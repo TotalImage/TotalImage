@@ -95,12 +95,19 @@
     <Compile Include="CommandLink.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="dlgNewSectorImage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dlgNewSectorImage.Designer.cs">
+      <DependentUpon>dlgNewSectorImage.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="ImageFormats\IMG.cs" />
     <Compile Include="ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -109,6 +116,9 @@
     <Compile Include="TreeViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="dlgNewSectorImage.resx">
+      <DependentUpon>dlgNewSectorImage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -136,6 +146,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="totalimage.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FileSystems\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

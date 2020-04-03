@@ -30,31 +30,11 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("2ndlevel");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("demodir1", new System.Windows.Forms.TreeNode[] {
-            treeNode1});
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("demodir2");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("<root directory>", new System.Windows.Forms.TreeNode[] {
-            treeNode2,
-            treeNode3});
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
-            "MSDOS.SYS",
-            "25,698 bytes",
-            "System file",
-            "2. 10. 1997 15:00:00"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
-            "IO.SYS",
-            "31,768 bytes",
-            "System file",
-            "2. 10. 1997 15:00:00"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
-            "COMMAND.COM",
-            "92,780 bytes",
-            "MS-DOS program",
-            "2. 10. 1997 15:00:00"}, -1);
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("<root directory>");
             this.menuBar = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newSurfaceImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -119,6 +99,7 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
+            this.newSurfaceImageToolStripMenuItem,
             this.openToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
@@ -133,47 +114,55 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
-            this.newToolStripMenuItem.Text = "New...";
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.newToolStripMenuItem.Text = "New sector image...";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            // 
+            // newSurfaceImageToolStripMenuItem
+            // 
+            this.newSurfaceImageToolStripMenuItem.Name = "newSurfaceImageToolStripMenuItem";
+            this.newSurfaceImageToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.newSurfaceImageToolStripMenuItem.Text = "New surface image...";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.openToolStripMenuItem.Text = "Open...";
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.saveToolStripMenuItem.Text = "Save";
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.saveAsToolStripMenuItem.Text = "Save as...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(131, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(181, 6);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(134, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
             this.toolStripMenuItem1.Text = "Recent files";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(131, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(181, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
             // editToolStripMenuItem
@@ -326,6 +315,7 @@
             this.newToolStripButton.Name = "newToolStripButton";
             this.newToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.newToolStripButton.Text = "&New";
+            this.newToolStripButton.Click += new System.EventHandler(this.newToolStripButton_Click);
             // 
             // openToolStripButton
             // 
@@ -344,6 +334,7 @@
             this.saveToolStripButton.Name = "saveToolStripButton";
             this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.saveToolStripButton.Text = "&Save";
+            this.saveToolStripButton.Click += new System.EventHandler(this.saveToolStripButton_Click);
             // 
             // splitContainer
             // 
@@ -380,16 +371,11 @@
             this.lstDirectories.ImageList = this.imageList1;
             this.lstDirectories.Location = new System.Drawing.Point(0, 0);
             this.lstDirectories.Name = "lstDirectories";
-            treeNode1.Name = "Node2";
-            treeNode1.Text = "2ndlevel";
-            treeNode2.Name = "Node1";
-            treeNode2.Text = "demodir1";
-            treeNode3.Name = "Node4";
-            treeNode3.Text = "demodir2";
-            treeNode4.Name = "rootDir";
-            treeNode4.Text = "<root directory>";
+            treeNode1.ImageKey = "folder.png";
+            treeNode1.Name = "rootDir";
+            treeNode1.Text = "<root directory>";
             this.lstDirectories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode4});
+            treeNode1});
             this.lstDirectories.SelectedImageKey = "folder.png";
             this.lstDirectories.ShowLines = false;
             this.lstDirectories.Size = new System.Drawing.Size(274, 448);
@@ -406,13 +392,6 @@
             this.lstFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstFiles.FullRowSelect = true;
             this.lstFiles.HideSelection = false;
-            listViewItem1.StateImageIndex = 0;
-            listViewItem2.StateImageIndex = 0;
-            listViewItem3.StateImageIndex = 0;
-            this.lstFiles.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3});
             this.lstFiles.LargeImageList = this.imageList1;
             this.lstFiles.Location = new System.Drawing.Point(0, 0);
             this.lstFiles.Name = "lstFiles";
@@ -515,6 +494,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ToolStripMenuItem newSurfaceImageToolStripMenuItem;
     }
 }
 
