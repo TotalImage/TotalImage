@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("TotalImage")]
 [assembly: AssemblyDescription("A disk image editor")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("The 86Box Team")]
+[assembly: AssemblyCompany("The TotalImage Team")]
 [assembly: AssemblyProduct("TotalImage")]
-[assembly: AssemblyCopyright("Copyright © 2020 The 86Box Team")]
+[assembly: AssemblyCopyright("Copyright © 2020 The TotalImage Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
