@@ -102,23 +102,65 @@
     <Compile Include="dlgAbout.Designer.cs">
       <DependentUpon>dlgAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="dlgCreateFolder.cs">
+    <Compile Include="dlgBootSector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dlgCreateFolder.Designer.cs">
-      <DependentUpon>dlgCreateFolder.cs</DependentUpon>
+    <Compile Include="dlgBootSector.Designer.cs">
+      <DependentUpon>dlgBootSector.cs</DependentUpon>
     </Compile>
-    <Compile Include="dlgNewSectorImage.cs">
+    <Compile Include="dlgChangeVolLabel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dlgNewSectorImage.Designer.cs">
-      <DependentUpon>dlgNewSectorImage.cs</DependentUpon>
+    <Compile Include="dlgChangeVolLabel.Designer.cs">
+      <DependentUpon>dlgChangeVolLabel.cs</DependentUpon>
     </Compile>
-    <Compile Include="dlgNewSurfaceImage.cs">
+    <Compile Include="dlgNewFolder.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="dlgNewSurfaceImage.Designer.cs">
-      <DependentUpon>dlgNewSurfaceImage.cs</DependentUpon>
+    <Compile Include="dlgNewFolder.Designer.cs">
+      <DependentUpon>dlgNewFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dlgExtract.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dlgExtract.Designer.cs">
+      <DependentUpon>dlgExtract.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dlgImageInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dlgImageInfo.Designer.cs">
+      <DependentUpon>dlgImageInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dlgManagePart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dlgManagePart.Designer.cs">
+      <DependentUpon>dlgManagePart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dlgNewImage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dlgNewImage.Designer.cs">
+      <DependentUpon>dlgNewImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dlgOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dlgOptions.Designer.cs">
+      <DependentUpon>dlgOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dlgProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dlgProperties.Designer.cs">
+      <DependentUpon>dlgProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="dlgUndelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dlgUndelete.Designer.cs">
+      <DependentUpon>dlgUndelete.cs</DependentUpon>
     </Compile>
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
@@ -135,8 +177,38 @@
     <Compile Include="TreeViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <EmbeddedResource Include="dlgNewSectorImage.resx">
-      <DependentUpon>dlgNewSectorImage.cs</DependentUpon>
+    <EmbeddedResource Include="dlgAbout.resx">
+      <DependentUpon>dlgAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dlgBootSector.resx">
+      <DependentUpon>dlgBootSector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dlgChangeVolLabel.resx">
+      <DependentUpon>dlgChangeVolLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dlgNewFolder.resx">
+      <DependentUpon>dlgNewFolder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dlgExtract.resx">
+      <DependentUpon>dlgExtract.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dlgImageInfo.resx">
+      <DependentUpon>dlgImageInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dlgManagePart.resx">
+      <DependentUpon>dlgManagePart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dlgNewImage.resx">
+      <DependentUpon>dlgNewImage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dlgOptions.resx">
+      <DependentUpon>dlgOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dlgProperties.resx">
+      <DependentUpon>dlgProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dlgUndelete.resx">
+      <DependentUpon>dlgUndelete.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>

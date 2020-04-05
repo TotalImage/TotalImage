@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace TotalImage
 {
-    public partial class dlgNewSectorImage : Form
+    public partial class dlgNewImage : Form
     {
-        public dlgNewSectorImage()
+        public dlgNewImage()
         {
             InitializeComponent();
         }

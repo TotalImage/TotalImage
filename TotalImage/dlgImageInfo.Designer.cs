@@ -1,6 +1,6 @@
 ﻿namespace TotalImage
 {
-    partial class dlgAbout
+    partial class dlgImageInfo
     {
         /// <summary>
         /// Required designer variable.
@@ -29,37 +29,50 @@
         private void InitializeComponent()
         {
             this.btnOK = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(362, 330);
+            this.btnOK.Location = new System.Drawing.Point(317, 535);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
-            this.btnOK.TabIndex = 0;
+            this.btnOK.TabIndex = 7;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             // 
-            // dlgAbout
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnCancel.Location = new System.Drawing.Point(403, 535);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 26);
+            this.btnCancel.TabIndex = 6;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // dlgImageInfo
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btnOK;
-            this.ClientSize = new System.Drawing.Size(454, 368);
+            this.CancelButton = this.btnCancel;
+            this.ClientSize = new System.Drawing.Size(495, 573);
             this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.btnCancel);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "dlgAbout";
+            this.Name = "dlgImageInfo";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "About TotalImage";
+            this.Text = "Image information";
             this.ResumeLayout(false);
 
         }
@@ -67,5 +80,6 @@
         #endregion
 
         private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Button btnCancel;
     }
 }

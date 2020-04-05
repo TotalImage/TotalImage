@@ -1,6 +1,6 @@
 ﻿namespace TotalImage
 {
-    partial class dlgAbout
+    partial class dlgChangeVolLabel
     {
         /// <summary>
         /// Required designer variable.
@@ -29,43 +29,81 @@
         private void InitializeComponent()
         {
             this.btnOK = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.txtName = new System.Windows.Forms.TextBox();
+            this.lblName = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(362, 330);
+            this.btnOK.Location = new System.Drawing.Point(94, 73);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
-            this.btnOK.TabIndex = 0;
+            this.btnOK.TabIndex = 7;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             // 
-            // dlgAbout
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnCancel.Location = new System.Drawing.Point(180, 73);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 26);
+            this.btnCancel.TabIndex = 6;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // txtName
+            // 
+            this.txtName.Location = new System.Drawing.Point(15, 36);
+            this.txtName.MaxLength = 11;
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(245, 23);
+            this.txtName.TabIndex = 5;
+            // 
+            // lblName
+            // 
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(12, 9);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(248, 15);
+            this.lblName.TabIndex = 4;
+            this.lblName.Text = "Enter a new volume label (11 characters max):";
+            // 
+            // dlgChangeVolLabel
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btnOK;
-            this.ClientSize = new System.Drawing.Size(454, 368);
+            this.CancelButton = this.btnCancel;
+            this.ClientSize = new System.Drawing.Size(272, 111);
             this.Controls.Add(this.btnOK);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.txtName);
+            this.Controls.Add(this.lblName);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "dlgAbout";
+            this.Name = "dlgChangeVolLabel";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "About TotalImage";
+            this.Text = "Change volume label";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.TextBox txtName;
+        private System.Windows.Forms.Label lblName;
     }
 }

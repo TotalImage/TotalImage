@@ -1,6 +1,6 @@
 ﻿namespace TotalImage
 {
-    partial class dlgNewSectorImage
+    partial class dlgNewImage
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(dlgNewSectorImage));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(dlgNewImage));
             this.gbxMediaType = new System.Windows.Forms.GroupBox();
             this.rbnHardDisk = new System.Windows.Forms.RadioButton();
             this.rbnFloppy = new System.Windows.Forms.RadioButton();
@@ -58,23 +58,23 @@
             this.rbn160k = new System.Windows.Forms.RadioButton();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.gbxHardDiskCapacity = new System.Windows.Forms.GroupBox();
+            this.lstType = new System.Windows.Forms.ComboBox();
+            this.lblType = new System.Windows.Forms.Label();
+            this.txtSize = new System.Windows.Forms.NumericUpDown();
+            this.lblSize = new System.Windows.Forms.Label();
             this.txtSectors = new System.Windows.Forms.NumericUpDown();
             this.lblSectors = new System.Windows.Forms.Label();
             this.txtHeads = new System.Windows.Forms.NumericUpDown();
             this.lblHeads = new System.Windows.Forms.Label();
             this.txtCylinders = new System.Windows.Forms.NumericUpDown();
             this.lblCylinders = new System.Windows.Forms.Label();
-            this.lblSize = new System.Windows.Forms.Label();
-            this.txtSize = new System.Windows.Forms.NumericUpDown();
-            this.lblType = new System.Windows.Forms.Label();
-            this.lstType = new System.Windows.Forms.ComboBox();
             this.gbxMediaType.SuspendLayout();
             this.gbxFloppyCapacity.SuspendLayout();
             this.gbxHardDiskCapacity.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtSectors)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtHeads)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtCylinders)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtSize)).BeginInit();
             this.SuspendLayout();
             // 
             // gbxMediaType
@@ -500,6 +500,47 @@
             this.gbxHardDiskCapacity.TabStop = false;
             this.gbxHardDiskCapacity.Text = "Hard disk capacity";
             // 
+            // lstType
+            // 
+            this.lstType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstType.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.lstType.FormattingEnabled = true;
+            this.lstType.Location = new System.Drawing.Point(214, 58);
+            this.lstType.MaxDropDownItems = 99;
+            this.lstType.Name = "lstType";
+            this.lstType.Size = new System.Drawing.Size(223, 23);
+            this.lstType.TabIndex = 9;
+            // 
+            // lblType
+            // 
+            this.lblType.AutoSize = true;
+            this.lblType.Location = new System.Drawing.Point(165, 63);
+            this.lblType.Name = "lblType";
+            this.lblType.Size = new System.Drawing.Size(34, 15);
+            this.lblType.TabIndex = 8;
+            this.lblType.Text = "Type:";
+            // 
+            // txtSize
+            // 
+            this.txtSize.Location = new System.Drawing.Point(74, 58);
+            this.txtSize.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.txtSize.Name = "txtSize";
+            this.txtSize.Size = new System.Drawing.Size(75, 23);
+            this.txtSize.TabIndex = 7;
+            // 
+            // lblSize
+            // 
+            this.lblSize.AutoSize = true;
+            this.lblSize.Location = new System.Drawing.Point(9, 63);
+            this.lblSize.Name = "lblSize";
+            this.lblSize.Size = new System.Drawing.Size(59, 15);
+            this.lblSize.TabIndex = 6;
+            this.lblSize.Text = "Size (MB):";
+            // 
             // txtSectors
             // 
             this.txtSectors.Location = new System.Drawing.Point(362, 22);
@@ -563,51 +604,12 @@
             this.lblCylinders.TabIndex = 0;
             this.lblCylinders.Text = "Cylinders:";
             // 
-            // lblSize
+            // dlgNewImage
             // 
-            this.lblSize.AutoSize = true;
-            this.lblSize.Location = new System.Drawing.Point(9, 63);
-            this.lblSize.Name = "lblSize";
-            this.lblSize.Size = new System.Drawing.Size(59, 15);
-            this.lblSize.TabIndex = 6;
-            this.lblSize.Text = "Size (MB):";
-            // 
-            // txtSize
-            // 
-            this.txtSize.Location = new System.Drawing.Point(74, 58);
-            this.txtSize.Maximum = new decimal(new int[] {
-            999999,
-            0,
-            0,
-            0});
-            this.txtSize.Name = "txtSize";
-            this.txtSize.Size = new System.Drawing.Size(75, 23);
-            this.txtSize.TabIndex = 7;
-            // 
-            // lblType
-            // 
-            this.lblType.AutoSize = true;
-            this.lblType.Location = new System.Drawing.Point(165, 63);
-            this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(34, 15);
-            this.lblType.TabIndex = 8;
-            this.lblType.Text = "Type:";
-            // 
-            // lstType
-            // 
-            this.lstType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.lstType.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.lstType.FormattingEnabled = true;
-            this.lstType.Location = new System.Drawing.Point(214, 58);
-            this.lstType.MaxDropDownItems = 99;
-            this.lstType.Name = "lstType";
-            this.lstType.Size = new System.Drawing.Size(223, 23);
-            this.lstType.TabIndex = 9;
-            // 
-            // dlgNewSectorImage
-            // 
+            this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(489, 391);
             this.Controls.Add(this.gbxHardDiskCapacity);
             this.Controls.Add(this.gbxFloppyCapacity);
@@ -618,10 +620,11 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "dlgNewSectorImage";
+            this.Name = "dlgNewImage";
+            this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "New sector image";
+            this.Text = "New image";
             this.Load += new System.EventHandler(this.dlgNewSectorImage_Load);
             this.gbxMediaType.ResumeLayout(false);
             this.gbxMediaType.PerformLayout();
@@ -629,10 +632,10 @@
             this.gbxFloppyCapacity.PerformLayout();
             this.gbxHardDiskCapacity.ResumeLayout(false);
             this.gbxHardDiskCapacity.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtSectors)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtHeads)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtCylinders)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtSize)).EndInit();
             this.ResumeLayout(false);
 
         }

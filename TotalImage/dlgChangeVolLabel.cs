@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace TotalImage
 {
-    public partial class dlgAbout : Form
+    public partial class dlgChangeVolLabel : Form
     {
-        public dlgAbout()
+        public dlgChangeVolLabel()
         {
             InitializeComponent();
         }
