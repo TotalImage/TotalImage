@@ -30,34 +30,43 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(dlgNewImage));
-            this.gbxMediaType = new System.Windows.Forms.GroupBox();
-            this.rbnHardDisk = new System.Windows.Forms.RadioButton();
-            this.rbnFloppy = new System.Windows.Forms.RadioButton();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
-            this.gbxFloppyCapacity = new System.Windows.Forms.GroupBox();
-            this.rbn172m = new System.Windows.Forms.RadioButton();
-            this.rbn800k = new System.Windows.Forms.RadioButton();
-            this.rbn35_XDF2 = new System.Windows.Forms.RadioButton();
-            this.rbn125m = new System.Windows.Forms.RadioButton();
-            this.rbn35_320k = new System.Windows.Forms.RadioButton();
-            this.rbn35_360k = new System.Windows.Forms.RadioButton();
-            this.rbn640k = new System.Windows.Forms.RadioButton();
-            this.rbn400k = new System.Windows.Forms.RadioButton();
-            this.rbn288m = new System.Windows.Forms.RadioButton();
-            this.rbnCustom = new System.Windows.Forms.RadioButton();
-            this.rbn35_XDF1 = new System.Windows.Forms.RadioButton();
-            this.rbn525_XDF = new System.Windows.Forms.RadioButton();
-            this.rbnDMF = new System.Windows.Forms.RadioButton();
-            this.rbn144m = new System.Windows.Forms.RadioButton();
-            this.rbn12m = new System.Windows.Forms.RadioButton();
-            this.rbn720k = new System.Windows.Forms.RadioButton();
-            this.rbn525_360k = new System.Windows.Forms.RadioButton();
-            this.rbn525_320k = new System.Windows.Forms.RadioButton();
-            this.rbn180k = new System.Windows.Forms.RadioButton();
-            this.rbn160k = new System.Windows.Forms.RadioButton();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.gbxHardDiskCapacity = new System.Windows.Forms.GroupBox();
+            this.lblFloppyType = new System.Windows.Forms.Label();
+            this.lstFloppyCapacity = new System.Windows.Forms.ComboBox();
+            this.cbxFloppyBPB = new System.Windows.Forms.CheckBox();
+            this.lstFloppyBPB = new System.Windows.Forms.ComboBox();
+            this.lblFloppyOEMID = new System.Windows.Forms.Label();
+            this.txtFloppyOEMID = new System.Windows.Forms.TextBox();
+            this.lblFloppyBPS = new System.Windows.Forms.Label();
+            this.txtFloppyBPS = new System.Windows.Forms.NumericUpDown();
+            this.lblFloppySPC = new System.Windows.Forms.Label();
+            this.txtFloppySPC = new System.Windows.Forms.NumericUpDown();
+            this.lblFloppyReserved = new System.Windows.Forms.Label();
+            this.lblFloppyNumFATs = new System.Windows.Forms.Label();
+            this.lblFloppyRootDirEntries = new System.Windows.Forms.Label();
+            this.txtFloppyRootDirEntries = new System.Windows.Forms.NumericUpDown();
+            this.lblFloppyTotalSect = new System.Windows.Forms.Label();
+            this.txtFloppyTotalSect = new System.Windows.Forms.NumericUpDown();
+            this.lblFloppyMediaDesc = new System.Windows.Forms.Label();
+            this.txtFloppyMediaDesc = new System.Windows.Forms.NumericUpDown();
+            this.lblFloppySPF = new System.Windows.Forms.Label();
+            this.txtFloppySPF = new System.Windows.Forms.NumericUpDown();
+            this.lblFloppySPT = new System.Windows.Forms.Label();
+            this.txtFloppySPT = new System.Windows.Forms.NumericUpDown();
+            this.lblFloppySides = new System.Windows.Forms.Label();
+            this.lstFloppySides = new System.Windows.Forms.ComboBox();
+            this.lblFloppySerial = new System.Windows.Forms.Label();
+            this.txtFloppySerial = new System.Windows.Forms.TextBox();
+            this.lblFloppyLabel = new System.Windows.Forms.Label();
+            this.txtFloppyLabel = new System.Windows.Forms.TextBox();
+            this.lblFloppyFSType = new System.Windows.Forms.Label();
+            this.txtFloppyFSType = new System.Windows.Forms.TextBox();
+            this.txtFloppyNumFATs = new System.Windows.Forms.NumericUpDown();
+            this.txtFloppyReserved = new System.Windows.Forms.NumericUpDown();
+            this.lblFloppyTracks = new System.Windows.Forms.Label();
+            this.txtFloppyTracks = new System.Windows.Forms.NumericUpDown();
             this.lstType = new System.Windows.Forms.ComboBox();
             this.lblType = new System.Windows.Forms.Label();
             this.txtSize = new System.Windows.Forms.NumericUpDown();
@@ -68,60 +77,36 @@
             this.lblHeads = new System.Windows.Forms.Label();
             this.txtCylinders = new System.Windows.Forms.NumericUpDown();
             this.lblCylinders = new System.Windows.Forms.Label();
-            this.gbxMediaType.SuspendLayout();
-            this.gbxFloppyCapacity.SuspendLayout();
-            this.gbxHardDiskCapacity.SuspendLayout();
+            this.tabControl = new System.Windows.Forms.TabControl();
+            this.tabFloppy = new System.Windows.Forms.TabPage();
+            this.tabHDD = new System.Windows.Forms.TabPage();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyBPS)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyRootDirEntries)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyTotalSect)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyMediaDesc)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPF)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPT)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyNumFATs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyReserved)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyTracks)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtSectors)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtHeads)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtCylinders)).BeginInit();
+            this.tabControl.SuspendLayout();
+            this.tabFloppy.SuspendLayout();
+            this.tabHDD.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // gbxMediaType
-            // 
-            this.gbxMediaType.Controls.Add(this.rbnHardDisk);
-            this.gbxMediaType.Controls.Add(this.rbnFloppy);
-            this.gbxMediaType.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.gbxMediaType.Location = new System.Drawing.Point(12, 12);
-            this.gbxMediaType.Name = "gbxMediaType";
-            this.gbxMediaType.Size = new System.Drawing.Size(465, 58);
-            this.gbxMediaType.TabIndex = 1;
-            this.gbxMediaType.TabStop = false;
-            this.gbxMediaType.Text = "Media type";
-            // 
-            // rbnHardDisk
-            // 
-            this.rbnHardDisk.AutoSize = true;
-            this.rbnHardDisk.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbnHardDisk.Location = new System.Drawing.Point(127, 22);
-            this.rbnHardDisk.Name = "rbnHardDisk";
-            this.rbnHardDisk.Size = new System.Drawing.Size(81, 20);
-            this.rbnHardDisk.TabIndex = 3;
-            this.rbnHardDisk.TabStop = true;
-            this.rbnHardDisk.Text = "Hard disk";
-            this.rbnHardDisk.UseVisualStyleBackColor = true;
-            this.rbnHardDisk.CheckedChanged += new System.EventHandler(this.rbnHardDisk_CheckedChanged);
-            // 
-            // rbnFloppy
-            // 
-            this.rbnFloppy.AutoSize = true;
-            this.rbnFloppy.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbnFloppy.Location = new System.Drawing.Point(15, 22);
-            this.rbnFloppy.Name = "rbnFloppy";
-            this.rbnFloppy.Size = new System.Drawing.Size(91, 20);
-            this.rbnFloppy.TabIndex = 2;
-            this.rbnFloppy.TabStop = true;
-            this.rbnFloppy.Text = "Floppy disk";
-            this.rbnFloppy.UseVisualStyleBackColor = true;
-            this.rbnFloppy.CheckedChanged += new System.EventHandler(this.rbnFloppy_CheckedChanged);
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(397, 353);
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(637, 248);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
-            this.btnCancel.TabIndex = 4;
+            this.btnCancel.TabIndex = 17;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -129,348 +114,13 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(311, 353);
+            this.btnOK.Location = new System.Drawing.Point(551, 248);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
-            this.btnOK.TabIndex = 5;
+            this.btnOK.TabIndex = 16;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
-            // 
-            // gbxFloppyCapacity
-            // 
-            this.gbxFloppyCapacity.Controls.Add(this.rbn172m);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn800k);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn35_XDF2);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn125m);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn35_320k);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn35_360k);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn640k);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn400k);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn288m);
-            this.gbxFloppyCapacity.Controls.Add(this.rbnCustom);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn35_XDF1);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn525_XDF);
-            this.gbxFloppyCapacity.Controls.Add(this.rbnDMF);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn144m);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn12m);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn720k);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn525_360k);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn525_320k);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn180k);
-            this.gbxFloppyCapacity.Controls.Add(this.rbn160k);
-            this.gbxFloppyCapacity.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.gbxFloppyCapacity.Location = new System.Drawing.Point(12, 76);
-            this.gbxFloppyCapacity.Name = "gbxFloppyCapacity";
-            this.gbxFloppyCapacity.Size = new System.Drawing.Size(465, 159);
-            this.gbxFloppyCapacity.TabIndex = 6;
-            this.gbxFloppyCapacity.TabStop = false;
-            this.gbxFloppyCapacity.Text = "Floppy disk capacity";
-            // 
-            // rbn172m
-            // 
-            this.rbn172m.AutoSize = true;
-            this.rbn172m.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn172m.Location = new System.Drawing.Point(362, 22);
-            this.rbn172m.Name = "rbn172m";
-            this.rbn172m.Size = new System.Drawing.Size(75, 20);
-            this.rbn172m.TabIndex = 35;
-            this.rbn172m.TabStop = true;
-            this.rbn172m.Tag = "15";
-            this.rbn172m.Text = "1722 KiB";
-            this.toolTip.SetToolTip(this.rbn172m, "Physical size: 3.5\"\r\nDensity: high (HD)\r\nSides: 2 (DS)\r\nBytes per sector: 512\r\nSe" +
-        "ctors per track: 21\r\nTracks: 82\r\n\r\nRare format.");
-            this.rbn172m.UseVisualStyleBackColor = true;
-            // 
-            // rbn800k
-            // 
-            this.rbn800k.AutoSize = true;
-            this.rbn800k.Enabled = false;
-            this.rbn800k.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn800k.Location = new System.Drawing.Point(139, 126);
-            this.rbn800k.Name = "rbn800k";
-            this.rbn800k.Size = new System.Drawing.Size(69, 20);
-            this.rbn800k.TabIndex = 34;
-            this.rbn800k.TabStop = true;
-            this.rbn800k.Tag = "9";
-            this.rbn800k.Text = "800 KiB";
-            this.toolTip.SetToolTip(this.rbn800k, "Physical size: 3.5\"\r\nDensity: double (DD)\r\nSides: 2 (DS)\r\nBytes per sector: 512\r\n" +
-        "Sectors per track: 10\r\nTracks: 80\r\n\r\nRare format.");
-            this.rbn800k.UseVisualStyleBackColor = true;
-            // 
-            // rbn35_XDF2
-            // 
-            this.rbn35_XDF2.AutoSize = true;
-            this.rbn35_XDF2.Enabled = false;
-            this.rbn35_XDF2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn35_XDF2.Location = new System.Drawing.Point(362, 100);
-            this.rbn35_XDF2.Name = "rbn35_XDF2";
-            this.rbn35_XDF2.Size = new System.Drawing.Size(75, 20);
-            this.rbn35_XDF2.TabIndex = 33;
-            this.rbn35_XDF2.TabStop = true;
-            this.rbn35_XDF2.Tag = "18";
-            this.rbn35_XDF2.Text = "3680 KiB";
-            this.toolTip.SetToolTip(this.rbn35_XDF2, "Physical size: 3.5\"\r\nDensity: extended (ED)\r\nSides: 2 (DS)\r\nBytes per sector: var" +
-        "iable\r\nSectors per track: ???\r\nTracks: 80\r\n\r\nIBM XDF proprietary format.\r\n");
-            this.rbn35_XDF2.UseVisualStyleBackColor = true;
-            // 
-            // rbn125m
-            // 
-            this.rbn125m.AutoSize = true;
-            this.rbn125m.Enabled = false;
-            this.rbn125m.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn125m.Location = new System.Drawing.Point(261, 48);
-            this.rbn125m.Name = "rbn125m";
-            this.rbn125m.Size = new System.Drawing.Size(75, 20);
-            this.rbn125m.TabIndex = 32;
-            this.rbn125m.TabStop = true;
-            this.rbn125m.Tag = "11";
-            this.rbn125m.Text = "1232 KiB";
-            this.toolTip.SetToolTip(this.rbn125m, "Physical size: 5.25\" or 3.5\"\r\nDensity: high (HD)\r\nSides: 2 (DS)\r\nBytes per sector" +
-        ": 1024\r\nSectors per track: 8\r\nTracks: 77\r\n\r\nNEC PC-98 proprietary format.");
-            this.rbn125m.UseVisualStyleBackColor = true;
-            // 
-            // rbn35_320k
-            // 
-            this.rbn35_320k.AutoSize = true;
-            this.rbn35_320k.Enabled = false;
-            this.rbn35_320k.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn35_320k.Location = new System.Drawing.Point(12, 100);
-            this.rbn35_320k.Name = "rbn35_320k";
-            this.rbn35_320k.Size = new System.Drawing.Size(100, 20);
-            this.rbn35_320k.TabIndex = 30;
-            this.rbn35_320k.TabStop = true;
-            this.rbn35_320k.Tag = "3";
-            this.rbn35_320k.Text = "320 KiB (3.5\")";
-            this.toolTip.SetToolTip(this.rbn35_320k, "Physical size: 3.5\"\r\nDensity: double (DD)\r\nSides: 1 (SS)\r\nBytes per sector: 512\r\n" +
-        "Sectors per track: 8\r\nTracks: 80\r\n\r\nRare format.");
-            this.rbn35_320k.UseVisualStyleBackColor = true;
-            // 
-            // rbn35_360k
-            // 
-            this.rbn35_360k.AutoSize = true;
-            this.rbn35_360k.Enabled = false;
-            this.rbn35_360k.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn35_360k.Location = new System.Drawing.Point(139, 22);
-            this.rbn35_360k.Name = "rbn35_360k";
-            this.rbn35_360k.Size = new System.Drawing.Size(100, 20);
-            this.rbn35_360k.TabIndex = 29;
-            this.rbn35_360k.TabStop = true;
-            this.rbn35_360k.Tag = "5";
-            this.rbn35_360k.Text = "360 KiB (3.5\")";
-            this.toolTip.SetToolTip(this.rbn35_360k, "Physical size: 3.5\"\r\nDensity: double (DD)\r\nSides: 1 (SS)\r\nBytes per sector: 512\r\n" +
-        "Sectors per track: 9\r\nTracks: 80\r\n\r\nRare format.");
-            this.rbn35_360k.UseVisualStyleBackColor = true;
-            // 
-            // rbn640k
-            // 
-            this.rbn640k.AutoSize = true;
-            this.rbn640k.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn640k.Location = new System.Drawing.Point(139, 74);
-            this.rbn640k.Name = "rbn640k";
-            this.rbn640k.Size = new System.Drawing.Size(69, 20);
-            this.rbn640k.TabIndex = 28;
-            this.rbn640k.TabStop = true;
-            this.rbn640k.Tag = "7";
-            this.rbn640k.Text = "640 KiB";
-            this.toolTip.SetToolTip(this.rbn640k, "Physical size: 5.25\" or 3.5\"\r\nDensity: double (DD) or quad (QD)\r\nSides: 2 (DS)\r\nB" +
-        "ytes per sector: 512\r\nSectors per track: 8\r\nTracks: 80\r\n\r\nRare format.");
-            this.rbn640k.UseVisualStyleBackColor = true;
-            // 
-            // rbn400k
-            // 
-            this.rbn400k.AutoSize = true;
-            this.rbn400k.Enabled = false;
-            this.rbn400k.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn400k.Location = new System.Drawing.Point(139, 48);
-            this.rbn400k.Name = "rbn400k";
-            this.rbn400k.Size = new System.Drawing.Size(69, 20);
-            this.rbn400k.TabIndex = 27;
-            this.rbn400k.TabStop = true;
-            this.rbn400k.Tag = "6";
-            this.rbn400k.Text = "400 KiB";
-            this.toolTip.SetToolTip(this.rbn400k, "Physical size: 5.25\"\r\nDensity: double (DD)\r\nSides: 1 (SS)\r\nBytes per sector: 512\r" +
-        "\nSectors per track: 10\r\nTracks: 80\r\n\r\nDEC RX50 proprietary format.");
-            this.rbn400k.UseVisualStyleBackColor = true;
-            // 
-            // rbn288m
-            // 
-            this.rbn288m.AutoSize = true;
-            this.rbn288m.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn288m.Location = new System.Drawing.Point(362, 74);
-            this.rbn288m.Name = "rbn288m";
-            this.rbn288m.Size = new System.Drawing.Size(75, 20);
-            this.rbn288m.TabIndex = 26;
-            this.rbn288m.TabStop = true;
-            this.rbn288m.Tag = "17";
-            this.rbn288m.Text = "2880 KiB";
-            this.toolTip.SetToolTip(this.rbn288m, "Physical size: 3.5\"\r\nDensity: high (HD)\r\nSides: 2 (DS)\r\nBytes per sector: 512\r\nSe" +
-        "ctors per track: 36\r\nTracks: 80\r\n\r\nRare format.");
-            this.rbn288m.UseVisualStyleBackColor = true;
-            // 
-            // rbnCustom
-            // 
-            this.rbnCustom.AutoSize = true;
-            this.rbnCustom.Enabled = false;
-            this.rbnCustom.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbnCustom.Location = new System.Drawing.Point(362, 126);
-            this.rbnCustom.Name = "rbnCustom";
-            this.rbnCustom.Size = new System.Drawing.Size(82, 20);
-            this.rbnCustom.TabIndex = 25;
-            this.rbnCustom.TabStop = true;
-            this.rbnCustom.Text = "Custom...";
-            this.toolTip.SetToolTip(this.rbnCustom, "Define custom parameters.");
-            this.rbnCustom.UseVisualStyleBackColor = true;
-            // 
-            // rbn35_XDF1
-            // 
-            this.rbn35_XDF1.AutoSize = true;
-            this.rbn35_XDF1.Enabled = false;
-            this.rbn35_XDF1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn35_XDF1.Location = new System.Drawing.Point(362, 48);
-            this.rbn35_XDF1.Name = "rbn35_XDF1";
-            this.rbn35_XDF1.Size = new System.Drawing.Size(75, 20);
-            this.rbn35_XDF1.TabIndex = 24;
-            this.rbn35_XDF1.TabStop = true;
-            this.rbn35_XDF1.Tag = "16";
-            this.rbn35_XDF1.Text = "1840 KiB";
-            this.toolTip.SetToolTip(this.rbn35_XDF1, "Physical size: 3.5\"\r\nDensity: high (HD)\r\nSides: 2 (DS)\r\nBytes per sector: variabl" +
-        "e\r\nSectors per track: ???\r\nTracks: 80\r\n\r\nIBM XDF proprietary format.\r\n");
-            this.rbn35_XDF1.UseVisualStyleBackColor = true;
-            // 
-            // rbn525_XDF
-            // 
-            this.rbn525_XDF.AutoSize = true;
-            this.rbn525_XDF.Enabled = false;
-            this.rbn525_XDF.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn525_XDF.Location = new System.Drawing.Point(261, 100);
-            this.rbn525_XDF.Name = "rbn525_XDF";
-            this.rbn525_XDF.Size = new System.Drawing.Size(75, 20);
-            this.rbn525_XDF.TabIndex = 23;
-            this.rbn525_XDF.TabStop = true;
-            this.rbn525_XDF.Tag = "13";
-            this.rbn525_XDF.Text = "1520 KiB";
-            this.toolTip.SetToolTip(this.rbn525_XDF, "Physical size: 5.25\"\r\nDensity: high (HD)\r\nSides: 2 (DS)\r\nBytes per sector: variab" +
-        "le\r\nSectors per track: ???\r\nTracks: 80\r\n\r\nIBM XDF proprietary format.");
-            this.rbn525_XDF.UseVisualStyleBackColor = true;
-            // 
-            // rbnDMF
-            // 
-            this.rbnDMF.AutoSize = true;
-            this.rbnDMF.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbnDMF.Location = new System.Drawing.Point(261, 126);
-            this.rbnDMF.Name = "rbnDMF";
-            this.rbnDMF.Size = new System.Drawing.Size(75, 20);
-            this.rbnDMF.TabIndex = 21;
-            this.rbnDMF.TabStop = true;
-            this.rbnDMF.Tag = "14";
-            this.rbnDMF.Text = "1680 KiB";
-            this.toolTip.SetToolTip(this.rbnDMF, "Physical size: 3.5\"\r\nDensity: high (HD)\r\nSides: 2 (DS)\r\nBytes per sector: 512\r\nSe" +
-        "ctors per track: 21\r\nTracks: 80\r\n\r\nMicrosoft DMF proprietary format.\r\n");
-            this.rbnDMF.UseVisualStyleBackColor = true;
-            // 
-            // rbn144m
-            // 
-            this.rbn144m.AutoSize = true;
-            this.rbn144m.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn144m.Location = new System.Drawing.Point(261, 74);
-            this.rbn144m.Name = "rbn144m";
-            this.rbn144m.Size = new System.Drawing.Size(75, 20);
-            this.rbn144m.TabIndex = 20;
-            this.rbn144m.TabStop = true;
-            this.rbn144m.Tag = "12";
-            this.rbn144m.Text = "1440 KiB";
-            this.toolTip.SetToolTip(this.rbn144m, "Physical size: 3.5\"\r\nDensity: high (HD)\r\nSides: 2 (DS)\r\nBytes per sector: 512\r\nSe" +
-        "ctors per track: 18\r\nTracks: 80\r\n\r\nStandard PC-compatible format.\r\n");
-            this.rbn144m.UseVisualStyleBackColor = true;
-            // 
-            // rbn12m
-            // 
-            this.rbn12m.AutoSize = true;
-            this.rbn12m.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn12m.Location = new System.Drawing.Point(261, 22);
-            this.rbn12m.Name = "rbn12m";
-            this.rbn12m.Size = new System.Drawing.Size(75, 20);
-            this.rbn12m.TabIndex = 18;
-            this.rbn12m.TabStop = true;
-            this.rbn12m.Tag = "10";
-            this.rbn12m.Text = "1200 KiB";
-            this.toolTip.SetToolTip(this.rbn12m, resources.GetString("rbn12m.ToolTip"));
-            this.rbn12m.UseVisualStyleBackColor = true;
-            // 
-            // rbn720k
-            // 
-            this.rbn720k.AutoSize = true;
-            this.rbn720k.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn720k.Location = new System.Drawing.Point(139, 100);
-            this.rbn720k.Name = "rbn720k";
-            this.rbn720k.Size = new System.Drawing.Size(69, 20);
-            this.rbn720k.TabIndex = 17;
-            this.rbn720k.TabStop = true;
-            this.rbn720k.Tag = "8";
-            this.rbn720k.Text = "720 KiB";
-            this.toolTip.SetToolTip(this.rbn720k, resources.GetString("rbn720k.ToolTip"));
-            this.rbn720k.UseVisualStyleBackColor = true;
-            // 
-            // rbn525_360k
-            // 
-            this.rbn525_360k.AutoSize = true;
-            this.rbn525_360k.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn525_360k.Location = new System.Drawing.Point(12, 126);
-            this.rbn525_360k.Name = "rbn525_360k";
-            this.rbn525_360k.Size = new System.Drawing.Size(106, 20);
-            this.rbn525_360k.TabIndex = 16;
-            this.rbn525_360k.TabStop = true;
-            this.rbn525_360k.Tag = "4";
-            this.rbn525_360k.Text = "360 KiB (5.25\")";
-            this.toolTip.SetToolTip(this.rbn525_360k, "Physical size: 5.25\"\r\nDensity: double (DD)\r\nSides: 2 (DS)\r\nBytes per sector: 512\r" +
-        "\nSectors per track: 9\r\nTracks: 40\r\n\r\nStandard IBM PC-compatible format.");
-            this.rbn525_360k.UseVisualStyleBackColor = true;
-            // 
-            // rbn525_320k
-            // 
-            this.rbn525_320k.AutoSize = true;
-            this.rbn525_320k.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn525_320k.Location = new System.Drawing.Point(12, 74);
-            this.rbn525_320k.Name = "rbn525_320k";
-            this.rbn525_320k.Size = new System.Drawing.Size(106, 20);
-            this.rbn525_320k.TabIndex = 15;
-            this.rbn525_320k.TabStop = true;
-            this.rbn525_320k.Tag = "2";
-            this.rbn525_320k.Text = "320 KiB (5.25\")";
-            this.toolTip.SetToolTip(this.rbn525_320k, "Physical size: 5.25\"\r\nDensity: double (DD)\r\nSides: 2 (DS)\r\nBytes per sector: 512\r" +
-        "\nSectors per track: 8\r\nTracks: 40\r\n\r\nStandard IBM PC-compatible format.");
-            this.rbn525_320k.UseVisualStyleBackColor = true;
-            // 
-            // rbn180k
-            // 
-            this.rbn180k.AutoSize = true;
-            this.rbn180k.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn180k.Location = new System.Drawing.Point(12, 48);
-            this.rbn180k.Name = "rbn180k";
-            this.rbn180k.Size = new System.Drawing.Size(69, 20);
-            this.rbn180k.TabIndex = 14;
-            this.rbn180k.TabStop = true;
-            this.rbn180k.Tag = "1";
-            this.rbn180k.Text = "180 KiB";
-            this.toolTip.SetToolTip(this.rbn180k, "Physical size: 5.25\"\r\nDensity: double (DD)\r\nSides: 1 (SS)\r\nBytes per sector: 512\r" +
-        "\nSectors per track: 9\r\nTracks: 40\r\n\r\nStandard IBM PC-compatible format.");
-            this.rbn180k.UseVisualStyleBackColor = true;
-            // 
-            // rbn160k
-            // 
-            this.rbn160k.AutoSize = true;
-            this.rbn160k.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbn160k.Location = new System.Drawing.Point(12, 22);
-            this.rbn160k.Name = "rbn160k";
-            this.rbn160k.Size = new System.Drawing.Size(69, 20);
-            this.rbn160k.TabIndex = 13;
-            this.rbn160k.TabStop = true;
-            this.rbn160k.Tag = "0";
-            this.rbn160k.Text = "160 KiB";
-            this.toolTip.SetToolTip(this.rbn160k, "Physical size: 5.25\"\r\nDensity: double (DD)\r\nSides: 1 (SS)\r\nBytes per sector: 512\r" +
-        "\nSectors per track: 8\r\nTracks: 40\r\n\r\nStandard IBM PC-compatible format.");
-            this.rbn160k.UseVisualStyleBackColor = true;
             // 
             // toolTip
             // 
@@ -478,34 +128,557 @@
             this.toolTip.InitialDelay = 500;
             this.toolTip.ReshowDelay = 100;
             this.toolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
-            this.toolTip.ToolTipTitle = "Format information";
+            this.toolTip.ToolTipTitle = "The more you know...";
             // 
-            // gbxHardDiskCapacity
+            // lblFloppyType
             // 
-            this.gbxHardDiskCapacity.Controls.Add(this.lstType);
-            this.gbxHardDiskCapacity.Controls.Add(this.lblType);
-            this.gbxHardDiskCapacity.Controls.Add(this.txtSize);
-            this.gbxHardDiskCapacity.Controls.Add(this.lblSize);
-            this.gbxHardDiskCapacity.Controls.Add(this.txtSectors);
-            this.gbxHardDiskCapacity.Controls.Add(this.lblSectors);
-            this.gbxHardDiskCapacity.Controls.Add(this.txtHeads);
-            this.gbxHardDiskCapacity.Controls.Add(this.lblHeads);
-            this.gbxHardDiskCapacity.Controls.Add(this.txtCylinders);
-            this.gbxHardDiskCapacity.Controls.Add(this.lblCylinders);
-            this.gbxHardDiskCapacity.Enabled = false;
-            this.gbxHardDiskCapacity.Location = new System.Drawing.Point(12, 241);
-            this.gbxHardDiskCapacity.Name = "gbxHardDiskCapacity";
-            this.gbxHardDiskCapacity.Size = new System.Drawing.Size(465, 96);
-            this.gbxHardDiskCapacity.TabIndex = 7;
-            this.gbxHardDiskCapacity.TabStop = false;
-            this.gbxHardDiskCapacity.Text = "Hard disk capacity";
+            this.lblFloppyType.AutoSize = true;
+            this.lblFloppyType.Location = new System.Drawing.Point(16, 17);
+            this.lblFloppyType.Name = "lblFloppyType";
+            this.lblFloppyType.Size = new System.Drawing.Size(112, 15);
+            this.lblFloppyType.TabIndex = 0;
+            this.lblFloppyType.Text = "Formatted capacity:";
+            this.toolTip.SetToolTip(this.lblFloppyType, "This will be the total storage capacity of your floppy disk image\r\nin kibibytes (" +
+        "1 kibibyte =1024 bytes).\r\n");
+            // 
+            // lstFloppyCapacity
+            // 
+            this.lstFloppyCapacity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstFloppyCapacity.FormattingEnabled = true;
+            this.lstFloppyCapacity.Items.AddRange(new object[] {
+            "160 KiB",
+            "180 KiB",
+            "320 KiB (5.25\")",
+            "320 KiB (3.5\")",
+            "360 KiB (5.25\")",
+            "360 KiB (3.5\")",
+            "400 KiB (DEC RX50)",
+            "640 KiB",
+            "720 KiB (Tandy 2000)",
+            "720 KiB",
+            "800 KiB",
+            "1200 KiB",
+            "1232 KiB (NEC PC-98)",
+            "1440 KiB",
+            "1520 KiB (IBM XDF)",
+            "1680 KiB (Microsoft DMF 1024 BPC)",
+            "1680 KiB (Microsoft DMF 2048 BPC)",
+            "1722 KiB",
+            "1840 KiB (IBM XDF)",
+            "2880 KiB",
+            "3680 KiB (IBM XDF)",
+            "Custom"});
+            this.lstFloppyCapacity.Location = new System.Drawing.Point(147, 13);
+            this.lstFloppyCapacity.Name = "lstFloppyCapacity";
+            this.lstFloppyCapacity.Size = new System.Drawing.Size(225, 23);
+            this.lstFloppyCapacity.TabIndex = 1;
+            this.toolTip.SetToolTip(this.lstFloppyCapacity, "This will be the total storage capacity of your floppy disk image\r\nin kibibytes (" +
+        "1 kibibyte =1024 bytes).");
+            this.lstFloppyCapacity.SelectedIndexChanged += new System.EventHandler(this.lstFloppyType_SelectedIndexChanged);
+            // 
+            // cbxFloppyBPB
+            // 
+            this.cbxFloppyBPB.AutoSize = true;
+            this.cbxFloppyBPB.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxFloppyBPB.Location = new System.Drawing.Point(387, 15);
+            this.cbxFloppyBPB.Name = "cbxFloppyBPB";
+            this.cbxFloppyBPB.Size = new System.Drawing.Size(219, 20);
+            this.cbxFloppyBPB.TabIndex = 2;
+            this.cbxFloppyBPB.Text = "Write a DOS BPB to the boot sector:";
+            this.toolTip.SetToolTip(this.cbxFloppyBPB, "DOS 1.0 and 1.1 did not use a BPB, but most programs and operating\r\nsystems made " +
+        "since then will expect one. Newer versions added\r\nadditional fields to better de" +
+        "scribe the physical media.\r\n");
+            this.cbxFloppyBPB.UseVisualStyleBackColor = true;
+            this.cbxFloppyBPB.CheckedChanged += new System.EventHandler(this.cbxFloppyBPB_CheckedChanged);
+            // 
+            // lstFloppyBPB
+            // 
+            this.lstFloppyBPB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstFloppyBPB.FormattingEnabled = true;
+            this.lstFloppyBPB.Items.AddRange(new object[] {
+            "DOS 2.0",
+            "DOS 3.0",
+            "DOS 3.2",
+            "DOS 3.31",
+            "DOS 3.4",
+            "DOS 4.0+"});
+            this.lstFloppyBPB.Location = new System.Drawing.Point(612, 13);
+            this.lstFloppyBPB.Name = "lstFloppyBPB";
+            this.lstFloppyBPB.Size = new System.Drawing.Size(72, 23);
+            this.lstFloppyBPB.TabIndex = 3;
+            this.toolTip.SetToolTip(this.lstFloppyBPB, "DOS 1.0 and 1.1 did not use a BPB, but most programs and operating\r\nsystems made " +
+        "since then will expect one. Newer versions added\r\nadditional fields to better de" +
+        "scribe the physical media.\r\n");
+            this.lstFloppyBPB.SelectedIndexChanged += new System.EventHandler(this.lstFloppyBPB_SelectedIndexChanged);
+            // 
+            // lblFloppyOEMID
+            // 
+            this.lblFloppyOEMID.AutoSize = true;
+            this.lblFloppyOEMID.Location = new System.Drawing.Point(16, 46);
+            this.lblFloppyOEMID.Name = "lblFloppyOEMID";
+            this.lblFloppyOEMID.Size = new System.Drawing.Size(50, 15);
+            this.lblFloppyOEMID.TabIndex = 4;
+            this.lblFloppyOEMID.Text = "OEM ID:";
+            this.toolTip.SetToolTip(this.lblFloppyOEMID, "The OEM ID field is often used to identify the system that formatted\r\nthe disk. U" +
+        "sing non-standard values could result in the operating\r\nsystem or program not re" +
+        "cognizing the disk.\r\n");
+            // 
+            // txtFloppyOEMID
+            // 
+            this.txtFloppyOEMID.Location = new System.Drawing.Point(147, 42);
+            this.txtFloppyOEMID.MaxLength = 8;
+            this.txtFloppyOEMID.Name = "txtFloppyOEMID";
+            this.txtFloppyOEMID.Size = new System.Drawing.Size(113, 23);
+            this.txtFloppyOEMID.TabIndex = 4;
+            this.txtFloppyOEMID.Text = "MSDOS5.0";
+            this.toolTip.SetToolTip(this.txtFloppyOEMID, "The OEM ID field is often used to identify the system that formatted\r\nthe disk. U" +
+        "sing non-standard values could result in the operating\r\nsystem or program not re" +
+        "cognizing the disk.");
+            // 
+            // lblFloppyBPS
+            // 
+            this.lblFloppyBPS.AutoSize = true;
+            this.lblFloppyBPS.Location = new System.Drawing.Point(275, 46);
+            this.lblFloppyBPS.Name = "lblFloppyBPS";
+            this.lblFloppyBPS.Size = new System.Drawing.Size(93, 15);
+            this.lblFloppyBPS.TabIndex = 6;
+            this.lblFloppyBPS.Text = "Bytes per sector:";
+            this.toolTip.SetToolTip(this.lblFloppyBPS, "This field determines the size of a sector in bytes.");
+            // 
+            // txtFloppyBPS
+            // 
+            this.txtFloppyBPS.Increment = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.txtFloppyBPS.Location = new System.Drawing.Point(387, 42);
+            this.txtFloppyBPS.Maximum = new decimal(new int[] {
+            4096,
+            0,
+            0,
+            0});
+            this.txtFloppyBPS.Minimum = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.txtFloppyBPS.Name = "txtFloppyBPS";
+            this.txtFloppyBPS.Size = new System.Drawing.Size(70, 23);
+            this.txtFloppyBPS.TabIndex = 5;
+            this.toolTip.SetToolTip(this.txtFloppyBPS, "This field determines the size of a sector in bytes.");
+            this.txtFloppyBPS.Value = new decimal(new int[] {
+            512,
+            0,
+            0,
+            0});
+            // 
+            // lblFloppySPC
+            // 
+            this.lblFloppySPC.AutoSize = true;
+            this.lblFloppySPC.Location = new System.Drawing.Point(275, 75);
+            this.lblFloppySPC.Name = "lblFloppySPC";
+            this.lblFloppySPC.Size = new System.Drawing.Size(106, 15);
+            this.lblFloppySPC.TabIndex = 8;
+            this.lblFloppySPC.Text = "Sectors per cluster:";
+            this.toolTip.SetToolTip(this.lblFloppySPC, "This field determines the number of sectors that make up one cluster.");
+            // 
+            // txtFloppySPC
+            // 
+            this.txtFloppySPC.Location = new System.Drawing.Point(387, 71);
+            this.txtFloppySPC.Maximum = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.txtFloppySPC.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.txtFloppySPC.Name = "txtFloppySPC";
+            this.txtFloppySPC.Size = new System.Drawing.Size(70, 23);
+            this.txtFloppySPC.TabIndex = 8;
+            this.toolTip.SetToolTip(this.txtFloppySPC, "This field determines the number of sectors that make up one cluster.\r\n");
+            this.txtFloppySPC.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // lblFloppyReserved
+            // 
+            this.lblFloppyReserved.AutoSize = true;
+            this.lblFloppyReserved.Location = new System.Drawing.Point(275, 163);
+            this.lblFloppyReserved.Name = "lblFloppyReserved";
+            this.lblFloppyReserved.Size = new System.Drawing.Size(97, 15);
+            this.lblFloppyReserved.TabIndex = 10;
+            this.lblFloppyReserved.Text = "Reserved sectors:";
+            this.toolTip.SetToolTip(this.lblFloppyReserved, "The number of sectors before the first file allocation table (FAT).\r\nThe only pos" +
+        "sible value for FAT12-formatted floppy disks is 1.");
+            // 
+            // lblFloppyNumFATs
+            // 
+            this.lblFloppyNumFATs.AutoSize = true;
+            this.lblFloppyNumFATs.Location = new System.Drawing.Point(16, 163);
+            this.lblFloppyNumFATs.Name = "lblFloppyNumFATs";
+            this.lblFloppyNumFATs.Size = new System.Drawing.Size(93, 15);
+            this.lblFloppyNumFATs.TabIndex = 11;
+            this.lblFloppyNumFATs.Text = "Number of FATs:";
+            this.toolTip.SetToolTip(this.lblFloppyNumFATs, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, thi" +
+        "s value is always 2.");
+            // 
+            // lblFloppyRootDirEntries
+            // 
+            this.lblFloppyRootDirEntries.AutoSize = true;
+            this.lblFloppyRootDirEntries.Location = new System.Drawing.Point(472, 74);
+            this.lblFloppyRootDirEntries.Name = "lblFloppyRootDirEntries";
+            this.lblFloppyRootDirEntries.Size = new System.Drawing.Size(123, 15);
+            this.lblFloppyRootDirEntries.TabIndex = 12;
+            this.lblFloppyRootDirEntries.Text = "Root directory entries:";
+            this.toolTip.SetToolTip(this.lblFloppyRootDirEntries, "This is the maximum number of files that can be located in the\r\nroot directory of" +
+        " the disk.");
+            // 
+            // txtFloppyRootDirEntries
+            // 
+            this.txtFloppyRootDirEntries.Increment = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.txtFloppyRootDirEntries.Location = new System.Drawing.Point(612, 71);
+            this.txtFloppyRootDirEntries.Maximum = new decimal(new int[] {
+            240,
+            0,
+            0,
+            0});
+            this.txtFloppyRootDirEntries.Minimum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.txtFloppyRootDirEntries.Name = "txtFloppyRootDirEntries";
+            this.txtFloppyRootDirEntries.Size = new System.Drawing.Size(72, 23);
+            this.txtFloppyRootDirEntries.TabIndex = 9;
+            this.toolTip.SetToolTip(this.txtFloppyRootDirEntries, "This is the maximum number of files that can be located in the\r\nroot directory of" +
+        " the disk. ");
+            this.txtFloppyRootDirEntries.Value = new decimal(new int[] {
+            224,
+            0,
+            0,
+            0});
+            // 
+            // lblFloppyTotalSect
+            // 
+            this.lblFloppyTotalSect.AutoSize = true;
+            this.lblFloppyTotalSect.Location = new System.Drawing.Point(472, 46);
+            this.lblFloppyTotalSect.Name = "lblFloppyTotalSect";
+            this.lblFloppyTotalSect.Size = new System.Drawing.Size(134, 15);
+            this.lblFloppyTotalSect.TabIndex = 14;
+            this.lblFloppyTotalSect.Text = "Total number of sectors:";
+            this.toolTip.SetToolTip(this.lblFloppyTotalSect, "This field specifies the total number of sectors on a disk. The number\r\nis calcul" +
+        "ated by multiplying the number of tracks, sectors per track and\r\nnumber of sides" +
+        " (tracks * SPT * sides).");
+            // 
+            // txtFloppyTotalSect
+            // 
+            this.txtFloppyTotalSect.Location = new System.Drawing.Point(612, 42);
+            this.txtFloppyTotalSect.Maximum = new decimal(new int[] {
+            7360,
+            0,
+            0,
+            0});
+            this.txtFloppyTotalSect.Minimum = new decimal(new int[] {
+            320,
+            0,
+            0,
+            0});
+            this.txtFloppyTotalSect.Name = "txtFloppyTotalSect";
+            this.txtFloppyTotalSect.Size = new System.Drawing.Size(72, 23);
+            this.txtFloppyTotalSect.TabIndex = 6;
+            this.toolTip.SetToolTip(this.txtFloppyTotalSect, "This field specifies the total number of sectors on a disk. The number\r\nis calcul" +
+        "ated by multiplying the number of tracks, sectors per track and\r\nnumber of sides" +
+        " (tracks * SPT * sides).\r\n");
+            this.txtFloppyTotalSect.Value = new decimal(new int[] {
+            2880,
+            0,
+            0,
+            0});
+            // 
+            // lblFloppyMediaDesc
+            // 
+            this.lblFloppyMediaDesc.AutoSize = true;
+            this.lblFloppyMediaDesc.Location = new System.Drawing.Point(472, 133);
+            this.lblFloppyMediaDesc.Name = "lblFloppyMediaDesc";
+            this.lblFloppyMediaDesc.Size = new System.Drawing.Size(99, 15);
+            this.lblFloppyMediaDesc.TabIndex = 16;
+            this.lblFloppyMediaDesc.Text = "Media descriptor:";
+            this.toolTip.SetToolTip(this.lblFloppyMediaDesc, resources.GetString("lblFloppyMediaDesc.ToolTip"));
+            // 
+            // txtFloppyMediaDesc
+            // 
+            this.txtFloppyMediaDesc.Hexadecimal = true;
+            this.txtFloppyMediaDesc.Location = new System.Drawing.Point(612, 129);
+            this.txtFloppyMediaDesc.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.txtFloppyMediaDesc.Minimum = new decimal(new int[] {
+            237,
+            0,
+            0,
+            0});
+            this.txtFloppyMediaDesc.Name = "txtFloppyMediaDesc";
+            this.txtFloppyMediaDesc.Size = new System.Drawing.Size(72, 23);
+            this.txtFloppyMediaDesc.TabIndex = 12;
+            this.toolTip.SetToolTip(this.txtFloppyMediaDesc, resources.GetString("txtFloppyMediaDesc.ToolTip"));
+            this.txtFloppyMediaDesc.Value = new decimal(new int[] {
+            240,
+            0,
+            0,
+            0});
+            // 
+            // lblFloppySPF
+            // 
+            this.lblFloppySPF.AutoSize = true;
+            this.lblFloppySPF.Location = new System.Drawing.Point(275, 133);
+            this.lblFloppySPF.Name = "lblFloppySPF";
+            this.lblFloppySPF.Size = new System.Drawing.Size(89, 15);
+            this.lblFloppySPF.TabIndex = 18;
+            this.lblFloppySPF.Text = "Sectors per FAT:";
+            this.toolTip.SetToolTip(this.lblFloppySPF, "Defines the number of sectors occupied by each file\r\nallocation table (FAT).");
+            // 
+            // txtFloppySPF
+            // 
+            this.txtFloppySPF.Location = new System.Drawing.Point(387, 129);
+            this.txtFloppySPF.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.txtFloppySPF.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.txtFloppySPF.Name = "txtFloppySPF";
+            this.txtFloppySPF.Size = new System.Drawing.Size(70, 23);
+            this.txtFloppySPF.TabIndex = 14;
+            this.toolTip.SetToolTip(this.txtFloppySPF, "Defines the number of sectors occupied by each file\r\nallocation table (FAT).");
+            this.txtFloppySPF.Value = new decimal(new int[] {
+            9,
+            0,
+            0,
+            0});
+            // 
+            // lblFloppySPT
+            // 
+            this.lblFloppySPT.AutoSize = true;
+            this.lblFloppySPT.Location = new System.Drawing.Point(275, 104);
+            this.lblFloppySPT.Name = "lblFloppySPT";
+            this.lblFloppySPT.Size = new System.Drawing.Size(97, 15);
+            this.lblFloppySPT.TabIndex = 20;
+            this.lblFloppySPT.Text = "Sectors per track:";
+            this.toolTip.SetToolTip(this.lblFloppySPT, "The number of sectors in one track.");
+            // 
+            // txtFloppySPT
+            // 
+            this.txtFloppySPT.Location = new System.Drawing.Point(387, 100);
+            this.txtFloppySPT.Maximum = new decimal(new int[] {
+            36,
+            0,
+            0,
+            0});
+            this.txtFloppySPT.Minimum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.txtFloppySPT.Name = "txtFloppySPT";
+            this.txtFloppySPT.Size = new System.Drawing.Size(70, 23);
+            this.txtFloppySPT.TabIndex = 11;
+            this.toolTip.SetToolTip(this.txtFloppySPT, "The number of sectors in one track.");
+            this.txtFloppySPT.Value = new decimal(new int[] {
+            18,
+            0,
+            0,
+            0});
+            // 
+            // lblFloppySides
+            // 
+            this.lblFloppySides.AutoSize = true;
+            this.lblFloppySides.Location = new System.Drawing.Point(472, 163);
+            this.lblFloppySides.Name = "lblFloppySides";
+            this.lblFloppySides.Size = new System.Drawing.Size(37, 15);
+            this.lblFloppySides.TabIndex = 22;
+            this.lblFloppySides.Text = "Sides:";
+            this.toolTip.SetToolTip(this.lblFloppySides, "Determines whether a disk is single-sided (SS) or double-sided (DS).");
+            // 
+            // lstFloppySides
+            // 
+            this.lstFloppySides.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstFloppySides.FormattingEnabled = true;
+            this.lstFloppySides.Items.AddRange(new object[] {
+            "1",
+            "2"});
+            this.lstFloppySides.Location = new System.Drawing.Point(612, 158);
+            this.lstFloppySides.Name = "lstFloppySides";
+            this.lstFloppySides.Size = new System.Drawing.Size(72, 23);
+            this.lstFloppySides.TabIndex = 15;
+            this.toolTip.SetToolTip(this.lstFloppySides, "Determines whether a disk is single-sided (SS) or double-sided (DS).");
+            // 
+            // lblFloppySerial
+            // 
+            this.lblFloppySerial.AutoSize = true;
+            this.lblFloppySerial.Location = new System.Drawing.Point(16, 104);
+            this.lblFloppySerial.Name = "lblFloppySerial";
+            this.lblFloppySerial.Size = new System.Drawing.Size(125, 15);
+            this.lblFloppySerial.TabIndex = 24;
+            this.lblFloppySerial.Text = "Volume serial number:\r\n";
+            this.toolTip.SetToolTip(this.lblFloppySerial, "This field can be used to detect when the disk was ejected\r\nand a different disk " +
+        "was inserted.\r\n");
+            // 
+            // txtFloppySerial
+            // 
+            this.txtFloppySerial.Location = new System.Drawing.Point(147, 100);
+            this.txtFloppySerial.MaxLength = 8;
+            this.txtFloppySerial.Name = "txtFloppySerial";
+            this.txtFloppySerial.Size = new System.Drawing.Size(113, 23);
+            this.txtFloppySerial.TabIndex = 10;
+            this.toolTip.SetToolTip(this.txtFloppySerial, "This field can be used to detect when the disk was ejected\r\nand a different disk " +
+        "was inserted.");
+            // 
+            // lblFloppyLabel
+            // 
+            this.lblFloppyLabel.AutoSize = true;
+            this.lblFloppyLabel.Location = new System.Drawing.Point(16, 75);
+            this.lblFloppyLabel.Name = "lblFloppyLabel";
+            this.lblFloppyLabel.Size = new System.Drawing.Size(78, 15);
+            this.lblFloppyLabel.TabIndex = 26;
+            this.lblFloppyLabel.Text = "Volume label:\r\n";
+            this.toolTip.SetToolTip(this.lblFloppyLabel, "Volume label can be used to describe the contents or purpose of\r\nthe disk.");
+            // 
+            // txtFloppyLabel
+            // 
+            this.txtFloppyLabel.Location = new System.Drawing.Point(147, 71);
+            this.txtFloppyLabel.MaxLength = 11;
+            this.txtFloppyLabel.Name = "txtFloppyLabel";
+            this.txtFloppyLabel.Size = new System.Drawing.Size(113, 23);
+            this.txtFloppyLabel.TabIndex = 7;
+            this.toolTip.SetToolTip(this.txtFloppyLabel, "Volume label can be used to describe the contents or purpose of\r\nthe disk. Some o" +
+        "perating systems or programs may not recognize\r\nthe disk if this value is not wh" +
+        "at they expect.");
+            // 
+            // lblFloppyFSType
+            // 
+            this.lblFloppyFSType.AutoSize = true;
+            this.lblFloppyFSType.Location = new System.Drawing.Point(16, 133);
+            this.lblFloppyFSType.Name = "lblFloppyFSType";
+            this.lblFloppyFSType.Size = new System.Drawing.Size(94, 15);
+            this.lblFloppyFSType.TabIndex = 28;
+            this.lblFloppyFSType.Text = "File system type:";
+            this.toolTip.SetToolTip(this.lblFloppyFSType, resources.GetString("lblFloppyFSType.ToolTip"));
+            // 
+            // txtFloppyFSType
+            // 
+            this.txtFloppyFSType.Location = new System.Drawing.Point(147, 129);
+            this.txtFloppyFSType.MaxLength = 8;
+            this.txtFloppyFSType.Name = "txtFloppyFSType";
+            this.txtFloppyFSType.Size = new System.Drawing.Size(113, 23);
+            this.txtFloppyFSType.TabIndex = 13;
+            this.txtFloppyFSType.Text = "FAT12";
+            this.toolTip.SetToolTip(this.txtFloppyFSType, resources.GetString("txtFloppyFSType.ToolTip"));
+            // 
+            // txtFloppyNumFATs
+            // 
+            this.txtFloppyNumFATs.Location = new System.Drawing.Point(147, 158);
+            this.txtFloppyNumFATs.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.txtFloppyNumFATs.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.txtFloppyNumFATs.Name = "txtFloppyNumFATs";
+            this.txtFloppyNumFATs.ReadOnly = true;
+            this.txtFloppyNumFATs.Size = new System.Drawing.Size(113, 23);
+            this.txtFloppyNumFATs.TabIndex = 30;
+            this.toolTip.SetToolTip(this.txtFloppyNumFATs, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, thi" +
+        "s value is always 2.\r\n");
+            this.txtFloppyNumFATs.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // txtFloppyReserved
+            // 
+            this.txtFloppyReserved.Location = new System.Drawing.Point(387, 158);
+            this.txtFloppyReserved.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.txtFloppyReserved.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.txtFloppyReserved.Name = "txtFloppyReserved";
+            this.txtFloppyReserved.ReadOnly = true;
+            this.txtFloppyReserved.Size = new System.Drawing.Size(70, 23);
+            this.txtFloppyReserved.TabIndex = 31;
+            this.toolTip.SetToolTip(this.txtFloppyReserved, "The number of sectors before the first file allocation table (FAT).\r\nThe only pos" +
+        "sible value for FAT12-formatted floppy disks is 1.\r\n");
+            this.txtFloppyReserved.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // lblFloppyTracks
+            // 
+            this.lblFloppyTracks.AutoSize = true;
+            this.lblFloppyTracks.Location = new System.Drawing.Point(472, 104);
+            this.lblFloppyTracks.Name = "lblFloppyTracks";
+            this.lblFloppyTracks.Size = new System.Drawing.Size(86, 15);
+            this.lblFloppyTracks.TabIndex = 32;
+            this.lblFloppyTracks.Text = "Tracks per side:";
+            this.toolTip.SetToolTip(this.lblFloppyTracks, "The number of tracks on one side of the disk.");
+            // 
+            // txtFloppyTracks
+            // 
+            this.txtFloppyTracks.Location = new System.Drawing.Point(612, 100);
+            this.txtFloppyTracks.Maximum = new decimal(new int[] {
+            82,
+            0,
+            0,
+            0});
+            this.txtFloppyTracks.Minimum = new decimal(new int[] {
+            40,
+            0,
+            0,
+            0});
+            this.txtFloppyTracks.Name = "txtFloppyTracks";
+            this.txtFloppyTracks.Size = new System.Drawing.Size(72, 23);
+            this.txtFloppyTracks.TabIndex = 33;
+            this.toolTip.SetToolTip(this.txtFloppyTracks, "The number of tracks on one side of the disk.");
+            this.txtFloppyTracks.Value = new decimal(new int[] {
+            80,
+            0,
+            0,
+            0});
             // 
             // lstType
             // 
             this.lstType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.lstType.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstType.FormattingEnabled = true;
-            this.lstType.Location = new System.Drawing.Point(214, 58);
+            this.lstType.Location = new System.Drawing.Point(219, 48);
             this.lstType.MaxDropDownItems = 99;
             this.lstType.Name = "lstType";
             this.lstType.Size = new System.Drawing.Size(223, 23);
@@ -514,7 +687,7 @@
             // lblType
             // 
             this.lblType.AutoSize = true;
-            this.lblType.Location = new System.Drawing.Point(165, 63);
+            this.lblType.Location = new System.Drawing.Point(170, 53);
             this.lblType.Name = "lblType";
             this.lblType.Size = new System.Drawing.Size(34, 15);
             this.lblType.TabIndex = 8;
@@ -522,7 +695,7 @@
             // 
             // txtSize
             // 
-            this.txtSize.Location = new System.Drawing.Point(74, 58);
+            this.txtSize.Location = new System.Drawing.Point(79, 48);
             this.txtSize.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -535,7 +708,7 @@
             // lblSize
             // 
             this.lblSize.AutoSize = true;
-            this.lblSize.Location = new System.Drawing.Point(9, 63);
+            this.lblSize.Location = new System.Drawing.Point(14, 53);
             this.lblSize.Name = "lblSize";
             this.lblSize.Size = new System.Drawing.Size(59, 15);
             this.lblSize.TabIndex = 6;
@@ -543,7 +716,7 @@
             // 
             // txtSectors
             // 
-            this.txtSectors.Location = new System.Drawing.Point(362, 22);
+            this.txtSectors.Location = new System.Drawing.Point(367, 12);
             this.txtSectors.Maximum = new decimal(new int[] {
             99,
             0,
@@ -556,7 +729,7 @@
             // lblSectors
             // 
             this.lblSectors.AutoSize = true;
-            this.lblSectors.Location = new System.Drawing.Point(308, 26);
+            this.lblSectors.Location = new System.Drawing.Point(313, 16);
             this.lblSectors.Name = "lblSectors";
             this.lblSectors.Size = new System.Drawing.Size(48, 15);
             this.lblSectors.TabIndex = 4;
@@ -564,7 +737,7 @@
             // 
             // txtHeads
             // 
-            this.txtHeads.Location = new System.Drawing.Point(214, 22);
+            this.txtHeads.Location = new System.Drawing.Point(219, 12);
             this.txtHeads.Maximum = new decimal(new int[] {
             255,
             0,
@@ -577,7 +750,7 @@
             // lblHeads
             // 
             this.lblHeads.AutoSize = true;
-            this.lblHeads.Location = new System.Drawing.Point(165, 26);
+            this.lblHeads.Location = new System.Drawing.Point(170, 16);
             this.lblHeads.Name = "lblHeads";
             this.lblHeads.Size = new System.Drawing.Size(43, 15);
             this.lblHeads.TabIndex = 2;
@@ -585,7 +758,7 @@
             // 
             // txtCylinders
             // 
-            this.txtCylinders.Location = new System.Drawing.Point(74, 22);
+            this.txtCylinders.Location = new System.Drawing.Point(79, 12);
             this.txtCylinders.Maximum = new decimal(new int[] {
             266305,
             0,
@@ -598,11 +771,88 @@
             // lblCylinders
             // 
             this.lblCylinders.AutoSize = true;
-            this.lblCylinders.Location = new System.Drawing.Point(9, 26);
+            this.lblCylinders.Location = new System.Drawing.Point(14, 16);
             this.lblCylinders.Name = "lblCylinders";
             this.lblCylinders.Size = new System.Drawing.Size(59, 15);
             this.lblCylinders.TabIndex = 0;
             this.lblCylinders.Text = "Cylinders:";
+            // 
+            // tabControl
+            // 
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl.Controls.Add(this.tabFloppy);
+            this.tabControl.Controls.Add(this.tabHDD);
+            this.tabControl.Location = new System.Drawing.Point(12, 12);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(706, 225);
+            this.tabControl.TabIndex = 0;
+            // 
+            // tabFloppy
+            // 
+            this.tabFloppy.Controls.Add(this.txtFloppyTracks);
+            this.tabFloppy.Controls.Add(this.lblFloppyTracks);
+            this.tabFloppy.Controls.Add(this.txtFloppyReserved);
+            this.tabFloppy.Controls.Add(this.txtFloppyNumFATs);
+            this.tabFloppy.Controls.Add(this.txtFloppyFSType);
+            this.tabFloppy.Controls.Add(this.lblFloppyFSType);
+            this.tabFloppy.Controls.Add(this.txtFloppyLabel);
+            this.tabFloppy.Controls.Add(this.lblFloppyLabel);
+            this.tabFloppy.Controls.Add(this.txtFloppySerial);
+            this.tabFloppy.Controls.Add(this.lblFloppySerial);
+            this.tabFloppy.Controls.Add(this.lstFloppySides);
+            this.tabFloppy.Controls.Add(this.lblFloppySides);
+            this.tabFloppy.Controls.Add(this.txtFloppySPT);
+            this.tabFloppy.Controls.Add(this.lblFloppySPT);
+            this.tabFloppy.Controls.Add(this.txtFloppySPF);
+            this.tabFloppy.Controls.Add(this.lblFloppySPF);
+            this.tabFloppy.Controls.Add(this.txtFloppyMediaDesc);
+            this.tabFloppy.Controls.Add(this.lblFloppyMediaDesc);
+            this.tabFloppy.Controls.Add(this.txtFloppyTotalSect);
+            this.tabFloppy.Controls.Add(this.lblFloppyTotalSect);
+            this.tabFloppy.Controls.Add(this.txtFloppyRootDirEntries);
+            this.tabFloppy.Controls.Add(this.lblFloppyRootDirEntries);
+            this.tabFloppy.Controls.Add(this.lblFloppyNumFATs);
+            this.tabFloppy.Controls.Add(this.lblFloppyReserved);
+            this.tabFloppy.Controls.Add(this.txtFloppySPC);
+            this.tabFloppy.Controls.Add(this.lblFloppySPC);
+            this.tabFloppy.Controls.Add(this.txtFloppyBPS);
+            this.tabFloppy.Controls.Add(this.lblFloppyBPS);
+            this.tabFloppy.Controls.Add(this.txtFloppyOEMID);
+            this.tabFloppy.Controls.Add(this.lblFloppyOEMID);
+            this.tabFloppy.Controls.Add(this.lstFloppyBPB);
+            this.tabFloppy.Controls.Add(this.cbxFloppyBPB);
+            this.tabFloppy.Controls.Add(this.lstFloppyCapacity);
+            this.tabFloppy.Controls.Add(this.lblFloppyType);
+            this.tabFloppy.Location = new System.Drawing.Point(4, 24);
+            this.tabFloppy.Name = "tabFloppy";
+            this.tabFloppy.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFloppy.Size = new System.Drawing.Size(698, 197);
+            this.tabFloppy.TabIndex = 0;
+            this.tabFloppy.Text = "Floppy disk";
+            this.tabFloppy.UseVisualStyleBackColor = true;
+            // 
+            // tabHDD
+            // 
+            this.tabHDD.Controls.Add(this.lstType);
+            this.tabHDD.Controls.Add(this.lblCylinders);
+            this.tabHDD.Controls.Add(this.lblType);
+            this.tabHDD.Controls.Add(this.txtCylinders);
+            this.tabHDD.Controls.Add(this.txtSize);
+            this.tabHDD.Controls.Add(this.lblHeads);
+            this.tabHDD.Controls.Add(this.lblSize);
+            this.tabHDD.Controls.Add(this.txtHeads);
+            this.tabHDD.Controls.Add(this.txtSectors);
+            this.tabHDD.Controls.Add(this.lblSectors);
+            this.tabHDD.Location = new System.Drawing.Point(4, 24);
+            this.tabHDD.Name = "tabHDD";
+            this.tabHDD.Padding = new System.Windows.Forms.Padding(3);
+            this.tabHDD.Size = new System.Drawing.Size(698, 197);
+            this.tabHDD.TabIndex = 1;
+            this.tabHDD.Text = "Hard disk";
+            this.tabHDD.UseVisualStyleBackColor = true;
             // 
             // dlgNewImage
             // 
@@ -610,12 +860,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(489, 391);
-            this.Controls.Add(this.gbxHardDiskCapacity);
-            this.Controls.Add(this.gbxFloppyCapacity);
+            this.ClientSize = new System.Drawing.Size(729, 286);
+            this.Controls.Add(this.tabControl);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.gbxMediaType);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -626,50 +874,33 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "New image";
             this.Load += new System.EventHandler(this.dlgNewSectorImage_Load);
-            this.gbxMediaType.ResumeLayout(false);
-            this.gbxMediaType.PerformLayout();
-            this.gbxFloppyCapacity.ResumeLayout(false);
-            this.gbxFloppyCapacity.PerformLayout();
-            this.gbxHardDiskCapacity.ResumeLayout(false);
-            this.gbxHardDiskCapacity.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyBPS)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyRootDirEntries)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyTotalSect)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyMediaDesc)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPF)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPT)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyNumFATs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyReserved)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyTracks)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtSectors)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtHeads)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtCylinders)).EndInit();
+            this.tabControl.ResumeLayout(false);
+            this.tabFloppy.ResumeLayout(false);
+            this.tabFloppy.PerformLayout();
+            this.tabHDD.ResumeLayout(false);
+            this.tabHDD.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.GroupBox gbxMediaType;
-        private System.Windows.Forms.RadioButton rbnHardDisk;
-        private System.Windows.Forms.RadioButton rbnFloppy;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.GroupBox gbxFloppyCapacity;
-        private System.Windows.Forms.RadioButton rbn525_360k;
-        private System.Windows.Forms.RadioButton rbn525_320k;
-        private System.Windows.Forms.RadioButton rbn180k;
-        private System.Windows.Forms.RadioButton rbn160k;
-        private System.Windows.Forms.RadioButton rbn144m;
-        private System.Windows.Forms.RadioButton rbn12m;
-        private System.Windows.Forms.RadioButton rbn720k;
-        private System.Windows.Forms.RadioButton rbnDMF;
-        private System.Windows.Forms.RadioButton rbn35_XDF1;
-        private System.Windows.Forms.RadioButton rbn525_XDF;
-        private System.Windows.Forms.RadioButton rbnCustom;
-        private System.Windows.Forms.RadioButton rbn400k;
-        private System.Windows.Forms.RadioButton rbn288m;
-        private System.Windows.Forms.RadioButton rbn35_320k;
-        private System.Windows.Forms.RadioButton rbn35_360k;
-        private System.Windows.Forms.RadioButton rbn640k;
-        private System.Windows.Forms.RadioButton rbn125m;
         private System.Windows.Forms.ToolTip toolTip;
-        private System.Windows.Forms.RadioButton rbn35_XDF2;
-        private System.Windows.Forms.RadioButton rbn800k;
-        private System.Windows.Forms.RadioButton rbn172m;
-        private System.Windows.Forms.GroupBox gbxHardDiskCapacity;
         private System.Windows.Forms.Label lblCylinders;
         private System.Windows.Forms.NumericUpDown txtCylinders;
         private System.Windows.Forms.NumericUpDown txtHeads;
@@ -680,5 +911,42 @@
         private System.Windows.Forms.Label lblSize;
         private System.Windows.Forms.Label lblType;
         private System.Windows.Forms.ComboBox lstType;
+        private System.Windows.Forms.TabControl tabControl;
+        private System.Windows.Forms.TabPage tabFloppy;
+        private System.Windows.Forms.TabPage tabHDD;
+        private System.Windows.Forms.ComboBox lstFloppyCapacity;
+        private System.Windows.Forms.Label lblFloppyType;
+        private System.Windows.Forms.ComboBox lstFloppyBPB;
+        private System.Windows.Forms.CheckBox cbxFloppyBPB;
+        private System.Windows.Forms.Label lblFloppyOEMID;
+        private System.Windows.Forms.TextBox txtFloppyOEMID;
+        private System.Windows.Forms.Label lblFloppyBPS;
+        private System.Windows.Forms.NumericUpDown txtFloppyBPS;
+        private System.Windows.Forms.Label lblFloppySPC;
+        private System.Windows.Forms.NumericUpDown txtFloppySPC;
+        private System.Windows.Forms.Label lblFloppyReserved;
+        private System.Windows.Forms.Label lblFloppyNumFATs;
+        private System.Windows.Forms.Label lblFloppyRootDirEntries;
+        private System.Windows.Forms.NumericUpDown txtFloppyRootDirEntries;
+        private System.Windows.Forms.NumericUpDown txtFloppyTotalSect;
+        private System.Windows.Forms.Label lblFloppyTotalSect;
+        private System.Windows.Forms.NumericUpDown txtFloppyMediaDesc;
+        private System.Windows.Forms.Label lblFloppyMediaDesc;
+        private System.Windows.Forms.NumericUpDown txtFloppySPF;
+        private System.Windows.Forms.Label lblFloppySPF;
+        private System.Windows.Forms.Label lblFloppySPT;
+        private System.Windows.Forms.NumericUpDown txtFloppySPT;
+        private System.Windows.Forms.Label lblFloppySides;
+        private System.Windows.Forms.ComboBox lstFloppySides;
+        private System.Windows.Forms.Label lblFloppySerial;
+        private System.Windows.Forms.TextBox txtFloppySerial;
+        private System.Windows.Forms.TextBox txtFloppyLabel;
+        private System.Windows.Forms.Label lblFloppyLabel;
+        private System.Windows.Forms.Label lblFloppyFSType;
+        private System.Windows.Forms.TextBox txtFloppyFSType;
+        private System.Windows.Forms.NumericUpDown txtFloppyReserved;
+        private System.Windows.Forms.NumericUpDown txtFloppyNumFATs;
+        private System.Windows.Forms.Label lblFloppyTracks;
+        private System.Windows.Forms.NumericUpDown txtFloppyTracks;
     }
 }

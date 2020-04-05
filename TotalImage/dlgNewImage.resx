@@ -120,29 +120,30 @@
   <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="rbn12m.ToolTip" xml:space="preserve">
-    <value>Physical size: 5.25" or 3.5"
-Density: high (HD)
-Sides: 2 (DS)
-Bytes per sector: 512
-Sectors per track: 15
-Tracks: 80
-
-5.25" is a standard PC-compatible format.
-3.5" is a NEC PC-98 proprietary format.</value>
+  <data name="lblFloppyMediaDesc.ToolTip" xml:space="preserve">
+    <value>The media descriptor value can be used to perform rudimentary
+assesment of disk geometry, but other parameters must be checked
+for a definitive answer. The meaning of this value can differ between
+different OEMs.</value>
   </data>
-  <data name="rbn720k.ToolTip" xml:space="preserve">
-    <value>Physical size: 5.25" or 3.5"
-Density: double (DD) or quad (QD)
-Sides: 2 (DS)
-Bytes per sector: 512
-Sectors per track: 9
-Tracks: 80
-
-3.5" is standard IBM PC-compatible format.
-5.25" is a rare format, used on the Tandy 2000.</value>
+  <data name="txtFloppyMediaDesc.ToolTip" xml:space="preserve">
+    <value>The media descriptor value can be used to perform preliminary
+detection of disk geometry, but other parameters must be checked
+for a definitive answer. The meaning of this value can differ between
+different OEMs.</value>
+  </data>
+  <data name="lblFloppyFSType.ToolTip" xml:space="preserve">
+    <value>Despite its name, the value of this field is completely arbitrary
+and does not reliably determine the file system type. Still, some
+programs and operating systems expect certain values, such as
+FAT12, FAT16 or FAT.
+</value>
+  </data>
+  <data name="txtFloppyFSType.ToolTip" xml:space="preserve">
+    <value>Despite its name, the value of this field is completely arbitrary
+and does not reliably determine the file system type. Still, some
+programs and operating systems expect certain values, such as
+FAT12, FAT16 or FAT.
+</value>
   </data>
 </root>

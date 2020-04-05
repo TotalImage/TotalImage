@@ -7,7 +7,6 @@ namespace TotalImage
 {
     public partial class frmMain : Form
     {
-        public static bool surfaceImage;
         public string filename = "";
         public IMG imgMan;
 
@@ -522,6 +521,11 @@ namespace TotalImage
             {
                 /* Inject the entire selected folder into the image */
             }
+        }
+
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
