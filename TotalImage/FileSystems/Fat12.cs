@@ -23,6 +23,7 @@ namespace TotalImage.FileSystems
                 bpb.TotalLogicalSectors =       reader.ReadUInt16();
                 bpb.MediaDescriptor =           reader.ReadByte();
                 bpb.LogicalSectorsPerFAT =      reader.ReadUInt16();
+                bpb.PhysicalSectorsPerTrack =   reader.ReadUInt16();
                 bpb.NumberOfHeads =             reader.ReadUInt16();
                 bpb.HiddenSectors =             reader.ReadUInt32();
                 bpb.LargeTotalLogicalSectors =  reader.ReadUInt32();
@@ -30,8 +31,8 @@ namespace TotalImage.FileSystems
                 bpb.Flags =                     reader.ReadByte();
                 bpb.ExtendedBootSignature =     reader.ReadByte();
                 bpb.VolumeSerialNumber =        reader.ReadUInt32();
-                bpb.VolumeLabel =               reader.ReadChars(11).ToString();
-                bpb.FileSystemType =            reader.ReadChars(8).ToString();
+                bpb.VolumeLabel =               new string(reader.ReadChars(11));
+                bpb.FileSystemType =            new string(reader.ReadChars(8));
             }
         }
     }
