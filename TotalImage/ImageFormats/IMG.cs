@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace TotalImage.ImageFormats
 {
@@ -145,6 +146,11 @@ namespace TotalImage.ImageFormats
         public void CreateCustomImage()
         {
             /* Do custom parameter stuff here */
+        }
+
+        public void LoadImage(string path)
+        {
+            imageBytes = File.ReadAllBytes(path);
         }
     }
 }

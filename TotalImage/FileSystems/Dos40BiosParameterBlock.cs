@@ -23,9 +23,9 @@ namespace TotalImage.FileSystems
         [FieldOffset(0x1C)] public uint VolumeSerialNumber;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 11)]
-        [FieldOffset(0x20)] public char[] VolumeLabel;
+        [FieldOffset(0x20)] public string VolumeLabel;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
-        [FieldOffset(0x2B)] public char[] FileSystemType;
+        [FieldOffset(0x2B)] public string FileSystemType;
     }
 }
