@@ -10,7 +10,7 @@ namespace TotalImage.FileSystems
         {
             var bpb = new Dos40BiosParameterBlock();
 
-            using(var stream = new MemoryStream(imageBytes, writable = false))
+            using(var stream = new MemoryStream(imageBytes, writable: false))
             using(var reader = new BinaryReader(stream, Encoding.ASCII))
             {
                 stream.Seek(0x0B, SeekOrigin.Begin); // BPB offset
@@ -30,8 +30,8 @@ namespace TotalImage.FileSystems
                 bpb.Flags =                     reader.ReadByte();
                 bpb.ExtendedBootSignature =     reader.ReadByte();
                 bpb.VolumeSerialNumber =        reader.ReadUInt32();
-                bpb.VolumeLabel =               reader.ReadChars(11);
-                bpb.FileSystemType =            reader.ReadChars(8);
+                bpb.VolumeLabel =               reader.ReadChars(11).ToString();
+                bpb.FileSystemType =            reader.ReadChars(8).ToString();
             }
         }
     }
