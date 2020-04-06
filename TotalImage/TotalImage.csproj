@@ -162,6 +162,13 @@
     <Compile Include="dlgUndelete.Designer.cs">
       <DependentUpon>dlgUndelete.cs</DependentUpon>
     </Compile>
+    <Compile Include="FileSystems\Dos20BiosParameterBlock.cs" />
+    <Compile Include="FileSystems\Dos30BiosParameterBlock.cs" />
+    <Compile Include="FileSystems\Dos32BiosParameterBlock.cs" />
+    <Compile Include="FileSystems\Dos331BiosParameterBlock.cs" />
+    <Compile Include="FileSystems\Dos34BiosParameterBlock.cs" />
+    <Compile Include="FileSystems\Dos40BiosParameterBlock.cs" />
+    <Compile Include="FileSystems\Fat12.cs" />
     <Compile Include="floppyTable.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
@@ -241,8 +248,6 @@
   <ItemGroup>
     <Content Include="totalimage.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="FileSystems\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
