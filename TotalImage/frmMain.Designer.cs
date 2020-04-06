@@ -140,6 +140,8 @@
             this.createAFolderToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.defragmentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsDirTree.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.cmsToolbars.SuspendLayout();
@@ -353,6 +355,8 @@
             this.undeleteToolStripMenuItem,
             this.propertiesToolStripMenuItem,
             this.toolStripSeparator3,
+            this.formatToolStripMenuItem,
+            this.defragmentToolStripMenuItem,
             this.selectPartitionToolStripMenuItem,
             this.managePartitionsToolStripMenuItem,
             this.toolStripSeparator4,
@@ -1096,6 +1100,18 @@
             this.propertiesToolStripMenuItem2.Text = "Properties...";
             this.propertiesToolStripMenuItem2.Click += new System.EventHandler(this.propertiesToolStripMenuItem2_Click);
             // 
+            // formatToolStripMenuItem
+            // 
+            this.formatToolStripMenuItem.Name = "formatToolStripMenuItem";
+            this.formatToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.formatToolStripMenuItem.Text = "Format...";
+            // 
+            // defragmentToolStripMenuItem
+            // 
+            this.defragmentToolStripMenuItem.Name = "defragmentToolStripMenuItem";
+            this.defragmentToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.defragmentToolStripMenuItem.Text = "Defragment...";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1240,6 +1256,8 @@
         private System.Windows.Forms.ToolStripMenuItem closeImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton toolStripButton11;
         private System.Windows.Forms.ToolStripMenuItem injectAFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem formatToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem defragmentToolStripMenuItem;
     }
 }
 
