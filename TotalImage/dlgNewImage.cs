@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace TotalImage
@@ -17,18 +18,30 @@ namespace TotalImage
 
         private void dlgNewSectorImage_Load(object sender, EventArgs e)
         {
+            //Default values are for a 1440 KiB disk with DOS 4.0+ BPB
             cbxFloppyBPB.Checked = true;
             lstFloppyBPB.SelectedIndex = 5;
             lstFloppyCapacity.SelectedIndex = 13;
-            lstFloppySides.SelectedIndex = 1;
             txtFloppySerial.Text = GenerateVolumeID().ToString("X8");
+
+            //Populate the HDD type list
+            foreach(int[] type in hddTable.hdt)
+            {
+                int capacity = type[0] * type[1] * type[2] * 512 / 1048576;
+                string s = capacity.ToString() + " MiB (CHS: " + type[0] + ", " + type[1] + ", " + type[2] + ")";
+                lstHDDType.Items.Add(s);
+            }
+
+            lstHDDType.Items.Add("Custom...");
+            lstHDDType.Items.Add("Custom (large)...");
+            lstHDDType.SelectedIndex = 0;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
         {
             if (tabControl.SelectedTab == tabFloppy)
             {
-                if (!cbxFloppyBPB.Checked)
+                if (!cbxFloppyBPB.Checked && lstFloppyCapacity.SelectedIndex != 6)
                 {
                     DialogResult bpb = MessageBox.Show("You chose not to write a DOS BIOS parameter block (BPB) to the boot sector of the image." +
                         " Many programs and operating systems may not recognize the disk because of this." +
@@ -38,20 +51,38 @@ namespace TotalImage
                         return;
                     }
                 }
-                /* Create a new floppy disk image */
+                else if(cbxFloppyBPB.Checked && lstFloppyCapacity.SelectedIndex == 6) //RX50 disks do not have a BPB...
+                {
+                    DialogResult bpb = MessageBox.Show("DEC RX50 400 KiB disks do not have an on-disk BIOS paraneter block (BPB), but you still chose to write a DOS BPB to the boot sector of the image." +
+                        " The disk may not work in an RX50 drive because of this." +
+                        "\n\nAre you sure you want to create an RX50 image with a BPB?", "BIOS Parameter Block", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (bpb == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
+                
+                if(lstFloppyCapacity.SelectedIndex >= 21)
+                {
+                    /* Create a new floppy disk image with selected parameters */
+                }
+                else
+                {
+                    /* Create a new floppy disk image with standard parameters */
+                }
             }
             else if (tabControl.SelectedTab == tabHDD)
             {
-                /* Create a new hard disk image */
+                /* Create a new hard disk image with selected parameters*/
             }
             Close();
         }
 
         private void cbxFloppyBPB_CheckedChanged(object sender, EventArgs e)
         {
+            //Disable volume ID and FS type fields since they were only added in DOS 3.4/4.0
             lstFloppyBPB.Enabled = cbxFloppyBPB.Checked;
             txtFloppySerial.Enabled = cbxFloppyBPB.Checked && (lstFloppyBPB.SelectedIndex >= 4);
-            //txtFloppyLabel.Enabled = cbxFloppyBPB.Checked && (lstFloppyBPB.SelectedIndex == 5);
             txtFloppyFSType.Enabled = cbxFloppyBPB.Checked && (lstFloppyBPB.SelectedIndex == 5);
         }
 
@@ -66,19 +97,16 @@ namespace TotalImage
         {
             if (lstFloppyBPB.SelectedIndex == 5) //DOS 4.0+ BPB
             {
-                //txtFloppyLabel.Enabled = true;
                 txtFloppyFSType.Enabled = true;
                 txtFloppySerial.Enabled = true;
             }
             else if (lstFloppyBPB.SelectedIndex == 4) //DOS 3.4 BPB
             {
-                //txtFloppyLabel.Enabled = false;
                 txtFloppyFSType.Enabled = false;
                 txtFloppySerial.Enabled = true;
             }
             else if (lstFloppyBPB.SelectedIndex <= 3) //DOS 2.0-3.31 BPB
             {
-                //txtFloppyLabel.Enabled = false;
                 txtFloppyFSType.Enabled = false;
                 txtFloppySerial.Enabled = false;
             }
@@ -86,299 +114,164 @@ namespace TotalImage
 
         private void lstFloppyType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lstFloppyCapacity.SelectedIndex == 20) //3680 KiB IBM XDF
+            int i = lstFloppyCapacity.SelectedIndex;
+            if (i < lstFloppyCapacity.Items.Count - 1) //Ignore the last item ("Custom...")
             {
-                txtFloppyBPS.Value = 512; //BPS varies with XDF
-                txtFloppySPC.Value = 2; //Uncertain
-                txtFloppySPT.Value = 36; //SPT varies with XDF
-                txtFloppyTracks.Value = 80; //Uncertain
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 9; //Uncertain
-                txtFloppyRootDirEntries.Value = 240; //Uncertain
-                txtFloppyMediaDesc.Value = 0xF0; //Uncertain
-                txtFloppyTotalSect.Value = 7360; //Probably wrong due to variable SPT
-                txtFloppyReserved.Value = 1; //Uncertain
-                txtFloppyNumFATs.Value = 2; //Uncertain
+                lstFloppySides.SelectedIndex = floppyTable.fdt[i][1] - 1;
+                txtFloppyTracks.Value = floppyTable.fdt[i][5];
+                txtFloppySPT.Value = floppyTable.fdt[i][6];
+                txtFloppyBPS.Value = (128 << floppyTable.fdt[i][7]);
+                txtFloppyMediaDesc.Value = floppyTable.fdt[i][8];
+                txtFloppySPC.Value = floppyTable.fdt[i][9];
+                txtFloppyNumFATs.Value = floppyTable.fdt[i][10];
+                txtFloppySPF.Value = floppyTable.fdt[i][11];
+                txtFloppyRootDir.Value = floppyTable.fdt[i][12];
+                txtFloppyReservedSect.Value = floppyTable.fdt[i][13];
+                txtFloppyTotalSect.Value = floppyTable.fdt[i][5] * floppyTable.fdt[i][6] * floppyTable.fdt[i][1];
             }
-            else if (lstFloppyCapacity.SelectedIndex == 19) //2880 KiB
+            if(lstFloppyCapacity.SelectedIndex == 6) //DEC RX50 disks don't have a BPB...
             {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 2;
-                txtFloppySPT.Value = 36;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 9;
-                txtFloppyRootDirEntries.Value = 240;
-                txtFloppyMediaDesc.Value = 0xF0;
-                txtFloppyTotalSect.Value = 5760;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                cbxFloppyBPB.Checked = false;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 18) //1840 KiB IBM XDF
+            else
             {
-                txtFloppyBPS.Value = 512; //BPS varies with XDF
-                txtFloppySPC.Value = 2; //Uncertain
-                txtFloppySPT.Value = 23; //SPT varies with XDF
-                txtFloppyTracks.Value = 80; //Uncertain
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 9; //Uncertain
-                txtFloppyRootDirEntries.Value = 224; //Uncertain
-                txtFloppyMediaDesc.Value = 0xF0; //Uncertain
-                txtFloppyTotalSect.Value = 3680; //Probably wrong due to variable SPT
-                txtFloppyReserved.Value = 1; //Uncertain
-                txtFloppyNumFATs.Value = 2; //Uncertain
+                cbxFloppyBPB.Checked = true;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 17) //1722 KiB
+        }
+
+        private void lstHDDCapacity_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int i = lstHDDType.SelectedIndex;
+            if (lstHDDType.SelectedIndex < lstHDDType.Items.Count - 2) //Ignore the last two items - "Custom..." and "Custom (large)..."
             {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 2;
-                txtFloppySPT.Value = 21;
-                txtFloppyTracks.Value = 82;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 10;
-                txtFloppyRootDirEntries.Value = 224;
-                txtFloppyMediaDesc.Value = 0xF0;
-                txtFloppyTotalSect.Value = 3444;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                //HDD cpacity is displayed in MiB
+                txtHDDCapacity.Value = (hddTable.hdt[i][0] * hddTable.hdt[i][1] * hddTable.hdt[i][2] * 512 / 1048576);
+                txtHDDCylinders.Value = hddTable.hdt[i][0];
+                txtHDDHeads.Value = hddTable.hdt[i][1];
+                txtHDDSectors.Value = hddTable.hdt[i][2];
             }
-            else if (lstFloppyCapacity.SelectedIndex == 16) //1680 KiB Microsoft DMF 2048 BPC
+        }
+
+        private void txtFloppyNumFATs_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+
+            if(lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count -1 && txtFloppyNumFATs.Value != floppyTable.fdt[i][10])
             {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 4;
-                txtFloppySPT.Value = 21;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 3;
-                txtFloppyRootDirEntries.Value = 16;
-                txtFloppyMediaDesc.Value = 0xF0;
-                txtFloppyTotalSect.Value = 3360;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                lstFloppyCapacity.SelectedIndex = 21;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 15) //1680 KiB Microsoft DMF 1024 BPC
+        }
+
+        private void txtFloppyReserved_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyReservedSect.Value != floppyTable.fdt[i][13])
             {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 2;
-                txtFloppySPT.Value = 21;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 5;
-                txtFloppyRootDirEntries.Value = 16;
-                txtFloppyMediaDesc.Value = 0xF0;
-                txtFloppyTotalSect.Value = 3360;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                lstFloppyCapacity.SelectedIndex = 21;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 14) //1520 KiB IBM XDF
+        }
+
+        private void lstFloppySides_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && lstFloppySides.SelectedIndex != floppyTable.fdt[i][1] - 1)
             {
-                txtFloppyBPS.Value = 512; //BPS varies with XDF
-                txtFloppySPC.Value = 2; //Uncertain
-                txtFloppySPT.Value = 23; //SPT varies with XDF
-                txtFloppyTracks.Value = 80; //Uncertain
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 9; //Uncertain
-                txtFloppyRootDirEntries.Value = 224; //Uncertain
-                txtFloppyMediaDesc.Value = 0xF0; //Uncertain
-                txtFloppyTotalSect.Value = 3040; //Probably wrong due to variable SPT
-                txtFloppyReserved.Value = 1; //Uncertain
-                txtFloppyNumFATs.Value = 2; //Uncertain
+                lstFloppyCapacity.SelectedIndex = 21;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 13) //1440 KiB
+        }
+
+        private void txtFloppySPF_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPF.Value != floppyTable.fdt[i][11])
             {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 1;
-                txtFloppySPT.Value = 18;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 9;
-                txtFloppyRootDirEntries.Value = 224;
-                txtFloppyMediaDesc.Value = 0xF0;
-                txtFloppyTotalSect.Value = 2880;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                lstFloppyCapacity.SelectedIndex = 21;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 12) //1232 KiB NEC PC-98
+        }
+
+        private void txtFloppySPT_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPT.Value != floppyTable.fdt[i][6])
             {
-                txtFloppyBPS.Value = 1024;
-                txtFloppySPC.Value = 1;
-                txtFloppySPT.Value = 8;
-                txtFloppyTracks.Value = 77;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 2;
-                txtFloppyRootDirEntries.Value = 192;
-                txtFloppyMediaDesc.Value = 0xFE;
-                txtFloppyTotalSect.Value = 1232;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                lstFloppyCapacity.SelectedIndex = 21;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 11) //1200 KiB
+        }
+
+        private void txtFloppySPC_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPC.Value != floppyTable.fdt[i][9])
             {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 1;
-                txtFloppySPT.Value = 15;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 7;
-                txtFloppyRootDirEntries.Value = 224;
-                txtFloppyMediaDesc.Value = 0xF9;
-                txtFloppyTotalSect.Value = 2400;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                lstFloppyCapacity.SelectedIndex = 21;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 10) //800 KiB
+        }
+
+        private void txtFloppyBPS_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyBPS.Value != (128 << floppyTable.fdt[i][7]))
             {
-                txtFloppyBPS.Value = 512; //Uncertain
-                txtFloppySPC.Value = 2; //Uncertain
-                txtFloppySPT.Value = 10;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 7; //Uncertain
-                txtFloppyRootDirEntries.Value = 224; //Uncertain
-                txtFloppyMediaDesc.Value = 0xF9; //Uncertain
-                txtFloppyTotalSect.Value = 1600;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                lstFloppyCapacity.SelectedIndex = 21;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 9) //720 KiB 3.5"
+        }
+
+        private void txtFloppyTotalSect_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1)
             {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 2;
-                txtFloppySPT.Value = 9;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 3;
-                txtFloppyRootDirEntries.Value = 112;
-                txtFloppyMediaDesc.Value = 0xF9;
-                txtFloppyTotalSect.Value = 1440;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                int total_sect = floppyTable.fdt[i][5] * floppyTable.fdt[i][6] * floppyTable.fdt[i][1];
+                if (txtFloppyTotalSect.Value != total_sect)
+                {
+                    lstFloppyCapacity.SelectedIndex = 21;
+                }
             }
-            else if (lstFloppyCapacity.SelectedIndex == 8) //720 KiB 5.25" Tandy 2000
+        }
+
+        private void txtFloppyRootDirEntries_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyRootDir.Value != floppyTable.fdt[i][12])
             {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 4;
-                txtFloppySPT.Value = 9;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 2;
-                txtFloppyRootDirEntries.Value = 112;
-                txtFloppyMediaDesc.Value = 0xED;
-                txtFloppyTotalSect.Value = 1440;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                lstFloppyCapacity.SelectedIndex = 21;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 7) //640 KiB
+        }
+
+        private void txtFloppyTracks_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyTracks.Value != floppyTable.fdt[i][5])
             {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 2;
-                txtFloppySPT.Value = 8;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 2;
-                txtFloppyRootDirEntries.Value = 112;
-                txtFloppyMediaDesc.Value = 0xFB;
-                txtFloppyTotalSect.Value = 1280;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                lstFloppyCapacity.SelectedIndex = 21;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 6) //400 KiB DEC RX50
+        }
+
+        private void txtFloppyMediaDesc_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstFloppyCapacity.SelectedIndex;
+
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyMediaDesc.Value != floppyTable.fdt[i][8])
             {
-                txtFloppyBPS.Value = 512; //Uncertain
-                txtFloppySPC.Value = 2; //Uncertain
-                txtFloppySPT.Value = 10;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 0;
-                txtFloppySPF.Value = 2; //Uncertain
-                txtFloppyRootDirEntries.Value = 112; //Uncertain
-                txtFloppyMediaDesc.Value = 0xF9; //Uncertain
-                txtFloppyTotalSect.Value = 800;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                lstFloppyCapacity.SelectedIndex = 21;
             }
-            else if (lstFloppyCapacity.SelectedIndex == 5) //360 KiB 3.5"
+        }
+
+        private void txtHDDCylinders_ValueChanged(object sender, EventArgs e)
+        {
+            int i = lstHDDType.SelectedIndex;
+
+            if(lstHDDType.SelectedIndex < lstHDDType.Items.Count -2 && txtHDDCylinders.Value != hddTable.hdt[i][0])
             {
-                txtFloppyBPS.Value = 512; //Uncertain
-                txtFloppySPC.Value = 2; //Uncertain
-                txtFloppySPT.Value = 9;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 0;
-                txtFloppySPF.Value = 2; //Uncertain
-                txtFloppyRootDirEntries.Value = 112; //Uncertain
-                txtFloppyMediaDesc.Value = 0xF9; //Uncertain
-                txtFloppyTotalSect.Value = 720;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
-            }
-            else if (lstFloppyCapacity.SelectedIndex == 4) //360 KiB 5.25"
-            {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 2;
-                txtFloppySPT.Value = 9;
-                txtFloppyTracks.Value = 40;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 2;
-                txtFloppyRootDirEntries.Value = 112;
-                txtFloppyMediaDesc.Value = 0xFD;
-                txtFloppyTotalSect.Value = 720;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
-            }
-            else if (lstFloppyCapacity.SelectedIndex == 3) //320 KiB 3.5"
-            {
-                txtFloppyBPS.Value = 512; //Uncertain
-                txtFloppySPC.Value = 2; //Uncertain
-                txtFloppySPT.Value = 8;
-                txtFloppyTracks.Value = 80;
-                lstFloppySides.SelectedIndex = 0;
-                txtFloppySPF.Value = 2; //Uncertain
-                txtFloppyRootDirEntries.Value = 112; //Uncertain
-                txtFloppyMediaDesc.Value = 0xF9; //Uncertain
-                txtFloppyTotalSect.Value = 640;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
-            }
-            else if (lstFloppyCapacity.SelectedIndex == 2) //320 KiB 5.25"
-            {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 2;
-                txtFloppySPT.Value = 8;
-                txtFloppyTracks.Value = 40;
-                lstFloppySides.SelectedIndex = 1;
-                txtFloppySPF.Value = 1;
-                txtFloppyRootDirEntries.Value = 112;
-                txtFloppyMediaDesc.Value = 0xFF;
-                txtFloppyTotalSect.Value = 640;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
-            }
-            else if (lstFloppyCapacity.SelectedIndex == 1) //180 KiB
-            {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 2;
-                txtFloppySPT.Value = 9;
-                txtFloppyTracks.Value = 40;
-                lstFloppySides.SelectedIndex = 0;
-                txtFloppySPF.Value = 1;
-                txtFloppyRootDirEntries.Value = 64;
-                txtFloppyMediaDesc.Value = 0xFC;
-                txtFloppyTotalSect.Value = 360;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
-            }
-            else if (lstFloppyCapacity.SelectedIndex == 0) //160 KiB
-            {
-                txtFloppyBPS.Value = 512;
-                txtFloppySPC.Value = 2;
-                txtFloppySPT.Value = 8;
-                txtFloppyTracks.Value = 40;
-                lstFloppySides.SelectedIndex = 0;
-                txtFloppySPF.Value = 1;
-                txtFloppyRootDirEntries.Value = 64;
-                txtFloppyMediaDesc.Value = 0xFE;
-                txtFloppyTotalSect.Value = 320;
-                txtFloppyReserved.Value = 1;
-                txtFloppyNumFATs.Value = 2;
+                lstHDDType.SelectedIndex = lstHDDType.Items.Count - 1;
             }
         }
     }

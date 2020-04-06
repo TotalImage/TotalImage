@@ -43,10 +43,10 @@
             this.txtFloppyBPS = new System.Windows.Forms.NumericUpDown();
             this.lblFloppySPC = new System.Windows.Forms.Label();
             this.txtFloppySPC = new System.Windows.Forms.NumericUpDown();
-            this.lblFloppyReserved = new System.Windows.Forms.Label();
+            this.lblFloppyReservedSect = new System.Windows.Forms.Label();
             this.lblFloppyNumFATs = new System.Windows.Forms.Label();
-            this.lblFloppyRootDirEntries = new System.Windows.Forms.Label();
-            this.txtFloppyRootDirEntries = new System.Windows.Forms.NumericUpDown();
+            this.lblFloppyRootDir = new System.Windows.Forms.Label();
+            this.txtFloppyRootDir = new System.Windows.Forms.NumericUpDown();
             this.lblFloppyTotalSect = new System.Windows.Forms.Label();
             this.txtFloppyTotalSect = new System.Windows.Forms.NumericUpDown();
             this.lblFloppyMediaDesc = new System.Windows.Forms.Label();
@@ -64,36 +64,36 @@
             this.lblFloppyFSType = new System.Windows.Forms.Label();
             this.txtFloppyFSType = new System.Windows.Forms.TextBox();
             this.txtFloppyNumFATs = new System.Windows.Forms.NumericUpDown();
-            this.txtFloppyReserved = new System.Windows.Forms.NumericUpDown();
+            this.txtFloppyReservedSect = new System.Windows.Forms.NumericUpDown();
             this.lblFloppyTracks = new System.Windows.Forms.Label();
             this.txtFloppyTracks = new System.Windows.Forms.NumericUpDown();
-            this.lstType = new System.Windows.Forms.ComboBox();
-            this.lblType = new System.Windows.Forms.Label();
-            this.txtSize = new System.Windows.Forms.NumericUpDown();
-            this.lblSize = new System.Windows.Forms.Label();
-            this.txtSectors = new System.Windows.Forms.NumericUpDown();
-            this.lblSectors = new System.Windows.Forms.Label();
-            this.txtHeads = new System.Windows.Forms.NumericUpDown();
-            this.lblHeads = new System.Windows.Forms.Label();
-            this.txtCylinders = new System.Windows.Forms.NumericUpDown();
-            this.lblCylinders = new System.Windows.Forms.Label();
+            this.lstHDDType = new System.Windows.Forms.ComboBox();
+            this.lblHDDType = new System.Windows.Forms.Label();
+            this.txtHDDCapacity = new System.Windows.Forms.NumericUpDown();
+            this.lblHDDCapacity = new System.Windows.Forms.Label();
+            this.txtHDDSectors = new System.Windows.Forms.NumericUpDown();
+            this.lblHDDSectors = new System.Windows.Forms.Label();
+            this.txtHDDHeads = new System.Windows.Forms.NumericUpDown();
+            this.lblHDDHeads = new System.Windows.Forms.Label();
+            this.txtHDDCylinders = new System.Windows.Forms.NumericUpDown();
+            this.lblHDDCylinders = new System.Windows.Forms.Label();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabFloppy = new System.Windows.Forms.TabPage();
             this.tabHDD = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyBPS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPC)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyRootDirEntries)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyRootDir)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyTotalSect)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyMediaDesc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPF)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPT)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyNumFATs)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyReserved)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyReservedSect)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyTracks)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtSize)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtSectors)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtHeads)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtCylinders)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtHDDCapacity)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtHDDSectors)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtHDDHeads)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtHDDCylinders)).BeginInit();
             this.tabControl.SuspendLayout();
             this.tabFloppy.SuspendLayout();
             this.tabHDD.SuspendLayout();
@@ -167,7 +167,7 @@
             "1840 KiB (IBM XDF)",
             "2880 KiB",
             "3680 KiB (IBM XDF)",
-            "Custom"});
+            "Custom..."});
             this.lstFloppyCapacity.Location = new System.Drawing.Point(147, 13);
             this.lstFloppyCapacity.Name = "lstFloppyCapacity";
             this.lstFloppyCapacity.Size = new System.Drawing.Size(225, 23);
@@ -272,6 +272,7 @@
             0,
             0,
             0});
+            this.txtFloppyBPS.ValueChanged += new System.EventHandler(this.txtFloppyBPS_ValueChanged);
             // 
             // lblFloppySPC
             // 
@@ -305,17 +306,18 @@
             0,
             0,
             0});
+            this.txtFloppySPC.ValueChanged += new System.EventHandler(this.txtFloppySPC_ValueChanged);
             // 
-            // lblFloppyReserved
+            // lblFloppyReservedSect
             // 
-            this.lblFloppyReserved.AutoSize = true;
-            this.lblFloppyReserved.Location = new System.Drawing.Point(275, 163);
-            this.lblFloppyReserved.Name = "lblFloppyReserved";
-            this.lblFloppyReserved.Size = new System.Drawing.Size(97, 15);
-            this.lblFloppyReserved.TabIndex = 10;
-            this.lblFloppyReserved.Text = "Reserved sectors:";
-            this.toolTip.SetToolTip(this.lblFloppyReserved, "The number of sectors before the first file allocation table (FAT).\r\nThe only pos" +
-        "sible value for FAT12-formatted floppy disks is 1.");
+            this.lblFloppyReservedSect.AutoSize = true;
+            this.lblFloppyReservedSect.Location = new System.Drawing.Point(275, 163);
+            this.lblFloppyReservedSect.Name = "lblFloppyReservedSect";
+            this.lblFloppyReservedSect.Size = new System.Drawing.Size(97, 15);
+            this.lblFloppyReservedSect.TabIndex = 10;
+            this.lblFloppyReservedSect.Text = "Reserved sectors:";
+            this.toolTip.SetToolTip(this.lblFloppyReservedSect, "The number of sectors before the first file allocation table (FAT).\r\nFor most FAT" +
+        "12-formatted floppies, there is only one reserved\r\nsector - the boot sector.\r\n");
             // 
             // lblFloppyNumFATs
             // 
@@ -326,47 +328,48 @@
             this.lblFloppyNumFATs.TabIndex = 11;
             this.lblFloppyNumFATs.Text = "Number of FATs:";
             this.toolTip.SetToolTip(this.lblFloppyNumFATs, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, thi" +
-        "s value is always 2.");
+        "s value is basically always 2.");
             // 
-            // lblFloppyRootDirEntries
+            // lblFloppyRootDir
             // 
-            this.lblFloppyRootDirEntries.AutoSize = true;
-            this.lblFloppyRootDirEntries.Location = new System.Drawing.Point(472, 74);
-            this.lblFloppyRootDirEntries.Name = "lblFloppyRootDirEntries";
-            this.lblFloppyRootDirEntries.Size = new System.Drawing.Size(123, 15);
-            this.lblFloppyRootDirEntries.TabIndex = 12;
-            this.lblFloppyRootDirEntries.Text = "Root directory entries:";
-            this.toolTip.SetToolTip(this.lblFloppyRootDirEntries, "This is the maximum number of files that can be located in the\r\nroot directory of" +
+            this.lblFloppyRootDir.AutoSize = true;
+            this.lblFloppyRootDir.Location = new System.Drawing.Point(472, 74);
+            this.lblFloppyRootDir.Name = "lblFloppyRootDir";
+            this.lblFloppyRootDir.Size = new System.Drawing.Size(123, 15);
+            this.lblFloppyRootDir.TabIndex = 12;
+            this.lblFloppyRootDir.Text = "Root directory entries:";
+            this.toolTip.SetToolTip(this.lblFloppyRootDir, "This is the maximum number of files that can be located in the\r\nroot directory of" +
         " the disk.");
             // 
-            // txtFloppyRootDirEntries
+            // txtFloppyRootDir
             // 
-            this.txtFloppyRootDirEntries.Increment = new decimal(new int[] {
+            this.txtFloppyRootDir.Increment = new decimal(new int[] {
             16,
             0,
             0,
             0});
-            this.txtFloppyRootDirEntries.Location = new System.Drawing.Point(612, 71);
-            this.txtFloppyRootDirEntries.Maximum = new decimal(new int[] {
+            this.txtFloppyRootDir.Location = new System.Drawing.Point(612, 71);
+            this.txtFloppyRootDir.Maximum = new decimal(new int[] {
             240,
             0,
             0,
             0});
-            this.txtFloppyRootDirEntries.Minimum = new decimal(new int[] {
+            this.txtFloppyRootDir.Minimum = new decimal(new int[] {
             16,
             0,
             0,
             0});
-            this.txtFloppyRootDirEntries.Name = "txtFloppyRootDirEntries";
-            this.txtFloppyRootDirEntries.Size = new System.Drawing.Size(72, 23);
-            this.txtFloppyRootDirEntries.TabIndex = 9;
-            this.toolTip.SetToolTip(this.txtFloppyRootDirEntries, "This is the maximum number of files that can be located in the\r\nroot directory of" +
+            this.txtFloppyRootDir.Name = "txtFloppyRootDir";
+            this.txtFloppyRootDir.Size = new System.Drawing.Size(72, 23);
+            this.txtFloppyRootDir.TabIndex = 9;
+            this.toolTip.SetToolTip(this.txtFloppyRootDir, "This is the maximum number of files that can be located in the\r\nroot directory of" +
         " the disk. ");
-            this.txtFloppyRootDirEntries.Value = new decimal(new int[] {
+            this.txtFloppyRootDir.Value = new decimal(new int[] {
             224,
             0,
             0,
             0});
+            this.txtFloppyRootDir.ValueChanged += new System.EventHandler(this.txtFloppyRootDirEntries_ValueChanged);
             // 
             // lblFloppyTotalSect
             // 
@@ -404,6 +407,7 @@
             0,
             0,
             0});
+            this.txtFloppyTotalSect.ValueChanged += new System.EventHandler(this.txtFloppyTotalSect_ValueChanged);
             // 
             // lblFloppyMediaDesc
             // 
@@ -438,6 +442,7 @@
             0,
             0,
             0});
+            this.txtFloppyMediaDesc.ValueChanged += new System.EventHandler(this.txtFloppyMediaDesc_ValueChanged);
             // 
             // lblFloppySPF
             // 
@@ -453,7 +458,7 @@
             // 
             this.txtFloppySPF.Location = new System.Drawing.Point(387, 129);
             this.txtFloppySPF.Maximum = new decimal(new int[] {
-            10,
+            11,
             0,
             0,
             0});
@@ -471,6 +476,7 @@
             0,
             0,
             0});
+            this.txtFloppySPF.ValueChanged += new System.EventHandler(this.txtFloppySPF_ValueChanged);
             // 
             // lblFloppySPT
             // 
@@ -504,6 +510,7 @@
             0,
             0,
             0});
+            this.txtFloppySPT.ValueChanged += new System.EventHandler(this.txtFloppySPT_ValueChanged);
             // 
             // lblFloppySides
             // 
@@ -527,6 +534,7 @@
             this.lstFloppySides.Size = new System.Drawing.Size(72, 23);
             this.lstFloppySides.TabIndex = 15;
             this.toolTip.SetToolTip(this.lstFloppySides, "Determines whether a disk is single-sided (SS) or double-sided (DS).");
+            this.lstFloppySides.SelectedIndexChanged += new System.EventHandler(this.lstFloppySides_SelectedIndexChanged);
             // 
             // lblFloppySerial
             // 
@@ -594,51 +602,51 @@
             // 
             this.txtFloppyNumFATs.Location = new System.Drawing.Point(147, 158);
             this.txtFloppyNumFATs.Maximum = new decimal(new int[] {
-            2,
+            9,
             0,
             0,
             0});
             this.txtFloppyNumFATs.Minimum = new decimal(new int[] {
-            2,
+            1,
             0,
             0,
             0});
             this.txtFloppyNumFATs.Name = "txtFloppyNumFATs";
-            this.txtFloppyNumFATs.ReadOnly = true;
             this.txtFloppyNumFATs.Size = new System.Drawing.Size(113, 23);
             this.txtFloppyNumFATs.TabIndex = 30;
             this.toolTip.SetToolTip(this.txtFloppyNumFATs, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, thi" +
-        "s value is always 2.\r\n");
+        "s value is basically always 2.\r\n");
             this.txtFloppyNumFATs.Value = new decimal(new int[] {
             2,
             0,
             0,
             0});
+            this.txtFloppyNumFATs.ValueChanged += new System.EventHandler(this.txtFloppyNumFATs_ValueChanged);
             // 
-            // txtFloppyReserved
+            // txtFloppyReservedSect
             // 
-            this.txtFloppyReserved.Location = new System.Drawing.Point(387, 158);
-            this.txtFloppyReserved.Maximum = new decimal(new int[] {
+            this.txtFloppyReservedSect.Location = new System.Drawing.Point(387, 158);
+            this.txtFloppyReservedSect.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.txtFloppyReservedSect.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.txtFloppyReserved.Minimum = new decimal(new int[] {
+            this.txtFloppyReservedSect.Name = "txtFloppyReservedSect";
+            this.txtFloppyReservedSect.Size = new System.Drawing.Size(70, 23);
+            this.txtFloppyReservedSect.TabIndex = 31;
+            this.toolTip.SetToolTip(this.txtFloppyReservedSect, "The number of sectors before the first file allocation table (FAT).\r\nFor most FAT" +
+        "12-formatted floppies, there is only one reserved\r\nsector - the boot sector.\r\n");
+            this.txtFloppyReservedSect.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.txtFloppyReserved.Name = "txtFloppyReserved";
-            this.txtFloppyReserved.ReadOnly = true;
-            this.txtFloppyReserved.Size = new System.Drawing.Size(70, 23);
-            this.txtFloppyReserved.TabIndex = 31;
-            this.toolTip.SetToolTip(this.txtFloppyReserved, "The number of sectors before the first file allocation table (FAT).\r\nThe only pos" +
-        "sible value for FAT12-formatted floppy disks is 1.\r\n");
-            this.txtFloppyReserved.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.txtFloppyReservedSect.ValueChanged += new System.EventHandler(this.txtFloppyReserved_ValueChanged);
             // 
             // lblFloppyTracks
             // 
@@ -672,110 +680,113 @@
             0,
             0,
             0});
+            this.txtFloppyTracks.ValueChanged += new System.EventHandler(this.txtFloppyTracks_ValueChanged);
             // 
-            // lstType
+            // lstHDDType
             // 
-            this.lstType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.lstType.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.lstType.FormattingEnabled = true;
-            this.lstType.Location = new System.Drawing.Point(219, 48);
-            this.lstType.MaxDropDownItems = 99;
-            this.lstType.Name = "lstType";
-            this.lstType.Size = new System.Drawing.Size(223, 23);
-            this.lstType.TabIndex = 9;
+            this.lstHDDType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstHDDType.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.lstHDDType.FormattingEnabled = true;
+            this.lstHDDType.Location = new System.Drawing.Point(79, 13);
+            this.lstHDDType.MaxDropDownItems = 35;
+            this.lstHDDType.Name = "lstHDDType";
+            this.lstHDDType.Size = new System.Drawing.Size(223, 23);
+            this.lstHDDType.TabIndex = 9;
+            this.lstHDDType.SelectedIndexChanged += new System.EventHandler(this.lstHDDCapacity_SelectedIndexChanged);
             // 
-            // lblType
+            // lblHDDType
             // 
-            this.lblType.AutoSize = true;
-            this.lblType.Location = new System.Drawing.Point(170, 53);
-            this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(34, 15);
-            this.lblType.TabIndex = 8;
-            this.lblType.Text = "Type:";
+            this.lblHDDType.AutoSize = true;
+            this.lblHDDType.Location = new System.Drawing.Point(14, 17);
+            this.lblHDDType.Name = "lblHDDType";
+            this.lblHDDType.Size = new System.Drawing.Size(34, 15);
+            this.lblHDDType.TabIndex = 8;
+            this.lblHDDType.Text = "Type:";
             // 
-            // txtSize
+            // txtHDDCapacity
             // 
-            this.txtSize.Location = new System.Drawing.Point(79, 48);
-            this.txtSize.Maximum = new decimal(new int[] {
+            this.txtHDDCapacity.Location = new System.Drawing.Point(414, 13);
+            this.txtHDDCapacity.Maximum = new decimal(new int[] {
             999999,
             0,
             0,
             0});
-            this.txtSize.Name = "txtSize";
-            this.txtSize.Size = new System.Drawing.Size(75, 23);
-            this.txtSize.TabIndex = 7;
+            this.txtHDDCapacity.Name = "txtHDDCapacity";
+            this.txtHDDCapacity.Size = new System.Drawing.Size(75, 23);
+            this.txtHDDCapacity.TabIndex = 7;
             // 
-            // lblSize
+            // lblHDDCapacity
             // 
-            this.lblSize.AutoSize = true;
-            this.lblSize.Location = new System.Drawing.Point(14, 53);
-            this.lblSize.Name = "lblSize";
-            this.lblSize.Size = new System.Drawing.Size(59, 15);
-            this.lblSize.TabIndex = 6;
-            this.lblSize.Text = "Size (MB):";
+            this.lblHDDCapacity.AutoSize = true;
+            this.lblHDDCapacity.Location = new System.Drawing.Point(320, 17);
+            this.lblHDDCapacity.Name = "lblHDDCapacity";
+            this.lblHDDCapacity.Size = new System.Drawing.Size(88, 15);
+            this.lblHDDCapacity.TabIndex = 6;
+            this.lblHDDCapacity.Text = "Capacity (MiB):";
             // 
-            // txtSectors
+            // txtHDDSectors
             // 
-            this.txtSectors.Location = new System.Drawing.Point(367, 12);
-            this.txtSectors.Maximum = new decimal(new int[] {
+            this.txtHDDSectors.Location = new System.Drawing.Point(414, 45);
+            this.txtHDDSectors.Maximum = new decimal(new int[] {
             99,
             0,
             0,
             0});
-            this.txtSectors.Name = "txtSectors";
-            this.txtSectors.Size = new System.Drawing.Size(75, 23);
-            this.txtSectors.TabIndex = 5;
+            this.txtHDDSectors.Name = "txtHDDSectors";
+            this.txtHDDSectors.Size = new System.Drawing.Size(75, 23);
+            this.txtHDDSectors.TabIndex = 5;
             // 
-            // lblSectors
+            // lblHDDSectors
             // 
-            this.lblSectors.AutoSize = true;
-            this.lblSectors.Location = new System.Drawing.Point(313, 16);
-            this.lblSectors.Name = "lblSectors";
-            this.lblSectors.Size = new System.Drawing.Size(48, 15);
-            this.lblSectors.TabIndex = 4;
-            this.lblSectors.Text = "Sectors:";
+            this.lblHDDSectors.AutoSize = true;
+            this.lblHDDSectors.Location = new System.Drawing.Point(320, 49);
+            this.lblHDDSectors.Name = "lblHDDSectors";
+            this.lblHDDSectors.Size = new System.Drawing.Size(48, 15);
+            this.lblHDDSectors.TabIndex = 4;
+            this.lblHDDSectors.Text = "Sectors:";
             // 
-            // txtHeads
+            // txtHDDHeads
             // 
-            this.txtHeads.Location = new System.Drawing.Point(219, 12);
-            this.txtHeads.Maximum = new decimal(new int[] {
+            this.txtHDDHeads.Location = new System.Drawing.Point(227, 45);
+            this.txtHDDHeads.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.txtHeads.Name = "txtHeads";
-            this.txtHeads.Size = new System.Drawing.Size(75, 23);
-            this.txtHeads.TabIndex = 3;
+            this.txtHDDHeads.Name = "txtHDDHeads";
+            this.txtHDDHeads.Size = new System.Drawing.Size(75, 23);
+            this.txtHDDHeads.TabIndex = 3;
             // 
-            // lblHeads
+            // lblHDDHeads
             // 
-            this.lblHeads.AutoSize = true;
-            this.lblHeads.Location = new System.Drawing.Point(170, 16);
-            this.lblHeads.Name = "lblHeads";
-            this.lblHeads.Size = new System.Drawing.Size(43, 15);
-            this.lblHeads.TabIndex = 2;
-            this.lblHeads.Text = "Heads:";
+            this.lblHDDHeads.AutoSize = true;
+            this.lblHDDHeads.Location = new System.Drawing.Point(178, 49);
+            this.lblHDDHeads.Name = "lblHDDHeads";
+            this.lblHDDHeads.Size = new System.Drawing.Size(43, 15);
+            this.lblHDDHeads.TabIndex = 2;
+            this.lblHDDHeads.Text = "Heads:";
             // 
-            // txtCylinders
+            // txtHDDCylinders
             // 
-            this.txtCylinders.Location = new System.Drawing.Point(79, 12);
-            this.txtCylinders.Maximum = new decimal(new int[] {
+            this.txtHDDCylinders.Location = new System.Drawing.Point(79, 45);
+            this.txtHDDCylinders.Maximum = new decimal(new int[] {
             266305,
             0,
             0,
             0});
-            this.txtCylinders.Name = "txtCylinders";
-            this.txtCylinders.Size = new System.Drawing.Size(75, 23);
-            this.txtCylinders.TabIndex = 1;
+            this.txtHDDCylinders.Name = "txtHDDCylinders";
+            this.txtHDDCylinders.Size = new System.Drawing.Size(75, 23);
+            this.txtHDDCylinders.TabIndex = 1;
+            this.txtHDDCylinders.ValueChanged += new System.EventHandler(this.txtHDDCylinders_ValueChanged);
             // 
-            // lblCylinders
+            // lblHDDCylinders
             // 
-            this.lblCylinders.AutoSize = true;
-            this.lblCylinders.Location = new System.Drawing.Point(14, 16);
-            this.lblCylinders.Name = "lblCylinders";
-            this.lblCylinders.Size = new System.Drawing.Size(59, 15);
-            this.lblCylinders.TabIndex = 0;
-            this.lblCylinders.Text = "Cylinders:";
+            this.lblHDDCylinders.AutoSize = true;
+            this.lblHDDCylinders.Location = new System.Drawing.Point(14, 49);
+            this.lblHDDCylinders.Name = "lblHDDCylinders";
+            this.lblHDDCylinders.Size = new System.Drawing.Size(59, 15);
+            this.lblHDDCylinders.TabIndex = 0;
+            this.lblHDDCylinders.Text = "Cylinders:";
             // 
             // tabControl
             // 
@@ -794,7 +805,7 @@
             // 
             this.tabFloppy.Controls.Add(this.txtFloppyTracks);
             this.tabFloppy.Controls.Add(this.lblFloppyTracks);
-            this.tabFloppy.Controls.Add(this.txtFloppyReserved);
+            this.tabFloppy.Controls.Add(this.txtFloppyReservedSect);
             this.tabFloppy.Controls.Add(this.txtFloppyNumFATs);
             this.tabFloppy.Controls.Add(this.txtFloppyFSType);
             this.tabFloppy.Controls.Add(this.lblFloppyFSType);
@@ -812,10 +823,10 @@
             this.tabFloppy.Controls.Add(this.lblFloppyMediaDesc);
             this.tabFloppy.Controls.Add(this.txtFloppyTotalSect);
             this.tabFloppy.Controls.Add(this.lblFloppyTotalSect);
-            this.tabFloppy.Controls.Add(this.txtFloppyRootDirEntries);
-            this.tabFloppy.Controls.Add(this.lblFloppyRootDirEntries);
+            this.tabFloppy.Controls.Add(this.txtFloppyRootDir);
+            this.tabFloppy.Controls.Add(this.lblFloppyRootDir);
             this.tabFloppy.Controls.Add(this.lblFloppyNumFATs);
-            this.tabFloppy.Controls.Add(this.lblFloppyReserved);
+            this.tabFloppy.Controls.Add(this.lblFloppyReservedSect);
             this.tabFloppy.Controls.Add(this.txtFloppySPC);
             this.tabFloppy.Controls.Add(this.lblFloppySPC);
             this.tabFloppy.Controls.Add(this.txtFloppyBPS);
@@ -836,16 +847,16 @@
             // 
             // tabHDD
             // 
-            this.tabHDD.Controls.Add(this.lstType);
-            this.tabHDD.Controls.Add(this.lblCylinders);
-            this.tabHDD.Controls.Add(this.lblType);
-            this.tabHDD.Controls.Add(this.txtCylinders);
-            this.tabHDD.Controls.Add(this.txtSize);
-            this.tabHDD.Controls.Add(this.lblHeads);
-            this.tabHDD.Controls.Add(this.lblSize);
-            this.tabHDD.Controls.Add(this.txtHeads);
-            this.tabHDD.Controls.Add(this.txtSectors);
-            this.tabHDD.Controls.Add(this.lblSectors);
+            this.tabHDD.Controls.Add(this.lstHDDType);
+            this.tabHDD.Controls.Add(this.lblHDDCylinders);
+            this.tabHDD.Controls.Add(this.lblHDDType);
+            this.tabHDD.Controls.Add(this.txtHDDCylinders);
+            this.tabHDD.Controls.Add(this.txtHDDCapacity);
+            this.tabHDD.Controls.Add(this.lblHDDHeads);
+            this.tabHDD.Controls.Add(this.lblHDDCapacity);
+            this.tabHDD.Controls.Add(this.txtHDDHeads);
+            this.tabHDD.Controls.Add(this.txtHDDSectors);
+            this.tabHDD.Controls.Add(this.lblHDDSectors);
             this.tabHDD.Location = new System.Drawing.Point(4, 24);
             this.tabHDD.Name = "tabHDD";
             this.tabHDD.Padding = new System.Windows.Forms.Padding(3);
@@ -876,18 +887,18 @@
             this.Load += new System.EventHandler(this.dlgNewSectorImage_Load);
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyBPS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPC)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyRootDirEntries)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyRootDir)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyTotalSect)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyMediaDesc)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPF)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPT)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyNumFATs)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyReserved)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtFloppyReservedSect)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyTracks)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtSize)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtSectors)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtHeads)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtCylinders)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtHDDCapacity)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtHDDSectors)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtHDDHeads)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtHDDCylinders)).EndInit();
             this.tabControl.ResumeLayout(false);
             this.tabFloppy.ResumeLayout(false);
             this.tabFloppy.PerformLayout();
@@ -901,16 +912,16 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.ToolTip toolTip;
-        private System.Windows.Forms.Label lblCylinders;
-        private System.Windows.Forms.NumericUpDown txtCylinders;
-        private System.Windows.Forms.NumericUpDown txtHeads;
-        private System.Windows.Forms.Label lblHeads;
-        private System.Windows.Forms.NumericUpDown txtSectors;
-        private System.Windows.Forms.Label lblSectors;
-        private System.Windows.Forms.NumericUpDown txtSize;
-        private System.Windows.Forms.Label lblSize;
-        private System.Windows.Forms.Label lblType;
-        private System.Windows.Forms.ComboBox lstType;
+        private System.Windows.Forms.Label lblHDDCylinders;
+        private System.Windows.Forms.NumericUpDown txtHDDCylinders;
+        private System.Windows.Forms.NumericUpDown txtHDDHeads;
+        private System.Windows.Forms.Label lblHDDHeads;
+        private System.Windows.Forms.NumericUpDown txtHDDSectors;
+        private System.Windows.Forms.Label lblHDDSectors;
+        private System.Windows.Forms.NumericUpDown txtHDDCapacity;
+        private System.Windows.Forms.Label lblHDDCapacity;
+        private System.Windows.Forms.Label lblHDDType;
+        private System.Windows.Forms.ComboBox lstHDDType;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabFloppy;
         private System.Windows.Forms.TabPage tabHDD;
@@ -924,10 +935,10 @@
         private System.Windows.Forms.NumericUpDown txtFloppyBPS;
         private System.Windows.Forms.Label lblFloppySPC;
         private System.Windows.Forms.NumericUpDown txtFloppySPC;
-        private System.Windows.Forms.Label lblFloppyReserved;
+        private System.Windows.Forms.Label lblFloppyReservedSect;
         private System.Windows.Forms.Label lblFloppyNumFATs;
-        private System.Windows.Forms.Label lblFloppyRootDirEntries;
-        private System.Windows.Forms.NumericUpDown txtFloppyRootDirEntries;
+        private System.Windows.Forms.Label lblFloppyRootDir;
+        private System.Windows.Forms.NumericUpDown txtFloppyRootDir;
         private System.Windows.Forms.NumericUpDown txtFloppyTotalSect;
         private System.Windows.Forms.Label lblFloppyTotalSect;
         private System.Windows.Forms.NumericUpDown txtFloppyMediaDesc;
@@ -944,7 +955,7 @@
         private System.Windows.Forms.Label lblFloppyLabel;
         private System.Windows.Forms.Label lblFloppyFSType;
         private System.Windows.Forms.TextBox txtFloppyFSType;
-        private System.Windows.Forms.NumericUpDown txtFloppyReserved;
+        private System.Windows.Forms.NumericUpDown txtFloppyReservedSect;
         private System.Windows.Forms.NumericUpDown txtFloppyNumFATs;
         private System.Windows.Forms.Label lblFloppyTracks;
         private System.Windows.Forms.NumericUpDown txtFloppyTracks;

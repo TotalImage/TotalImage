@@ -162,12 +162,14 @@
     <Compile Include="dlgUndelete.Designer.cs">
       <DependentUpon>dlgUndelete.cs</DependentUpon>
     </Compile>
+    <Compile Include="floppyTable.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="hddTable.cs" />
     <Compile Include="ImageFormats\IMG.cs" />
     <Compile Include="ListViewEx.cs">
       <SubType>Component</SubType>
