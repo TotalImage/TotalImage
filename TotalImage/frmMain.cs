@@ -8,12 +8,11 @@ namespace TotalImage
     public partial class frmMain : Form
     {
         public string filename = "";
-        public IMG imgMan;
+        public RawSector image;
 
         public frmMain()
         {
             InitializeComponent();
-            imgMan = new IMG();
         }
 
         private void newToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -29,6 +28,7 @@ namespace TotalImage
         private void NewImage()
         {
             //Needs a check for unsaved changes
+            image = new RawSector();
             dlgNewImage dlg = new dlgNewImage();
             dlg.ShowDialog();
         }
@@ -70,7 +70,7 @@ namespace TotalImage
                     sfd.FileName.EndsWith(".vfd") || sfd.FileName.EndsWith(".flp") || sfd.FileName.EndsWith(".dsk") ||
                     sfd.FileName.EndsWith(".hdm"))
                 {
-                    byte[] imageBytes = imgMan.GetImageBytes();
+                    byte[] imageBytes = image.GetImageBytes();
                     File.WriteAllBytes(sfd.FileName, imageBytes);
                 }
                 else if (sfd.FilterIndex == 1 || sfd.FileName.EndsWith(".imz"))
@@ -213,6 +213,8 @@ namespace TotalImage
                 /* Do stuff */
                 filename = ofd.SafeFileName;
                 Text = filename + " - TotalImage";
+                image = new RawSector();
+                image.LoadImage(ofd.FileName);
             }
         }
 

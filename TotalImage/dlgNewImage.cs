@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
+using TotalImage.FileSystems;
+using TotalImage.ImageFormats;
 
 namespace TotalImage
 {
@@ -20,7 +23,7 @@ namespace TotalImage
         {
             //Default values are for a 1440 KiB disk with DOS 4.0+ BPB
             cbxFloppyBPB.Checked = true;
-            lstFloppyBPB.SelectedIndex = 5;
+            lstFloppyBPB.SelectedIndex = 3;
             lstFloppyCapacity.SelectedIndex = 13;
             txtFloppySerial.Text = GenerateVolumeID().ToString("X8");
 
@@ -68,6 +71,98 @@ namespace TotalImage
                 }
                 else
                 {
+                    int i = lstFloppyCapacity.SelectedIndex;
+                    frmMain main = (frmMain)Application.OpenForms["frmMain"];
+                    if (cbxFloppyBPB.Checked)
+                    {
+                        BiosParameterBlock bpb = new BiosParameterBlock();
+                        if (lstFloppyBPB.SelectedIndex <= 1) //DOS 2.0 BPB (on floppies it's the same as 3.31)
+                        {
+                            bpb = new BiosParameterBlock
+                            {
+                                BpbVersion = 0x20,
+                                BytesPerLogicalSector = (ushort)(128 << floppyTable.fdt[i][7]),
+                                HiddenSectors = 0,
+                                LargeTotalLogicalSectors = 0,
+                                LogicalSectorsPerCluster = (byte)floppyTable.fdt[i][9],
+                                LogicalSectorsPerFAT = (ushort)floppyTable.fdt[i][11],
+                                MediaDescriptor = (byte)floppyTable.fdt[i][8],
+                                NumberOfFATs = (byte)floppyTable.fdt[i][10],
+                                NumberOfHeads = (ushort)floppyTable.fdt[i][1],
+                                PhysicalSectorsPerTrack = (ushort)floppyTable.fdt[i][6],
+                                ReservedLogicalSectors = (ushort)floppyTable.fdt[i][13],
+                                RootDirectoryEntries = (ushort)floppyTable.fdt[i][12],
+                                VolumeLabel = Encoding.ASCII.GetBytes(txtFloppyLabel.Text.ToUpper()),
+                                //TLS = (ushort)(bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * floppyTable.fdt[i][5])
+                            };
+
+                            string oemID = txtFloppyOEMID.Text.ToUpper();
+                            main.image.CreateImage(bpb, oemID, floppyTable.fdt[i][5]);
+                        }
+                        else if (lstFloppyBPB.SelectedIndex == 2) //DOS 3.4 BPB
+                        {
+                            bpb = new BiosParameterBlock40
+                            {
+                                BpbVersion = 0x34,
+                                BytesPerLogicalSector = (ushort)(128 << floppyTable.fdt[i][7]),
+                                ExtendedBootSignature = 0x28,
+                                FileSystemType = new byte[1],
+                                Flags = 0,
+                                HiddenSectors = 0,
+                                LargeTotalLogicalSectors = 0,
+                                LogicalSectorsPerCluster = (byte)floppyTable.fdt[i][9],
+                                LogicalSectorsPerFAT = (ushort)floppyTable.fdt[i][11],
+                                MediaDescriptor = (byte)floppyTable.fdt[i][8],
+                                NumberOfFATs = (byte)floppyTable.fdt[i][10],
+                                NumberOfHeads = (ushort)floppyTable.fdt[i][1],
+                                PhysicalDriveNumber = 0,
+                                PhysicalSectorsPerTrack = (ushort)floppyTable.fdt[i][6],
+                                ReservedLogicalSectors = (ushort)floppyTable.fdt[i][13],
+                                RootDirectoryEntries = (ushort)floppyTable.fdt[i][12],
+                                VolumeLabel = Encoding.ASCII.GetBytes(txtFloppyLabel.Text.ToUpper()),
+                                VolumeSerialNumber = uint.Parse(txtFloppySerial.Text),
+                                //TLS = (ushort)(bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * floppyTable.fdt[i][5])
+                            };
+
+                            string oemID = txtFloppyOEMID.Text.ToUpper();
+                            main.image.CreateImage(bpb, oemID, floppyTable.fdt[i][5]);
+                        }
+                        else if (lstFloppyBPB.SelectedIndex == 3) //DOS 4.0+ BPB
+                        {
+                            bpb = new BiosParameterBlock40();
+                            // {
+                            bpb.BpbVersion = 0x40;
+                            bpb.BytesPerLogicalSector = (ushort)(128 << floppyTable.fdt[i][7]);
+                            ((BiosParameterBlock40)bpb).ExtendedBootSignature = 0x29;
+                            ((BiosParameterBlock40)bpb).FileSystemType = Encoding.ASCII.GetBytes(txtFloppyFSType.Text.ToUpper());
+                            ((BiosParameterBlock40)bpb).Flags = 0;
+                            //bpb.TLS = (ushort)(bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * floppyTable.fdt[i][5]);
+                            bpb.HiddenSectors = 0;
+                            bpb.LargeTotalLogicalSectors = 0;
+                            bpb.LogicalSectorsPerCluster = floppyTable.fdt[i][9];
+                            bpb.LogicalSectorsPerFAT = floppyTable.fdt[i][11];
+                            bpb.MediaDescriptor = floppyTable.fdt[i][8];
+                            bpb.NumberOfFATs = floppyTable.fdt[i][10];
+                            bpb.NumberOfHeads = floppyTable.fdt[i][1];
+                            ((BiosParameterBlock40)bpb).PhysicalDriveNumber = 0;
+                            bpb.PhysicalSectorsPerTrack = floppyTable.fdt[i][6];
+                            bpb.ReservedLogicalSectors = floppyTable.fdt[i][13];
+                            bpb.RootDirectoryEntries = floppyTable.fdt[i][12];
+                            ((BiosParameterBlock40)bpb).VolumeLabel = Encoding.ASCII.GetBytes(txtFloppyLabel.Text.ToUpper());
+                            ((BiosParameterBlock40)bpb).VolumeSerialNumber = uint.Parse(txtFloppySerial.Text, System.Globalization.NumberStyles.HexNumber);
+                                
+                            //};
+                            //Console.WriteLine(bpb.TLS);
+                            string oemID = txtFloppyOEMID.Text.ToUpper();
+                            main.image.CreateImage(bpb, oemID, floppyTable.fdt[i][5]);
+                        }
+                    }
+                    
+                    else
+                    {
+                        /* Create a new floppy disk image without a BPB */
+                        //image.CreateImageNoBpb();
+                    }
                     /* Create a new floppy disk image with standard parameters */
                 }
             }
@@ -82,8 +177,8 @@ namespace TotalImage
         {
             //Disable volume ID and FS type fields since they were only added in DOS 3.4/4.0
             lstFloppyBPB.Enabled = cbxFloppyBPB.Checked;
-            txtFloppySerial.Enabled = cbxFloppyBPB.Checked && (lstFloppyBPB.SelectedIndex >= 4);
-            txtFloppyFSType.Enabled = cbxFloppyBPB.Checked && (lstFloppyBPB.SelectedIndex == 5);
+            txtFloppySerial.Enabled = cbxFloppyBPB.Checked && (lstFloppyBPB.SelectedIndex >= 2);
+            txtFloppyFSType.Enabled = cbxFloppyBPB.Checked && (lstFloppyBPB.SelectedIndex == 3);
         }
 
         //Generates a random volume ID/serial number for the DOS 3.4+ BPB
@@ -95,17 +190,17 @@ namespace TotalImage
 
         private void lstFloppyBPB_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lstFloppyBPB.SelectedIndex == 5) //DOS 4.0+ BPB
+            if (lstFloppyBPB.SelectedIndex == 3) //DOS 4.0+ BPB
             {
                 txtFloppyFSType.Enabled = true;
                 txtFloppySerial.Enabled = true;
             }
-            else if (lstFloppyBPB.SelectedIndex == 4) //DOS 3.4 BPB
+            else if (lstFloppyBPB.SelectedIndex == 2) //DOS 3.4 BPB
             {
                 txtFloppyFSType.Enabled = false;
                 txtFloppySerial.Enabled = true;
             }
-            else if (lstFloppyBPB.SelectedIndex <= 3) //DOS 2.0-3.31 BPB
+            else if (lstFloppyBPB.SelectedIndex <= 1) //DOS 2.0-3.31 BPB
             {
                 txtFloppyFSType.Enabled = false;
                 txtFloppySerial.Enabled = false;

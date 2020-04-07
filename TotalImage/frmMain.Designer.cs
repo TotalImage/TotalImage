@@ -30,8 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("<root directory>");
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Test item");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("<root directory>");
             this.cmsDirTree = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.extractToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.createAFolderToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -1059,12 +1058,12 @@
             this.lstDirectories.ImageList = this.imgDirFileList;
             this.lstDirectories.Location = new System.Drawing.Point(0, 0);
             this.lstDirectories.Name = "lstDirectories";
-            treeNode2.ContextMenuStrip = this.cmsDirTree;
-            treeNode2.ImageKey = "folder.png";
-            treeNode2.Name = "rootDir";
-            treeNode2.Text = "<root directory>";
+            treeNode1.ContextMenuStrip = this.cmsDirTree;
+            treeNode1.ImageKey = "folder.png";
+            treeNode1.Name = "rootDir";
+            treeNode1.Text = "<root directory>";
             this.lstDirectories.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode2});
+            treeNode1});
             this.lstDirectories.SelectedImageKey = "folder_open_16.png";
             this.lstDirectories.ShowLines = false;
             this.lstDirectories.Size = new System.Drawing.Size(274, 546);
@@ -1082,10 +1081,6 @@
             this.lstFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstFiles.FullRowSelect = true;
             this.lstFiles.HideSelection = false;
-            listViewItem2.Checked = true;
-            listViewItem2.StateImageIndex = 2;
-            this.lstFiles.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem2});
             this.lstFiles.LargeImageList = this.imgDirFileList;
             this.lstFiles.Location = new System.Drawing.Point(0, 0);
             this.lstFiles.Name = "lstFiles";
@@ -1183,8 +1178,6 @@
         private System.Windows.Forms.ToolStripButton newToolStripButton;
         private System.Windows.Forms.ToolStripButton openToolStripButton;
         private System.Windows.Forms.ToolStripButton saveToolStripButton;
-        private TreeViewEx lstDirectories;
-        private ListViewEx lstFiles;
         private System.Windows.Forms.ColumnHeader clmName;
         private System.Windows.Forms.ColumnHeader clmSize;
         private System.Windows.Forms.ColumnHeader clmType;
@@ -1263,6 +1256,8 @@
         private System.Windows.Forms.ToolStripMenuItem injectAFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem formatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem defragmentToolStripMenuItem;
+        public TreeViewEx lstDirectories;
+        public ListViewEx lstFiles;
     }
 }
 

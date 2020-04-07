@@ -162,6 +162,8 @@
     <Compile Include="dlgUndelete.Designer.cs">
       <DependentUpon>dlgUndelete.cs</DependentUpon>
     </Compile>
+    <Compile Include="FileSystems\BiosParameterBlock.cs" />
+    <Compile Include="FileSystems\BiosParameterBlock40.cs" />
     <Compile Include="FileSystems\Dos20BiosParameterBlock.cs" />
     <Compile Include="FileSystems\Dos30BiosParameterBlock.cs" />
     <Compile Include="FileSystems\Dos32BiosParameterBlock.cs" />
@@ -177,7 +179,7 @@
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
     <Compile Include="hddTable.cs" />
-    <Compile Include="ImageFormats\IMG.cs" />
+    <Compile Include="ImageFormats\RawSector.cs" />
     <Compile Include="ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -246,6 +248,33 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Icons\boot_sector_16.png" />
+    <Content Include="Icons\close_16.png" />
+    <Content Include="Icons\close_alt_16.png" />
+    <Content Include="Icons\delete_16.png" />
+    <Content Include="Icons\disks_16.png" />
+    <Content Include="Icons\disk_16.png" />
+    <Content Include="Icons\edit_16.png" />
+    <Content Include="Icons\extract_16.png" />
+    <Content Include="Icons\find_folder_16.png" />
+    <Content Include="Icons\folder_closed_16.png" />
+    <Content Include="Icons\folder_open_16.png" />
+    <Content Include="Icons\info_16.png" />
+    <Content Include="Icons\inject_file_16.png" />
+    <Content Include="Icons\inject_folder_16.png" />
+    <Content Include="Icons\label_16.png" />
+    <Content Include="Icons\move_16.png" />
+    <Content Include="Icons\new_16.png" />
+    <Content Include="Icons\new_32.png" />
+    <Content Include="Icons\new_folder_16.png" />
+    <Content Include="Icons\options_16.png" />
+    <Content Include="Icons\options_alt_16.png" />
+    <Content Include="Icons\properties_16.png" />
+    <Content Include="Icons\refresh_16.png" />
+    <Content Include="Icons\replace_folder_16.png" />
+    <Content Include="Icons\save_16.png" />
+    <Content Include="Icons\sort_16.png" />
+    <Content Include="Icons\up_folder_16.png" />
     <Content Include="totalimage.ico" />
   </ItemGroup>
   <ItemGroup />

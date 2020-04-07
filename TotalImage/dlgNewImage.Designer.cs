@@ -197,8 +197,6 @@
             this.lstFloppyBPB.FormattingEnabled = true;
             this.lstFloppyBPB.Items.AddRange(new object[] {
             "DOS 2.0",
-            "DOS 3.0",
-            "DOS 3.2",
             "DOS 3.31",
             "DOS 3.4",
             "DOS 4.0+"});
