@@ -183,6 +183,8 @@ namespace TotalImage.FileSystems
                     }
                     
                 }
+
+                main.lstDirectories.Sort();
             }
         }
     }
