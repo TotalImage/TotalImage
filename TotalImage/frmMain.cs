@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -587,6 +588,23 @@ namespace TotalImage
             node.Tag = entry;
             lstDirectories.Nodes[0].Nodes.Add(node);
             lstDirectories.Sort();
+        }
+
+        public void AddToDir(FatDirEntry parent, FatDirEntry child)
+        {
+            //THIS NEEDS TO FIND THE PARENT NODE AND ADD THE CHILD TO IT...
+            /*foreach (TreeNode node in lstDirectories.Nodes[0].Nodes)
+            {
+                if (node.Tag != null && node.Tag.Equals(parent))
+                {
+                    string filename = Encoding.ASCII.GetString(child.filename).TrimEnd(' ');
+                    TreeNode newNode = new TreeNode(filename);
+                    newNode.Tag = child;
+                    node.Nodes.Add(newNode);
+                    lstDirectories.Sort();
+                    return;
+                }
+            }*/
         }
 
         //Adds a new item to the file list

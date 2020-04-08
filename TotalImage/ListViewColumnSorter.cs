@@ -26,7 +26,7 @@
             listviewX = (ListViewItem)x;
             listviewY = (ListViewItem)y;
 
-            //This is needed for proper sorting of different types
+            //This is needed for proper sorting of different types and keeping directories at the top
             if (main.lstFiles.Columns[SortColumn].Text == "Modified")
             {
                 FatDirEntry entryX = (FatDirEntry)listviewX.Tag;
@@ -98,7 +98,6 @@
         }
 
         public int SortColumn { set; get; }
-
         public SortOrder Order { set; get; }
     }
 }
