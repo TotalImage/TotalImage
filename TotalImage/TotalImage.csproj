@@ -171,6 +171,7 @@
     <Compile Include="FileSystems\Dos34BiosParameterBlock.cs" />
     <Compile Include="FileSystems\Dos40BiosParameterBlock.cs" />
     <Compile Include="FileSystems\Fat12.cs" />
+    <Compile Include="FileSystems\FatDirEntry.cs" />
     <Compile Include="floppyTable.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>

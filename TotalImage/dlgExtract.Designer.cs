@@ -36,6 +36,7 @@
             this.rbnIgnoreFolders = new System.Windows.Forms.RadioButton();
             this.rbnExtractSameFolder = new System.Windows.Forms.RadioButton();
             this.rbnPreserveDirs = new System.Windows.Forms.RadioButton();
+            this.btnBrowse = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnOK
@@ -74,7 +75,7 @@
             // 
             this.txtPath.Location = new System.Drawing.Point(12, 36);
             this.txtPath.Name = "txtPath";
-            this.txtPath.Size = new System.Drawing.Size(612, 23);
+            this.txtPath.Size = new System.Drawing.Size(529, 23);
             this.txtPath.TabIndex = 11;
             // 
             // cbxOpenFolder
@@ -125,6 +126,15 @@
             this.rbnPreserveDirs.Text = "Extract by preserving the full directory structure";
             this.rbnPreserveDirs.UseVisualStyleBackColor = true;
             // 
+            // btnBrowse
+            // 
+            this.btnBrowse.Location = new System.Drawing.Point(547, 35);
+            this.btnBrowse.Name = "btnBrowse";
+            this.btnBrowse.Size = new System.Drawing.Size(80, 26);
+            this.btnBrowse.TabIndex = 16;
+            this.btnBrowse.Text = "Browse...";
+            this.btnBrowse.UseVisualStyleBackColor = true;
+            // 
             // dlgExtract
             // 
             this.AcceptButton = this.btnOK;
@@ -132,6 +142,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(639, 176);
+            this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.rbnPreserveDirs);
             this.Controls.Add(this.rbnExtractSameFolder);
             this.Controls.Add(this.rbnIgnoreFolders);
@@ -164,5 +175,6 @@
         private System.Windows.Forms.RadioButton rbnIgnoreFolders;
         private System.Windows.Forms.RadioButton rbnExtractSameFolder;
         private System.Windows.Forms.RadioButton rbnPreserveDirs;
+        private System.Windows.Forms.Button btnBrowse;
     }
 }

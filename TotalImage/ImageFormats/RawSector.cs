@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using TotalImage.FileSystems;
 
 namespace TotalImage.ImageFormats
@@ -7,6 +8,7 @@ namespace TotalImage.ImageFormats
     public class RawSector
     {
         private byte[] imageBytes;
+        private FileStream fs;
       
         //Returns byte array of the image
         public byte[] GetImageBytes()
@@ -23,18 +25,27 @@ namespace TotalImage.ImageFormats
             fat12.Format(imageBytes, bpb, oemID, tracks);
         }
 
-        //Create a new image based on custom parameters
+        //Creates a new image based on custom parameters
         public void CreateCustomImage()
         {
             /* Do custom parameter stuff here */
         }
 
-        //Load an image file
+        //Loads an image file
         public void LoadImage(string path)
         {
+            //For larger images (HDD etc.) we probably won't read the entire file at once, but use the stream instead...
             imageBytes = File.ReadAllBytes(path);
+            fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             Fat12 fat12 = new Fat12();
             fat12.ReadRootDir(imageBytes);
+        }
+
+        //Closes and unlocks the file
+        public void CloseImage()
+        {
+            fs.Flush();
+            fs.Close();
         }
     }
 }

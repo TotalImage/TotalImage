@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
+using TotalImage.FileSystems;
 using TotalImage.ImageFormats;
 
 namespace TotalImage
@@ -8,6 +10,8 @@ namespace TotalImage
     public partial class frmMain : Form
     {
         public string filename = "";
+        public string path = "";
+        public bool unsavedChanges = false;
         public RawSector image;
 
         public frmMain()
@@ -35,21 +39,25 @@ namespace TotalImage
 
         private void saveAsToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            SaveImage();
+            SaveNewImage();
         }
 
         private void saveToolStripButton_Click(object sender, EventArgs e)
         {
-            /*if(unsaved changes in existing file)
-              {
-                 SaveChangesToExistingFile();
-              }
-              else //Unsaved changes in new file
-            */
-            SaveImage();
+            if(unsavedChanges)
+            {
+                if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
+                {
+                    SaveNewImage();
+                }
+                else
+                {
+                    SaveChanges();
+                }
+            }
         }
 
-        private void SaveImage()
+        private void SaveNewImage()
         {
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.AutoUpgradeEnabled = true;
@@ -57,11 +65,11 @@ namespace TotalImage
             sfd.OverwritePrompt = true;
             sfd.Title = "Save image...";
             sfd.DefaultExt = "img";
-            sfd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm|" +
-                "WinImage compressed image (*.imz)|*.imz|" +
+            sfd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
+                /*"WinImage compressed image (*.imz)|*.imz|" +
                 "DiskDupe image (*.ddi)|*.ddi|" +
                 "Anex86 floppy disk image (*.fdi)|*.fdi|" +
-                "86Box surface image (*.86f)|*.86f|" +
+                "86Box surface image (*.86f)|*.86f|" +*/
                 "All files (*.*)|*.*";
 
             if (sfd.ShowDialog() == DialogResult.OK)
@@ -193,8 +201,8 @@ namespace TotalImage
             ofd.CheckPathExists = true;
             ofd.Multiselect = false;
             //ofd.ShowReadOnly = true; //We probably want this, but it degrades the dialog appearance to XP dialog... Needs a workaround
-            ofd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf|" +
-                "WinImage compressed image (*.imz)|*.imz|" +
+            ofd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
+               /* "WinImage compressed image (*.imz)|*.imz|" +
                 "DiskDupe image (*.ddi)|*.ddi|" +
                 "IBM SaveDiskF image (*.dsk)|*.dsk|" +
                 "TeleDisk image (*.td0)|*.td0|" +
@@ -205,16 +213,26 @@ namespace TotalImage
                 "Anex86 floppy disk image (*.fdi)|*.fdi|" +
                 "Anex86 hard disk image (*.hdi)|*.hdi|" +
                 "86Box surface image (*.86f)|*.86f|" +
-                "MFM surface image (*.mfm)|*.mfm|" +
+                "MFM surface image (*.mfm)|*.mfm|" +*/
                 "All files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                /* Do stuff */
                 filename = ofd.SafeFileName;
+                path = ofd.FileName;
                 Text = filename + " - TotalImage";
+                lstDirectories.Nodes.Clear();
+                lstFiles.Items.Clear();
+
+                TreeNode root = new TreeNode(filename);
+                root.ContextMenuStrip = cmsDirTree;
+                root.ImageIndex = 0;
+                lstDirectories.Nodes.Add(root);        
                 image = new RawSector();
-                image.LoadImage(ofd.FileName);
+                image.LoadImage(path);
+                lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                lblStatusCapacity.Text = GetImageCapacity() + " KiB";
+                EnableUI();
             }
         }
 
@@ -324,12 +342,22 @@ namespace TotalImage
                 deleteToolStripMenuItem.Enabled = false;
                 extractToolStripMenuItem.Enabled = false;
                 propertiesToolStripMenuItem.Enabled = false;
+                renameToolStripMenuItem.Enabled = false;
+
+                deleteToolStripButton.Enabled = false;
+                extractToolStripButton.Enabled = false;
+                propertiesToolStripButton.Enabled = false;
             }
             else
             {
                 deleteToolStripMenuItem.Enabled = true;
                 extractToolStripMenuItem.Enabled = true;
                 propertiesToolStripMenuItem.Enabled = true;
+                renameToolStripMenuItem.Enabled = true;
+
+                deleteToolStripButton.Enabled = true;
+                extractToolStripButton.Enabled = true;
+                propertiesToolStripButton.Enabled = true;
             }
         }
 
@@ -487,9 +515,17 @@ namespace TotalImage
              *          //Save changes
              *      }
              * }
-             * CloseImage();
+             *
              */
             Text = "TotalImage";
+
+            filename = "";
+            path = "";
+            image.CloseImage();
+            image = null;
+            lstDirectories.Nodes.Clear();
+            lstFiles.Items.Clear();
+            DisableUI();
         }
 
         private void toolStripButton11_Click(object sender, EventArgs e)
@@ -502,10 +538,16 @@ namespace TotalImage
             SaveChanges();
         }
 
+        //Save the changes made to the image since the last save or since it was opened
         private void SaveChanges()
         {
-            /* Save the changes made to the image since the last save (or since it was opened) */
+            byte[] imageBytes = image.GetImageBytes();
+            File.WriteAllBytes(path, imageBytes);
+
+            saveToolStripButton.Enabled = false;
+            saveToolStripMenuItem.Enabled = false;
             Text = filename + " - TotalImage";
+            unsavedChanges = false;
         }
 
         private void injectAFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -522,12 +564,116 @@ namespace TotalImage
             if(fbd.ShowDialog() == DialogResult.OK)
             {
                 /* Inject the entire selected folder into the image */
+                unsavedChanges = true;
             }
         }
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
+        }
 
+        //Adds a new node to the root directory in the directory tree
+        public void AddToRootDir(FatDirEntry entry)
+        {
+            string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
+            TreeNode node = new TreeNode(filename);
+            lstDirectories.Nodes[0].Nodes.Add(node);
+            lstDirectories.Sort();
+        }
+
+        //Adds a new item to the file list
+        public void AddToFileList(FatDirEntry entry)
+        {
+            string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
+            ushort year = (ushort)(((entry.modifiedDate & 0xFE00) >> 9) + 1980);
+            byte month = (byte)((entry.modifiedDate & 0x1E0) >> 5);
+            byte day = (byte)(entry.modifiedDate & 0x1F);
+            byte hours = (byte)((entry.modifiedTime & 0xF800) >> 11);
+            byte minutes = (byte)((entry.modifiedTime & 0x7E0) >> 5);
+            byte seconds = (byte)((entry.modifiedTime & 0x1F) * 2); //Resolution for seconds is 2s
+            DateTime date = new DateTime(year, month, day, hours, minutes, seconds);
+            ListViewItem lvi = new ListViewItem(filename);
+            if(Convert.ToBoolean(entry.attribute & 0x10))
+            {
+                lvi.SubItems.Add("Directory");
+                lvi.SubItems.Add("");
+                lvi.ImageIndex = 0;
+            }
+            else
+            {
+                string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
+                lvi.Text += "." + extension;
+                lvi.SubItems.Add("." + extension);
+                lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
+                lvi.ImageIndex = 2;
+            }
+            lvi.SubItems.Add(date.ToString());
+
+            lstFiles.Items.Add(lvi);
+            lstFiles.Sort();
+        }
+
+        //Calculates the image capacity
+        private uint GetImageCapacity()
+        {
+            return 0;
+        }
+
+        //Enables various UI elements after an image is loaded
+        private void EnableUI()
+        {
+            closeToolStripButton.Enabled = true;
+            injectToolStripButton.Enabled = true;
+            newFolderToolStripButton.Enabled = true;
+            labelToolStripMenuButton.Enabled = true;
+            bootsectToolStripButton.Enabled = true;
+            infoToolStripButton.Enabled = true;
+
+            foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
+            {
+                if (item.CanSelect)
+                {
+                    item.Enabled = true;
+                }
+            }
+
+            //Not available for floppies - once there's HDD support, this code needs to be adjusted accordingly...
+            managePartitionsToolStripMenuItem.Enabled = false;
+            selectPartitionToolStripMenuItem.Enabled = false;
+            managePartitionsToolStripButton.Enabled = false;
+            selectPartitionToolStripButton.Enabled = false;
+        }
+
+        //Disables various UI elements after an image is loaded
+        private void DisableUI()
+        {
+            closeToolStripButton.Enabled = false;
+            injectToolStripButton.Enabled = false;
+            extractToolStripButton.Enabled = false;
+            deleteToolStripButton.Enabled = false;
+            propertiesToolStripButton.Enabled = false;
+            newFolderToolStripButton.Enabled = false;
+            labelToolStripMenuButton.Enabled = false;
+            bootsectToolStripButton.Enabled = false;
+            infoToolStripButton.Enabled = false;
+            saveToolStripButton.Enabled = false;
+            managePartitionsToolStripButton.Enabled = false;
+            selectPartitionToolStripButton.Enabled = false;
+
+            managePartitionsToolStripMenuItem.Enabled = false;
+            selectPartitionToolStripMenuItem.Enabled = false;
+            saveAsToolStripMenuItem.Enabled = false;
+            saveToolStripMenuItem.Enabled = false;
+            closeImageToolStripMenuItem.Enabled = false;
+
+            foreach(ToolStripItem item in editToolStripMenuItem.DropDownItems)
+            {
+                if (item.CanSelect)
+                {
+                    item.Enabled = false;
+                }
+            }
         }
     }
 }

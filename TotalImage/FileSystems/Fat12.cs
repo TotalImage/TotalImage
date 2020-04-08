@@ -159,32 +159,57 @@ namespace TotalImage.FileSystems
             using (var stream = new MemoryStream(imageBytes, writable: false))
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
             {
-                stream.Seek(rootDirOffset, SeekOrigin.Begin); // BPB offset
+                stream.Seek(rootDirOffset, SeekOrigin.Begin);
 
-                //Read all root entries and add them to the appropriate control
+                //Read the entries top to bottom
                 for (int i = 0; i < bpb.RootDirectoryEntries; i++)
                 {
-                    Console.WriteLine("Entry " + i + " at " + (rootDirOffset + (i * 0x20)));
                     stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
-                    byte[] filename = reader.ReadBytes(8);
-                    stream.Seek(0x03, SeekOrigin.Current);
-                    byte attribute = reader.ReadByte();
-
-                    Console.WriteLine("Filename: " + Encoding.ASCII.GetString(filename));
-                    Console.WriteLine("Attribute: " + attribute);
-
-                    if(filename[0] != 0xE5 && filename[0] != 0x00)
+                    if (reader.ReadByte() == 0x00)
                     {
-                        if (Convert.ToBoolean(attribute & 0x10))
-                        {
-                            main.lstDirectories.Nodes[0].Nodes.Add(Encoding.ASCII.GetString(filename));
-                        }
-                        main.lstFiles.Items.Add(Encoding.ASCII.GetString(filename));
+                        break; //Empty entry, no entries after this one
                     }
-                    
-                }
 
-                main.lstDirectories.Sort();
+                    stream.Seek(-0x01, SeekOrigin.Current);
+                    FatDirEntry entry = new FatDirEntry
+                    {
+                        filename = reader.ReadBytes(8),
+                        extension = reader.ReadBytes(3),
+                        attribute = reader.ReadByte(),
+                        caseByte = reader.ReadByte(),
+                        creationTimeMs = reader.ReadByte(),
+                        creationTime = reader.ReadUInt16(),
+                        creationDate = reader.ReadUInt16(),
+                        lastAccessDate = reader.ReadUInt16(),
+                        FAT3232StartCluster = reader.ReadUInt16(),
+                        modifiedTime = reader.ReadUInt16(),
+                        modifiedDate = reader.ReadUInt16(),
+                        startCluster = reader.ReadUInt16(),
+                        fileSize = reader.ReadUInt32()
+                    };
+
+                    //Ignore deleted entries for now
+                    if(entry.filename[0] != 0xE5)
+                    {
+                        //Skip hidden, LFN and volume label entries for now
+                        if(Convert.ToBoolean(entry.attribute & 0x02) || entry.attribute == 0x0F || Convert.ToBoolean(entry.attribute & 0x08))
+                        {
+                            continue;
+                        }
+
+                        //Folder entry
+                        if(Convert.ToBoolean(entry.attribute & 0x10))
+                        {
+                            main.AddToRootDir(entry);
+                            main.AddToFileList(entry);
+                        }
+                        //File entry
+                        else if (!Convert.ToBoolean(entry.attribute & 0x10))
+                        {
+                            main.AddToFileList(entry);
+                        }
+                    }
+                }
             }
         }
     }
