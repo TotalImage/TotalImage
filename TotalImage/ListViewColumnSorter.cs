@@ -1,82 +1,104 @@
-﻿using System.Collections;
-using System.Windows.Forms;
-
-namespace TotalImage
+﻿namespace TotalImage
 {
+    using System;
     using System.Collections;
     using System.Windows.Forms;
+    using TotalImage.FileSystems;
 
     public class ListViewColumnSorter : IComparer
     {
-        private int ColumnToSort;
-        private SortOrder OrderOfSort;
         private CaseInsensitiveComparer ObjectCompare;
 
         public ListViewColumnSorter()
         {
-            // Initialize the column to '0'
-            ColumnToSort = 0;
-
-            // Initialize the sort order to 'none'
-            OrderOfSort = SortOrder.None;
-
-            // Initialize the CaseInsensitiveComparer object
+            SortColumn = 0;
+            Order = SortOrder.None;
             ObjectCompare = new CaseInsensitiveComparer();
         }
 
         public int Compare(object x, object y)
         {
-            int compareResult;
+            frmMain main = (frmMain)Application.OpenForms["frmMain"];
+
+            int compareResult = 0;
             ListViewItem listviewX, listviewY;
 
-            // Cast the objects to be compared to ListViewItem objects
             listviewX = (ListViewItem)x;
             listviewY = (ListViewItem)y;
 
-            // Compare the two items
-            compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text, listviewY.SubItems[ColumnToSort].Text);
+            //This is needed for proper sorting of different types
+            if (main.lstFiles.Columns[SortColumn].Text == "Modified")
+            {
+                FatDirEntry entryX = (FatDirEntry)listviewX.Tag;
+                FatDirEntry entryY = (FatDirEntry)listviewY.Tag;
+                if (Convert.ToBoolean(entryX.attribute & 0x10) && !Convert.ToBoolean(entryY.attribute & 0x10))
+                {
+                    return -1;
+                }
+                else if (!Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
+                {
+                    return 1;
+                }
 
-            // Calculate correct return value based on object comparison
-            if (OrderOfSort == SortOrder.Ascending)
-            {
-                // Ascending sort is selected, return normal result of compare operation
-                return compareResult;
+                DateTime parsedDateX = DateTime.Parse(listviewX.SubItems[SortColumn].Text);
+                DateTime parsedDateY = DateTime.Parse(listviewY.SubItems[SortColumn].Text);
+
+                compareResult = ObjectCompare.Compare(parsedDateX, parsedDateY);
             }
-            else if (OrderOfSort == SortOrder.Descending)
+            else if (main.lstFiles.Columns[SortColumn].Text == "Size")
             {
-                // Descending sort is selected, return negative result of compare operation
-                return (-compareResult);
+                FatDirEntry entryX = (FatDirEntry)listviewX.Tag;
+                FatDirEntry entryY = (FatDirEntry)listviewY.Tag;
+                if (Convert.ToBoolean(entryX.attribute & 0x10) && !Convert.ToBoolean(entryY.attribute & 0x10))
+                {
+                    return -1;
+                }
+                else if (!Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
+                {
+                    return 1;
+                }
+                else if(Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
+                {
+                    return 0;
+                }
+                int sizeX = int.Parse(listviewX.SubItems[SortColumn].Text.TrimEnd(' ', 'B').Replace(".", "").Replace(",", ""));
+                int sizeY = int.Parse(listviewY.SubItems[SortColumn].Text.TrimEnd(' ', 'B').Replace(".", "").Replace(",", ""));
+                compareResult = ObjectCompare.Compare(sizeX, sizeY);
+
             }
             else
             {
-                // Return '0' to indicate they are equal
+                FatDirEntry entryX = (FatDirEntry)listviewX.Tag;
+                FatDirEntry entryY = (FatDirEntry)listviewY.Tag;
+                if (Convert.ToBoolean(entryX.attribute & 0x10) && !Convert.ToBoolean(entryY.attribute & 0x10))
+                {
+                    return -1;
+                }
+                else if (!Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
+                {
+                    return 1;
+                }
+
+                compareResult = ObjectCompare.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
+
+            }
+
+            if (Order == SortOrder.Ascending)
+            {
+                return compareResult;
+            }
+            else if (Order == SortOrder.Descending)
+            {
+                return -compareResult;
+            }
+            else
+            {
                 return 0;
             }
         }
 
-        public int SortColumn
-        {
-            set
-            {
-                ColumnToSort = value;
-            }
-            get
-            {
-                return ColumnToSort;
-            }
-        }
+        public int SortColumn { set; get; }
 
-        public SortOrder Order
-        {
-            set
-            {
-                OrderOfSort = value;
-            }
-            get
-            {
-                return OrderOfSort;
-            }
-        }
-
+        public SortOrder Order { set; get; }
     }
 }

@@ -9,29 +9,29 @@ namespace TotalImage
         [StructLayout(LayoutKind.Sequential)]
         public struct LVCOLUMN
         {
-            public Int32 mask;
-            public Int32 cx;
+            public int mask;
+            public int cx;
             [MarshalAs(UnmanagedType.LPTStr)]
             public string pszText;
             public IntPtr hbm;
-            public Int32 cchTextMax;
-            public Int32 fmt;
-            public Int32 iSubItem;
-            public Int32 iImage;
-            public Int32 iOrder;
+            public int cchTextMax;
+            public int fmt;
+            public int iSubItem;
+            public int iImage;
+            public int iOrder;
         }
 
-        const Int32 HDI_FORMAT = 0x0004;
-        const Int32 HDF_LEFT = 0x0000;
-        const Int32 HDF_BITMAP_ON_RIGHT = 0x1000;
-        const Int32 HDF_SORTUP = 0x0400;
-        const Int32 HDF_SORTDOWN = 0x0200;
+        const int HDI_FORMAT = 0x0004;
+        const int HDF_LEFT = 0x0000;
+        const int HDF_BITMAP_ON_RIGHT = 0x1000;
+        const int HDF_SORTUP = 0x0400;
+        const int HDF_SORTDOWN = 0x0200;
 
-        const Int32 LVM_FIRST = 0x1000;         // List messages
-        const Int32 LVM_GETHEADER = LVM_FIRST + 31;
-        const Int32 HDM_FIRST = 0x1200;         // Header messages
-        const Int32 HDM_GETITEM = HDM_FIRST + 11;
-        const Int32 HDM_SETITEM = HDM_FIRST + 12;
+        const int LVM_FIRST = 0x1000;
+        const int LVM_GETHEADER = LVM_FIRST + 31;
+        const int HDM_FIRST = 0x1200;
+        const int HDM_GETITEM = HDM_FIRST + 11;
+        const int HDM_SETITEM = HDM_FIRST + 12;
 
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
@@ -87,8 +87,8 @@ namespace TotalImage
         protected override void CreateHandle()
         {
             base.CreateHandle();
-            SetWindowTheme(this.Handle, "explorer", null); //Enables Explorer-like appearance
-            SendMessage(this.Handle, 0x1000 + 54, 0x00010000, 0x00010000); //Enables semi-transparent selection rectangle
+            SetWindowTheme(Handle, "explorer", null); //Enables Explorer-like appearance
+            SendMessage(Handle, 0x1000 + 54, 0x00010000, 0x00010000); //Enables semi-transparent selection rectangle
         }
     }
 }
