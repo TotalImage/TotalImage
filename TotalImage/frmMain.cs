@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
@@ -13,6 +15,7 @@ namespace TotalImage
         public string path = "";
         public bool unsavedChanges = false;
         public RawSector image;
+        private ListViewColumnSorter sorter;
 
         public frmMain()
         {
@@ -570,6 +573,9 @@ namespace TotalImage
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            sorter = new ListViewColumnSorter();
+            lstFiles.ListViewItemSorter = sorter;
+
             DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
         }
 
@@ -578,6 +584,7 @@ namespace TotalImage
         {
             string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
             TreeNode node = new TreeNode(filename);
+            node.Tag = entry;
             lstDirectories.Nodes[0].Nodes.Add(node);
             lstDirectories.Sort();
         }
@@ -609,8 +616,10 @@ namespace TotalImage
                 lvi.ImageIndex = 2;
             }
             lvi.SubItems.Add(date.ToString());
-
+            lvi.Tag = entry;
             lstFiles.Items.Add(lvi);
+
+            //SortFileList();
             lstFiles.Sort();
         }
 
@@ -674,6 +683,32 @@ namespace TotalImage
                     item.Enabled = false;
                 }
             }
+        }
+
+        private void lstFiles_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (e.Column == sorter.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (sorter.Order == SortOrder.Ascending)
+                {
+                    sorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    sorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                sorter.SortColumn = e.Column;
+                sorter.Order = SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            lstFiles.Sort();
+            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
         }
     }
 }

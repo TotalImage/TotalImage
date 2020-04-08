@@ -152,7 +152,7 @@ namespace TotalImage
                             ((BiosParameterBlock40)bpb).VolumeSerialNumber = uint.Parse(txtFloppySerial.Text, System.Globalization.NumberStyles.HexNumber);
                                 
                             //};
-                            //Console.WriteLine(bpb.TLS);
+
                             string oemID = txtFloppyOEMID.Text.ToUpper();
                             main.image.CreateImage(bpb, oemID, floppyTable.fdt[i][5]);
                         }

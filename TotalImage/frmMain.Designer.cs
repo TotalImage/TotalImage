@@ -1079,6 +1079,7 @@
             // 
             // lstFiles
             // 
+            this.lstFiles.AllowColumnReorder = true;
             this.lstFiles.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lstFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.clmName,
@@ -1099,6 +1100,7 @@
             this.lstFiles.TabIndex = 0;
             this.lstFiles.UseCompatibleStateImageBehavior = false;
             this.lstFiles.View = System.Windows.Forms.View.Details;
+            this.lstFiles.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstFiles_ColumnClick);
             this.lstFiles.SelectedIndexChanged += new System.EventHandler(this.lstFiles_SelectedIndexChanged);
             // 
             // clmName
