@@ -116,7 +116,7 @@ namespace TotalImage
                             {
                                 bpb40.BpbVersion = BiosParameterBlockVersion.Dos40;
                                 bpb40.FileSystemType = txtFloppyFSType.Text.ToUpper();
-                                bpb40.VolumeLabel = txtFloppyFSType.Text.ToUpper();
+                                bpb40.VolumeLabel = txtFloppyLabel.Text.ToUpper();
                             }
                         }
 
