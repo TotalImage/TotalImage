@@ -30,7 +30,7 @@
         {
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.txtName = new System.Windows.Forms.TextBox();
+            this.txtLabel = new System.Windows.Forms.TextBox();
             this.lblName = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -44,6 +44,7 @@
             this.btnOK.TabIndex = 7;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // btnCancel
             // 
@@ -57,22 +58,22 @@
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
-            // txtName
+            // txtLabel
             // 
-            this.txtName.Location = new System.Drawing.Point(15, 36);
-            this.txtName.MaxLength = 11;
-            this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(245, 23);
-            this.txtName.TabIndex = 5;
+            this.txtLabel.Location = new System.Drawing.Point(15, 36);
+            this.txtLabel.MaxLength = 11;
+            this.txtLabel.Name = "txtLabel";
+            this.txtLabel.Size = new System.Drawing.Size(245, 23);
+            this.txtLabel.TabIndex = 5;
             // 
             // lblName
             // 
             this.lblName.AutoSize = true;
             this.lblName.Location = new System.Drawing.Point(12, 9);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(248, 15);
+            this.lblName.Size = new System.Drawing.Size(253, 15);
             this.lblName.TabIndex = 4;
-            this.lblName.Text = "Enter a new volume label (11 characters max):";
+            this.lblName.Text = "Enter a new volume label (up to 11 characters):";
             // 
             // dlgChangeVolLabel
             // 
@@ -83,7 +84,7 @@
             this.ClientSize = new System.Drawing.Size(272, 111);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.txtName);
+            this.Controls.Add(this.txtLabel);
             this.Controls.Add(this.lblName);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -103,7 +104,7 @@
 
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.TextBox txtName;
+        private System.Windows.Forms.TextBox txtLabel;
         private System.Windows.Forms.Label lblName;
     }
 }

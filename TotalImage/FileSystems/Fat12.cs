@@ -221,6 +221,8 @@ namespace TotalImage.FileSystems
                     }
                 }
             }
+
+            main.SortDirTree();
         }
 
         //Reads the subdirectory entries and adds subdirectories to the treeview
@@ -303,6 +305,8 @@ namespace TotalImage.FileSystems
                     }
                 }
                 while (cluster <= 0x0FEF);
+
+                main.SortDirTree();
             }
         }
 
@@ -433,6 +437,83 @@ namespace TotalImage.FileSystems
 
                         main.AddToFileList(entry);
                     }
+                }
+            }
+        }
+
+        /* Changes the volume label
+         * 
+         * If BPB version <= 3.31, only the root dir label is changed
+         * If BPB version >= 3.40, both the root dir and BPB label are changed
+         */
+        public void ChangeVolLabel(BiosParameterBlock bpb, string label)
+        {
+            uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
+            bool rootDirFull = false;
+
+            using (var stream = new MemoryStream(imageBytes, writable: true))
+            using (var reader = new BinaryReader(stream, Encoding.ASCII))
+            using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+            {
+                stream.Seek(rootDirOffset, SeekOrigin.Begin);
+
+                for (int i = 0; i < bpb.RootDirectoryEntries; i++)
+                {
+                    stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
+                    if (reader.ReadByte() == 0x00)
+                    {
+                        stream.Seek(-0x01, SeekOrigin.Current);
+                        //Root dir is empty, so let's add the first entry
+                        writer.Write(label.ToCharArray());
+                        writer.Write((byte)0x08); //Volume label attribute
+
+                        break;
+                    }
+
+                    /*Directory not empty, we need to find the volume label, as it may not be the first entry
+                     *...or it may not exist at all
+                     */
+                    stream.Seek(-0x01, SeekOrigin.Current);
+                    FatDirEntry entry = new FatDirEntry
+                    {
+                        filename = reader.ReadBytes(8),
+                        extension = reader.ReadBytes(3),
+                        attribute = reader.ReadByte(),
+                        caseByte = reader.ReadByte(),
+                        creationTimeMs = reader.ReadByte(),
+                        creationTime = reader.ReadUInt16(),
+                        creationDate = reader.ReadUInt16(),
+                        lastAccessDate = reader.ReadUInt16(),
+                        FAT3232StartCluster = reader.ReadUInt16(),
+                        modifiedTime = reader.ReadUInt16(),
+                        modifiedDate = reader.ReadUInt16(),
+                        startCluster = reader.ReadUInt16(),
+                        fileSize = reader.ReadUInt32()
+                    };
+
+                    if(entry.attribute == 0x08)
+                    {
+                        stream.Seek(-0x20, SeekOrigin.Current);
+                        writer.Write(label.ToCharArray());
+                        writer.Write(0x08);
+                        break;
+                    }
+
+                    if(i == bpb.RootDirectoryEntries - 1)
+                    {
+                        rootDirFull = true;
+                    }
+                }
+
+                if (bpb is BiosParameterBlock40 bpb40 && bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+                {
+                    stream.Seek(0x2B, SeekOrigin.Begin);
+                    writer.Write(label.ToCharArray());
+                }
+
+                if (rootDirFull)
+                {
+                    throw new Exception("Root directory is full, volume label could not be written!");
                 }
             }
         }

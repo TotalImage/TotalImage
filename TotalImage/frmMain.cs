@@ -646,7 +646,17 @@ namespace TotalImage
             TreeNode node = new TreeNode(filename);
             node.Tag = entry;
             lstDirectories.Nodes[0].Nodes.Add(node);
+            //lstDirectories.Sort();
+        }
+
+        public void SortDirTree()
+        {
             lstDirectories.Sort();
+        }
+
+        public void SortFileList()
+        {
+
         }
 
         //Finds the node with the specified entry
@@ -686,7 +696,7 @@ namespace TotalImage
                 /* throw some error because the parent node wasn't found for some reason */
             }
 
-            lstDirectories.Sort();
+            //lstDirectories.Sort();
         }
 
         //Adds a new item to the file list
@@ -730,7 +740,6 @@ namespace TotalImage
             }
             lvi.Tag = entry;
             lstFiles.Items.Add(lvi);
-            lstFiles.Sort();
         }
 
         //Calculates the image capacity

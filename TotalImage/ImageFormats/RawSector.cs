@@ -39,7 +39,7 @@ namespace TotalImage.ImageFormats
         {
             //For larger images (HDD etc.) we probably won't read the entire file at once, but use the stream instead...
             imageBytes = File.ReadAllBytes(path);
-            fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            //fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             Fat12 fat12 = new Fat12(imageBytes);
             bpb = fat12.Parse();
             fat12.ReadRootDir(bpb);
@@ -66,6 +66,13 @@ namespace TotalImage.ImageFormats
         {
             Fat12 fat12 = new Fat12(imageBytes);
             fat12.ListRootDir(bpb);
+        }
+
+        //Changes the volume label
+        public void ChangeVolumeLabel(string label)
+        {
+            Fat12 fat12 = new Fat12(imageBytes);
+            fat12.ChangeVolLabel(bpb, label);
         }
     }
 }
