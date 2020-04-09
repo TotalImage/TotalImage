@@ -123,7 +123,10 @@ namespace TotalImage.FileSystems
                         //DOS 4.0 adds volume label and FS type as well
                         if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
                         {
-                            writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
+                            if (string.IsNullOrEmpty(bpb40.VolumeLabel))
+                                writer.Write("NO NAME    ".ToCharArray());
+                            else
+                                writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
                             writer.Write(bpb40.FileSystemType.PadRight(8, ' ').ToCharArray());
                         }
                     }
@@ -155,7 +158,6 @@ namespace TotalImage.FileSystems
                         writer.Write((byte)0x08); //Volume label attribute
                     }
                 }
-                
             }
         }
 
