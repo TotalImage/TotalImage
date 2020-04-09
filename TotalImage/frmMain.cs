@@ -712,7 +712,7 @@ namespace TotalImage
                 else
                 {
                     string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
-                    lvi.Text += "." + extension;
+                    if(!string.IsNullOrWhiteSpace(extension)) lvi.Text += "." + extension;
                     lvi.SubItems.Add("." + extension);
                     lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
                     lvi.ImageIndex = 2;
