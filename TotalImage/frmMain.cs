@@ -314,7 +314,12 @@ namespace TotalImage
 
         private void totalImageOnGitHubToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/TotalImage/TotalImage");
+            var process = new System.Diagnostics.ProcessStartInfo()
+            {
+                FileName = "https://github.com/TotalImage/TotalImage",
+                UseShellExecute = true
+            };
+            System.Diagnostics.Process.Start(process);
         }
 
         private void menuBarToolStripMenuItem1_Click(object sender, EventArgs e)
