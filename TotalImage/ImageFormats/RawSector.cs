@@ -50,5 +50,19 @@ namespace TotalImage.ImageFormats
             fs.Flush();
             fs.Close();
         }
+
+        //Lists the contents of the specified directory
+        public void ListDirectory(FatDirEntry entry)
+        {
+            Fat12 fat12 = new Fat12(imageBytes);
+            fat12.ListDir(bpb, entry);
+        }
+
+        //Lists the contents of the root directory
+        public void ListRootDirectory()
+        {
+            Fat12 fat12 = new Fat12(imageBytes);
+            fat12.ListRootDir(bpb);
+        }
     }
 }

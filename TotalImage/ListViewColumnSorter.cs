@@ -20,22 +20,31 @@
         {
             frmMain main = (frmMain)Application.OpenForms["frmMain"];
 
-            int compareResult = 0;
+            int compareResult;
             ListViewItem listviewX, listviewY;
 
             listviewX = (ListViewItem)x;
             listviewY = (ListViewItem)y;
 
+            FatDirEntry entryX = (FatDirEntry)listviewX.Tag;
+            FatDirEntry entryY = (FatDirEntry)listviewY.Tag;
+            if (Convert.ToBoolean(entryX.attribute & 0x10) && !Convert.ToBoolean(entryY.attribute & 0x10))
+            {
+                return -1;
+            }
+            else if (!Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
+            {
+                return 1;
+            }
+
             //This is needed for proper sorting of different types and keeping directories at the top
             if (main.lstFiles.Columns[SortColumn].Text == "Modified")
             {
-                FatDirEntry entryX = (FatDirEntry)listviewX.Tag;
-                FatDirEntry entryY = (FatDirEntry)listviewY.Tag;
-                if (Convert.ToBoolean(entryX.attribute & 0x10) && !Convert.ToBoolean(entryY.attribute & 0x10))
+                if(listviewX.Text == "..")
                 {
                     return -1;
                 }
-                else if (!Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
+                else if(listviewY.Text == "..")
                 {
                     return 1;
                 }
@@ -46,18 +55,8 @@
                 compareResult = ObjectCompare.Compare(parsedDateX, parsedDateY);
             }
             else if (main.lstFiles.Columns[SortColumn].Text == "Size")
-            {
-                FatDirEntry entryX = (FatDirEntry)listviewX.Tag;
-                FatDirEntry entryY = (FatDirEntry)listviewY.Tag;
-                if (Convert.ToBoolean(entryX.attribute & 0x10) && !Convert.ToBoolean(entryY.attribute & 0x10))
-                {
-                    return -1;
-                }
-                else if (!Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
-                {
-                    return 1;
-                }
-                else if(Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
+            {  
+                if(Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
                 {
                     return 0;
                 }
@@ -66,21 +65,33 @@
                 compareResult = ObjectCompare.Compare(sizeX, sizeY);
 
             }
-            else
+            else if (main.lstFiles.Columns[SortColumn].Text == "Name")
             {
-                FatDirEntry entryX = (FatDirEntry)listviewX.Tag;
-                FatDirEntry entryY = (FatDirEntry)listviewY.Tag;
-                if (Convert.ToBoolean(entryX.attribute & 0x10) && !Convert.ToBoolean(entryY.attribute & 0x10))
+                if (listviewX.Text == ".." /*&& Convert.ToBoolean(entryY.attribute & 0x10)*/)
                 {
                     return -1;
                 }
-                else if (!Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
+                else if (listviewY.Text == ".." /*&& Convert.ToBoolean(entryX.attribute & 0x10)*/)
+                {
+                    return 1;
+                }
+
+                /* Sure would be nice to implement Explorer-like numeric sorting here... */
+
+                compareResult = ObjectCompare.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
+            }
+            else
+            {
+                if (listviewX.Text == ".." /*&& Convert.ToBoolean(entryY.attribute & 0x10)*/)
+                {
+                    return -1;
+                }
+                else if (listviewY.Text == ".." /*&& Convert.ToBoolean(entryX.attribute & 0x10)*/)
                 {
                     return 1;
                 }
 
                 compareResult = ObjectCompare.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
-
             }
 
             if (Order == SortOrder.Ascending)

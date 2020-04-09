@@ -113,50 +113,75 @@ namespace TotalImage
         private void largeIconsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem.Checked = true;
+            largeIconsToolStripMenuItem1.Checked = true;
             smallIconsToolStripMenuItem.Checked = false;
+            smallIconsToolStripMenuItem1.Checked = false;
             detailsToolStripMenuItem.Checked = false;
+            detailsToolStripMenuItem1.Checked = false;
             tilesToolStripMenuItem.Checked = false;
+            tilesToolStripMenuItem1.Checked = false;
             listToolStripMenuItem.Checked = false;
+            listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.LargeIcon;
         }
 
         private void smallIconsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem.Checked = false;
+            largeIconsToolStripMenuItem1.Checked = false;
             smallIconsToolStripMenuItem.Checked = true;
+            smallIconsToolStripMenuItem1.Checked = true;
             detailsToolStripMenuItem.Checked = false;
+            detailsToolStripMenuItem1.Checked = false;
             tilesToolStripMenuItem.Checked = false;
+            tilesToolStripMenuItem1.Checked = false;
             listToolStripMenuItem.Checked = false;
+            listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.SmallIcon;
         }
 
         private void listToolStripMenuItem_Click(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem.Checked = false;
+            largeIconsToolStripMenuItem1.Checked = false;
             smallIconsToolStripMenuItem.Checked = false;
+            smallIconsToolStripMenuItem1.Checked = false;
             detailsToolStripMenuItem.Checked = false;
+            detailsToolStripMenuItem1.Checked = false;
             tilesToolStripMenuItem.Checked = false;
+            tilesToolStripMenuItem1.Checked = false;
             listToolStripMenuItem.Checked = true;
+            listToolStripMenuItem1.Checked = true;
             lstFiles.View = View.List;
         }
 
         private void detailsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem.Checked = false;
+            largeIconsToolStripMenuItem1.Checked = false;
             smallIconsToolStripMenuItem.Checked = false;
+            smallIconsToolStripMenuItem1.Checked = false;
             detailsToolStripMenuItem.Checked = true;
+            detailsToolStripMenuItem1.Checked = true;
             tilesToolStripMenuItem.Checked = false;
+            tilesToolStripMenuItem1.Checked = false;
             listToolStripMenuItem.Checked = false;
+            listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.Details;
         }
 
         private void tilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem.Checked = false;
+            largeIconsToolStripMenuItem1.Checked = false;
             smallIconsToolStripMenuItem.Checked = false;
+            smallIconsToolStripMenuItem1.Checked = false;
             detailsToolStripMenuItem.Checked = false;
+            detailsToolStripMenuItem1.Checked = false;
             tilesToolStripMenuItem.Checked = true;
+            tilesToolStripMenuItem1.Checked = true;
             listToolStripMenuItem.Checked = false;
+            listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.Tile;
         }
 
@@ -344,24 +369,47 @@ namespace TotalImage
             if(lstFiles.SelectedItems.Count == 0)
             {
                 deleteToolStripMenuItem.Enabled = false;
+                deleteToolStripMenuItem2.Enabled = false;
                 extractToolStripMenuItem.Enabled = false;
+                extractToolStripMenuItem2.Enabled = false;
                 propertiesToolStripMenuItem.Enabled = false;
+                propertiesToolStripMenuItem2.Enabled = false;
                 renameToolStripMenuItem.Enabled = false;
+                renameToolStripMenuItem2.Enabled = false;
 
                 deleteToolStripButton.Enabled = false;
                 extractToolStripButton.Enabled = false;
                 propertiesToolStripButton.Enabled = false;
             }
-            else
+            else if(lstFiles.SelectedItems.Count == 1)
             {
                 deleteToolStripMenuItem.Enabled = true;
+                deleteToolStripMenuItem2.Enabled = true;
                 extractToolStripMenuItem.Enabled = true;
+                extractToolStripMenuItem2.Enabled = true;
                 propertiesToolStripMenuItem.Enabled = true;
+                propertiesToolStripMenuItem2.Enabled = true;
                 renameToolStripMenuItem.Enabled = true;
+                renameToolStripMenuItem2.Enabled = true;
 
                 deleteToolStripButton.Enabled = true;
                 extractToolStripButton.Enabled = true;
                 propertiesToolStripButton.Enabled = true;
+            }
+            else
+            {
+                deleteToolStripMenuItem.Enabled = true;
+                deleteToolStripMenuItem2.Enabled = true;
+                extractToolStripMenuItem.Enabled = true;
+                extractToolStripMenuItem2.Enabled = true;
+                propertiesToolStripMenuItem.Enabled = false;
+                propertiesToolStripMenuItem2.Enabled = false;
+                renameToolStripMenuItem.Enabled = false;
+                renameToolStripMenuItem2.Enabled = false;
+
+                deleteToolStripButton.Enabled = true;
+                extractToolStripButton.Enabled = true;
+                propertiesToolStripButton.Enabled = false;
             }
         }
 
@@ -406,6 +454,12 @@ namespace TotalImage
             if (lstFiles.SelectedItems.Count == 0)
             {
                 e.Cancel = true;
+                return;
+            }
+            if(lstFiles.SelectedItems[0].Text == "..")
+            {
+                e.Cancel = true;
+                return;
             }
         }
 
@@ -590,54 +644,87 @@ namespace TotalImage
             lstDirectories.Sort();
         }
 
+        //Finds the node with the specified entry
+        private TreeNode FindNode(TreeNode startNode, ushort startCluster)
+        {
+            foreach (TreeNode node in startNode.Nodes)
+            {
+                if (((FatDirEntry)node.Tag).startCluster == startCluster)
+                {
+                    return node;
+                }
+                else
+                {
+                    TreeNode nodeChild = FindNode(node, startCluster);
+                    if (nodeChild != null)
+                    {
+                        return nodeChild;
+                    }
+                }
+            }
+            return null;
+        }
+
         public void AddToDir(FatDirEntry parent, FatDirEntry child)
         {
-            //THIS NEEDS TO FIND THE PARENT NODE AND ADD THE CHILD TO IT...
-            /*foreach (TreeNode node in lstDirectories.Nodes[0].Nodes)
+            string childFilename = Encoding.ASCII.GetString(child.filename).TrimEnd(' ');
+
+            TreeNode childNode = new TreeNode(childFilename);
+            childNode.Tag = child;
+            TreeNode parentNode = FindNode(lstDirectories.Nodes[0], parent.startCluster);
+            if(parentNode != null)
             {
-                if (node.Tag != null && node.Tag.Equals(parent))
-                {
-                    string filename = Encoding.ASCII.GetString(child.filename).TrimEnd(' ');
-                    TreeNode newNode = new TreeNode(filename);
-                    newNode.Tag = child;
-                    node.Nodes.Add(newNode);
-                    lstDirectories.Sort();
-                    return;
-                }
-            }*/
+                parentNode.Nodes.Add(childNode);
+            }
+            else
+            {
+                /* throw some error because the parent node wasn't found for some reason */
+            }
+
+            lstDirectories.Sort();
         }
 
         //Adds a new item to the file list
         public void AddToFileList(FatDirEntry entry)
         {
             string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
-            ushort year = (ushort)(((entry.modifiedDate & 0xFE00) >> 9) + 1980);
-            byte month = (byte)((entry.modifiedDate & 0x1E0) >> 5);
-            byte day = (byte)(entry.modifiedDate & 0x1F);
-            byte hours = (byte)((entry.modifiedTime & 0xF800) >> 11);
-            byte minutes = (byte)((entry.modifiedTime & 0x7E0) >> 5);
-            byte seconds = (byte)((entry.modifiedTime & 0x1F) * 2); //Resolution for seconds is 2s
-            DateTime date = new DateTime(year, month, day, hours, minutes, seconds);
             ListViewItem lvi = new ListViewItem(filename);
-            if(Convert.ToBoolean(entry.attribute & 0x10))
+            if (!filename.Equals(".."))
             {
-                lvi.SubItems.Add("Directory");
+                ushort year = (ushort)(((entry.modifiedDate & 0xFE00) >> 9) + 1980);
+                byte month = (byte)((entry.modifiedDate & 0x1E0) >> 5);
+                byte day = (byte)(entry.modifiedDate & 0x1F);
+                byte hours = (byte)((entry.modifiedTime & 0xF800) >> 11);
+                byte minutes = (byte)((entry.modifiedTime & 0x7E0) >> 5);
+                byte seconds = (byte)((entry.modifiedTime & 0x1F) * 2); //Resolution for seconds is 2s
+
+                if (Convert.ToBoolean(entry.attribute & 0x10))
+                {
+                    lvi.SubItems.Add("Directory");
+                    lvi.SubItems.Add("");
+                    lvi.ImageIndex = 0;
+                }
+                else
+                {
+                    string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
+                    lvi.Text += "." + extension;
+                    lvi.SubItems.Add("." + extension);
+                    lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
+                    lvi.ImageIndex = 2;
+                }
+
+                DateTime date = new DateTime(year, month, day, hours, minutes, seconds);
+                lvi.SubItems.Add(date.ToString());
+            }
+            else // ".." virtual folder
+            {
+                lvi.ImageIndex = 3;
                 lvi.SubItems.Add("");
-                lvi.ImageIndex = 0;
+                lvi.SubItems.Add("");
+                lvi.SubItems.Add("");
             }
-            else
-            {
-                string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
-                lvi.Text += "." + extension;
-                lvi.SubItems.Add("." + extension);
-                lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
-                lvi.ImageIndex = 2;
-            }
-            lvi.SubItems.Add(date.ToString());
             lvi.Tag = entry;
             lstFiles.Items.Add(lvi);
-
-            //SortFileList();
             lstFiles.Sort();
         }
 
@@ -727,6 +814,236 @@ namespace TotalImage
             // Perform the sort with these new sort options.
             lstFiles.Sort();
             lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
+        }
+
+        private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            uint fileCount = 0;
+            uint dirSize = 0;
+            //Subdirs
+            if (e.Node.Text != filename)
+            {
+                lstFiles.Items.Clear();
+                image.ListDirectory((FatDirEntry)e.Node.Tag);
+            }
+            //Root dir
+            else
+            {
+                lstFiles.Items.Clear();
+                image.ListRootDirectory();
+            }
+            foreach (ListViewItem lvi in lstFiles.Items)
+            {
+                FatDirEntry entry = (FatDirEntry)lvi.Tag;
+                if (!Convert.ToBoolean(entry.attribute & 0x10))
+                {
+                    fileCount++;
+                    dirSize += entry.fileSize;
+                }
+            }
+            lblDirSize.Text = string.Format("{0:n0}", dirSize).ToString() + " bytes in " + fileCount + " file(s)";
+            lblPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
+        }
+
+        private void lstFiles_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (lstFiles.SelectedItems.Count == 1)
+            {
+                if (lstFiles.SelectedItems[0].Text == "..")
+                {
+                    lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
+                }
+                else
+                {
+                    if (Convert.ToBoolean(((FatDirEntry)lstFiles.SelectedItems[0].Tag).attribute & 0x10)) //A folder was double-clicked
+                    {
+                        TreeNode node = FindNode(lstDirectories.SelectedNode, ((FatDirEntry)lstFiles.SelectedItems[0].Tag).startCluster);
+                        if (node != null)
+                        {
+                            lstDirectories.SelectedNode = node;
+                        }
+                        else
+                        {
+                            /* Throw an error because the node was not found for some reason... */
+                        }
+                    }
+                    else //A file was double-clicked
+                    {
+                        /* Probably extract the file and open it */
+                    }
+                }
+            }
+        }
+
+        private void nameToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            nameToolStripMenuItem.Checked = true;
+            nameToolStripMenuItem1.Checked = true;
+            typeToolStripMenuItem.Checked = false;
+            typeToolStripMenuItem1.Checked = false;
+            sizeToolStripMenuItem.Checked = false;
+            sizeToolStripMenuItem1.Checked = false;
+            modifiedToolStripMenuItem.Checked = false;
+            modifiedToolStripMenuItem1.Checked = false;
+        }
+
+        private void sizeToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            nameToolStripMenuItem.Checked = false;
+            nameToolStripMenuItem1.Checked = false;
+            typeToolStripMenuItem.Checked = false;
+            typeToolStripMenuItem1.Checked = false;
+            sizeToolStripMenuItem.Checked = true;
+            sizeToolStripMenuItem1.Checked = true;
+            modifiedToolStripMenuItem.Checked = false;
+            modifiedToolStripMenuItem1.Checked = false;
+        }
+
+        private void typeToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            nameToolStripMenuItem.Checked = false;
+            nameToolStripMenuItem1.Checked = false;
+            typeToolStripMenuItem.Checked = true;
+            typeToolStripMenuItem1.Checked = true;
+            sizeToolStripMenuItem.Checked = false;
+            sizeToolStripMenuItem1.Checked = false;
+            modifiedToolStripMenuItem.Checked = false;
+            modifiedToolStripMenuItem1.Checked = false;
+        }
+
+        private void modifiedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            nameToolStripMenuItem.Checked = false;
+            nameToolStripMenuItem1.Checked = false;
+            typeToolStripMenuItem.Checked = false;
+            typeToolStripMenuItem1.Checked = false;
+            sizeToolStripMenuItem.Checked = false;
+            sizeToolStripMenuItem1.Checked = false;
+            modifiedToolStripMenuItem.Checked = true;
+            modifiedToolStripMenuItem1.Checked = true;
+        }
+
+        private void nameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            nameToolStripMenuItem.Checked = true;
+            nameToolStripMenuItem1.Checked = true;
+            typeToolStripMenuItem.Checked = false;
+            typeToolStripMenuItem1.Checked = false;
+            sizeToolStripMenuItem.Checked = false;
+            sizeToolStripMenuItem1.Checked = false;
+            modifiedToolStripMenuItem.Checked = false;
+            modifiedToolStripMenuItem1.Checked = false;
+        }
+
+        private void sizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            nameToolStripMenuItem.Checked = false;
+            nameToolStripMenuItem1.Checked = false;
+            typeToolStripMenuItem.Checked = false;
+            typeToolStripMenuItem1.Checked = false;
+            sizeToolStripMenuItem.Checked = true;
+            sizeToolStripMenuItem1.Checked = true;
+            modifiedToolStripMenuItem.Checked = false;
+            modifiedToolStripMenuItem1.Checked = false;
+        }
+
+        private void typeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            nameToolStripMenuItem.Checked = false;
+            nameToolStripMenuItem1.Checked = false;
+            typeToolStripMenuItem.Checked = true;
+            typeToolStripMenuItem1.Checked = true;
+            sizeToolStripMenuItem.Checked = false;
+            sizeToolStripMenuItem1.Checked = false;
+            modifiedToolStripMenuItem.Checked = false;
+            modifiedToolStripMenuItem1.Checked = false;
+        }
+
+        private void modifiedDateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            nameToolStripMenuItem.Checked = false;
+            nameToolStripMenuItem1.Checked = false;
+            typeToolStripMenuItem.Checked = false;
+            typeToolStripMenuItem1.Checked = false;
+            sizeToolStripMenuItem.Checked = false;
+            sizeToolStripMenuItem1.Checked = false;
+            modifiedToolStripMenuItem.Checked = true;
+            modifiedToolStripMenuItem1.Checked = true;
+        }
+
+        private void largeIconsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            largeIconsToolStripMenuItem.Checked = true;
+            largeIconsToolStripMenuItem1.Checked = true;
+            smallIconsToolStripMenuItem.Checked = false;
+            smallIconsToolStripMenuItem1.Checked = false;
+            detailsToolStripMenuItem.Checked = false;
+            detailsToolStripMenuItem1.Checked = false;
+            tilesToolStripMenuItem.Checked = false;
+            tilesToolStripMenuItem1.Checked = false;
+            listToolStripMenuItem.Checked = false;
+            listToolStripMenuItem1.Checked = false;
+            lstFiles.View = View.LargeIcon;
+        }
+
+        private void smallIconsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            largeIconsToolStripMenuItem.Checked = false;
+            largeIconsToolStripMenuItem1.Checked = false;
+            smallIconsToolStripMenuItem.Checked = true;
+            smallIconsToolStripMenuItem1.Checked = true;
+            detailsToolStripMenuItem.Checked = false;
+            detailsToolStripMenuItem1.Checked = false;
+            tilesToolStripMenuItem.Checked = false;
+            tilesToolStripMenuItem1.Checked = false;
+            listToolStripMenuItem.Checked = false;
+            listToolStripMenuItem1.Checked = false;
+            lstFiles.View = View.SmallIcon;
+        }
+
+        private void listToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            largeIconsToolStripMenuItem.Checked = false;
+            largeIconsToolStripMenuItem1.Checked = false;
+            smallIconsToolStripMenuItem.Checked = false;
+            smallIconsToolStripMenuItem1.Checked = false;
+            detailsToolStripMenuItem.Checked = false;
+            detailsToolStripMenuItem1.Checked = false;
+            tilesToolStripMenuItem.Checked = false;
+            tilesToolStripMenuItem1.Checked = false;
+            listToolStripMenuItem.Checked = true;
+            listToolStripMenuItem1.Checked = true;
+            lstFiles.View = View.List;
+        }
+
+        private void detailsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            largeIconsToolStripMenuItem.Checked = false;
+            largeIconsToolStripMenuItem1.Checked = false;
+            smallIconsToolStripMenuItem.Checked = false;
+            smallIconsToolStripMenuItem1.Checked = false;
+            detailsToolStripMenuItem.Checked = true;
+            detailsToolStripMenuItem1.Checked = true;
+            tilesToolStripMenuItem.Checked = false;
+            tilesToolStripMenuItem1.Checked = false;
+            listToolStripMenuItem.Checked = false;
+            listToolStripMenuItem1.Checked = false;
+            lstFiles.View = View.Details;
+        }
+
+        private void tilesToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            largeIconsToolStripMenuItem.Checked = false;
+            largeIconsToolStripMenuItem1.Checked = false;
+            smallIconsToolStripMenuItem.Checked = false;
+            smallIconsToolStripMenuItem1.Checked = false;
+            detailsToolStripMenuItem.Checked = false;
+            detailsToolStripMenuItem1.Checked = false;
+            tilesToolStripMenuItem.Checked = true;
+            tilesToolStripMenuItem1.Checked = true;
+            listToolStripMenuItem.Checked = false;
+            listToolStripMenuItem1.Checked = false;
+            lstFiles.View = View.Tile;
         }
     }
 }
