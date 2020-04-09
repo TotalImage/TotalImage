@@ -18,12 +18,12 @@ namespace TotalImage.ImageFormats
         }
 
         //Creates a new image from the selected preset - PORTED FROM 86BOX
-        public void CreateImage(BiosParameterBlock bpb, string oemID, byte tracks)
+        public void CreateImage(BiosParameterBlock bpb, byte tracks)
         {
             uint imageSize = (ushort)(bpb.BytesPerLogicalSector * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * tracks);
             imageBytes = new byte[imageSize];
             Fat12 fat12 = new Fat12(imageBytes);
-            fat12.Format(bpb, oemID, tracks);
+            fat12.Format(bpb, tracks);
             this.bpb = bpb;
         }
 

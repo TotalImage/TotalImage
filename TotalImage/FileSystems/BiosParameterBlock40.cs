@@ -1,4 +1,6 @@
-﻿namespace TotalImage.FileSystems
+﻿using System;
+
+namespace TotalImage.FileSystems
 {
     /*
      * BIOS Parameter Block for FAT12, FAT16, FAT16B and HPFS file systems 
@@ -6,27 +8,33 @@
      */
     public class BiosParameterBlock40 : BiosParameterBlock
     {
-        public byte PhysicalDriveNumber;
-        public byte Flags;
-        public byte ExtendedBootSignature;
-        public uint VolumeSerialNumber;
+        private string volumeLabel, fileSystemType;
 
-        public byte[] FileSystemType;
-
-        public BiosParameterBlock40(byte v, ushort bps, byte spc, ushort rs, byte nf, ushort rde, ushort ts, byte md, ushort spf, ushort spt, 
-            ushort h, uint hs, uint lts, byte pdn, byte f, byte ebs, uint vsn, byte[] fst, byte[] vl) : base(v, bps, spc, rs, nf, rde, ts, md, 
-                spf, spt, h, hs, lts, vl)
+        public byte PhysicalDriveNumber { get; set; }
+        public byte Flags { get; set; }
+        //public byte ExtendedBootSignature { get; set; } <-- this can be deducted from the BpbVersion field - commenting out for now.
+        public uint VolumeSerialNumber { get; set; }
+        public string VolumeLabel
         {
-            PhysicalDriveNumber = pdn;
-            Flags = f;
-            ExtendedBootSignature = ebs;
-            VolumeSerialNumber = vsn;
-            FileSystemType = fst;
+            get => volumeLabel; 
+            set
+            {
+                if(value.Length > 11)
+                    throw new ArgumentException("VolumeLabel must be 11 characters at most");
+
+                volumeLabel = value;
+            }
         }
-
-        public BiosParameterBlock40() : base()
+        public string FileSystemType
         {
+            get => fileSystemType;
+            set
+            {
+                if(value.Length > 8)
+                    throw new ArgumentException("FileSystemType must be 8 characters at most");
 
+                fileSystemType = value;
+            }
         }
     }
 }

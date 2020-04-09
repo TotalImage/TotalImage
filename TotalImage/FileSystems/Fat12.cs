@@ -47,19 +47,33 @@ namespace TotalImage.FileSystems
                 bpb.LargeTotalLogicalSectors = reader.ReadUInt32();
                 bpb.PhysicalDriveNumber = reader.ReadByte();
                 bpb.Flags = reader.ReadByte();
-                bpb.ExtendedBootSignature = reader.ReadByte();
+
+                switch(reader.ReadByte())
+                {
+                    case 40:
+                        bpb.BpbVersion = BiosParameterBlockVersion.Dos34;
+                        break;
+                    case 41:
+                        bpb.BpbVersion = BiosParameterBlockVersion.Dos40;
+                        break;
+                    default:
+                        throw new Exception("PANIIIIIIC");
+                }
+
                 bpb.VolumeSerialNumber = reader.ReadUInt32();
-                bpb.VolumeLabel = new byte[11];
-                bpb.FileSystemType = new byte[8];
-                bpb.VolumeLabel = Encoding.ASCII.GetBytes(reader.ReadChars(11));
-                bpb.FileSystemType = Encoding.ASCII.GetBytes(reader.ReadChars(8));
+
+                if(bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+                {
+                    bpb.VolumeLabel = new string(reader.ReadChars(11));
+                    bpb.FileSystemType = new string(reader.ReadChars(8));
+                }
             }
 
             return bpb;
         }
 
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
-        public void Format(BiosParameterBlock bpb, string oemID, byte tracks)
+        public void Format(BiosParameterBlock bpb, byte tracks)
         {
             //stream = new MemoryStream(imageBytes, true);
             uint total_size = (uint)imageBytes.Length;
@@ -82,18 +96,10 @@ namespace TotalImage.FileSystems
                 }
 
                 stream.Seek(0, SeekOrigin.Begin);
-                writer.Write((byte)0xEB); //Jump to bootcode
-                writer.Write((byte)0x58);
-                writer.Write((byte)0x90); //NOP
+                stream.Write(bpb.BootJump, 0, 3);
 
-                byte[] oemIdBytes = Encoding.ASCII.GetBytes(oemID); //OEM ID
-                writer.Write(oemIdBytes);
-                if (oemIdBytes.Length < 8) //If it's shorter than 8 bytes, it needs to be padded with spaces
-                {
-                    for (int i = 0; i < 8 - oemIdBytes.Length; i++)
-                        writer.Write((byte)0x20);
-                }
-
+                //byte[] oemIdBytes = Encoding.ASCII.GetBytes(oemID); //OEM ID
+                writer.Write(bpb.OemId.PadRight(8, ' ').ToCharArray());
                 writer.Write(bpb.BytesPerLogicalSector);
                 writer.Write(bpb.LogicalSectorsPerCluster);
                 writer.Write(bpb.ReservedLogicalSectors);
@@ -108,32 +114,26 @@ namespace TotalImage.FileSystems
                 writer.Write(bpb.LargeTotalLogicalSectors);
 
                 //DOS 3.4+ specific values
-                if (bpb.BpbVersion >= 0x34)
                 {
-                    writer.Write(((BiosParameterBlock40)bpb).PhysicalDriveNumber);
-                    writer.Write(((BiosParameterBlock40)bpb).Flags);
-                    writer.Write(((BiosParameterBlock40)bpb).ExtendedBootSignature);
-                    writer.Write(((BiosParameterBlock40)bpb).VolumeSerialNumber);
-
-                    //DOS 4.0 adds volume label and FS type as well
-                    if (bpb.BpbVersion == 0x40)
+                    if (bpb is BiosParameterBlock40 bpb40)
                     {
-                        writer.Write(((BiosParameterBlock40)bpb).VolumeLabel);
+                        writer.Write(bpb40.PhysicalDriveNumber);
+                        writer.Write(bpb40.Flags);
+                        
+                        if (bpb.BpbVersion == BiosParameterBlockVersion.Dos34)
+                            writer.Write((byte)40);
+                        else if (bpb.BpbVersion == BiosParameterBlockVersion.Dos34)
+                            writer.Write((byte)41);
+                        else
+                            throw new Exception("PANIIIIIIC");
 
-                        //If volume label is shorter than 11 bytes, it needs to be padded with spaces
-                        if (((BiosParameterBlock40)bpb).VolumeLabel.Length < 11)
+                        writer.Write(bpb40.VolumeSerialNumber);
+
+                        //DOS 4.0 adds volume label and FS type as well
+                        if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
                         {
-                            for (int i = 0; i < 11 - ((BiosParameterBlock40)bpb).VolumeLabel.Length; i++)
-                                writer.Write((byte)0x20);
-                        }
-
-                        writer.Write(((BiosParameterBlock40)bpb).FileSystemType);
-
-                        //If volume label is shorter than 8 bytes, it needs to be padded with spaces
-                        if (((BiosParameterBlock40)bpb).FileSystemType.Length < 8)
-                        {
-                            for (int i = 0; i < 8 - ((BiosParameterBlock40)bpb).FileSystemType.Length; i++)
-                                writer.Write((byte)0x20);
+                            writer.Write(bpb40.VolumeLabel.PadRight(8, ' ').ToCharArray());
+                            writer.Write(bpb40.FileSystemType.PadRight(8, ' ').ToCharArray());
                         }
                     }
                 }
@@ -157,14 +157,14 @@ namespace TotalImage.FileSystems
                 stream.Seek(fat2_offs + fat_size, SeekOrigin.Begin);
 
                 //First 11 bytes (8.3 space-padded filename) are the label itself
-                writer.Write(((BiosParameterBlock40)bpb).VolumeLabel);
-                if (((BiosParameterBlock40)bpb).VolumeLabel.Length < 11)
                 {
-                    for (int i = 0; i < 11 - ((BiosParameterBlock40)bpb).VolumeLabel.Length; i++)
-                        writer.Write((byte)0x20);
+                    if(bpb is BiosParameterBlock40 bpb40 && string.IsNullOrEmpty(bpb40.VolumeLabel))
+                    {
+                        writer.Write(bpb40.VolumeLabel.PadRight(8, ' ').ToCharArray());
+                        writer.Write((byte)0x08); //Volume label attribute
+                    }
                 }
-
-                writer.Write((byte)0x08); //Volume label attribute
+                
             }
         }
 
