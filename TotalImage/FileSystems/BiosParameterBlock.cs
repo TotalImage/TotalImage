@@ -14,7 +14,9 @@ namespace TotalImage.FileSystems
 
     /*
      * BIOS Parameter Block for FAT12 and FAT16 file systems 
-     * Use this class for BPB versions 2.0, 3.2 and 3.31
+     * Use this class for BPB versions 2.0 and 3.31.
+     * 
+     * For BPB versions 3.4, 4.0 and HPFS, use BiosParameterBlock40 instead
      */
     public class BiosParameterBlock
     {

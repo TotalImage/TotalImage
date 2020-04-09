@@ -25,11 +25,11 @@ namespace TotalImage
             //Default values are for a 1440 KiB disk with DOS 4.0+ BPB
             cbxFloppyBPB.Checked = true;
             lstFloppyBPB.SelectedIndex = 3;
-            lstFloppyCapacity.SelectedIndex = 13;
+            lstFloppyCapacity.SelectedItem = "1440 KiB";
             txtFloppySerial.Text = GenerateVolumeID().ToString("X8");
 
             //Populate the HDD type list
-            foreach(int[] type in hddTable.hdt)
+            foreach (int[] type in hddTable.hdt)
             {
                 int capacity = type[0] * type[1] * type[2] * 512 / 1048576;
                 string s = capacity.ToString() + " MiB (CHS: " + type[0] + ", " + type[1] + ", " + type[2] + ")";
@@ -37,7 +37,6 @@ namespace TotalImage
             }
 
             lstHDDType.Items.Add("Custom...");
-            lstHDDType.Items.Add("Custom (large)...");
             lstHDDType.SelectedIndex = 0;
         }
 
@@ -45,17 +44,19 @@ namespace TotalImage
         {
             if (tabControl.SelectedTab == tabFloppy)
             {
-                if (!cbxFloppyBPB.Checked && lstFloppyCapacity.SelectedIndex != 6)
+                if (!cbxFloppyBPB.Checked)
                 {
-                    DialogResult bpb = MessageBox.Show("You chose not to write a DOS BIOS parameter block (BPB) to the boot sector of the image." +
+                    DialogResult noBpb = MessageBox.Show("You chose not to write a DOS BIOS parameter block (BPB) to the boot sector of the image." +
                         " Many programs and operating systems may not recognize the disk because of this." +
                         "\n\nAre you sure you want to create an image without the BPB?", "BIOS Parameter Block", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                    if (bpb == DialogResult.No)
+                    if (noBpb == DialogResult.No)
                     {
                         return;
                     }
                 }
-                else if(cbxFloppyBPB.Checked && lstFloppyCapacity.SelectedIndex == 6) //RX50 disks do not have a BPB...
+                /* RX50 isn't implemented yet
+                 * 
+                 * else if(cbxFloppyBPB.Checked && lstFloppyCapacity.SelectedIndex == 6) //RX50 disks do not have a BPB...
                 {
                     DialogResult bpb = MessageBox.Show("DEC RX50 400 KiB disks do not have an on-disk BIOS paraneter block (BPB), but you still chose to write a DOS BPB to the boot sector of the image." +
                         " The disk may not work in an RX50 drive because of this." +
@@ -64,9 +65,9 @@ namespace TotalImage
                     {
                         return;
                     }
-                }
-                
-                if(lstFloppyCapacity.SelectedIndex >= 21)
+                }*/
+
+                if (lstFloppyCapacity.SelectedItem.ToString() == "Custom...")
                 {
                     /* Create a new floppy disk image with selected parameters */
                 }
@@ -77,11 +78,13 @@ namespace TotalImage
                     if (cbxFloppyBPB.Checked)
                     {
                         BiosParameterBlock bpb;
-                        if (lstFloppyBPB.SelectedIndex <= 1) //DOS 2.0 BPB (on floppies it's the same as 3.31)
+                        if (lstFloppyBPB.SelectedIndex == 0)
                             bpb = new BiosParameterBlock() { BpbVersion = BiosParameterBlockVersion.Dos20 };
+                        else if (lstFloppyBPB.SelectedIndex == 1)
+                            bpb = new BiosParameterBlock() { BpbVersion = BiosParameterBlockVersion.Dos33 };
                         else if (lstFloppyBPB.SelectedIndex == 2)
                             bpb = new BiosParameterBlock40() { BpbVersion = BiosParameterBlockVersion.Dos34 };
-                            else if (lstFloppyBPB.SelectedIndex == 3)
+                        else if (lstFloppyBPB.SelectedIndex == 3)
                             bpb = new BiosParameterBlock40() { BpbVersion = BiosParameterBlockVersion.Dos40 };
                         else
                             throw new Exception("PANIIIIIC");
@@ -90,23 +93,22 @@ namespace TotalImage
                         bpb.BytesPerLogicalSector = (ushort)(128 << floppyTable.fdt[i][7]);
                         bpb.HiddenSectors = 0;
                         bpb.LargeTotalLogicalSectors = 0;
-                        bpb.LogicalSectorsPerCluster = (byte)floppyTable.fdt[i][9];
-                        bpb.LogicalSectorsPerFAT = (ushort)floppyTable.fdt[i][11];
-                        bpb.MediaDescriptor = (byte)floppyTable.fdt[i][8];
-                        bpb.NumberOfFATs = (byte)floppyTable.fdt[i][10];
-                        bpb.NumberOfHeads = (ushort)floppyTable.fdt[i][1];
-                        bpb.PhysicalSectorsPerTrack = (ushort)floppyTable.fdt[i][6];
-                        bpb.ReservedLogicalSectors = (ushort)floppyTable.fdt[i][13];
-                        bpb.RootDirectoryEntries = (ushort)floppyTable.fdt[i][12];
-                        //TLS = (ushort)(bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * floppyTable.fdt[i][5])
+                        bpb.LogicalSectorsPerCluster = floppyTable.fdt[i][9];
+                        bpb.LogicalSectorsPerFAT = floppyTable.fdt[i][11];
+                        bpb.MediaDescriptor = floppyTable.fdt[i][8];
+                        bpb.NumberOfFATs = floppyTable.fdt[i][10];
+                        bpb.NumberOfHeads = floppyTable.fdt[i][1];
+                        bpb.PhysicalSectorsPerTrack = floppyTable.fdt[i][6];
+                        bpb.ReservedLogicalSectors = floppyTable.fdt[i][13];
+                        bpb.RootDirectoryEntries = floppyTable.fdt[i][12];
 
-                        if (bpb is BiosParameterBlock40 bpb40) //DOS 3.4 BPB
+                        if (bpb is BiosParameterBlock40 bpb40) //DOS 3.4+ BPB
                         {
                             bpb40.PhysicalDriveNumber = 0;
                             bpb40.Flags = 0;
                             bpb40.VolumeSerialNumber = uint.Parse(txtFloppySerial.Text, NumberStyles.HexNumber);
 
-                            if(lstFloppyBPB.SelectedIndex == 2)
+                            if (lstFloppyBPB.SelectedIndex == 2)
                             {
                                 bpb40.BpbVersion = BiosParameterBlockVersion.Dos34;
                             }
@@ -119,14 +121,13 @@ namespace TotalImage
                         }
 
                         main.image.CreateImage(bpb, floppyTable.fdt[i][5]);
+                        main.EnableUI();
                     }
-                    
+
                     else
                     {
                         /* Create a new floppy disk image without a BPB */
-                        //image.CreateImageNoBpb();
                     }
-                    /* Create a new floppy disk image with standard parameters */
                 }
             }
             else if (tabControl.SelectedTab == tabHDD)
@@ -144,7 +145,7 @@ namespace TotalImage
             txtFloppyFSType.Enabled = cbxFloppyBPB.Checked && (lstFloppyBPB.SelectedIndex == 3);
         }
 
-        //Generates a random volume ID/serial number for the DOS 3.4+ BPB
+        //Generates a random volume ID/serial number for DOS 3.4+ BPB
         private int GenerateVolumeID()
         {
             Random rnd = new Random();
@@ -187,20 +188,22 @@ namespace TotalImage
                 txtFloppyReservedSect.Value = floppyTable.fdt[i][13];
                 txtFloppyTotalSect.Value = floppyTable.fdt[i][5] * floppyTable.fdt[i][6] * floppyTable.fdt[i][1];
             }
-            if(lstFloppyCapacity.SelectedIndex == 6) //DEC RX50 disks don't have a BPB...
-            {
-                cbxFloppyBPB.Checked = false;
-            }
-            else
-            {
-                cbxFloppyBPB.Checked = true;
-            }
+            /* RX50 not implemented yet
+             * 
+             * if(lstFloppyCapacity.SelectedIndex == 6) //DEC RX50 disks don't have a BPB...
+             {
+                 cbxFloppyBPB.Checked = false;
+             }
+             else
+             {
+                 cbxFloppyBPB.Checked = true;
+             }*/
         }
 
         private void lstHDDCapacity_SelectedIndexChanged(object sender, EventArgs e)
         {
             int i = lstHDDType.SelectedIndex;
-            if (lstHDDType.SelectedIndex < lstHDDType.Items.Count - 2) //Ignore the last two items - "Custom..." and "Custom (large)..."
+            if (lstHDDType.SelectedIndex < lstHDDType.Items.Count - 1) //Ignore the last item - "Custom..."
             {
                 //HDD cpacity is displayed in MiB
                 txtHDDCapacity.Value = (hddTable.hdt[i][0] * hddTable.hdt[i][1] * hddTable.hdt[i][2] * 512 / 1048576);
@@ -214,9 +217,9 @@ namespace TotalImage
         {
             int i = lstFloppyCapacity.SelectedIndex;
 
-            if(lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count -1 && txtFloppyNumFATs.Value != floppyTable.fdt[i][10])
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyNumFATs.Value != floppyTable.fdt[i][10])
             {
-                lstFloppyCapacity.SelectedIndex = 21;
+                lstFloppyCapacity.SelectedItem = "Custom...";
             }
         }
 
@@ -226,7 +229,7 @@ namespace TotalImage
 
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyReservedSect.Value != floppyTable.fdt[i][13])
             {
-                lstFloppyCapacity.SelectedIndex = 21;
+                lstFloppyCapacity.SelectedItem = "Custom...";
             }
         }
 
@@ -236,7 +239,7 @@ namespace TotalImage
 
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && lstFloppySides.SelectedIndex != floppyTable.fdt[i][1] - 1)
             {
-                lstFloppyCapacity.SelectedIndex = 21;
+                lstFloppyCapacity.SelectedItem = "Custom...";
             }
         }
 
@@ -246,7 +249,7 @@ namespace TotalImage
 
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPF.Value != floppyTable.fdt[i][11])
             {
-                lstFloppyCapacity.SelectedIndex = 21;
+                lstFloppyCapacity.SelectedItem = "Custom...";
             }
         }
 
@@ -256,7 +259,7 @@ namespace TotalImage
 
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPT.Value != floppyTable.fdt[i][6])
             {
-                lstFloppyCapacity.SelectedIndex = 21;
+                lstFloppyCapacity.SelectedItem = "Custom...";
             }
         }
 
@@ -266,7 +269,7 @@ namespace TotalImage
 
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPC.Value != floppyTable.fdt[i][9])
             {
-                lstFloppyCapacity.SelectedIndex = 21;
+                lstFloppyCapacity.SelectedItem = "Custom...";
             }
         }
 
@@ -276,7 +279,7 @@ namespace TotalImage
 
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyBPS.Value != (128 << floppyTable.fdt[i][7]))
             {
-                lstFloppyCapacity.SelectedIndex = 21;
+                lstFloppyCapacity.SelectedItem = "Custom...";
             }
         }
 
@@ -288,7 +291,7 @@ namespace TotalImage
                 int total_sect = floppyTable.fdt[i][5] * floppyTable.fdt[i][6] * floppyTable.fdt[i][1];
                 if (txtFloppyTotalSect.Value != total_sect)
                 {
-                    lstFloppyCapacity.SelectedIndex = 21;
+                    lstFloppyCapacity.SelectedItem = "Custom...";
                 }
             }
         }
@@ -299,7 +302,7 @@ namespace TotalImage
 
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyRootDir.Value != floppyTable.fdt[i][12])
             {
-                lstFloppyCapacity.SelectedIndex = 21;
+                lstFloppyCapacity.SelectedItem = "Custom...";
             }
         }
 
@@ -309,7 +312,7 @@ namespace TotalImage
 
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyTracks.Value != floppyTable.fdt[i][5])
             {
-                lstFloppyCapacity.SelectedIndex = 21;
+                lstFloppyCapacity.SelectedItem = "Custom...";
             }
         }
 
@@ -319,7 +322,7 @@ namespace TotalImage
 
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyMediaDesc.Value != floppyTable.fdt[i][8])
             {
-                lstFloppyCapacity.SelectedIndex = 21;
+                lstFloppyCapacity.SelectedItem = "Custom...";
             }
         }
 
@@ -327,7 +330,7 @@ namespace TotalImage
         {
             int i = lstHDDType.SelectedIndex;
 
-            if(lstHDDType.SelectedIndex < lstHDDType.Items.Count -2 && txtHDDCylinders.Value != hddTable.hdt[i][0])
+            if (lstHDDType.SelectedIndex < lstHDDType.Items.Count - 2 && txtHDDCylinders.Value != hddTable.hdt[i][0])
             {
                 lstHDDType.SelectedIndex = lstHDDType.Items.Count - 1;
             }

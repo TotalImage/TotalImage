@@ -1,10 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using TotalImage.FileSystems;
 
 namespace TotalImage.ImageFormats
 {
+    /*
+     * Class for handling raw sector disk images
+     */
     public class RawSector
     {
         private byte[] imageBytes;
@@ -47,8 +48,11 @@ namespace TotalImage.ImageFormats
         //Closes and unlocks the file
         public void CloseImage()
         {
-            fs.Flush();
-            fs.Close();
+            //fs.Flush();
+            if(fs != null)
+            {
+                fs.Close();
+            }
         }
 
         //Lists the contents of the specified directory

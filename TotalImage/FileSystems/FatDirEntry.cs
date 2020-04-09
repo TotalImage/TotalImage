@@ -3,23 +3,25 @@
 namespace TotalImage.FileSystems
 {
     /*
-     * This class represents the traditional 32-byte FAT directory entry
+     * This class represents the traditional 32-byte FAT directory entry, used in FAT12, FAT16 and FAT32
      */
     public class FatDirEntry
     {
         public byte[] filename; //8 bytes
         public byte[] extension; //3 bytes
         public byte attribute;
+        //VFAT-specific values, unusused in classic directory entries
         public byte caseByte;
         public byte creationTimeMs;
         public ushort creationTime;
         public ushort creationDate;
         public ushort lastAccessDate;
-        public ushort FAT3232StartCluster; //High word of the FAT32 starting cluster
+        //
+        public ushort FAT3232StartCluster; //High word of starting cluster in FAT32, unused in FAT12/FAT16
         public ushort modifiedTime;
         public ushort modifiedDate;
         public ushort startCluster;
-        public uint fileSize;
+        public uint fileSize; //Low word of starting cluster in FAT32, starting cluster in FAT12/16
 
         public FatDirEntry()
         {

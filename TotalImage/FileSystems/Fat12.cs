@@ -8,23 +8,16 @@ namespace TotalImage.FileSystems
     public class Fat12
     {
         private frmMain main; 
-        /*private BinaryReader reader;
-        private MemoryStream stream;
-        private BinaryWriter writer;*/
         private byte[] imageBytes;
 
         public Fat12(byte[] imageBytes)
         {
             this.imageBytes = imageBytes;
             main = (frmMain)Application.OpenForms["frmMain"];
-            /*stream = new MemoryStream(this.imageBytes, true);
-            reader = new BinaryReader(stream, Encoding.ASCII);
-            writer = new BinaryWriter(stream, Encoding.ASCII);*/
         }
 
         public BiosParameterBlock Parse()
         {
-            //var stream = new MemoryStream(imageBytes, false);
             var bpb = new BiosParameterBlock40();//Dos40BiosParameterBlock();
 
             using (var stream = new MemoryStream(imageBytes, writable: false))
@@ -75,7 +68,6 @@ namespace TotalImage.FileSystems
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
         public void Format(BiosParameterBlock bpb, byte tracks)
         {
-            //stream = new MemoryStream(imageBytes, true);
             uint total_size = (uint)imageBytes.Length;
             uint root_dir_bytes = (uint)(bpb.RootDirectoryEntries << 5);
             uint fat_size = (uint)(bpb.LogicalSectorsPerFAT * bpb.BytesPerLogicalSector);
@@ -96,9 +88,8 @@ namespace TotalImage.FileSystems
                 }
 
                 stream.Seek(0, SeekOrigin.Begin);
-                stream.Write(bpb.BootJump, 0, 3);
+                writer.Write(bpb.BootJump, 0, 3);
 
-                //byte[] oemIdBytes = Encoding.ASCII.GetBytes(oemID); //OEM ID
                 writer.Write(bpb.OemId.PadRight(8, ' ').ToCharArray());
                 writer.Write(bpb.BytesPerLogicalSector);
                 writer.Write(bpb.LogicalSectorsPerCluster);
@@ -122,7 +113,7 @@ namespace TotalImage.FileSystems
                         
                         if (bpb.BpbVersion == BiosParameterBlockVersion.Dos34)
                             writer.Write((byte)40);
-                        else if (bpb.BpbVersion == BiosParameterBlockVersion.Dos34)
+                        else if (bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
                             writer.Write((byte)41);
                         else
                             throw new Exception("PANIIIIIIC");
@@ -132,7 +123,7 @@ namespace TotalImage.FileSystems
                         //DOS 4.0 adds volume label and FS type as well
                         if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
                         {
-                            writer.Write(bpb40.VolumeLabel.PadRight(8, ' ').ToCharArray());
+                            writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
                             writer.Write(bpb40.FileSystemType.PadRight(8, ' ').ToCharArray());
                         }
                     }
@@ -160,7 +151,7 @@ namespace TotalImage.FileSystems
                 {
                     if(bpb is BiosParameterBlock40 bpb40 && string.IsNullOrEmpty(bpb40.VolumeLabel))
                     {
-                        writer.Write(bpb40.VolumeLabel.PadRight(8, ' ').ToCharArray());
+                        writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
                         writer.Write((byte)0x08); //Volume label attribute
                     }
                 }
@@ -171,7 +162,6 @@ namespace TotalImage.FileSystems
         //Reads the root directory entries and any subdirectories and adds them to the treeview
         public void ReadRootDir(BiosParameterBlock bpb)
         {
-            //stream = new MemoryStream(imageBytes, false);
             uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
             using (var stream = new MemoryStream(imageBytes, writable: false))
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
@@ -234,7 +224,6 @@ namespace TotalImage.FileSystems
         //Reads the subdirectory entries and adds subdirectories to the treeview
         public void ReadSubdir(BiosParameterBlock bpb, FatDirEntry parent)
         {
-            //stream = new MemoryStream(imageBytes, false);
             uint dataAreaOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2) + 
                 (bpb.RootDirectoryEntries << 5));
             ushort fat1Offset = bpb.BytesPerLogicalSector;

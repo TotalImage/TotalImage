@@ -37,10 +37,10 @@
                 return 1;
             }
 
-            //This is needed for proper sorting of different types and keeping directories at the top
+            //This if-else block is needed so each column is handled properly
             if (main.lstFiles.Columns[SortColumn].Text == "Modified")
             {
-                if(listviewX.Text == "..")
+                if(listviewX.Text == "..") //This keeps the virtual .. directory always a the top
                 {
                     return -1;
                 }
@@ -60,33 +60,34 @@
                 {
                     return 0;
                 }
+
                 int sizeX = int.Parse(listviewX.SubItems[SortColumn].Text.TrimEnd(' ', 'B').Replace(".", "").Replace(",", ""));
                 int sizeY = int.Parse(listviewY.SubItems[SortColumn].Text.TrimEnd(' ', 'B').Replace(".", "").Replace(",", ""));
-                compareResult = ObjectCompare.Compare(sizeX, sizeY);
 
+                compareResult = ObjectCompare.Compare(sizeX, sizeY);
             }
             else if (main.lstFiles.Columns[SortColumn].Text == "Name")
             {
-                if (listviewX.Text == ".." /*&& Convert.ToBoolean(entryY.attribute & 0x10)*/)
+                if (listviewX.Text == "..")
                 {
                     return -1;
                 }
-                else if (listviewY.Text == ".." /*&& Convert.ToBoolean(entryX.attribute & 0x10)*/)
+                else if (listviewY.Text == "..")
                 {
                     return 1;
                 }
 
-                /* Sure would be nice to implement Explorer-like numeric sorting here... */
+                /* Sure would be nice to implement Explorer-like numeric string sorting here... */
 
                 compareResult = ObjectCompare.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
             }
             else
             {
-                if (listviewX.Text == ".." /*&& Convert.ToBoolean(entryY.attribute & 0x10)*/)
+                if (listviewX.Text == "..")
                 {
                     return -1;
                 }
-                else if (listviewY.Text == ".." /*&& Convert.ToBoolean(entryX.attribute & 0x10)*/)
+                else if (listviewY.Text == "..")
                 {
                     return 1;
                 }

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace TotalImage
 {
-    public class TreeViewEx : System.Windows.Forms.TreeView
+    public class TreeViewEx : TreeView
     {
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
         private extern static int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);

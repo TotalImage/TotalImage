@@ -85,22 +85,22 @@ namespace TotalImage
                     byte[] imageBytes = image.GetImageBytes();
                     File.WriteAllBytes(sfd.FileName, imageBytes);
                 }
-                else if (sfd.FilterIndex == 1 || sfd.FileName.EndsWith(".imz"))
+                /*else if (sfd.FilterIndex == 1 || sfd.FileName.EndsWith(".imz"))
                 {
-                    /* Save to IMZ */
+
                 }
                 else if (sfd.FilterIndex == 2 || sfd.FileName.EndsWith(".ddi"))
                 {
-                    /* Save to DDI */
+     
                 }
                 else if (sfd.FilterIndex == 3 || sfd.FileName.EndsWith(".fdi"))
                 {
-                    /* Save to Anex86 FDI */
+      
                 }
                 else if (sfd.FilterIndex == 4 || sfd.FileName.EndsWith(".86f"))
                 {
-                    /* Save to 86F */
-                }
+
+                }*/
             }
         }
 
@@ -735,7 +735,7 @@ namespace TotalImage
         }
 
         //Enables various UI elements after an image is loaded
-        private void EnableUI()
+        public void EnableUI()
         {
             closeToolStripButton.Enabled = true;
             injectToolStripButton.Enabled = true;
@@ -743,6 +743,8 @@ namespace TotalImage
             labelToolStripMenuButton.Enabled = true;
             bootsectToolStripButton.Enabled = true;
             infoToolStripButton.Enabled = true;
+            saveAsToolStripMenuItem.Enabled = true;
+            closeImageToolStripMenuItem.Enabled = true;
 
             foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
             {
