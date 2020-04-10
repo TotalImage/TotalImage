@@ -84,7 +84,7 @@ namespace TotalImage
                     sfd.FileName.EndsWith(".hdm"))
                 {
                     byte[] imageBytes = image.GetImageBytes();
-                    File.WriteAllBytes(sfd.FileName, imageBytes);
+                    System.IO.File.WriteAllBytes(sfd.FileName, imageBytes);
                 }
                 /*else if (sfd.FilterIndex == 1 || sfd.FileName.EndsWith(".imz"))
                 {
@@ -606,7 +606,7 @@ namespace TotalImage
         private void SaveChanges()
         {
             byte[] imageBytes = image.GetImageBytes();
-            File.WriteAllBytes(path, imageBytes);
+            System.IO.File.WriteAllBytes(path, imageBytes);
 
             saveToolStripButton.Enabled = false;
             saveToolStripMenuItem.Enabled = false;

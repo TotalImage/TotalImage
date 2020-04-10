@@ -39,7 +39,7 @@ namespace TotalImage.ImageFormats
         public void LoadImage(string path)
         {
             //For larger images (HDD etc.) we probably won't read the entire file at once, but use the stream instead...
-            imageBytes = File.ReadAllBytes(path);
+            imageBytes = System.IO.File.ReadAllBytes(path);
             //fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             Fat12 fat12 = new Fat12(imageBytes);
             bpb = fat12.Parse();
