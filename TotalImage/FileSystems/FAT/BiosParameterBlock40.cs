@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TotalImage.FileSystems
+namespace TotalImage.FileSystems.FAT
 {
     /*
      * BIOS Parameter Block for FAT12, FAT16, FAT16B and HPFS file systems 

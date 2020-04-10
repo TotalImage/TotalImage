@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
+using TotalImage.FileSystems.FAT;
 using TotalImage.ImageFormats;
 
 namespace TotalImage

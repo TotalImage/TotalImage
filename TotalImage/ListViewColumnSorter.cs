@@ -4,6 +4,7 @@
     using System.Collections;
     using System.Windows.Forms;
     using TotalImage.FileSystems;
+    using TotalImage.FileSystems.FAT;
 
     public class ListViewColumnSorter : IComparer
     {

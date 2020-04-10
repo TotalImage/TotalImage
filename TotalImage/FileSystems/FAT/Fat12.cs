@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace TotalImage.FileSystems
+namespace TotalImage.FileSystems.FAT
 {
     public class Fat12
     {

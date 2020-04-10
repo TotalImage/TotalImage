@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TotalImage.FileSystems
+namespace TotalImage.FileSystems.FAT
 {
     public enum BiosParameterBlockVersion
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TotalImage.FileSystems
+namespace TotalImage.FileSystems.FAT
 {
     /*
      * This class represents the traditional 32-byte FAT directory entry, used in FAT12, FAT16 and FAT32
