@@ -29,7 +29,7 @@ namespace TotalImage.FileSystems.FAT
             get => oemId; 
             set
             {
-                if(value.Length > 8)
+                if(value?.Length > 8)
                     throw new ArgumentException("OEM ID must be 8 characters at most");
 
                 oemId = value;

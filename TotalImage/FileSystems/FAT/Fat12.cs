@@ -18,7 +18,7 @@ namespace TotalImage.FileSystems.FAT
 
         public BiosParameterBlock Parse()
         {
-            var bpb = new BiosParameterBlock40();
+            var bpb = new BiosParameterBlock();
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
             {
                 stream.Seek(0x0B, SeekOrigin.Begin); //BPB offset
@@ -35,31 +35,34 @@ namespace TotalImage.FileSystems.FAT
                 bpb.NumberOfHeads = reader.ReadUInt16();
                 bpb.HiddenSectors = reader.ReadUInt32();
                 bpb.LargeTotalLogicalSectors = reader.ReadUInt32();
-                bpb.PhysicalDriveNumber = reader.ReadByte();
-                bpb.Flags = reader.ReadByte();
+
+                // Try to read the BPB further as a DOS 4.0 BPB.
+                var bpb40 = new BiosParameterBlock40(bpb);
+                bpb40.PhysicalDriveNumber = reader.ReadByte();
+                bpb40.Flags = reader.ReadByte();
 
                 switch(reader.ReadByte())
                 {
                     case 40:
-                        bpb.BpbVersion = BiosParameterBlockVersion.Dos34;
+                        bpb40.BpbVersion = BiosParameterBlockVersion.Dos34;
                         break;
                     case 41:
-                        bpb.BpbVersion = BiosParameterBlockVersion.Dos40;
+                        bpb40.BpbVersion = BiosParameterBlockVersion.Dos40;
                         break;
                     default:
-                        throw new Exception("PANIIIIIIC");
+                        return bpb; // it's not a DOS 4.0 BPB, don't bother any further
                 }
 
-                bpb.VolumeSerialNumber = reader.ReadUInt32();
+                bpb40.VolumeSerialNumber = reader.ReadUInt32();
 
-                if(bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+                if(bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
                 {
-                    bpb.VolumeLabel = new string(reader.ReadChars(11));
-                    bpb.FileSystemType = new string(reader.ReadChars(8));
+                    bpb40.VolumeLabel = new string(reader.ReadChars(11));
+                    bpb40.FileSystemType = new string(reader.ReadChars(8));
                 }
-            }
 
-            return bpb;
+                return bpb;
+            }
         }
 
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...

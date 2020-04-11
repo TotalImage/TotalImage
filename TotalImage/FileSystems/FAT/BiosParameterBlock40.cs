@@ -38,5 +38,26 @@ namespace TotalImage.FileSystems.FAT
                 fileSystemType = value;
             }
         }
+
+        public BiosParameterBlock40() { }
+
+        public BiosParameterBlock40(BiosParameterBlock bpb)
+        {
+            BpbVersion = bpb.BpbVersion;
+            BootJump = bpb.BootJump;
+            OemId = bpb.OemId;
+            BytesPerLogicalSector = bpb.BytesPerLogicalSector;
+            LogicalSectorsPerCluster = bpb.LogicalSectorsPerCluster;
+            ReservedLogicalSectors = bpb.ReservedLogicalSectors;
+            NumberOfFATs = bpb.NumberOfFATs;
+            RootDirectoryEntries = bpb.RootDirectoryEntries;
+            //TLS = bpb.TLS;
+            MediaDescriptor = bpb.MediaDescriptor;
+            LogicalSectorsPerFAT = bpb.LogicalSectorsPerFAT;
+            PhysicalSectorsPerTrack = bpb.PhysicalSectorsPerTrack;
+            NumberOfHeads = bpb.NumberOfHeads;
+            HiddenSectors = bpb.HiddenSectors;
+            LargeTotalLogicalSectors = bpb.LargeTotalLogicalSectors;
+        }
     }
 }
