@@ -364,12 +364,6 @@ namespace TotalImage
             dlg.ShowDialog();
         }
 
-        private void undeleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dlgUndelete dlg = new dlgUndelete();
-            dlg.ShowDialog();
-        }
-
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(lstFiles.SelectedItems.Count == 0)
@@ -636,6 +630,8 @@ namespace TotalImage
         {
             sorter = new ListViewColumnSorter();
             lstFiles.ListViewItemSorter = sorter;
+
+            propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter; //Because designer doesn't have the Enter key in the list for some reason...
 
             DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
         }
@@ -1061,6 +1057,21 @@ namespace TotalImage
             listToolStripMenuItem.Checked = false;
             listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.Tile;
+        }
+
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lstFiles.Focus();
+            foreach(ListViewItem lvi in lstFiles.Items)
+            {
+                lvi.Selected = true;
+            }
+        }
+
+        private void defragmentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dlgDefragment dlg = new dlgDefragment();
+            dlg.ShowDialog();
         }
     }
 }

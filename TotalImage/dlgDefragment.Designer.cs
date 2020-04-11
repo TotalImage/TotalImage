@@ -1,6 +1,6 @@
 ﻿namespace TotalImage
 {
-    partial class dlgUndelete
+    partial class dlgDefragment
     {
         /// <summary>
         /// Required designer variable.
@@ -36,10 +36,10 @@
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(600, 346);
+            this.btnOK.Location = new System.Drawing.Point(425, 291);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
-            this.btnOK.TabIndex = 9;
+            this.btnOK.TabIndex = 0;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             // 
@@ -48,31 +48,31 @@
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(686, 346);
+            this.btnCancel.Location = new System.Drawing.Point(511, 291);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
-            this.btnCancel.TabIndex = 8;
+            this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
-            // dlgUndelete
+            // dlgDefragment
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(778, 384);
+            this.ClientSize = new System.Drawing.Size(603, 329);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnCancel);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "dlgUndelete";
+            this.Name = "dlgDefragment";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Undelete file(s)";
+            this.Text = "Defragment";
             this.ResumeLayout(false);
 
         }
