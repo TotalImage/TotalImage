@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace TotalImage.FileSystems
 {
@@ -19,6 +18,7 @@ namespace TotalImage.FileSystems
 
         public abstract void Delete();
         public abstract void MoveTo(string path);
+        public abstract void Rename(string name);
 
         public bool IsReadOnly
         {

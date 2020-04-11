@@ -18,7 +18,7 @@ namespace TotalImage.FileSystems.FAT
 
         public BiosParameterBlock Parse()
         {
-            var bpb = new BiosParameterBlock40();//Dos40BiosParameterBlock();
+            var bpb = new BiosParameterBlock40();
 
             using (var stream = new MemoryStream(imageBytes, writable: false))
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
