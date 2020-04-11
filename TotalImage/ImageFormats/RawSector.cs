@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using TotalImage.FileSystems;
 using TotalImage.FileSystems.FAT;
 
 namespace TotalImage.ImageFormats
@@ -10,23 +9,22 @@ namespace TotalImage.ImageFormats
     public class RawSector
     {
         private byte[] imageBytes;
-        private BiosParameterBlock bpb;
-        private FileStream fs;
+        //private BiosParameterBlock bpb;
+        private MemoryStream stream;
       
-        //Returns byte array of the image
         public byte[] GetImageBytes()
         {
             return imageBytes;
         }
 
-        //Creates a new image from the selected preset - PORTED FROM 86BOX
+        //Creates a new image from the selected preset
         public void CreateImage(BiosParameterBlock bpb, byte tracks)
         {
             uint imageSize = (uint)(bpb.BytesPerLogicalSector * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * tracks);
             imageBytes = new byte[imageSize];
-            Fat12 fat12 = new Fat12(imageBytes);
+            stream = new MemoryStream(imageBytes, true);
+            Fat12 fat12 = new Fat12(stream);
             fat12.Format(bpb, tracks);
-            this.bpb = bpb;
         }
 
         //Creates a new image based on custom parameters
@@ -40,40 +38,41 @@ namespace TotalImage.ImageFormats
         {
             //For larger images (HDD etc.) we probably won't read the entire file at once, but use the stream instead...
             imageBytes = System.IO.File.ReadAllBytes(path);
-            //fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            Fat12 fat12 = new Fat12(imageBytes);
-            bpb = fat12.Parse();
-            fat12.ReadRootDir(bpb);
+            stream = new MemoryStream(imageBytes, true);
+            Fat12 fat12 = new Fat12(stream);
+            /*bpb = fat12.Parse();
+            fat12.ReadRootDir(bpb);*/
         }
 
         //Closes and unlocks the file
         public void CloseImage()
         {
-            if(fs != null)
+            if(stream != null)
             {
-                fs.Close();
+                stream.Flush();
+                stream.Close();
             }
         }
 
         //Lists the contents of the specified directory
         public void ListDirectory(FatDirEntry entry)
         {
-            Fat12 fat12 = new Fat12(imageBytes);
-            fat12.ListDir(bpb, entry);
+            Fat12 fat12 = new Fat12(stream);
+            //fat12.ListDir(bpb, entry);
         }
 
         //Lists the contents of the root directory
         public void ListRootDirectory()
         {
-            Fat12 fat12 = new Fat12(imageBytes);
-            fat12.ListRootDir(bpb);
+            Fat12 fat12 = new Fat12(stream);
+            //fat12.ListRootDir(bpb);
         }
 
         //Changes the volume label
         public void ChangeVolumeLabel(string label)
         {
-            Fat12 fat12 = new Fat12(imageBytes);
-            fat12.ChangeVolLabel(bpb, label);
+            Fat12 fat12 = new Fat12(stream);
+            //fat12.ChangeVolLabel(bpb, label);
         }
     }
 }

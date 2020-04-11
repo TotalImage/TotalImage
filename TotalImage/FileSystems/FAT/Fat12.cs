@@ -7,30 +7,27 @@ namespace TotalImage.FileSystems.FAT
 {
     public class Fat12
     {
-        private frmMain main; 
-        private byte[] imageBytes;
+        private frmMain main;
+        private MemoryStream stream;
 
-        public Fat12(byte[] imageBytes)
+        public Fat12(MemoryStream stream)
         {
-            this.imageBytes = imageBytes;
+            this.stream = stream;
             main = (frmMain)Application.OpenForms["frmMain"];
         }
 
         public BiosParameterBlock Parse()
         {
             var bpb = new BiosParameterBlock40();
-
-            using (var stream = new MemoryStream(imageBytes, writable: false))
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
             {
-                stream.Seek(0x0B, SeekOrigin.Begin); // BPB offset
+                stream.Seek(0x0B, SeekOrigin.Begin); //BPB offset
 
                 bpb.BytesPerLogicalSector = reader.ReadUInt16();
                 bpb.LogicalSectorsPerCluster = reader.ReadByte();
                 bpb.ReservedLogicalSectors = reader.ReadUInt16();
                 bpb.NumberOfFATs = reader.ReadByte();
                 bpb.RootDirectoryEntries = reader.ReadUInt16();
-                /*bpb.TotalLogicalSectors =*/
                 reader.ReadUInt16();
                 bpb.MediaDescriptor = reader.ReadByte();
                 bpb.LogicalSectorsPerFAT = reader.ReadUInt16();
@@ -68,28 +65,31 @@ namespace TotalImage.FileSystems.FAT
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
         public void Format(BiosParameterBlock bpb, byte tracks)
         {
-            uint total_size = (uint)imageBytes.Length;
-            uint root_dir_bytes = (uint)(bpb.RootDirectoryEntries << 5);
-            uint fat_size = (uint)(bpb.LogicalSectorsPerFAT * bpb.BytesPerLogicalSector);
-            uint fat1_offs = (uint)(bpb.ReservedLogicalSectors * bpb.BytesPerLogicalSector);
-            uint fat2_offs = fat1_offs + fat_size;
-            uint zero_bytes = fat2_offs + fat_size + root_dir_bytes;
+            uint totalSize = (uint)stream.Length;
+            uint rootDirSize = (uint)(bpb.RootDirectoryEntries << 5);
+            uint fatSize = (uint)(bpb.LogicalSectorsPerFAT * bpb.BytesPerLogicalSector);
+            uint fat1Offset = (uint)(bpb.ReservedLogicalSectors * bpb.BytesPerLogicalSector);
+            uint fat2Offset = fat1Offset + fatSize;
+            uint dataAreaOffset = fat2Offset + fatSize + rootDirSize;
 
-            using (var stream = new MemoryStream(imageBytes, writable: true))
+            //using (var stream = new MemoryStream(imageBytes, writable: true))
             using (var writer = new BinaryWriter(stream, Encoding.ASCII))
             {
-                imageBytes.Initialize(); //Fill the image with zeroes
-                stream.Seek(zero_bytes, SeekOrigin.Begin);
+                stream.Seek(0, SeekOrigin.Begin);
+                for (uint i = 0; i < totalSize; i++)
+                {
+                    writer.Write((byte)0);
+                }
 
-                //Fill the data area with 0xF6
-                for (uint i = 0; i < total_size - zero_bytes; i++)
+                //Fille the data area with 0xF6
+                stream.Seek(dataAreaOffset, SeekOrigin.Begin);
+                for (uint i = 0; i < totalSize - dataAreaOffset; i++)
                 {
                     writer.Write((byte)0xF6);
                 }
 
                 stream.Seek(0, SeekOrigin.Begin);
                 writer.Write(bpb.BootJump, 0, 3);
-
                 writer.Write(bpb.OemId.PadRight(8, ' ').ToCharArray());
                 writer.Write(bpb.BytesPerLogicalSector);
                 writer.Write(bpb.LogicalSectorsPerCluster);
@@ -138,17 +138,17 @@ namespace TotalImage.FileSystems.FAT
                 writer.Write((byte)0xAA);
 
                 //Media descriptor needs to be written to each FAT as well
-                stream.Seek(fat1_offs, SeekOrigin.Begin);
+                stream.Seek(fat1Offset, SeekOrigin.Begin);
                 writer.Write(bpb.MediaDescriptor);
                 writer.Write((byte)0xFF);
                 writer.Write((byte)0xFF);
-                stream.Seek(fat2_offs, SeekOrigin.Begin);
+                stream.Seek(fat2Offset, SeekOrigin.Begin);
                 writer.Write(bpb.MediaDescriptor);
                 writer.Write((byte)0xFF);
                 writer.Write((byte)0xFF);
 
                 //Volume label needs to be written to the root directory as well
-                stream.Seek(fat2_offs + fat_size, SeekOrigin.Begin);
+                stream.Seek(fat2Offset + fatSize, SeekOrigin.Begin);
 
                 //First 11 bytes (8.3 space-padded filename) are the label itself
                 {
@@ -165,7 +165,6 @@ namespace TotalImage.FileSystems.FAT
         public void ReadRootDir(BiosParameterBlock bpb)
         {
             uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
-            using (var stream = new MemoryStream(imageBytes, writable: false))
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
             {
                 stream.Seek(rootDirOffset, SeekOrigin.Begin);
@@ -231,7 +230,7 @@ namespace TotalImage.FileSystems.FAT
             uint dataAreaOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2) + 
                 (bpb.RootDirectoryEntries << 5));
             ushort fat1Offset = bpb.BytesPerLogicalSector;
-            using (var stream = new MemoryStream(imageBytes, writable: false))
+
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
             {
                 ushort cluster = parent.startCluster;
@@ -318,7 +317,7 @@ namespace TotalImage.FileSystems.FAT
             ushort fatSize = (ushort)(bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT);
             uint rootDirOffset = (uint)(fat1Offset + (fatSize * 2));
             uint dataAreaOffset = (uint)(rootDirOffset + (bpb.RootDirectoryEntries << 5));
-            using (var stream = new MemoryStream(imageBytes, writable: false))
+
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
             {
                 ushort cluster = parent.startCluster;
@@ -394,7 +393,7 @@ namespace TotalImage.FileSystems.FAT
         public void ListRootDir(BiosParameterBlock bpb)
         {
             uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
-            using (var stream = new MemoryStream(imageBytes, writable: false))
+
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
             {
                 stream.Seek(rootDirOffset, SeekOrigin.Begin);
@@ -451,7 +450,6 @@ namespace TotalImage.FileSystems.FAT
             uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
             bool rootDirFull = false;
 
-            using (var stream = new MemoryStream(imageBytes, writable: true))
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
             using (var writer = new BinaryWriter(stream, Encoding.ASCII))
             {
