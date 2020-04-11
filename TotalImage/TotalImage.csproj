@@ -13,12 +13,4 @@
     <ApplicationIcon>totalimage.ico</ApplicationIcon>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Resources.Extensions" Version="4.7.0" />
-  </ItemGroup>
-
 </Project>
