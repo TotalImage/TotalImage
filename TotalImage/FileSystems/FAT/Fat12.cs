@@ -8,12 +8,17 @@ namespace TotalImage.FileSystems.FAT
     public class Fat12
     {
         private frmMain main;
-        private MemoryStream stream;
+        private Stream stream;
 
-        public Fat12(MemoryStream stream)
+        protected Fat12()
+        {
+            main = (frmMain)Application.OpenForms["frmMain"];
+        }
+
+        public Fat12(Stream stream) : this()
         {
             this.stream = stream;
-            main = (frmMain)Application.OpenForms["frmMain"];
+            Parse();
         }
 
         public BiosParameterBlock Parse()
@@ -66,8 +71,11 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
-        public void Format(BiosParameterBlock bpb, byte tracks)
+        public static Fat12 Create(Stream stream, BiosParameterBlock bpb, byte tracks)
         {
+            var fat = new Fat12();
+            fat.stream = stream;
+
             uint totalSize = (uint)stream.Length;
             uint rootDirSize = (uint)(bpb.RootDirectoryEntries << 5);
             uint fatSize = (uint)(bpb.LogicalSectorsPerFAT * bpb.BytesPerLogicalSector);
@@ -162,6 +170,9 @@ namespace TotalImage.FileSystems.FAT
                     }
                 }
             }
+
+            fat.Parse();
+            return fat;
         }
 
         //Reads the root directory entries and any subdirectories and adds them to the treeview

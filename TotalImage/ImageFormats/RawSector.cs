@@ -23,8 +23,7 @@ namespace TotalImage.ImageFormats
             uint imageSize = (uint)(bpb.BytesPerLogicalSector * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * tracks);
             imageBytes = new byte[imageSize];
             stream = new MemoryStream(imageBytes, true);
-            Fat12 fat12 = new Fat12(stream);
-            fat12.Format(bpb, tracks);
+            Fat12 fat12 = Fat12.Create(stream, bpb, tracks);
         }
 
         //Creates a new image based on custom parameters
