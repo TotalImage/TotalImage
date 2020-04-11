@@ -5,6 +5,8 @@ namespace TotalImage.FileSystems
 {
     public abstract class FileSystemObject
     {
+        protected FileSystemObject() { }
+
         public abstract string Name { get; set; }
         public abstract string FullName { get; set; }
 

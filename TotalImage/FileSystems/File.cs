@@ -6,6 +6,8 @@ namespace TotalImage.FileSystems
 {
     public abstract class File : FileSystemObject
     {
+        protected File() { }
+
         public virtual string Extension
         {
             get => Name.Split('.').Last();

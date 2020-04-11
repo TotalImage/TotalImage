@@ -505,7 +505,7 @@ namespace TotalImage.FileSystems.FAT
                     }
                 }
 
-                if (bpb is BiosParameterBlock40 bpb40 && bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+                if (bpb is BiosParameterBlock40 && bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
                 {
                     stream.Seek(0x2B, SeekOrigin.Begin);
                     writer.Write(label.ToCharArray());

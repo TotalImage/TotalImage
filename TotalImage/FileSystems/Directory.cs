@@ -6,6 +6,8 @@ namespace TotalImage.FileSystems
 {
     public abstract class Directory : FileSystemObject
     {
+        protected Directory() { }
+
         public abstract Directory Parent { get; }
         public abstract Directory Root { get; }
 
