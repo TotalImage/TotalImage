@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace TotalImage
 {
-    public partial class dlgUndelete : Form
+    public partial class dlgDefragment : Form
     {
-        public dlgUndelete()
+        public dlgDefragment()
         {
             InitializeComponent();
         }
