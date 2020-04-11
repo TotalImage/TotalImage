@@ -9,6 +9,7 @@ namespace TotalImage.FileSystems.FAT
     {
         private frmMain main;
         private Stream stream;
+        private BiosParameterBlock bpb;
 
         protected Fat12()
         {
@@ -18,13 +19,13 @@ namespace TotalImage.FileSystems.FAT
         public Fat12(Stream stream) : this()
         {
             this.stream = stream;
-            Parse();
+            bpb = Parse();
         }
 
         public BiosParameterBlock Parse()
         {
             var bpb = new BiosParameterBlock();
-            using (var reader = new BinaryReader(stream, Encoding.ASCII))
+            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
                 stream.Seek(0x0B, SeekOrigin.Begin); //BPB offset
 
@@ -84,7 +85,7 @@ namespace TotalImage.FileSystems.FAT
             uint dataAreaOffset = fat2Offset + fatSize + rootDirSize;
 
             //using (var stream = new MemoryStream(imageBytes, writable: true))
-            using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+            using (var writer = new BinaryWriter(stream, Encoding.ASCII, true))
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 for (uint i = 0; i < totalSize; i++)
@@ -171,15 +172,15 @@ namespace TotalImage.FileSystems.FAT
                 }
             }
 
-            fat.Parse();
+            fat.bpb = fat.Parse();
             return fat;
         }
 
         //Reads the root directory entries and any subdirectories and adds them to the treeview
-        public void ReadRootDir(BiosParameterBlock bpb)
+        public void ReadRootDir()
         {
             uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
-            using (var reader = new BinaryReader(stream, Encoding.ASCII))
+            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
                 stream.Seek(rootDirOffset, SeekOrigin.Begin);
 
@@ -224,7 +225,7 @@ namespace TotalImage.FileSystems.FAT
                         {
                             main.AddToRootDir(entry);
                             main.AddToFileList(entry);
-                            ReadSubdir(bpb, entry);
+                            ReadSubdir(entry);
                         }
                         //File entry
                         else if (!Convert.ToBoolean(entry.attribute & 0x10))
@@ -239,13 +240,13 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Reads the subdirectory entries and adds subdirectories to the treeview
-        public void ReadSubdir(BiosParameterBlock bpb, FatDirEntry parent)
+        public void ReadSubdir(FatDirEntry parent)
         {
             uint dataAreaOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2) + 
                 (bpb.RootDirectoryEntries << 5));
             ushort fat1Offset = bpb.BytesPerLogicalSector;
 
-            using (var reader = new BinaryReader(stream, Encoding.ASCII))
+            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
                 ushort cluster = parent.startCluster;
 
@@ -298,7 +299,7 @@ namespace TotalImage.FileSystems.FAT
                             if (Convert.ToBoolean(entry.attribute & 0x10))
                             {
                                 main.AddToDir(parent, entry);
-                                ReadSubdir(bpb, entry);
+                                ReadSubdir(entry);
                             }
                         }
                     }
@@ -324,7 +325,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Lists the contents of the directory without traversing subdirectories and adding them to the treeview
-        public void ListDir(BiosParameterBlock bpb, FatDirEntry parent)
+        public void ListDir(FatDirEntry parent)
         {
             uint dirSize = 0;
             ushort fat1Offset = bpb.BytesPerLogicalSector;
@@ -332,7 +333,7 @@ namespace TotalImage.FileSystems.FAT
             uint rootDirOffset = (uint)(fat1Offset + (fatSize * 2));
             uint dataAreaOffset = (uint)(rootDirOffset + (bpb.RootDirectoryEntries << 5));
 
-            using (var reader = new BinaryReader(stream, Encoding.ASCII))
+            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
                 ushort cluster = parent.startCluster;
                 do
@@ -404,11 +405,11 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Lists the contents of the root directory without traversing subdirectories and adding them to the treeview
-        public void ListRootDir(BiosParameterBlock bpb)
+        public void ListRootDir()
         {
             uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
 
-            using (var reader = new BinaryReader(stream, Encoding.ASCII))
+            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
                 stream.Seek(rootDirOffset, SeekOrigin.Begin);
 
@@ -459,13 +460,13 @@ namespace TotalImage.FileSystems.FAT
          * If BPB version <= 3.31, only the root dir label is changed
          * If BPB version >= 3.40, both the root dir and BPB label are changed
          */
-        public void ChangeVolLabel(BiosParameterBlock bpb, string label)
+        public void ChangeVolLabel(string label)
         {
             uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
             bool rootDirFull = false;
 
-            using (var reader = new BinaryReader(stream, Encoding.ASCII))
-            using (var writer = new BinaryWriter(stream, Encoding.ASCII))
+            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+            using (var writer = new BinaryWriter(stream, Encoding.ASCII, true))
             {
                 stream.Seek(rootDirOffset, SeekOrigin.Begin);
 

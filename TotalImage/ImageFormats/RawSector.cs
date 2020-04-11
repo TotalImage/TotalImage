@@ -10,7 +10,8 @@ namespace TotalImage.ImageFormats
     {
         private byte[] imageBytes;
         //private BiosParameterBlock bpb;
-        private MemoryStream stream;
+        private Stream stream;
+        private Fat12 fat12;
       
         public byte[] GetImageBytes()
         {
@@ -23,7 +24,7 @@ namespace TotalImage.ImageFormats
             uint imageSize = (uint)(bpb.BytesPerLogicalSector * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * tracks);
             imageBytes = new byte[imageSize];
             stream = new MemoryStream(imageBytes, true);
-            Fat12 fat12 = Fat12.Create(stream, bpb, tracks);
+            fat12 = Fat12.Create(stream, bpb, tracks);
         }
 
         //Creates a new image based on custom parameters
@@ -36,9 +37,9 @@ namespace TotalImage.ImageFormats
         public void LoadImage(string path)
         {
             //For larger images (HDD etc.) we probably won't read the entire file at once, but use the stream instead...
-            imageBytes = System.IO.File.ReadAllBytes(path);
-            stream = new MemoryStream(imageBytes, true);
-            Fat12 fat12 = new Fat12(stream);
+            //imageBytes = System.IO.File.ReadAllBytes(path);
+            stream = new FileStream(path, FileMode.Open);
+            fat12 = new Fat12(stream);
             /*bpb = fat12.Parse();
             fat12.ReadRootDir(bpb);*/
         }
@@ -56,22 +57,22 @@ namespace TotalImage.ImageFormats
         //Lists the contents of the specified directory
         public void ListDirectory(FatDirEntry entry)
         {
-            Fat12 fat12 = new Fat12(stream);
-            //fat12.ListDir(bpb, entry);
+            //Fat12 fat12 = new Fat12(stream);
+            fat12.ListDir(entry);
         }
 
         //Lists the contents of the root directory
         public void ListRootDirectory()
         {
-            Fat12 fat12 = new Fat12(stream);
-            //fat12.ListRootDir(bpb);
+            //Fat12 fat12 = new Fat12(stream);
+            fat12.ListRootDir();
         }
 
         //Changes the volume label
         public void ChangeVolumeLabel(string label)
         {
-            Fat12 fat12 = new Fat12(stream);
-            //fat12.ChangeVolLabel(bpb, label);
+            //Fat12 fat12 = new Fat12(stream);
+            fat12.ChangeVolLabel(label);
         }
     }
 }
