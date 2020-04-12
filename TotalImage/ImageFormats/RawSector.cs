@@ -9,7 +9,7 @@ namespace TotalImage.ImageFormats
     public class RawSector
     {
         private byte[] imageBytes;
-        //private BiosParameterBlock bpb;
+        private BiosParameterBlock bpb;
         private Stream stream;
         private Fat12 fat12;
       
@@ -37,11 +37,10 @@ namespace TotalImage.ImageFormats
         public void LoadImage(string path)
         {
             //For larger images (HDD etc.) we probably won't read the entire file at once, but use the stream instead...
-            //imageBytes = System.IO.File.ReadAllBytes(path);
             stream = new FileStream(path, FileMode.Open);
             fat12 = new Fat12(stream);
-            /*bpb = fat12.Parse();
-            fat12.ReadRootDir(bpb);*/
+            bpb = fat12.Parse();
+            fat12.ReadRootDir();
         }
 
         //Closes and unlocks the file

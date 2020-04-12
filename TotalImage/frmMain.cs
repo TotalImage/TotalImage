@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using TotalImage.FileSystems;
 using TotalImage.FileSystems.FAT;
 using TotalImage.ImageFormats;
 
@@ -18,6 +14,41 @@ namespace TotalImage
         public bool unsavedChanges = false;
         public RawSector image;
         private ListViewColumnSorter sorter;
+
+        private const int FILE_ATTRIBUTE_NORMAL = 0x80;
+        private const int SHGFI_TYPENAME = 0x400;
+        private const int SHGFI_USEFILEATTRIBUTES = 0x000000010;
+
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr SHGetFileInfo(
+            string pszPath,
+            int dwFileAttributes,
+            ref SHFILEINFO shinfo,
+            uint cbfileInfo,
+            int uFlags);
+
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        private struct SHFILEINFO
+        {
+            public SHFILEINFO(bool b)
+            {
+                hIcon = IntPtr.Zero;
+                iIcon = 0;
+                dwAttributes = 0;
+                szDisplayName = "";
+                szTypeName = "";
+            }
+
+            public IntPtr hIcon;
+            public int iIcon;
+            public uint dwAttributes;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+            public string szDisplayName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
+            public string szTypeName;
+        };
+
 
         public frmMain()
         {
@@ -222,7 +253,17 @@ namespace TotalImage
 
         private void OpenImage()
         {
-            //Needs a check for unsaved changes
+            if (unsavedChanges)
+            {
+                DialogResult = MessageBox.Show("You have unsaved changes. Would you like to save the current image first before opening another one?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                switch (DialogResult)
+                {
+                    case DialogResult.Cancel: return;
+                    case DialogResult.Yes: /* Save changes to the current image, then close the current image */ break;
+                    case DialogResult.No: /* Close the current image */ break;
+                }
+            }
+
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.AutoUpgradeEnabled = true;
             ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
@@ -696,6 +737,19 @@ namespace TotalImage
             //lstDirectories.Sort();
         }
 
+        public static string GetShellFileType(string fileName)
+        {
+            var shinfo = new SHFILEINFO(true);
+            const int flags = SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES;
+
+            if (SHGetFileInfo(fileName, FILE_ATTRIBUTE_NORMAL, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
+            {
+                return "File";
+            }
+
+            return shinfo.szTypeName;
+        }
+
         //Adds a new item to the file list
         public void AddToFileList(FatDirEntry entry)
         {
@@ -709,7 +763,6 @@ namespace TotalImage
                 byte hours = (byte)((entry.modifiedTime & 0xF800) >> 11);
                 byte minutes = (byte)((entry.modifiedTime & 0x7E0) >> 5);
                 byte seconds = (byte)((entry.modifiedTime & 0x1F) * 2); //Resolution for seconds is 2s
-
                 if (Convert.ToBoolean(entry.attribute & 0x10))
                 {
                     lvi.SubItems.Add("Directory");
@@ -719,8 +772,10 @@ namespace TotalImage
                 else
                 {
                     string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
-                    if(!string.IsNullOrWhiteSpace(extension)) lvi.Text += "." + extension;
-                    lvi.SubItems.Add("." + extension);
+                    if (!string.IsNullOrWhiteSpace(extension)) 
+                        lvi.Text += "." + extension;  
+                    string filetype = GetShellFileType(filename + "." + extension);
+                    lvi.SubItems.Add(filetype);
                     lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
                     lvi.ImageIndex = 2;
                 }

@@ -123,6 +123,8 @@ namespace TotalImage
 
                         main.image.CreateImage(bpb, floppyTable.fdt[i][5]);
                         main.EnableUI();
+
+                        Close();
                     }
 
                     else
@@ -135,7 +137,6 @@ namespace TotalImage
             {
                 /* Create a new hard disk image with selected parameters*/
             }
-            Close();
         }
 
         private void cbxFloppyBPB_CheckedChanged(object sender, EventArgs e)
