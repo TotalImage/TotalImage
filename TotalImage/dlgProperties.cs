@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
+using static Interop.Shell32;
+using static Interop.User32;
 
 namespace TotalImage
 {
@@ -84,6 +89,20 @@ namespace TotalImage
                 if (Convert.ToBoolean(entry.attribute & 0x20))
                 {
                     cbxArchive.Checked = true;
+                }
+
+                var shellInfo = new SHFILEINFO();
+                var flags = SHGFI.ICON | SHGFI.LARGEICON | SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
+                if (SHGetFileInfo($"{filename}.{extension}", (FileAttributes)entry.attribute, ref shellInfo, (uint)Marshal.SizeOf(shellInfo), flags) != IntPtr.Zero)
+                {
+                    using (var icon = Icon.FromHandle(shellInfo.hIcon))
+                    {
+                        imgIcon.Image = (icon.Clone() as Icon).ToBitmap();
+                    }
+
+                    lblType1.Text = shellInfo.szTypeName;
+
+                    DestroyIcon(shellInfo.hIcon);
                 }
             }
         }
