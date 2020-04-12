@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.ImageFormats;
+using static Interop.Shell32;
 
 namespace TotalImage
 {
@@ -15,44 +17,6 @@ namespace TotalImage
         public bool unsavedChanges = false;
         public RawSector image;
         private ListViewColumnSorter sorter;
-
-        private const int FILE_ATTRIBUTE_NORMAL = 0x80;
-        private const int SHGFI_TYPENAME = 0x400;
-        private const int SHGFI_USEFILEATTRIBUTES = 0x10;
-        private const int SHGFI_ICON = 0x100;
-        private const int SHGFI_LARGEICON = 0x0;
-        private const int SHGFI_SMALLICON = 0x1;
-
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-        private static extern IntPtr SHGetFileInfo(
-            string pszPath,
-            int dwFileAttributes,
-            ref SHFILEINFO shinfo,
-            uint cbfileInfo,
-            int uFlags);
-
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        private struct SHFILEINFO
-        {
-            public SHFILEINFO(bool b)
-            {
-                hIcon = IntPtr.Zero;
-                iIcon = 0;
-                dwAttributes = 0;
-                szDisplayName = "";
-                szTypeName = "";
-            }
-
-            public IntPtr hIcon;
-            public int iIcon;
-            public uint dwAttributes;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            public string szDisplayName;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-            public string szTypeName;
-        };
-
 
         public frmMain()
         {
@@ -798,10 +762,10 @@ namespace TotalImage
         //Obtains the fancy file type name
         public string GetShellFileType(string filename)
         {
-            var shinfo = new SHFILEINFO(true);
-            const int flags = SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES;
+            var shinfo = new SHFILEINFO();
+            var flags = SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
 
-            if (SHGetFileInfo(filename, FILE_ATTRIBUTE_NORMAL, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
+            if (SHGetFileInfo(filename, FileAttributes.Normal, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
             {
                 return "File";
             }
@@ -812,10 +776,10 @@ namespace TotalImage
         //Obtains the icon for the file type
         public Icon GetShellFileIcon(string filename)
         {
-            var shinfo = new SHFILEINFO(true);
-            const int flags = SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES;
+            var shinfo = new SHFILEINFO();
+            var flags = SHGFI.ICON | SHGFI.SMALLICON | SHGFI.USEFILEATTRIBUTES;
 
-            SHGetFileInfo(filename, FILE_ATTRIBUTE_NORMAL, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
+            SHGetFileInfo(filename, FileAttributes.Normal, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
 
             return Icon.FromHandle(shinfo.hIcon);
         }
