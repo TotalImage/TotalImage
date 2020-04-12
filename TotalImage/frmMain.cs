@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -17,7 +18,10 @@ namespace TotalImage
 
         private const int FILE_ATTRIBUTE_NORMAL = 0x80;
         private const int SHGFI_TYPENAME = 0x400;
-        private const int SHGFI_USEFILEATTRIBUTES = 0x000000010;
+        private const int SHGFI_USEFILEATTRIBUTES = 0x10;
+        private const int SHGFI_ICON = 0x100;
+        private const int SHGFI_LARGEICON = 0x0;
+        private const int SHGFI_SMALLICON = 0x1;
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         private static extern IntPtr SHGetFileInfo(
@@ -737,18 +741,31 @@ namespace TotalImage
             //lstDirectories.Sort();
         }
 
-        public static string GetShellFileType(string fileName)
+        //Obtains the fancy file type name
+        public string GetShellFileType(string filename)
         {
             var shinfo = new SHFILEINFO(true);
             const int flags = SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES;
 
-            if (SHGetFileInfo(fileName, FILE_ATTRIBUTE_NORMAL, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
+            if (SHGetFileInfo(filename, FILE_ATTRIBUTE_NORMAL, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
             {
                 return "File";
             }
 
             return shinfo.szTypeName;
         }
+
+        //Obtains the icon for the file type
+        public Icon GetShellFileIcon(string filename)
+        {
+            var shinfo = new SHFILEINFO(true);
+            const int flags = SHGFI_ICON | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES;
+
+            SHGetFileInfo(filename, FILE_ATTRIBUTE_NORMAL, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
+
+            return Icon.FromHandle(shinfo.hIcon);
+        }
+
 
         //Adds a new item to the file list
         public void AddToFileList(FatDirEntry entry)
@@ -771,13 +788,20 @@ namespace TotalImage
                 }
                 else
                 {
+
                     string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
+                    string fullname = filename;
                     if (!string.IsNullOrWhiteSpace(extension)) 
-                        lvi.Text += "." + extension;  
-                    string filetype = GetShellFileType(filename + "." + extension);
+                    {
+                        fullname += "." + extension;
+                        lvi.Text = fullname;
+                    }
+                    string filetype = GetShellFileType(fullname);
                     lvi.SubItems.Add(filetype);
                     lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
-                    lvi.ImageIndex = 2;
+                    Icon icon = GetShellFileIcon(fullname);
+                    imgDirFileList.Images.Add(fullname, icon);
+                    lvi.ImageIndex = imgDirFileList.Images.IndexOfKey(fullname);
                 }
 
                 DateTime date = new DateTime(year, month, day, hours, minutes, seconds);
