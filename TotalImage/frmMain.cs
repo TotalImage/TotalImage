@@ -84,7 +84,7 @@ namespace TotalImage
 
         private void saveToolStripButton_Click(object sender, EventArgs e)
         {
-            if(unsavedChanges)
+            if (unsavedChanges)
             {
                 if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
                 {
@@ -277,18 +277,18 @@ namespace TotalImage
             ofd.Multiselect = false;
             //ofd.ShowReadOnly = true; //We probably want this, but it degrades the dialog appearance to XP dialog... Needs a workaround
             ofd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
-               /* "WinImage compressed image (*.imz)|*.imz|" +
-                "DiskDupe image (*.ddi)|*.ddi|" +
-                "IBM SaveDiskF image (*.dsk)|*.dsk|" +
-                "TeleDisk image (*.td0)|*.td0|" +
-                "ImageDisk image (*.imd)|*.imd|" +
-                "CopyQM image (*.cqm)|*.cqm|" +
-                "EZ-DisKlone Plus image (*.fdf)|*.fdf|" +
-                "Virtual Hard Disk image (*.vhd)|*.vhd|" +
-                "Anex86 floppy disk image (*.fdi)|*.fdi|" +
-                "Anex86 hard disk image (*.hdi)|*.hdi|" +
-                "86Box surface image (*.86f)|*.86f|" +
-                "MFM surface image (*.mfm)|*.mfm|" +*/
+                /* "WinImage compressed image (*.imz)|*.imz|" +
+                 "DiskDupe image (*.ddi)|*.ddi|" +
+                 "IBM SaveDiskF image (*.dsk)|*.dsk|" +
+                 "TeleDisk image (*.td0)|*.td0|" +
+                 "ImageDisk image (*.imd)|*.imd|" +
+                 "CopyQM image (*.cqm)|*.cqm|" +
+                 "EZ-DisKlone Plus image (*.fdf)|*.fdf|" +
+                 "Virtual Hard Disk image (*.vhd)|*.vhd|" +
+                 "Anex86 floppy disk image (*.fdi)|*.fdi|" +
+                 "Anex86 hard disk image (*.hdi)|*.hdi|" +
+                 "86Box surface image (*.86f)|*.86f|" +
+                 "MFM surface image (*.mfm)|*.mfm|" +*/
                 "All files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -302,7 +302,7 @@ namespace TotalImage
                 TreeNode root = new TreeNode(filename);
                 root.ContextMenuStrip = cmsDirTree;
                 root.ImageIndex = 0;
-                lstDirectories.Nodes.Add(root);        
+                lstDirectories.Nodes.Add(root);
                 image = new RawSector();
                 image.LoadImage(path);
                 lstDirectories.SelectedNode = lstDirectories.Nodes[0];
@@ -409,6 +409,40 @@ namespace TotalImage
             dlg.ShowDialog();
         }
 
+        //Returns size of directory
+        private uint CalculateDirSize(bool searchSubdirs) 
+        {
+            uint dirSize = 0;
+
+            foreach (ListViewItem lvi in lstFiles.Items)
+            {
+                FatDirEntry entry = (FatDirEntry)lvi.Tag;
+                if (!Convert.ToBoolean(entry.attribute & 0x10))
+                {
+                    dirSize += entry.fileSize;
+                }
+            }
+
+            return dirSize;
+        }
+
+        //Returns the number of files in a directory
+        private uint GetFileCount(bool searchSubdirs) 
+        {
+            uint fileCount = 0;
+
+            foreach (ListViewItem lvi in lstFiles.Items)
+            {
+                FatDirEntry entry = (FatDirEntry)lvi.Tag;
+                if (!Convert.ToBoolean(entry.attribute & 0x10))
+                {
+                    fileCount++;
+                }
+            }
+
+            return fileCount;
+        }
+
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(lstFiles.SelectedItems.Count == 0)
@@ -425,6 +459,9 @@ namespace TotalImage
                 deleteToolStripButton.Enabled = false;
                 extractToolStripButton.Enabled = false;
                 propertiesToolStripButton.Enabled = false;
+
+                lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
+                lblStatusSize.Text = string.Format("{0:n0}", CalculateDirSize(false)).ToString() + " bytes in " + GetFileCount(false) + " file(s)";
             }
             else if(lstFiles.SelectedItems.Count == 1)
             {
@@ -440,6 +477,9 @@ namespace TotalImage
                 deleteToolStripButton.Enabled = true;
                 extractToolStripButton.Enabled = true;
                 propertiesToolStripButton.Enabled = true;
+
+                lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator + lstFiles.SelectedItems[0].Text;
+                lblStatusSize.Text = string.Format("{0:n0}", ((FatDirEntry)lstFiles.SelectedItems[0].Tag).fileSize).ToString() + " bytes in 1 file";
             }
             else
             {
@@ -455,6 +495,18 @@ namespace TotalImage
                 deleteToolStripButton.Enabled = true;
                 extractToolStripButton.Enabled = true;
                 propertiesToolStripButton.Enabled = false;
+
+                lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
+
+                uint selectedSize = 0;
+                foreach(ListViewItem lvi in lstFiles.SelectedItems)
+                {
+                    FatDirEntry entry = (FatDirEntry)lvi.Tag;
+                    selectedSize += entry.fileSize;
+                }
+
+                lblStatusSize.Text = string.Format("{0:n0}", selectedSize) + " bytes in " + lstFiles.SelectedItems.Count + " files";
+
             }
         }
 
@@ -484,7 +536,7 @@ namespace TotalImage
 
         private void propertiesToolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties();
+            dlgProperties dlg = new dlgProperties((FatDirEntry)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
         }
 
@@ -677,6 +729,8 @@ namespace TotalImage
             lstFiles.ListViewItemSorter = sorter;
 
             propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter; //Because designer doesn't have the Enter key in the list for some reason...
+            propertiesToolStripMenuItem1.ShortcutKeys = Keys.Alt | Keys.Enter;
+            propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
 
             DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
         }
@@ -788,7 +842,6 @@ namespace TotalImage
                 }
                 else
                 {
-
                     string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
                     string fullname = filename;
                     if (!string.IsNullOrWhiteSpace(extension)) 
@@ -800,8 +853,8 @@ namespace TotalImage
                     lvi.SubItems.Add(filetype);
                     lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
                     Icon icon = GetShellFileIcon(fullname);
-                    imgDirFileList.Images.Add(fullname, icon);
-                    lvi.ImageIndex = imgDirFileList.Images.IndexOfKey(fullname);
+                    imgFilesSmall.Images.Add(fullname, icon);
+                    lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey(fullname);
                 }
 
                 DateTime date = new DateTime(year, month, day, hours, minutes, seconds);
@@ -933,8 +986,8 @@ namespace TotalImage
                     dirSize += entry.fileSize;
                 }
             }
-            lblDirSize.Text = string.Format("{0:n0}", dirSize).ToString() + " bytes in " + fileCount + " file(s)";
-            lblPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
+            lblStatusSize.Text = string.Format("{0:n0}", dirSize).ToString() + " bytes in " + fileCount + " file(s)";
+            lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
         }
 
         private void lstFiles_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -1151,6 +1204,15 @@ namespace TotalImage
         {
             dlgDefragment dlg = new dlgDefragment();
             dlg.ShowDialog();
+        }
+
+        private void selectAllToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            lstFiles.Focus();
+            foreach (ListViewItem lvi in lstFiles.Items)
+            {
+                lvi.Selected = true;
+            }
         }
     }
 }
