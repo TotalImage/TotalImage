@@ -10,6 +10,7 @@ namespace TotalImage.FileSystems.FAT
         private frmMain main;
         private Stream stream;
         private BiosParameterBlock bpb;
+        public BiosParameterBlock BiosParameterBlock => bpb; 
 
         protected Fat12()
         {
@@ -20,6 +21,11 @@ namespace TotalImage.FileSystems.FAT
         {
             this.stream = stream;
             bpb = Parse();
+        }
+
+        public Stream GetStream()
+        {
+            return stream;
         }
 
         public BiosParameterBlock Parse()

@@ -5,14 +5,19 @@ namespace TotalImage.FileSystems
 {
     public abstract class File : FileSystemObject
     {
-        protected File() { }
+        Directory directory;
+
+        protected File(Directory directory)
+        {
+            this.directory = directory;
+        }
 
         public virtual string Extension
         {
             get => Name.Split('.').Last();
         }
 
-        public abstract Directory Directory { get; }
+        public Directory Directory => directory;
 
         public string DirectoryName
         {

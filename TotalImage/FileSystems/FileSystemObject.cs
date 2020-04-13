@@ -27,5 +27,7 @@ namespace TotalImage.FileSystems
             get => (Attributes & FileAttributes.ReadOnly) > 0;
             set => Attributes = Attributes | (value ? FileAttributes.ReadOnly : 0);
         }
+
+        public override string ToString() => FullName;
     }
 }

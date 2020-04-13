@@ -5,15 +5,18 @@ namespace TotalImage.FileSystems.FAT
 {
     public class FatFile : File
     {
+        Fat12 fs;
         DirectoryEntry entry;
-        internal FatFile(DirectoryEntry entry)
+
+        public FatFile(Fat12 fs, DirectoryEntry entry, Directory dir) : base(dir)
         {
+            this.fs = fs;
             this.entry = entry;
         }
 
         public override string Name
         {
-            get => entry.name.Insert(8, ".");
+            get => Helper.TrimFileName(entry.name);
             set => throw new NotImplementedException();
         }
 
@@ -48,8 +51,6 @@ namespace TotalImage.FileSystems.FAT
         }
 
         public override string Extension => entry.name.Substring(8).Trim();
-
-        public override Directory Directory => throw new NotImplementedException();
 
         public override void Delete()
         {

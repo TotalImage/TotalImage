@@ -48,10 +48,5 @@ namespace TotalImage.FileSystems.FAT
 
             return entry;
         }
-
-        public bool IsDirectory() => (attr & (byte)FileAttributes.Directory) > 0;
-
-        public FileSystemObject ToFileSystemObject()
-            => IsDirectory() ? new FatDirectory(this) : new FatFile(this) as FileSystemObject;
     }
 }

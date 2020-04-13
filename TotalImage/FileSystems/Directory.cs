@@ -44,7 +44,7 @@ namespace TotalImage.FileSystems
 
                 path.Reverse();
 
-                return DirectorySeparatorChar + string.Join(DirectorySeparatorChar.ToString(), path);
+                return string.Join(DirectorySeparatorChar.ToString(), path);
             }
         }
 
