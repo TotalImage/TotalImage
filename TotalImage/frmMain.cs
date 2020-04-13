@@ -300,7 +300,7 @@ namespace TotalImage
 
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties();
+            dlgProperties dlg = new dlgProperties((FatDirEntry)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
         }
 
@@ -476,7 +476,7 @@ namespace TotalImage
 
         private void propertiesToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties();
+            dlgProperties dlg = new dlgProperties((FatDirEntry)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
         }
 
@@ -581,7 +581,7 @@ namespace TotalImage
 
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties();
+            dlgProperties dlg = new dlgProperties((FatDirEntry)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
         }
 
