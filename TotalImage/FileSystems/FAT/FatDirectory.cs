@@ -29,19 +29,19 @@ namespace TotalImage.FileSystems.FAT
             set => throw new NotImplementedException();
         }
 
-        public override DateTime LastAccessTime
+        public override DateTime? LastAccessTime
         {
             get => Helper.FatToDateTime(entry.lstAccDate);
             set => throw new NotImplementedException();
         }
 
-        public override DateTime LastWriteTime
+        public override DateTime? LastWriteTime
         {
             get => Helper.FatToDateTime(entry.wrtDate, entry.wrtTime);
             set => throw new NotImplementedException();
         }
 
-        public override DateTime CreationTime
+        public override DateTime? CreationTime
         {
             get => Helper.FatToDateTime(entry.crtDate, entry.crtTime, entry.crtTimeTenth);
             set => throw new NotImplementedException();

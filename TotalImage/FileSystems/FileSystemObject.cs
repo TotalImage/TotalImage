@@ -20,9 +20,9 @@ namespace TotalImage.FileSystems
 
         public abstract FileAttributes Attributes { get; set; }
 
-        public abstract DateTime LastAccessTime { get; set; }
-        public abstract DateTime LastWriteTime { get; set; }
-        public abstract DateTime CreationTime { get; set; }
+        public abstract DateTime? LastAccessTime { get; set; }
+        public abstract DateTime? LastWriteTime { get; set; }
+        public abstract DateTime? CreationTime { get; set; }
 
         public FileSystem FileSystem => fileSystem;
 

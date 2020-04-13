@@ -4,9 +4,9 @@ namespace TotalImage.FileSystems.FAT
 {
     internal static class Helper
     {
-        public static DateTime FatToDateTime(ushort date)
+        public static DateTime? FatToDateTime(ushort date)
         {
-            if(date == 0) return DateTime.MinValue;
+            if(date == 0) return null;
             var year = ((date & 0xFE00) >> 9) + 1980;
             var month = (date & 0x1E0) >> 5;
             var day = date & 0x1F;
@@ -14,9 +14,9 @@ namespace TotalImage.FileSystems.FAT
             return new DateTime(year, month, day);
         }
 
-        public static DateTime FatToDateTime(ushort date, ushort time)
+        public static DateTime? FatToDateTime(ushort date, ushort time)
         {
-            if(date == 0 && time == 0) return DateTime.MinValue;
+            if(date == 0 && time == 0) return null;
             var year = ((date & 0xFE00) >> 9) + 1980;
             var month = (date & 0x1E0) >> 5;
             var day = date & 0x1F;
@@ -27,9 +27,9 @@ namespace TotalImage.FileSystems.FAT
             return new DateTime(year, month, day, hour, minute, second);
         }
 
-        public static DateTime FatToDateTime(ushort date, ushort time, byte tenths)
+        public static DateTime? FatToDateTime(ushort date, ushort time, byte tenths)
         {
-            if(date == 0 && time == 0 && tenths == 0) return DateTime.MinValue;
+            if(date == 0 && time == 0 && tenths == 0) return null;
             var year = ((date & 0xFE00) >> 9) + 1980;
             var month = (date & 0x1E0) >> 5;
             var day = date & 0x1F;

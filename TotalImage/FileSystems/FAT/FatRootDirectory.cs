@@ -86,19 +86,19 @@ namespace TotalImage.FileSystems.FAT
             get => FileAttributes.Directory;
             set => throw new NotSupportedException();
         }
-        public override DateTime LastAccessTime
+        public override DateTime? LastAccessTime
         {
-            get => throw new NotSupportedException();
+            get => null;
             set => throw new NotSupportedException();
         }
-        public override DateTime LastWriteTime
+        public override DateTime? LastWriteTime
         {
-            get => throw new NotSupportedException();
+            get => null;
             set => throw new NotSupportedException();
         }
-        public override DateTime CreationTime
+        public override DateTime? CreationTime
         {
-            get => throw new NotSupportedException();
+            get => null;
             set => throw new NotSupportedException();
         }
         public override long Length
