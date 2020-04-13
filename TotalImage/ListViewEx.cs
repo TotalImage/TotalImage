@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static Interop.UxTheme;
 
 namespace TotalImage
 {
@@ -78,9 +79,6 @@ namespace TotalImage
 
     public class ListViewEx : ListView
     {
-
-        [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
-        private extern static int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
