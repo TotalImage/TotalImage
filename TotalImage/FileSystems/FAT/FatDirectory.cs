@@ -5,6 +5,9 @@ using System.Text;
 
 namespace TotalImage.FileSystems.FAT
 {
+    /*
+     * FAT12/FAT16/FAT32 directory class. Implements directory entry enumeration.
+     */
     public class FatDirectory : Directory
     {
         protected Fat12 fat;

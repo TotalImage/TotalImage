@@ -3,6 +3,11 @@ using System.IO;
 
 namespace TotalImage.FileSystems.FAT
 {
+    /*
+     * FAT12/FAT16/FAT32 file entry class.
+     *
+     * Just for looks atm
+     */
     public class FatFile : File
     {
         Fat12 fs;

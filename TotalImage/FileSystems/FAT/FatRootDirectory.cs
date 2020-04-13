@@ -6,6 +6,15 @@ using static System.IO.Path;
 
 namespace TotalImage.FileSystems.FAT
 {
+    /*
+     * FAT12/FAT16/FAT32 root directory class. Implements root dir enumeration
+     *
+     * The root directory is a special directory in the FAT filesystem, as it is
+     * present in a well-known location, as opposed to being referred to from an
+     * entry in the parent directory.
+     *
+     * Separate class for now, aim to integrate this into FatDirectory.cs
+     */
     public class FatRootDirectory : Directory
     {
         Fat12 fat;

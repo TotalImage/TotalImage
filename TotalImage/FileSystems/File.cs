@@ -3,6 +3,9 @@ using static System.IO.Path;
 
 namespace TotalImage.FileSystems
 {
+    /*
+     * Base file class to be implemented by the file system handlers.
+     */
     public abstract class File : FileSystemObject
     {
         Directory directory;

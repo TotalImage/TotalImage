@@ -3,6 +3,9 @@ using System.IO;
 
 namespace TotalImage.FileSystems
 {
+    /*
+     * The most basic building block for a file system browser.
+     */
     public abstract class FileSystemObject
     {
         protected FileSystemObject() { }
