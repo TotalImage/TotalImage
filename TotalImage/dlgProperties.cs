@@ -16,7 +16,7 @@ namespace TotalImage
     {
         //private FatDirEntry entry;
 
-        protected dlgProperties()
+        public dlgProperties()
         {
             InitializeComponent();
         }
