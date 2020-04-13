@@ -8,11 +8,12 @@ namespace TotalImage.FileSystems
         protected FileSystemObject() { }
 
         public abstract string Name { get; set; }
-        public abstract string FullName { get; set; }
+        public abstract string FullName { get; }
 
         public abstract FileAttributes Attributes { get; set; }
 
         public abstract DateTime LastAccessTime { get; set; }
+        public abstract DateTime LastWriteTime { get; set; }
         public abstract DateTime CreationTime { get; set; }
 
         public abstract long Length { get; set; }
