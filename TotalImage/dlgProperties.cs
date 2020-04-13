@@ -16,14 +16,13 @@ namespace TotalImage
     {
         //private FatDirEntry entry;
 
-        public dlgProperties()
+        protected dlgProperties()
         {
             InitializeComponent();
         }
 
-        public dlgProperties(FatDirEntry entry)
+        public dlgProperties(FatDirEntry entry) : this()
         {
-            InitializeComponent();
             //this.entry = entry;
 
             dateCreated.CustomFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
@@ -93,10 +92,8 @@ namespace TotalImage
             }
         }
 
-        public dlgProperties(FileSystemObject entry)
+        public dlgProperties(FileSystemObject entry) : this()
         {
-            InitializeComponent();
-
             txtFilename.Text = entry.Name.ToUpper();
             lblShortFilename1.Text = entry.Name.ToUpper();
             lblSize1.Text = $"{entry.Length:n0} B";
