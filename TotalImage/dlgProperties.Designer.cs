@@ -386,7 +386,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Properties";
-            this.Load += new System.EventHandler(this.dlgProperties_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imgIcon)).EndInit();
             this.gbxGeneral.ResumeLayout(false);
             this.gbxGeneral.PerformLayout();

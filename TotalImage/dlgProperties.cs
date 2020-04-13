@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using TotalImage.FileSystems;
 using TotalImage.FileSystems.FAT;
 using static Interop.Shell32;
 using static Interop.User32;
@@ -13,7 +14,7 @@ namespace TotalImage
 {
     public partial class dlgProperties : Form
     {
-        private FatDirEntry entry;
+        //private FatDirEntry entry;
 
         public dlgProperties()
         {
@@ -23,11 +24,8 @@ namespace TotalImage
         public dlgProperties(FatDirEntry entry)
         {
             InitializeComponent();
-            this.entry = entry;
-        }
+            //this.entry = entry;
 
-        private void dlgProperties_Load(object sender, EventArgs e)
-        {
             dateCreated.CustomFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
             dateModified.CustomFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
             dateAccessed.CustomFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
@@ -91,19 +89,62 @@ namespace TotalImage
                     cbxArchive.Checked = true;
                 }
 
-                var shellInfo = new SHFILEINFO();
-                var flags = SHGFI.ICON | SHGFI.LARGEICON | SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
-                if (SHGetFileInfo($"{filename}.{extension}", (FileAttributes)entry.attribute, ref shellInfo, (uint)Marshal.SizeOf(shellInfo), flags) != IntPtr.Zero)
+                SetIconAndType($"{filename}.{extension}", (FileAttributes)entry.attribute);
+            }
+        }
+
+        public dlgProperties(FileSystemObject entry)
+        {
+            InitializeComponent();
+
+            txtFilename.Text = entry.Name.ToUpper();
+            lblShortFilename1.Text = entry.Name.ToUpper();
+            lblSize1.Text = $"{entry.Length:n0} B";
+
+            if(entry is FileSystems.File file)
+                lblLocation1.Text = file.DirectoryName;
+            else if(entry is FileSystems.Directory dir)
+                lblLocation1.Text = dir.Parent?.Name;
+
+            // These are indeed supposed to be assignments in the conditions.
+            if (dateAccessed.Checked = entry.LastAccessTime.HasValue)
+                dateAccessed.Value = entry.LastAccessTime.Value;
+
+            if (dateModified.Checked = entry.LastWriteTime.HasValue)
+                dateModified.Value = entry.LastWriteTime.Value;
+
+            if (dateCreated.Checked = entry.CreationTime.HasValue)
+                dateCreated.Value = entry.CreationTime.Value;
+
+            if (entry.Attributes.HasFlag(FileAttributes.ReadOnly))
+                cbxReadOnly.Checked = true;
+
+            if (entry.Attributes.HasFlag(FileAttributes.Hidden))
+                cbxHidden.Checked = true;
+
+            if (entry.Attributes.HasFlag(FileAttributes.System))
+                cbxSystem.Checked = true;
+
+            if (entry.Attributes.HasFlag(FileAttributes.Archive))
+                cbxArchive.Checked = true;
+
+            SetIconAndType(entry.Name, entry.Attributes);
+        }
+
+        public void SetIconAndType(string filename, FileAttributes attributes)
+        {
+            var shellInfo = new SHFILEINFO();
+            var flags = SHGFI.ICON | SHGFI.LARGEICON | SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
+            if (SHGetFileInfo(filename, attributes, ref shellInfo, (uint)Marshal.SizeOf(shellInfo), flags) != IntPtr.Zero)
+            {
+                using (var icon = Icon.FromHandle(shellInfo.hIcon))
                 {
-                    using (var icon = Icon.FromHandle(shellInfo.hIcon))
-                    {
-                        imgIcon.Image = (icon.Clone() as Icon).ToBitmap();
-                    }
-
-                    lblType1.Text = shellInfo.szTypeName;
-
-                    DestroyIcon(shellInfo.hIcon);
+                    imgIcon.Image = (icon.Clone() as Icon).ToBitmap();
                 }
+
+                lblType1.Text = shellInfo.szTypeName;
+
+                DestroyIcon(shellInfo.hIcon);
             }
         }
     }
