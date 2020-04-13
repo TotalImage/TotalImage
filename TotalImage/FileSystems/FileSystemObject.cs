@@ -8,7 +8,12 @@ namespace TotalImage.FileSystems
      */
     public abstract class FileSystemObject
     {
-        protected FileSystemObject() { }
+        FileSystem fileSystem;
+
+        protected FileSystemObject(FileSystem fileSystem)
+        {
+            this.fileSystem = fileSystem;
+        }
 
         public abstract string Name { get; set; }
         public abstract string FullName { get; }
@@ -18,6 +23,8 @@ namespace TotalImage.FileSystems
         public abstract DateTime LastAccessTime { get; set; }
         public abstract DateTime LastWriteTime { get; set; }
         public abstract DateTime CreationTime { get; set; }
+
+        public FileSystem FileSystem => fileSystem;
 
         public abstract long Length { get; set; }
 

@@ -9,10 +9,15 @@ namespace TotalImage.FileSystems
      */
     public abstract class Directory : FileSystemObject
     {
-        protected Directory() { }
+        Directory parent;
 
-        public abstract Directory Parent { get; }
-        public abstract Directory Root { get; }
+        protected Directory(FileSystem fileSystem, Directory parent) : base(fileSystem)
+        {
+            this.parent = parent;
+        }
+
+        public Directory Parent => parent;
+        public Directory Root => FileSystem.RootDirectory;
 
         public abstract IEnumerable<FileSystemObject> EnumerateFileSystemObjects();
 

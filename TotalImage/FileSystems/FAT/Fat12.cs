@@ -5,12 +5,29 @@ using System.Windows.Forms;
 
 namespace TotalImage.FileSystems.FAT
 {
-    public class Fat12
+    public class Fat12 : FileSystem
     {
         private frmMain main;
         private Stream stream;
         private BiosParameterBlock bpb;
-        public BiosParameterBlock BiosParameterBlock => bpb; 
+        public BiosParameterBlock BiosParameterBlock => bpb;
+        private Directory rootDirectory;
+
+        public override string Format => "FAT12";
+
+        public override string VolumeLabel
+        {
+            get => bpb is BiosParameterBlock40 bpb40 && bpb40.BpbVersion == BiosParameterBlockVersion.Dos40 ? bpb40.VolumeLabel : "UNSUPPORTED";
+            set => ChangeVolLabel(value);
+        }
+
+        public override Directory RootDirectory => rootDirectory;
+
+        public override long AvailableFreeSpace => throw new NotImplementedException();
+
+        public override long TotalFreeSpace => throw new NotImplementedException();
+
+        public override long TotalSize => throw new NotImplementedException();
 
         protected Fat12()
         {
@@ -21,6 +38,7 @@ namespace TotalImage.FileSystems.FAT
         {
             this.stream = stream;
             bpb = Parse();
+            rootDirectory = new FatRootDirectory(this);
         }
 
         public Stream GetStream()
@@ -179,6 +197,7 @@ namespace TotalImage.FileSystems.FAT
             }
 
             fat.bpb = fat.Parse();
+            fat.rootDirectory = new FatRootDirectory(fat);
             return fat;
         }
 

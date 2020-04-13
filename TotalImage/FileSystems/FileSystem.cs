@@ -4,13 +4,13 @@ namespace TotalImage.FileSystems
     {
         protected FileSystem() { }
 
-        public string Format { get; }
-        public string VolumeLabel { get; set; }
+        public abstract string Format { get; }
+        public abstract string VolumeLabel { get; set; }
 
-        public Directory RootDirectory { get; }
+        public abstract Directory RootDirectory { get; }
 
-        public long AvailableFreeSpace { get; }
-        public long TotalFreeSpace { get; }
-        public long TotalSize { get; }
+        public abstract long AvailableFreeSpace { get; }
+        public abstract long TotalFreeSpace { get; }
+        public abstract long TotalSize { get; }
     }
 }

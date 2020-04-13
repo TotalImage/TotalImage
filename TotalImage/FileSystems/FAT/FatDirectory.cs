@@ -10,16 +10,11 @@ namespace TotalImage.FileSystems.FAT
      */
     public class FatDirectory : Directory
     {
-        protected Fat12 fat;
         DirectoryEntry entry;
-        Directory root, parent;
 
-        public FatDirectory(Fat12 fat, DirectoryEntry entry, Directory root, Directory parent)
+        public FatDirectory(Fat12 fat, DirectoryEntry entry, Directory parent) : base(fat, parent)
         {
-            this.fat = fat;
             this.entry = entry;
-            this.root = root;
-            this.parent = parent;
         }
 
         public override string Name
@@ -58,9 +53,6 @@ namespace TotalImage.FileSystems.FAT
             set => throw new NotImplementedException();
         }
 
-        public override Directory Parent => parent;
-        public override Directory Root => root;
-
         public override Directory CreateSubdirectory(string path)
         {
             throw new NotImplementedException();
@@ -73,6 +65,7 @@ namespace TotalImage.FileSystems.FAT
 
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects()
         {
+            var fat = FileSystem as Fat12;
             var dataAreaOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT * 2) + 
                 (fat.BiosParameterBlock.RootDirectoryEntries << 5));
             var fat1Offset = fat.BiosParameterBlock.BytesPerLogicalSector;
@@ -115,7 +108,7 @@ namespace TotalImage.FileSystems.FAT
                             //Folder entry
                             if (Convert.ToBoolean(entry.attr & 0x10))
                             {
-                                yield return new FatDirectory(fat, entry, root, this);
+                                yield return new FatDirectory(fat, entry, this);
                             }
                             else
                             {

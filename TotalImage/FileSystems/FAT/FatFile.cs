@@ -10,12 +10,10 @@ namespace TotalImage.FileSystems.FAT
      */
     public class FatFile : File
     {
-        Fat12 fs;
         DirectoryEntry entry;
 
-        public FatFile(Fat12 fs, DirectoryEntry entry, Directory dir) : base(dir)
+        public FatFile(Fat12 fat, DirectoryEntry entry, Directory dir) : base(fat, dir)
         {
-            this.fs = fs;
             this.entry = entry;
         }
 

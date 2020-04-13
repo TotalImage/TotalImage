@@ -17,15 +17,11 @@ namespace TotalImage.FileSystems.FAT
      */
     public class FatRootDirectory : Directory
     {
-        Fat12 fat;
-
-        public FatRootDirectory(Fat12 fat) 
-        {
-            this.fat = fat;
-        }
+        public FatRootDirectory(Fat12 fat) : base(fat, null) { }
 
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects()
         {
+            var fat = FileSystem as Fat12;
             var rootDirOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT * 2));
             var stream = fat.GetStream();
             using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
@@ -56,7 +52,7 @@ namespace TotalImage.FileSystems.FAT
                         //Folder entry
                         if (Convert.ToBoolean(entry.attr & 0x10))
                         {
-                            yield return new FatDirectory(fat, entry, this, this);
+                            yield return new FatDirectory(fat, entry, this);
                         }
                         //File entry
                         else if (!Convert.ToBoolean(entry.attr & 0x10))
@@ -85,12 +81,9 @@ namespace TotalImage.FileSystems.FAT
             set => throw new InvalidOperationException();
         }
 
-        public override Directory Root => this;
-        public override Directory Parent => null;
-
         public override FileAttributes Attributes
         {
-            get => throw new NotSupportedException();
+            get => FileAttributes.Directory;
             set => throw new NotSupportedException();
         }
         public override DateTime LastAccessTime

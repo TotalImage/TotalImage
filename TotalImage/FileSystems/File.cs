@@ -10,7 +10,7 @@ namespace TotalImage.FileSystems
     {
         Directory directory;
 
-        protected File(Directory directory)
+        protected File(FileSystem fileSystem, Directory directory) : base(fileSystem)
         {
             this.directory = directory;
         }
