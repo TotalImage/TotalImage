@@ -39,7 +39,11 @@ namespace TotalImage
             //Needs a check for unsaved changes
             image = new RawSector();
             dlgNewImage dlg = new dlgNewImage();
-            dlg.ShowDialog();
+            DialogResult result = dlg.ShowDialog();
+            if(result == DialogResult.OK)
+            {
+                Text = "(Untitled) - TotalImage";
+            }
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -86,22 +90,10 @@ namespace TotalImage
                     byte[] imageBytes = image.GetImageBytes();
                     System.IO.File.WriteAllBytes(sfd.FileName, imageBytes);
                 }
-                /*else if (sfd.FilterIndex == 1 || sfd.FileName.EndsWith(".imz"))
-                {
 
-                }
-                else if (sfd.FilterIndex == 2 || sfd.FileName.EndsWith(".ddi"))
-                {
-     
-                }
-                else if (sfd.FilterIndex == 3 || sfd.FileName.EndsWith(".fdi"))
-                {
-      
-                }
-                else if (sfd.FilterIndex == 4 || sfd.FileName.EndsWith(".86f"))
-                {
-
-                }*/
+                filename = Path.GetFileName(sfd.FileName);
+                path = sfd.FileName;
+                Text = filename + " - TotalImage";
             }
         }
 
@@ -281,7 +273,6 @@ namespace TotalImage
                 lblStatusCapacity.Text = GetImageCapacity() + " KiB";
                 EnableUI();
             }
-            System.Diagnostics.Debug.WriteLine(imgFilesSmall.Images.Count);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -973,8 +964,6 @@ namespace TotalImage
             }
             lblStatusSize.Text = string.Format("{0:n0}", dirSize).ToString() + " bytes in " + fileCount + " file(s)";
             lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
-
-           
         }
 
         private void lstFiles_MouseDoubleClick(object sender, MouseEventArgs e)

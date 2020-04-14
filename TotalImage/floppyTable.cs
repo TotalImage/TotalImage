@@ -14,12 +14,15 @@
 		public static byte[][] fdt = new byte[][]{         
             new byte[]{ 0,  1, 2, 1, 0,  40,  8, 2, 0xfe, 2, 2,   1,  64,  1 }, /*  160 KiB */
 			new byte[]{ 0,  1, 2, 1, 0,  40,  9, 2, 0xfc, 2, 2,   1,  64,  1 }, /*  180 KiB */
+			//new byte[]{ 0,  1, 2, 1, 0,  70,  9, 2, 0xfc, 1, 2,   2, 128,  1 }, /*  315 KiB (ACT Apricot) - CUSTOM BOOTSECTOR*/
 			new byte[]{ 0,  2, 2, 1, 0,  40,  8, 2, 0xff, 2, 2,   1, 112,  1 }, /*  320 KiB (5.25") */
 			//new byte[]{ 0,  1, 2, 1, 0,  40,  8, 2, 0xff, 2, 2,   1, 112,  1 }, /*  320 KiB (3.5") - UNRELIABLE VALUES!*/
 			new byte[]{ 0,  2, 2, 1, 0,  40,  9, 2, 0xfd, 2, 2,   2, 112,  1 }, /*  360 KiB (5.25") */
 			//new byte[]{ 0,  1, 2, 1, 0,  80,  9, 2, 0xfd, 2, 2,   2, 112,  1 }, /*  360 KiB (3.5") - UNRELIABLE VALUES!*/
-			//new byte[]{ 0,  1, 2, 1, 0,  80, 10, 2, 0xfa, 1, 2,   3,  96, 20 }, /*  400 KiB (DEC RX50) */
+			//new byte[]{ 0,  1, 2, 1, 0,  80, 10, 2, 0xfa, 1, 2,   3,  96, 20 }, /*  400 KiB (DEC RX50) - VERY CUSTOM FORMAT */
+			new byte[]{ 0,  2, 2, 1, 0,  40,  5, 3, 0xff, 2, 2,   1, 128,  1 }, /*  400 KiB (Triumph-Adler) */
 			new byte[]{ 0,  2, 2, 1, 0,  80,  8, 2, 0xfb, 2, 2,   2, 112,  1 }, /*  640 KiB */
+			//new byte[]{ 0,  2, 2, 1, 0,  80,  9, 2, 0xfe, 2, 2,   3, 176,  1 }, /*  720 KiB (ACT Apricot) - CUSTOM BOOTSECTOR*/
 			new byte[]{ 0,  2, 2, 1, 0,  80,  9, 2, 0xed, 4, 2,   2, 112,  1 }, /*  720 KiB (Tandy 2000) */
 			new byte[]{ 0,  2, 2, 1, 0,  80,  9, 2, 0xf9, 2, 2,   3, 112,  1 }, /*  720 KiB (3.5") */
 			//new byte[]{ 0,  2, 2, 1, 0,  80, 10, 2, 0xf9, 2, 2,   3, 112,  1 }, /*  800 KiB - UNRELIABLE VALUES!*/

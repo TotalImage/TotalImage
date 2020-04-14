@@ -18,6 +18,7 @@ namespace TotalImage
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            DialogResult = DialogResult.Cancel;
             Close();
         }
 
@@ -124,6 +125,7 @@ namespace TotalImage
                         main.image.CreateImage(bpb, floppyTable.fdt[i][5]);
                         main.EnableUI();
 
+                        DialogResult = DialogResult.OK;
                         Close();
                     }
 

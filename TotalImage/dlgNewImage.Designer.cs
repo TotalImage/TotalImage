@@ -150,14 +150,15 @@
             "180 KiB",
             "320 KiB (5.25\")",
             "360 KiB (5.25\")",
+            "400 KiB (Triumph-Adler)",
             "640 KiB",
             "720 KiB (Tandy 2000)",
             "720 KiB",
             "1200 KiB",
             "1232 KiB (NEC PC-98)",
             "1440 KiB",
-            "1680 KiB (Microsoft DMF 1024 BPC)",
-            "1680 KiB (Microsoft DMF 2048 BPC)",
+            "1680 KiB (Microsoft DMF 2 SPC)",
+            "1680 KiB (Microsoft DMF 4 SPC)",
             "1722 KiB",
             "2880 KiB",
             "Custom..."});
@@ -488,7 +489,7 @@
             0,
             0});
             this.txtFloppySPT.Minimum = new decimal(new int[] {
-            8,
+            5,
             0,
             0,
             0});
