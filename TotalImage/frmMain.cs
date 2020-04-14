@@ -265,17 +265,17 @@ namespace TotalImage
 
                 TreeNode root = new TreeNode(filename);
                 root.ContextMenuStrip = cmsDirTree;
-                root.ImageIndex = 0;
+                root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 lstDirectories.Nodes.Add(root);
                 image = new RawSector();
                 lstFiles.ListViewItemSorter = null;
                 lstFiles.BeginUpdate();
                 lstDirectories.BeginUpdate();
                 image.LoadImage(path);
-                lstDirectories.SelectedNode = lstDirectories.Nodes[0];
                 lstDirectories.EndUpdate();
-                lstFiles.EndUpdate();
                 SortDirTree();
+                lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                lstFiles.EndUpdate();
                 lstFiles.ListViewItemSorter = sorter;
                 lblStatusCapacity.Text = GetImageCapacity() + " KiB";
                 EnableUI();
@@ -704,6 +704,16 @@ namespace TotalImage
             propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
 
             DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
+            GetFolderIcon();
+            lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+        }
+
+        //Gets the default Windows folder icon with SHGetFileInfo
+        public void GetFolderIcon()
+        {
+            Icon icon = GetShellFileIcon("C:\\Windows", FileAttributes.Directory);
+            imgFilesSmall.Images.Add("folder", icon);
+            //node.ImageIndex = imgFilesSmall.Images.IndexOfKey(filename);
         }
 
         //Adds a new node to the root directory in the directory tree
@@ -711,6 +721,9 @@ namespace TotalImage
         {
             string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
             TreeNode node = new TreeNode(filename);
+            //Icon icon = GetShellFileIcon(filename, FileAttributes.Directory);
+            //imgFilesSmall.Images.Add(filename, icon);
+            node.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             node.Tag = entry;
             lstDirectories.Nodes[0].Nodes.Add(node);
         }
@@ -744,8 +757,10 @@ namespace TotalImage
         public void AddToDir(FatDirEntry parent, FatDirEntry child)
         {
             string childFilename = Encoding.ASCII.GetString(child.filename).TrimEnd(' ');
-
             TreeNode childNode = new TreeNode(childFilename);
+            //Icon icon = GetShellFileIcon(childFilename, FileAttributes.Directory);
+            //imgFilesSmall.Images.Add(childFilename, icon);
+            childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             childNode.Tag = child;
             TreeNode parentNode = FindNode(lstDirectories.Nodes[0], parent.startCluster);
             if(parentNode != null)
@@ -759,12 +774,12 @@ namespace TotalImage
         }
 
         //Obtains the fancy file type name
-        public string GetShellFileType(string filename)
+        public string GetShellFileType(string filename, FileAttributes attributes)
         {
             var shinfo = new SHFILEINFO();
             var flags = SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
 
-            if (SHGetFileInfo(filename, FileAttributes.Normal, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
+            if (SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
             {
                 return "File";
             }
@@ -773,12 +788,12 @@ namespace TotalImage
         }
 
         //Obtains the icon for the file type
-        public Icon GetShellFileIcon(string filename)
+        public Icon GetShellFileIcon(string filename, FileAttributes attributes)
         {
             var shinfo = new SHFILEINFO();
             var flags = SHGFI.ICON | SHGFI.SMALLICON | SHGFI.USEFILEATTRIBUTES;
 
-            SHGetFileInfo(filename, FileAttributes.Normal, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
+            SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
 
             return Icon.FromHandle(shinfo.hIcon);
         }
@@ -799,9 +814,12 @@ namespace TotalImage
                 byte seconds = (byte)((entry.modifiedTime & 0x1F) * 2); //Resolution for seconds is 2s
                 if (Convert.ToBoolean(entry.attribute & 0x10))
                 {
-                    lvi.SubItems.Add("Directory");
+                    string filetype = GetShellFileType(filename, FileAttributes.Directory);
+                    lvi.SubItems.Add(filetype);
                     lvi.SubItems.Add("");
-                    lvi.ImageIndex = 0;
+                    //Icon icon = GetShellFileIcon(filename, FileAttributes.Directory);
+                    //imgFilesSmall.Images.Add(filename, icon);
+                    lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 }
                 else
                 {
@@ -812,10 +830,10 @@ namespace TotalImage
                         fullname += "." + extension;
                         lvi.Text = fullname;
                     }
-                    string filetype = GetShellFileType(fullname);
+                    string filetype = GetShellFileType(fullname, FileAttributes.Normal);
                     lvi.SubItems.Add(filetype);
                     lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
-                    Icon icon = GetShellFileIcon(fullname);
+                    Icon icon = GetShellFileIcon(fullname, FileAttributes.Normal);
                     imgFilesSmall.Images.Add(fullname, icon);
                     lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey(fullname);
                 }
@@ -825,7 +843,7 @@ namespace TotalImage
             }
             else // ".." virtual folder
             {
-                lvi.ImageIndex = 3;
+                lvi.ImageIndex = 0;
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");

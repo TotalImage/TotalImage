@@ -1142,10 +1142,7 @@
             // 
             this.imgFilesSmall.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgFilesSmall.ImageStream")));
             this.imgFilesSmall.TransparentColor = System.Drawing.Color.Transparent;
-            this.imgFilesSmall.Images.SetKeyName(0, "folder_closed_16.png");
-            this.imgFilesSmall.Images.SetKeyName(1, "folder_open_16.png");
-            this.imgFilesSmall.Images.SetKeyName(2, "new_16.png");
-            this.imgFilesSmall.Images.SetKeyName(3, "up_folder_16.png");
+            this.imgFilesSmall.Images.SetKeyName(0, "up_folder_16.png");
             // 
             // cmsFileList
             // 
@@ -1226,7 +1223,7 @@
             this.lstDirectories.ImageList = this.imgFilesSmall;
             this.lstDirectories.Location = new System.Drawing.Point(0, 0);
             this.lstDirectories.Name = "lstDirectories";
-            this.lstDirectories.SelectedImageKey = "folder_closed_16.png";
+            this.lstDirectories.SelectedImageIndex = 0;
             this.lstDirectories.ShowLines = false;
             this.lstDirectories.Size = new System.Drawing.Size(274, 546);
             this.lstDirectories.TabIndex = 0;
