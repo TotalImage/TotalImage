@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.ImageFormats;
 using static Interop.Shell32;
+using static Interop.User32;
 
 namespace TotalImage
 {
@@ -790,8 +791,9 @@ namespace TotalImage
             var flags = SHGFI.ICON | SHGFI.SMALLICON | SHGFI.USEFILEATTRIBUTES;
 
             SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
-
-            return Icon.FromHandle(shinfo.hIcon);
+            Icon icon = (Icon)Icon.FromHandle(shinfo.hIcon).Clone();
+            DestroyIcon(shinfo.hIcon);
+            return icon;
         }
 
 
