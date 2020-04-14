@@ -280,6 +280,7 @@ namespace TotalImage
                 lblStatusCapacity.Text = GetImageCapacity() + " KiB";
                 EnableUI();
             }
+            System.Diagnostics.Debug.WriteLine(imgFilesSmall.Images.Count);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -713,7 +714,6 @@ namespace TotalImage
         {
             Icon icon = GetShellFileIcon("C:\\Windows", FileAttributes.Directory);
             imgFilesSmall.Images.Add("folder", icon);
-            //node.ImageIndex = imgFilesSmall.Images.IndexOfKey(filename);
         }
 
         //Adds a new node to the root directory in the directory tree
@@ -721,8 +721,6 @@ namespace TotalImage
         {
             string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
             TreeNode node = new TreeNode(filename);
-            //Icon icon = GetShellFileIcon(filename, FileAttributes.Directory);
-            //imgFilesSmall.Images.Add(filename, icon);
             node.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             node.Tag = entry;
             lstDirectories.Nodes[0].Nodes.Add(node);
@@ -758,8 +756,6 @@ namespace TotalImage
         {
             string childFilename = Encoding.ASCII.GetString(child.filename).TrimEnd(' ');
             TreeNode childNode = new TreeNode(childFilename);
-            //Icon icon = GetShellFileIcon(childFilename, FileAttributes.Directory);
-            //imgFilesSmall.Images.Add(childFilename, icon);
             childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             childNode.Tag = child;
             TreeNode parentNode = FindNode(lstDirectories.Nodes[0], parent.startCluster);
@@ -817,15 +813,13 @@ namespace TotalImage
                     string filetype = GetShellFileType(filename, FileAttributes.Directory);
                     lvi.SubItems.Add(filetype);
                     lvi.SubItems.Add("");
-                    //Icon icon = GetShellFileIcon(filename, FileAttributes.Directory);
-                    //imgFilesSmall.Images.Add(filename, icon);
                     lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 }
                 else
                 {
                     string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
                     string fullname = filename;
-                    if (!string.IsNullOrWhiteSpace(extension)) 
+                    if (!string.IsNullOrWhiteSpace(extension))
                     {
                         fullname += "." + extension;
                         lvi.Text = fullname;
@@ -833,15 +827,20 @@ namespace TotalImage
                     string filetype = GetShellFileType(fullname, FileAttributes.Normal);
                     lvi.SubItems.Add(filetype);
                     lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
-                    Icon icon = GetShellFileIcon(fullname, FileAttributes.Normal);
-                    imgFilesSmall.Images.Add(fullname, icon);
-                    lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey(fullname);
+
+                    //This will only add a new icon to the list if the associated type hasn't been encountered yet
+                    if (!imgFilesSmall.Images.ContainsKey(filetype))
+                    {
+                        Icon icon = GetShellFileIcon(fullname, FileAttributes.Normal);
+                        imgFilesSmall.Images.Add(filetype, icon);
+                    }
+                    lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype);
                 }
 
                 DateTime date = new DateTime(year, month, day, hours, minutes, seconds);
                 lvi.SubItems.Add(date.ToString());
             }
-            else // ".." virtual folder
+            else //The ".." virtual folder
             {
                 lvi.ImageIndex = 0;
                 lvi.SubItems.Add("");
@@ -972,6 +971,8 @@ namespace TotalImage
             }
             lblStatusSize.Text = string.Format("{0:n0}", dirSize).ToString() + " bytes in " + fileCount + " file(s)";
             lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
+
+           
         }
 
         private void lstFiles_MouseDoubleClick(object sender, MouseEventArgs e)
