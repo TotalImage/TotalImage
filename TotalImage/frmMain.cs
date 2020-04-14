@@ -268,8 +268,15 @@ namespace TotalImage
                 root.ImageIndex = 0;
                 lstDirectories.Nodes.Add(root);
                 image = new RawSector();
+                lstFiles.ListViewItemSorter = null;
+                lstFiles.BeginUpdate();
+                lstDirectories.BeginUpdate();
                 image.LoadImage(path);
                 lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                lstDirectories.EndUpdate();
+                lstFiles.EndUpdate();
+                SortDirTree();
+                lstFiles.ListViewItemSorter = sorter;
                 lblStatusCapacity.Text = GetImageCapacity() + " KiB";
                 EnableUI();
             }
@@ -470,7 +477,6 @@ namespace TotalImage
                 }
 
                 lblStatusSize.Text = string.Format("{0:n0}", selectedSize) + " bytes in " + lstFiles.SelectedItems.Count + " files";
-
             }
         }
 
@@ -692,7 +698,8 @@ namespace TotalImage
             sorter = new ListViewColumnSorter();
             lstFiles.ListViewItemSorter = sorter;
 
-            propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter; //Because designer doesn't have the Enter key in the list for some reason...
+            //Because designer doesn't have the Enter key in the list for some reason...
+            propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter; 
             propertiesToolStripMenuItem1.ShortcutKeys = Keys.Alt | Keys.Enter;
             propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
 
@@ -706,17 +713,11 @@ namespace TotalImage
             TreeNode node = new TreeNode(filename);
             node.Tag = entry;
             lstDirectories.Nodes[0].Nodes.Add(node);
-            //lstDirectories.Sort();
         }
 
         public void SortDirTree()
         {
             lstDirectories.Sort();
-        }
-
-        public void SortFileList()
-        {
-
         }
 
         //Finds the node with the specified entry
@@ -755,8 +756,6 @@ namespace TotalImage
             {
                 /* throw some error because the parent node wasn't found for some reason */
             }
-
-            //lstDirectories.Sort();
         }
 
         //Obtains the fancy file type name
@@ -929,6 +928,7 @@ namespace TotalImage
         {
             uint fileCount = 0;
             uint dirSize = 0;
+            lstFiles.BeginUpdate();
             //Subdirs
             if (e.Node.Text != filename)
             {
@@ -941,6 +941,8 @@ namespace TotalImage
                 lstFiles.Items.Clear();
                 image.ListRootDirectory();
             }
+            lstFiles.EndUpdate();
+
             foreach (ListViewItem lvi in lstFiles.Items)
             {
                 FatDirEntry entry = (FatDirEntry)lvi.Tag;

@@ -123,7 +123,7 @@
             this.lblSize.Size = new System.Drawing.Size(30, 15);
             this.lblSize.TabIndex = 12;
             this.lblSize.Text = "Size:";
-            this.toolTip.SetToolTip(this.lblSize, "This is the actual size of the data inside the file");
+            this.toolTip.SetToolTip(this.lblSize, "This is the actual size of the data inside the file.");
             // 
             // lblSize1
             // 
@@ -133,7 +133,7 @@
             this.lblSize1.Size = new System.Drawing.Size(42, 15);
             this.lblSize1.TabIndex = 13;
             this.lblSize1.Text = "<size>";
-            this.toolTip.SetToolTip(this.lblSize1, "This is the actual size of the data inside the file");
+            this.toolTip.SetToolTip(this.lblSize1, "This is the actual size of the data inside the file.");
             // 
             // lblSizeOnDisk
             // 
@@ -143,8 +143,7 @@
             this.lblSizeOnDisk.Size = new System.Drawing.Size(93, 15);
             this.lblSizeOnDisk.TabIndex = 14;
             this.lblSizeOnDisk.Text = "Space occupied:";
-            this.toolTip.SetToolTip(this.lblSizeOnDisk, "This is the disk space occupied by the file, determine by the formula:\r\nsize / by" +
-        "tes per sector * sectors per cluster");
+            this.toolTip.SetToolTip(this.lblSizeOnDisk, "This is the disk space occupied by the file due to\r\ncluster size.");
             // 
             // lblSizeOnDisk1
             // 
@@ -154,7 +153,7 @@
             this.lblSizeOnDisk1.Size = new System.Drawing.Size(102, 15);
             this.lblSizeOnDisk1.TabIndex = 15;
             this.lblSizeOnDisk1.Text = "<spaceoccupied>";
-            this.toolTip.SetToolTip(this.lblSizeOnDisk1, "This is the disk space occupied by the file due to\r\ncluster size");
+            this.toolTip.SetToolTip(this.lblSizeOnDisk1, "This is the disk space occupied by the file due to\r\ncluster size.");
             // 
             // toolTip
             // 
@@ -173,7 +172,7 @@
             this.lblShortFilename.TabIndex = 16;
             this.lblShortFilename.Text = "Short filename (8.3):";
             this.toolTip.SetToolTip(this.lblShortFilename, "Short filenames are used for backwards compatibility with\r\nsystems not supporting" +
-        " the VFAT extensions.");
+        " the VFAT/LFN extensions.");
             // 
             // lblShortFilename1
             // 
@@ -184,7 +183,7 @@
             this.lblShortFilename1.TabIndex = 17;
             this.lblShortFilename1.Text = "<shortfilename>";
             this.toolTip.SetToolTip(this.lblShortFilename1, "Short filenames are used for backwards compatibility with\r\nsystems not supporting" +
-        " the VFAT extensions.\r\n");
+        " the VFAT/LFN extensions.\r\n");
             // 
             // cbxReadOnly
             // 
@@ -195,7 +194,7 @@
             this.cbxReadOnly.Size = new System.Drawing.Size(86, 20);
             this.cbxReadOnly.TabIndex = 4;
             this.cbxReadOnly.Text = "Read-only";
-            this.toolTip.SetToolTip(this.cbxReadOnly, "Read-only files cannot be written to until this attribute\r\nis removed");
+            this.toolTip.SetToolTip(this.cbxReadOnly, "Read-only files cannot be written to until this attribute\r\nis cleared.");
             this.cbxReadOnly.UseVisualStyleBackColor = true;
             // 
             // cbxHidden
@@ -207,7 +206,8 @@
             this.cbxHidden.Size = new System.Drawing.Size(71, 20);
             this.cbxHidden.TabIndex = 5;
             this.cbxHidden.Text = "Hidden";
-            this.toolTip.SetToolTip(this.cbxHidden, "Hidden files do not show up in regular directory listings");
+            this.toolTip.SetToolTip(this.cbxHidden, "Hidden files do not show up in regular directory listings and\r\ncannot be moved, d" +
+        "eleted, etc. until this attribute is cleared.");
             this.cbxHidden.UseVisualStyleBackColor = true;
             // 
             // cbxSystem
@@ -345,6 +345,7 @@
             // 
             // btnCancel
             // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnCancel.Location = new System.Drawing.Point(292, 403);
             this.btnCancel.Name = "btnCancel";

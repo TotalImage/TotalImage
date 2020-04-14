@@ -260,8 +260,6 @@ namespace TotalImage.FileSystems.FAT
                     }
                 }
             }
-
-            main.SortDirTree();
         }
 
         //Reads the subdirectory entries and adds subdirectories to the treeview
@@ -344,8 +342,6 @@ namespace TotalImage.FileSystems.FAT
                     }
                 }
                 while (cluster <= 0x0FEF);
-
-                main.SortDirTree();
             }
         }
 
