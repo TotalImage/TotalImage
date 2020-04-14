@@ -95,10 +95,10 @@ namespace TotalImage
                         bpb.BytesPerLogicalSector = (ushort)(128 << floppyTable.fdt[i][7]);
                         bpb.HiddenSectors = 0;
                         bpb.LargeTotalLogicalSectors = 0;
-                        bpb.LogicalSectorsPerCluster = floppyTable.fdt[i][9];
+                        bpb.LogicalSectorsPerCluster = (byte)floppyTable.fdt[i][9];
                         bpb.LogicalSectorsPerFAT = floppyTable.fdt[i][11];
-                        bpb.MediaDescriptor = floppyTable.fdt[i][8];
-                        bpb.NumberOfFATs = floppyTable.fdt[i][10];
+                        bpb.MediaDescriptor = (byte)floppyTable.fdt[i][8];
+                        bpb.NumberOfFATs = (byte)floppyTable.fdt[i][10];
                         bpb.NumberOfHeads = floppyTable.fdt[i][1];
                         bpb.PhysicalSectorsPerTrack = floppyTable.fdt[i][6];
                         bpb.ReservedLogicalSectors = floppyTable.fdt[i][13];
@@ -122,7 +122,7 @@ namespace TotalImage
                             }
                         }
 
-                        main.image.CreateImage(bpb, floppyTable.fdt[i][5]);
+                        main.image.CreateImage(bpb, (byte)floppyTable.fdt[i][5]);
                         main.EnableUI();
 
                         DialogResult = DialogResult.OK;

@@ -154,6 +154,7 @@
             "640 KiB",
             "720 KiB (Tandy 2000)",
             "720 KiB",
+            "800 KiB (Eagle 1600)",
             "1200 KiB",
             "1232 KiB (NEC PC-98)",
             "1440 KiB",
@@ -342,7 +343,7 @@
             0});
             this.txtFloppyRootDir.Location = new System.Drawing.Point(612, 71);
             this.txtFloppyRootDir.Maximum = new decimal(new int[] {
-            240,
+            320,
             0,
             0,
             0});
