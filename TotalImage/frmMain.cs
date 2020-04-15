@@ -1190,5 +1190,105 @@ namespace TotalImage
                 lvi.Selected = true;
             }
         }
+
+        private void lstFiles_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        //Opens an image that's been dragged and dropped onto the file list
+        //Needs improvement, but the gist of it is there...
+        private void lstFiles_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+            if(filename == "" && unsavedChanges == false) //No image is loaded
+            {
+                if(items.Length == 1)
+                {
+                    filename = Path.GetFileName(items[0]);
+                    path = items[0];
+                    Text = filename + " - TotalImage";
+                    lstDirectories.Nodes.Clear();
+                    lstFiles.Items.Clear();
+
+                    TreeNode root = new TreeNode(filename);
+                    root.ContextMenuStrip = cmsDirTree;
+                    root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                    lstDirectories.Nodes.Add(root);
+                    image = new RawSector();
+                    lstFiles.ListViewItemSorter = null;
+                    lstFiles.BeginUpdate();
+                    lstDirectories.BeginUpdate();
+                    image.LoadImage(path);
+                    lstDirectories.EndUpdate();
+                    SortDirTree();
+                    lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                    lstFiles.EndUpdate();
+                    lstFiles.ListViewItemSorter = sorter;
+                    lblStatusCapacity.Text = GetImageCapacity() + " KiB";
+                    EnableUI();
+                }
+            }
+            else if(filename != "" || unsavedChanges) //An image is open (either saved or new)
+            {
+                /* Inject files/folder instead */
+            }
+        }
+
+        private void lstDirectories_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        //Opens an image that's been dragged and dropped onto the dir tree
+        //Needs improvement, but the gist of it is there...
+        private void lstDirectories_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+            if (filename == "" && unsavedChanges == false) //No image is loaded
+            {
+                if (items.Length == 1)
+                {
+                    filename = Path.GetFileName(items[0]);
+                    path = items[0];
+                    Text = filename + " - TotalImage";
+                    lstDirectories.Nodes.Clear();
+                    lstFiles.Items.Clear();
+
+                    TreeNode root = new TreeNode(filename);
+                    root.ContextMenuStrip = cmsDirTree;
+                    root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                    lstDirectories.Nodes.Add(root);
+                    image = new RawSector();
+                    lstFiles.ListViewItemSorter = null;
+                    lstFiles.BeginUpdate();
+                    lstDirectories.BeginUpdate();
+                    image.LoadImage(path);
+                    lstDirectories.EndUpdate();
+                    SortDirTree();
+                    lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                    lstFiles.EndUpdate();
+                    lstFiles.ListViewItemSorter = sorter;
+                    lblStatusCapacity.Text = GetImageCapacity() + " KiB";
+                    EnableUI();
+                }
+            }
+        }
     }
 }
