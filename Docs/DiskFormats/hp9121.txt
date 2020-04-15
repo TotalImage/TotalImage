@@ -1,0 +1,28 @@
+HP 9121 DISK FORMAT (264 KiB)
+
+A very early 3.5" format used by HP for their 9121 disk drives. These were used by their 150 Touchscreen computer, among others. The drives and media are single-sided (SS) double-density (DD). Also commonly known as "270k", and rarely as "280k". The information below has been obtained by observing original disk images.
+
+These disks have 70 tracks, of which only 66 are used. There is also a sector interleave of 1:4, so the logical sector order in a track looks like this:
+
+0  4  8  12  1  5  9  13  2  6  10  14  3  7  11  15
+
+First three bytes in observed images are EB 1C 90, followed by OEM ID 48 50 31 35 30 20 20 20 ("HP150   ", see notes). A standard DOS 2.0 BIOS parameter block follows with the following values:
+
+Bytes per sector: 256
+Sectors per cluster: 4
+Reserved sectors: 2
+Number of FATs: 2
+Root directory entries: 128
+Total sectors: 1056
+Media descriptor: 0xFA (BPB) or 0xFF (FAT) (see notes)
+Sectors per FAT: 3
+Sectors per track: 16 (BPB) or 17 (Teledisk) (see notes)
+Number of heads: 2 (see notes)
+
+Raw image size is 270336 bytes.
+
+NOTES:
+-Observed Teledisk images have sector IDs starting from 0 instead of 1 as usual.
+-MS-DOS for the HP 150 may depend on the mentioned OEM ID to recognize disks, but this has not been confirmed.
+-BPB values may not be entirely reliable on such disks. Number of heads (sides) is reported as 2 instead of 1, and media descriptor (0xFA) does not match the one in the FAT (0xFF).
+-Teledisk's track headers reports 17 sectors per track, DOS BPB reports 16. Raw image size and other parameters support the latter number, with the 17th sector likely being unused.
