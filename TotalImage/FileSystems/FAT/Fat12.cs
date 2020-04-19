@@ -58,13 +58,27 @@ namespace TotalImage.FileSystems.FAT
                 bpb.ReservedLogicalSectors = reader.ReadUInt16();
                 bpb.NumberOfFATs = reader.ReadByte();
                 bpb.RootDirectoryEntries = reader.ReadUInt16();
-                reader.ReadUInt16();
+                bpb.TotalLogicalSector = reader.ReadUInt16();
                 bpb.MediaDescriptor = reader.ReadByte();
                 bpb.LogicalSectorsPerFAT = reader.ReadUInt16();
                 bpb.PhysicalSectorsPerTrack = reader.ReadUInt16();
                 bpb.NumberOfHeads = reader.ReadUInt16();
                 bpb.HiddenSectors = reader.ReadUInt32();
                 bpb.LargeTotalLogicalSectors = reader.ReadUInt32();
+
+                /* At this point it's worth checking if there even is a valid BPB at the standard offset (0x0B).
+                 * 
+                 * If there isn't, then additional checks should be performed for the exotic disk formats that may have
+                 * a BPB elsewhere (e.g. Apricot disks have it at 0x50...)
+                 */
+                if(bpb.NumberOfHeads == 0 || bpb.PhysicalSectorsPerTrack == 0 || bpb.BytesPerLogicalSector == 0)
+                {
+                    throw new Exception("Non-standard BPB");
+                }
+                if(bpb.TotalLogicalSector / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack != stream.Length / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack / bpb.BytesPerLogicalSector)
+                {
+                    throw new Exception("Non-standard BPB");
+                }
 
                 // Try to read the BPB further as a DOS 4.0 BPB.
                 var bpb40 = new BiosParameterBlock40(bpb);
@@ -108,7 +122,6 @@ namespace TotalImage.FileSystems.FAT
             uint fat2Offset = fat1Offset + fatSize;
             uint dataAreaOffset = fat2Offset + fatSize + rootDirSize;
 
-            //using (var stream = new MemoryStream(imageBytes, writable: true))
             using (var writer = new BinaryWriter(stream, Encoding.ASCII, true))
             {
                 stream.Seek(0, SeekOrigin.Begin);
@@ -336,7 +349,7 @@ namespace TotalImage.FileSystems.FAT
                     else
                     {
                         stream.Seek(fat1Offset + (ushort)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
-                        ushort lower4 = (ushort)((reader.ReadByte() & 0xF0) >> 4);
+                        ushort lower4 = (ushort)(reader.ReadByte() >> 4);
                         ushort upper8 = (ushort)(reader.ReadByte() << 4);
                         cluster = (ushort)(upper8 + lower4);
                     }
@@ -416,7 +429,7 @@ namespace TotalImage.FileSystems.FAT
                     else
                     {
                         stream.Seek(fat1Offset + (ushort)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
-                        ushort lower4 = (ushort)((reader.ReadByte() & 0xF0) >> 4);
+                        ushort lower4 = (ushort)(reader.ReadByte() >> 4);
                         ushort upper8 = (ushort)(reader.ReadByte() << 4);
                         cluster = (ushort)(upper8 + lower4);
                     }
@@ -547,7 +560,7 @@ namespace TotalImage.FileSystems.FAT
 
                 if (rootDirFull)
                 {
-                    throw new Exception("Root directory is full, volume label could not be written!");
+                    throw new Exception("Root directory is full, volume label cannot be written!");
                 }
             }
         }

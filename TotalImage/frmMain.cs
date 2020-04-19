@@ -712,7 +712,16 @@ namespace TotalImage
         public void AddToRootDir(FatDirEntry entry)
         {
             string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
+            string extension = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
+            string fullname = filename;
             TreeNode node = new TreeNode(filename);
+
+            if (!string.IsNullOrWhiteSpace(extension))
+            {
+                fullname += "." + extension;
+                node.Text = fullname;
+            }
+
             node.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             node.Tag = entry;
             lstDirectories.Nodes[0].Nodes.Add(node);
@@ -747,7 +756,15 @@ namespace TotalImage
         public void AddToDir(FatDirEntry parent, FatDirEntry child)
         {
             string childFilename = Encoding.ASCII.GetString(child.filename).TrimEnd(' ');
+            string childExtension = Encoding.ASCII.GetString(child.filename).TrimEnd(' ');
+            string fullname = filename;
             TreeNode childNode = new TreeNode(childFilename);
+            if (!string.IsNullOrWhiteSpace(childExtension))
+            {
+                fullname += "." + childExtension;
+                childNode.Text = fullname;
+            }
+
             childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             childNode.Tag = child;
             TreeNode parentNode = FindNode(lstDirectories.Nodes[0], parent.startCluster);
@@ -792,7 +809,15 @@ namespace TotalImage
         public void AddToFileList(FatDirEntry entry)
         {
             string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
+            string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
+            string fullname = filename;
             ListViewItem lvi = new ListViewItem(filename);
+            if (!string.IsNullOrWhiteSpace(extension))
+            {
+                fullname += "." + extension;
+                lvi.Text = fullname;
+            }
+
             if (!filename.Equals(".."))
             {
                 ushort year = (ushort)(((entry.modifiedDate & 0xFE00) >> 9) + 1980);
@@ -810,13 +835,6 @@ namespace TotalImage
                 }
                 else
                 {
-                    string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
-                    string fullname = filename;
-                    if (!string.IsNullOrWhiteSpace(extension))
-                    {
-                        fullname += "." + extension;
-                        lvi.Text = fullname;
-                    }
                     string filetype = GetShellFileType(fullname, FileAttributes.Normal);
                     lvi.SubItems.Add(filetype);
                     lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");

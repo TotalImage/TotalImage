@@ -40,7 +40,7 @@ namespace TotalImage.FileSystems.FAT
         public ushort ReservedLogicalSectors { get; set; }
         public byte NumberOfFATs { get; set; }
         public ushort RootDirectoryEntries { get; set; }
-        //public ushort TLS;
+        public ushort TotalLogicalSector { get; set; }
         public byte MediaDescriptor { get; set; }
         public ushort LogicalSectorsPerFAT { get; set; }
         public ushort PhysicalSectorsPerTrack { get; set; }

@@ -56,18 +56,6 @@ namespace TotalImage
                         return;
                     }
                 }
-                /* RX50 isn't implemented yet
-                 * 
-                 * else if(cbxFloppyBPB.Checked && lstFloppyCapacity.SelectedIndex == 6) //RX50 disks do not have a BPB...
-                {
-                    DialogResult bpb = MessageBox.Show("DEC RX50 400 KiB disks do not have an on-disk BIOS paraneter block (BPB), but you still chose to write a DOS BPB to the boot sector of the image." +
-                        " The disk may not work in an RX50 drive because of this." +
-                        "\n\nAre you sure you want to create an RX50 image with a BPB?", "BIOS Parameter Block", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                    if (bpb == DialogResult.No)
-                    {
-                        return;
-                    }
-                }*/
 
                 if (lstFloppyCapacity.SelectedItem.ToString() == "Custom...")
                 {
