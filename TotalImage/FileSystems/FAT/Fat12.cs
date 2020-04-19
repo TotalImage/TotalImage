@@ -251,7 +251,7 @@ namespace TotalImage.FileSystems.FAT
                     };
 
                     //Ignore deleted entries for now
-                    if (entry.name[0] != (char)0xE5)
+                    if (entry.name[0] != 0xE5)
                     {
                         //Skip hidden, LFN and volume label entries for now
                         if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))

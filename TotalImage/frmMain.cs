@@ -39,7 +39,7 @@ namespace TotalImage
             image = new RawSector();
             dlgNewImage dlg = new dlgNewImage();
             DialogResult result = dlg.ShowDialog();
-            if(result == DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 Text = "(Untitled) - TotalImage";
             }
@@ -208,10 +208,71 @@ namespace TotalImage
 
         private void openToolStripButton_Click(object sender, EventArgs e)
         {
-            OpenImage();
+            if (unsavedChanges)
+            {
+                DialogResult = MessageBox.Show("You have unsaved changes. Would you like to save the current image first before opening another one?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                switch (DialogResult)
+                {
+                    case DialogResult.Cancel: return;
+                    case DialogResult.Yes: /* Save changes to the current image, then close the current image */ break;
+                    case DialogResult.No: /* Close the current image */ break;
+                }
+            }
+
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.AutoUpgradeEnabled = true;
+            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+            ofd.Title = "Open image...";
+            ofd.CheckFileExists = true;
+            ofd.CheckPathExists = true;
+            ofd.Multiselect = false;
+            //ofd.ShowReadOnly = true; //We probably want this, but it degrades the dialog appearance to XP dialog... Needs a workaround
+            ofd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
+                /* "WinImage compressed image (*.imz)|*.imz|" +
+                 "DiskDupe image (*.ddi)|*.ddi|" +
+                 "IBM SaveDiskF image (*.dsk)|*.dsk|" +
+                 "TeleDisk image (*.td0)|*.td0|" +
+                 "ImageDisk image (*.imd)|*.imd|" +
+                 "CopyQM image (*.cqm)|*.cqm|" +
+                 "EZ-DisKlone Plus image (*.fdf)|*.fdf|" +
+                 "Virtual Hard Disk image (*.vhd)|*.vhd|" +
+                 "Anex86 floppy disk image (*.fdi)|*.fdi|" +
+                 "Anex86 hard disk image (*.hdi)|*.hdi|" +
+                 "86Box surface image (*.86f)|*.86f|" +
+                 "MFM surface image (*.mfm)|*.mfm|" +*/
+                "All files (*.*)|*.*";
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                OpenImage(ofd.FileName);
+            }
         }
 
-        private void OpenImage()
+        private void OpenImage(string path)
+        {
+            filename = Path.GetFileName(path);
+            Text = filename + " - TotalImage";
+            lstDirectories.Nodes.Clear();
+            lstFiles.Items.Clear();
+
+            TreeNode root = new TreeNode("\\");
+            root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+            lstDirectories.Nodes.Add(root);
+            image = new RawSector();
+            lstFiles.ListViewItemSorter = null;
+            lstFiles.BeginUpdate();
+            lstDirectories.BeginUpdate();
+            image.LoadImage(path);
+            lstDirectories.EndUpdate();
+            SortDirTree();
+            lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+            lstFiles.EndUpdate();
+            lstFiles.ListViewItemSorter = sorter;
+            lblStatusCapacity.Text = GetImageCapacity() + " KiB";
+            EnableUI();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (unsavedChanges)
             {
@@ -249,34 +310,8 @@ namespace TotalImage
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                filename = ofd.SafeFileName;
-                path = ofd.FileName;
-                Text = filename + " - TotalImage";
-                lstDirectories.Nodes.Clear();
-                lstFiles.Items.Clear();
-
-                TreeNode root = new TreeNode(filename);
-                root.ContextMenuStrip = cmsDirTree;
-                root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                lstDirectories.Nodes.Add(root);
-                image = new RawSector();
-                lstFiles.ListViewItemSorter = null;
-                lstFiles.BeginUpdate();
-                lstDirectories.BeginUpdate();
-                image.LoadImage(path);
-                lstDirectories.EndUpdate();
-                SortDirTree();
-                lstDirectories.SelectedNode = lstDirectories.Nodes[0];
-                lstFiles.EndUpdate();
-                lstFiles.ListViewItemSorter = sorter;
-                lblStatusCapacity.Text = GetImageCapacity() + " KiB";
-                EnableUI();
+                OpenImage(ofd.FileName);
             }
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenImage();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -373,7 +408,7 @@ namespace TotalImage
         }
 
         //Returns size of directory
-        private uint CalculateDirSize(bool searchSubdirs) 
+        private uint CalculateDirSize(bool searchSubdirs)
         {
             uint dirSize = 0;
 
@@ -390,7 +425,7 @@ namespace TotalImage
         }
 
         //Returns the number of files in a directory
-        private uint GetFileCount(bool searchSubdirs) 
+        private uint GetFileCount(bool searchSubdirs)
         {
             uint fileCount = 0;
 
@@ -408,7 +443,7 @@ namespace TotalImage
 
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(lstFiles.SelectedItems.Count == 0)
+            if (lstFiles.SelectedItems.Count == 0 || lstFiles.SelectedItems.Count == 1 && lstFiles.SelectedItems[0].Text == "..")
             {
                 deleteToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem1.Enabled = false;
@@ -426,7 +461,7 @@ namespace TotalImage
                 lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
                 lblStatusSize.Text = string.Format("{0:n0}", CalculateDirSize(false)).ToString() + " bytes in " + GetFileCount(false) + " file(s)";
             }
-            else if(lstFiles.SelectedItems.Count == 1)
+            else if (lstFiles.SelectedItems.Count == 1)
             {
                 deleteToolStripMenuItem.Enabled = true;
                 deleteToolStripMenuItem1.Enabled = true;
@@ -443,6 +478,7 @@ namespace TotalImage
 
                 lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator + lstFiles.SelectedItems[0].Text;
                 lblStatusSize.Text = string.Format("{0:n0}", ((DirectoryEntry)lstFiles.SelectedItems[0].Tag).fileSize).ToString() + " bytes in 1 file";
+
             }
             else
             {
@@ -462,7 +498,7 @@ namespace TotalImage
                 lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
 
                 uint selectedSize = 0;
-                foreach(ListViewItem lvi in lstFiles.SelectedItems)
+                foreach (ListViewItem lvi in lstFiles.SelectedItems)
                 {
                     DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
                     selectedSize += entry.fileSize;
@@ -519,7 +555,7 @@ namespace TotalImage
 
         private void menuBar_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            if(e.ClickedItem == editToolStripMenuItem) 
+            if (e.ClickedItem == editToolStripMenuItem)
             {
                 if (lstFiles.SelectedItems.Count == 0)
                 {
@@ -672,8 +708,8 @@ namespace TotalImage
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.Description = "Select a folder to inject...";
             fbd.ShowNewFolderButton = true;
-           
-            if(fbd.ShowDialog() == DialogResult.OK)
+
+            if (fbd.ShowDialog() == DialogResult.OK)
             {
                 /* Inject the entire selected folder into the image */
                 unsavedChanges = true;
@@ -686,7 +722,7 @@ namespace TotalImage
             lstFiles.ListViewItemSorter = sorter;
 
             //Because designer doesn't have the Enter key in the list for some reason...
-            propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter; 
+            propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter;
             propertiesToolStripMenuItem1.ShortcutKeys = Keys.Alt | Keys.Enter;
             propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
 
@@ -750,7 +786,7 @@ namespace TotalImage
             childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             childNode.Tag = child;
             TreeNode parentNode = FindNode(lstDirectories.Nodes[0], ((uint)(parent.fstClusHI << 16) + parent.fstClusLO));
-            if(parentNode != null)
+            if (parentNode != null)
             {
                 parentNode.Nodes.Add(childNode);
             }
@@ -893,7 +929,7 @@ namespace TotalImage
             saveToolStripMenuItem.Enabled = false;
             closeImageToolStripMenuItem.Enabled = false;
 
-            foreach(ToolStripItem item in editToolStripMenuItem.DropDownItems)
+            foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
             {
                 if (item.CanSelect)
                 {
@@ -934,7 +970,7 @@ namespace TotalImage
             uint dirSize = 0;
             lstFiles.BeginUpdate();
             //Subdirs
-            if (e.Node.Text != filename)
+            if (e.Node != lstDirectories.Nodes[0])
             {
                 lstFiles.Items.Clear();
                 image.ListDirectory((DirectoryEntry)e.Node.Tag);
@@ -1165,7 +1201,7 @@ namespace TotalImage
         private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lstFiles.Focus();
-            foreach(ListViewItem lvi in lstFiles.Items)
+            foreach (ListViewItem lvi in lstFiles.Items)
             {
                 lvi.Selected = true;
             }
@@ -1204,35 +1240,14 @@ namespace TotalImage
         {
             string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
-            if(filename == "" && unsavedChanges == false) //No image is loaded
+            if (filename == "" && unsavedChanges == false) //No image is loaded
             {
-                if(items.Length == 1)
+                if (items.Length == 1)
                 {
-                    filename = Path.GetFileName(items[0]);
-                    path = items[0];
-                    Text = filename + " - TotalImage";
-                    lstDirectories.Nodes.Clear();
-                    lstFiles.Items.Clear();
-
-                    TreeNode root = new TreeNode(filename);
-                    root.ContextMenuStrip = cmsDirTree;
-                    root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                    lstDirectories.Nodes.Add(root);
-                    image = new RawSector();
-                    lstFiles.ListViewItemSorter = null;
-                    lstFiles.BeginUpdate();
-                    lstDirectories.BeginUpdate();
-                    image.LoadImage(path);
-                    lstDirectories.EndUpdate();
-                    SortDirTree();
-                    lstDirectories.SelectedNode = lstDirectories.Nodes[0];
-                    lstFiles.EndUpdate();
-                    lstFiles.ListViewItemSorter = sorter;
-                    lblStatusCapacity.Text = GetImageCapacity() + " KiB";
-                    EnableUI();
+                    OpenImage(items[0]);
                 }
             }
-            else if(filename != "" || unsavedChanges) //An image is open (either saved or new)
+            else if (filename != "" || unsavedChanges) //An image is open (either saved or new)
             {
                 /* Inject files/folder instead */
             }
@@ -1260,28 +1275,7 @@ namespace TotalImage
             {
                 if (items.Length == 1)
                 {
-                    filename = Path.GetFileName(items[0]);
-                    path = items[0];
-                    Text = filename + " - TotalImage";
-                    lstDirectories.Nodes.Clear();
-                    lstFiles.Items.Clear();
-
-                    TreeNode root = new TreeNode(filename);
-                    root.ContextMenuStrip = cmsDirTree;
-                    root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                    lstDirectories.Nodes.Add(root);
-                    image = new RawSector();
-                    lstFiles.ListViewItemSorter = null;
-                    lstFiles.BeginUpdate();
-                    lstDirectories.BeginUpdate();
-                    image.LoadImage(path);
-                    lstDirectories.EndUpdate();
-                    SortDirTree();
-                    lstDirectories.SelectedNode = lstDirectories.Nodes[0];
-                    lstFiles.EndUpdate();
-                    lstFiles.ListViewItemSorter = sorter;
-                    lblStatusCapacity.Text = GetImageCapacity() + " KiB";
-                    EnableUI();
+                    OpenImage(items[0]);
                 }
             }
         }
@@ -1345,12 +1339,6 @@ namespace TotalImage
             if (e.Button == MouseButtons.Right)
             {
                 lstDirectories.SelectedNode = lstDirectories.GetNodeAt(e.X, e.Y);
-
-                if (lstDirectories.SelectedNode != null)
-                {
-                    System.Diagnostics.Debug.WriteLine(lstDirectories.SelectedNode.Text);
-
-                }
                 cmsDirTree.Show(lstDirectories, e.Location);
             }
         }
