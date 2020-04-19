@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.ImageFormats;
@@ -412,13 +411,13 @@ namespace TotalImage
             if(lstFiles.SelectedItems.Count == 0)
             {
                 deleteToolStripMenuItem.Enabled = false;
-                deleteToolStripMenuItem2.Enabled = false;
+                deleteToolStripMenuItem1.Enabled = false;
                 extractToolStripMenuItem.Enabled = false;
                 extractToolStripMenuItem2.Enabled = false;
                 propertiesToolStripMenuItem.Enabled = false;
                 propertiesToolStripMenuItem2.Enabled = false;
+                renameToolStripMenuItem1.Enabled = false;
                 renameToolStripMenuItem.Enabled = false;
-                renameToolStripMenuItem2.Enabled = false;
 
                 deleteToolStripButton.Enabled = false;
                 extractToolStripButton.Enabled = false;
@@ -430,13 +429,13 @@ namespace TotalImage
             else if(lstFiles.SelectedItems.Count == 1)
             {
                 deleteToolStripMenuItem.Enabled = true;
-                deleteToolStripMenuItem2.Enabled = true;
+                deleteToolStripMenuItem1.Enabled = true;
                 extractToolStripMenuItem.Enabled = true;
                 extractToolStripMenuItem2.Enabled = true;
                 propertiesToolStripMenuItem.Enabled = true;
                 propertiesToolStripMenuItem2.Enabled = true;
+                renameToolStripMenuItem1.Enabled = true;
                 renameToolStripMenuItem.Enabled = true;
-                renameToolStripMenuItem2.Enabled = true;
 
                 deleteToolStripButton.Enabled = true;
                 extractToolStripButton.Enabled = true;
@@ -448,13 +447,13 @@ namespace TotalImage
             else
             {
                 deleteToolStripMenuItem.Enabled = true;
-                deleteToolStripMenuItem2.Enabled = true;
+                deleteToolStripMenuItem1.Enabled = true;
                 extractToolStripMenuItem.Enabled = true;
                 extractToolStripMenuItem2.Enabled = true;
                 propertiesToolStripMenuItem.Enabled = false;
                 propertiesToolStripMenuItem2.Enabled = false;
+                renameToolStripMenuItem1.Enabled = false;
                 renameToolStripMenuItem.Enabled = false;
-                renameToolStripMenuItem2.Enabled = false;
 
                 deleteToolStripButton.Enabled = true;
                 extractToolStripButton.Enabled = true;
@@ -475,7 +474,7 @@ namespace TotalImage
 
         private void propertiesToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties((DirectoryEntry)lstFiles.SelectedItems[0].Tag);
+            dlgProperties dlg = new dlgProperties((DirectoryEntry)lstDirectories.SelectedNode.Tag);
             dlg.ShowDialog();
         }
 
@@ -511,12 +510,7 @@ namespace TotalImage
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (lstFiles.SelectedItems.Count == 0)
-            {
-                e.Cancel = true;
-                return;
-            }
-            if(lstFiles.SelectedItems[0].Text == "..")
+            if (lstFiles.SelectedItems.Count == 0 || lstFiles.SelectedItems[0].Text == "..")
             {
                 e.Cancel = true;
                 return;
@@ -713,7 +707,7 @@ namespace TotalImage
         {
             string filename = entry.name.TrimEnd('.');
             TreeNode node = new TreeNode(filename);
-
+            //node.ContextMenuStrip = cmsDirTree;
             node.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             node.Tag = entry;
             lstDirectories.Nodes[0].Nodes.Add(node);
@@ -752,6 +746,7 @@ namespace TotalImage
         {
             string childFilename = child.name.TrimEnd('.');
             TreeNode childNode = new TreeNode(childFilename);
+            //childNode.ContextMenuStrip = cmsDirTree;
             childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             childNode.Tag = child;
             TreeNode parentNode = FindNode(lstDirectories.Nodes[0], ((uint)(parent.fstClusHI << 16) + parent.fstClusLO));
@@ -1309,6 +1304,52 @@ namespace TotalImage
         private void collapseDirectoryTreeToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             lstDirectories.CollapseAll();
+        }
+
+        private void cmsDirTree_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (lstDirectories.SelectedNode == null)
+            {
+                extractToolStripMenuItem1.Enabled = false;
+                createAFolderToolStripMenuItem1.Enabled = false;
+                renameToolStripMenuItem1.Enabled = false;
+                propertiesToolStripMenuItem1.Enabled = false;
+                undeleteToolStripMenuItem1.Enabled = false;
+                deleteToolStripMenuItem1.Enabled = false;
+            }
+            else
+            {
+                if (lstDirectories.SelectedNode == lstDirectories.Nodes[0])
+                {
+                    deleteToolStripMenuItem1.Enabled = false;
+                    renameToolStripMenuItem1.Enabled = false;
+                    propertiesToolStripMenuItem1.Enabled = false;
+                    undeleteToolStripMenuItem1.Enabled = false;
+                    createAFolderToolStripMenuItem1.Enabled = true;
+                    extractToolStripMenuItem1.Enabled = true;
+                }
+                else
+                {
+                    extractToolStripMenuItem1.Enabled = true;
+                    createAFolderToolStripMenuItem1.Enabled = true;
+                    renameToolStripMenuItem1.Enabled = true;
+                    propertiesToolStripMenuItem1.Enabled = true;
+                    undeleteToolStripMenuItem1.Enabled = false;
+                    deleteToolStripMenuItem1.Enabled = true;
+                }
+            }
+        }
+
+        private void lstDirectories_MouseUp(object sender, MouseEventArgs e)
+        {
+            lstDirectories.SelectedNode = lstDirectories.GetNodeAt(e.X, e.Y);
+
+            if (lstDirectories.SelectedNode != null)
+            {
+                System.Diagnostics.Debug.WriteLine(lstDirectories.SelectedNode.Text);
+                
+            }
+            cmsDirTree.Show(lstDirectories, e.Location);
         }
     }
 }
