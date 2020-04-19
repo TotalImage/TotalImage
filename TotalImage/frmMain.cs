@@ -1342,14 +1342,17 @@ namespace TotalImage
 
         private void lstDirectories_MouseUp(object sender, MouseEventArgs e)
         {
-            lstDirectories.SelectedNode = lstDirectories.GetNodeAt(e.X, e.Y);
-
-            if (lstDirectories.SelectedNode != null)
+            if (e.Button == MouseButtons.Right)
             {
-                System.Diagnostics.Debug.WriteLine(lstDirectories.SelectedNode.Text);
-                
+                lstDirectories.SelectedNode = lstDirectories.GetNodeAt(e.X, e.Y);
+
+                if (lstDirectories.SelectedNode != null)
+                {
+                    System.Diagnostics.Debug.WriteLine(lstDirectories.SelectedNode.Text);
+
+                }
+                cmsDirTree.Show(lstDirectories, e.Location);
             }
-            cmsDirTree.Show(lstDirectories, e.Location);
         }
     }
 }
