@@ -58,7 +58,7 @@ namespace TotalImage.FileSystems.FAT
                 bpb.ReservedLogicalSectors = reader.ReadUInt16();
                 bpb.NumberOfFATs = reader.ReadByte();
                 bpb.RootDirectoryEntries = reader.ReadUInt16();
-                bpb.TotalLogicalSector = reader.ReadUInt16();
+                bpb.TotalLogicalSectors = reader.ReadUInt16();
                 bpb.MediaDescriptor = reader.ReadByte();
                 bpb.LogicalSectorsPerFAT = reader.ReadUInt16();
                 bpb.PhysicalSectorsPerTrack = reader.ReadUInt16();
@@ -75,7 +75,7 @@ namespace TotalImage.FileSystems.FAT
                 {
                     throw new Exception("Non-standard BPB");
                 }
-                if(bpb.TotalLogicalSector / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack != stream.Length / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack / bpb.BytesPerLogicalSector)
+                if(bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack != stream.Length / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack / bpb.BytesPerLogicalSector)
                 {
                     throw new Exception("Non-standard BPB");
                 }
@@ -145,7 +145,7 @@ namespace TotalImage.FileSystems.FAT
                 writer.Write(bpb.ReservedLogicalSectors);
                 writer.Write(bpb.NumberOfFATs);
                 writer.Write(bpb.RootDirectoryEntries);
-                writer.Write((ushort)(tracks * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads));
+                writer.Write(bpb.TotalLogicalSectors);
                 writer.Write(bpb.MediaDescriptor);
                 writer.Write(bpb.LogicalSectorsPerFAT);
                 writer.Write(bpb.PhysicalSectorsPerTrack);
@@ -186,7 +186,10 @@ namespace TotalImage.FileSystems.FAT
                 writer.Write((byte)0x55);
                 writer.Write((byte)0xAA);
 
-                //Media descriptor needs to be written to each FAT as well
+                /*Media descriptor needs to be written to each FAT as well
+                 *
+                 * It takes up the first cluster entry (0), while the second entry (1) is also reserved
+                 */
                 stream.Seek(fat1Offset, SeekOrigin.Begin);
                 writer.Write(bpb.MediaDescriptor);
                 writer.Write((byte)0xFF);

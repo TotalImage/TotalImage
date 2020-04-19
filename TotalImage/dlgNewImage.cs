@@ -91,6 +91,7 @@ namespace TotalImage
                         bpb.PhysicalSectorsPerTrack = floppyTable.fdt[i][6];
                         bpb.ReservedLogicalSectors = floppyTable.fdt[i][13];
                         bpb.RootDirectoryEntries = floppyTable.fdt[i][12];
+                        bpb.TotalLogicalSectors = (ushort)(floppyTable.fdt[i][5] * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads);
 
                         if (bpb is BiosParameterBlock40 bpb40) //DOS 3.4+ BPB
                         {
@@ -180,16 +181,6 @@ namespace TotalImage
                 txtFloppyReservedSect.Value = floppyTable.fdt[i][13];
                 txtFloppyTotalSect.Value = floppyTable.fdt[i][5] * floppyTable.fdt[i][6] * floppyTable.fdt[i][1];
             }
-            /* RX50 not implemented yet
-             * 
-             * if(lstFloppyCapacity.SelectedIndex == 6) //DEC RX50 disks don't have a BPB...
-             {
-                 cbxFloppyBPB.Checked = false;
-             }
-             else
-             {
-                 cbxFloppyBPB.Checked = true;
-             }*/
         }
 
         private void lstHDDCapacity_SelectedIndexChanged(object sender, EventArgs e)
