@@ -1290,5 +1290,25 @@ namespace TotalImage
                 }
             }
         }
+
+        private void expandDirectoryTreeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lstDirectories.ExpandAll();
+        }
+
+        private void collapseDirectoryTreeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lstDirectories.CollapseAll();
+        }
+
+        private void expandDirectoryTreeToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            lstDirectories.ExpandAll();
+        }
+
+        private void collapseDirectoryTreeToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            lstDirectories.CollapseAll();
+        }
     }
 }

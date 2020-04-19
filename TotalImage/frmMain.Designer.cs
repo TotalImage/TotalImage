@@ -77,6 +77,8 @@
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showHiddenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showDeletedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.expandDirectoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.collapseDirectoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.largeIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.smallIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -156,8 +158,9 @@
             this.renameToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.selectAllToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.expandDirectoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.collapseDirectoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.expandDirectoryTreeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.collapseDirectoryTreeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
             this.cmsDirTree.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.cmsToolbars.SuspendLayout();
@@ -173,6 +176,9 @@
             // cmsDirTree
             // 
             this.cmsDirTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.expandDirectoryTreeToolStripMenuItem1,
+            this.collapseDirectoryTreeToolStripMenuItem1,
+            this.toolStripSeparator15,
             this.extractToolStripMenuItem1,
             this.createAFolderToolStripMenuItem1,
             this.deleteToolStripMenuItem2,
@@ -181,7 +187,7 @@
             this.propertiesToolStripMenuItem1});
             this.cmsDirTree.Name = "cmsDirTree";
             this.cmsDirTree.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.cmsDirTree.Size = new System.Drawing.Size(161, 136);
+            this.cmsDirTree.Size = new System.Drawing.Size(193, 208);
             // 
             // extractToolStripMenuItem1
             // 
@@ -576,6 +582,20 @@
             this.showDeletedToolStripMenuItem.Name = "showDeletedToolStripMenuItem";
             this.showDeletedToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.showDeletedToolStripMenuItem.Text = "Show deleted items";
+            // 
+            // expandDirectoryTreeToolStripMenuItem
+            // 
+            this.expandDirectoryTreeToolStripMenuItem.Name = "expandDirectoryTreeToolStripMenuItem";
+            this.expandDirectoryTreeToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.expandDirectoryTreeToolStripMenuItem.Text = "Expand directory tree";
+            this.expandDirectoryTreeToolStripMenuItem.Click += new System.EventHandler(this.expandDirectoryTreeToolStripMenuItem_Click);
+            // 
+            // collapseDirectoryTreeToolStripMenuItem
+            // 
+            this.collapseDirectoryTreeToolStripMenuItem.Name = "collapseDirectoryTreeToolStripMenuItem";
+            this.collapseDirectoryTreeToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.collapseDirectoryTreeToolStripMenuItem.Text = "Collapse directory tree";
+            this.collapseDirectoryTreeToolStripMenuItem.Click += new System.EventHandler(this.collapseDirectoryTreeToolStripMenuItem_Click);
             // 
             // toolStripSeparator13
             // 
@@ -1288,17 +1308,24 @@
             this.selectAllToolStripMenuItem1.Text = "Select all";
             this.selectAllToolStripMenuItem1.Click += new System.EventHandler(this.selectAllToolStripMenuItem1_Click);
             // 
-            // expandDirectoryTreeToolStripMenuItem
+            // expandDirectoryTreeToolStripMenuItem1
             // 
-            this.expandDirectoryTreeToolStripMenuItem.Name = "expandDirectoryTreeToolStripMenuItem";
-            this.expandDirectoryTreeToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.expandDirectoryTreeToolStripMenuItem.Text = "Expand directory tree";
+            this.expandDirectoryTreeToolStripMenuItem1.Name = "expandDirectoryTreeToolStripMenuItem1";
+            this.expandDirectoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(192, 22);
+            this.expandDirectoryTreeToolStripMenuItem1.Text = "Expand directory tree";
+            this.expandDirectoryTreeToolStripMenuItem1.Click += new System.EventHandler(this.expandDirectoryTreeToolStripMenuItem1_Click);
             // 
-            // collapseDirectoryTreeToolStripMenuItem
+            // collapseDirectoryTreeToolStripMenuItem1
             // 
-            this.collapseDirectoryTreeToolStripMenuItem.Name = "collapseDirectoryTreeToolStripMenuItem";
-            this.collapseDirectoryTreeToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.collapseDirectoryTreeToolStripMenuItem.Text = "Collapse directory tree";
+            this.collapseDirectoryTreeToolStripMenuItem1.Name = "collapseDirectoryTreeToolStripMenuItem1";
+            this.collapseDirectoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(192, 22);
+            this.collapseDirectoryTreeToolStripMenuItem1.Text = "Collapse directory tree";
+            this.collapseDirectoryTreeToolStripMenuItem1.Click += new System.EventHandler(this.collapseDirectoryTreeToolStripMenuItem1_Click);
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(189, 6);
             // 
             // frmMain
             // 
@@ -1464,6 +1491,9 @@
         private System.Windows.Forms.ToolStripMenuItem changeFormatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem expandDirectoryTreeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem collapseDirectoryTreeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem expandDirectoryTreeToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem collapseDirectoryTreeToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
     }
 }
 
