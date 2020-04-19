@@ -27,13 +27,13 @@
             listviewX = (ListViewItem)x;
             listviewY = (ListViewItem)y;
 
-            FatDirEntry entryX = (FatDirEntry)listviewX.Tag;
-            FatDirEntry entryY = (FatDirEntry)listviewY.Tag;
-            if (Convert.ToBoolean(entryX.attribute & 0x10) && !Convert.ToBoolean(entryY.attribute & 0x10))
+            DirectoryEntry entryX = (DirectoryEntry)listviewX.Tag;
+            DirectoryEntry entryY = (DirectoryEntry)listviewY.Tag;
+            if (Convert.ToBoolean(entryX.attr & 0x10) && !Convert.ToBoolean(entryY.attr & 0x10))
             {
                 return -1;
             }
-            else if (!Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
+            else if (!Convert.ToBoolean(entryX.attr & 0x10) && Convert.ToBoolean(entryY.attr & 0x10))
             {
                 return 1;
             }
@@ -57,7 +57,7 @@
             }
             else if (main.lstFiles.Columns[SortColumn].Text == "Size")
             {  
-                if(Convert.ToBoolean(entryX.attribute & 0x10) && Convert.ToBoolean(entryY.attribute & 0x10))
+                if(Convert.ToBoolean(entryX.attr & 0x10) && Convert.ToBoolean(entryY.attr & 0x10))
                 {
                     return 0;
                 }

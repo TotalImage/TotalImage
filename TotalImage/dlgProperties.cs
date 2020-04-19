@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
 using TotalImage.FileSystems.FAT;
@@ -21,74 +20,69 @@ namespace TotalImage
             InitializeComponent();
         }
 
-        public dlgProperties(FatDirEntry entry) : this()
+        public dlgProperties(DirectoryEntry entry) : this()
         {
-            //this.entry = entry;
-
             dateCreated.CustomFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
             dateModified.CustomFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
             dateAccessed.CustomFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
 
-            if(entry != null)
+            //For now both fields display the same 8.3 filename, once VFAT/LFN support is added, the textbox will display
+            //the long filename instead
+            string filename = entry.name.TrimEnd('.');
+            txtFilename.Text = filename;
+            lblShortFilename1.Text = filename;
+            lblSize1.Text = string.Format("{0:n0}", entry.fileSize).ToString() + " B";
+
+            ushort year = 1980;
+            byte month = 1;
+            byte day = 1;
+            byte hours = 0;
+            byte minutes = 0;
+            byte seconds = 0;
+            if (entry.wrtDate > 0)
             {
-                //For now both fields display the same 8.3 filename, once VFAT/LFN support is added, the textbox will display
-                //the long filename instead
-                string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
-                string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
-                txtFilename.Text = filename.ToUpper();
-                lblShortFilename1.Text = filename.ToUpper();
-                if (!string.IsNullOrEmpty(extension))
-                {
-                    txtFilename.Text += "." + extension;
-                    lblShortFilename1.Text += "." + extension;
-                }
+                year = (ushort)(((entry.wrtDate & 0xFE00) >> 9) + 1980);
+                month = (byte)((entry.wrtDate & 0x1E0) >> 5);
+                day = (byte)(entry.wrtDate & 0x1F);
+            }
+            if (entry.wrtTime > 0)
+            {
+                hours = (byte)((entry.wrtTime & 0xF800) >> 11);
+                minutes = (byte)((entry.wrtTime & 0x7E0) >> 5);
+                seconds = (byte)((entry.wrtTime & 0x1F) * 2);
+            }
 
-                lblSize1.Text = string.Format("{0:n0}", entry.fileSize).ToString() + " B";
+            DateTime modified = new DateTime(year, month, day, hours, minutes, seconds);
+            dateModified.Value = modified;
+            dateModified.Checked = true;
 
-                ushort year = 1980;
-                byte month = 1;
-                byte day = 1;
-                byte hours = 0;
-                byte minutes = 0;
-                byte seconds = 0;
-                if (entry.modifiedDate > 0)
-                {
-                    year = (ushort)(((entry.modifiedDate & 0xFE00) >> 9) + 1980);
-                    month = (byte)((entry.modifiedDate & 0x1E0) >> 5);
-                    day = (byte)(entry.modifiedDate & 0x1F);
-                }
-                if (entry.modifiedTime > 0)
-                {
-                    hours = (byte)((entry.modifiedTime & 0xF800) >> 11);
-                    minutes = (byte)((entry.modifiedTime & 0x7E0) >> 5);
-                    seconds = (byte)((entry.modifiedTime & 0x1F) * 2);
-                }
+            dateAccessed.Checked = entry.lstAccDate != 0;
+            dateCreated.Checked = entry.crtDate != 0;
 
-                DateTime modified = new DateTime(year, month, day, hours, minutes, seconds);
-                dateModified.Value = modified;
-                dateModified.Checked = true;
+            if (Convert.ToBoolean(entry.attr & 0x01))
+            {
+                cbxReadOnly.Checked = true;
+            }
+            if (Convert.ToBoolean(entry.attr & 0x02))
+            {
+                cbxHidden.Checked = true;
+            }
+            if (Convert.ToBoolean(entry.attr & 0x04))
+            {
+                cbxSystem.Checked = true;
+            }
+            if (Convert.ToBoolean(entry.attr & 0x20))
+            {
+                cbxArchive.Checked = true;
+            }
 
-                dateAccessed.Checked = entry.lastAccessDate != 0;
-                dateCreated.Checked = entry.creationDate != 0;
-
-                if(Convert.ToBoolean(entry.attribute & 0x01))
-                {
-                    cbxReadOnly.Checked = true;
-                }
-                if (Convert.ToBoolean(entry.attribute & 0x02))
-                {
-                    cbxHidden.Checked = true;
-                }
-                if (Convert.ToBoolean(entry.attribute & 0x04))
-                {
-                    cbxSystem.Checked = true;
-                }
-                if (Convert.ToBoolean(entry.attribute & 0x20))
-                {
-                    cbxArchive.Checked = true;
-                }
-
-                SetIconAndType($"{filename}.{extension}", (FileAttributes)entry.attribute);
+            if (Convert.ToBoolean(entry.attr & 0x10))
+            {
+                SetIconAndType(entry.name, FileAttributes.Directory);
+            }
+            else
+            {
+                SetIconAndType(entry.name, FileAttributes.Normal);
             }
         }
 
@@ -98,9 +92,9 @@ namespace TotalImage
             lblShortFilename1.Text = entry.Name.ToUpper();
             lblSize1.Text = $"{entry.Length:n0} B";
 
-            if(entry is FileSystems.File file)
+            if (entry is FileSystems.File file)
                 lblLocation1.Text = file.DirectoryName;
-            else if(entry is FileSystems.Directory dir)
+            else if (entry is FileSystems.Directory dir)
                 lblLocation1.Text = dir.Parent?.Name;
 
             // These are indeed supposed to be assignments in the conditions.

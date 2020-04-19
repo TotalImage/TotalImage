@@ -186,10 +186,8 @@ namespace TotalImage.FileSystems.FAT
                 writer.Write((byte)0x55);
                 writer.Write((byte)0xAA);
 
-                /*Media descriptor needs to be written to each FAT as well
-                 *
-                 * It takes up the first cluster entry (0), while the second entry (1) is also reserved
-                 */
+                /* Media descriptor needs to be written to each FAT as well
+                 * It takes up the first cluster entry (0), and the second entry (1) is also reserved */
                 stream.Seek(fat1Offset, SeekOrigin.Begin);
                 writer.Write(bpb.MediaDescriptor);
                 writer.Write((byte)0xFF);
@@ -202,7 +200,7 @@ namespace TotalImage.FileSystems.FAT
                 //Volume label needs to be written to the root directory as well
                 stream.Seek(fat2Offset + fatSize, SeekOrigin.Begin);
 
-                //First 11 bytes (8.3 space-padded filename) are the label itself
+                //First 11 bytes (8.3 space-padded filename without the period) are the label itself
                 {
                     if(bpb is BiosParameterBlock40 bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
                     {
@@ -235,41 +233,41 @@ namespace TotalImage.FileSystems.FAT
                     }
 
                     stream.Seek(-0x01, SeekOrigin.Current);
-                    FatDirEntry entry = new FatDirEntry
+                    DirectoryEntry entry = new DirectoryEntry
                     {
-                        filename = reader.ReadBytes(8),
-                        extension = reader.ReadBytes(3),
-                        attribute = reader.ReadByte(),
-                        caseByte = reader.ReadByte(),
-                        creationTimeMs = reader.ReadByte(),
-                        creationTime = reader.ReadUInt16(),
-                        creationDate = reader.ReadUInt16(),
-                        lastAccessDate = reader.ReadUInt16(),
-                        FAT3232StartCluster = reader.ReadUInt16(),
-                        modifiedTime = reader.ReadUInt16(),
-                        modifiedDate = reader.ReadUInt16(),
-                        startCluster = reader.ReadUInt16(),
+                        name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() + "." +
+                               Encoding.ASCII.GetString(reader.ReadBytes(3)).TrimEnd(' ').ToUpper(),
+                        attr = reader.ReadByte(),
+                        ntRes = reader.ReadByte(),
+                        crtTimeTenth = reader.ReadByte(),
+                        crtTime = reader.ReadUInt16(),
+                        crtDate = reader.ReadUInt16(),
+                        lstAccDate = reader.ReadUInt16(),
+                        fstClusHI = reader.ReadUInt16(),
+                        wrtTime = reader.ReadUInt16(),
+                        wrtDate = reader.ReadUInt16(),
+                        fstClusLO = reader.ReadUInt16(),
                         fileSize = reader.ReadUInt32()
                     };
 
                     //Ignore deleted entries for now
-                    if (entry.filename[0] != 0xE5)
+                    if (entry.name[0] != (char)0xE5)
                     {
                         //Skip hidden, LFN and volume label entries for now
-                        if (Convert.ToBoolean(entry.attribute & 0x02) || entry.attribute == 0x0F || Convert.ToBoolean(entry.attribute & 0x08))
+                        if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
                         {
                             continue;
                         }
 
                         //Folder entry
-                        if (Convert.ToBoolean(entry.attribute & 0x10))
+                        if (Convert.ToBoolean(entry.attr & 0x10))
                         {
                             main.AddToRootDir(entry);
                             main.AddToFileList(entry);
                             ReadSubdir(entry);
                         }
                         //File entry
-                        else if (!Convert.ToBoolean(entry.attribute & 0x10))
+                        else if (!Convert.ToBoolean(entry.attr & 0x10))
                         {
                             main.AddToFileList(entry);
                         }
@@ -279,7 +277,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Reads the subdirectory entries and adds subdirectories to the treeview
-        public void ReadSubdir(FatDirEntry parent)
+        public void ReadSubdir(DirectoryEntry parent)
         {
             uint dataAreaOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2) + 
                 (bpb.RootDirectoryEntries << 5));
@@ -287,11 +285,11 @@ namespace TotalImage.FileSystems.FAT
 
             using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
-                ushort cluster = parent.startCluster;
+                uint cluster = (((uint)parent.fstClusHI) << 16) + parent.fstClusLO;
 
                 do
                 {
-                    uint clusterOffset = (uint)((cluster - 2) * bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector);
+                    uint clusterOffset = (cluster - 2) * bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector;
 
                     //No. of entries that fit in one cluster = BPS * SPC / 32 bytes per entry
                     for (int i = 0; i < (bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector / 32); i++)
@@ -308,34 +306,34 @@ namespace TotalImage.FileSystems.FAT
                         }
 
                         stream.Seek(-0x01, SeekOrigin.Current);
-                        FatDirEntry entry = new FatDirEntry
+                        DirectoryEntry entry = new DirectoryEntry
                         {
-                            filename = reader.ReadBytes(8),
-                            extension = reader.ReadBytes(3),
-                            attribute = reader.ReadByte(),
-                            caseByte = reader.ReadByte(),
-                            creationTimeMs = reader.ReadByte(),
-                            creationTime = reader.ReadUInt16(),
-                            creationDate = reader.ReadUInt16(),
-                            lastAccessDate = reader.ReadUInt16(),
-                            FAT3232StartCluster = reader.ReadUInt16(),
-                            modifiedTime = reader.ReadUInt16(),
-                            modifiedDate = reader.ReadUInt16(),
-                            startCluster = reader.ReadUInt16(),
+                            name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() + "." +
+                                   Encoding.ASCII.GetString(reader.ReadBytes(3)).TrimEnd(' ').ToUpper(),
+                            attr = reader.ReadByte(),
+                            ntRes = reader.ReadByte(),
+                            crtTimeTenth = reader.ReadByte(),
+                            crtTime = reader.ReadUInt16(),
+                            crtDate = reader.ReadUInt16(),
+                            lstAccDate = reader.ReadUInt16(),
+                            fstClusHI = reader.ReadUInt16(),
+                            wrtTime = reader.ReadUInt16(),
+                            wrtDate = reader.ReadUInt16(),
+                            fstClusLO = reader.ReadUInt16(),
                             fileSize = reader.ReadUInt32()
                         };
 
                         //Ignore deleted entries for now
-                        if (entry.filename[0] != 0xE5)
+                        if (entry.name[0] != (char)0xE5)
                         {
                             //Skip hidden, LFN and volume label entries for now
-                            if (Convert.ToBoolean(entry.attribute & 0x02) || entry.attribute == 0x0F || Convert.ToBoolean(entry.attribute & 0x08))
+                            if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
                             {
                                 continue;
                             }
 
                             //Folder entry
-                            if (Convert.ToBoolean(entry.attribute & 0x10))
+                            if (Convert.ToBoolean(entry.attr & 0x10))
                             {
                                 main.AddToDir(parent, entry);
                                 ReadSubdir(entry);
@@ -362,7 +360,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Lists the contents of the directory without traversing subdirectories and adding them to the treeview
-        public void ListDir(FatDirEntry parent)
+        public void ListDir(DirectoryEntry parent)
         {
             uint dirSize = 0;
             ushort fat1Offset = bpb.BytesPerLogicalSector;
@@ -372,10 +370,10 @@ namespace TotalImage.FileSystems.FAT
 
             using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
-                ushort cluster = parent.startCluster;
+                uint cluster = ((uint)parent.fstClusHI << 16) + parent.fstClusLO;
                 do
                 {
-                    uint clusterOffset = (uint)((cluster - 2) * bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector);
+                    uint clusterOffset = (cluster - 2) * bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector;
 
                     //No. of entries that fit in one cluster = BPS * SPC / 32 bytes per entry
                     for (int i = 0; i < (bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector / 32); i++)
@@ -388,32 +386,32 @@ namespace TotalImage.FileSystems.FAT
                         }
                         if (Encoding.ASCII.GetString(filename).TrimEnd(' ') == ".")
                         {
-                            continue; //Ignore "." and ".." entries
+                            continue; //Ignore the root directory (".") entry
                         }
 
                         stream.Seek(-0x08, SeekOrigin.Current);
-                        FatDirEntry entry = new FatDirEntry
+                        DirectoryEntry entry = new DirectoryEntry
                         {
-                            filename = reader.ReadBytes(8),
-                            extension = reader.ReadBytes(3),
-                            attribute = reader.ReadByte(),
-                            caseByte = reader.ReadByte(),
-                            creationTimeMs = reader.ReadByte(),
-                            creationTime = reader.ReadUInt16(),
-                            creationDate = reader.ReadUInt16(),
-                            lastAccessDate = reader.ReadUInt16(),
-                            FAT3232StartCluster = reader.ReadUInt16(),
-                            modifiedTime = reader.ReadUInt16(),
-                            modifiedDate = reader.ReadUInt16(),
-                            startCluster = reader.ReadUInt16(),
+                            name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() + "." +
+                                   Encoding.ASCII.GetString(reader.ReadBytes(3)).TrimEnd(' ').ToUpper(),
+                            attr = reader.ReadByte(),
+                            ntRes = reader.ReadByte(),
+                            crtTimeTenth = reader.ReadByte(),
+                            crtTime = reader.ReadUInt16(),
+                            crtDate = reader.ReadUInt16(),
+                            lstAccDate = reader.ReadUInt16(),
+                            fstClusHI = reader.ReadUInt16(),
+                            wrtTime = reader.ReadUInt16(),
+                            wrtDate = reader.ReadUInt16(),
+                            fstClusLO = reader.ReadUInt16(),
                             fileSize = reader.ReadUInt32()
                         };
 
                         //Ignore deleted entries for now
-                        if (entry.filename[0] != 0xE5)
+                        if (entry.name[0] != (char)0xE5)
                         {
                             //Skip hidden, LFN and volume label entries for now
-                            if (Convert.ToBoolean(entry.attribute & 0x02) || entry.attribute == 0x0F || Convert.ToBoolean(entry.attribute & 0x08))
+                            if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
                             {
                                 continue;
                             }
@@ -460,28 +458,28 @@ namespace TotalImage.FileSystems.FAT
                     }
 
                     stream.Seek(-0x01, SeekOrigin.Current);
-                    FatDirEntry entry = new FatDirEntry
+                    DirectoryEntry entry = new DirectoryEntry
                     {
-                        filename = reader.ReadBytes(8),
-                        extension = reader.ReadBytes(3),
-                        attribute = reader.ReadByte(),
-                        caseByte = reader.ReadByte(),
-                        creationTimeMs = reader.ReadByte(),
-                        creationTime = reader.ReadUInt16(),
-                        creationDate = reader.ReadUInt16(),
-                        lastAccessDate = reader.ReadUInt16(),
-                        FAT3232StartCluster = reader.ReadUInt16(),
-                        modifiedTime = reader.ReadUInt16(),
-                        modifiedDate = reader.ReadUInt16(),
-                        startCluster = reader.ReadUInt16(),
+                        name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() + "." +
+                               Encoding.ASCII.GetString(reader.ReadBytes(3)).TrimEnd(' ').ToUpper(),
+                        attr = reader.ReadByte(),
+                        ntRes = reader.ReadByte(),
+                        crtTimeTenth = reader.ReadByte(),
+                        crtTime = reader.ReadUInt16(),
+                        crtDate = reader.ReadUInt16(),
+                        lstAccDate = reader.ReadUInt16(),
+                        fstClusHI = reader.ReadUInt16(),
+                        wrtTime = reader.ReadUInt16(),
+                        wrtDate = reader.ReadUInt16(),
+                        fstClusLO = reader.ReadUInt16(),
                         fileSize = reader.ReadUInt32()
                     };
 
                     //Ignore deleted entries for now
-                    if (entry.filename[0] != 0xE5)
+                    if (entry.name[0] != (char)0xE5)
                     {
                         //Skip hidden, LFN and volume label entries for now
-                        if (Convert.ToBoolean(entry.attribute & 0x02) || entry.attribute == 0x0F || Convert.ToBoolean(entry.attribute & 0x08))
+                        if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
                         {
                             continue;
                         }
@@ -512,36 +510,40 @@ namespace TotalImage.FileSystems.FAT
                     stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
                     if (reader.ReadByte() == 0x00)
                     {
-                        stream.Seek(-0x01, SeekOrigin.Current);
                         //Root dir is empty, so let's add the first entry
+                        stream.Seek(-0x01, SeekOrigin.Current);
                         writer.Write(label.ToCharArray());
                         writer.Write((byte)0x08); //Volume label attribute
 
                         break;
                     }
 
-                    /*Directory not empty, we need to find the volume label, as it may not be the first entry
-                     *...or it may not exist at all
+                    /* Root directory is not empty, we need to find the volume label, as it may not be the first entry or it may not exist at all
+                     * 
+                     * Currently, this code will only look for empty entries after the last entry in the directory (first byte 0x00), and then give up.
+                     * What it should do if no free entries after the last one exist, is to go through the directory again and search for any deleted
+                     * entries (first byte 0xE5) that can be overwritten and use the first one it finds. The reaseon these deleted entries are not
+                     * used immediately when found is to facilitate the UNDELETE functionality.
                      */
                     stream.Seek(-0x01, SeekOrigin.Current);
-                    FatDirEntry entry = new FatDirEntry
+                    DirectoryEntry entry = new DirectoryEntry
                     {
-                        filename = reader.ReadBytes(8),
-                        extension = reader.ReadBytes(3),
-                        attribute = reader.ReadByte(),
-                        caseByte = reader.ReadByte(),
-                        creationTimeMs = reader.ReadByte(),
-                        creationTime = reader.ReadUInt16(),
-                        creationDate = reader.ReadUInt16(),
-                        lastAccessDate = reader.ReadUInt16(),
-                        FAT3232StartCluster = reader.ReadUInt16(),
-                        modifiedTime = reader.ReadUInt16(),
-                        modifiedDate = reader.ReadUInt16(),
-                        startCluster = reader.ReadUInt16(),
+                        name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() + "." +
+                               Encoding.ASCII.GetString(reader.ReadBytes(3)).TrimEnd(' ').ToUpper(),
+                        attr = reader.ReadByte(),
+                        ntRes = reader.ReadByte(),
+                        crtTimeTenth = reader.ReadByte(),
+                        crtTime = reader.ReadUInt16(),
+                        crtDate = reader.ReadUInt16(),
+                        lstAccDate = reader.ReadUInt16(),
+                        fstClusHI = reader.ReadUInt16(),
+                        wrtTime = reader.ReadUInt16(),
+                        wrtDate = reader.ReadUInt16(),
+                        fstClusLO = reader.ReadUInt16(),
                         fileSize = reader.ReadUInt32()
                     };
 
-                    if(entry.attribute == 0x08)
+                    if(entry.attr == 0x08)
                     {
                         stream.Seek(-0x20, SeekOrigin.Current);
                         writer.Write(label.ToCharArray());
@@ -563,7 +565,7 @@ namespace TotalImage.FileSystems.FAT
 
                 if (rootDirFull)
                 {
-                    throw new Exception("Root directory is full, volume label cannot be written!");
+                    throw new Exception("Root directory is full, volume label cannot be written");
                 }
             }
         }

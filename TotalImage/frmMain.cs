@@ -300,7 +300,7 @@ namespace TotalImage
 
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties((FatDirEntry)lstFiles.SelectedItems[0].Tag);
+            dlgProperties dlg = new dlgProperties((DirectoryEntry)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
         }
 
@@ -380,8 +380,8 @@ namespace TotalImage
 
             foreach (ListViewItem lvi in lstFiles.Items)
             {
-                FatDirEntry entry = (FatDirEntry)lvi.Tag;
-                if (!Convert.ToBoolean(entry.attribute & 0x10))
+                DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
+                if (!Convert.ToBoolean(entry.attr & 0x10))
                 {
                     dirSize += entry.fileSize;
                 }
@@ -397,8 +397,8 @@ namespace TotalImage
 
             foreach (ListViewItem lvi in lstFiles.Items)
             {
-                FatDirEntry entry = (FatDirEntry)lvi.Tag;
-                if (!Convert.ToBoolean(entry.attribute & 0x10))
+                DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
+                if (!Convert.ToBoolean(entry.attr & 0x10))
                 {
                     fileCount++;
                 }
@@ -443,7 +443,7 @@ namespace TotalImage
                 propertiesToolStripButton.Enabled = true;
 
                 lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator + lstFiles.SelectedItems[0].Text;
-                lblStatusSize.Text = string.Format("{0:n0}", ((FatDirEntry)lstFiles.SelectedItems[0].Tag).fileSize).ToString() + " bytes in 1 file";
+                lblStatusSize.Text = string.Format("{0:n0}", ((DirectoryEntry)lstFiles.SelectedItems[0].Tag).fileSize).ToString() + " bytes in 1 file";
             }
             else
             {
@@ -465,7 +465,7 @@ namespace TotalImage
                 uint selectedSize = 0;
                 foreach(ListViewItem lvi in lstFiles.SelectedItems)
                 {
-                    FatDirEntry entry = (FatDirEntry)lvi.Tag;
+                    DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
                     selectedSize += entry.fileSize;
                 }
 
@@ -475,7 +475,7 @@ namespace TotalImage
 
         private void propertiesToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties((FatDirEntry)lstFiles.SelectedItems[0].Tag);
+            dlgProperties dlg = new dlgProperties((DirectoryEntry)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
         }
 
@@ -499,7 +499,7 @@ namespace TotalImage
 
         private void propertiesToolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties((FatDirEntry)lstFiles.SelectedItems[0].Tag);
+            dlgProperties dlg = new dlgProperties((DirectoryEntry)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
         }
 
@@ -580,7 +580,7 @@ namespace TotalImage
 
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties((FatDirEntry)lstFiles.SelectedItems[0].Tag);
+            dlgProperties dlg = new dlgProperties((DirectoryEntry)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
         }
 
@@ -709,18 +709,10 @@ namespace TotalImage
         }
 
         //Adds a new node to the root directory in the directory tree
-        public void AddToRootDir(FatDirEntry entry)
+        public void AddToRootDir(DirectoryEntry entry)
         {
-            string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
-            string extension = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
-            string fullname = filename;
+            string filename = entry.name.TrimEnd('.');
             TreeNode node = new TreeNode(filename);
-
-            if (!string.IsNullOrWhiteSpace(extension))
-            {
-                fullname += "." + extension;
-                node.Text = fullname;
-            }
 
             node.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             node.Tag = entry;
@@ -733,11 +725,13 @@ namespace TotalImage
         }
 
         //Finds the node with the specified entry
-        private TreeNode FindNode(TreeNode startNode, ushort startCluster)
+        private TreeNode FindNode(TreeNode startNode, uint startCluster)
         {
             foreach (TreeNode node in startNode.Nodes)
             {
-                if (((FatDirEntry)node.Tag).startCluster == startCluster)
+                uint sc = ((uint)((DirectoryEntry)node.Tag).fstClusHI << 16) + ((DirectoryEntry)node.Tag).fstClusLO;
+
+                if (sc == startCluster)
                 {
                     return node;
                 }
@@ -750,31 +744,24 @@ namespace TotalImage
                     }
                 }
             }
+
             return null;
         }
 
-        public void AddToDir(FatDirEntry parent, FatDirEntry child)
+        public void AddToDir(DirectoryEntry parent, DirectoryEntry child)
         {
-            string childFilename = Encoding.ASCII.GetString(child.filename).TrimEnd(' ');
-            string childExtension = Encoding.ASCII.GetString(child.filename).TrimEnd(' ');
-            string fullname = filename;
+            string childFilename = child.name.TrimEnd('.');
             TreeNode childNode = new TreeNode(childFilename);
-            if (!string.IsNullOrWhiteSpace(childExtension))
-            {
-                fullname += "." + childExtension;
-                childNode.Text = fullname;
-            }
-
             childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             childNode.Tag = child;
-            TreeNode parentNode = FindNode(lstDirectories.Nodes[0], parent.startCluster);
+            TreeNode parentNode = FindNode(lstDirectories.Nodes[0], ((uint)(parent.fstClusHI << 16) + parent.fstClusLO));
             if(parentNode != null)
             {
                 parentNode.Nodes.Add(childNode);
             }
             else
             {
-                /* throw some error because the parent node wasn't found for some reason */
+                throw new Exception("Parent node not found");
             }
         }
 
@@ -806,27 +793,20 @@ namespace TotalImage
 
 
         //Adds a new item to the file list
-        public void AddToFileList(FatDirEntry entry)
+        public void AddToFileList(DirectoryEntry entry)
         {
-            string filename = Encoding.ASCII.GetString(entry.filename).TrimEnd(' ');
-            string extension = Encoding.ASCII.GetString(entry.extension).TrimEnd(' ');
-            string fullname = filename;
-            ListViewItem lvi = new ListViewItem(filename);
-            if (!string.IsNullOrWhiteSpace(extension))
+            ListViewItem lvi = new ListViewItem();
+            if (entry.name.Substring(0, 2) != "..")
             {
-                fullname += "." + extension;
-                lvi.Text = fullname;
-            }
-
-            if (!filename.Equals(".."))
-            {
-                ushort year = (ushort)(((entry.modifiedDate & 0xFE00) >> 9) + 1980);
-                byte month = (byte)((entry.modifiedDate & 0x1E0) >> 5);
-                byte day = (byte)(entry.modifiedDate & 0x1F);
-                byte hours = (byte)((entry.modifiedTime & 0xF800) >> 11);
-                byte minutes = (byte)((entry.modifiedTime & 0x7E0) >> 5);
-                byte seconds = (byte)((entry.modifiedTime & 0x1F) * 2); //Resolution for seconds is 2s
-                if (Convert.ToBoolean(entry.attribute & 0x10))
+                string filename = entry.name.TrimEnd('.');
+                lvi.Text = filename;
+                ushort year = (ushort)(((entry.wrtDate & 0xFE00) >> 9) + 1980);
+                byte month = (byte)((entry.wrtDate & 0x1E0) >> 5);
+                byte day = (byte)(entry.wrtDate & 0x1F);
+                byte hours = (byte)((entry.wrtTime & 0xF800) >> 11);
+                byte minutes = (byte)((entry.wrtTime & 0x7E0) >> 5);
+                byte seconds = (byte)((entry.wrtTime & 0x1F) * 2); //Resolution for seconds is 2s
+                if (Convert.ToBoolean(entry.attr & 0x10))
                 {
                     string filetype = GetShellFileType(filename, FileAttributes.Directory);
                     lvi.SubItems.Add(filetype);
@@ -835,14 +815,14 @@ namespace TotalImage
                 }
                 else
                 {
-                    string filetype = GetShellFileType(fullname, FileAttributes.Normal);
+                    string filetype = GetShellFileType(filename, FileAttributes.Normal);
                     lvi.SubItems.Add(filetype);
                     lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
 
                     //This will only add a new icon to the list if the associated type hasn't been encountered yet
                     if (!imgFilesSmall.Images.ContainsKey(filetype))
                     {
-                        Icon icon = GetShellFileIcon(fullname, FileAttributes.Normal);
+                        Icon icon = GetShellFileIcon(filename, FileAttributes.Normal);
                         imgFilesSmall.Images.Add(filetype, icon);
                     }
                     lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype);
@@ -853,6 +833,7 @@ namespace TotalImage
             }
             else //The ".." virtual folder
             {
+                lvi.Text = "..";
                 lvi.ImageIndex = 0;
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");
@@ -961,7 +942,7 @@ namespace TotalImage
             if (e.Node.Text != filename)
             {
                 lstFiles.Items.Clear();
-                image.ListDirectory((FatDirEntry)e.Node.Tag);
+                image.ListDirectory((DirectoryEntry)e.Node.Tag);
             }
             //Root dir
             else
@@ -973,8 +954,8 @@ namespace TotalImage
 
             foreach (ListViewItem lvi in lstFiles.Items)
             {
-                FatDirEntry entry = (FatDirEntry)lvi.Tag;
-                if (!Convert.ToBoolean(entry.attribute & 0x10))
+                DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
+                if (!Convert.ToBoolean(entry.attr & 0x10))
                 {
                     fileCount++;
                     dirSize += entry.fileSize;
@@ -994,9 +975,10 @@ namespace TotalImage
                 }
                 else
                 {
-                    if (Convert.ToBoolean(((FatDirEntry)lstFiles.SelectedItems[0].Tag).attribute & 0x10)) //A folder was double-clicked
+                    if (Convert.ToBoolean(((DirectoryEntry)lstFiles.SelectedItems[0].Tag).attr & 0x10)) //A folder was double-clicked
                     {
-                        TreeNode node = FindNode(lstDirectories.SelectedNode, ((FatDirEntry)lstFiles.SelectedItems[0].Tag).startCluster);
+                        uint sc = (((uint)((DirectoryEntry)lstFiles.SelectedItems[0].Tag).fstClusHI) << 16) + ((DirectoryEntry)lstFiles.SelectedItems[0].Tag).fstClusLO;
+                        TreeNode node = FindNode(lstDirectories.SelectedNode, sc);
                         if (node != null)
                         {
                             lstDirectories.SelectedNode = node;

@@ -55,7 +55,7 @@ namespace TotalImage.ImageFormats
         }
 
         //Lists the contents of the specified directory
-        public void ListDirectory(FatDirEntry entry)
+        public void ListDirectory(DirectoryEntry entry)
         {
             //Fat12 fat12 = new Fat12(stream);
             fat12.ListDir(entry);
