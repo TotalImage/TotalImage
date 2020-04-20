@@ -1,0 +1,21 @@
+TRIUMPH-ADLER ALPHATRONIC PC-16 FORMAT (400 KiB)
+
+A rare 5.25" format used by the Triumph-Adler Alphatronic PC-16. The drives and media are double-sided (DS) double-density (DD) with 40 tracks.
+
+First three bytes in observed images are EB 4A 90, followed by OEM ID 54 41 42 54 58 50 43 30 ("TABTXPC0"). A standard DOS 2.0 BIOS parameter block follows with the following values:
+
+Bytes per sector: 1024
+Sectors per cluster: 2
+Reserved sectors: 1
+Number of FATs: 2
+Root directory entries: 128
+Total sectors: 400
+Media descriptor: 0x00 (BPB) or 0xFF (FAT) (see notes)
+Sectors per FAT: 1
+Sectors per track: 5
+Number of heads: 2
+
+Raw image size is 409600 bytes.
+
+NOTES:
+-Media descriptor (0x00) in the BPB does not match the one in the FAT (0xFF). The BPB value should probably be ignored.
