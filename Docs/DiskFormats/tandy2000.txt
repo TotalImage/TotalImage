@@ -2,7 +2,7 @@ TANDY 2000 DISK FORMAT (720 KiB)
 
 A somewhat rare 5.25" format used by the Tandy 2000. The drives and media are double-sided (DS) double-density (DD) with 80 tracks (doubled from the standard 40).
 
-First three bytes in observed images are EB 20 90, followed by OEM ID 54 41 4E 44 59 32 2E 30 ("TANDY2.0") or 54 41 4E 44 59 32 2E 31 ("TANDY2.1"), depending on the DOS version used to format the disk. A standard DOS 2.0 BIOS parameter block follow with the following values:
+First three bytes in observed images are EB 20 90, followed by OEM ID 54 41 4E 44 59 32 2E 30 ("TANDY2.0") or 54 41 4E 44 59 32 2E 31 ("TANDY2.1"), depending on the DOS version used to format the disk. A standard DOS 2.0 BIOS parameter block follows with the following values:
 
 Bytes per sector: 512
 Sectors per cluster: 4

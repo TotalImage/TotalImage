@@ -1,0 +1,18 @@
+SIEMENS PC-D DISK FORMAT (720 KiB)
+
+A somewhat rare 5.25" format used by the Siemens PC-D and PC-X. The drives and media are double-sided (DS) double-density (DD) with 80 tracks (doubled from the standard 40).
+
+First three bytes in observed images vary (EB XX 90), followed by the OEM ID 53 49 45 4D 45 4E 53 20 ("SIEMENS "). A standard DOS 2.0 BIOS parameter block follows with the following values:
+
+Bytes per sector: 512
+Sectors per cluster: 4
+Reserved sectors: 1
+Number of FATs: 2
+Root directory entries: 144
+Total sectors: 1440
+Media descriptor: 0xF9
+Sectors per FAT: 2
+Sectors per track: 9
+Number of heads: 2
+
+Raw image size is 737280 bytes.
