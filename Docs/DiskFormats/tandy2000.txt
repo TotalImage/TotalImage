@@ -1,0 +1,21 @@
+TANDY 2000 DISK FORMAT (720 KiB)
+
+A somewhat rare 5.25" format used by the Tandy 2000. The drives and media are double-sided (DS) double-density (DD) with 80 tracks (doubled from the standard 40).
+
+First three bytes in observed images are EB 20 90, followed by OEM ID 54 41 4E 44 59 32 2E 30 ("TANDY2.0") or 54 41 4E 44 59 32 2E 31 ("TANDY2.1"), depending on the DOS version used to format the disk. A standard DOS 2.0 BIOS parameter block follow with the following values:
+
+Bytes per sector: 512
+Sectors per cluster: 4
+Reserved sectors: 1
+Number of FATs: 2
+Root directory entries: 112
+Total sectors: 1440
+Media descriptor: 0xED (BPB) or 0xFD (FAT) (see notes)
+Sectors per FAT: 2
+Sectors per track: 9
+Number of heads: 2
+
+Raw image size is 737280 bytes.
+
+NOTES:
+-Media descriptor (0xED) in the BPB does not match the one in the FAT (0xFD). The latter is possibly used for some compatibility reasons, as it's the value used for standard 360 KiB disks.
