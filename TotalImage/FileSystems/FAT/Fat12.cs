@@ -37,7 +37,103 @@ namespace TotalImage.FileSystems.FAT
         public Fat12(Stream stream) : this()
         {
             this.stream = stream;
-            bpb = Parse();
+            try
+            {
+                bpb = Parse();
+            }
+            catch (Exception ex)
+            {
+                /* This is very barebones... Additional checks should be performed to detect Apricot, RX50, etc. images
+                 * For now, it will just assume a DOS 1.x disk with no BPB */
+                switch (stream.Length)
+                {
+                    case 163840:
+                        {
+                            bpb = new BiosParameterBlock
+                            {
+                                BpbVersion = BiosParameterBlockVersion.Dos20,
+                                BytesPerLogicalSector = 512,
+                                LogicalSectorsPerCluster = 2,
+                                ReservedLogicalSectors = 1,
+                                NumberOfFATs = 2,
+                                LogicalSectorsPerFAT = 1,
+                                RootDirectoryEntries = 64,
+                                PhysicalSectorsPerTrack = 8,
+                                NumberOfHeads = 1,
+                                TotalLogicalSectors = 320,
+                                MediaDescriptor = 0xFE,
+                                HiddenSectors = 0,
+                                LargeTotalLogicalSectors = 0
+                            };
+                        }
+                        break;
+                    case 184320:
+                        {
+                            bpb = new BiosParameterBlock
+                            {
+                                BpbVersion = BiosParameterBlockVersion.Dos20,
+                                BytesPerLogicalSector = 512,
+                                LogicalSectorsPerCluster = 2,
+                                ReservedLogicalSectors = 1,
+                                NumberOfFATs = 2,
+                                LogicalSectorsPerFAT = 1,
+                                RootDirectoryEntries = 64,
+                                PhysicalSectorsPerTrack = 9,
+                                NumberOfHeads = 1,
+                                TotalLogicalSectors = 360,
+                                MediaDescriptor = 0xFC,
+                                HiddenSectors = 0,
+                                LargeTotalLogicalSectors = 0
+                            };
+                        }
+                        break;
+                    case 327680:
+                        {
+                            bpb = new BiosParameterBlock
+                            {
+                                BpbVersion = BiosParameterBlockVersion.Dos20,
+                                BytesPerLogicalSector = 512,
+                                LogicalSectorsPerCluster = 2,
+                                ReservedLogicalSectors = 1,
+                                NumberOfFATs = 2,
+                                LogicalSectorsPerFAT = 1,
+                                RootDirectoryEntries = 112,
+                                PhysicalSectorsPerTrack = 8,
+                                NumberOfHeads = 2,
+                                TotalLogicalSectors = 640,
+                                MediaDescriptor = 0xFF,
+                                HiddenSectors = 0,
+                                LargeTotalLogicalSectors = 0
+                            };
+                        }
+                        break;
+                    case 368640:
+                        {
+                            bpb = new BiosParameterBlock
+                            {
+                                BpbVersion = BiosParameterBlockVersion.Dos20,
+                                BytesPerLogicalSector = 512,
+                                LogicalSectorsPerCluster = 2,
+                                ReservedLogicalSectors = 1,
+                                NumberOfFATs = 2,
+                                LogicalSectorsPerFAT = 2,
+                                RootDirectoryEntries = 112,
+                                PhysicalSectorsPerTrack = 9,
+                                NumberOfHeads = 2,
+                                TotalLogicalSectors = 720,
+                                MediaDescriptor = 0xFD,
+                                HiddenSectors = 0,
+                                LargeTotalLogicalSectors = 0
+                            };
+                        }
+                        break;
+                }
+                using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+                {
+                    stream.Seek(3, SeekOrigin.Begin);
+                    bpb.OemId = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper();
+                }
+            }
             rootDirectory = new FatRootDirectory(this);
         }
 
@@ -69,15 +165,17 @@ namespace TotalImage.FileSystems.FAT
                 /* At this point it's worth checking if there even is a valid BPB at the standard offset (0x0B).
                  * 
                  * If there isn't, then additional checks should be performed for the exotic disk formats that may have
-                 * a BPB elsewhere (e.g. Apricot disks have it at 0x50...)
+                 * a BPB elsewhere (e.g. Apricot disks have it at 0x50...) or none at all (e.g. PC DOS 1.x disks)
                  */
-                if(bpb.NumberOfHeads == 0 || bpb.PhysicalSectorsPerTrack == 0 || bpb.BytesPerLogicalSector == 0)
+                if (bpb.NumberOfHeads == 0 || bpb.PhysicalSectorsPerTrack == 0 || bpb.BytesPerLogicalSector == 0 || bpb.NumberOfFATs == 0 ||
+                    bpb.TotalLogicalSectors == 0 || bpb.ReservedLogicalSectors == 0 || bpb.LogicalSectorsPerCluster == 0 ||
+                    bpb.LogicalSectorsPerFAT == 0 || bpb.RootDirectoryEntries == 0)
                 {
-                    throw new Exception("Non-standard BPB");
+                    throw new Exception("At least one of BPB parameters is 0");
                 }
-                if(bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack != stream.Length / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack / bpb.BytesPerLogicalSector)
+                if (bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack != stream.Length / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack / bpb.BytesPerLogicalSector)
                 {
-                    throw new Exception("Non-standard BPB");
+                    throw new Exception("BPB paramaters don't match image size");
                 }
 
                 // Try to read the BPB further as a DOS 4.0 BPB.
@@ -85,7 +183,7 @@ namespace TotalImage.FileSystems.FAT
                 bpb40.PhysicalDriveNumber = reader.ReadByte();
                 bpb40.Flags = reader.ReadByte();
 
-                switch(reader.ReadByte())
+                switch (reader.ReadByte())
                 {
                     case 40:
                         bpb40.BpbVersion = BiosParameterBlockVersion.Dos34;
@@ -99,7 +197,7 @@ namespace TotalImage.FileSystems.FAT
 
                 bpb40.VolumeSerialNumber = reader.ReadUInt32();
 
-                if(bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
+                if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
                 {
                     bpb40.VolumeLabel = new string(reader.ReadChars(11));
                     bpb40.FileSystemType = new string(reader.ReadChars(8));
@@ -159,7 +257,7 @@ namespace TotalImage.FileSystems.FAT
                     {
                         writer.Write(bpb40.PhysicalDriveNumber);
                         writer.Write(bpb40.Flags);
-                        
+
                         if (bpb.BpbVersion == BiosParameterBlockVersion.Dos34)
                             writer.Write((byte)40);
                         else if (bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
@@ -202,7 +300,7 @@ namespace TotalImage.FileSystems.FAT
 
                 //First 11 bytes (8.3 space-padded filename without the period) are the label itself
                 {
-                    if(bpb is BiosParameterBlock40 bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
+                    if (bpb is BiosParameterBlock40 bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
                     {
                         writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
                         writer.Write((byte)0x08); //Volume label attribute
@@ -227,10 +325,12 @@ namespace TotalImage.FileSystems.FAT
                 for (int i = 0; i < bpb.RootDirectoryEntries; i++)
                 {
                     stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
-                    if (reader.ReadByte() == 0x00)
-                    {
-                        break; //Empty entry, no entries after this one
-                    }
+                    byte firstChar = reader.ReadByte();
+
+                    /* 0x00/0xF6 = no more entries after this one, stop
+                     * 0xE5/0x05 = deleted entry, skip for now */
+                    if (firstChar == 0x00 || firstChar == 0xF6) break;
+                    else if (firstChar == 0xE5 || firstChar == 0x05) continue;
 
                     stream.Seek(-0x01, SeekOrigin.Current);
                     DirectoryEntry entry = new DirectoryEntry
@@ -250,27 +350,23 @@ namespace TotalImage.FileSystems.FAT
                         fileSize = reader.ReadUInt32()
                     };
 
-                    //Ignore deleted entries for now
-                    if (entry.name[0] != 0xE5)
+                    //Skip hidden, LFN and volume label entries for now
+                    if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
                     {
-                        //Skip hidden, LFN and volume label entries for now
-                        if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        //Folder entry
-                        if (Convert.ToBoolean(entry.attr & 0x10))
-                        {
-                            main.AddToRootDir(entry);
-                            main.AddToFileList(entry);
-                            ReadSubdir(entry);
-                        }
-                        //File entry
-                        else if (!Convert.ToBoolean(entry.attr & 0x10))
-                        {
-                            main.AddToFileList(entry);
-                        }
+                    //Folder entry
+                    if (Convert.ToBoolean(entry.attr & 0x10))
+                    {
+                        main.AddToRootDir(entry);
+                        main.AddToFileList(entry);
+                        ReadSubdir(entry);
+                    }
+                    //File entry
+                    else if (!Convert.ToBoolean(entry.attr & 0x10))
+                    {
+                        main.AddToFileList(entry);
                     }
                 }
             }
@@ -279,13 +375,13 @@ namespace TotalImage.FileSystems.FAT
         //Reads the subdirectory entries and adds subdirectories to the treeview
         public void ReadSubdir(DirectoryEntry parent)
         {
-            uint dataAreaOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2) + 
+            uint dataAreaOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2) +
                 (bpb.RootDirectoryEntries << 5));
             ushort fat1Offset = bpb.BytesPerLogicalSector;
 
             using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
-                uint cluster = (((uint)parent.fstClusHI) << 16) + parent.fstClusLO;
+                uint cluster = (((uint)parent.fstClusHI) << 16) | parent.fstClusLO;
 
                 do
                 {
@@ -295,15 +391,13 @@ namespace TotalImage.FileSystems.FAT
                     for (int i = 0; i < (bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector / 32); i++)
                     {
                         stream.Seek(dataAreaOffset + clusterOffset + (i * 32), SeekOrigin.Begin);
-                        byte firstByte = reader.ReadByte();
-                        if (firstByte == 0x00)
-                        {
-                            break; //Directory is empty, go up one level and onto the next
-                        }
-                        if(firstByte == 0x2E)
-                        {
-                            continue; //Ignore . and .. entries
-                        }
+                        byte firstChar = reader.ReadByte();
+
+                        /* 0x00/0xF6 = no more entries after this one, stop
+                         * 0xE5/0x05 = deleted entry, skip for now 
+                         * 0x2E      = virtual . and .. folders, skip*/
+                        if (firstChar == 0x00 || firstChar == 0xF6) break;
+                        else if (firstChar == 0xE5 || firstChar == 0x05 || firstChar == 0x2E) continue;
 
                         stream.Seek(-0x01, SeekOrigin.Current);
                         DirectoryEntry entry = new DirectoryEntry
@@ -323,24 +417,20 @@ namespace TotalImage.FileSystems.FAT
                             fileSize = reader.ReadUInt32()
                         };
 
-                        //Ignore deleted entries for now
-                        if (entry.name[0] != (char)0xE5)
+                        //Skip hidden, LFN and volume label entries for now
+                        if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
                         {
-                            //Skip hidden, LFN and volume label entries for now
-                            if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
-                            {
-                                continue;
-                            }
+                            continue;
+                        }
 
-                            //Folder entry
-                            if (Convert.ToBoolean(entry.attr & 0x10))
-                            {
-                                main.AddToDir(parent, entry);
-                                ReadSubdir(entry);
-                            }
+                        //Folder entry
+                        if (Convert.ToBoolean(entry.attr & 0x10))
+                        {
+                            main.AddToDir(parent, entry);
+                            ReadSubdir(entry);
                         }
                     }
-                    if(cluster % 2 == 0)
+                    if (cluster % 2 == 0)
                     {
                         stream.Seek(fat1Offset + (ushort)(cluster * 1.5), SeekOrigin.Begin);
                         ushort lower8 = reader.ReadByte();
@@ -362,7 +452,7 @@ namespace TotalImage.FileSystems.FAT
         //Lists the contents of the directory without traversing subdirectories and adding them to the treeview
         public void ListDir(DirectoryEntry parent)
         {
-            uint dirSize = 0;
+            //uint dirSize = 0;
             ushort fat1Offset = bpb.BytesPerLogicalSector;
             ushort fatSize = (ushort)(bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT);
             uint rootDirOffset = (uint)(fat1Offset + (fatSize * 2));
@@ -370,7 +460,7 @@ namespace TotalImage.FileSystems.FAT
 
             using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
-                uint cluster = ((uint)parent.fstClusHI << 16) + parent.fstClusLO;
+                uint cluster = ((uint)parent.fstClusHI << 16) | parent.fstClusLO;
                 do
                 {
                     uint clusterOffset = (cluster - 2) * bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector;
@@ -379,17 +469,20 @@ namespace TotalImage.FileSystems.FAT
                     for (int i = 0; i < (bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector / 32); i++)
                     {
                         stream.Seek(dataAreaOffset + clusterOffset + (i * 32), SeekOrigin.Begin);
-                        byte[] filename = reader.ReadBytes(8);
-                        if (filename[0] == 0x00)
+                        byte firstChar = reader.ReadByte();
+
+                        /* 0x00/0xF6 = no more entries after this one, stop
+                         * 0xE5/0x05 = deleted entry, skip for now 
+                         * 0x2E      = virtual "." and ".." folders, only skip the first one */
+                        if (firstChar == 0x00 || firstChar == 0xF6) break;
+                        else if (firstChar == 0xE5 || firstChar == 0x05) continue;
+                        else if (firstChar == 0x2E)
                         {
-                            break; //No entries will follow after this one, stop reading
-                        }
-                        if (Encoding.ASCII.GetString(filename).TrimEnd(' ') == ".")
-                        {
-                            continue; //Ignore the root directory (".") entry
+                            if (reader.ReadByte() == 0x20) continue;
+                            stream.Seek(-0x01, SeekOrigin.Current);
                         }
 
-                        stream.Seek(-0x08, SeekOrigin.Current);
+                        stream.Seek(-0x01, SeekOrigin.Current);
                         DirectoryEntry entry = new DirectoryEntry
                         {
                             name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() + "." +
@@ -407,18 +500,14 @@ namespace TotalImage.FileSystems.FAT
                             fileSize = reader.ReadUInt32()
                         };
 
-                        //Ignore deleted entries for now
-                        if (entry.name[0] != (char)0xE5)
+                        //Skip hidden, LFN and volume label entries for now
+                        if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
                         {
-                            //Skip hidden, LFN and volume label entries for now
-                            if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
-                            {
-                                continue;
-                            }
-
-                            dirSize += entry.fileSize;
-                            main.AddToFileList(entry);
+                            continue;
                         }
+
+                        //dirSize += entry.fileSize;
+                        main.AddToFileList(entry);
                     }
                     if (cluster % 2 == 0)
                     {
@@ -452,10 +541,12 @@ namespace TotalImage.FileSystems.FAT
                 for (int i = 0; i < bpb.RootDirectoryEntries; i++)
                 {
                     stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
-                    if (reader.ReadByte() == 0x00)
-                    {
-                        break; //Empty entry, no entries after this one
-                    }
+                    byte firstChar = reader.ReadByte();
+
+                    /* 0x00/0xF6 = no more entries after this one, stop
+                     * 0xE5/0x05 = deleted entry, skip for now */
+                    if (firstChar == 0x00 || firstChar == 0xF6) break;
+                    else if (firstChar == 0xE5 || firstChar == 0x05) continue;
 
                     stream.Seek(-0x01, SeekOrigin.Current);
                     DirectoryEntry entry = new DirectoryEntry
@@ -475,17 +566,13 @@ namespace TotalImage.FileSystems.FAT
                         fileSize = reader.ReadUInt32()
                     };
 
-                    //Ignore deleted entries for now
-                    if (entry.name[0] != (char)0xE5)
+                    //Skip hidden, LFN and volume label entries for now
+                    if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
                     {
-                        //Skip hidden, LFN and volume label entries for now
-                        if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
-                        {
-                            continue;
-                        }
-
-                        main.AddToFileList(entry);
+                        continue;
                     }
+
+                    main.AddToFileList(entry);
                 }
             }
         }
@@ -508,14 +595,29 @@ namespace TotalImage.FileSystems.FAT
                 for (int i = 0; i < bpb.RootDirectoryEntries; i++)
                 {
                     stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
-                    if (reader.ReadByte() == 0x00)
+                    byte firstChar = reader.ReadByte();
+
+                    /* 0x00      = no more entries after this one, write the volume label
+                     * 0xE5/0x05 = deleted entry, only overwrite it if the directory is full */
+                    if (firstChar == 0x00)
                     {
                         //Root dir is empty, so let's add the first entry
                         stream.Seek(-0x01, SeekOrigin.Current);
                         writer.Write(label.ToCharArray());
                         writer.Write((byte)0x08); //Volume label attribute
-
                         break;
+                    }
+                    else if (firstChar == 0xE5 || firstChar == 0x05)
+                    {
+                        if (rootDirFull)
+                        {
+                            stream.Seek(-0x01, SeekOrigin.Current);
+                            writer.Write(label.ToCharArray());
+                            writer.Write((byte)0x08); //Volume label attribute
+                            rootDirFull = false;
+                            break;
+                        }
+                        else continue;
                     }
 
                     /* Root directory is not empty, we need to find the volume label, as it may not be the first entry or it may not exist at all
@@ -543,20 +645,24 @@ namespace TotalImage.FileSystems.FAT
                         fileSize = reader.ReadUInt32()
                     };
 
-                    if(entry.attr == 0x08)
+                    if (entry.attr == 0x08)
                     {
                         stream.Seek(-0x20, SeekOrigin.Current);
                         writer.Write(label.ToCharArray());
-                        writer.Write(0x08);
+                        writer.Write((byte)0x08);
                         break;
                     }
 
-                    if(i == bpb.RootDirectoryEntries - 1)
+                    /* All entries have been checked and there are no free ones left
+                     * Time to check again, this time overwriting the first deleted entry that's found */
+                    if (i == bpb.RootDirectoryEntries - 1 && !rootDirFull)
                     {
                         rootDirFull = true;
+                        i = 0;
                     }
                 }
 
+                //Writes the volume label to the BPB as well if BPBP is for DOS 4.0+
                 if (bpb is BiosParameterBlock40 && bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
                 {
                     stream.Seek(0x2B, SeekOrigin.Begin);
@@ -568,6 +674,65 @@ namespace TotalImage.FileSystems.FAT
                     throw new Exception("Root directory is full, volume label cannot be written");
                 }
             }
+        }
+
+        //Returns the current volume label in the root directory, if it exists
+        public string GetRDVolLabel()
+        {
+            uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
+
+            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+            {
+                stream.Seek(rootDirOffset, SeekOrigin.Begin);
+
+                for (int i = 0; i < bpb.RootDirectoryEntries; i++)
+                {
+                    stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
+                    byte firstChar = reader.ReadByte();
+
+                    /* 0x00      = no more entries after this one, stop
+                     * 0xE5/0x05 = deleted entry, skip for now */
+                    if (firstChar == 0x00) break;
+                    else if (firstChar == 0xE5 || firstChar == 0x05) continue;
+
+                    //Root directory is not empty, we need to find the volume label, as it may not be the first entry or it may not exist at all
+                    stream.Seek(-0x01, SeekOrigin.Current);
+                    DirectoryEntry entry = new DirectoryEntry
+                    {
+                        name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() +
+                               Encoding.ASCII.GetString(reader.ReadBytes(3)).TrimEnd(' ').ToUpper(),
+                        attr = reader.ReadByte(),
+                        ntRes = reader.ReadByte(),
+                        crtTimeTenth = reader.ReadByte(),
+                        crtTime = reader.ReadUInt16(),
+                        crtDate = reader.ReadUInt16(),
+                        lstAccDate = reader.ReadUInt16(),
+                        fstClusHI = reader.ReadUInt16(),
+                        wrtTime = reader.ReadUInt16(),
+                        wrtDate = reader.ReadUInt16(),
+                        fstClusLO = reader.ReadUInt16(),
+                        fileSize = reader.ReadUInt32()
+                    };
+
+                    if (entry.attr == 0x08)
+                    {
+                        return entry.name;
+                    }
+                }
+
+                return null;
+            }
+        }
+
+        //Returns the current volume label in the BPB, if BPB is for DOS 4.0+
+        public string GetBPBVolLabel()
+        {
+            if (bpb is BiosParameterBlock40 && bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+            {
+                return ((BiosParameterBlock40)bpb).VolumeLabel;
+            }
+
+            return null;
         }
     }
 }

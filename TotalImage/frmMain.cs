@@ -340,7 +340,7 @@ namespace TotalImage
 
         private void changeVolumeLabelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            dlgChangeVolLabel dlg = new dlgChangeVolLabel();
+            dlgChangeVolLabel dlg = new dlgChangeVolLabel(image.GetRDVolumeLabel(), image.GetBPBVolumeLabel());
             dlg.ShowDialog();
         }
 
@@ -598,7 +598,7 @@ namespace TotalImage
 
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
-            dlgChangeVolLabel dlg = new dlgChangeVolLabel();
+            dlgChangeVolLabel dlg = new dlgChangeVolLabel(image.GetRDVolumeLabel(), image.GetBPBVolumeLabel());
             dlg.ShowDialog();
         }
 

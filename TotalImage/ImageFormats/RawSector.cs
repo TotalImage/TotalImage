@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using TotalImage.FileSystems.FAT;
 
 namespace TotalImage.ImageFormats
@@ -10,7 +9,6 @@ namespace TotalImage.ImageFormats
     public class RawSector
     {
         private byte[] imageBytes;
-        private BiosParameterBlock bpb;
         private Stream stream;
         private Fat12 fat12;
       
@@ -38,9 +36,8 @@ namespace TotalImage.ImageFormats
         public void LoadImage(string path)
         {
             //For larger images (HDD etc.) we probably won't read the entire file at once, but use the stream instead...
-            stream = new FileStream(path, FileMode.Open);
+            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
             fat12 = new Fat12(stream);
-            bpb = fat12.Parse();
             fat12.ReadRootDir();
         }
 
@@ -57,22 +54,30 @@ namespace TotalImage.ImageFormats
         //Lists the contents of the specified directory
         public void ListDirectory(DirectoryEntry entry)
         {
-            //Fat12 fat12 = new Fat12(stream);
             fat12.ListDir(entry);
         }
 
         //Lists the contents of the root directory
         public void ListRootDirectory()
         {
-            //Fat12 fat12 = new Fat12(stream);
             fat12.ListRootDir();
         }
 
-        //Changes the volume label
+        //Sets a new volume label
         public void ChangeVolumeLabel(string label)
         {
-            //Fat12 fat12 = new Fat12(stream);
             fat12.ChangeVolLabel(label);
+        }
+        
+        //Returns the current volume label
+        public string GetRDVolumeLabel()
+        {
+            return fat12.GetRDVolLabel();
+        }
+
+        public string GetBPBVolumeLabel()
+        {
+            return fat12.GetBPBVolLabel();
         }
     }
 }
