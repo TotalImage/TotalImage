@@ -19,6 +19,7 @@ namespace TotalImage
         {
             frmMain main = (frmMain)Application.OpenForms["frmMain"];
             main.image.ChangeVolumeLabel(txtRootDirLabel.Text.ToUpper().PadRight(11, ' '));
+            DialogResult = DialogResult.OK;
             Close();
         }
 

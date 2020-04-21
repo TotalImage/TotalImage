@@ -599,7 +599,12 @@ namespace TotalImage
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
             dlgChangeVolLabel dlg = new dlgChangeVolLabel(image.GetRDVolumeLabel(), image.GetBPBVolumeLabel());
-            dlg.ShowDialog();
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+                unsavedChanges = true;
+                saveToolStripButton.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+            }
         }
 
         private void toolStripButton9_Click(object sender, EventArgs e)
