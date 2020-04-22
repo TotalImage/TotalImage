@@ -21,7 +21,7 @@ namespace TotalImage.FileSystems.FAT
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects()
         {
             var fat = FileSystem as Fat12;
-            var rootDirOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT * 2));
+            var rootDirOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT * fat.BiosParameterBlock.NumberOfFATs));
             var stream = fat.GetStream();
             using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
@@ -31,33 +31,31 @@ namespace TotalImage.FileSystems.FAT
                 for (int i = 0; i < fat.BiosParameterBlock.RootDirectoryEntries; i++)
                 {
                     stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
-                    if (reader.ReadByte() == 0x00)
-                    {
-                        break; //Empty entry, no entries after this one
-                    }
+                    byte firstChar = reader.ReadByte();
+
+                    /* 0x00/0xF6 = no more entries after this one, stop
+                     * 0xE5/0x05 = deleted entry, skip for now */
+                    if (firstChar == 0x00 || firstChar == 0xF6) break;
+                    else if (firstChar == 0xE5 || firstChar == 0x05) continue;
 
                     stream.Seek(-0x01, SeekOrigin.Current);
                     var entry = DirectoryEntry.Parse(reader.ReadBytes(32));
 
-                    //Ignore deleted entries for now
-                    if (entry.name[0] != 0xE5)
+                    //Skip hidden, LFN and volume label entries for now
+                    if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
                     {
-                        //Skip hidden, LFN and volume label entries for now
-                        if (Convert.ToBoolean(entry.attr & 0x02) || entry.attr == 0x0F || Convert.ToBoolean(entry.attr & 0x08))
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        //Folder entry
-                        if (Convert.ToBoolean(entry.attr & 0x10))
-                        {
-                            yield return new FatDirectory(fat, entry, this);
-                        }
-                        //File entry
-                        else if (!Convert.ToBoolean(entry.attr & 0x10))
-                        {
-                            yield return new FatFile(fat, entry, this);
-                        }
+                    //Folder entry
+                    if (Convert.ToBoolean(entry.attr & 0x10))
+                    {
+                        yield return new FatDirectory(fat, entry, this);
+                    }
+                    //File entry
+                    else if (!Convert.ToBoolean(entry.attr & 0x10))
+                    {
+                        yield return new FatFile(fat, entry, this);
                     }
                 }
             }
