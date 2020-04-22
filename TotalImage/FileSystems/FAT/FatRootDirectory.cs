@@ -31,18 +31,18 @@ namespace TotalImage.FileSystems.FAT
                 for (int i = 0; i < fat.BiosParameterBlock.RootDirectoryEntries; i++)
                 {
                     stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
-                    byte firstChar = reader.ReadByte();
+                    byte firstByte = reader.ReadByte();
 
                     /* 0x00/0xF6 = no more entries after this one, stop
                      * 0xE5/0x05 = deleted entry, skip for now */
-                    if (firstChar == 0x00 || firstChar == 0xF6) break;
-                    else if (firstChar == 0xE5 || firstChar == 0x05) continue;
+                    if (firstByte == 0x00 || firstByte == 0xF6) break;
+                    else if (firstByte == 0xE5 || firstByte == 0x05) continue;
 
                     stream.Seek(-0x01, SeekOrigin.Current);
                     var entry = DirectoryEntry.Parse(reader.ReadBytes(32));
 
-                    //Skip hidden, LFN and volume label entries for now
-                    if (Convert.ToBoolean(entry.attr & 0x02) || Convert.ToBoolean(entry.attr & 0x08))
+                    //Skip LFN and volume label entries for now
+                    if (Convert.ToBoolean(entry.attr & 0x08))
                     {
                         continue;
                     }

@@ -66,57 +66,51 @@ namespace TotalImage.FileSystems.FAT
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects()
         {
             var fat = FileSystem as Fat12;
-            var dataAreaOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT * 2) + 
-                (fat.BiosParameterBlock.RootDirectoryEntries << 5));
+            var dataAreaOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector + (fat.BiosParameterBlock.BytesPerLogicalSector *
+                fat.BiosParameterBlock.LogicalSectorsPerFAT * fat.BiosParameterBlock.NumberOfFATs) + (fat.BiosParameterBlock.RootDirectoryEntries << 5));
             var fat1Offset = fat.BiosParameterBlock.BytesPerLogicalSector;
             var stream = fat.GetStream();
 
             using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
-                var cluster = entry.fstClusLO;
+                uint cluster = ((uint)entry.fstClusHI << 16) | entry.fstClusLO;
 
                 do
                 {
-                    uint clusterOffset = (uint)((cluster - 2) * fat.BiosParameterBlock.LogicalSectorsPerCluster * fat.BiosParameterBlock.BytesPerLogicalSector);
+                    uint clusterOffset = (cluster - 2) * fat.BiosParameterBlock.LogicalSectorsPerCluster * fat.BiosParameterBlock.BytesPerLogicalSector;
 
                     //No. of entries that fit in one cluster = BPS * SPC / 32 bytes per entry
                     for (int i = 0; i < (fat.BiosParameterBlock.LogicalSectorsPerCluster * fat.BiosParameterBlock.BytesPerLogicalSector / 32); i++)
                     {
                         stream.Seek(dataAreaOffset + clusterOffset + (i * 32), SeekOrigin.Begin);
                         byte firstByte = reader.ReadByte();
-                        if (firstByte == 0x00)
-                        {
-                            break; //Directory is empty, go up one level and onto the next
-                        }
-                        if(firstByte == 0x2E)
-                        {
-                            continue; //Ignore . and .. entries
-                        }
+
+                        /* 0x00/0xF6 = no more entries after this one, stop
+                         * 0xE5/0x05 = deleted entry, skip for now */
+                        if (firstByte == 0x00 || firstByte == 0xF6) break;
+                        else if (firstByte == 0xE5 || firstByte == 0x05) continue;
 
                         stream.Seek(-0x01, SeekOrigin.Current);
                         var entry = DirectoryEntry.Parse(reader.ReadBytes(32));
 
-                        //Ignore deleted entries for now
-                        if (entry.name[0] != 0xE5)
+                        //Skip LFN and volume label entries for now
+                        if (Convert.ToBoolean(entry.attr & 0x08))
                         {
-                            //Skip hidden, LFN and volume label entries for now
-                            if (Convert.ToBoolean(entry.attr & 0x02) || entry.attr == 0x0F || Convert.ToBoolean(entry.attr & 0x08))
-                            {
-                                continue;
-                            }
-
-                            //Folder entry
-                            if (Convert.ToBoolean(entry.attr & 0x10))
-                            {
-                                yield return new FatDirectory(fat, entry, this);
-                            }
-                            else
-                            {
-                                yield return new FatFile(fat, entry, this);
-                            }
+                            continue;
                         }
+
+                        //Folder entry
+                        if (Convert.ToBoolean(entry.attr & 0x10))
+                        {
+                            yield return new FatDirectory(fat, entry, this);
+                        }
+                        else
+                        {
+                            yield return new FatFile(fat, entry, this);
+                        }
+
                     }
-                    if(cluster % 2 == 0)
+                    if (cluster % 2 == 0)
                     {
                         stream.Seek(fat1Offset + (ushort)(cluster * 1.5), SeekOrigin.Begin);
                         ushort lower8 = reader.ReadByte();
