@@ -842,6 +842,9 @@ namespace TotalImage
                 byte hours = (byte)((entry.wrtTime & 0xF800) >> 11);
                 byte minutes = (byte)((entry.wrtTime & 0x7E0) >> 5);
                 byte seconds = (byte)((entry.wrtTime & 0x1F) * 2); //Resolution for seconds is 2s
+                if (month <= 0 || month >= 13) month = 1;
+                if (day <= 0 || day >= 31) day = 1; //We don't bother checking for February 31st etc. yet...
+
                 if (Convert.ToBoolean(entry.attr & 0x10))
                 {
                     string filetype = GetShellFileType(filename, FileAttributes.Directory);

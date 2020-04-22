@@ -148,6 +148,7 @@
             this.lstFloppyCapacity.Items.AddRange(new object[] {
             "160 KiB",
             "180 KiB",
+            "250 KiB",
             "320 KiB (5.25\")",
             "360 KiB (5.25\")",
             "400 KiB (Triumph-Adler)",
@@ -156,7 +157,7 @@
             "720 KiB",
             "800 KiB (Eagle 1600)",
             "1200 KiB",
-            "1232 KiB (NEC PC-98)",
+            "1232 KiB",
             "1440 KiB",
             "1680 KiB (Microsoft DMF 2 SPC)",
             "1680 KiB (Microsoft DMF 4 SPC)",
