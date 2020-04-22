@@ -41,7 +41,7 @@ namespace TotalImage.FileSystems.FAT
             {
                 bpb = Parse();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 /* This is very barebones... Additional checks should be performed to detect Apricot, RX50, etc. images
                  * For now, it will just assume a DOS 1.x disk with no BPB */

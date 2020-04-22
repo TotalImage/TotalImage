@@ -408,7 +408,7 @@ namespace TotalImage
         }
 
         //Returns size of directory
-        private uint CalculateDirSize(bool searchSubdirs)
+        private uint CalculateDirSize()
         {
             uint dirSize = 0;
 
@@ -425,7 +425,7 @@ namespace TotalImage
         }
 
         //Returns the number of files in a directory
-        private uint GetFileCount(bool searchSubdirs)
+        private uint GetFileCount()
         {
             uint fileCount = 0;
 
@@ -459,7 +459,7 @@ namespace TotalImage
                 propertiesToolStripButton.Enabled = false;
 
                 lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
-                lblStatusSize.Text = string.Format("{0:n0}", CalculateDirSize(false)).ToString() + " bytes in " + GetFileCount(false) + " file(s)";
+                lblStatusSize.Text = string.Format("{0:n0}", CalculateDirSize()).ToString() + " bytes in " + GetFileCount() + " file(s)";
             }
             else if (lstFiles.SelectedItems.Count == 1)
             {
