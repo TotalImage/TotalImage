@@ -173,7 +173,10 @@ namespace TotalImage.FileSystems.FAT
                 {
                     throw new Exception("At least one of BPB parameters is 0");
                 }
-                if (bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack != stream.Length / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack / bpb.BytesPerLogicalSector)
+
+                uint tracks = (uint)(bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack);
+
+                if (tracks <= 0)
                 {
                     throw new Exception("BPB paramaters don't match image size");
                 }
@@ -208,7 +211,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
-        public static Fat12 Create(Stream stream, BiosParameterBlock bpb, byte tracks)
+        public static Fat12 Create(Stream stream, BiosParameterBlock bpb)
         {
             var fat = new Fat12();
             fat.stream = stream;
@@ -316,7 +319,11 @@ namespace TotalImage.FileSystems.FAT
         //Reads the root directory entries and any subdirectories and adds them to the treeview
         public void ReadRootDir()
         {
-            uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
+            /*System.Diagnostics.Debug.WriteLine("BPS: " + bpb.BytesPerLogicalSector);
+            System.Diagnostics.Debug.WriteLine("SPF: " + bpb.LogicalSectorsPerFAT);
+            System.Diagnostics.Debug.WriteLine("NOF: " + bpb.NumberOfFATs);
+            System.Diagnostics.Debug.WriteLine("Result: " + (bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * bpb.NumberOfFATs)));*/
+            uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * bpb.NumberOfFATs));
             using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
             {
                 stream.Seek(rootDirOffset, SeekOrigin.Begin);
