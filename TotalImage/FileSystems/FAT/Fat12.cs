@@ -344,6 +344,7 @@ namespace TotalImage.FileSystems.FAT
             return fat;
         }
 
+        /* THIS WILL BE DEPRECATED ONCE NEW FILE SYSTEM CLASSES ARE IN USE */
         //Reads the root directory entries and any subdirectories and adds them to the treeview
         public void ReadRootDir()
         {
@@ -403,6 +404,7 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
+        /* THIS WILL BE DEPRECATED ONCE NEW FILE SYSTEM CLASSES ARE IN USE */
         //Reads the subdirectory entries and adds subdirectories to the treeview
         public void ReadSubdir(DirectoryEntry parent)
         {
@@ -480,10 +482,10 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
+        /* THIS WILL BE DEPRECATED ONCE NEW FILE SYSTEM CLASSES ARE IN USE */
         //Lists the contents of the directory without traversing subdirectories and adding them to the treeview
         public void ListDir(DirectoryEntry parent)
         {
-            //uint dirSize = 0;
             ushort fat1Offset = bpb.BytesPerLogicalSector;
             ushort fatSize = (ushort)(bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT);
             uint rootDirOffset = (uint)(fat1Offset + (fatSize * 2));
@@ -537,7 +539,6 @@ namespace TotalImage.FileSystems.FAT
                             continue;
                         }
 
-                        //dirSize += entry.fileSize;
                         main.AddToFileList(entry);
                     }
                     if (cluster % 2 == 0)
@@ -559,6 +560,7 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
+        /* THIS WILL BE DEPRECATED ONCE NEW FILE SYSTEM CLASSES ARE IN USE */
         //Lists the contents of the root directory without traversing subdirectories and adding them to the treeview
         public void ListRootDir()
         {
@@ -651,13 +653,7 @@ namespace TotalImage.FileSystems.FAT
                         else continue;
                     }
 
-                    /* Root directory is not empty, we need to find the volume label, as it may not be the first entry or it may not exist at all
-                     * 
-                     * Currently, this code will only look for empty entries after the last entry in the directory (first byte 0x00), and then give up.
-                     * What it should do if no free entries after the last one exist, is to go through the directory again and search for any deleted
-                     * entries (first byte 0xE5) that can be overwritten and use the first one it finds. The reaseon these deleted entries are not
-                     * used immediately when found is to facilitate the UNDELETE functionality.
-                     */
+                    /* Root directory is not empty, we need to find the volume label, as it may not be the first entry or it may not exist at all */
                     stream.Seek(-0x01, SeekOrigin.Current);
                     DirectoryEntry entry = new DirectoryEntry
                     {

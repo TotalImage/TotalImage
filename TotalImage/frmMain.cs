@@ -35,13 +35,23 @@ namespace TotalImage
 
         private void NewImage()
         {
-            //Needs a check for unsaved changes
+            if (unsavedChanges)
+            {
+                DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before creating a new image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (DialogResult == DialogResult.Yes)
+                {
+                    /* Save changes */
+                }
+                else if (DialogResult == DialogResult.Cancel) return;
+            }
+
             image = new RawSector();
             dlgNewImage dlg = new dlgNewImage();
             DialogResult result = dlg.ShowDialog();
             if (result == DialogResult.OK)
             {
                 Text = "(Untitled) - TotalImage";
+                unsavedChanges = true;
             }
         }
 
@@ -248,6 +258,7 @@ namespace TotalImage
             }
         }
 
+        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private void OpenImage(string path)
         {
             filename = Path.GetFileName(path);
@@ -317,6 +328,15 @@ namespace TotalImage
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Needs a check for unsaved changes
+            if (unsavedChanges)
+            {
+                DialogResult = MessageBox.Show("You have unsaved changed. Would you like to save them before closing TotalImage?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (DialogResult == DialogResult.Yes)
+                {
+                    /* Save changes */
+                }
+                else if (DialogResult == DialogResult.Cancel) return;
+            }
             Application.Exit();
         }
 
@@ -599,7 +619,7 @@ namespace TotalImage
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
             dlgChangeVolLabel dlg = new dlgChangeVolLabel(image.GetRDVolumeLabel(), image.GetBPBVolumeLabel());
-            if(dlg.ShowDialog() == DialogResult.OK)
+            if (dlg.ShowDialog() == DialogResult.OK)
             {
                 unsavedChanges = true;
                 saveToolStripButton.Enabled = true;
@@ -661,17 +681,17 @@ namespace TotalImage
         private void CloseImage()
         {
             /* Offer to save any unsaved changes before closing the image file */
-            /* if(unsavedChanges)
-             * {
-             *      DialogResult == MessageBox.Show("blabla");
-             *      if(DialogResult == DialogResult.Yes){
-             *          //Save changes
-             *      }
-             * }
-             *
-             */
-            Text = "TotalImage";
+            if (unsavedChanges)
+            {
+                DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before closing the image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question); ;
+                if (DialogResult == DialogResult.Yes)
+                {
+                    /* Save changes */
+                }
+                else if (DialogResult == DialogResult.Cancel) return;
+            }
 
+            Text = "TotalImage";
             filename = "";
             path = "";
             image.CloseImage();
@@ -736,7 +756,7 @@ namespace TotalImage
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
         }
 
-        //Gets the default Windows folder icon with SHGetFileInfo
+        //Gets the default Windows folder icon with SHGetFileInfo that will be used for folders
         public void GetFolderIcon()
         {
             Icon icon = GetShellFileIcon("C:\\Windows", FileAttributes.Directory);
@@ -748,7 +768,6 @@ namespace TotalImage
         {
             string filename = entry.name.TrimEnd('.');
             TreeNode node = new TreeNode(filename);
-            //node.ContextMenuStrip = cmsDirTree;
             node.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             node.Tag = entry;
             lstDirectories.Nodes[0].Nodes.Add(node);
@@ -787,7 +806,6 @@ namespace TotalImage
         {
             string childFilename = child.name.TrimEnd('.');
             TreeNode childNode = new TreeNode(childFilename);
-            //childNode.ContextMenuStrip = cmsDirTree;
             childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             childNode.Tag = child;
             TreeNode parentNode = FindNode(lstDirectories.Nodes[0], ((uint)(parent.fstClusHI << 16) + parent.fstClusLO));
@@ -827,8 +845,8 @@ namespace TotalImage
             return icon;
         }
 
-
-        //Adds a new item to the file list
+        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES
+         * Adds a new item to the file list */
         public void AddToFileList(DirectoryEntry entry)
         {
             ListViewItem lvi = new ListViewItem();
@@ -842,6 +860,7 @@ namespace TotalImage
                 byte hours = (byte)((entry.wrtTime & 0xF800) >> 11);
                 byte minutes = (byte)((entry.wrtTime & 0x7E0) >> 5);
                 byte seconds = (byte)((entry.wrtTime & 0x1F) * 2); //Resolution for seconds is 2s
+
                 if (month <= 0 || month >= 13) month = 1;
                 if (day <= 0 || day >= 31) day = 1; //We don't bother checking for February 31st etc. yet...
 
@@ -882,7 +901,7 @@ namespace TotalImage
             lstFiles.Items.Add(lvi);
         }
 
-        //Calculates the image capacity
+        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private uint GetImageCapacity()
         {
             return 0;
@@ -972,6 +991,7 @@ namespace TotalImage
             lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
         }
 
+        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
         {
             uint fileCount = 0;
@@ -1004,6 +1024,7 @@ namespace TotalImage
             lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
         }
 
+        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private void lstFiles_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (lstFiles.SelectedItems.Count == 1)
@@ -1348,6 +1369,23 @@ namespace TotalImage
             {
                 lstDirectories.SelectedNode = lstDirectories.GetNodeAt(e.X, e.Y);
                 cmsDirTree.Show(lstDirectories, e.Location);
+            }
+        }
+
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (unsavedChanges)
+            {
+                DialogResult = MessageBox.Show("You have unsaved changes in the current image. Do you want to save them before closing TotalImage?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if(DialogResult == DialogResult.Yes)
+                {
+                    /* Save changes */
+                }
+                else if(DialogResult == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                    return;
+                }
             }
         }
     }
