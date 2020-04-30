@@ -797,6 +797,7 @@
             // 
             // tabFloppy
             // 
+            this.tabFloppy.BackColor = System.Drawing.Color.White;
             this.tabFloppy.Controls.Add(this.txtFloppyTracks);
             this.tabFloppy.Controls.Add(this.lblFloppyTracks);
             this.tabFloppy.Controls.Add(this.txtFloppyReservedSect);
@@ -837,10 +838,10 @@
             this.tabFloppy.Size = new System.Drawing.Size(698, 197);
             this.tabFloppy.TabIndex = 0;
             this.tabFloppy.Text = "Floppy disk";
-            this.tabFloppy.UseVisualStyleBackColor = true;
             // 
             // tabHDD
             // 
+            this.tabHDD.BackColor = System.Drawing.Color.White;
             this.tabHDD.Controls.Add(this.lstHDDType);
             this.tabHDD.Controls.Add(this.lblHDDCylinders);
             this.tabHDD.Controls.Add(this.lblHDDType);
@@ -857,13 +858,13 @@
             this.tabHDD.Size = new System.Drawing.Size(698, 197);
             this.tabHDD.TabIndex = 1;
             this.tabHDD.Text = "Hard disk";
-            this.tabHDD.UseVisualStyleBackColor = true;
             // 
             // dlgNewImage
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(729, 286);
             this.Controls.Add(this.tabControl);

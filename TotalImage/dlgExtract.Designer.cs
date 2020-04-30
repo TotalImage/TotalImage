@@ -46,7 +46,7 @@
             this.btnOK.Location = new System.Drawing.Point(461, 138);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
-            this.btnOK.TabIndex = 9;
+            this.btnOK.TabIndex = 6;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -59,7 +59,7 @@
             this.btnCancel.Location = new System.Drawing.Point(547, 138);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
-            this.btnCancel.TabIndex = 8;
+            this.btnCancel.TabIndex = 7;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
@@ -77,7 +77,7 @@
             this.txtPath.Location = new System.Drawing.Point(12, 36);
             this.txtPath.Name = "txtPath";
             this.txtPath.Size = new System.Drawing.Size(529, 23);
-            this.txtPath.TabIndex = 11;
+            this.txtPath.TabIndex = 0;
             // 
             // cbxOpenFolder
             // 
@@ -86,7 +86,7 @@
             this.cbxOpenFolder.Location = new System.Drawing.Point(12, 109);
             this.cbxOpenFolder.Name = "cbxOpenFolder";
             this.cbxOpenFolder.Size = new System.Drawing.Size(240, 20);
-            this.cbxOpenFolder.TabIndex = 12;
+            this.cbxOpenFolder.TabIndex = 5;
             this.cbxOpenFolder.Text = "Open destination folder after extraction";
             this.cbxOpenFolder.UseVisualStyleBackColor = true;
             // 
@@ -98,7 +98,7 @@
             this.rbnIgnoreFolders.Location = new System.Drawing.Point(12, 74);
             this.rbnIgnoreFolders.Name = "rbnIgnoreFolders";
             this.rbnIgnoreFolders.Size = new System.Drawing.Size(104, 20);
-            this.rbnIgnoreFolders.TabIndex = 13;
+            this.rbnIgnoreFolders.TabIndex = 2;
             this.rbnIgnoreFolders.TabStop = true;
             this.rbnIgnoreFolders.Text = "Ignore folders";
             this.rbnIgnoreFolders.UseVisualStyleBackColor = true;
@@ -110,7 +110,7 @@
             this.rbnExtractSameFolder.Location = new System.Drawing.Point(122, 74);
             this.rbnExtractSameFolder.Name = "rbnExtractSameFolder";
             this.rbnExtractSameFolder.Size = new System.Drawing.Size(215, 20);
-            this.rbnExtractSameFolder.TabIndex = 14;
+            this.rbnExtractSameFolder.TabIndex = 3;
             this.rbnExtractSameFolder.TabStop = true;
             this.rbnExtractSameFolder.Text = "Extract all files into the same folder";
             this.rbnExtractSameFolder.UseVisualStyleBackColor = true;
@@ -122,7 +122,7 @@
             this.rbnPreserveDirs.Location = new System.Drawing.Point(343, 74);
             this.rbnPreserveDirs.Name = "rbnPreserveDirs";
             this.rbnPreserveDirs.Size = new System.Drawing.Size(218, 20);
-            this.rbnPreserveDirs.TabIndex = 15;
+            this.rbnPreserveDirs.TabIndex = 4;
             this.rbnPreserveDirs.TabStop = true;
             this.rbnPreserveDirs.Text = "Preserve original directory structure";
             this.rbnPreserveDirs.UseVisualStyleBackColor = true;
@@ -132,7 +132,7 @@
             this.btnBrowse.Location = new System.Drawing.Point(547, 35);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(80, 26);
-            this.btnBrowse.TabIndex = 16;
+            this.btnBrowse.TabIndex = 1;
             this.btnBrowse.Text = "Browse...";
             this.btnBrowse.UseVisualStyleBackColor = true;
             // 
@@ -141,6 +141,7 @@
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(639, 176);
             this.Controls.Add(this.btnBrowse);
