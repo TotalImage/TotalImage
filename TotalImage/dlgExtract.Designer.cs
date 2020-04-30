@@ -49,6 +49,7 @@
             this.btnOK.TabIndex = 9;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // btnCancel
             // 
@@ -120,10 +121,10 @@
             this.rbnPreserveDirs.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.rbnPreserveDirs.Location = new System.Drawing.Point(343, 74);
             this.rbnPreserveDirs.Name = "rbnPreserveDirs";
-            this.rbnPreserveDirs.Size = new System.Drawing.Size(281, 20);
+            this.rbnPreserveDirs.Size = new System.Drawing.Size(218, 20);
             this.rbnPreserveDirs.TabIndex = 15;
             this.rbnPreserveDirs.TabStop = true;
-            this.rbnPreserveDirs.Text = "Extract by preserving the full directory structure";
+            this.rbnPreserveDirs.Text = "Preserve original directory structure";
             this.rbnPreserveDirs.UseVisualStyleBackColor = true;
             // 
             // btnBrowse

@@ -486,9 +486,9 @@ namespace TotalImage.FileSystems.FAT
         //Lists the contents of the directory without traversing subdirectories and adding them to the treeview
         public void ListDir(DirectoryEntry parent)
         {
-            ushort fat1Offset = bpb.BytesPerLogicalSector;
-            ushort fatSize = (ushort)(bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT);
-            uint rootDirOffset = (uint)(fat1Offset + (fatSize * 2));
+            uint fat1Offset = (uint)(bpb.BytesPerLogicalSector * bpb.ReservedLogicalSectors);
+            uint fatSize = (uint)(bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT);
+            uint rootDirOffset = fat1Offset + (fatSize * 2);
             uint dataAreaOffset = (uint)(rootDirOffset + (bpb.RootDirectoryEntries << 5));
 
             using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
@@ -760,6 +760,62 @@ namespace TotalImage.FileSystems.FAT
             }
 
             return null;
+        }
+
+        //Returns the number of the next cluster in the chain from either primary or backup FAT
+        public uint FatGetNextCluster(uint cluster, bool useBackupFat)
+        {
+            uint fat1Offset = (uint)(bpb.BytesPerLogicalSector * bpb.ReservedLogicalSectors);
+            uint fatSize = (uint)bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT;
+            uint fat2Offset = fat1Offset + fatSize;
+
+            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+            {
+                if (cluster % 2 == 0)
+                {
+                    if(useBackupFat)
+                        stream.Seek(fat2Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
+                    else
+                        stream.Seek(fat1Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
+
+                    ushort lower8 = reader.ReadByte();
+                    ushort upper4 = (ushort)((reader.ReadByte() & 0x0F) << 8);
+
+                    return (uint)(upper4 | lower8);
+                }
+                else
+                {
+                    if (useBackupFat)
+                        stream.Seek(fat2Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
+                    else
+                        stream.Seek(fat1Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
+
+                    ushort lower4 = (ushort)(reader.ReadByte() >> 4);
+                    ushort upper8 = (ushort)(reader.ReadByte() << 4);
+
+                    return (uint)(upper8 | lower4);
+                }
+            }
+        }
+
+        //Reads the specified cluster in the data area and returns its bytes
+        public byte[] ReadCluster(uint cluster)
+        {
+            if (cluster < 2 || cluster > 0xFEF)
+                return null;
+
+            uint fat1Offset = (uint)(bpb.BytesPerLogicalSector * bpb.ReservedLogicalSectors);
+            uint fatSize = (uint)bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT;
+            uint dataAreaOffset = (uint)(fat1Offset + fatSize * 2 + (bpb.RootDirectoryEntries << 5));
+
+            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+            {
+                uint clusterOffset = (cluster - 2) * bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector;
+                stream.Seek(dataAreaOffset + clusterOffset, SeekOrigin.Begin);
+                byte[] bytes = reader.ReadBytes(bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerCluster);
+
+                return bytes;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
@@ -423,8 +424,22 @@ namespace TotalImage
 
         private void extractToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Extract();
+        }
+
+        /* Extracts file(s) or folder(s) from the image to the specified path
+         * This code is just a POC - needs to be improved to use the actual selected path and to follow the selected options
+         * from the extraction dialog. */
+        public void Extract()
+        {
             dlgExtract dlg = new dlgExtract();
-            dlg.ShowDialog();
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+                if (lstFiles.SelectedItems.Count == 1)
+                {
+                    image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, "C:\\Users\\David\\Desktop\\");
+                }
+            }
         }
 
         //Returns size of directory
@@ -536,8 +551,7 @@ namespace TotalImage
 
         private void extractToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            dlgExtract dlg = new dlgExtract();
-            dlg.ShowDialog();
+            Extract();
         }
 
         private void createAFolderToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -548,8 +562,7 @@ namespace TotalImage
 
         private void extractToolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            dlgExtract dlg = new dlgExtract();
-            dlg.ShowDialog();
+            Extract();
         }
 
         private void propertiesToolStripMenuItem2_Click(object sender, EventArgs e)
@@ -647,8 +660,7 @@ namespace TotalImage
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            dlgExtract dlg = new dlgExtract();
-            dlg.ShowDialog();
+            Extract();
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
