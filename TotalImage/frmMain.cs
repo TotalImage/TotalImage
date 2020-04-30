@@ -437,12 +437,24 @@ namespace TotalImage
             {
                 if (lstFiles.SelectedItems.Count == 1)
                 {
-                    image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, "C:\\Users\\David\\Desktop\\");
+                    image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+                }
+                else if(lstFiles.SelectedItems.Count > 1)
+                {
+                    foreach(ListViewItem lvi in lstFiles.SelectedItems)
+                    {
+                        DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
+                        if(!Convert.ToBoolean(entry.attr & 0x10))
+                        {
+                            image.ExtractFile(entry, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+                        }
+                    }
                 }
             }
         }
 
-        //Returns size of directory
+        /* Returns size of directory
+         * This needs to be moved to the appropriate file system classes and extended with the option to include subdirs as well. */
         private uint CalculateDirSize()
         {
             uint dirSize = 0;
@@ -459,7 +471,8 @@ namespace TotalImage
             return dirSize;
         }
 
-        //Returns the number of files in a directory
+        /* Returns the number of files in a directory
+         * This needs to be moved to the appropriate file system classes and extended with the option to include subdirs as well. */
         private uint GetFileCount()
         {
             uint fileCount = 0;
