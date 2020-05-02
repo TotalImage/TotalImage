@@ -122,7 +122,6 @@
             this.deleteToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.propertiesToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-            this.selectPartitionToolStripButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.managePartitionsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.labelToolStripMenuButton = new System.Windows.Forms.ToolStripButton();
@@ -161,6 +160,7 @@
             this.renameToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.selectAllToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectPartitionToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.cmsDirTree.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.cmsToolbars.SuspendLayout();
@@ -860,7 +860,7 @@
             this.deleteToolStripButton,
             this.propertiesToolStripButton,
             this.toolStripSeparator9,
-            this.selectPartitionToolStripButton,
+            this.selectPartitionToolStripComboBox,
             this.managePartitionsToolStripButton,
             this.toolStripSeparator11,
             this.labelToolStripMenuButton,
@@ -979,15 +979,6 @@
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
             this.toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
-            // 
-            // selectPartitionToolStripButton
-            // 
-            this.selectPartitionToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.selectPartitionToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("selectPartitionToolStripButton.Image")));
-            this.selectPartitionToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.selectPartitionToolStripButton.Name = "selectPartitionToolStripButton";
-            this.selectPartitionToolStripButton.Size = new System.Drawing.Size(29, 22);
-            this.selectPartitionToolStripButton.Text = "Select partition";
             // 
             // managePartitionsToolStripButton
             // 
@@ -1334,6 +1325,13 @@
             this.selectAllToolStripMenuItem1.Text = "Select all";
             this.selectAllToolStripMenuItem1.Click += new System.EventHandler(this.selectAllToolStripMenuItem1_Click);
             // 
+            // selectPartitionToolStripComboBox
+            // 
+            this.selectPartitionToolStripComboBox.Enabled = false;
+            this.selectPartitionToolStripComboBox.Name = "selectPartitionToolStripComboBox";
+            this.selectPartitionToolStripComboBox.Size = new System.Drawing.Size(121, 25);
+            this.selectPartitionToolStripComboBox.ToolTipText = "Select partition";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1453,7 +1451,6 @@
         private System.Windows.Forms.ToolStripButton deleteToolStripButton;
         private System.Windows.Forms.ToolStripButton propertiesToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
-        private System.Windows.Forms.ToolStripDropDownButton selectPartitionToolStripButton;
         private System.Windows.Forms.ToolStripButton managePartitionsToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private System.Windows.Forms.ToolStripButton labelToolStripMenuButton;
@@ -1502,6 +1499,7 @@
         private System.Windows.Forms.ToolStripMenuItem expandDirectoryTreeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem collapseDirectoryTreeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
+        private System.Windows.Forms.ToolStripComboBox selectPartitionToolStripComboBox;
     }
 }
 

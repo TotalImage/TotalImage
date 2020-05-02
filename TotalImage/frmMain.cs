@@ -956,7 +956,7 @@ namespace TotalImage
             managePartitionsToolStripMenuItem.Enabled = false;
             selectPartitionToolStripMenuItem.Enabled = false;
             managePartitionsToolStripButton.Enabled = false;
-            selectPartitionToolStripButton.Enabled = false;
+            selectPartitionToolStripComboBox.Enabled = false;
         }
 
         //Disables various UI elements after an image is loaded
@@ -973,7 +973,7 @@ namespace TotalImage
             infoToolStripButton.Enabled = false;
             saveToolStripButton.Enabled = false;
             managePartitionsToolStripButton.Enabled = false;
-            selectPartitionToolStripButton.Enabled = false;
+            selectPartitionToolStripComboBox.Enabled = false;
 
             managePartitionsToolStripMenuItem.Enabled = false;
             selectPartitionToolStripMenuItem.Enabled = false;
