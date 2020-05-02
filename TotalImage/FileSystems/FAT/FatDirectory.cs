@@ -60,7 +60,16 @@ namespace TotalImage.FileSystems.FAT
 
         public override void Delete()
         {
-            throw new NotImplementedException();
+            /* When deleting a directory, the first character of the name needs to be changed to 0xE5.
+            * The directory's directory entry can then be reused, and its clusters are marked as free until they're
+            * overwritten. The same must then be done for all files and subdirectories inside.
+            * This code is untested until this class is hooked up to the UI... */
+
+            byte[] bytes = Encoding.ASCII.GetBytes(entry.name);
+            bytes[0] = 0xE5;
+            entry.name = Encoding.ASCII.GetString(bytes);
+
+            //And then mark all clusters in the chain as free, and do the same for all files and subdirectories inside.
         }
 
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects()

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -57,7 +58,15 @@ namespace TotalImage.FileSystems.FAT
 
         public override void Delete()
         {
-            throw new NotImplementedException();
+            /* When deleting a file, only the first character of the name needs to be changed to 0xE5.
+             * The file's directory entry can then be reused, and its clusters are marked as free until they're
+             * overwritten. 
+             * This code is untested until this class is hooked up to the UI... */
+            byte[] bytes = Encoding.ASCII.GetBytes(entry.name);
+            bytes[0] = 0xE5;
+            entry.name = Encoding.ASCII.GetString(bytes);
+
+            //And then mark all clusters in the chain as free...
         }
 
         public override void MoveTo(string path)
