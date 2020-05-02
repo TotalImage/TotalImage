@@ -330,10 +330,12 @@ namespace TotalImage.FileSystems.FAT
                 stream.Seek(fat2Offset + fatSize, SeekOrigin.Begin);
 
                 //First 11 bytes (8.3 space-padded filename without the period) are the label itself
-                if (bpb is BiosParameterBlock40 bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
                 {
-                    writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
-                    writer.Write((byte)0x08); //Volume label attribute
+                    if (bpb is BiosParameterBlock40 bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
+                    {
+                        writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
+                        writer.Write((byte)0x08); //Volume label attribute
+                    }
                 }
             }
 
