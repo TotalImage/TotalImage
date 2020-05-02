@@ -193,7 +193,7 @@ namespace TotalImage.FileSystems.FAT
                 /* At this point it's worth checking if there even is a valid BPB at the standard offset (0x0B).
                  * 
                  * If there isn't, then additional checks should be performed for the exotic disk formats that may have
-                 * a BPB elsewhere (e.g. Apricot disks have it at 0x50...) or none at all (e.g. PC DOS 1.x disks)
+                 * a BPB elsewhere (e.g. Apricot disks have it at 0x50...) or none at all (e.g. DOS 1.x disks)
                  */
                 if (bpb.NumberOfHeads == 0 || bpb.PhysicalSectorsPerTrack == 0 || bpb.BytesPerLogicalSector == 0 || bpb.NumberOfFATs == 0 ||
                     bpb.TotalLogicalSectors == 0 || bpb.ReservedLogicalSectors == 0 || bpb.LogicalSectorsPerCluster == 0 ||
@@ -315,7 +315,7 @@ namespace TotalImage.FileSystems.FAT
                 writer.Write((byte)0x55);
                 writer.Write((byte)0xAA);
 
-                /* Media descriptor needs to be written to each FAT as well
+                /* Media descriptor needs to be written to each FAT as well, upper 4 bits must all be set.
                  * It takes up the first cluster entry (0), and the second entry (1) is also reserved */
                 stream.Seek(fat1Offset, SeekOrigin.Begin);
                 writer.Write(bpb.MediaDescriptor);
@@ -330,12 +330,10 @@ namespace TotalImage.FileSystems.FAT
                 stream.Seek(fat2Offset + fatSize, SeekOrigin.Begin);
 
                 //First 11 bytes (8.3 space-padded filename without the period) are the label itself
+                if (bpb is BiosParameterBlock40 bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
                 {
-                    if (bpb is BiosParameterBlock40 bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
-                    {
-                        writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
-                        writer.Write((byte)0x08); //Volume label attribute
-                    }
+                    writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
+                    writer.Write((byte)0x08); //Volume label attribute
                 }
             }
 
@@ -773,7 +771,7 @@ namespace TotalImage.FileSystems.FAT
             {
                 if (cluster % 2 == 0)
                 {
-                    if(useBackupFat)
+                    if (useBackupFat)
                         stream.Seek(fat2Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
                     else
                         stream.Seek(fat1Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
@@ -815,6 +813,62 @@ namespace TotalImage.FileSystems.FAT
                 byte[] bytes = reader.ReadBytes(bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerCluster);
 
                 return bytes;
+            }
+        }
+
+        //Writes data to the specified cluster in the data area
+        public void WriteCluster(uint cluster, byte[] data)
+        {
+            if (cluster < 2 || cluster > 0xFEF)
+                return;
+
+            uint fat1Offset = (uint)(bpb.BytesPerLogicalSector * bpb.ReservedLogicalSectors);
+            uint fatSize = (uint)bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT;
+            uint dataAreaOffset = (uint)(fat1Offset + fatSize * 2 + (bpb.RootDirectoryEntries << 5));
+
+            using (var writer = new BinaryWriter(stream, Encoding.ASCII, true))
+            {
+                uint clusterOffset = (cluster - 2) * bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector;
+                stream.Seek(dataAreaOffset + clusterOffset, SeekOrigin.Begin);
+                writer.Write(data);
+            }
+        }
+
+        //Marks a cluster in the FATs as free (0x00)
+        public void FatFreeCluster(uint cluster)
+        {
+            uint fat1Offset = (uint)(bpb.BytesPerLogicalSector * bpb.ReservedLogicalSectors);
+            uint fatSize = (uint)bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT;
+            uint fat2Offset = fat1Offset + fatSize;
+
+            using (var writer = new BinaryWriter(stream, Encoding.ASCII, true))
+            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+            {
+                if (cluster % 2 == 0)
+                {
+                    stream.Seek(fat1Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
+                    writer.Write((byte)0x00);
+                    byte upper4 = (byte)(reader.ReadByte() & 0xF0); //Zero out the bottom 4 bits only - the upper 4 are for the next cluster!
+                    stream.Seek(-8, SeekOrigin.Current);
+                    writer.Write(upper4);
+
+                    //Repeat the process for the backup FAT
+                    stream.Seek(fat2Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
+                    writer.Write((byte)0x00);
+                    writer.Write(upper4);
+                }
+                else
+                {
+                    stream.Seek(fat1Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
+                    byte lower4 = (byte)(reader.ReadByte() & 0x0F); //Zero out the top 4 bits only - the bottom 4 are for the previous cluster!
+                    stream.Seek(-8, SeekOrigin.Current);
+                    writer.Write(lower4);
+                    writer.Write(0x00);
+
+                    stream.Seek(fat2Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
+                    writer.Write(lower4);
+                    writer.Write(0x00);
+                }
             }
         }
     }
