@@ -122,6 +122,7 @@
             this.deleteToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.propertiesToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.selectPartitionToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.managePartitionsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.labelToolStripMenuButton = new System.Windows.Forms.ToolStripButton();
@@ -160,7 +161,6 @@
             this.renameToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.selectAllToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectPartitionToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.cmsDirTree.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.cmsToolbars.SuspendLayout();
@@ -980,6 +980,13 @@
             this.toolStripSeparator9.Name = "toolStripSeparator9";
             this.toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
             // 
+            // selectPartitionToolStripComboBox
+            // 
+            this.selectPartitionToolStripComboBox.Enabled = false;
+            this.selectPartitionToolStripComboBox.Name = "selectPartitionToolStripComboBox";
+            this.selectPartitionToolStripComboBox.Size = new System.Drawing.Size(121, 25);
+            this.selectPartitionToolStripComboBox.ToolTipText = "Select partition";
+            // 
             // managePartitionsToolStripButton
             // 
             this.managePartitionsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -1324,13 +1331,6 @@
             this.selectAllToolStripMenuItem1.Size = new System.Drawing.Size(235, 22);
             this.selectAllToolStripMenuItem1.Text = "Select all";
             this.selectAllToolStripMenuItem1.Click += new System.EventHandler(this.selectAllToolStripMenuItem1_Click);
-            // 
-            // selectPartitionToolStripComboBox
-            // 
-            this.selectPartitionToolStripComboBox.Enabled = false;
-            this.selectPartitionToolStripComboBox.Name = "selectPartitionToolStripComboBox";
-            this.selectPartitionToolStripComboBox.Size = new System.Drawing.Size(121, 25);
-            this.selectPartitionToolStripComboBox.ToolTipText = "Select partition";
             // 
             // frmMain
             // 
