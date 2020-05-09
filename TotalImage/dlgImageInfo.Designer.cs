@@ -43,6 +43,8 @@
             this.lblFileSize = new System.Windows.Forms.Label();
             this.lblHash1 = new System.Windows.Forms.Label();
             this.lblHash = new System.Windows.Forms.Label();
+            this.pnlBottom = new System.Windows.Forms.Panel();
+            this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOK
@@ -50,7 +52,7 @@
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(259, 331);
+            this.btnOK.Location = new System.Drawing.Point(259, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 0;
@@ -183,6 +185,16 @@
             this.lblHash.TabIndex = 20;
             this.lblHash.Text = "SHA-256 hash:";
             // 
+            // pnlBottom
+            // 
+            this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlBottom.Controls.Add(this.btnOK);
+            this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlBottom.Location = new System.Drawing.Point(0, 182);
+            this.pnlBottom.Name = "pnlBottom";
+            this.pnlBottom.Size = new System.Drawing.Size(351, 50);
+            this.pnlBottom.TabIndex = 22;
+            // 
             // dlgImageInfo
             // 
             this.AcceptButton = this.btnOK;
@@ -190,7 +202,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnOK;
-            this.ClientSize = new System.Drawing.Size(351, 369);
+            this.ClientSize = new System.Drawing.Size(351, 232);
+            this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.lblHash1);
             this.Controls.Add(this.lblHash);
             this.Controls.Add(this.lblFileSize1);
@@ -205,7 +218,6 @@
             this.Controls.Add(this.lblImageFormat);
             this.Controls.Add(this.lblFilename1);
             this.Controls.Add(this.lblFilename);
-            this.Controls.Add(this.btnOK);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -215,6 +227,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Image information";
+            this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -237,5 +250,6 @@
         private System.Windows.Forms.Label lblFileSize;
         private System.Windows.Forms.Label lblHash1;
         private System.Windows.Forms.Label lblHash;
+        private System.Windows.Forms.Panel pnlBottom;
     }
 }

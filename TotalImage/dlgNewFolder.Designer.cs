@@ -34,6 +34,8 @@
             this.btnOK = new System.Windows.Forms.Button();
             this.lblShortName = new System.Windows.Forms.Label();
             this.lblShortName1 = new System.Windows.Forms.Label();
+            this.pnlBottom = new System.Windows.Forms.Panel();
+            this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblName
@@ -57,7 +59,7 @@
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(392, 101);
+            this.btnCancel.Location = new System.Drawing.Point(392, 12);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
             this.btnCancel.TabIndex = 2;
@@ -68,7 +70,7 @@
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(306, 101);
+            this.btnOK.Location = new System.Drawing.Point(306, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 1;
@@ -93,6 +95,17 @@
             this.lblShortName1.TabIndex = 5;
             this.lblShortName1.Text = "<shortname>";
             // 
+            // pnlBottom
+            // 
+            this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlBottom.Controls.Add(this.btnCancel);
+            this.pnlBottom.Controls.Add(this.btnOK);
+            this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlBottom.Location = new System.Drawing.Point(0, 101);
+            this.pnlBottom.Name = "pnlBottom";
+            this.pnlBottom.Size = new System.Drawing.Size(484, 50);
+            this.pnlBottom.TabIndex = 6;
+            // 
             // dlgNewFolder
             // 
             this.AcceptButton = this.btnOK;
@@ -100,11 +113,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(484, 139);
+            this.ClientSize = new System.Drawing.Size(484, 151);
+            this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.lblShortName1);
             this.Controls.Add(this.lblShortName);
-            this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.txtName);
             this.Controls.Add(this.lblName);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -116,6 +128,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "New folder";
+            this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -129,5 +142,6 @@
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Label lblShortName;
         private System.Windows.Forms.Label lblShortName1;
+        private System.Windows.Forms.Panel pnlBottom;
     }
 }

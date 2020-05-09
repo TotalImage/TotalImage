@@ -80,6 +80,7 @@
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabFloppy = new System.Windows.Forms.TabPage();
             this.tabHDD = new System.Windows.Forms.TabPage();
+            this.pnlBottom = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyBPS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyRootDir)).BeginInit();
@@ -97,13 +98,14 @@
             this.tabControl.SuspendLayout();
             this.tabFloppy.SuspendLayout();
             this.tabHDD.SuspendLayout();
+            this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(637, 248);
+            this.btnCancel.Location = new System.Drawing.Point(636, 12);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
             this.btnCancel.TabIndex = 17;
@@ -114,7 +116,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(551, 248);
+            this.btnOK.Location = new System.Drawing.Point(550, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 16;
@@ -792,7 +794,7 @@
             this.tabControl.Location = new System.Drawing.Point(12, 12);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(706, 225);
+            this.tabControl.Size = new System.Drawing.Size(705, 223);
             this.tabControl.TabIndex = 0;
             // 
             // tabFloppy
@@ -835,7 +837,7 @@
             this.tabFloppy.Location = new System.Drawing.Point(4, 24);
             this.tabFloppy.Name = "tabFloppy";
             this.tabFloppy.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFloppy.Size = new System.Drawing.Size(698, 197);
+            this.tabFloppy.Size = new System.Drawing.Size(697, 195);
             this.tabFloppy.TabIndex = 0;
             this.tabFloppy.Text = "Floppy disk";
             // 
@@ -859,6 +861,17 @@
             this.tabHDD.TabIndex = 1;
             this.tabHDD.Text = "Hard disk";
             // 
+            // pnlBottom
+            // 
+            this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlBottom.Controls.Add(this.btnCancel);
+            this.pnlBottom.Controls.Add(this.btnOK);
+            this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlBottom.Location = new System.Drawing.Point(0, 264);
+            this.pnlBottom.Name = "pnlBottom";
+            this.pnlBottom.Size = new System.Drawing.Size(728, 50);
+            this.pnlBottom.TabIndex = 18;
+            // 
             // dlgNewImage
             // 
             this.AcceptButton = this.btnOK;
@@ -866,10 +879,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(729, 286);
+            this.ClientSize = new System.Drawing.Size(728, 314);
+            this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.tabControl);
-            this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.btnCancel);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -899,6 +911,7 @@
             this.tabFloppy.PerformLayout();
             this.tabHDD.ResumeLayout(false);
             this.tabHDD.PerformLayout();
+            this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -954,5 +967,6 @@
         private System.Windows.Forms.NumericUpDown txtFloppyNumFATs;
         private System.Windows.Forms.Label lblFloppyTracks;
         private System.Windows.Forms.NumericUpDown txtFloppyTracks;
+        private System.Windows.Forms.Panel pnlBottom;
     }
 }

@@ -34,13 +34,15 @@
             this.lblRootDirLabel = new System.Windows.Forms.Label();
             this.txtBPBLabel = new System.Windows.Forms.TextBox();
             this.cbxBPBLabel = new System.Windows.Forms.CheckBox();
+            this.pnlBottom = new System.Windows.Forms.Panel();
+            this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(96, 153);
+            this.btnOK.Location = new System.Drawing.Point(96, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 3;
@@ -53,7 +55,7 @@
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(182, 153);
+            this.btnCancel.Location = new System.Drawing.Point(182, 12);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
             this.btnCancel.TabIndex = 4;
@@ -101,6 +103,17 @@
             this.cbxBPBLabel.UseVisualStyleBackColor = true;
             this.cbxBPBLabel.CheckedChanged += new System.EventHandler(this.cbxBPBLabel_CheckedChanged);
             // 
+            // pnlBottom
+            // 
+            this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlBottom.Controls.Add(this.btnOK);
+            this.pnlBottom.Controls.Add(this.btnCancel);
+            this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlBottom.Location = new System.Drawing.Point(0, 156);
+            this.pnlBottom.Name = "pnlBottom";
+            this.pnlBottom.Size = new System.Drawing.Size(274, 50);
+            this.pnlBottom.TabIndex = 5;
+            // 
             // dlgChangeVolLabel
             // 
             this.AcceptButton = this.btnOK;
@@ -108,11 +121,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(274, 191);
+            this.ClientSize = new System.Drawing.Size(274, 206);
+            this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.cbxBPBLabel);
             this.Controls.Add(this.txtBPBLabel);
-            this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.txtRootDirLabel);
             this.Controls.Add(this.lblRootDirLabel);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -125,6 +137,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Change volume label";
             this.Load += new System.EventHandler(this.dlgChangeVolLabel_Load);
+            this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -138,5 +151,6 @@
         private System.Windows.Forms.Label lblRootDirLabel;
         private System.Windows.Forms.TextBox txtBPBLabel;
         private System.Windows.Forms.CheckBox cbxBPBLabel;
+        private System.Windows.Forms.Panel pnlBottom;
     }
 }

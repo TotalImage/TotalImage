@@ -32,13 +32,15 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblDisc = new System.Windows.Forms.Label();
             this.lblDisc2 = new System.Windows.Forms.Label();
+            this.pnlBottom = new System.Windows.Forms.Panel();
+            this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(372, 302);
+            this.btnOK.Location = new System.Drawing.Point(372, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 0;
@@ -50,7 +52,7 @@
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(458, 302);
+            this.btnCancel.Location = new System.Drawing.Point(458, 12);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
             this.btnCancel.TabIndex = 1;
@@ -79,6 +81,17 @@
             this.lblDisc2.TabIndex = 9;
             this.lblDisc2.Text = "WARNING: Changing these parameters may make the disk image unusable!";
             // 
+            // pnlBottom
+            // 
+            this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlBottom.Controls.Add(this.btnCancel);
+            this.pnlBottom.Controls.Add(this.btnOK);
+            this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlBottom.Location = new System.Drawing.Point(0, 290);
+            this.pnlBottom.Name = "pnlBottom";
+            this.pnlBottom.Size = new System.Drawing.Size(550, 50);
+            this.pnlBottom.TabIndex = 10;
+            // 
             // dlgBootSector
             // 
             this.AcceptButton = this.btnOK;
@@ -87,10 +100,9 @@
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(550, 340);
+            this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.lblDisc2);
             this.Controls.Add(this.lblDisc);
-            this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.btnCancel);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -100,6 +112,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Boot sector properties";
+            this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -111,5 +124,6 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Label lblDisc;
         private System.Windows.Forms.Label lblDisc2;
+        private System.Windows.Forms.Panel pnlBottom;
     }
 }

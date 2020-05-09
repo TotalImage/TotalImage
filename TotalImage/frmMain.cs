@@ -507,7 +507,7 @@ namespace TotalImage
                 propertiesToolStripButton.Enabled = false;
 
                 lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
-                lblStatusSize.Text = string.Format("{0:n0}", CalculateDirSize()).ToString() + " bytes in " + GetFileCount() + " file(s)";
+                lblStatusSize.Text = string.Format("{0:n0}", CalculateDirSize()).ToString() + " bytes in " + GetFileCount() + " item(s)";
             }
             else if (lstFiles.SelectedItems.Count == 1)
             {
@@ -525,7 +525,7 @@ namespace TotalImage
                 propertiesToolStripButton.Enabled = true;
 
                 lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator + lstFiles.SelectedItems[0].Text;
-                lblStatusSize.Text = string.Format("{0:n0}", ((DirectoryEntry)lstFiles.SelectedItems[0].Tag).fileSize).ToString() + " bytes in 1 file";
+                lblStatusSize.Text = string.Format("{0:n0}", ((DirectoryEntry)lstFiles.SelectedItems[0].Tag).fileSize).ToString() + " bytes in 1 item";
 
             }
             else
@@ -552,7 +552,7 @@ namespace TotalImage
                     selectedSize += entry.fileSize;
                 }
 
-                lblStatusSize.Text = string.Format("{0:n0}", selectedSize) + " bytes in " + lstFiles.SelectedItems.Count + " files";
+                lblStatusSize.Text = string.Format("{0:n0}", selectedSize) + " bytes in " + lstFiles.SelectedItems.Count + " items";
             }
         }
 

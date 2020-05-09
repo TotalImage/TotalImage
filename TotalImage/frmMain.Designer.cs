@@ -101,7 +101,7 @@
             this.fileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.totalImageOnGitHubToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -144,7 +144,7 @@
             this.typeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.modifiedToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            this.optionsToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.settingsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.lstDirectories = new TotalImage.TreeViewEx();
             this.imgFilesSmall = new System.Windows.Forms.ImageList(this.components);
@@ -161,6 +161,7 @@
             this.renameToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.selectAllToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.cmsDirTree.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.cmsToolbars.SuspendLayout();
@@ -574,10 +575,11 @@
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showHiddenToolStripMenuItem,
-            this.showDeletedToolStripMenuItem,
             this.expandDirectoryTreeToolStripMenuItem,
             this.collapseDirectoryTreeToolStripMenuItem,
+            this.toolStripSeparator16,
+            this.showHiddenToolStripMenuItem,
+            this.showDeletedToolStripMenuItem,
             this.toolStripSeparator13,
             this.largeIconsToolStripMenuItem,
             this.smallIconsToolStripMenuItem,
@@ -588,7 +590,7 @@
             this.sortByToolStripMenuItem,
             this.toolbarsToolStripMenuItem,
             this.toolStripSeparator5,
-            this.optionsToolStripMenuItem});
+            this.settingsToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.V)));
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -778,12 +780,12 @@
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(189, 6);
             // 
-            // optionsToolStripMenuItem
+            // settingsToolStripMenuItem
             // 
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.optionsToolStripMenuItem.Text = "Options...";
-            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.settingsToolStripMenuItem.Text = "Settings...";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -870,7 +872,7 @@
             this.viewToolStripButton,
             this.sortToolStripButton,
             this.toolStripSeparator12,
-            this.optionsToolStripButton});
+            this.settingsToolStripButton});
             this.commandBar.Location = new System.Drawing.Point(0, 24);
             this.commandBar.Name = "commandBar";
             this.commandBar.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -984,7 +986,7 @@
             // 
             this.selectPartitionToolStripComboBox.Enabled = false;
             this.selectPartitionToolStripComboBox.Name = "selectPartitionToolStripComboBox";
-            this.selectPartitionToolStripComboBox.Size = new System.Drawing.Size(121, 25);
+            this.selectPartitionToolStripComboBox.Size = new System.Drawing.Size(200, 25);
             this.selectPartitionToolStripComboBox.ToolTipText = "Select partition";
             // 
             // managePartitionsToolStripButton
@@ -1158,15 +1160,15 @@
             this.toolStripSeparator12.Name = "toolStripSeparator12";
             this.toolStripSeparator12.Size = new System.Drawing.Size(6, 25);
             // 
-            // optionsToolStripButton
+            // settingsToolStripButton
             // 
-            this.optionsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.optionsToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("optionsToolStripButton.Image")));
-            this.optionsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.optionsToolStripButton.Name = "optionsToolStripButton";
-            this.optionsToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.optionsToolStripButton.Text = "Options";
-            this.optionsToolStripButton.Click += new System.EventHandler(this.toolStripButton10_Click);
+            this.settingsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.settingsToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("settingsToolStripButton.Image")));
+            this.settingsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.settingsToolStripButton.Name = "settingsToolStripButton";
+            this.settingsToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.settingsToolStripButton.Text = "Settings";
+            this.settingsToolStripButton.Click += new System.EventHandler(this.toolStripButton10_Click);
             // 
             // splitContainer
             // 
@@ -1332,6 +1334,11 @@
             this.selectAllToolStripMenuItem1.Text = "Select all";
             this.selectAllToolStripMenuItem1.Click += new System.EventHandler(this.selectAllToolStripMenuItem1_Click);
             // 
+            // toolStripSeparator16
+            // 
+            this.toolStripSeparator16.Name = "toolStripSeparator16";
+            this.toolStripSeparator16.Size = new System.Drawing.Size(189, 6);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1394,7 +1401,7 @@
         private System.Windows.Forms.ToolStripMenuItem changeVolumeLabelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem bootSectorPropertiesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageInformationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.ToolStripButton newToolStripButton;
         private System.Windows.Forms.ToolStripButton openToolStripButton;
@@ -1464,7 +1471,7 @@
         private System.Windows.Forms.ToolStripMenuItem detailsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem tilesToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
-        private System.Windows.Forms.ToolStripButton optionsToolStripButton;
+        private System.Windows.Forms.ToolStripButton settingsToolStripButton;
         private System.Windows.Forms.ToolStripDropDownButton sortToolStripButton;
         private System.Windows.Forms.ToolStripMenuItem nameToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem sizeToolStripMenuItem1;
@@ -1500,6 +1507,7 @@
         private System.Windows.Forms.ToolStripMenuItem collapseDirectoryTreeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
         private System.Windows.Forms.ToolStripComboBox selectPartitionToolStripComboBox;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
     }
 }
 

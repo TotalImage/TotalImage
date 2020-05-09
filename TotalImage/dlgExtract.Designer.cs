@@ -37,13 +37,15 @@
             this.rbnExtractSameFolder = new System.Windows.Forms.RadioButton();
             this.rbnPreserveDirs = new System.Windows.Forms.RadioButton();
             this.btnBrowse = new System.Windows.Forms.Button();
+            this.pnlBottom = new System.Windows.Forms.Panel();
+            this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(461, 138);
+            this.btnOK.Location = new System.Drawing.Point(461, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 6;
@@ -56,7 +58,7 @@
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(547, 138);
+            this.btnCancel.Location = new System.Drawing.Point(547, 12);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
             this.btnCancel.TabIndex = 7;
@@ -68,9 +70,9 @@
             this.lblPath.AutoSize = true;
             this.lblPath.Location = new System.Drawing.Point(9, 9);
             this.lblPath.Name = "lblPath";
-            this.lblPath.Size = new System.Drawing.Size(245, 15);
+            this.lblPath.Size = new System.Drawing.Size(253, 15);
             this.lblPath.TabIndex = 10;
-            this.lblPath.Text = "Extract selected file(s) to the following folder:";
+            this.lblPath.Text = "Extract selected item(s) to the following folder:";
             // 
             // txtPath
             // 
@@ -136,6 +138,17 @@
             this.btnBrowse.Text = "Browse...";
             this.btnBrowse.UseVisualStyleBackColor = true;
             // 
+            // pnlBottom
+            // 
+            this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlBottom.Controls.Add(this.btnCancel);
+            this.pnlBottom.Controls.Add(this.btnOK);
+            this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlBottom.Location = new System.Drawing.Point(0, 144);
+            this.pnlBottom.Name = "pnlBottom";
+            this.pnlBottom.Size = new System.Drawing.Size(639, 50);
+            this.pnlBottom.TabIndex = 11;
+            // 
             // dlgExtract
             // 
             this.AcceptButton = this.btnOK;
@@ -143,7 +156,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(639, 176);
+            this.ClientSize = new System.Drawing.Size(639, 194);
+            this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.rbnPreserveDirs);
             this.Controls.Add(this.rbnExtractSameFolder);
@@ -151,8 +165,6 @@
             this.Controls.Add(this.cbxOpenFolder);
             this.Controls.Add(this.txtPath);
             this.Controls.Add(this.lblPath);
-            this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.btnCancel);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -161,7 +173,8 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Extract file(s)";
+            this.Text = "Extract item(s)";
+            this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -178,5 +191,6 @@
         private System.Windows.Forms.RadioButton rbnExtractSameFolder;
         private System.Windows.Forms.RadioButton rbnPreserveDirs;
         private System.Windows.Forms.Button btnBrowse;
+        private System.Windows.Forms.Panel pnlBottom;
     }
 }
