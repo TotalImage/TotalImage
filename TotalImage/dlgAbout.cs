@@ -16,5 +16,10 @@ namespace TotalImage
         {
             InitializeComponent();
         }
+
+        private void dlgAbout_Load(object sender, EventArgs e)
+        {
+            lblVer.Text = "Version: " + System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+        }
     }
 }

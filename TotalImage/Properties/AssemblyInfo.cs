@@ -1,12 +1,11 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TotalImage")]
-[assembly: AssemblyDescription("A disk image editor")]
+[assembly: AssemblyDescription("A better disk image editor")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The TotalImage Team")]
 [assembly: AssemblyProduct("TotalImage")]
