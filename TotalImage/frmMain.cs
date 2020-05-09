@@ -87,14 +87,27 @@ namespace TotalImage
         }
 
         //Creates a new disk image
-        private void newImage_Click(object sender, System.EventArgs e)
+        private void newImage_Click(object sender, EventArgs e)
         {
             if (unsavedChanges)
             {
                 DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before creating a new image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (DialogResult == DialogResult.Yes)
                 {
-                    /* Save changes */
+                    save_Click(sender, e);
+                }
+                else if (DialogResult == DialogResult.No)
+                {
+                    /* This is necessary because if we don't do this and the user then backs out of creating a new image, they'll be left
+                     * with unsaved changes they already chose not to keep. */
+                    Text = "TotalImage";
+                    filename = "";
+                    path = "";
+                    image.CloseImage();
+                    image = null;
+                    lstDirectories.Nodes.Clear();
+                    lstFiles.Items.Clear();
+                    DisableUI();
                 }
                 else if (DialogResult == DialogResult.Cancel) return;
             }
@@ -605,7 +618,7 @@ namespace TotalImage
                 DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before closing the image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question); ;
                 if (DialogResult == DialogResult.Yes)
                 {
-                    /* Save changes */
+                    save_Click(sender, e);
                 }
                 else if (DialogResult == DialogResult.Cancel) return;
             }
