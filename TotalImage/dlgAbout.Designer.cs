@@ -76,9 +76,9 @@
             this.lblVer.AutoSize = true;
             this.lblVer.Location = new System.Drawing.Point(9, 73);
             this.lblVer.Name = "lblVer";
-            this.lblVer.Size = new System.Drawing.Size(75, 15);
+            this.lblVer.Size = new System.Drawing.Size(84, 15);
             this.lblVer.TabIndex = 3;
-            this.lblVer.Text = "Version: 1.0.0";
+            this.lblVer.Text = "Version: 1.0.0.0";
             // 
             // lblCopyright
             // 

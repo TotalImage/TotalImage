@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(dlgProperties));
             this.imgIcon = new System.Windows.Forms.PictureBox();
             this.txtFilename = new System.Windows.Forms.TextBox();
             this.lblType = new System.Windows.Forms.Label();
@@ -78,6 +79,7 @@
             this.txtFilename.Size = new System.Drawing.Size(322, 23);
             this.txtFilename.TabIndex = 0;
             this.txtFilename.Text = "<filename>";
+            this.toolTip.SetToolTip(this.txtFilename, resources.GetString("txtFilename.ToolTip"));
             // 
             // lblType
             // 
@@ -123,7 +125,7 @@
             this.lblSize.Size = new System.Drawing.Size(30, 15);
             this.lblSize.TabIndex = 12;
             this.lblSize.Text = "Size:";
-            this.toolTip.SetToolTip(this.lblSize, "This is the actual size of the data inside the file.");
+            this.toolTip.SetToolTip(this.lblSize, "This is the actual size of the file or directory.");
             // 
             // lblSize1
             // 
@@ -133,7 +135,7 @@
             this.lblSize1.Size = new System.Drawing.Size(42, 15);
             this.lblSize1.TabIndex = 13;
             this.lblSize1.Text = "<size>";
-            this.toolTip.SetToolTip(this.lblSize1, "This is the actual size of the data inside the file.");
+            this.toolTip.SetToolTip(this.lblSize1, "This is the actual size of the file or directory.");
             // 
             // lblSizeOnDisk
             // 
@@ -143,7 +145,8 @@
             this.lblSizeOnDisk.Size = new System.Drawing.Size(93, 15);
             this.lblSizeOnDisk.TabIndex = 14;
             this.lblSizeOnDisk.Text = "Space occupied:";
-            this.toolTip.SetToolTip(this.lblSizeOnDisk, "This is the disk space occupied by the file due to\r\ncluster size.");
+            this.toolTip.SetToolTip(this.lblSizeOnDisk, "This is the space occupied by the file or directory on the disk\r\ndue to cluster s" +
+        "ize.");
             // 
             // lblSizeOnDisk1
             // 
@@ -153,7 +156,8 @@
             this.lblSizeOnDisk1.Size = new System.Drawing.Size(102, 15);
             this.lblSizeOnDisk1.TabIndex = 15;
             this.lblSizeOnDisk1.Text = "<spaceoccupied>";
-            this.toolTip.SetToolTip(this.lblSizeOnDisk1, "This is the disk space occupied by the file due to\r\ncluster size.");
+            this.toolTip.SetToolTip(this.lblSizeOnDisk1, "This is the space occupied by the file or directory on the disk\r\ndue to cluster s" +
+        "ize.");
             // 
             // toolTip
             // 
@@ -171,8 +175,9 @@
             this.lblShortFilename.Size = new System.Drawing.Size(113, 15);
             this.lblShortFilename.TabIndex = 16;
             this.lblShortFilename.Text = "Short filename (8.3):";
-            this.toolTip.SetToolTip(this.lblShortFilename, "Short filenames are used for backwards compatibility with\r\nsystems not supporting" +
-        " the VFAT/LFN extensions.");
+            this.toolTip.SetToolTip(this.lblShortFilename, "Short names are used for backwards compatibility with systems that \r\ndon\'t suppor" +
+        "t the VFAT/LFN extensions. It is automatically generated\r\nbased on the long name" +
+        " (see above).\r\n");
             // 
             // lblShortFilename1
             // 
@@ -182,8 +187,9 @@
             this.lblShortFilename1.Size = new System.Drawing.Size(96, 15);
             this.lblShortFilename1.TabIndex = 17;
             this.lblShortFilename1.Text = "<shortfilename>";
-            this.toolTip.SetToolTip(this.lblShortFilename1, "Short filenames are used for backwards compatibility with\r\nsystems not supporting" +
-        " the VFAT/LFN extensions.\r\n");
+            this.toolTip.SetToolTip(this.lblShortFilename1, "Short names are used for backwards compatibility with systems that \r\ndon\'t suppor" +
+        "t the VFAT/LFN extensions. It is automatically generated\r\nbased on the long name" +
+        " (see above).\r\n");
             // 
             // cbxReadOnly
             // 
@@ -240,6 +246,7 @@
             this.lblAccessed.Size = new System.Drawing.Size(59, 15);
             this.lblAccessed.TabIndex = 22;
             this.lblAccessed.Text = "Accessed:";
+            this.toolTip.SetToolTip(this.lblAccessed, resources.GetString("lblAccessed.ToolTip"));
             // 
             // dateAccessed
             // 
@@ -251,6 +258,7 @@
             this.dateAccessed.ShowUpDown = true;
             this.dateAccessed.Size = new System.Drawing.Size(295, 23);
             this.dateAccessed.TabIndex = 3;
+            this.toolTip.SetToolTip(this.dateAccessed, resources.GetString("dateAccessed.ToolTip"));
             // 
             // dateCreated
             // 
@@ -262,6 +270,8 @@
             this.dateCreated.ShowUpDown = true;
             this.dateCreated.Size = new System.Drawing.Size(295, 23);
             this.dateCreated.TabIndex = 1;
+            this.toolTip.SetToolTip(this.dateCreated, "This is the date and time when the file or directory was originally\r\ncreated. Onl" +
+        "y systems supporting the VFAT extensions use this value.");
             // 
             // lblModified
             // 
@@ -271,6 +281,7 @@
             this.lblModified.Size = new System.Drawing.Size(58, 15);
             this.lblModified.TabIndex = 19;
             this.lblModified.Text = "Modified:";
+            this.toolTip.SetToolTip(this.lblModified, "This is the date and time when the file or directory was last\r\nwritten to.");
             // 
             // lblCreated
             // 
@@ -280,6 +291,8 @@
             this.lblCreated.Size = new System.Drawing.Size(51, 15);
             this.lblCreated.TabIndex = 18;
             this.lblCreated.Text = "Created:";
+            this.toolTip.SetToolTip(this.lblCreated, "This is the date and time when the file or directory was originally\r\ncreated. Onl" +
+        "y systems supporting the VFAT extensions use this value.\r\n");
             // 
             // dateModified
             // 
@@ -291,6 +304,7 @@
             this.dateModified.ShowUpDown = true;
             this.dateModified.Size = new System.Drawing.Size(295, 23);
             this.dateModified.TabIndex = 2;
+            this.toolTip.SetToolTip(this.dateModified, "This is the date and time when the file or directory was last\r\nwritten to.");
             // 
             // btnCancel
             // 
@@ -321,16 +335,17 @@
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 346);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 341);
             this.pnlBottom.Name = "pnlBottom";
             this.pnlBottom.Size = new System.Drawing.Size(384, 50);
             this.pnlBottom.TabIndex = 10;
             // 
             // lblSeparator1
             // 
-            this.lblSeparator1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblSeparator1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblSeparator1.Enabled = false;
             this.lblSeparator1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lblSeparator1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.lblSeparator1.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.lblSeparator1.Location = new System.Drawing.Point(12, 50);
             this.lblSeparator1.Name = "lblSeparator1";
             this.lblSeparator1.Size = new System.Drawing.Size(360, 1);
@@ -338,9 +353,10 @@
             // 
             // lblSeparator2
             // 
-            this.lblSeparator2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblSeparator2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblSeparator2.Enabled = false;
             this.lblSeparator2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lblSeparator2.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.lblSeparator2.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.lblSeparator2.Location = new System.Drawing.Point(12, 201);
             this.lblSeparator2.Name = "lblSeparator2";
             this.lblSeparator2.Size = new System.Drawing.Size(360, 1);
@@ -348,9 +364,10 @@
             // 
             // lblSeparator3
             // 
-            this.lblSeparator3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblSeparator3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.lblSeparator3.Enabled = false;
             this.lblSeparator3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lblSeparator3.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.lblSeparator3.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.lblSeparator3.Location = new System.Drawing.Point(12, 299);
             this.lblSeparator3.Name = "lblSeparator3";
             this.lblSeparator3.Size = new System.Drawing.Size(360, 1);
@@ -372,7 +389,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(384, 396);
+            this.ClientSize = new System.Drawing.Size(384, 391);
             this.Controls.Add(this.cbxArchive);
             this.Controls.Add(this.lblAttributes);
             this.Controls.Add(this.cbxSystem);
