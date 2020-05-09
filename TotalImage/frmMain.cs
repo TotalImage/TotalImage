@@ -53,6 +53,11 @@ namespace TotalImage
             }
         }
 
+        private void hexView_Click(object sender, EventArgs e)
+        {
+
+        }
+
         //Allows viewing and editing both volume labels
         private void changeVolumeLabel_Click(object sender, EventArgs e)
         {
@@ -236,7 +241,8 @@ namespace TotalImage
         //Formats the selected partition
         private void format_Click(object sender, EventArgs e)
         {
-
+            dlgFormat dlg = new dlgFormat();
+            dlg.ShowDialog();
         }
 
         //Save the changes made to the current image since the last save or since it was opened
