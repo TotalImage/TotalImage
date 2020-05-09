@@ -53,9 +53,11 @@ namespace TotalImage
             }
         }
 
+        //Shows a hex view of the current image
         private void hexView_Click(object sender, EventArgs e)
         {
-
+            frmHexView frm = new frmHexView();
+            frm.Show();
         }
 
         //Allows viewing and editing both volume labels
@@ -210,19 +212,48 @@ namespace TotalImage
         //Deletes a file or folder
         private void delete_Click(object sender, EventArgs e)
         {
-
+            if (lstFiles.Focused)
+            {
+                if(lstFiles.SelectedItems.Count == 1)
+                {
+                    DialogResult = MessageBox.Show("Are you sure you want to delete 1 item occupying X bytes?", "Delete item", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if(DialogResult == DialogResult.No || DialogResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                }
+                else if(lstFiles.SelectedItems.Count > 1)
+                {
+                    //First get the total size of all selected items
+                    DialogResult = MessageBox.Show("Are you sure you want to delete " + lstFiles.SelectedItems.Count + " items occupying X bytes?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (DialogResult == DialogResult.No || DialogResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+                }
+                foreach(ListViewItem lvi in lstFiles.SelectedItems)
+                {
+                    /* Delete each selected item */      
+                }
+            }
+            else if (lstDirectories.Focused)
+            {
+                /* Delete the selected directory */
+            }
         }
 
         //Checks if a deleted file or folder can be undeleted and if so, offers to undelete it
         private void undelete_Click(object sender, EventArgs e)
         {
-
+            dlgUndelete dlg = new dlgUndelete();
+            dlg.ShowDialog();
         }
 
         //Renames a file or folder
         private void rename_Click(object sender, EventArgs e)
         {
-
+            dlgRename dlg = new dlgRename();
+            dlg.ShowDialog();
         }
 
         //Changes image format
