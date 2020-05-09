@@ -1,6 +1,6 @@
 ﻿namespace TotalImage
 {
-    partial class dlgOptions
+    partial class dlgSettings
     {
         /// <summary>
         /// Required designer variable.
@@ -68,7 +68,7 @@
             this.pnlBottom.Size = new System.Drawing.Size(642, 50);
             this.pnlBottom.TabIndex = 2;
             // 
-            // dlgOptions
+            // dlgSettings
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -81,11 +81,11 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "dlgOptions";
+            this.Name = "dlgSettings";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Options";
+            this.Text = "Settings";
             this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
 

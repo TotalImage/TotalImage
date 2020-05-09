@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
@@ -24,17 +23,64 @@ namespace TotalImage
             InitializeComponent();
         }
 
-        private void newToolStripMenuItem_Click(object sender, System.EventArgs e)
+        #region Event Handlers
+        private void frmMain_Load(object sender, EventArgs e)
         {
-            NewImage();
+            sorter = new ListViewColumnSorter();
+            lstFiles.ListViewItemSorter = sorter;
+
+            //Because designer doesn't have the Enter key in the list for some reason...
+            propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter;
+            propertiesToolStripMenuItem1.ShortcutKeys = Keys.Alt | Keys.Enter;
+            propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
+
+            DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
+            GetFolderIcon();
+            lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
         }
 
-        private void newToolStripButton_Click(object sender, System.EventArgs e)
+        //Injects a folder into the image
+        private void injectFolder_Click(object sender, EventArgs e)
         {
-            NewImage();
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.Description = "Select a folder to inject...";
+            fbd.ShowNewFolderButton = true;
+
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                /* Inject the entire selected folder into the image */
+                unsavedChanges = true;
+            }
         }
 
-        private void NewImage()
+        //Allows viewing and editing both volume labels
+        private void changeVolumeLabel_Click(object sender, EventArgs e)
+        {
+            dlgChangeVolLabel dlg = new dlgChangeVolLabel(image.GetRDVolumeLabel(), image.GetBPBVolumeLabel());
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                unsavedChanges = true;
+                saveToolStripButton.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+            }
+        }
+
+        //Allows viewing and editing bootsector properties
+        private void bootSectorProperties_Click(object sender, EventArgs e)
+        {
+            dlgBootSector dlg = new dlgBootSector();
+            dlg.ShowDialog();
+        }
+
+        //Shows current image information
+        private void imageInformation_Click(object sender, EventArgs e)
+        {
+            dlgImageInfo dlg = new dlgImageInfo();
+            dlg.ShowDialog();
+        }
+
+        //Creates a new disk image
+        private void newImage_Click(object sender, System.EventArgs e)
         {
             if (unsavedChanges)
             {
@@ -56,58 +102,26 @@ namespace TotalImage
             }
         }
 
-        private void saveAsToolStripMenuItem_Click(object sender, System.EventArgs e)
-        {
-            SaveNewImage();
-        }
-
+        /* The Save button on the command bar acts as either: 
+         * -"Save" when the file is already saved and there are unsaved changes
+         * -"Save as" when the file has not been saved yet */
         private void saveToolStripButton_Click(object sender, EventArgs e)
         {
             if (unsavedChanges)
             {
                 if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
                 {
-                    SaveNewImage();
+                    saveAs_Click(sender, e);
                 }
                 else
                 {
-                    SaveChanges();
+                    save_Click(sender, e);
                 }
             }
         }
 
-        private void SaveNewImage()
-        {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.AutoUpgradeEnabled = true;
-            sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-            sfd.OverwritePrompt = true;
-            sfd.Title = "Save image...";
-            sfd.DefaultExt = "img";
-            sfd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
-                /*"WinImage compressed image (*.imz)|*.imz|" +
-                "DiskDupe image (*.ddi)|*.ddi|" +
-                "Anex86 floppy disk image (*.fdi)|*.fdi|" +
-                "86Box surface image (*.86f)|*.86f|" +*/
-                "All files (*.*)|*.*";
-
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                if (sfd.FilterIndex == 0 || sfd.FileName.EndsWith(".img") || sfd.FileName.EndsWith(".ima") ||
-                    sfd.FileName.EndsWith(".vfd") || sfd.FileName.EndsWith(".flp") || sfd.FileName.EndsWith(".dsk") ||
-                    sfd.FileName.EndsWith(".hdm"))
-                {
-                    byte[] imageBytes = image.GetImageBytes();
-                    System.IO.File.WriteAllBytes(sfd.FileName, imageBytes);
-                }
-
-                filename = Path.GetFileName(sfd.FileName);
-                path = sfd.FileName;
-                Text = filename + " - TotalImage";
-            }
-        }
-
-        private void createAFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        //Creates a new folder
+        private void newFolder_Click(object sender, EventArgs e)
         {
             dlgNewFolder dlg = new dlgNewFolder();
             dlg.ShowDialog();
@@ -188,6 +202,102 @@ namespace TotalImage
             lstFiles.View = View.Tile;
         }
 
+        //Deletes a file or folder
+        private void delete_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Checks if a deleted file or folder can be undeleted and if so, offers to undelete it
+        private void undelete_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Renames a file or folder
+        private void rename_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Changes image format
+        private void changeFormat_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Defragments the selected partition
+        private void defragment_Click(object sender, EventArgs e)
+        {
+            dlgDefragment dlg = new dlgDefragment();
+            dlg.ShowDialog();
+        }
+
+        //Formats the selected partition
+        private void format_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Save the changes made to the current image since the last save or since it was opened
+        private void save_Click(object sender, EventArgs e)
+        {
+            byte[] imageBytes = image.GetImageBytes();
+            File.WriteAllBytes(path, imageBytes);
+
+            saveToolStripButton.Enabled = false;
+            saveToolStripMenuItem.Enabled = false;
+            Text = filename + " - TotalImage";
+            unsavedChanges = false;
+        }
+
+        //Saves the current image as a new file, along with any changes made to it since the last save
+        private void saveAs_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.AutoUpgradeEnabled = true;
+            sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+            sfd.OverwritePrompt = true;
+            sfd.Title = "Save image...";
+            sfd.DefaultExt = "img";
+            sfd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
+                /*"WinImage compressed image (*.imz)|*.imz|" +
+                "DiskDupe image (*.ddi)|*.ddi|" +
+                "Anex86 floppy disk image (*.fdi)|*.fdi|" +
+                "86Box surface image (*.86f)|*.86f|" +*/
+                "All files (*.*)|*.*";
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                if (sfd.FilterIndex == 0 || sfd.FileName.EndsWith(".img") || sfd.FileName.EndsWith(".ima") ||
+                    sfd.FileName.EndsWith(".vfd") || sfd.FileName.EndsWith(".flp") || sfd.FileName.EndsWith(".dsk") ||
+                    sfd.FileName.EndsWith(".hdm"))
+                {
+                    byte[] imageBytes = image.GetImageBytes();
+                    File.WriteAllBytes(sfd.FileName, imageBytes);
+                }
+
+                filename = Path.GetFileName(sfd.FileName);
+                path = sfd.FileName;
+                Text = filename + " - TotalImage";
+            }
+        }
+
+        //Closes the application
+        private void exit_Click(object sender, EventArgs e)
+        {
+            if (unsavedChanges)
+            {
+                DialogResult = MessageBox.Show("You have unsaved changed. Would you like to save them before closing TotalImage?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (DialogResult == DialogResult.Yes)
+                {
+                    save_Click(sender, e);
+                }
+                else if (DialogResult == DialogResult.Cancel) return;
+            }
+            Application.Exit();
+        }
+
         private void menuBarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             menuBar.Visible = menuBarToolStripMenuItem.Checked;
@@ -217,7 +327,7 @@ namespace TotalImage
             statusBarToolStripMenuItem1.Checked = statusBarToolStripMenuItem.Checked;
         }
 
-        private void openToolStripButton_Click(object sender, EventArgs e)
+        private void openImage_Click(object sender, EventArgs e)
         {
             if (unsavedChanges)
             {
@@ -238,19 +348,8 @@ namespace TotalImage
             ofd.CheckPathExists = true;
             ofd.Multiselect = false;
             //ofd.ShowReadOnly = true; //We probably want this, but it degrades the dialog appearance to XP dialog... Needs a workaround
-            ofd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
-                /* "WinImage compressed image (*.imz)|*.imz|" +
-                 "DiskDupe image (*.ddi)|*.ddi|" +
-                 "IBM SaveDiskF image (*.dsk)|*.dsk|" +
-                 "TeleDisk image (*.td0)|*.td0|" +
-                 "ImageDisk image (*.imd)|*.imd|" +
-                 "CopyQM image (*.cqm)|*.cqm|" +
-                 "EZ-DisKlone Plus image (*.fdf)|*.fdf|" +
-                 "Virtual Hard Disk image (*.vhd)|*.vhd|" +
-                 "Anex86 floppy disk image (*.fdi)|*.fdi|" +
-                 "Anex86 hard disk image (*.hdi)|*.hdi|" +
-                 "86Box surface image (*.86f)|*.86f|" +
-                 "MFM surface image (*.mfm)|*.mfm|" +*/
+            ofd.Filter = 
+                "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "All files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -259,125 +358,13 @@ namespace TotalImage
             }
         }
 
-        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
-        private void OpenImage(string path)
-        {
-            filename = Path.GetFileName(path);
-            Text = filename + " - TotalImage";
-            lstDirectories.Nodes.Clear();
-            lstFiles.Items.Clear();
-
-            TreeNode root = new TreeNode("\\");
-            root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            lstDirectories.Nodes.Add(root);
-            image = new RawSector();
-            lstFiles.ListViewItemSorter = null;
-            lstFiles.BeginUpdate();
-            lstDirectories.BeginUpdate();
-            image.LoadImage(path);
-            lstDirectories.EndUpdate();
-            SortDirTree();
-            lstDirectories.SelectedNode = lstDirectories.Nodes[0];
-            lstFiles.EndUpdate();
-            lstFiles.ListViewItemSorter = sorter;
-            lblStatusCapacity.Text = GetImageCapacity() + " KiB";
-            EnableUI();
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (unsavedChanges)
-            {
-                DialogResult = MessageBox.Show("You have unsaved changes. Would you like to save the current image first before opening another one?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                switch (DialogResult)
-                {
-                    case DialogResult.Cancel: return;
-                    case DialogResult.Yes: /* Save changes to the current image, then close the current image */ break;
-                    case DialogResult.No: /* Close the current image */ break;
-                }
-            }
-
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.AutoUpgradeEnabled = true;
-            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-            ofd.Title = "Open image...";
-            ofd.CheckFileExists = true;
-            ofd.CheckPathExists = true;
-            ofd.Multiselect = false;
-            //ofd.ShowReadOnly = true; //We probably want this, but it degrades the dialog appearance to XP dialog... Needs a workaround
-            ofd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
-                /* "WinImage compressed image (*.imz)|*.imz|" +
-                 "DiskDupe image (*.ddi)|*.ddi|" +
-                 "IBM SaveDiskF image (*.dsk)|*.dsk|" +
-                 "TeleDisk image (*.td0)|*.td0|" +
-                 "ImageDisk image (*.imd)|*.imd|" +
-                 "CopyQM image (*.cqm)|*.cqm|" +
-                 "EZ-DisKlone Plus image (*.fdf)|*.fdf|" +
-                 "Virtual Hard Disk image (*.vhd)|*.vhd|" +
-                 "Anex86 floppy disk image (*.fdi)|*.fdi|" +
-                 "Anex86 hard disk image (*.hdi)|*.hdi|" +
-                 "86Box surface image (*.86f)|*.86f|" +
-                 "MFM surface image (*.mfm)|*.mfm|" +*/
-                "All files (*.*)|*.*";
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                OpenImage(ofd.FileName);
-            }
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //Needs a check for unsaved changes
-            if (unsavedChanges)
-            {
-                DialogResult = MessageBox.Show("You have unsaved changed. Would you like to save them before closing TotalImage?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (DialogResult == DialogResult.Yes)
-                {
-                    /* Save changes */
-                }
-                else if (DialogResult == DialogResult.Cancel) return;
-            }
-            Application.Exit();
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void about_Click(object sender, EventArgs e)
         {
             dlgAbout dlg = new dlgAbout();
             dlg.ShowDialog();
         }
 
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dlgOptions dlg = new dlgOptions();
-            dlg.ShowDialog();
-        }
-
-        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dlgProperties dlg = new dlgProperties((DirectoryEntry)lstFiles.SelectedItems[0].Tag);
-            dlg.ShowDialog();
-        }
-
-        private void changeVolumeLabelToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dlgChangeVolLabel dlg = new dlgChangeVolLabel(image.GetRDVolumeLabel(), image.GetBPBVolumeLabel());
-            dlg.ShowDialog();
-        }
-
-        private void bootSectorPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dlgBootSector dlg = new dlgBootSector();
-            dlg.ShowDialog();
-        }
-
-        private void imageInformationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dlgImageInfo dlg = new dlgImageInfo();
-            dlg.ShowDialog();
-        }
-
-        private void totalImageOnGitHubToolStripMenuItem_Click(object sender, EventArgs e)
+        private void GitHub_Click(object sender, EventArgs e)
         {
             var process = new System.Diagnostics.ProcessStartInfo()
             {
@@ -417,76 +404,30 @@ namespace TotalImage
             statusBarToolStripMenuItem.Checked = statusBarToolStripMenuItem1.Checked;
         }
 
-        private void insertToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            InjectFiles();
-        }
-
-        private void extractToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Extract();
-        }
-
         /* Extracts file(s) or folder(s) from the image to the specified path
          * This code is just a POC - needs to be improved to use the actual selected path and to follow the selected options
          * from the extraction dialog. */
-        public void Extract()
+        private void extract_Click(object sender, EventArgs e)
         {
             dlgExtract dlg = new dlgExtract();
-            if(dlg.ShowDialog() == DialogResult.OK)
+            if (dlg.ShowDialog() == DialogResult.OK)
             {
                 if (lstFiles.SelectedItems.Count == 1)
                 {
                     image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                 }
-                else if(lstFiles.SelectedItems.Count > 1)
+                else if (lstFiles.SelectedItems.Count > 1)
                 {
-                    foreach(ListViewItem lvi in lstFiles.SelectedItems)
+                    foreach (ListViewItem lvi in lstFiles.SelectedItems)
                     {
                         DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
-                        if(!Convert.ToBoolean(entry.attr & 0x10))
+                        if (!Convert.ToBoolean(entry.attr & 0x10))
                         {
                             image.ExtractFile(entry, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
                         }
                     }
                 }
             }
-        }
-
-        /* Returns size of directory
-         * This needs to be moved to the appropriate file system classes and extended with the option to include subdirs as well. */
-        private uint CalculateDirSize()
-        {
-            uint dirSize = 0;
-
-            foreach (ListViewItem lvi in lstFiles.Items)
-            {
-                DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
-                if (!Convert.ToBoolean(entry.attr & 0x10))
-                {
-                    dirSize += entry.fileSize;
-                }
-            }
-
-            return dirSize;
-        }
-
-        /* Returns the number of files in a directory
-         * This needs to be moved to the appropriate file system classes and extended with the option to include subdirs as well. */
-        private uint GetFileCount()
-        {
-            uint fileCount = 0;
-
-            foreach (ListViewItem lvi in lstFiles.Items)
-            {
-                DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
-                if (!Convert.ToBoolean(entry.attr & 0x10))
-                {
-                    fileCount++;
-                }
-            }
-
-            return fileCount;
         }
 
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
@@ -556,40 +497,6 @@ namespace TotalImage
             }
         }
 
-        private void propertiesToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            dlgProperties dlg = new dlgProperties((DirectoryEntry)lstDirectories.SelectedNode.Tag);
-            dlg.ShowDialog();
-        }
-
-        private void extractToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Extract();
-        }
-
-        private void createAFolderToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            dlgNewFolder dlg = new dlgNewFolder();
-            dlg.ShowDialog();
-        }
-
-        private void extractToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            Extract();
-        }
-
-        private void propertiesToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            dlgProperties dlg = new dlgProperties((DirectoryEntry)lstFiles.SelectedItems[0].Tag);
-            dlg.ShowDialog();
-        }
-
-        private void createAFolderToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            dlgNewFolder dlg = new dlgNewFolder();
-            dlg.ShowDialog();
-        }
-
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (lstFiles.SelectedItems.Count == 0 || lstFiles.SelectedItems[0].Text == "..")
@@ -618,70 +525,25 @@ namespace TotalImage
             }
         }
 
-        private void managePartitionsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void managePartitions_Click(object sender, EventArgs e)
         {
             dlgManagePart dlg = new dlgManagePart();
             dlg.ShowDialog();
         }
 
-        private void toolStripButton10_Click(object sender, EventArgs e)
+        private void settings_Click(object sender, EventArgs e)
         {
-            dlgOptions dlg = new dlgOptions();
+            dlgSettings dlg = new dlgSettings();
             dlg.ShowDialog();
         }
 
-        private void toolStripButton8_Click(object sender, EventArgs e)
-        {
-            dlgImageInfo dlg = new dlgImageInfo();
-            dlg.ShowDialog();
-        }
-
-        private void toolStripButton7_Click(object sender, EventArgs e)
-        {
-            dlgBootSector dlg = new dlgBootSector();
-            dlg.ShowDialog();
-        }
-
-        private void toolStripButton6_Click(object sender, EventArgs e)
-        {
-            dlgChangeVolLabel dlg = new dlgChangeVolLabel(image.GetRDVolumeLabel(), image.GetBPBVolumeLabel());
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                unsavedChanges = true;
-                saveToolStripButton.Enabled = true;
-                saveToolStripMenuItem.Enabled = true;
-            }
-        }
-
-        private void toolStripButton9_Click(object sender, EventArgs e)
-        {
-            dlgManagePart dlg = new dlgManagePart();
-            dlg.ShowDialog();
-        }
-
-        private void toolStripButton5_Click(object sender, EventArgs e)
+        private void properties_Click(object sender, EventArgs e)
         {
             dlgProperties dlg = new dlgProperties((DirectoryEntry)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
         }
 
-        private void toolStripButton3_Click(object sender, EventArgs e)
-        {
-            dlgNewFolder dlg = new dlgNewFolder();
-            dlg.ShowDialog();
-        }
-
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            Extract();
-        }
-
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            InjectFiles();
-        }
-
-        private void InjectFiles()
+        private void injectFiles_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.AutoUpgradeEnabled = true;
@@ -698,12 +560,7 @@ namespace TotalImage
             }
         }
 
-        private void closeImageToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CloseImage();
-        }
-
-        private void CloseImage()
+        private void closeImage_Click(object sender, EventArgs e)
         {
             /* Offer to save any unsaved changes before closing the image file */
             if (unsavedChanges)
@@ -724,270 +581,6 @@ namespace TotalImage
             lstDirectories.Nodes.Clear();
             lstFiles.Items.Clear();
             DisableUI();
-        }
-
-        private void toolStripButton11_Click(object sender, EventArgs e)
-        {
-            CloseImage();
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveChanges();
-        }
-
-        //Save the changes made to the image since the last save or since it was opened
-        private void SaveChanges()
-        {
-            byte[] imageBytes = image.GetImageBytes();
-            System.IO.File.WriteAllBytes(path, imageBytes);
-
-            saveToolStripButton.Enabled = false;
-            saveToolStripMenuItem.Enabled = false;
-            Text = filename + " - TotalImage";
-            unsavedChanges = false;
-        }
-
-        private void injectAFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            InjectFolder();
-        }
-
-        private void InjectFolder()
-        {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            fbd.Description = "Select a folder to inject...";
-            fbd.ShowNewFolderButton = true;
-
-            if (fbd.ShowDialog() == DialogResult.OK)
-            {
-                /* Inject the entire selected folder into the image */
-                unsavedChanges = true;
-            }
-        }
-
-        private void frmMain_Load(object sender, EventArgs e)
-        {
-            sorter = new ListViewColumnSorter();
-            lstFiles.ListViewItemSorter = sorter;
-
-            //Because designer doesn't have the Enter key in the list for some reason...
-            propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter;
-            propertiesToolStripMenuItem1.ShortcutKeys = Keys.Alt | Keys.Enter;
-            propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
-
-            DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
-            GetFolderIcon();
-            lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-        }
-
-        //Gets the default Windows folder icon with SHGetFileInfo that will be used for folders
-        public void GetFolderIcon()
-        {
-            Icon icon = GetShellFileIcon("C:\\Windows", FileAttributes.Directory);
-            imgFilesSmall.Images.Add("folder", icon);
-        }
-
-        //Adds a new node to the root directory in the directory tree
-        public void AddToRootDir(DirectoryEntry entry)
-        {
-            string filename = entry.name.TrimEnd('.');
-            TreeNode node = new TreeNode(filename);
-            node.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            node.Tag = entry;
-            lstDirectories.Nodes[0].Nodes.Add(node);
-        }
-
-        public void SortDirTree()
-        {
-            lstDirectories.Sort();
-        }
-
-        //Finds the node with the specified entry
-        private TreeNode FindNode(TreeNode startNode, uint startCluster)
-        {
-            foreach (TreeNode node in startNode.Nodes)
-            {
-                uint sc = ((uint)((DirectoryEntry)node.Tag).fstClusHI << 16) + ((DirectoryEntry)node.Tag).fstClusLO;
-
-                if (sc == startCluster)
-                {
-                    return node;
-                }
-                else
-                {
-                    TreeNode nodeChild = FindNode(node, startCluster);
-                    if (nodeChild != null)
-                    {
-                        return nodeChild;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        public void AddToDir(DirectoryEntry parent, DirectoryEntry child)
-        {
-            string childFilename = child.name.TrimEnd('.');
-            TreeNode childNode = new TreeNode(childFilename);
-            childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            childNode.Tag = child;
-            TreeNode parentNode = FindNode(lstDirectories.Nodes[0], ((uint)(parent.fstClusHI << 16) + parent.fstClusLO));
-            if (parentNode != null)
-            {
-                parentNode.Nodes.Add(childNode);
-            }
-            else
-            {
-                throw new Exception("Parent node not found");
-            }
-        }
-
-        //Obtains the fancy file type name
-        public string GetShellFileType(string filename, FileAttributes attributes)
-        {
-            var shinfo = new SHFILEINFO();
-            var flags = SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
-
-            if (SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
-            {
-                return "File";
-            }
-
-            return shinfo.szTypeName;
-        }
-
-        //Obtains the icon for the file type
-        public Icon GetShellFileIcon(string filename, FileAttributes attributes)
-        {
-            var shinfo = new SHFILEINFO();
-            var flags = SHGFI.ICON | SHGFI.SMALLICON | SHGFI.USEFILEATTRIBUTES;
-
-            SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
-            Icon icon = (Icon)Icon.FromHandle(shinfo.hIcon).Clone();
-            DestroyIcon(shinfo.hIcon);
-            return icon;
-        }
-
-        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES
-         * Adds a new item to the file list */
-        public void AddToFileList(DirectoryEntry entry)
-        {
-            ListViewItem lvi = new ListViewItem();
-            if (entry.name.Substring(0, 2) != "..")
-            {
-                string filename = entry.name.TrimEnd('.');
-                lvi.Text = filename;
-                ushort year = (ushort)(((entry.wrtDate & 0xFE00) >> 9) + 1980);
-                byte month = (byte)((entry.wrtDate & 0x1E0) >> 5);
-                byte day = (byte)(entry.wrtDate & 0x1F);
-                byte hours = (byte)((entry.wrtTime & 0xF800) >> 11);
-                byte minutes = (byte)((entry.wrtTime & 0x7E0) >> 5);
-                byte seconds = (byte)((entry.wrtTime & 0x1F) * 2); //Resolution for seconds is 2s
-
-                if (month <= 0 || month >= 13) month = 1;
-                if (day <= 0 || day >= 31) day = 1; //We don't bother checking for February 31st etc. yet...
-
-                if (Convert.ToBoolean(entry.attr & 0x10))
-                {
-                    string filetype = GetShellFileType(filename, FileAttributes.Directory);
-                    lvi.SubItems.Add(filetype);
-                    lvi.SubItems.Add("");
-                    lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                }
-                else
-                {
-                    string filetype = GetShellFileType(filename, FileAttributes.Normal);
-                    lvi.SubItems.Add(filetype);
-                    lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
-
-                    //This will only add a new icon to the list if the associated type hasn't been encountered yet
-                    if (!imgFilesSmall.Images.ContainsKey(filetype))
-                    {
-                        Icon icon = GetShellFileIcon(filename, FileAttributes.Normal);
-                        imgFilesSmall.Images.Add(filetype, icon);
-                    }
-                    lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype);
-                }
-
-                DateTime date = new DateTime(year, month, day, hours, minutes, seconds);
-                lvi.SubItems.Add(date.ToString());
-            }
-            else //The ".." virtual folder
-            {
-                lvi.Text = "..";
-                lvi.ImageIndex = 0;
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add("");
-            }
-            lvi.Tag = entry;
-            lstFiles.Items.Add(lvi);
-        }
-
-        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
-        private uint GetImageCapacity()
-        {
-            return 0;
-        }
-
-        //Enables various UI elements after an image is loaded
-        public void EnableUI()
-        {
-            closeToolStripButton.Enabled = true;
-            injectToolStripButton.Enabled = true;
-            newFolderToolStripButton.Enabled = true;
-            labelToolStripMenuButton.Enabled = true;
-            bootsectToolStripButton.Enabled = true;
-            infoToolStripButton.Enabled = true;
-            saveAsToolStripMenuItem.Enabled = true;
-            closeImageToolStripMenuItem.Enabled = true;
-
-            foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
-            {
-                if (item.CanSelect)
-                {
-                    item.Enabled = true;
-                }
-            }
-
-            //Not available for floppies - once there's HDD support, this code needs to be adjusted accordingly...
-            managePartitionsToolStripMenuItem.Enabled = false;
-            selectPartitionToolStripMenuItem.Enabled = false;
-            managePartitionsToolStripButton.Enabled = false;
-            selectPartitionToolStripComboBox.Enabled = false;
-        }
-
-        //Disables various UI elements after an image is loaded
-        private void DisableUI()
-        {
-            closeToolStripButton.Enabled = false;
-            injectToolStripButton.Enabled = false;
-            extractToolStripButton.Enabled = false;
-            deleteToolStripButton.Enabled = false;
-            propertiesToolStripButton.Enabled = false;
-            newFolderToolStripButton.Enabled = false;
-            labelToolStripMenuButton.Enabled = false;
-            bootsectToolStripButton.Enabled = false;
-            infoToolStripButton.Enabled = false;
-            saveToolStripButton.Enabled = false;
-            managePartitionsToolStripButton.Enabled = false;
-            selectPartitionToolStripComboBox.Enabled = false;
-
-            managePartitionsToolStripMenuItem.Enabled = false;
-            selectPartitionToolStripMenuItem.Enabled = false;
-            saveAsToolStripMenuItem.Enabled = false;
-            saveToolStripMenuItem.Enabled = false;
-            closeImageToolStripMenuItem.Enabled = false;
-
-            foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
-            {
-                if (item.CanSelect)
-                {
-                    item.Enabled = false;
-                }
-            }
         }
 
         private void lstFiles_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -1252,22 +845,7 @@ namespace TotalImage
             lstFiles.View = View.Tile;
         }
 
-        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            lstFiles.Focus();
-            foreach (ListViewItem lvi in lstFiles.Items)
-            {
-                lvi.Selected = true;
-            }
-        }
-
-        private void defragmentToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            dlgDefragment dlg = new dlgDefragment();
-            dlg.ShowDialog();
-        }
-
-        private void selectAllToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void selectAll_Click(object sender, EventArgs e)
         {
             lstFiles.Focus();
             foreach (ListViewItem lvi in lstFiles.Items)
@@ -1334,22 +912,12 @@ namespace TotalImage
             }
         }
 
-        private void expandDirectoryTreeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void expandDirectoryTree_Click(object sender, EventArgs e)
         {
             lstDirectories.ExpandAll();
         }
 
-        private void collapseDirectoryTreeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            lstDirectories.CollapseAll();
-        }
-
-        private void expandDirectoryTreeToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            lstDirectories.ExpandAll();
-        }
-
-        private void collapseDirectoryTreeToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void collapseDirectoryTree_Click(object sender, EventArgs e)
         {
             lstDirectories.CollapseAll();
         }
@@ -1359,7 +927,7 @@ namespace TotalImage
             if (lstDirectories.SelectedNode == null)
             {
                 extractToolStripMenuItem1.Enabled = false;
-                createAFolderToolStripMenuItem1.Enabled = false;
+                newFolderToolStripMenuItem1.Enabled = false;
                 renameToolStripMenuItem1.Enabled = false;
                 propertiesToolStripMenuItem1.Enabled = false;
                 undeleteToolStripMenuItem1.Enabled = false;
@@ -1373,13 +941,13 @@ namespace TotalImage
                     renameToolStripMenuItem1.Enabled = false;
                     propertiesToolStripMenuItem1.Enabled = false;
                     undeleteToolStripMenuItem1.Enabled = false;
-                    createAFolderToolStripMenuItem1.Enabled = true;
+                    newFolderToolStripMenuItem1.Enabled = true;
                     extractToolStripMenuItem1.Enabled = true;
                 }
                 else
                 {
                     extractToolStripMenuItem1.Enabled = true;
-                    createAFolderToolStripMenuItem1.Enabled = true;
+                    newFolderToolStripMenuItem1.Enabled = true;
                     renameToolStripMenuItem1.Enabled = true;
                     propertiesToolStripMenuItem1.Enabled = true;
                     undeleteToolStripMenuItem1.Enabled = false;
@@ -1402,14 +970,285 @@ namespace TotalImage
             if (unsavedChanges)
             {
                 DialogResult = MessageBox.Show("You have unsaved changes in the current image. Do you want to save them before closing TotalImage?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if(DialogResult == DialogResult.Yes)
+                if (DialogResult == DialogResult.Yes)
                 {
                     /* Save changes */
                 }
-                else if(DialogResult == DialogResult.Cancel)
+                else if (DialogResult == DialogResult.Cancel)
                 {
                     e.Cancel = true;
                     return;
+                }
+            }
+        }
+        #endregion
+
+        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
+        private void OpenImage(string path)
+        {
+            filename = Path.GetFileName(path);
+            Text = filename + " - TotalImage";
+            lstDirectories.Nodes.Clear();
+            lstFiles.Items.Clear();
+
+            TreeNode root = new TreeNode("\\");
+            root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+            lstDirectories.Nodes.Add(root);
+            image = new RawSector();
+            lstFiles.ListViewItemSorter = null;
+            lstFiles.BeginUpdate();
+            lstDirectories.BeginUpdate();
+            image.LoadImage(path);
+            lstDirectories.EndUpdate();
+            SortDirTree();
+            lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+            lstFiles.EndUpdate();
+            lstFiles.ListViewItemSorter = sorter;
+            lblStatusCapacity.Text = GetImageCapacity() + " KiB";
+            EnableUI();
+        }
+
+        /* Returns size of directory
+         * This needs to be moved to the appropriate file system classes and extended with the option to include subdirs as well. */
+        private uint CalculateDirSize()
+        {
+            uint dirSize = 0;
+
+            foreach (ListViewItem lvi in lstFiles.Items)
+            {
+                DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
+                if (!Convert.ToBoolean(entry.attr & 0x10))
+                {
+                    dirSize += entry.fileSize;
+                }
+            }
+
+            return dirSize;
+        }
+
+        /* Returns the number of files in a directory
+         * This needs to be moved to the appropriate file system classes and extended with the option to include subdirs as well. */
+        private uint GetFileCount()
+        {
+            uint fileCount = 0;
+
+            foreach (ListViewItem lvi in lstFiles.Items)
+            {
+                DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
+                if (!Convert.ToBoolean(entry.attr & 0x10))
+                {
+                    fileCount++;
+                }
+            }
+
+            return fileCount;
+        }
+
+        //Gets the default Windows folder icon with SHGetFileInfo that will be used for folders
+        public void GetFolderIcon()
+        {
+            Icon icon = GetShellFileIcon("C:\\Windows", FileAttributes.Directory);
+            imgFilesSmall.Images.Add("folder", icon);
+        }
+
+        //Adds a new node to the root directory in the directory tree
+        public void AddToRootDir(DirectoryEntry entry)
+        {
+            string filename = entry.name.TrimEnd('.');
+            TreeNode node = new TreeNode(filename);
+            node.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+            node.Tag = entry;
+            lstDirectories.Nodes[0].Nodes.Add(node);
+        }
+
+        public void SortDirTree()
+        {
+            lstDirectories.Sort();
+        }
+
+        //Finds the node with the specified entry
+        private TreeNode FindNode(TreeNode startNode, uint startCluster)
+        {
+            foreach (TreeNode node in startNode.Nodes)
+            {
+                uint sc = ((uint)((DirectoryEntry)node.Tag).fstClusHI << 16) + ((DirectoryEntry)node.Tag).fstClusLO;
+
+                if (sc == startCluster)
+                {
+                    return node;
+                }
+                else
+                {
+                    TreeNode nodeChild = FindNode(node, startCluster);
+                    if (nodeChild != null)
+                    {
+                        return nodeChild;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public void AddToDir(DirectoryEntry parent, DirectoryEntry child)
+        {
+            string childFilename = child.name.TrimEnd('.');
+            TreeNode childNode = new TreeNode(childFilename);
+            childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+            childNode.Tag = child;
+            TreeNode parentNode = FindNode(lstDirectories.Nodes[0], ((uint)(parent.fstClusHI << 16) + parent.fstClusLO));
+            if (parentNode != null)
+            {
+                parentNode.Nodes.Add(childNode);
+            }
+            else
+            {
+                throw new Exception("Parent node not found");
+            }
+        }
+
+        //Obtains the fancy file type name
+        public string GetShellFileType(string filename, FileAttributes attributes)
+        {
+            var shinfo = new SHFILEINFO();
+            var flags = SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
+
+            if (SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
+            {
+                return "File";
+            }
+
+            return shinfo.szTypeName;
+        }
+
+        //Obtains the icon for the file type
+        public Icon GetShellFileIcon(string filename, FileAttributes attributes)
+        {
+            var shinfo = new SHFILEINFO();
+            var flags = SHGFI.ICON | SHGFI.SMALLICON | SHGFI.USEFILEATTRIBUTES;
+
+            SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
+            Icon icon = (Icon)Icon.FromHandle(shinfo.hIcon).Clone();
+            DestroyIcon(shinfo.hIcon);
+            return icon;
+        }
+
+        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES
+         * Adds a new item to the file list */
+        public void AddToFileList(DirectoryEntry entry)
+        {
+            ListViewItem lvi = new ListViewItem();
+            if (entry.name.Substring(0, 2) != "..")
+            {
+                string filename = entry.name.TrimEnd('.');
+                lvi.Text = filename;
+                ushort year = (ushort)(((entry.wrtDate & 0xFE00) >> 9) + 1980);
+                byte month = (byte)((entry.wrtDate & 0x1E0) >> 5);
+                byte day = (byte)(entry.wrtDate & 0x1F);
+                byte hours = (byte)((entry.wrtTime & 0xF800) >> 11);
+                byte minutes = (byte)((entry.wrtTime & 0x7E0) >> 5);
+                byte seconds = (byte)((entry.wrtTime & 0x1F) * 2); //Resolution for seconds is 2s
+
+                if (month <= 0 || month >= 13) month = 1;
+                if (day <= 0 || day >= 31) day = 1; //We don't bother checking for February 31st etc. yet...
+
+                if (Convert.ToBoolean(entry.attr & 0x10))
+                {
+                    string filetype = GetShellFileType(filename, FileAttributes.Directory);
+                    lvi.SubItems.Add(filetype);
+                    lvi.SubItems.Add("");
+                    lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                }
+                else
+                {
+                    string filetype = GetShellFileType(filename, FileAttributes.Normal);
+                    lvi.SubItems.Add(filetype);
+                    lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
+
+                    //This will only add a new icon to the list if the associated type hasn't been encountered yet
+                    if (!imgFilesSmall.Images.ContainsKey(filetype))
+                    {
+                        Icon icon = GetShellFileIcon(filename, FileAttributes.Normal);
+                        imgFilesSmall.Images.Add(filetype, icon);
+                    }
+                    lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype);
+                }
+
+                DateTime date = new DateTime(year, month, day, hours, minutes, seconds);
+                lvi.SubItems.Add(date.ToString());
+            }
+            else //The ".." virtual folder
+            {
+                lvi.Text = "..";
+                lvi.ImageIndex = 0;
+                lvi.SubItems.Add("");
+                lvi.SubItems.Add("");
+                lvi.SubItems.Add("");
+            }
+            lvi.Tag = entry;
+            lstFiles.Items.Add(lvi);
+        }
+
+        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
+        private uint GetImageCapacity()
+        {
+            return 0;
+        }
+
+        //Enables various UI elements after an image is loaded
+        public void EnableUI()
+        {
+            closeToolStripButton.Enabled = true;
+            injectToolStripButton.Enabled = true;
+            newFolderToolStripButton.Enabled = true;
+            labelToolStripMenuButton.Enabled = true;
+            bootsectToolStripButton.Enabled = true;
+            infoToolStripButton.Enabled = true;
+            saveAsToolStripMenuItem.Enabled = true;
+            closeImageToolStripMenuItem.Enabled = true;
+
+            foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
+            {
+                if (item.CanSelect)
+                {
+                    item.Enabled = true;
+                }
+            }
+
+            //Not available for floppies - once there's HDD support, this code needs to be adjusted accordingly...
+            managePartitionsToolStripMenuItem.Enabled = false;
+            selectPartitionToolStripMenuItem.Enabled = false;
+            managePartitionsToolStripButton.Enabled = false;
+            selectPartitionToolStripComboBox.Enabled = false;
+        }
+
+        //Disables various UI elements after an image is loaded
+        private void DisableUI()
+        {
+            closeToolStripButton.Enabled = false;
+            injectToolStripButton.Enabled = false;
+            extractToolStripButton.Enabled = false;
+            deleteToolStripButton.Enabled = false;
+            propertiesToolStripButton.Enabled = false;
+            newFolderToolStripButton.Enabled = false;
+            labelToolStripMenuButton.Enabled = false;
+            bootsectToolStripButton.Enabled = false;
+            infoToolStripButton.Enabled = false;
+            saveToolStripButton.Enabled = false;
+            managePartitionsToolStripButton.Enabled = false;
+            selectPartitionToolStripComboBox.Enabled = false;
+
+            managePartitionsToolStripMenuItem.Enabled = false;
+            selectPartitionToolStripMenuItem.Enabled = false;
+            saveAsToolStripMenuItem.Enabled = false;
+            saveToolStripMenuItem.Enabled = false;
+            closeImageToolStripMenuItem.Enabled = false;
+
+            foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
+            {
+                if (item.CanSelect)
+                {
+                    item.Enabled = false;
                 }
             }
         }

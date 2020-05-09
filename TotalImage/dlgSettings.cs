@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace TotalImage
 {
-    public partial class dlgOptions : Form
+    public partial class dlgSettings : Form
     {
-        public dlgOptions()
+        public dlgSettings()
         {
             InitializeComponent();
         }
