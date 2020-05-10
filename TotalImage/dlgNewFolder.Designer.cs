@@ -41,7 +41,7 @@
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(12, 9);
+            this.lblName.Location = new System.Drawing.Point(9, 9);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(176, 15);
             this.lblName.TabIndex = 0;
@@ -49,9 +49,9 @@
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(15, 36);
+            this.txtName.Location = new System.Drawing.Point(12, 36);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(457, 23);
+            this.txtName.Size = new System.Drawing.Size(460, 23);
             this.txtName.TabIndex = 0;
             // 
             // btnCancel
@@ -81,16 +81,16 @@
             // lblShortName
             // 
             this.lblShortName.AutoSize = true;
-            this.lblShortName.Location = new System.Drawing.Point(12, 71);
+            this.lblShortName.Location = new System.Drawing.Point(9, 71);
             this.lblShortName.Name = "lblShortName";
-            this.lblShortName.Size = new System.Drawing.Size(176, 15);
+            this.lblShortName.Size = new System.Drawing.Size(97, 15);
             this.lblShortName.TabIndex = 4;
-            this.lblShortName.Text = "Short name (up to 8 characters):";
+            this.lblShortName.Text = "Short name (8.3):";
             // 
             // lblShortName1
             // 
             this.lblShortName1.AutoSize = true;
-            this.lblShortName1.Location = new System.Drawing.Point(194, 71);
+            this.lblShortName1.Location = new System.Drawing.Point(107, 71);
             this.lblShortName1.Name = "lblShortName1";
             this.lblShortName1.Size = new System.Drawing.Size(80, 15);
             this.lblShortName1.TabIndex = 5;

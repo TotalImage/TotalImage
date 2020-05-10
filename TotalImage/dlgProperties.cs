@@ -33,6 +33,8 @@ namespace TotalImage
             string filename = entry.name.TrimEnd('.');
             txtFilename.Text = filename;
             lblShortFilename1.Text = filename;
+
+            //Both size labels need to take display correct sizes for both files and directories - the latter is not handled at all for now...
             lblSize1.Text = string.Format("{0:n0}", entry.fileSize).ToString() + " B";
 
             //This needs to obtain the actual cluster size from the BPB/floppyTable and use it...

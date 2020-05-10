@@ -103,5 +103,22 @@ namespace TotalImage.FileSystems.FAT
             get => throw new NotSupportedException();
             set => throw new NotSupportedException();
         }
+
+        //Checks if an entry with the specified name already exists in the root directory
+        public bool EntryExists(string fullname)
+        {
+            string name = fullname.Substring(0, fullname.IndexOf('.')).PadRight(8, ' ');
+            string ext = fullname.Substring(fullname.IndexOf('.'), fullname.Length - 1).PadRight(3, ' ');
+
+            return false; //Bogus, needs to actually check all the entries which aren't in this class yet...
+        }
+
+        //Returns whether the root directory is full
+        public bool IsFull()
+        {
+            /* Bogus, this needs to actually check the number of normal (non-deleted) entries in the root directory and compare it
+             * to the value in the BPB/floppyTable, then return the result... */
+            return false;
+        }
     }
 }
