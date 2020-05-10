@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Globalization;
-using System.IO;
-using System.Text;
 using System.Windows.Forms;
-using TotalImage.FileSystems;
 using TotalImage.FileSystems.FAT;
-using TotalImage.ImageFormats;
 
 namespace TotalImage
 {

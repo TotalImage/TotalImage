@@ -101,6 +101,7 @@
             this.fileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hexViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -163,7 +164,6 @@
             this.renameToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.selectAllToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.hexViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsDirTree.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.cmsToolbars.SuspendLayout();
@@ -792,6 +792,13 @@
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
             // 
+            // hexViewToolStripMenuItem
+            // 
+            this.hexViewToolStripMenuItem.Name = "hexViewToolStripMenuItem";
+            this.hexViewToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.hexViewToolStripMenuItem.Text = "Hex view...";
+            this.hexViewToolStripMenuItem.Click += new System.EventHandler(this.hexView_Click);
+            // 
             // imageInformationToolStripMenuItem
             // 
             this.imageInformationToolStripMenuItem.Name = "imageInformationToolStripMenuItem";
@@ -1009,7 +1016,6 @@
             // 
             // selectPartitionToolStripComboBox
             // 
-            this.selectPartitionToolStripComboBox.Enabled = false;
             this.selectPartitionToolStripComboBox.Name = "selectPartitionToolStripComboBox";
             this.selectPartitionToolStripComboBox.Size = new System.Drawing.Size(200, 25);
             this.selectPartitionToolStripComboBox.ToolTipText = "Select partition";
@@ -1361,13 +1367,6 @@
             this.selectAllToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             this.selectAllToolStripMenuItem1.Text = "Select all";
             this.selectAllToolStripMenuItem1.Click += new System.EventHandler(this.selectAll_Click);
-            // 
-            // hexViewToolStripMenuItem
-            // 
-            this.hexViewToolStripMenuItem.Name = "hexViewToolStripMenuItem";
-            this.hexViewToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.hexViewToolStripMenuItem.Text = "Hex view...";
-            this.hexViewToolStripMenuItem.Click += new System.EventHandler(this.hexView_Click);
             // 
             // frmMain
             // 

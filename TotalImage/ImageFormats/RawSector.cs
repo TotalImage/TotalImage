@@ -39,6 +39,8 @@ namespace TotalImage.ImageFormats
         {
             //For larger images (HDD etc.) we probably won't read the entire file at once, but use the stream instead...
             stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            imageBytes = new byte[stream.Length];
+            stream.Read(imageBytes, 0, (int)stream.Length);
             fat12 = new Fat12(stream);
             fat12.ReadRootDir();
         }
