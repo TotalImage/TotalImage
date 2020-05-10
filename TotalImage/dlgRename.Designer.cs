@@ -31,6 +31,10 @@
             this.pnlBottom = new System.Windows.Forms.Panel();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
+            this.lblDesc = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.lblShortname = new System.Windows.Forms.Label();
+            this.lblShortname1 = new System.Windows.Forms.Label();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -40,7 +44,7 @@
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 134);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 100);
             this.pnlBottom.Name = "pnlBottom";
             this.pnlBottom.Size = new System.Drawing.Size(586, 50);
             this.pnlBottom.TabIndex = 3;
@@ -69,6 +73,40 @@
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             // 
+            // lblDesc
+            // 
+            this.lblDesc.AutoSize = true;
+            this.lblDesc.Location = new System.Drawing.Point(9, 9);
+            this.lblDesc.Name = "lblDesc";
+            this.lblDesc.Size = new System.Drawing.Size(250, 15);
+            this.lblDesc.TabIndex = 4;
+            this.lblDesc.Text = "Please enter a new name for <oldname here>:";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(12, 36);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(562, 23);
+            this.textBox1.TabIndex = 5;
+            // 
+            // lblShortname
+            // 
+            this.lblShortname.AutoSize = true;
+            this.lblShortname.Location = new System.Drawing.Point(12, 71);
+            this.lblShortname.Name = "lblShortname";
+            this.lblShortname.Size = new System.Drawing.Size(97, 15);
+            this.lblShortname.TabIndex = 6;
+            this.lblShortname.Text = "Short name (8.3):";
+            // 
+            // lblShortname1
+            // 
+            this.lblShortname1.AutoSize = true;
+            this.lblShortname1.Location = new System.Drawing.Point(109, 71);
+            this.lblShortname1.Name = "lblShortname1";
+            this.lblShortname1.Size = new System.Drawing.Size(80, 15);
+            this.lblShortname1.TabIndex = 7;
+            this.lblShortname1.Text = "<shortname>";
+            // 
             // dlgRename
             // 
             this.AcceptButton = this.btnOK;
@@ -76,7 +114,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(586, 184);
+            this.ClientSize = new System.Drawing.Size(586, 150);
+            this.Controls.Add(this.lblShortname1);
+            this.Controls.Add(this.lblShortname);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.lblDesc);
             this.Controls.Add(this.pnlBottom);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -89,6 +131,7 @@
             this.Text = "Rename item";
             this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -97,5 +140,9 @@
         private System.Windows.Forms.Panel pnlBottom;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Label lblDesc;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label lblShortname;
+        private System.Windows.Forms.Label lblShortname1;
     }
 }

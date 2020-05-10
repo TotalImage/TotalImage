@@ -36,6 +36,8 @@
             this.lblCopyright = new System.Windows.Forms.Label();
             this.pnlBottom = new System.Windows.Forms.Panel();
             this.imgLogo = new System.Windows.Forms.PictureBox();
+            this.lblLicense = new System.Windows.Forms.Label();
+            this.lnkGitHub = new System.Windows.Forms.LinkLabel();
             this.pnlBottom.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgLogo)).BeginInit();
             this.SuspendLayout();
@@ -45,7 +47,7 @@
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(342, 12);
+            this.btnOK.Location = new System.Drawing.Point(209, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 0;
@@ -94,9 +96,9 @@
             this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 124);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 191);
             this.pnlBottom.Name = "pnlBottom";
-            this.pnlBottom.Size = new System.Drawing.Size(434, 50);
+            this.pnlBottom.Size = new System.Drawing.Size(301, 50);
             this.pnlBottom.TabIndex = 5;
             // 
             // imgLogo
@@ -108,6 +110,27 @@
             this.imgLogo.TabIndex = 6;
             this.imgLogo.TabStop = false;
             // 
+            // lblLicense
+            // 
+            this.lblLicense.AutoSize = true;
+            this.lblLicense.Location = new System.Drawing.Point(9, 121);
+            this.lblLicense.Name = "lblLicense";
+            this.lblLicense.Size = new System.Drawing.Size(282, 30);
+            this.lblLicense.TabIndex = 7;
+            this.lblLicense.Text = "TotalImage is licensed under the MIT license. See the\r\nLICENSE file for more info" +
+    "rmation.";
+            // 
+            // lnkGitHub
+            // 
+            this.lnkGitHub.AutoSize = true;
+            this.lnkGitHub.Location = new System.Drawing.Point(9, 160);
+            this.lnkGitHub.Name = "lnkGitHub";
+            this.lnkGitHub.Size = new System.Drawing.Size(235, 15);
+            this.lnkGitHub.TabIndex = 8;
+            this.lnkGitHub.TabStop = true;
+            this.lnkGitHub.Text = "https://github.com/TotalImage/TotalImage";
+            this.lnkGitHub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkGitHub_LinkClicked);
+            // 
             // dlgAbout
             // 
             this.AcceptButton = this.btnOK;
@@ -115,7 +138,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnOK;
-            this.ClientSize = new System.Drawing.Size(434, 174);
+            this.ClientSize = new System.Drawing.Size(301, 241);
+            this.Controls.Add(this.lnkGitHub);
+            this.Controls.Add(this.lblLicense);
             this.Controls.Add(this.imgLogo);
             this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.lblCopyright);
@@ -148,5 +173,7 @@
         private System.Windows.Forms.Label lblCopyright;
         private System.Windows.Forms.Panel pnlBottom;
         private System.Windows.Forms.PictureBox imgLogo;
+        private System.Windows.Forms.Label lblLicense;
+        private System.Windows.Forms.LinkLabel lnkGitHub;
     }
 }
