@@ -22,16 +22,22 @@ namespace TotalImage
 
         public dlgProperties(DirectoryEntry entry) : this()
         {
-            dateCreated.CustomFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
-            dateModified.CustomFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
-            dateAccessed.CustomFormat = CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern;
+            /* This is effectively the same as using CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern, just without
+             * the silly 'Z' at the end... */
+            dateCreated.CustomFormat = "yyyy-MM-dd HH:mm:ss";
+            dateModified.CustomFormat = "yyyy-MM-dd HH:mm:ss";
+            dateAccessed.CustomFormat = "yyyy-MM-dd HH:mm:ss";
 
-            //For now both fields display the same 8.3 filename, once VFAT/LFN support is added, the textbox will display
-            //the long filename instead
+            /* For now both fields display the same 8.3 name, once VFAT/LFN support is added, the textbox will display
+             * the long name instead */
             string filename = entry.name.TrimEnd('.');
             txtFilename.Text = filename;
             lblShortFilename1.Text = filename;
             lblSize1.Text = string.Format("{0:n0}", entry.fileSize).ToString() + " B";
+
+            //This needs to obtain the actual cluster size from the BPB/floppyTable and use it...
+            uint sizeOnDisk = (uint)Math.Ceiling(entry.fileSize / 1024.0) * 1024;
+            lblSizeOnDisk1.Text = string.Format("{0:n0}", sizeOnDisk).ToString() + " B";
 
             ushort year = 1980;
             byte month = 1;
@@ -59,22 +65,10 @@ namespace TotalImage
             dateAccessed.Checked = entry.lstAccDate != 0;
             dateCreated.Checked = entry.crtDate != 0;
 
-            if (Convert.ToBoolean(entry.attr & 0x01))
-            {
-                cbxReadOnly.Checked = true;
-            }
-            if (Convert.ToBoolean(entry.attr & 0x02))
-            {
-                cbxHidden.Checked = true;
-            }
-            if (Convert.ToBoolean(entry.attr & 0x04))
-            {
-                cbxSystem.Checked = true;
-            }
-            if (Convert.ToBoolean(entry.attr & 0x20))
-            {
-                cbxArchive.Checked = true;
-            }
+            cbxReadOnly.Checked = Convert.ToBoolean(entry.attr & 0x01);
+            cbxHidden.Checked = Convert.ToBoolean(entry.attr & 0x02);
+            cbxSystem.Checked = Convert.ToBoolean(entry.attr & 0x04);
+            cbxArchive.Checked = Convert.ToBoolean(entry.attr & 0x20);
 
             if (Convert.ToBoolean(entry.attr & 0x10))
             {

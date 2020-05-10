@@ -93,7 +93,7 @@
             // lblType1
             // 
             this.lblType1.AutoSize = true;
-            this.lblType1.Location = new System.Drawing.Point(111, 62);
+            this.lblType1.Location = new System.Drawing.Point(115, 62);
             this.lblType1.Name = "lblType1";
             this.lblType1.Size = new System.Drawing.Size(46, 15);
             this.lblType1.TabIndex = 9;
@@ -111,7 +111,7 @@
             // lblLocation1
             // 
             this.lblLocation1.AutoSize = true;
-            this.lblLocation1.Location = new System.Drawing.Point(111, 86);
+            this.lblLocation1.Location = new System.Drawing.Point(115, 86);
             this.lblLocation1.Name = "lblLocation1";
             this.lblLocation1.Size = new System.Drawing.Size(66, 15);
             this.lblLocation1.TabIndex = 11;
@@ -130,7 +130,7 @@
             // lblSize1
             // 
             this.lblSize1.AutoSize = true;
-            this.lblSize1.Location = new System.Drawing.Point(111, 110);
+            this.lblSize1.Location = new System.Drawing.Point(115, 110);
             this.lblSize1.Name = "lblSize1";
             this.lblSize1.Size = new System.Drawing.Size(42, 15);
             this.lblSize1.TabIndex = 13;
@@ -151,7 +151,7 @@
             // lblSizeOnDisk1
             // 
             this.lblSizeOnDisk1.AutoSize = true;
-            this.lblSizeOnDisk1.Location = new System.Drawing.Point(111, 134);
+            this.lblSizeOnDisk1.Location = new System.Drawing.Point(115, 134);
             this.lblSizeOnDisk1.Name = "lblSizeOnDisk1";
             this.lblSizeOnDisk1.Size = new System.Drawing.Size(102, 15);
             this.lblSizeOnDisk1.TabIndex = 15;
@@ -172,9 +172,9 @@
             this.lblShortFilename.AutoSize = true;
             this.lblShortFilename.Location = new System.Drawing.Point(12, 158);
             this.lblShortFilename.Name = "lblShortFilename";
-            this.lblShortFilename.Size = new System.Drawing.Size(113, 15);
+            this.lblShortFilename.Size = new System.Drawing.Size(97, 15);
             this.lblShortFilename.TabIndex = 16;
-            this.lblShortFilename.Text = "Short filename (8.3):";
+            this.lblShortFilename.Text = "Short name (8.3):";
             this.toolTip.SetToolTip(this.lblShortFilename, "Short names are used for backwards compatibility with systems that \r\ndon\'t suppor" +
         "t the VFAT/LFN extensions. It is automatically generated\r\nbased on the long name" +
         " (see above).\r\n");
@@ -182,7 +182,7 @@
             // lblShortFilename1
             // 
             this.lblShortFilename1.AutoSize = true;
-            this.lblShortFilename1.Location = new System.Drawing.Point(12, 177);
+            this.lblShortFilename1.Location = new System.Drawing.Point(115, 158);
             this.lblShortFilename1.Name = "lblShortFilename1";
             this.lblShortFilename1.Size = new System.Drawing.Size(96, 15);
             this.lblShortFilename1.TabIndex = 17;
@@ -194,7 +194,7 @@
             // cbxReadOnly
             // 
             this.cbxReadOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxReadOnly.Location = new System.Drawing.Point(80, 307);
+            this.cbxReadOnly.Location = new System.Drawing.Point(80, 298);
             this.cbxReadOnly.Name = "cbxReadOnly";
             this.cbxReadOnly.Size = new System.Drawing.Size(75, 20);
             this.cbxReadOnly.TabIndex = 4;
@@ -205,7 +205,7 @@
             // cbxHidden
             // 
             this.cbxHidden.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxHidden.Location = new System.Drawing.Point(166, 307);
+            this.cbxHidden.Location = new System.Drawing.Point(166, 298);
             this.cbxHidden.Name = "cbxHidden";
             this.cbxHidden.Size = new System.Drawing.Size(60, 20);
             this.cbxHidden.TabIndex = 5;
@@ -217,7 +217,7 @@
             // cbxSystem
             // 
             this.cbxSystem.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxSystem.Location = new System.Drawing.Point(240, 307);
+            this.cbxSystem.Location = new System.Drawing.Point(240, 298);
             this.cbxSystem.Name = "cbxSystem";
             this.cbxSystem.Size = new System.Drawing.Size(60, 20);
             this.cbxSystem.TabIndex = 6;
@@ -229,7 +229,7 @@
             // cbxArchive
             // 
             this.cbxArchive.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxArchive.Location = new System.Drawing.Point(312, 307);
+            this.cbxArchive.Location = new System.Drawing.Point(312, 298);
             this.cbxArchive.Name = "cbxArchive";
             this.cbxArchive.Size = new System.Drawing.Size(60, 20);
             this.cbxArchive.TabIndex = 7;
@@ -241,7 +241,7 @@
             // lblAccessed
             // 
             this.lblAccessed.AutoSize = true;
-            this.lblAccessed.Location = new System.Drawing.Point(12, 273);
+            this.lblAccessed.Location = new System.Drawing.Point(12, 259);
             this.lblAccessed.Name = "lblAccessed";
             this.lblAccessed.Size = new System.Drawing.Size(59, 15);
             this.lblAccessed.TabIndex = 22;
@@ -251,7 +251,7 @@
             // dateAccessed
             // 
             this.dateAccessed.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateAccessed.Location = new System.Drawing.Point(77, 268);
+            this.dateAccessed.Location = new System.Drawing.Point(77, 254);
             this.dateAccessed.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             this.dateAccessed.Name = "dateAccessed";
             this.dateAccessed.ShowCheckBox = true;
@@ -263,7 +263,7 @@
             // dateCreated
             // 
             this.dateCreated.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateCreated.Location = new System.Drawing.Point(77, 210);
+            this.dateCreated.Location = new System.Drawing.Point(77, 196);
             this.dateCreated.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             this.dateCreated.Name = "dateCreated";
             this.dateCreated.ShowCheckBox = true;
@@ -276,7 +276,7 @@
             // lblModified
             // 
             this.lblModified.AutoSize = true;
-            this.lblModified.Location = new System.Drawing.Point(12, 244);
+            this.lblModified.Location = new System.Drawing.Point(12, 230);
             this.lblModified.Name = "lblModified";
             this.lblModified.Size = new System.Drawing.Size(58, 15);
             this.lblModified.TabIndex = 19;
@@ -286,7 +286,7 @@
             // lblCreated
             // 
             this.lblCreated.AutoSize = true;
-            this.lblCreated.Location = new System.Drawing.Point(12, 215);
+            this.lblCreated.Location = new System.Drawing.Point(12, 201);
             this.lblCreated.Name = "lblCreated";
             this.lblCreated.Size = new System.Drawing.Size(51, 15);
             this.lblCreated.TabIndex = 18;
@@ -297,7 +297,7 @@
             // dateModified
             // 
             this.dateModified.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateModified.Location = new System.Drawing.Point(77, 239);
+            this.dateModified.Location = new System.Drawing.Point(77, 225);
             this.dateModified.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             this.dateModified.Name = "dateModified";
             this.dateModified.ShowCheckBox = true;
@@ -336,7 +336,7 @@
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 341);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 331);
             this.pnlBottom.Name = "pnlBottom";
             this.pnlBottom.Size = new System.Drawing.Size(384, 50);
             this.pnlBottom.TabIndex = 10;
@@ -347,7 +347,7 @@
             this.lblSeparator1.Enabled = false;
             this.lblSeparator1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lblSeparator1.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblSeparator1.Location = new System.Drawing.Point(12, 50);
+            this.lblSeparator1.Location = new System.Drawing.Point(12, 53);
             this.lblSeparator1.Name = "lblSeparator1";
             this.lblSeparator1.Size = new System.Drawing.Size(360, 1);
             this.lblSeparator1.TabIndex = 11;
@@ -358,7 +358,7 @@
             this.lblSeparator2.Enabled = false;
             this.lblSeparator2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lblSeparator2.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblSeparator2.Location = new System.Drawing.Point(12, 201);
+            this.lblSeparator2.Location = new System.Drawing.Point(12, 183);
             this.lblSeparator2.Name = "lblSeparator2";
             this.lblSeparator2.Size = new System.Drawing.Size(360, 1);
             this.lblSeparator2.TabIndex = 18;
@@ -369,7 +369,7 @@
             this.lblSeparator3.Enabled = false;
             this.lblSeparator3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lblSeparator3.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblSeparator3.Location = new System.Drawing.Point(12, 299);
+            this.lblSeparator3.Location = new System.Drawing.Point(12, 288);
             this.lblSeparator3.Name = "lblSeparator3";
             this.lblSeparator3.Size = new System.Drawing.Size(360, 1);
             this.lblSeparator3.TabIndex = 19;
@@ -377,7 +377,7 @@
             // lblAttributes
             // 
             this.lblAttributes.AutoSize = true;
-            this.lblAttributes.Location = new System.Drawing.Point(12, 309);
+            this.lblAttributes.Location = new System.Drawing.Point(12, 300);
             this.lblAttributes.Name = "lblAttributes";
             this.lblAttributes.Size = new System.Drawing.Size(62, 15);
             this.lblAttributes.TabIndex = 23;
@@ -390,7 +390,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(384, 391);
+            this.ClientSize = new System.Drawing.Size(384, 381);
             this.Controls.Add(this.cbxArchive);
             this.Controls.Add(this.lblAttributes);
             this.Controls.Add(this.cbxSystem);
