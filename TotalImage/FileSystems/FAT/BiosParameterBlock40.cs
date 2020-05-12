@@ -21,7 +21,9 @@ namespace TotalImage.FileSystems.FAT
             get => volumeLabel; 
             set
             {
-                if(value.Length > 11)
+                if(string.IsNullOrEmpty(value))
+                    throw new ArgumentException("VolumeLabel must not be null or empty string");
+                else if(value.Length > 11)
                     throw new ArgumentException("VolumeLabel must be 11 characters at most");
 
                 volumeLabel = value;
@@ -32,7 +34,9 @@ namespace TotalImage.FileSystems.FAT
             get => fileSystemType;
             set
             {
-                if(value.Length > 8)
+                if (string.IsNullOrEmpty(value))
+                    throw new ArgumentException("FileSystemType must not be null or empty string");
+                else if(value.Length > 8)
                     throw new ArgumentException("FileSystemType must be 8 characters at most");
 
                 fileSystemType = value;
@@ -43,6 +47,9 @@ namespace TotalImage.FileSystems.FAT
 
         public BiosParameterBlock40(BiosParameterBlock bpb)
         {
+            if (bpb == null)
+                throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
+
             BpbVersion = bpb.BpbVersion;
             BootJump = bpb.BootJump;
             OemId = bpb.OemId;

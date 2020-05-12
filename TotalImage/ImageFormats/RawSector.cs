@@ -22,6 +22,9 @@ namespace TotalImage.ImageFormats
         //Creates a new image from the selected preset
         public void CreateImage(BiosParameterBlock bpb, byte tracks)
         {
+            if (bpb == null)
+                throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
+
             uint imageSize = (uint)(bpb.BytesPerLogicalSector * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * tracks);
             imageBytes = new byte[imageSize];
             stream = new MemoryStream(imageBytes, true);

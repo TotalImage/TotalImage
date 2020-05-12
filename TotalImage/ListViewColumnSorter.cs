@@ -19,6 +19,11 @@
 
         public int Compare(object x, object y)
         {
+            if (x == null)
+                throw new ArgumentNullException(nameof(x), "x cannot be null!");
+            if (y == null)
+                throw new ArgumentNullException(nameof(y), "y cannot be null!");
+
             frmMain main = (frmMain)Application.OpenForms["frmMain"];
 
             int compareResult;

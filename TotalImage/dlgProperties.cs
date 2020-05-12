@@ -84,6 +84,10 @@ namespace TotalImage
 
         public dlgProperties(FileSystemObject entry) : this()
         {
+            if(entry == null)
+            {
+                throw new ArgumentNullException(nameof(entry), "entry cannot be null!");
+            }
             txtFilename.Text = entry.Name.ToUpper();
             lblShortFilename1.Text = entry.Name.ToUpper();
             lblSize1.Text = $"{entry.Length:n0} B";

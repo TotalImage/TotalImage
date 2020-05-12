@@ -135,7 +135,7 @@ namespace TotalImage
         }
 
         //Generates a random volume ID/serial number for DOS 3.4+ BPB
-        private int GenerateVolumeID()
+        private static int GenerateVolumeID()
         {
             Random rnd = new Random();
             return rnd.Next();

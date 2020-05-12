@@ -5,7 +5,7 @@ internal static partial class Interop
         public enum TVM : uint
         {
             FIRST = 0x1100,
-            INSERTITEMA = FIRST + 0,
+            INSERTITEMA = FIRST,
             INSERTITEMW = FIRST + 50,
             DELETEITEM = FIRST + 1,
             EXPAND = FIRST + 2,

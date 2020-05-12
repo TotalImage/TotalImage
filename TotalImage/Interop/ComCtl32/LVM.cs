@@ -5,7 +5,7 @@ internal static partial class Interop
         public enum LVM : uint
         {
             FIRST = 0x1000,
-            GETBKCOLOR = FIRST + 0,
+            GETBKCOLOR = FIRST,
             SETBKCOLOR = FIRST + 1,
             GETIMAGELIST = FIRST + 2,
             SETIMAGELIST = FIRST + 3,

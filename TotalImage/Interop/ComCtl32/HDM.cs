@@ -5,7 +5,7 @@ internal static partial class Interop
         public enum HDM : uint
         {
             FIRST = 0x1200,
-            GETITEMCOUNT = FIRST + 0,
+            GETITEMCOUNT = FIRST,
             INSERTITEMA = FIRST + 1,
             INSERTITEMW = FIRST + 10,
             DELETEITEM = FIRST + 2,

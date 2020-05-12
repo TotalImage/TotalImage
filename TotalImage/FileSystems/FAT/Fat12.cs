@@ -241,6 +241,11 @@ namespace TotalImage.FileSystems.FAT
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
         public static Fat12 Create(Stream stream, BiosParameterBlock bpb)
         {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream), "stream cannot be null!");
+            if (bpb == null)
+                throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
+
             var fat = new Fat12();
             fat.stream = stream;
 
@@ -617,6 +622,9 @@ namespace TotalImage.FileSystems.FAT
          */
         public void ChangeVolLabel(string label)
         {
+            if (string.IsNullOrEmpty(label))
+                throw new ArgumentNullException(nameof(label), "label cannot be null!");
+
             uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
             bool rootDirFull = false;
 
