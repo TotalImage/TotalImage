@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.ImageFormats;
@@ -51,6 +52,7 @@ namespace TotalImage
                 /* Inject the entire selected folder into the image */
                 unsavedChanges = true;
             }
+            fbd.Dispose();
         }
 
         //Shows a hex view of the current image
@@ -58,6 +60,7 @@ namespace TotalImage
         {
             frmHexView frm = new frmHexView();
             frm.Show();
+            frm.Dispose();
         }
 
         //Allows viewing and editing both volume labels
@@ -70,6 +73,7 @@ namespace TotalImage
                 saveToolStripButton.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
             }
+            dlg.Dispose();
         }
 
         //Allows viewing and editing bootsector properties
@@ -77,6 +81,7 @@ namespace TotalImage
         {
             dlgBootSector dlg = new dlgBootSector();
             dlg.ShowDialog();
+            dlg.Dispose();
         }
 
         //Shows current image information
@@ -84,6 +89,7 @@ namespace TotalImage
         {
             dlgImageInfo dlg = new dlgImageInfo();
             dlg.ShowDialog();
+            dlg.Dispose();
         }
 
         //Creates a new disk image
@@ -114,12 +120,12 @@ namespace TotalImage
 
             image = new RawSector();
             dlgNewImage dlg = new dlgNewImage();
-            DialogResult result = dlg.ShowDialog();
-            if (result == DialogResult.OK)
+            if (dlg.ShowDialog() == DialogResult.OK)
             {
                 Text = "(Untitled) - TotalImage";
                 unsavedChanges = true;
             }
+            dlg.Dispose();
         }
 
         /* The Save button on the command bar acts as either: 
@@ -145,9 +151,10 @@ namespace TotalImage
         {
             dlgNewFolder dlg = new dlgNewFolder();
             dlg.ShowDialog();
+            dlg.Dispose();
         }
 
-        private void largeIconsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void viewLargeIcons_Click(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem.Checked = true;
             largeIconsToolStripMenuItem1.Checked = true;
@@ -162,7 +169,7 @@ namespace TotalImage
             lstFiles.View = View.LargeIcon;
         }
 
-        private void smallIconsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void viewSmallIcons_Click(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem.Checked = false;
             largeIconsToolStripMenuItem1.Checked = false;
@@ -177,7 +184,7 @@ namespace TotalImage
             lstFiles.View = View.SmallIcon;
         }
 
-        private void listToolStripMenuItem_Click(object sender, EventArgs e)
+        private void viewList_Click(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem.Checked = false;
             largeIconsToolStripMenuItem1.Checked = false;
@@ -192,7 +199,7 @@ namespace TotalImage
             lstFiles.View = View.List;
         }
 
-        private void detailsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void viewDetails_Click(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem.Checked = false;
             largeIconsToolStripMenuItem1.Checked = false;
@@ -207,7 +214,7 @@ namespace TotalImage
             lstFiles.View = View.Details;
         }
 
-        private void tilesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void viewTiles_Click(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem.Checked = false;
             largeIconsToolStripMenuItem1.Checked = false;
@@ -260,6 +267,7 @@ namespace TotalImage
         {
             dlgUndelete dlg = new dlgUndelete();
             dlg.ShowDialog();
+            dlg.Dispose();
         }
 
         //Renames a file or folder
@@ -267,6 +275,7 @@ namespace TotalImage
         {
             dlgRename dlg = new dlgRename();
             dlg.ShowDialog();
+            dlg.Dispose();
         }
 
         //Changes image format
@@ -280,6 +289,7 @@ namespace TotalImage
         {
             dlgDefragment dlg = new dlgDefragment();
             dlg.ShowDialog();
+            dlg.Dispose();
         }
 
         //Formats the selected partition
@@ -287,6 +297,7 @@ namespace TotalImage
         {
             dlgFormat dlg = new dlgFormat();
             dlg.ShowDialog();
+            dlg.Dispose();
         }
 
         //Save the changes made to the current image since the last save or since it was opened
@@ -319,9 +330,13 @@ namespace TotalImage
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                if (sfd.FilterIndex == 0 || sfd.FileName.EndsWith(".img") || sfd.FileName.EndsWith(".ima") ||
-                    sfd.FileName.EndsWith(".vfd") || sfd.FileName.EndsWith(".flp") || sfd.FileName.EndsWith(".dsk") ||
-                    sfd.FileName.EndsWith(".hdm"))
+                if (sfd.FilterIndex == 0 || 
+                    sfd.FileName.EndsWith(".img", StringComparison.OrdinalIgnoreCase) || 
+                    sfd.FileName.EndsWith(".ima", StringComparison.OrdinalIgnoreCase) ||
+                    sfd.FileName.EndsWith(".vfd", StringComparison.OrdinalIgnoreCase) || 
+                    sfd.FileName.EndsWith(".flp", StringComparison.OrdinalIgnoreCase) || 
+                    sfd.FileName.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase) ||
+                    sfd.FileName.EndsWith(".hdm", StringComparison.OrdinalIgnoreCase))
                 {
                     byte[] imageBytes = image.GetImageBytes();
                     File.WriteAllBytes(sfd.FileName, imageBytes);
@@ -331,6 +346,8 @@ namespace TotalImage
                 path = sfd.FileName;
                 Text = filename + " - TotalImage";
             }
+
+            sfd.Dispose();
         }
 
         //Closes the application
@@ -348,30 +365,24 @@ namespace TotalImage
             Application.Exit();
         }
 
-        private void menuBarToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            menuBar.Visible = menuBarToolStripMenuItem.Checked;
-            menuBarToolStripMenuItem1.Checked = menuBarToolStripMenuItem.Checked;
-        }
-
-        private void commandBarToolStripMenuItem_Click(object sender, EventArgs e)
+        private void toggleCommandBar_Click(object sender, EventArgs e)
         {
             commandBar.Visible = commandBarToolStripMenuItem.Checked;
             commandBarToolStripMenuItem1.Checked = commandBarToolStripMenuItem.Checked;
         }
-        private void directoryTreeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void toggleDirectoryTree_Click(object sender, EventArgs e)
         {
             splitContainer.Panel1Collapsed = !directoryTreeToolStripMenuItem.Checked;
             directoryTreeToolStripMenuItem1.Checked = directoryTreeToolStripMenuItem.Checked;
         }
 
-        private void fileListToolStripMenuItem_Click(object sender, EventArgs e)
+        private void toggleFileList_Click(object sender, EventArgs e)
         {
             splitContainer.Panel2Collapsed = !fileListToolStripMenuItem.Checked;
             fileListToolStripMenuItem1.Checked = fileListToolStripMenuItem.Checked;
         }
 
-        private void statusBarToolStripMenuItem_Click(object sender, EventArgs e)
+        private void toggleStatusBar_Click(object sender, EventArgs e)
         {
             statusBar.Visible = statusBarToolStripMenuItem.Checked;
             statusBarToolStripMenuItem1.Checked = statusBarToolStripMenuItem.Checked;
@@ -406,52 +417,21 @@ namespace TotalImage
             {
                 OpenImage(ofd.FileName);
             }
+
+            ofd.Dispose();
         }
 
         private void about_Click(object sender, EventArgs e)
         {
             dlgAbout dlg = new dlgAbout();
             dlg.ShowDialog();
-        }
-
-        private void GitHub_Click(object sender, EventArgs e)
-        {
-            var process = new System.Diagnostics.ProcessStartInfo()
-            {
-                FileName = "https://github.com/TotalImage/TotalImage",
-                UseShellExecute = true
-            };
-            System.Diagnostics.Process.Start(process);
+            dlg.Dispose();
         }
 
         private void menuBarToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             menuBar.Visible = menuBarToolStripMenuItem1.Checked;
             menuBarToolStripMenuItem.Checked = menuBarToolStripMenuItem1.Checked;
-        }
-
-        private void commandBarToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            commandBar.Visible = commandBarToolStripMenuItem1.Checked;
-            commandBarToolStripMenuItem.Checked = commandBarToolStripMenuItem1.Checked;
-        }
-
-        private void directoryTreeToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            splitContainer.Panel1Collapsed = !directoryTreeToolStripMenuItem1.Checked;
-            directoryTreeToolStripMenuItem.Checked = directoryTreeToolStripMenuItem1.Checked;
-        }
-
-        private void fileListToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            splitContainer.Panel2Collapsed = !fileListToolStripMenuItem1.Checked;
-            fileListToolStripMenuItem.Checked = fileListToolStripMenuItem1.Checked;
-        }
-
-        private void statusBarToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            statusBar.Visible = statusBarToolStripMenuItem1.Checked;
-            statusBarToolStripMenuItem.Checked = statusBarToolStripMenuItem1.Checked;
         }
 
         /* Extracts file(s) or folder(s) from the image to the specified path
@@ -478,6 +458,7 @@ namespace TotalImage
                     }
                 }
             }
+            dlg.Dispose();
         }
 
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
@@ -579,18 +560,21 @@ namespace TotalImage
         {
             dlgManagePart dlg = new dlgManagePart();
             dlg.ShowDialog();
+            dlg.Dispose();
         }
 
         private void settings_Click(object sender, EventArgs e)
         {
             dlgSettings dlg = new dlgSettings();
             dlg.ShowDialog();
+            dlg.Dispose();
         }
 
         private void properties_Click(object sender, EventArgs e)
         {
             dlgProperties dlg = new dlgProperties((DirectoryEntry)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
+            dlg.Dispose();
         }
 
         private void injectFiles_Click(object sender, EventArgs e)
@@ -608,6 +592,8 @@ namespace TotalImage
             {
                 /* Inject the selected file(s) into the image */
             }
+
+            ofd.Dispose();
         }
 
         private void closeImage_Click(object sender, EventArgs e)
@@ -724,31 +710,7 @@ namespace TotalImage
             }
         }
 
-        private void nameToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            nameToolStripMenuItem.Checked = true;
-            nameToolStripMenuItem1.Checked = true;
-            typeToolStripMenuItem.Checked = false;
-            typeToolStripMenuItem1.Checked = false;
-            sizeToolStripMenuItem.Checked = false;
-            sizeToolStripMenuItem1.Checked = false;
-            modifiedToolStripMenuItem.Checked = false;
-            modifiedToolStripMenuItem1.Checked = false;
-        }
-
-        private void sizeToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            nameToolStripMenuItem.Checked = false;
-            nameToolStripMenuItem1.Checked = false;
-            typeToolStripMenuItem.Checked = false;
-            typeToolStripMenuItem1.Checked = false;
-            sizeToolStripMenuItem.Checked = true;
-            sizeToolStripMenuItem1.Checked = true;
-            modifiedToolStripMenuItem.Checked = false;
-            modifiedToolStripMenuItem1.Checked = false;
-        }
-
-        private void typeToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void sortByType_Click(object sender, EventArgs e)
         {
             nameToolStripMenuItem.Checked = false;
             nameToolStripMenuItem1.Checked = false;
@@ -760,7 +722,7 @@ namespace TotalImage
             modifiedToolStripMenuItem1.Checked = false;
         }
 
-        private void modifiedToolStripMenuItem_Click(object sender, EventArgs e)
+        private void sortByModified_Click(object sender, EventArgs e)
         {
             nameToolStripMenuItem.Checked = false;
             nameToolStripMenuItem1.Checked = false;
@@ -772,7 +734,7 @@ namespace TotalImage
             modifiedToolStripMenuItem1.Checked = true;
         }
 
-        private void nameToolStripMenuItem_Click(object sender, EventArgs e)
+        private void sortByName_Click(object sender, EventArgs e)
         {
             nameToolStripMenuItem.Checked = true;
             nameToolStripMenuItem1.Checked = true;
@@ -784,7 +746,7 @@ namespace TotalImage
             modifiedToolStripMenuItem1.Checked = false;
         }
 
-        private void sizeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void sortBySize_Click(object sender, EventArgs e)
         {
             nameToolStripMenuItem.Checked = false;
             nameToolStripMenuItem1.Checked = false;
@@ -794,30 +756,6 @@ namespace TotalImage
             sizeToolStripMenuItem1.Checked = true;
             modifiedToolStripMenuItem.Checked = false;
             modifiedToolStripMenuItem1.Checked = false;
-        }
-
-        private void typeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            nameToolStripMenuItem.Checked = false;
-            nameToolStripMenuItem1.Checked = false;
-            typeToolStripMenuItem.Checked = true;
-            typeToolStripMenuItem1.Checked = true;
-            sizeToolStripMenuItem.Checked = false;
-            sizeToolStripMenuItem1.Checked = false;
-            modifiedToolStripMenuItem.Checked = false;
-            modifiedToolStripMenuItem1.Checked = false;
-        }
-
-        private void modifiedDateToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            nameToolStripMenuItem.Checked = false;
-            nameToolStripMenuItem1.Checked = false;
-            typeToolStripMenuItem.Checked = false;
-            typeToolStripMenuItem1.Checked = false;
-            sizeToolStripMenuItem.Checked = false;
-            sizeToolStripMenuItem1.Checked = false;
-            modifiedToolStripMenuItem.Checked = true;
-            modifiedToolStripMenuItem1.Checked = true;
         }
 
         private void largeIconsToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -922,14 +860,14 @@ namespace TotalImage
         {
             string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
-            if (filename == "" && unsavedChanges == false) //No image is loaded
+            if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
             {
                 if (items.Length == 1)
                 {
                     OpenImage(items[0]);
                 }
             }
-            else if (filename != "" || unsavedChanges) //An image is open (either saved or new)
+            else if (!string.IsNullOrWhiteSpace(filename) || unsavedChanges) //An image is open (either saved or new)
             {
                 /* Inject files/folder instead */
             }
@@ -953,7 +891,7 @@ namespace TotalImage
         {
             string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
-            if (filename == "" && unsavedChanges == false) //No image is loaded
+            if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
             {
                 if (items.Length == 1)
                 {
@@ -1013,6 +951,16 @@ namespace TotalImage
                 lstDirectories.SelectedNode = lstDirectories.GetNodeAt(e.X, e.Y);
                 cmsDirTree.Show(lstDirectories, e.Location);
             }
+        }
+
+        private void showHiddenItems_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void showDeletedItems_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
