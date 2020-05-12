@@ -1257,6 +1257,9 @@ namespace TotalImage
             saveAsToolStripMenuItem.Enabled = true;
             closeImageToolStripMenuItem.Enabled = true;
 
+            imageInformationToolStripMenuItem.Enabled = true;
+            hexViewToolStripMenuItem.Enabled = true;
+
             foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
             {
                 if (item.CanSelect)
@@ -1293,6 +1296,8 @@ namespace TotalImage
             saveAsToolStripMenuItem.Enabled = false;
             saveToolStripMenuItem.Enabled = false;
             closeImageToolStripMenuItem.Enabled = false;
+            imageInformationToolStripMenuItem.Enabled = false;
+            hexViewToolStripMenuItem.Enabled = false;
 
             foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
             {

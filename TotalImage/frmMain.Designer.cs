@@ -188,7 +188,7 @@
             this.propertiesToolStripMenuItem1});
             this.cmsDirTree.Name = "cmsDirTree";
             this.cmsDirTree.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.cmsDirTree.Size = new System.Drawing.Size(217, 186);
+            this.cmsDirTree.Size = new System.Drawing.Size(217, 208);
             this.cmsDirTree.Opening += new System.ComponentModel.CancelEventHandler(this.cmsDirTree_Opening);
             // 
             // expandDirectoryTreeToolStripMenuItem1
@@ -212,6 +212,7 @@
             // 
             // extractToolStripMenuItem1
             // 
+            this.extractToolStripMenuItem1.Image = global::TotalImage.Properties.Resources.extract_16;
             this.extractToolStripMenuItem1.Name = "extractToolStripMenuItem1";
             this.extractToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.extractToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
@@ -220,6 +221,7 @@
             // 
             // newFolderToolStripMenuItem1
             // 
+            this.newFolderToolStripMenuItem1.Image = global::TotalImage.Properties.Resources.new_folder_16;
             this.newFolderToolStripMenuItem1.Name = "newFolderToolStripMenuItem1";
             this.newFolderToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.N)));
@@ -229,6 +231,7 @@
             // 
             // deleteToolStripMenuItem1
             // 
+            this.deleteToolStripMenuItem1.Image = global::TotalImage.Properties.Resources.delete_16;
             this.deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
             this.deleteToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
@@ -253,6 +256,7 @@
             // 
             // propertiesToolStripMenuItem1
             // 
+            this.propertiesToolStripMenuItem1.Image = global::TotalImage.Properties.Resources.properties_16;
             this.propertiesToolStripMenuItem1.Name = "propertiesToolStripMenuItem1";
             this.propertiesToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             this.propertiesToolStripMenuItem1.Text = "Properties...";
@@ -357,6 +361,7 @@
             // 
             // newToolStripMenuItem
             // 
+            this.newToolStripMenuItem.Image = global::TotalImage.Properties.Resources.new_16;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
@@ -373,6 +378,7 @@
             // 
             // saveToolStripMenuItem
             // 
+            this.saveToolStripMenuItem.Image = global::TotalImage.Properties.Resources.save_16;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
@@ -447,6 +453,7 @@
             // 
             // injectFilesToolStripMenuItem
             // 
+            this.injectFilesToolStripMenuItem.Image = global::TotalImage.Properties.Resources.inject_file_16;
             this.injectFilesToolStripMenuItem.Name = "injectFilesToolStripMenuItem";
             this.injectFilesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Insert;
             this.injectFilesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -455,6 +462,7 @@
             // 
             // injectAFolderToolStripMenuItem
             // 
+            this.injectAFolderToolStripMenuItem.Image = global::TotalImage.Properties.Resources.inject_folder_16;
             this.injectAFolderToolStripMenuItem.Name = "injectAFolderToolStripMenuItem";
             this.injectAFolderToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.injectAFolderToolStripMenuItem.Text = "Inject a folder...";
@@ -462,6 +470,7 @@
             // 
             // extractToolStripMenuItem
             // 
+            this.extractToolStripMenuItem.Image = global::TotalImage.Properties.Resources.extract_16;
             this.extractToolStripMenuItem.Name = "extractToolStripMenuItem";
             this.extractToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.extractToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -470,6 +479,7 @@
             // 
             // newFolderToolStripMenuItem
             // 
+            this.newFolderToolStripMenuItem.Image = global::TotalImage.Properties.Resources.new_folder_16;
             this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
             this.newFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.N)));
@@ -479,6 +489,7 @@
             // 
             // deleteToolStripMenuItem
             // 
+            this.deleteToolStripMenuItem.Image = global::TotalImage.Properties.Resources.delete_16;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -502,6 +513,7 @@
             // 
             // propertiesToolStripMenuItem
             // 
+            this.propertiesToolStripMenuItem.Image = global::TotalImage.Properties.Resources.properties_16;
             this.propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
             this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.propertiesToolStripMenuItem.Text = "Properties...";
@@ -522,6 +534,7 @@
             // 
             // changeVolumeLabelToolStripMenuItem
             // 
+            this.changeVolumeLabelToolStripMenuItem.Image = global::TotalImage.Properties.Resources.label_16;
             this.changeVolumeLabelToolStripMenuItem.Name = "changeVolumeLabelToolStripMenuItem";
             this.changeVolumeLabelToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.changeVolumeLabelToolStripMenuItem.Text = "Change volume label...";
@@ -550,6 +563,7 @@
             // 
             // bootSectorPropertiesToolStripMenuItem
             // 
+            this.bootSectorPropertiesToolStripMenuItem.Image = global::TotalImage.Properties.Resources.boot_sector_16;
             this.bootSectorPropertiesToolStripMenuItem.Name = "bootSectorPropertiesToolStripMenuItem";
             this.bootSectorPropertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.bootSectorPropertiesToolStripMenuItem.Text = "Boot sector properties...";
@@ -568,6 +582,7 @@
             // 
             // managePartitionsToolStripMenuItem
             // 
+            this.managePartitionsToolStripMenuItem.Image = global::TotalImage.Properties.Resources.disks_16;
             this.managePartitionsToolStripMenuItem.Name = "managePartitionsToolStripMenuItem";
             this.managePartitionsToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.managePartitionsToolStripMenuItem.Text = "Manage partitions...";
@@ -691,28 +706,28 @@
             this.nameToolStripMenuItem.Checked = true;
             this.nameToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
-            this.nameToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.nameToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.nameToolStripMenuItem.Text = "Name";
             this.nameToolStripMenuItem.Click += new System.EventHandler(this.nameToolStripMenuItem_Click);
             // 
             // sizeToolStripMenuItem
             // 
             this.sizeToolStripMenuItem.Name = "sizeToolStripMenuItem";
-            this.sizeToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.sizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.sizeToolStripMenuItem.Text = "Size";
             this.sizeToolStripMenuItem.Click += new System.EventHandler(this.sizeToolStripMenuItem_Click);
             // 
             // typeToolStripMenuItem
             // 
             this.typeToolStripMenuItem.Name = "typeToolStripMenuItem";
-            this.typeToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.typeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.typeToolStripMenuItem.Text = "Type";
             this.typeToolStripMenuItem.Click += new System.EventHandler(this.typeToolStripMenuItem_Click);
             // 
             // modifiedToolStripMenuItem
             // 
             this.modifiedToolStripMenuItem.Name = "modifiedToolStripMenuItem";
-            this.modifiedToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.modifiedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.modifiedToolStripMenuItem.Text = "Modified";
             this.modifiedToolStripMenuItem.Click += new System.EventHandler(this.modifiedDateToolStripMenuItem_Click);
             // 
@@ -799,6 +814,7 @@
             // 
             // imageInformationToolStripMenuItem
             // 
+            this.imageInformationToolStripMenuItem.Image = global::TotalImage.Properties.Resources.info_16;
             this.imageInformationToolStripMenuItem.Name = "imageInformationToolStripMenuItem";
             this.imageInformationToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.imageInformationToolStripMenuItem.Text = "Image information...";
@@ -811,6 +827,7 @@
             // 
             // settingsToolStripMenuItem1
             // 
+            this.settingsToolStripMenuItem1.Image = global::TotalImage.Properties.Resources.options_alt_16;
             this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
             this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(182, 22);
             this.settingsToolStripMenuItem1.Text = "Settings...";
@@ -828,7 +845,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.about_Click);
             // 
@@ -898,7 +915,7 @@
             // newToolStripButton
             // 
             this.newToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.newToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("newToolStripButton.Image")));
+            this.newToolStripButton.Image = global::TotalImage.Properties.Resources.new_16;
             this.newToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.newToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newToolStripButton.Name = "newToolStripButton";
@@ -921,7 +938,7 @@
             // saveToolStripButton
             // 
             this.saveToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.saveToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripButton.Image")));
+            this.saveToolStripButton.Image = global::TotalImage.Properties.Resources.save_16;
             this.saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveToolStripButton.Name = "saveToolStripButton";
             this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -946,7 +963,7 @@
             // injectToolStripButton
             // 
             this.injectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.injectToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("injectToolStripButton.Image")));
+            this.injectToolStripButton.Image = global::TotalImage.Properties.Resources.inject_file_16;
             this.injectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.injectToolStripButton.Name = "injectToolStripButton";
             this.injectToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -956,7 +973,7 @@
             // extractToolStripButton
             // 
             this.extractToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.extractToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("extractToolStripButton.Image")));
+            this.extractToolStripButton.Image = global::TotalImage.Properties.Resources.extract_16;
             this.extractToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.extractToolStripButton.Name = "extractToolStripButton";
             this.extractToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -966,7 +983,7 @@
             // newFolderToolStripButton
             // 
             this.newFolderToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.newFolderToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("newFolderToolStripButton.Image")));
+            this.newFolderToolStripButton.Image = global::TotalImage.Properties.Resources.new_folder_16;
             this.newFolderToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newFolderToolStripButton.Name = "newFolderToolStripButton";
             this.newFolderToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -976,7 +993,7 @@
             // deleteToolStripButton
             // 
             this.deleteToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.deleteToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteToolStripButton.Image")));
+            this.deleteToolStripButton.Image = global::TotalImage.Properties.Resources.delete_16;
             this.deleteToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deleteToolStripButton.Name = "deleteToolStripButton";
             this.deleteToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -986,7 +1003,7 @@
             // propertiesToolStripButton
             // 
             this.propertiesToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.propertiesToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("propertiesToolStripButton.Image")));
+            this.propertiesToolStripButton.Image = global::TotalImage.Properties.Resources.properties_16;
             this.propertiesToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.propertiesToolStripButton.Name = "propertiesToolStripButton";
             this.propertiesToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1007,7 +1024,7 @@
             // managePartitionsToolStripButton
             // 
             this.managePartitionsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.managePartitionsToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("managePartitionsToolStripButton.Image")));
+            this.managePartitionsToolStripButton.Image = global::TotalImage.Properties.Resources.disks_16;
             this.managePartitionsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.managePartitionsToolStripButton.Name = "managePartitionsToolStripButton";
             this.managePartitionsToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1022,7 +1039,7 @@
             // labelToolStripMenuButton
             // 
             this.labelToolStripMenuButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.labelToolStripMenuButton.Image = ((System.Drawing.Image)(resources.GetObject("labelToolStripMenuButton.Image")));
+            this.labelToolStripMenuButton.Image = global::TotalImage.Properties.Resources.label_16;
             this.labelToolStripMenuButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.labelToolStripMenuButton.Name = "labelToolStripMenuButton";
             this.labelToolStripMenuButton.Size = new System.Drawing.Size(23, 22);
@@ -1032,7 +1049,7 @@
             // bootsectToolStripButton
             // 
             this.bootsectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bootsectToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("bootsectToolStripButton.Image")));
+            this.bootsectToolStripButton.Image = global::TotalImage.Properties.Resources.boot_sector_16;
             this.bootsectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.bootsectToolStripButton.Name = "bootsectToolStripButton";
             this.bootsectToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1042,7 +1059,7 @@
             // infoToolStripButton
             // 
             this.infoToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.infoToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("infoToolStripButton.Image")));
+            this.infoToolStripButton.Image = global::TotalImage.Properties.Resources.info_16;
             this.infoToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.infoToolStripButton.Name = "infoToolStripButton";
             this.infoToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1136,7 +1153,7 @@
             this.sizeToolStripMenuItem1,
             this.typeToolStripMenuItem1,
             this.modifiedToolStripMenuItem1});
-            this.sortToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("sortToolStripButton.Image")));
+            this.sortToolStripButton.Image = global::TotalImage.Properties.Resources.sort_16;
             this.sortToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.sortToolStripButton.Name = "sortToolStripButton";
             this.sortToolStripButton.Size = new System.Drawing.Size(29, 22);
@@ -1145,28 +1162,28 @@
             // nameToolStripMenuItem1
             // 
             this.nameToolStripMenuItem1.Name = "nameToolStripMenuItem1";
-            this.nameToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
+            this.nameToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.nameToolStripMenuItem1.Text = "Name";
             this.nameToolStripMenuItem1.Click += new System.EventHandler(this.nameToolStripMenuItem1_Click);
             // 
             // sizeToolStripMenuItem1
             // 
             this.sizeToolStripMenuItem1.Name = "sizeToolStripMenuItem1";
-            this.sizeToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
+            this.sizeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.sizeToolStripMenuItem1.Text = "Size";
             this.sizeToolStripMenuItem1.Click += new System.EventHandler(this.sizeToolStripMenuItem1_Click);
             // 
             // typeToolStripMenuItem1
             // 
             this.typeToolStripMenuItem1.Name = "typeToolStripMenuItem1";
-            this.typeToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
+            this.typeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.typeToolStripMenuItem1.Text = "Type";
             this.typeToolStripMenuItem1.Click += new System.EventHandler(this.typeToolStripMenuItem1_Click);
             // 
             // modifiedToolStripMenuItem1
             // 
             this.modifiedToolStripMenuItem1.Name = "modifiedToolStripMenuItem1";
-            this.modifiedToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
+            this.modifiedToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.modifiedToolStripMenuItem1.Text = "Modified";
             this.modifiedToolStripMenuItem1.Click += new System.EventHandler(this.modifiedToolStripMenuItem_Click);
             // 
@@ -1178,7 +1195,7 @@
             // settingsToolStripButton
             // 
             this.settingsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.settingsToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("settingsToolStripButton.Image")));
+            this.settingsToolStripButton.Image = global::TotalImage.Properties.Resources.options_alt_16;
             this.settingsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.settingsToolStripButton.Name = "settingsToolStripButton";
             this.settingsToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1227,6 +1244,7 @@
             // 
             // extractToolStripMenuItem2
             // 
+            this.extractToolStripMenuItem2.Image = global::TotalImage.Properties.Resources.extract_16;
             this.extractToolStripMenuItem2.Name = "extractToolStripMenuItem2";
             this.extractToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.extractToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
@@ -1235,6 +1253,7 @@
             // 
             // newFolderToolStripMenuItem2
             // 
+            this.newFolderToolStripMenuItem2.Image = global::TotalImage.Properties.Resources.new_folder_16;
             this.newFolderToolStripMenuItem2.Name = "newFolderToolStripMenuItem2";
             this.newFolderToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.N)));
@@ -1244,6 +1263,7 @@
             // 
             // deleteToolStripMenuItem2
             // 
+            this.deleteToolStripMenuItem2.Image = global::TotalImage.Properties.Resources.delete_16;
             this.deleteToolStripMenuItem2.Name = "deleteToolStripMenuItem2";
             this.deleteToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.deleteToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
@@ -1268,6 +1288,7 @@
             // 
             // propertiesToolStripMenuItem2
             // 
+            this.propertiesToolStripMenuItem2.Image = global::TotalImage.Properties.Resources.properties_16;
             this.propertiesToolStripMenuItem2.Name = "propertiesToolStripMenuItem2";
             this.propertiesToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             this.propertiesToolStripMenuItem2.Text = "Properties...";

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(dlgAbout));
             this.btnOK = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblDesc = new System.Windows.Forms.Label();
@@ -103,7 +102,7 @@
             // 
             // imgLogo
             // 
-            this.imgLogo.Image = ((System.Drawing.Image)(resources.GetObject("imgLogo.Image")));
+            this.imgLogo.Image = global::TotalImage.Properties.Resources.logo_48;
             this.imgLogo.Location = new System.Drawing.Point(12, 12);
             this.imgLogo.Name = "imgLogo";
             this.imgLogo.Size = new System.Drawing.Size(48, 48);
