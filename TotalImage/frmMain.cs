@@ -60,7 +60,6 @@ namespace TotalImage
         {
             frmHexView frm = new frmHexView();
             frm.Show();
-            frm.Dispose();
         }
 
         //Allows viewing and editing both volume labels

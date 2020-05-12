@@ -16,5 +16,10 @@ namespace TotalImage
         {
             InitializeComponent();
         }
+
+        private void frmHexView_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
