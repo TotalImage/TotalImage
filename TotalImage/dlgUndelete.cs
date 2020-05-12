@@ -12,9 +12,16 @@ namespace TotalImage
 {
     public partial class dlgUndelete : Form
     {
+        public char FirstChar { get; private set; }
+
         public dlgUndelete()
         {
             InitializeComponent();
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            FirstChar = txtFirstChar.Text[0]; //Character needs to be validated first...
         }
     }
 }

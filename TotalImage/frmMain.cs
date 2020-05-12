@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
@@ -35,9 +36,9 @@ namespace TotalImage
             propertiesToolStripMenuItem1.ShortcutKeys = Keys.Alt | Keys.Enter;
             propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
 
-#if !DEBUG
-            DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
-#endif
+            #if !DEBUG
+                DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
+            #endif
             GetFolderIcon();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
         }
@@ -274,8 +275,18 @@ namespace TotalImage
         //Renames a file or folder
         private void rename_Click(object sender, EventArgs e)
         {
-            dlgRename dlg = new dlgRename();
+            string oldname = "";
+            if (lstFiles.Focused)
+                oldname = lstFiles.SelectedItems[0].Text;
+            else if (lstDirectories.Focused)
+                oldname = lstDirectories.SelectedNode.Text;
+
+            dlgRename dlg = new dlgRename(oldname);
             dlg.ShowDialog();
+
+            string newname = dlg.NewName;
+            /* This is where the item gets actually renamed */
+
             dlg.Dispose();
         }
 
@@ -1072,8 +1083,10 @@ namespace TotalImage
         //Gets the default Windows folder icon with SHGetFileInfo that will be used for folders
         public void GetFolderIcon()
         {
-            Icon icon = GetShellFileIcon("C:\\Windows", FileAttributes.Directory);
+            Icon icon = GetShellFileIcon("C:\\Windows", false, FileAttributes.Directory);
             imgFilesSmall.Images.Add("folder", icon);
+            icon = GetShellFileIcon("C:\\Windows", true, FileAttributes.Directory);
+            imgFilesLarge.Images.Add("folder", icon);
         }
 
         //Adds a new node to the root directory in the directory tree
@@ -1147,10 +1160,14 @@ namespace TotalImage
         }
 
         //Obtains the icon for the file type
-        public Icon GetShellFileIcon(string filename, FileAttributes attributes)
+        public Icon GetShellFileIcon(string filename, bool GetLargeIcon, FileAttributes attributes)
         {
             var shinfo = new SHFILEINFO();
-            var flags = SHGFI.ICON | SHGFI.SMALLICON | SHGFI.USEFILEATTRIBUTES;
+            var flags = SHGFI.ICON | SHGFI.USEFILEATTRIBUTES;
+            if (GetLargeIcon)
+                flags |= SHGFI.LARGEICON;
+            else
+                flags |= SHGFI.SMALLICON;
 
             SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
             Icon icon = (Icon)Icon.FromHandle(shinfo.hIcon).Clone();
@@ -1193,8 +1210,10 @@ namespace TotalImage
                     //This will only add a new icon to the list if the associated type hasn't been encountered yet
                     if (!imgFilesSmall.Images.ContainsKey(filetype))
                     {
-                        Icon icon = GetShellFileIcon(filename, FileAttributes.Normal);
+                        Icon icon = GetShellFileIcon(filename, false, FileAttributes.Normal);
                         imgFilesSmall.Images.Add(filetype, icon);
+                        icon = GetShellFileIcon(filename, true, FileAttributes.Normal);
+                        imgFilesLarge.Images.Add(filetype, icon);
                     }
                     lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype);
                 }

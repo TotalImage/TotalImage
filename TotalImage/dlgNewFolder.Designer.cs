@@ -53,6 +53,7 @@
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(460, 23);
             this.txtName.TabIndex = 0;
+            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
             // 
             // btnCancel
             // 
@@ -77,6 +78,7 @@
             this.btnOK.TabIndex = 1;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // lblShortName
             // 

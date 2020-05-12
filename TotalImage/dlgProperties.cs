@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -13,7 +12,14 @@ namespace TotalImage
 {
     public partial class dlgProperties : Form
     {
-        //private FatDirEntry entry;
+        public string NewName { get; private set; }
+        public DateTime DateModified { get; private set; }
+        public DateTime DateCreated { get; private set; }
+        public DateTime DateAccessed { get; private set; }
+        public bool AttrReadOnly { get; private set; }
+        public bool AttrHidden { get; private set; }
+        public bool AttrSystem { get; private set; }
+        public bool AttrArchive { get; private set; }
 
         private dlgProperties()
         {
@@ -22,12 +28,6 @@ namespace TotalImage
 
         public dlgProperties(DirectoryEntry entry) : this()
         {
-            /* This is effectively the same as using CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern, just without
-             * the silly 'Z' at the end... */
-            dateCreated.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-            dateModified.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-            dateAccessed.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-
             /* For now both fields display the same 8.3 name, once VFAT/LFN support is added, the textbox will display
              * the long name instead */
             string filename = entry.name.TrimEnd('.');
@@ -85,9 +85,8 @@ namespace TotalImage
         public dlgProperties(FileSystemObject entry) : this()
         {
             if(entry == null)
-            {
                 throw new ArgumentNullException(nameof(entry), "entry cannot be null!");
-            }
+
             txtFilename.Text = entry.Name.ToUpper();
             lblShortFilename1.Text = entry.Name.ToUpper();
             lblSize1.Text = $"{entry.Length:n0} B";
@@ -137,6 +136,35 @@ namespace TotalImage
 
                 DestroyIcon(shellInfo.hIcon);
             }
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            NewName = txtFilename.Text; //Name needs to be validated first...
+            if (dateModified.Checked)
+                DateModified = dateModified.Value;
+            if (dateCreated.Checked)
+                DateCreated = dateCreated.Value;
+            if (dateAccessed.Checked)
+                DateAccessed = dateAccessed.Value;
+            AttrArchive = cbxArchive.Checked;
+            AttrHidden = cbxHidden.Checked;
+            AttrReadOnly = cbxReadOnly.Checked;
+            AttrSystem = cbxSystem.Checked;
+        }
+
+        private void txtFilename_TextChanged(object sender, EventArgs e)
+        {
+            /* This is where short (8.3) name is generated */
+        }
+
+        private void dlgProperties_Load(object sender, EventArgs e)
+        {
+            /* This is effectively the same as using CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern, just without
+             * the silly 'Z' at the end... */
+            dateCreated.CustomFormat = "yyyy-MM-dd HH:mm:ss";
+            dateModified.CustomFormat = "yyyy-MM-dd HH:mm:ss";
+            dateAccessed.CustomFormat = "yyyy-MM-dd";
         }
     }
 }

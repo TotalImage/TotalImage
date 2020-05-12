@@ -126,15 +126,4 @@ the VFAT/LFN extensions. Other systems will display the short (8.3)
 name instead (see below), which is automatically generated based
 on the long name.</value>
   </data>
-  <data name="lblAccessed.ToolTip" xml:space="preserve">
-    <value>This is the date and time when the file or directory was last accessed.
-The definition of this can vary significantly from system to system.
-Only systems supporting the VFAT extensions use this value.
-</value>
-  </data>
-  <data name="dateAccessed.ToolTip" xml:space="preserve">
-    <value>This is the date and time when the file or directory was last accessed.
-The definition of this can vary significantly from system to system.
-Only systems supporting the VFAT extensions use this value.</value>
-  </data>
 </root>

@@ -80,6 +80,7 @@
             this.txtFilename.TabIndex = 0;
             this.txtFilename.Text = "<filename>";
             this.toolTip.SetToolTip(this.txtFilename, resources.GetString("txtFilename.ToolTip"));
+            this.txtFilename.TextChanged += new System.EventHandler(this.txtFilename_TextChanged);
             // 
             // lblType
             // 
@@ -246,7 +247,9 @@
             this.lblAccessed.Size = new System.Drawing.Size(59, 15);
             this.lblAccessed.TabIndex = 22;
             this.lblAccessed.Text = "Accessed:";
-            this.toolTip.SetToolTip(this.lblAccessed, resources.GetString("lblAccessed.ToolTip"));
+            this.toolTip.SetToolTip(this.lblAccessed, "This is the date when the file or directory was last accessed. The definition \r\no" +
+        "f this can vary significantly from system to system. Only systems \r\nsupporting t" +
+        "he VFAT extensions use this value.");
             // 
             // dateAccessed
             // 
@@ -258,7 +261,9 @@
             this.dateAccessed.ShowUpDown = true;
             this.dateAccessed.Size = new System.Drawing.Size(295, 23);
             this.dateAccessed.TabIndex = 3;
-            this.toolTip.SetToolTip(this.dateAccessed, resources.GetString("dateAccessed.ToolTip"));
+            this.toolTip.SetToolTip(this.dateAccessed, "This is the date when the file or directory was last accessed. The definition \r\no" +
+        "f this can vary significantly from system to system. Only systems \r\nsupporting t" +
+        "he VFAT extensions use this value.");
             // 
             // dateCreated
             // 
@@ -329,6 +334,7 @@
             this.btnOK.TabIndex = 8;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // pnlBottom
             // 
@@ -427,6 +433,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Properties";
+            this.Load += new System.EventHandler(this.dlgProperties_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imgIcon)).EndInit();
             this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
