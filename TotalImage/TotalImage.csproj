@@ -12,6 +12,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationIcon>totalimage.ico</ApplicationIcon>
     <StartupObject>TotalImage.Program</StartupObject>
+    <Authors>The TotalImage Team</Authors>
   </PropertyGroup>
 
   <ItemGroup>

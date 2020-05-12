@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.ImageFormats;
@@ -444,18 +444,44 @@ namespace TotalImage
             {
                 if (lstFiles.SelectedItems.Count == 1)
                 {
-                    image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+                    DirectoryEntry entry = (DirectoryEntry)lstFiles.SelectedItems[0].Tag;
+                    if (Convert.ToBoolean(entry.attr & 0x10))
+                    {
+                        /* Extract the entire selected directory based on the selected options from the dialog */
+                    }
+                    else
+                    {
+                        /* Extract just one file based on the selected options from the dialog
+                         * Right now only the "Ignore folders" option works... */
+                        if(dlg.ExtractType == dlgExtract.FolderBehaviour.Ignore)
+                        {
+                            image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, dlg.TargetPath);
+                        }
+                    }
                 }
                 else if (lstFiles.SelectedItems.Count > 1)
                 {
                     foreach (ListViewItem lvi in lstFiles.SelectedItems)
                     {
                         DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
-                        if (!Convert.ToBoolean(entry.attr & 0x10))
+                        if (Convert.ToBoolean(entry.attr & 0x10))
                         {
-                            image.ExtractFile(entry, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+                            /* Extract this entire directory based on the selected options from the dialog */
+                        }
+                        else
+                        {
+                            /* Extract just one file based on the selected options from the dialog
+                             * Right now only the "Ignore folders" option works... */
+                            if (dlg.ExtractType == dlgExtract.FolderBehaviour.Ignore)
+                            {
+                                image.ExtractFile((DirectoryEntry)lvi.Tag, dlg.TargetPath);
+                            }
                         }
                     }
+                }
+                if (dlg.OpenFolder)
+                {
+                    Process.Start(dlg.TargetPath);
                 }
             }
             dlg.Dispose();
