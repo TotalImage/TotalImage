@@ -35,7 +35,9 @@ namespace TotalImage
             propertiesToolStripMenuItem1.ShortcutKeys = Keys.Alt | Keys.Enter;
             propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
 
+#if !DEBUG
             DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
+#endif
             GetFolderIcon();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
         }
@@ -1004,7 +1006,7 @@ namespace TotalImage
                 }
             }
         }
-        #endregion
+#endregion
 
         /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private void OpenImage(string path)

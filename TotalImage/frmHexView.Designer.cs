@@ -41,7 +41,6 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Hex view";
-            this.Load += new System.EventHandler(this.frmHexView_Load);
             this.ResumeLayout(false);
 
         }
