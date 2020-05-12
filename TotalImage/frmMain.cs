@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
@@ -53,7 +52,7 @@ namespace TotalImage
             if (fbd.ShowDialog() == DialogResult.OK)
             {
                 /* Inject the entire selected folder into the image */
-                unsavedChanges = true;
+                throw new NotImplementedException("This feature is not implemented yet");
             }
             fbd.Dispose();
         }
@@ -253,14 +252,14 @@ namespace TotalImage
                         return;
                     }
                 }
-                foreach(ListViewItem lvi in lstFiles.SelectedItems)
+                foreach (ListViewItem lvi in lstFiles.SelectedItems)
                 {
-                    /* Delete each selected item */      
+                    throw new NotImplementedException("This feature is not implemented yet");
                 }
             }
             else if (lstDirectories.Focused)
             {
-                /* Delete the selected directory */
+                throw new NotImplementedException("This feature is not implemented yet");
             }
         }
 
@@ -293,7 +292,7 @@ namespace TotalImage
         //Changes image format
         private void changeFormat_Click(object sender, EventArgs e)
         {
-
+            throw new NotImplementedException("This feature is not implemented yet");
         }
 
         //Defragments the selected partition
@@ -447,8 +446,7 @@ namespace TotalImage
         }
 
         /* Extracts file(s) or folder(s) from the image to the specified path
-         * This code is just a POC - needs to be improved to use the actual selected path and to follow the selected options
-         * from the extraction dialog. */
+         * This code is just a POC - needs to be improved to use all the selected options from the dialog */
         private void extract_Click(object sender, EventArgs e)
         {
             dlgExtract dlg = new dlgExtract();
@@ -459,7 +457,7 @@ namespace TotalImage
                     DirectoryEntry entry = (DirectoryEntry)lstFiles.SelectedItems[0].Tag;
                     if (Convert.ToBoolean(entry.attr & 0x10))
                     {
-                        /* Extract the entire selected directory based on the selected options from the dialog */
+                        throw new NotImplementedException("This feature is not implemented yet");
                     }
                     else
                     {
@@ -468,6 +466,10 @@ namespace TotalImage
                         if(dlg.ExtractType == dlgExtract.FolderBehaviour.Ignore)
                         {
                             image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, dlg.TargetPath);
+                        }
+                        else
+                        {
+                            throw new NotImplementedException("This feature is not implemented yet");
                         }
                     }
                 }
@@ -478,7 +480,7 @@ namespace TotalImage
                         DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
                         if (Convert.ToBoolean(entry.attr & 0x10))
                         {
-                            /* Extract this entire directory based on the selected options from the dialog */
+                            throw new NotImplementedException("This feature is not implemented yet");
                         }
                         else
                         {
@@ -487,6 +489,10 @@ namespace TotalImage
                             if (dlg.ExtractType == dlgExtract.FolderBehaviour.Ignore)
                             {
                                 image.ExtractFile((DirectoryEntry)lvi.Tag, dlg.TargetPath);
+                            }
+                            else
+                            {
+                                throw new NotImplementedException("This feature is not implemented yet");
                             }
                         }
                     }
@@ -628,7 +634,7 @@ namespace TotalImage
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                /* Inject the selected file(s) into the image */
+                throw new NotImplementedException("This feature is not implemented yet");
             }
 
             ofd.Dispose();
@@ -737,12 +743,12 @@ namespace TotalImage
                         }
                         else
                         {
-                            /* Throw an error because the node was not found for some reason... */
+                            throw new Exception("Associated treeview node was not found");
                         }
                     }
                     else //A file was double-clicked
                     {
-                        /* Probably extract the file and open it */
+                        throw new NotImplementedException("This feature is not implemented yet");
                     }
                 }
             }
@@ -883,57 +889,81 @@ namespace TotalImage
         private void lstFiles_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
                 e.Effect = DragDropEffects.Copy;
-            }
+            else if (e.Data.GetDataPresent(typeof(ListViewItem)) || e.Data.GetDataPresent(typeof(TreeNode)))
+                e.Effect = DragDropEffects.Move;
             else
-            {
                 e.Effect = DragDropEffects.None;
-            }
         }
 
         //Opens an image that's been dragged and dropped onto the file list
         //Needs improvement, but the gist of it is there...
         private void lstFiles_DragDrop(object sender, DragEventArgs e)
         {
-            string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
-            if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
+            if (e.Data.GetDataPresent(typeof(ListViewItem)))
             {
-                if (items.Length == 1)
-                {
-                    OpenImage(items[0]);
-                }
+                /* A file or folder is being moved within the listview */
+                throw new NotImplementedException("This feature is not implemented yet");
             }
-            else if (!string.IsNullOrWhiteSpace(filename) || unsavedChanges) //An image is open (either saved or new)
+            else if (e.Data.GetDataPresent(typeof(TreeNode)))
             {
-                /* Inject files/folder instead */
+                /* A folder is being moved from the treeview to the listview. First needs to check if such a move is even legal;
+                 * as this could potentially allow the user to move a parent folder into its own subfolder... */
+                throw new NotImplementedException("This feature is not implemented yet");
+            }
+            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                //Files are being dragged into the listview from outside the form
+                string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+                if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
+                {
+                    if (items.Length == 1)
+                        OpenImage(items[0]);
+                }
+                else if (!string.IsNullOrWhiteSpace(filename) || unsavedChanges) //An image is open (either saved or new)
+                {
+                    /* Inject files/folder instead */
+                    throw new NotImplementedException("This feature is not implemented yet");
+                }
             }
         }
 
         private void lstDirectories_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
                 e.Effect = DragDropEffects.Copy;
-            }
+            else if (e.Data.GetDataPresent(typeof(ListViewItem)) || e.Data.GetDataPresent(typeof(TreeNode)))
+                e.Effect = DragDropEffects.Move;
             else
-            {
                 e.Effect = DragDropEffects.None;
-            }
         }
 
         //Opens an image that's been dragged and dropped onto the dir tree
         //Needs improvement, but the gist of it is there...
         private void lstDirectories_DragDrop(object sender, DragEventArgs e)
         {
-            string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
-            if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
+            if (e.Data.GetDataPresent(typeof(ListViewItem)))
             {
-                if (items.Length == 1)
+                /* A file or folder is being moved from the listview to the treeview */
+                throw new NotImplementedException("This feature is not implemented yet");
+            }
+            else if (e.Data.GetDataPresent(typeof(TreeNode)))
+            {
+                /* A folder is being moved within the treeview. First needs to check if such a move is even legal;
+                 * as this could potentially allow the user to move a parent folder into its own subfolder... */
+                throw new NotImplementedException("This feature is not implemented yet");
+            }
+            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+                if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
                 {
-                    OpenImage(items[0]);
+                    if (items.Length == 1)
+                    {
+                        OpenImage(items[0]);
+                    }
                 }
             }
         }
@@ -993,12 +1023,22 @@ namespace TotalImage
 
         private void showHiddenItems_Click(object sender, EventArgs e)
         {
-
+            throw new NotImplementedException("This feature is not implemented yet");
         }
 
         private void showDeletedItems_Click(object sender, EventArgs e)
         {
+            throw new NotImplementedException("This feature is not implemented yet");
+        }
 
+        private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            DoDragDrop(e.Item, DragDropEffects.Move);
+        }
+
+        private void lstDirectories_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            DoDragDrop(e.Item, DragDropEffects.Move);
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
