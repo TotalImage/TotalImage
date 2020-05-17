@@ -26,6 +26,9 @@
 
             frmMain main = (frmMain)Application.OpenForms["frmMain"];
 
+            if (SortColumn < 0 || SortColumn > main.lstFiles.Columns.Count)
+                throw new IndexOutOfRangeException("SortColumn is out of range!");
+
             int compareResult;
             ListViewItem listviewX, listviewY;
 

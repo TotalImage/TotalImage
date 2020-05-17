@@ -6,13 +6,7 @@ namespace TotalImage
     {
         public string TargetPath { get; private set; }
         public bool OpenFolder { get; private set; }
-        public FolderBehaviour ExtractType { get; private set; }
-        public enum FolderBehaviour
-        { 
-            Ignore,
-            Merge,
-            Preserve
-        }
+        public Settings.FolderExtract ExtractType { get; private set; }
 
         public dlgExtract()
         {
@@ -25,15 +19,15 @@ namespace TotalImage
             OpenFolder = cbxOpenFolder.Checked;
             if (rbnExtractSameFolder.Checked)
             {
-                ExtractType = FolderBehaviour.Merge;
+                ExtractType = Settings.FolderExtract.Merge;
             }
             else if (rbnIgnoreFolders.Checked)
             {
-                ExtractType = FolderBehaviour.Ignore;
+                ExtractType = Settings.FolderExtract.Ignore;
             }
             else if (rbnPreserveDirs.Checked)
             {
-                ExtractType = FolderBehaviour.Preserve;
+                ExtractType = Settings.FolderExtract.Preserve;
             }
         }
 

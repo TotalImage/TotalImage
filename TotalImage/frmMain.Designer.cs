@@ -706,8 +706,6 @@
             // 
             // nameToolStripMenuItem
             // 
-            this.nameToolStripMenuItem.Checked = true;
-            this.nameToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
             this.nameToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.nameToolStripMenuItem.Text = "Name";
@@ -1166,28 +1164,28 @@
             // nameToolStripMenuItem1
             // 
             this.nameToolStripMenuItem1.Name = "nameToolStripMenuItem1";
-            this.nameToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
+            this.nameToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.nameToolStripMenuItem1.Text = "Name";
             this.nameToolStripMenuItem1.Click += new System.EventHandler(this.sortByName_Click);
             // 
             // sizeToolStripMenuItem1
             // 
             this.sizeToolStripMenuItem1.Name = "sizeToolStripMenuItem1";
-            this.sizeToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
+            this.sizeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.sizeToolStripMenuItem1.Text = "Size";
             this.sizeToolStripMenuItem1.Click += new System.EventHandler(this.sortBySize_Click);
             // 
             // typeToolStripMenuItem1
             // 
             this.typeToolStripMenuItem1.Name = "typeToolStripMenuItem1";
-            this.typeToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
+            this.typeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.typeToolStripMenuItem1.Text = "Type";
             this.typeToolStripMenuItem1.Click += new System.EventHandler(this.sortByType_Click);
             // 
             // modifiedToolStripMenuItem1
             // 
             this.modifiedToolStripMenuItem1.Name = "modifiedToolStripMenuItem1";
-            this.modifiedToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
+            this.modifiedToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.modifiedToolStripMenuItem1.Text = "Modified";
             this.modifiedToolStripMenuItem1.Click += new System.EventHandler(this.sortByModified_Click);
             // 
@@ -1366,22 +1364,26 @@
             // 
             // clmName
             // 
+            this.clmName.Tag = "Name";
             this.clmName.Text = "Name";
             this.clmName.Width = 128;
             // 
             // clmType
             // 
+            this.clmType.Tag = "Type";
             this.clmType.Text = "Type";
             this.clmType.Width = 127;
             // 
             // clmSize
             // 
+            this.clmSize.Tag = "Size";
             this.clmSize.Text = "Size";
             this.clmSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.clmSize.Width = 118;
             // 
             // clmModified
             // 
+            this.clmModified.Tag = "Modified";
             this.clmModified.Text = "Modified";
             this.clmModified.Width = 148;
             // 

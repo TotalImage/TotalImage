@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -168,6 +169,7 @@ namespace TotalImage
             listToolStripMenuItem.Checked = false;
             listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.LargeIcon;
+            Settings.FilesView = View.LargeIcon;
         }
 
         private void viewSmallIcons_Click(object sender, EventArgs e)
@@ -183,6 +185,7 @@ namespace TotalImage
             listToolStripMenuItem.Checked = false;
             listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.SmallIcon;
+            Settings.FilesView = View.SmallIcon;
         }
 
         private void viewList_Click(object sender, EventArgs e)
@@ -198,6 +201,7 @@ namespace TotalImage
             listToolStripMenuItem.Checked = true;
             listToolStripMenuItem1.Checked = true;
             lstFiles.View = View.List;
+            Settings.FilesView = View.List;
         }
 
         private void viewDetails_Click(object sender, EventArgs e)
@@ -213,6 +217,7 @@ namespace TotalImage
             listToolStripMenuItem.Checked = false;
             listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.Details;
+            Settings.FilesView = View.Details;
         }
 
         private void viewTiles_Click(object sender, EventArgs e)
@@ -228,6 +233,7 @@ namespace TotalImage
             listToolStripMenuItem.Checked = false;
             listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.Tile;
+            Settings.FilesView = View.Tile;
         }
 
         //Deletes a file or folder
@@ -380,23 +386,27 @@ namespace TotalImage
         {
             commandBar.Visible = commandBarToolStripMenuItem.Checked;
             commandBarToolStripMenuItem1.Checked = commandBarToolStripMenuItem.Checked;
+            Settings.ShowCommandBar = commandBarToolStripMenuItem.Checked;
         }
         private void toggleDirectoryTree_Click(object sender, EventArgs e)
         {
             splitContainer.Panel1Collapsed = !directoryTreeToolStripMenuItem.Checked;
             directoryTreeToolStripMenuItem1.Checked = directoryTreeToolStripMenuItem.Checked;
+            Settings.ShowDirectoryTree = directoryTreeToolStripMenuItem.Checked;
         }
 
         private void toggleFileList_Click(object sender, EventArgs e)
         {
             splitContainer.Panel2Collapsed = !fileListToolStripMenuItem.Checked;
             fileListToolStripMenuItem1.Checked = fileListToolStripMenuItem.Checked;
+            Settings.ShowFileList = fileListToolStripMenuItem.Checked;
         }
 
         private void toggleStatusBar_Click(object sender, EventArgs e)
         {
             statusBar.Visible = statusBarToolStripMenuItem.Checked;
             statusBarToolStripMenuItem1.Checked = statusBarToolStripMenuItem.Checked;
+            Settings.ShowStatusBar = statusBarToolStripMenuItem.Checked;
         }
 
         private void openImage_Click(object sender, EventArgs e)
@@ -463,7 +473,7 @@ namespace TotalImage
                     {
                         /* Extract just one file based on the selected options from the dialog
                          * Right now only the "Ignore folders" option works... */
-                        if(dlg.ExtractType == dlgExtract.FolderBehaviour.Ignore)
+                        if(dlg.ExtractType == Settings.FolderExtract.Ignore)
                         {
                             image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, dlg.TargetPath);
                         }
@@ -486,7 +496,7 @@ namespace TotalImage
                         {
                             /* Extract just one file based on the selected options from the dialog
                              * Right now only the "Ignore folders" option works... */
-                            if (dlg.ExtractType == dlgExtract.FolderBehaviour.Ignore)
+                            if (dlg.ExtractType == Settings.FolderExtract.Ignore)
                             {
                                 image.ExtractFile((DirectoryEntry)lvi.Tag, dlg.TargetPath);
                             }
@@ -764,6 +774,8 @@ namespace TotalImage
             sizeToolStripMenuItem1.Checked = false;
             modifiedToolStripMenuItem.Checked = false;
             modifiedToolStripMenuItem1.Checked = false;
+
+            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Type");
         }
 
         private void sortByModified_Click(object sender, EventArgs e)
@@ -776,6 +788,8 @@ namespace TotalImage
             sizeToolStripMenuItem1.Checked = false;
             modifiedToolStripMenuItem.Checked = true;
             modifiedToolStripMenuItem1.Checked = true;
+
+            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Modified");
         }
 
         private void sortByName_Click(object sender, EventArgs e)
@@ -788,6 +802,8 @@ namespace TotalImage
             sizeToolStripMenuItem1.Checked = false;
             modifiedToolStripMenuItem.Checked = false;
             modifiedToolStripMenuItem1.Checked = false;
+
+            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Name");
         }
 
         private void sortBySize_Click(object sender, EventArgs e)
@@ -800,81 +816,8 @@ namespace TotalImage
             sizeToolStripMenuItem1.Checked = true;
             modifiedToolStripMenuItem.Checked = false;
             modifiedToolStripMenuItem1.Checked = false;
-        }
 
-        private void largeIconsToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            largeIconsToolStripMenuItem.Checked = true;
-            largeIconsToolStripMenuItem1.Checked = true;
-            smallIconsToolStripMenuItem.Checked = false;
-            smallIconsToolStripMenuItem1.Checked = false;
-            detailsToolStripMenuItem.Checked = false;
-            detailsToolStripMenuItem1.Checked = false;
-            tilesToolStripMenuItem.Checked = false;
-            tilesToolStripMenuItem1.Checked = false;
-            listToolStripMenuItem.Checked = false;
-            listToolStripMenuItem1.Checked = false;
-            lstFiles.View = View.LargeIcon;
-        }
-
-        private void smallIconsToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            largeIconsToolStripMenuItem.Checked = false;
-            largeIconsToolStripMenuItem1.Checked = false;
-            smallIconsToolStripMenuItem.Checked = true;
-            smallIconsToolStripMenuItem1.Checked = true;
-            detailsToolStripMenuItem.Checked = false;
-            detailsToolStripMenuItem1.Checked = false;
-            tilesToolStripMenuItem.Checked = false;
-            tilesToolStripMenuItem1.Checked = false;
-            listToolStripMenuItem.Checked = false;
-            listToolStripMenuItem1.Checked = false;
-            lstFiles.View = View.SmallIcon;
-        }
-
-        private void listToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            largeIconsToolStripMenuItem.Checked = false;
-            largeIconsToolStripMenuItem1.Checked = false;
-            smallIconsToolStripMenuItem.Checked = false;
-            smallIconsToolStripMenuItem1.Checked = false;
-            detailsToolStripMenuItem.Checked = false;
-            detailsToolStripMenuItem1.Checked = false;
-            tilesToolStripMenuItem.Checked = false;
-            tilesToolStripMenuItem1.Checked = false;
-            listToolStripMenuItem.Checked = true;
-            listToolStripMenuItem1.Checked = true;
-            lstFiles.View = View.List;
-        }
-
-        private void detailsToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            largeIconsToolStripMenuItem.Checked = false;
-            largeIconsToolStripMenuItem1.Checked = false;
-            smallIconsToolStripMenuItem.Checked = false;
-            smallIconsToolStripMenuItem1.Checked = false;
-            detailsToolStripMenuItem.Checked = true;
-            detailsToolStripMenuItem1.Checked = true;
-            tilesToolStripMenuItem.Checked = false;
-            tilesToolStripMenuItem1.Checked = false;
-            listToolStripMenuItem.Checked = false;
-            listToolStripMenuItem1.Checked = false;
-            lstFiles.View = View.Details;
-        }
-
-        private void tilesToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            largeIconsToolStripMenuItem.Checked = false;
-            largeIconsToolStripMenuItem1.Checked = false;
-            smallIconsToolStripMenuItem.Checked = false;
-            smallIconsToolStripMenuItem1.Checked = false;
-            detailsToolStripMenuItem.Checked = false;
-            detailsToolStripMenuItem1.Checked = false;
-            tilesToolStripMenuItem.Checked = true;
-            tilesToolStripMenuItem1.Checked = true;
-            listToolStripMenuItem.Checked = false;
-            listToolStripMenuItem1.Checked = false;
-            lstFiles.View = View.Tile;
+            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Size");
         }
 
         private void selectAll_Click(object sender, EventArgs e)
