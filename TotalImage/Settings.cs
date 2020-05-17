@@ -18,6 +18,7 @@ namespace TotalImage
         public static SizeUnit SizeUnits { get; set; }
         public static string DefaultExtractPath { get; set; }
         public static FolderExtract DefaultExtractType { get; set; }
+        public static bool OpenFolderAfterExtract { get; set; }
 
         public enum SizeUnit
         {
@@ -27,12 +28,14 @@ namespace TotalImage
             MB = 1000000,
             MiB = 1048576
         }
+
+        //Default folder options for extraction
         public enum FolderExtract
         {
-            Ignore,
-            Merge,
-            Preserve,
-            AlwaysAsk
+            Ignore,   //Folders will be ignored by default
+            Merge,    //All files will be extracted into the same directory
+            Preserve, //Directory structure will be preserved
+            AlwaysAsk //The user will always be prompted with the Extract dialog
         }
 
         public static void Load()
@@ -47,11 +50,13 @@ namespace TotalImage
 
         public static void AddRecentImage(string path)
         {
+            //This prevents duplicate entries by removing the old entry first - the new one is then put at the start of the list
             if (RecentImages.Count > 0) {
                 if(RecentImages.LastIndexOf(path) > -1)
                     RecentImages.RemoveAt(RecentImages.LastIndexOf(path));
             }
 
+            //10 entries seems like a reasonable number
             if (RecentImages.Count >= 10)
                 RecentImages.RemoveAt(0);
             RecentImages.Add(path);

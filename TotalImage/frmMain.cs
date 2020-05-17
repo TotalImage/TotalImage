@@ -1290,20 +1290,12 @@ namespace TotalImage
                 newItem.Click += recentImage_Click;
                 recentFilesToolStripMenuItem.DropDownItems.Add(newItem);
             }
+
+            recentFilesToolStripMenuItem.Enabled = recentFilesToolStripMenuItem.DropDownItems.Count != 0;
         }
 
         private void CloseImage()
         {
-            /* Offer to save any unsaved changes before closing the image file */
-            /*if (unsavedChanges)
-            {
-                DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before closing the image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question); ;
-                if (DialogResult == DialogResult.Yes)
-                {
-                    //save_Click(sender, e);
-                }
-                else if (DialogResult == DialogResult.Cancel) return;
-            }*/
             unsavedChanges = false;
             Text = "TotalImage";
             filename = "";
