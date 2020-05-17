@@ -21,9 +21,7 @@ namespace TotalImage.FileSystems.FAT
             get => volumeLabel; 
             set
             {
-                if(string.IsNullOrEmpty(value))
-                    throw new ArgumentException("VolumeLabel must not be null or empty string");
-                else if(value.Length > 11)
+                if(value.Length > 11)
                     throw new ArgumentException("VolumeLabel must be 11 characters at most");
 
                 volumeLabel = value;

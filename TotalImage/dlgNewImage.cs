@@ -38,6 +38,8 @@ namespace TotalImage
             lstHDDType.SelectedIndex = 0;
         }
 
+        /* This will have to be rewritten so it only passes a struct/object/whatever that contains relevant image info to the main form, 
+         * instead of calling main form methods. */
         private void btnOK_Click(object sender, EventArgs e)
         {
             if (tabControl.SelectedTab == tabFloppy)

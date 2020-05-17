@@ -54,7 +54,7 @@
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -352,7 +352,7 @@
             this.saveAsToolStripMenuItem,
             this.closeImageToolStripMenuItem,
             this.toolStripSeparator2,
-            this.toolStripMenuItem1,
+            this.recentFilesToolStripMenuItem,
             this.toolStripSeparator1,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -397,6 +397,7 @@
             // 
             // closeImageToolStripMenuItem
             // 
+            this.closeImageToolStripMenuItem.Image = global::TotalImage.Properties.Resources.close_16;
             this.closeImageToolStripMenuItem.Name = "closeImageToolStripMenuItem";
             this.closeImageToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.closeImageToolStripMenuItem.Text = "Close image";
@@ -407,11 +408,11 @@
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(190, 6);
             // 
-            // toolStripMenuItem1
+            // recentFilesToolStripMenuItem
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
-            this.toolStripMenuItem1.Text = "Recent files";
+            this.recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
+            this.recentFilesToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.recentFilesToolStripMenuItem.Text = "Recent files";
             // 
             // toolStripSeparator1
             // 
@@ -948,7 +949,7 @@
             // closeToolStripButton
             // 
             this.closeToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.closeToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("closeToolStripButton.Image")));
+            this.closeToolStripButton.Image = global::TotalImage.Properties.Resources.close_16;
             this.closeToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.closeToolStripButton.Name = "closeToolStripButton";
             this.closeToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1164,28 +1165,28 @@
             // nameToolStripMenuItem1
             // 
             this.nameToolStripMenuItem1.Name = "nameToolStripMenuItem1";
-            this.nameToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.nameToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
             this.nameToolStripMenuItem1.Text = "Name";
             this.nameToolStripMenuItem1.Click += new System.EventHandler(this.sortByName_Click);
             // 
             // sizeToolStripMenuItem1
             // 
             this.sizeToolStripMenuItem1.Name = "sizeToolStripMenuItem1";
-            this.sizeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.sizeToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
             this.sizeToolStripMenuItem1.Text = "Size";
             this.sizeToolStripMenuItem1.Click += new System.EventHandler(this.sortBySize_Click);
             // 
             // typeToolStripMenuItem1
             // 
             this.typeToolStripMenuItem1.Name = "typeToolStripMenuItem1";
-            this.typeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.typeToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
             this.typeToolStripMenuItem1.Text = "Type";
             this.typeToolStripMenuItem1.Click += new System.EventHandler(this.sortByType_Click);
             // 
             // modifiedToolStripMenuItem1
             // 
             this.modifiedToolStripMenuItem1.Name = "modifiedToolStripMenuItem1";
-            this.modifiedToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.modifiedToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
             this.modifiedToolStripMenuItem1.Text = "Modified";
             this.modifiedToolStripMenuItem1.Click += new System.EventHandler(this.sortByModified_Click);
             // 
@@ -1435,7 +1436,7 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem recentFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;

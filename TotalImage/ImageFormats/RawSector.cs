@@ -41,7 +41,7 @@ namespace TotalImage.ImageFormats
         public void LoadImage(string path)
         {
             //For larger images (HDD etc.) we probably won't read the entire file at once, but use the stream instead...
-            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            stream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
             imageBytes = new byte[stream.Length];
             stream.Read(imageBytes, 0, (int)stream.Length);
             fat12 = new Fat12(stream);
@@ -55,6 +55,7 @@ namespace TotalImage.ImageFormats
             {
                 stream.Flush();
                 stream.Close();
+                stream.Dispose();
             }
         }
 

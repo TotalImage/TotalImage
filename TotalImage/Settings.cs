@@ -8,7 +8,7 @@ namespace TotalImage
         public static View FilesView { get; set; }
         public static int FilesSortingColumn { get; set; }
         public static SortOrder FilesSortOrder { get; set; }
-        public static List<string> RecentImages { get; }
+        public static List<string> RecentImages { get; private set; }
         public static bool ShowHiddenItems { get; set; }
         public static bool ShowDeletedItems { get; set; }
         public static bool ShowCommandBar { get; set; }
@@ -37,7 +37,7 @@ namespace TotalImage
 
         public static void Load()
         {
-
+            RecentImages = new List<string>();
         }
 
         public static void Save()
@@ -47,6 +47,11 @@ namespace TotalImage
 
         public static void AddRecentImage(string path)
         {
+            if (RecentImages.Count > 0) {
+                if(RecentImages.LastIndexOf(path) > -1)
+                    RecentImages.RemoveAt(RecentImages.LastIndexOf(path));
+            }
+
             if (RecentImages.Count >= 10)
                 RecentImages.RemoveAt(0);
             RecentImages.Add(path);

@@ -28,6 +28,9 @@ namespace TotalImage
         #region Event Handlers
         private void frmMain_Load(object sender, EventArgs e)
         {
+            Settings.Load();
+            PopulateRecentList();
+
             sorter = new ListViewColumnSorter();
             lstFiles.ListViewItemSorter = sorter;
 
@@ -36,9 +39,9 @@ namespace TotalImage
             propertiesToolStripMenuItem1.ShortcutKeys = Keys.Alt | Keys.Enter;
             propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
 
-            #if !DEBUG
+#if !DEBUG
                 DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
-            #endif
+#endif
             GetFolderIcon();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
         }
@@ -94,32 +97,26 @@ namespace TotalImage
             dlg.Dispose();
         }
 
+        //Click event handler for all menu items in the Recent images menu
+        private void recentImage_Click(object sender, EventArgs e)
+        {
+            CloseImage();
+            string imagePath = ((ToolStripMenuItem)sender).Text.Substring(3, ((ToolStripMenuItem)sender).Text.Length - 3).Trim(' ');
+            OpenImage(imagePath);
+        }
+
         //Creates a new disk image
         private void newImage_Click(object sender, EventArgs e)
         {
             if (unsavedChanges)
             {
                 DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before creating a new image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (DialogResult == DialogResult.Yes)
-                {
-                    save_Click(sender, e);
-                }
-                else if (DialogResult == DialogResult.No)
-                {
-                    /* This is necessary because if we don't do this and the user then backs out of creating a new image, they'll be left
-                     * with unsaved changes they already chose not to keep. */
-                    Text = "TotalImage";
-                    filename = "";
-                    path = "";
-                    image.CloseImage();
-                    image = null;
-                    lstDirectories.Nodes.Clear();
-                    lstFiles.Items.Clear();
-                    DisableUI();
-                }
+                if (DialogResult == DialogResult.Yes) /*save_Click(sender, e);*/;
                 else if (DialogResult == DialogResult.Cancel) return;
             }
 
+            if(image != null)
+                CloseImage();
             image = new RawSector();
             dlgNewImage dlg = new dlgNewImage();
             if (dlg.ShowDialog() == DialogResult.OK)
@@ -241,15 +238,15 @@ namespace TotalImage
         {
             if (lstFiles.Focused)
             {
-                if(lstFiles.SelectedItems.Count == 1)
+                if (lstFiles.SelectedItems.Count == 1)
                 {
                     DialogResult = MessageBox.Show("Are you sure you want to delete 1 item occupying X bytes?", "Delete item", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if(DialogResult == DialogResult.No || DialogResult == DialogResult.Cancel)
+                    if (DialogResult == DialogResult.No || DialogResult == DialogResult.Cancel)
                     {
                         return;
                     }
                 }
-                else if(lstFiles.SelectedItems.Count > 1)
+                else if (lstFiles.SelectedItems.Count > 1)
                 {
                     //First get the total size of all selected items
                     DialogResult = MessageBox.Show("Are you sure you want to delete " + lstFiles.SelectedItems.Count + " items occupying X bytes?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -347,11 +344,11 @@ namespace TotalImage
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                if (sfd.FilterIndex == 0 || 
-                    sfd.FileName.EndsWith(".img", StringComparison.OrdinalIgnoreCase) || 
+                if (sfd.FilterIndex == 0 ||
+                    sfd.FileName.EndsWith(".img", StringComparison.OrdinalIgnoreCase) ||
                     sfd.FileName.EndsWith(".ima", StringComparison.OrdinalIgnoreCase) ||
-                    sfd.FileName.EndsWith(".vfd", StringComparison.OrdinalIgnoreCase) || 
-                    sfd.FileName.EndsWith(".flp", StringComparison.OrdinalIgnoreCase) || 
+                    sfd.FileName.EndsWith(".vfd", StringComparison.OrdinalIgnoreCase) ||
+                    sfd.FileName.EndsWith(".flp", StringComparison.OrdinalIgnoreCase) ||
                     sfd.FileName.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase) ||
                     sfd.FileName.EndsWith(".hdm", StringComparison.OrdinalIgnoreCase))
                 {
@@ -359,9 +356,12 @@ namespace TotalImage
                     File.WriteAllBytes(sfd.FileName, imageBytes);
                 }
 
-                filename = Path.GetFileName(sfd.FileName);
                 path = sfd.FileName;
+                filename = Path.GetFileName(path);
                 Text = filename + " - TotalImage";
+
+                Settings.AddRecentImage(path);
+                PopulateRecentList();
             }
 
             sfd.Dispose();
@@ -417,8 +417,7 @@ namespace TotalImage
                 switch (DialogResult)
                 {
                     case DialogResult.Cancel: return;
-                    case DialogResult.Yes: /* Save changes to the current image, then close the current image */ break;
-                    case DialogResult.No: /* Close the current image */ break;
+                    case DialogResult.Yes: /*SaveChanges()*/ break;
                 }
             }
 
@@ -430,12 +429,13 @@ namespace TotalImage
             ofd.CheckPathExists = true;
             ofd.Multiselect = false;
             //ofd.ShowReadOnly = true; //We probably want this, but it degrades the dialog appearance to XP dialog... Needs a workaround
-            ofd.Filter = 
+            ofd.Filter =
                 "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "All files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
+                CloseImage();
                 OpenImage(ofd.FileName);
             }
 
@@ -473,7 +473,7 @@ namespace TotalImage
                     {
                         /* Extract just one file based on the selected options from the dialog
                          * Right now only the "Ignore folders" option works... */
-                        if(dlg.ExtractType == Settings.FolderExtract.Ignore)
+                        if (dlg.ExtractType == Settings.FolderExtract.Ignore)
                         {
                             image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, dlg.TargetPath);
                         }
@@ -652,25 +652,13 @@ namespace TotalImage
 
         private void closeImage_Click(object sender, EventArgs e)
         {
-            /* Offer to save any unsaved changes before closing the image file */
             if (unsavedChanges)
             {
                 DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before closing the image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question); ;
-                if (DialogResult == DialogResult.Yes)
-                {
-                    save_Click(sender, e);
-                }
+                if (DialogResult == DialogResult.Yes) /*SaveChanges();*/;
                 else if (DialogResult == DialogResult.Cancel) return;
             }
-
-            Text = "TotalImage";
-            filename = "";
-            path = "";
-            image.CloseImage();
-            image = null;
-            lstDirectories.Nodes.Clear();
-            lstFiles.Items.Clear();
-            DisableUI();
+            CloseImage();
         }
 
         private void lstFiles_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -999,8 +987,10 @@ namespace TotalImage
                     return;
                 }
             }
+
+            Settings.Save();
         }
-#endregion
+        #endregion
 
         /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private void OpenImage(string path)
@@ -1012,6 +1002,7 @@ namespace TotalImage
 
             TreeNode root = new TreeNode("\\");
             root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+            root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             lstDirectories.Nodes.Add(root);
             image = new RawSector();
             lstFiles.ListViewItemSorter = null;
@@ -1025,6 +1016,9 @@ namespace TotalImage
             lstFiles.ListViewItemSorter = sorter;
             lblStatusCapacity.Text = GetImageCapacity() + " KiB";
             EnableUI();
+
+            Settings.AddRecentImage(path);
+            PopulateRecentList();
         }
 
         /* Returns size of directory
@@ -1283,6 +1277,43 @@ namespace TotalImage
                     item.Enabled = false;
                 }
             }
+        }
+
+        private void PopulateRecentList()
+        {
+            recentFilesToolStripMenuItem.DropDownItems.Clear();
+
+            for (int i = Settings.RecentImages.Count - 1; i >= 0; i--)
+            {
+                ToolStripMenuItem newItem = new ToolStripMenuItem();
+                newItem.Text = (Settings.RecentImages.Count - i).ToString() + ": " + Settings.RecentImages[i];
+                newItem.Click += recentImage_Click;
+                recentFilesToolStripMenuItem.DropDownItems.Add(newItem);
+            }
+        }
+
+        private void CloseImage()
+        {
+            /* Offer to save any unsaved changes before closing the image file */
+            /*if (unsavedChanges)
+            {
+                DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before closing the image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question); ;
+                if (DialogResult == DialogResult.Yes)
+                {
+                    //save_Click(sender, e);
+                }
+                else if (DialogResult == DialogResult.Cancel) return;
+            }*/
+            unsavedChanges = false;
+            Text = "TotalImage";
+            filename = "";
+            path = "";
+            if(image != null)
+                image.CloseImage();
+            image = null;
+            lstDirectories.Nodes.Clear();
+            lstFiles.Items.Clear();
+            DisableUI();
         }
     }
 }
