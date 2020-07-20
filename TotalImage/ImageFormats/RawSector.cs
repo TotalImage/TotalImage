@@ -19,22 +19,18 @@ namespace TotalImage.ImageFormats
             return imageBytes;
         }
 
-        //Creates a new image from the selected preset
-        public void CreateImage(BiosParameterBlock bpb, byte tracks)
+        //Creates a new image with the provided parameters
+        public void CreateImage(BiosParameterBlock bpb, byte tracks, bool writeBPB)
         {
             if (bpb == null)
-                throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
+                throw new ArgumentNullException(nameof(bpb), "BPB cannot be null!");
 
             uint imageSize = (uint)(bpb.BytesPerLogicalSector * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * tracks);
             imageBytes = new byte[imageSize];
-            stream = new MemoryStream(imageBytes, true);
-            fat12 = Fat12.Create(stream, bpb);
-        }
 
-        //Creates a new image based on custom parameters
-        public void CreateCustomImage()
-        {
-            /* Do custom parameter stuff here */
+            //At this point we need to consider writeBPB value...
+            stream = new MemoryStream(imageBytes, true); 
+            fat12 = Fat12.Create(stream, bpb);
         }
 
         //Loads an image file

@@ -299,7 +299,7 @@ namespace TotalImage.FileSystems.FAT
                         else if (bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
                             writer.Write((byte)41);
                         else
-                            throw new Exception("PANIIIIIIC");
+                            throw new Exception("Invalid BPB version!");
 
                         writer.Write(bpb40.VolumeSerialNumber);
 

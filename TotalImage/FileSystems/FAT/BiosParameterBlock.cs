@@ -5,7 +5,7 @@ namespace TotalImage.FileSystems.FAT
     public enum BiosParameterBlockVersion
     {
         Dos20,
-        Dos33,
+        //Dos33, //It seems this is effectively the same as DOS 2.0 BPB
         Dos34,
         Dos40,
         Fat32,

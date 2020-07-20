@@ -105,19 +105,20 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(636, 12);
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnCancel.Location = new System.Drawing.Point(637, 12);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
             this.btnCancel.TabIndex = 17;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOK.Location = new System.Drawing.Point(550, 12);
+            this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnOK.Location = new System.Drawing.Point(551, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 16;
@@ -147,6 +148,7 @@
             // lstFloppyCapacity
             // 
             this.lstFloppyCapacity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstFloppyCapacity.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstFloppyCapacity.FormattingEnabled = true;
             this.lstFloppyCapacity.Items.AddRange(new object[] {
             "160 KiB",
@@ -193,6 +195,7 @@
             // lstFloppyBPB
             // 
             this.lstFloppyBPB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstFloppyBPB.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstFloppyBPB.FormattingEnabled = true;
             this.lstFloppyBPB.Items.AddRange(new object[] {
             "DOS 2.0",
@@ -231,6 +234,7 @@
             this.toolTip.SetToolTip(this.txtFloppyOEMID, "The OEM ID field is often used to identify the system that formatted\r\nthe disk. U" +
         "sing non-standard values could result in the operating\r\nsystem or program not re" +
         "cognizing the disk.");
+            this.txtFloppyOEMID.TextChanged += new System.EventHandler(this.txtFloppyOEMID_TextChanged);
             // 
             // lblFloppyBPS
             // 
@@ -522,6 +526,7 @@
             // lstFloppySides
             // 
             this.lstFloppySides.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstFloppySides.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstFloppySides.FormattingEnabled = true;
             this.lstFloppySides.Items.AddRange(new object[] {
             "1",
@@ -553,6 +558,7 @@
             this.txtFloppySerial.TabIndex = 10;
             this.toolTip.SetToolTip(this.txtFloppySerial, "This field can be used to detect when the disk was ejected\r\nand a different disk " +
         "was inserted.");
+            this.txtFloppySerial.TextChanged += new System.EventHandler(this.txtFloppySerial_TextChanged);
             // 
             // lblFloppyLabel
             // 
@@ -574,6 +580,7 @@
             this.toolTip.SetToolTip(this.txtFloppyLabel, "Volume label can be used to describe the contents or purpose of\r\nthe disk. Some o" +
         "perating systems or programs may not recognize\r\nthe disk if this value is not wh" +
         "at they expect.");
+            this.txtFloppyLabel.TextChanged += new System.EventHandler(this.txtFloppyLabel_TextChanged);
             // 
             // lblFloppyFSType
             // 
@@ -594,6 +601,7 @@
             this.txtFloppyFSType.TabIndex = 13;
             this.txtFloppyFSType.Text = "FAT12";
             this.toolTip.SetToolTip(this.txtFloppyFSType, resources.GetString("txtFloppyFSType.ToolTip"));
+            this.txtFloppyFSType.TextChanged += new System.EventHandler(this.txtFloppyFSType_TextChanged);
             // 
             // txtFloppyNumFATs
             // 
@@ -682,6 +690,7 @@
             // lstHDDType
             // 
             this.lstHDDType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstHDDType.Enabled = false;
             this.lstHDDType.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstHDDType.FormattingEnabled = true;
             this.lstHDDType.Location = new System.Drawing.Point(79, 13);
@@ -694,6 +703,7 @@
             // lblHDDType
             // 
             this.lblHDDType.AutoSize = true;
+            this.lblHDDType.Enabled = false;
             this.lblHDDType.Location = new System.Drawing.Point(14, 17);
             this.lblHDDType.Name = "lblHDDType";
             this.lblHDDType.Size = new System.Drawing.Size(34, 15);
@@ -702,6 +712,7 @@
             // 
             // txtHDDCapacity
             // 
+            this.txtHDDCapacity.Enabled = false;
             this.txtHDDCapacity.Location = new System.Drawing.Point(414, 13);
             this.txtHDDCapacity.Maximum = new decimal(new int[] {
             999999,
@@ -715,6 +726,7 @@
             // lblHDDCapacity
             // 
             this.lblHDDCapacity.AutoSize = true;
+            this.lblHDDCapacity.Enabled = false;
             this.lblHDDCapacity.Location = new System.Drawing.Point(320, 17);
             this.lblHDDCapacity.Name = "lblHDDCapacity";
             this.lblHDDCapacity.Size = new System.Drawing.Size(88, 15);
@@ -723,6 +735,7 @@
             // 
             // txtHDDSectors
             // 
+            this.txtHDDSectors.Enabled = false;
             this.txtHDDSectors.Location = new System.Drawing.Point(414, 45);
             this.txtHDDSectors.Maximum = new decimal(new int[] {
             99,
@@ -736,6 +749,7 @@
             // lblHDDSectors
             // 
             this.lblHDDSectors.AutoSize = true;
+            this.lblHDDSectors.Enabled = false;
             this.lblHDDSectors.Location = new System.Drawing.Point(320, 49);
             this.lblHDDSectors.Name = "lblHDDSectors";
             this.lblHDDSectors.Size = new System.Drawing.Size(48, 15);
@@ -744,6 +758,7 @@
             // 
             // txtHDDHeads
             // 
+            this.txtHDDHeads.Enabled = false;
             this.txtHDDHeads.Location = new System.Drawing.Point(227, 45);
             this.txtHDDHeads.Maximum = new decimal(new int[] {
             255,
@@ -757,6 +772,7 @@
             // lblHDDHeads
             // 
             this.lblHDDHeads.AutoSize = true;
+            this.lblHDDHeads.Enabled = false;
             this.lblHDDHeads.Location = new System.Drawing.Point(178, 49);
             this.lblHDDHeads.Name = "lblHDDHeads";
             this.lblHDDHeads.Size = new System.Drawing.Size(43, 15);
@@ -765,6 +781,7 @@
             // 
             // txtHDDCylinders
             // 
+            this.txtHDDCylinders.Enabled = false;
             this.txtHDDCylinders.Location = new System.Drawing.Point(79, 45);
             this.txtHDDCylinders.Maximum = new decimal(new int[] {
             266305,
@@ -779,6 +796,7 @@
             // lblHDDCylinders
             // 
             this.lblHDDCylinders.AutoSize = true;
+            this.lblHDDCylinders.Enabled = false;
             this.lblHDDCylinders.Location = new System.Drawing.Point(14, 49);
             this.lblHDDCylinders.Name = "lblHDDCylinders";
             this.lblHDDCylinders.Size = new System.Drawing.Size(59, 15);
@@ -792,11 +810,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabFloppy);
             this.tabControl.Controls.Add(this.tabHDD);
+            this.tabControl.HotTrack = true;
             this.tabControl.Location = new System.Drawing.Point(12, 12);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(705, 223);
+            this.tabControl.Size = new System.Drawing.Size(706, 223);
             this.tabControl.TabIndex = 0;
+            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
             // tabFloppy
             // 
@@ -838,7 +858,7 @@
             this.tabFloppy.Location = new System.Drawing.Point(4, 24);
             this.tabFloppy.Name = "tabFloppy";
             this.tabFloppy.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFloppy.Size = new System.Drawing.Size(697, 195);
+            this.tabFloppy.Size = new System.Drawing.Size(698, 195);
             this.tabFloppy.TabIndex = 0;
             this.tabFloppy.Text = "Floppy disk";
             // 
@@ -858,7 +878,7 @@
             this.tabHDD.Location = new System.Drawing.Point(4, 24);
             this.tabHDD.Name = "tabHDD";
             this.tabHDD.Padding = new System.Windows.Forms.Padding(3);
-            this.tabHDD.Size = new System.Drawing.Size(697, 195);
+            this.tabHDD.Size = new System.Drawing.Size(698, 195);
             this.tabHDD.TabIndex = 1;
             this.tabHDD.Text = "Hard disk";
             // 
@@ -868,9 +888,9 @@
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 264);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 241);
             this.pnlBottom.Name = "pnlBottom";
-            this.pnlBottom.Size = new System.Drawing.Size(728, 50);
+            this.pnlBottom.Size = new System.Drawing.Size(729, 50);
             this.pnlBottom.TabIndex = 18;
             // 
             // dlgNewImage
@@ -880,7 +900,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(728, 314);
+            this.ClientSize = new System.Drawing.Size(729, 291);
             this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.tabControl);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
@@ -892,7 +912,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "New image";
-            this.Load += new System.EventHandler(this.dlgNewSectorImage_Load);
+            this.Load += new System.EventHandler(this.dlgNewImage_Load);
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyBPS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyRootDir)).EndInit();
