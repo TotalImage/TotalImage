@@ -41,11 +41,12 @@ namespace TotalImage
         public static void Load()
         {
             RecentImages = new List<string>();
+            //This is where all the settings and other stored variables would be loaded...
         }
 
         public static void Save()
         {
-
+            //Still need to decide on the output format...
         }
 
         public static void AddRecentImage(string path)

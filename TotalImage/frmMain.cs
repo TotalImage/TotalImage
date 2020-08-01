@@ -51,7 +51,6 @@ namespace TotalImage
         private void injectFolder_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
-            fbd.Description = "Select a folder to inject...";
             fbd.ShowNewFolderButton = true;
 
             if (fbd.ShowDialog() == DialogResult.OK)
@@ -371,13 +370,9 @@ namespace TotalImage
             sfd.AutoUpgradeEnabled = true;
             sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             sfd.OverwritePrompt = true;
-            sfd.Title = "Save image...";
             sfd.DefaultExt = "img";
-            sfd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
-                /*"WinImage compressed image (*.imz)|*.imz|" +
-                "DiskDupe image (*.ddi)|*.ddi|" +
-                "Anex86 floppy disk image (*.fdi)|*.fdi|" +
-                "86Box surface image (*.86f)|*.86f|" +*/
+            sfd.Filter = 
+                "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "All files (*.*)|*.*";
 
             if (sfd.ShowDialog() == DialogResult.OK)
@@ -422,29 +417,34 @@ namespace TotalImage
 
         private void toggleCommandBar_Click(object sender, EventArgs e)
         {
-            commandBar.Visible = commandBarToolStripMenuItem.Checked;
-            commandBarToolStripMenuItem1.Checked = commandBarToolStripMenuItem.Checked;
-            Settings.ShowCommandBar = commandBarToolStripMenuItem.Checked;
+            commandBar.Visible = !commandBar.Visible;
+            commandBarToolStripMenuItem.Checked = commandBar.Visible;
+            commandBarToolStripMenuItem1.Checked = commandBar.Visible;
+            Settings.ShowCommandBar = commandBar.Visible;
         }
+
         private void toggleDirectoryTree_Click(object sender, EventArgs e)
         {
-            splitContainer.Panel1Collapsed = !directoryTreeToolStripMenuItem.Checked;
-            directoryTreeToolStripMenuItem1.Checked = directoryTreeToolStripMenuItem.Checked;
-            Settings.ShowDirectoryTree = directoryTreeToolStripMenuItem.Checked;
+            splitContainer.Panel1Collapsed = !splitContainer.Panel1Collapsed;
+            directoryTreeToolStripMenuItem.Checked = !splitContainer.Panel1Collapsed;
+            directoryTreeToolStripMenuItem1.Checked = !splitContainer.Panel1Collapsed;
+            Settings.ShowDirectoryTree = !splitContainer.Panel1Collapsed;
         }
 
         private void toggleFileList_Click(object sender, EventArgs e)
         {
-            splitContainer.Panel2Collapsed = !fileListToolStripMenuItem.Checked;
-            fileListToolStripMenuItem1.Checked = fileListToolStripMenuItem.Checked;
-            Settings.ShowFileList = fileListToolStripMenuItem.Checked;
+            splitContainer.Panel2Collapsed = !splitContainer.Panel2Collapsed;
+            fileListToolStripMenuItem.Checked = !splitContainer.Panel2Collapsed;
+            fileListToolStripMenuItem1.Checked = !splitContainer.Panel2Collapsed;
+            Settings.ShowFileList = !splitContainer.Panel2Collapsed;
         }
 
         private void toggleStatusBar_Click(object sender, EventArgs e)
         {
-            statusBar.Visible = statusBarToolStripMenuItem.Checked;
-            statusBarToolStripMenuItem1.Checked = statusBarToolStripMenuItem.Checked;
-            Settings.ShowStatusBar = statusBarToolStripMenuItem.Checked;
+            statusBar.Visible = !statusBar.Visible;
+            statusBarToolStripMenuItem.Checked = statusBar.Visible;
+            statusBarToolStripMenuItem1.Checked = statusBar.Visible;
+            Settings.ShowStatusBar = statusBar.Visible;
         }
 
         private void openImage_Click(object sender, EventArgs e)
@@ -462,7 +462,6 @@ namespace TotalImage
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.AutoUpgradeEnabled = true;
             ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-            ofd.Title = "Open image...";
             ofd.CheckFileExists = true;
             ofd.CheckPathExists = true;
             ofd.Multiselect = false;
@@ -674,7 +673,6 @@ namespace TotalImage
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.AutoUpgradeEnabled = true;
             ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-            ofd.Title = "Select file(s) to inject...";
             ofd.CheckFileExists = true;
             ofd.CheckPathExists = true;
             ofd.Multiselect = true;

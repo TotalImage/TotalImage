@@ -34,13 +34,13 @@ namespace TotalImage
         private void btnBrowse_Click(object sender, System.EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
-            fbd.Description = "Select the destination folder...";
             fbd.ShowNewFolderButton = true;
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {
                 txtPath.Text = fbd.SelectedPath;
             }
+
             fbd.Dispose();
         }
     }

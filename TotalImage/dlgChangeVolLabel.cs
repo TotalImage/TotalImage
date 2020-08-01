@@ -20,8 +20,6 @@ namespace TotalImage
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            /*frmMain main = (frmMain)Application.OpenForms["frmMain"];
-            main.image.ChangeVolumeLabel(txtRootDirLabel.Text.ToUpper().PadRight(11, ' '));*/
             NewRDLabel = txtRootDirLabel.Text.ToUpper().PadRight(11, ' ');
             WriteBPBLabel = cbxBPBLabel.Checked;
             NewBPBLabel = txtBPBLabel.Text;
@@ -31,6 +29,7 @@ namespace TotalImage
         {
             txtBPBLabel.Enabled = cbxBPBLabel.Checked;
             cbxSync.Enabled = cbxBPBLabel.Checked;
+            txtBPBLabel.Text = txtRootDirLabel.Text;
         }
 
         private void txtRootDirLabel_TextChanged(object sender, EventArgs e)
@@ -43,6 +42,18 @@ namespace TotalImage
         {
             txtBPBLabel.Text = oldBPBLabel;
             txtRootDirLabel.Text = oldRDLabel;
+        }
+
+        private void cbxSync_CheckedChanged(object sender, EventArgs e)
+        {
+            if(cbxSync.Checked)
+                txtBPBLabel.Text = txtRootDirLabel.Text;
+        }
+
+        private void txtBPBLabel_TextChanged(object sender, EventArgs e)
+        {
+            if (cbxBPBLabel.Checked && cbxSync.Checked)
+                txtRootDirLabel.Text = txtBPBLabel.Text;
         }
     }
 }

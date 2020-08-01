@@ -89,6 +89,7 @@
             this.txtBPBLabel.Name = "txtBPBLabel";
             this.txtBPBLabel.Size = new System.Drawing.Size(250, 23);
             this.txtBPBLabel.TabIndex = 2;
+            this.txtBPBLabel.TextChanged += new System.EventHandler(this.txtBPBLabel_TextChanged);
             // 
             // cbxBPBLabel
             // 
@@ -127,6 +128,7 @@
             this.cbxSync.TabIndex = 6;
             this.cbxSync.Text = "Write the same label as in root directory";
             this.cbxSync.UseVisualStyleBackColor = true;
+            this.cbxSync.CheckedChanged += new System.EventHandler(this.cbxSync_CheckedChanged);
             // 
             // dlgChangeVolLabel
             // 
