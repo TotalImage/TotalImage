@@ -417,29 +417,34 @@ namespace TotalImage
 
         private void toggleCommandBar_Click(object sender, EventArgs e)
         {
-            commandBar.Visible = commandBarToolStripMenuItem.Checked;
-            commandBarToolStripMenuItem1.Checked = commandBarToolStripMenuItem.Checked;
-            Settings.ShowCommandBar = commandBarToolStripMenuItem.Checked;
+            commandBar.Visible = !commandBar.Visible;
+            commandBarToolStripMenuItem.Checked = commandBar.Visible;
+            commandBarToolStripMenuItem1.Checked = commandBar.Visible;
+            Settings.ShowCommandBar = commandBar.Visible;
         }
+
         private void toggleDirectoryTree_Click(object sender, EventArgs e)
         {
-            splitContainer.Panel1Collapsed = !directoryTreeToolStripMenuItem.Checked;
-            directoryTreeToolStripMenuItem1.Checked = directoryTreeToolStripMenuItem.Checked;
-            Settings.ShowDirectoryTree = directoryTreeToolStripMenuItem.Checked;
+            splitContainer.Panel1Collapsed = !splitContainer.Panel1Collapsed;
+            directoryTreeToolStripMenuItem.Checked = !splitContainer.Panel1Collapsed;
+            directoryTreeToolStripMenuItem1.Checked = !splitContainer.Panel1Collapsed;
+            Settings.ShowDirectoryTree = !splitContainer.Panel1Collapsed;
         }
 
         private void toggleFileList_Click(object sender, EventArgs e)
         {
-            splitContainer.Panel2Collapsed = !fileListToolStripMenuItem.Checked;
-            fileListToolStripMenuItem1.Checked = fileListToolStripMenuItem.Checked;
-            Settings.ShowFileList = fileListToolStripMenuItem.Checked;
+            splitContainer.Panel2Collapsed = !splitContainer.Panel2Collapsed;
+            fileListToolStripMenuItem.Checked = !splitContainer.Panel2Collapsed;
+            fileListToolStripMenuItem1.Checked = !splitContainer.Panel2Collapsed;
+            Settings.ShowFileList = !splitContainer.Panel2Collapsed;
         }
 
         private void toggleStatusBar_Click(object sender, EventArgs e)
         {
-            statusBar.Visible = statusBarToolStripMenuItem.Checked;
-            statusBarToolStripMenuItem1.Checked = statusBarToolStripMenuItem.Checked;
-            Settings.ShowStatusBar = statusBarToolStripMenuItem.Checked;
+            statusBar.Visible = !statusBar.Visible;
+            statusBarToolStripMenuItem.Checked = statusBar.Visible;
+            statusBarToolStripMenuItem1.Checked = statusBar.Visible;
+            Settings.ShowStatusBar = statusBar.Visible;
         }
 
         private void openImage_Click(object sender, EventArgs e)
