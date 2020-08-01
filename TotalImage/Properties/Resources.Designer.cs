@@ -241,6 +241,60 @@ namespace TotalImage.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string TI_Generic_Error {
+            get {
+                return ResourceManager.GetString("TI_Generic_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fatal.
+        /// </summary>
+        internal static string TI_Generic_Fatal {
+            get {
+                return ResourceManager.GetString("TI_Generic_Fatal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Information.
+        /// </summary>
+        internal static string TI_Generic_Information {
+            get {
+                return ResourceManager.GetString("TI_Generic_Information", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TotalImage.
+        /// </summary>
+        internal static string TI_Generic_TotalImage {
+            get {
+                return ResourceManager.GetString("TI_Generic_TotalImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        internal static string TI_Generic_Warning {
+            get {
+                return ResourceManager.GetString("TI_Generic_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The characters &quot; * + , / : ; &lt; = &gt; ? \ [ ] | are not valid in filenames..
+        /// </summary>
+        internal static string TI_Validate_FirstChar_OnFail {
+            get {
+                return ResourceManager.GetString("TI_Validate_FirstChar_OnFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon totalimage {
