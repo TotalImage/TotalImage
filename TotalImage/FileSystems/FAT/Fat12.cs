@@ -396,7 +396,7 @@ namespace TotalImage.FileSystems.FAT
                     //Folder entry
                     if (Convert.ToBoolean(entry.attr & 0x10))
                     {
-                        main.AddToRootDir(entry);
+                        //main.AddToRootDir(entry);
                         main.AddToFileList(entry);
                         ReadSubdir(entry);
                     }
@@ -464,7 +464,7 @@ namespace TotalImage.FileSystems.FAT
                         //Folder entry
                         if (Convert.ToBoolean(entry.attr & 0x10))
                         {
-                            main.AddToDir(parent, entry);
+                            //main.AddToDir(parent, entry);
                             ReadSubdir(entry);
                         }
                     }

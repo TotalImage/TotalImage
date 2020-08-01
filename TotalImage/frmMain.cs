@@ -1028,26 +1028,48 @@ namespace TotalImage
         }
         #endregion
 
+        private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
+        {
+            foreach(var subdir in dir.EnumerateDirectories())
+            {
+                var subnode = new TreeNode(subdir.Name);
+                subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                subnode.Tag = subdir;
+                node.Nodes.Add(subnode);
+
+                PopulateTreeView(subnode, subdir);
+            }
+        }
+
         /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private void OpenImage(string path)
         {
             filename = Path.GetFileName(path);
             Text = filename + " - TotalImage";
-            lstDirectories.Nodes.Clear();
             lstFiles.Items.Clear();
 
-            TreeNode root = new TreeNode("\\");
-            root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            lstDirectories.Nodes.Add(root);
             image = new RawSector();
             lstFiles.ListViewItemSorter = null;
             lstFiles.BeginUpdate();
-            lstDirectories.BeginUpdate();
             image.LoadImage(path);
-            lstDirectories.EndUpdate();
-            SortDirTree();
+
+            lstDirectories.BeginUpdate();
+
+            var root = new TreeNode("\\");
+            root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+            root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+            root.Tag = image.fat12.RootDirectory;
+
+            PopulateTreeView(root, image.fat12.RootDirectory);
+
+            lstDirectories.Nodes.Clear();
+            lstDirectories.Nodes.Add(root);
             lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+
+            lstDirectories.Sort();
+
+            lstDirectories.EndUpdate();
+
             lstFiles.EndUpdate();
             lstFiles.ListViewItemSorter = sorter;
             lblStatusCapacity.Text = GetImageCapacity() + " KiB";
@@ -1102,21 +1124,6 @@ namespace TotalImage
             imgFilesLarge.Images.Add("folder", icon);
         }
 
-        //Adds a new node to the root directory in the directory tree
-        public void AddToRootDir(DirectoryEntry entry)
-        {
-            string filename = entry.name.TrimEnd('.');
-            TreeNode node = new TreeNode(filename);
-            node.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            node.Tag = entry;
-            lstDirectories.Nodes[0].Nodes.Add(node);
-        }
-
-        public void SortDirTree()
-        {
-            lstDirectories.Sort();
-        }
-
         //Finds the node with the specified entry
         private TreeNode FindNode(TreeNode startNode, uint startCluster)
         {
@@ -1139,23 +1146,6 @@ namespace TotalImage
             }
 
             return null;
-        }
-
-        public void AddToDir(DirectoryEntry parent, DirectoryEntry child)
-        {
-            string childFilename = child.name.TrimEnd('.');
-            TreeNode childNode = new TreeNode(childFilename);
-            childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            childNode.Tag = child;
-            TreeNode parentNode = FindNode(lstDirectories.Nodes[0], ((uint)(parent.fstClusHI << 16) + parent.fstClusLO));
-            if (parentNode != null)
-            {
-                parentNode.Nodes.Add(childNode);
-            }
-            else
-            {
-                throw new Exception("Parent node not found");
-            }
         }
 
         //Obtains the fancy file type name

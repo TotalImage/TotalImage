@@ -12,7 +12,7 @@ namespace TotalImage.ImageFormats
     {
         private byte[] imageBytes;
         private Stream stream;
-        private Fat12 fat12;
+        /*private*/ public Fat12 fat12;
       
         public byte[] GetImageBytes()
         {
@@ -41,7 +41,7 @@ namespace TotalImage.ImageFormats
             imageBytes = new byte[stream.Length];
             stream.Read(imageBytes, 0, (int)stream.Length);
             fat12 = new Fat12(stream);
-            fat12.ReadRootDir();
+            //fat12.ReadRootDir();
         }
 
         //Closes and unlocks the file
