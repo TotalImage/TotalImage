@@ -47,7 +47,7 @@ namespace TotalImage.FileSystems.FAT
             set => throw new NotImplementedException();
         }
 
-        public override long Length
+        public override ulong Length
         {
             get => entry.fileSize;
             set => throw new NotImplementedException();

@@ -99,7 +99,7 @@ namespace TotalImage.FileSystems.FAT
             get => null;
             set => throw new NotSupportedException();
         }
-        public override long Length
+        public override ulong Length
         {
             get => throw new NotSupportedException();
             set => throw new NotSupportedException();
