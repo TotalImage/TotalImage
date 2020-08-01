@@ -55,18 +55,6 @@ namespace TotalImage.ImageFormats
             }
         }
 
-        //Lists the contents of the specified directory
-        public void ListDirectory(DirectoryEntry entry)
-        {
-            fat12.ListDir(entry);
-        }
-
-        //Lists the contents of the root directory
-        public void ListRootDirectory()
-        {
-            fat12.ListRootDir();
-        }
-
         //Sets a new volume label
         public void ChangeVolumeLabel(string label)
         {
