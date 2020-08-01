@@ -917,7 +917,6 @@
             // 
             this.newToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.newToolStripButton.Image = global::TotalImage.Properties.Resources.new_16;
-            this.newToolStripButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.newToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newToolStripButton.Name = "newToolStripButton";
             this.newToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1390,8 +1389,8 @@
             // 
             // frmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1057, 617);
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.commandBar);

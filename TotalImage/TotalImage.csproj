@@ -13,6 +13,7 @@
     <ApplicationIcon>totalimage.ico</ApplicationIcon>
     <StartupObject>TotalImage.Program</StartupObject>
     <Authors>The TotalImage Team</Authors>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
