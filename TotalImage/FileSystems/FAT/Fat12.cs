@@ -41,7 +41,7 @@ namespace TotalImage.FileSystems.FAT
             {
                 bpb = Parse();
             }
-            catch (Exception)
+            catch (InvalidDataException)
             {
                 /* This is very barebones... Additional checks should be performed to detect Apricot, RX50, etc. images
                  * For now, it will just assume a DOS 1.x disk with no BPB */
@@ -199,14 +199,14 @@ namespace TotalImage.FileSystems.FAT
                     bpb.TotalLogicalSectors == 0 || bpb.ReservedLogicalSectors == 0 || bpb.LogicalSectorsPerCluster == 0 ||
                     bpb.LogicalSectorsPerFAT == 0 || bpb.RootDirectoryEntries == 0)
                 {
-                    throw new Exception("At least one of BPB parameters is 0");
+                    throw new InvalidDataException("At least one of BPB parameters is 0");
                 }
 
                 uint tracks = (uint)(bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack);
 
                 if (tracks <= 0)
                 {
-                    throw new Exception("BPB paramaters don't match image size");
+                    throw new InvalidDataException("BPB paramaters don't match image size");
                 }
 
                 // Try to read the BPB further as a DOS 4.0 BPB.
