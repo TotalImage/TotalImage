@@ -32,8 +32,8 @@ namespace TotalImage
             Settings.Load();
             PopulateRecentList();
 
-            //sorter = new ListViewColumnSorter();
-            //lstFiles.ListViewItemSorter = sorter;
+            sorter = new ListViewColumnSorter();
+            lstFiles.ListViewItemSorter = sorter;
 
             //Because designer doesn't have the Enter key in the list for some reason...
             propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter;
@@ -1107,7 +1107,7 @@ namespace TotalImage
 
             PopulateListView(image.fat12.RootDirectory);
 
-            //lstFiles.ListViewItemSorter = sorter;
+            lstFiles.ListViewItemSorter = sorter;
             lstFiles.EndUpdate();
 
             lblStatusCapacity.Text = GetImageCapacity() + " KiB";
