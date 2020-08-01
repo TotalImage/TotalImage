@@ -1,4 +1,5 @@
-﻿using System;
+﻿using TotalImage.Validation.ValidationMethods;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,7 +22,16 @@ namespace TotalImage
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            FirstChar = txtFirstChar.Text[0]; //Character needs to be validated first...
+            FirstCharacterValidation FCV = new FirstCharacterValidation();
+
+            // Convert to object
+
+            // Don't do anything if it's not valid
+            object _ = FCV.Validate(txtFirstChar.Text[0]);
+
+            if (_ == null) return;
+
+            FirstChar = (char)_; //Character needs to be validated first...
         }
     }
 }
