@@ -51,7 +51,6 @@ namespace TotalImage
         private void injectFolder_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
-            fbd.Description = "Select a folder to inject...";
             fbd.ShowNewFolderButton = true;
 
             if (fbd.ShowDialog() == DialogResult.OK)
@@ -371,13 +370,9 @@ namespace TotalImage
             sfd.AutoUpgradeEnabled = true;
             sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             sfd.OverwritePrompt = true;
-            sfd.Title = "Save image...";
             sfd.DefaultExt = "img";
-            sfd.Filter = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
-                /*"WinImage compressed image (*.imz)|*.imz|" +
-                "DiskDupe image (*.ddi)|*.ddi|" +
-                "Anex86 floppy disk image (*.fdi)|*.fdi|" +
-                "86Box surface image (*.86f)|*.86f|" +*/
+            sfd.Filter = 
+                "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "All files (*.*)|*.*";
 
             if (sfd.ShowDialog() == DialogResult.OK)
@@ -462,7 +457,6 @@ namespace TotalImage
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.AutoUpgradeEnabled = true;
             ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-            ofd.Title = "Open image...";
             ofd.CheckFileExists = true;
             ofd.CheckPathExists = true;
             ofd.Multiselect = false;
@@ -674,7 +668,6 @@ namespace TotalImage
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.AutoUpgradeEnabled = true;
             ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-            ofd.Title = "Select file(s) to inject...";
             ofd.CheckFileExists = true;
             ofd.CheckPathExists = true;
             ofd.Multiselect = true;
