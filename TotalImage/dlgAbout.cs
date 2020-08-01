@@ -19,7 +19,6 @@ namespace TotalImage
         private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             lnkGitHub.LinkVisited = true;
-            //Process.Start(lnkGitHub.Text);
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = lnkGitHub.Text,
