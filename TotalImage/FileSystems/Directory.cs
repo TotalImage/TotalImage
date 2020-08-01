@@ -40,7 +40,7 @@ namespace TotalImage.FileSystems
         public File[] GetFiles()
             => EnumerateFiles().ToArray();
 
-        public override string FullName => Parent?.Name + DirectorySeparatorChar;
+        public override string FullName => Parent?.Name + DirectorySeparatorChar + Name;
 
         public abstract Directory CreateSubdirectory(string path);
     }
