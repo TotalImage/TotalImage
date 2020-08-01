@@ -1047,14 +1047,16 @@ namespace TotalImage
 
                 var filetype = GetShellFileType(fso.Name, fso.Attributes);
                 item.SubItems.Add(filetype);
-                item.SubItems.Add(string.Format("{0:n0} B", fso.Length).ToString());
 
                 if (fso is FileSystems.Directory)
                 {
+                    item.SubItems.Add(string.Empty);
                     item.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 }
                 else
                 {
+                    item.SubItems.Add(string.Format("{0:n0} B", fso.Length).ToString());
+
                     //This will only add a new icon to the list if the associated type hasn't been encountered yet
                     if (!imgFilesSmall.Images.ContainsKey(filetype))
                     {
