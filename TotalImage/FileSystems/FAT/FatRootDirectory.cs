@@ -34,9 +34,10 @@ namespace TotalImage.FileSystems.FAT
                     byte firstByte = reader.ReadByte();
 
                     /* 0x00/0xF6 = no more entries after this one, stop
-                     * 0xE5/0x05 = deleted entry, skip for now */
+                     * 0xE5/0x05 = deleted entry, skip for now 
+                     * 0x2E      = virtual . and .. folders, skip*/
                     if (firstByte == 0x00 || firstByte == 0xF6) break;
-                    else if (firstByte == 0xE5 || firstByte == 0x05) continue;
+                    else if (firstByte == 0xE5 || firstByte == 0x05 || firstByte == 0x2E) continue;
 
                     stream.Seek(-0x01, SeekOrigin.Current);
                     var entry = DirectoryEntry.Parse(reader.ReadBytes(32));
