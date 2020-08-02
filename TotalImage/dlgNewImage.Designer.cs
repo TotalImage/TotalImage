@@ -106,7 +106,7 @@
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(637, 12);
+            this.btnCancel.Location = new System.Drawing.Point(652, 12);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
             this.btnCancel.TabIndex = 17;
@@ -118,7 +118,7 @@
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(551, 12);
+            this.btnOK.Location = new System.Drawing.Point(566, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 16;
@@ -204,7 +204,7 @@
             "DOS 4.0+"});
             this.lstFloppyBPB.Location = new System.Drawing.Point(612, 13);
             this.lstFloppyBPB.Name = "lstFloppyBPB";
-            this.lstFloppyBPB.Size = new System.Drawing.Size(72, 23);
+            this.lstFloppyBPB.Size = new System.Drawing.Size(84, 23);
             this.lstFloppyBPB.TabIndex = 3;
             this.toolTip.SetToolTip(this.lstFloppyBPB, "DOS 1.0 and 1.1 did not use a BPB, but most programs and operating\r\nsystems made " +
         "since then will expect one. Newer versions added\r\nadditional fields to better de" +
@@ -267,6 +267,7 @@
             this.txtFloppyBPS.Name = "txtFloppyBPS";
             this.txtFloppyBPS.Size = new System.Drawing.Size(70, 23);
             this.txtFloppyBPS.TabIndex = 5;
+            this.txtFloppyBPS.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyBPS, "This field determines the size of a sector in bytes.");
             this.txtFloppyBPS.Value = new decimal(new int[] {
             512,
@@ -301,6 +302,7 @@
             this.txtFloppySPC.Name = "txtFloppySPC";
             this.txtFloppySPC.Size = new System.Drawing.Size(70, 23);
             this.txtFloppySPC.TabIndex = 8;
+            this.txtFloppySPC.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppySPC, "This field determines the number of sectors that make up one cluster.\r\n");
             this.txtFloppySPC.Value = new decimal(new int[] {
             1,
@@ -361,8 +363,9 @@
             0,
             0});
             this.txtFloppyRootDir.Name = "txtFloppyRootDir";
-            this.txtFloppyRootDir.Size = new System.Drawing.Size(72, 23);
+            this.txtFloppyRootDir.Size = new System.Drawing.Size(84, 23);
             this.txtFloppyRootDir.TabIndex = 9;
+            this.txtFloppyRootDir.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyRootDir, "This is the maximum number of files that can be located in the\r\nroot directory of" +
         " the disk. ");
             this.txtFloppyRootDir.Value = new decimal(new int[] {
@@ -398,8 +401,9 @@
             0,
             0});
             this.txtFloppyTotalSect.Name = "txtFloppyTotalSect";
-            this.txtFloppyTotalSect.Size = new System.Drawing.Size(72, 23);
+            this.txtFloppyTotalSect.Size = new System.Drawing.Size(84, 23);
             this.txtFloppyTotalSect.TabIndex = 6;
+            this.txtFloppyTotalSect.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyTotalSect, "This field specifies the total number of sectors on a disk. The number\r\nis calcul" +
         "ated by multiplying the number of tracks, sectors per track and\r\nnumber of sides" +
         " (tracks * SPT * sides).\r\n");
@@ -435,8 +439,9 @@
             0,
             0});
             this.txtFloppyMediaDesc.Name = "txtFloppyMediaDesc";
-            this.txtFloppyMediaDesc.Size = new System.Drawing.Size(72, 23);
+            this.txtFloppyMediaDesc.Size = new System.Drawing.Size(84, 23);
             this.txtFloppyMediaDesc.TabIndex = 12;
+            this.txtFloppyMediaDesc.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyMediaDesc, resources.GetString("txtFloppyMediaDesc.ToolTip"));
             this.txtFloppyMediaDesc.Value = new decimal(new int[] {
             240,
@@ -471,6 +476,7 @@
             this.txtFloppySPF.Name = "txtFloppySPF";
             this.txtFloppySPF.Size = new System.Drawing.Size(70, 23);
             this.txtFloppySPF.TabIndex = 14;
+            this.txtFloppySPF.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppySPF, "Defines the number of sectors occupied by each file\r\nallocation table (FAT).");
             this.txtFloppySPF.Value = new decimal(new int[] {
             9,
@@ -505,6 +511,7 @@
             this.txtFloppySPT.Name = "txtFloppySPT";
             this.txtFloppySPT.Size = new System.Drawing.Size(70, 23);
             this.txtFloppySPT.TabIndex = 11;
+            this.txtFloppySPT.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppySPT, "The number of sectors in one track.");
             this.txtFloppySPT.Value = new decimal(new int[] {
             18,
@@ -533,7 +540,7 @@
             "2"});
             this.lstFloppySides.Location = new System.Drawing.Point(612, 158);
             this.lstFloppySides.Name = "lstFloppySides";
-            this.lstFloppySides.Size = new System.Drawing.Size(72, 23);
+            this.lstFloppySides.Size = new System.Drawing.Size(84, 23);
             this.lstFloppySides.TabIndex = 15;
             this.toolTip.SetToolTip(this.lstFloppySides, "Determines whether a disk is single-sided (SS) or double-sided (DS).");
             this.lstFloppySides.SelectedIndexChanged += new System.EventHandler(this.lstFloppySides_SelectedIndexChanged);
@@ -619,6 +626,7 @@
             this.txtFloppyNumFATs.Name = "txtFloppyNumFATs";
             this.txtFloppyNumFATs.Size = new System.Drawing.Size(113, 23);
             this.txtFloppyNumFATs.TabIndex = 30;
+            this.txtFloppyNumFATs.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyNumFATs, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, thi" +
         "s value is basically always 2.\r\n");
             this.txtFloppyNumFATs.Value = new decimal(new int[] {
@@ -644,6 +652,7 @@
             this.txtFloppyReservedSect.Name = "txtFloppyReservedSect";
             this.txtFloppyReservedSect.Size = new System.Drawing.Size(70, 23);
             this.txtFloppyReservedSect.TabIndex = 31;
+            this.txtFloppyReservedSect.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyReservedSect, "The number of sectors before the first file allocation table (FAT).\r\nFor most FAT" +
         "12-formatted floppies, there is only one reserved\r\nsector - the boot sector.\r\n");
             this.txtFloppyReservedSect.Value = new decimal(new int[] {
@@ -677,8 +686,9 @@
             0,
             0});
             this.txtFloppyTracks.Name = "txtFloppyTracks";
-            this.txtFloppyTracks.Size = new System.Drawing.Size(72, 23);
+            this.txtFloppyTracks.Size = new System.Drawing.Size(84, 23);
             this.txtFloppyTracks.TabIndex = 33;
+            this.txtFloppyTracks.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyTracks, "The number of tracks on one side of the disk.");
             this.txtFloppyTracks.Value = new decimal(new int[] {
             80,
@@ -814,7 +824,7 @@
             this.tabControl.Location = new System.Drawing.Point(12, 12);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(706, 223);
+            this.tabControl.Size = new System.Drawing.Size(720, 223);
             this.tabControl.TabIndex = 0;
             this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
@@ -858,7 +868,7 @@
             this.tabFloppy.Location = new System.Drawing.Point(4, 24);
             this.tabFloppy.Name = "tabFloppy";
             this.tabFloppy.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFloppy.Size = new System.Drawing.Size(698, 195);
+            this.tabFloppy.Size = new System.Drawing.Size(712, 195);
             this.tabFloppy.TabIndex = 0;
             this.tabFloppy.Text = "Floppy disk";
             // 
@@ -890,7 +900,7 @@
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlBottom.Location = new System.Drawing.Point(0, 241);
             this.pnlBottom.Name = "pnlBottom";
-            this.pnlBottom.Size = new System.Drawing.Size(729, 50);
+            this.pnlBottom.Size = new System.Drawing.Size(744, 50);
             this.pnlBottom.TabIndex = 18;
             // 
             // dlgNewImage
@@ -900,7 +910,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(729, 291);
+            this.ClientSize = new System.Drawing.Size(744, 291);
             this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.tabControl);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
