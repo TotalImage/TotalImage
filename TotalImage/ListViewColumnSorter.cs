@@ -35,13 +35,13 @@
             listviewX = (ListViewItem)x;
             listviewY = (ListViewItem)y;
 
-            DirectoryEntry entryX = (DirectoryEntry)listviewX.Tag;
-            DirectoryEntry entryY = (DirectoryEntry)listviewY.Tag;
-            if (Convert.ToBoolean(entryX.attr & 0x10) && !Convert.ToBoolean(entryY.attr & 0x10))
+            FileSystems.FileSystemObject entryX = (FileSystems.FileSystemObject)listviewX.Tag;
+            FileSystems.FileSystemObject entryY = (FileSystems.FileSystemObject)listviewY.Tag;
+            if (entryX is FileSystems.Directory && !(entryY is FileSystems.Directory))
             {
                 return -1;
             }
-            else if (!Convert.ToBoolean(entryX.attr & 0x10) && Convert.ToBoolean(entryY.attr & 0x10))
+            else if (!(entryX is FileSystems.Directory) && entryY is FileSystems.Directory)
             {
                 return 1;
             }
@@ -58,22 +58,16 @@
                     return 1;
                 }
 
-                DateTime parsedDateX = DateTime.Parse(listviewX.SubItems[SortColumn].Text);
-                DateTime parsedDateY = DateTime.Parse(listviewY.SubItems[SortColumn].Text);
-
-                compareResult = ObjectCompare.Compare(parsedDateX, parsedDateY);
+                compareResult = ObjectCompare.Compare(entryX.LastWriteTime, entryY.LastWriteTime);
             }
             else if (main.lstFiles.Columns[SortColumn].Text == "Size")
             {  
-                if(Convert.ToBoolean(entryX.attr & 0x10) && Convert.ToBoolean(entryY.attr & 0x10))
+                if(entryX is FileSystems.Directory && entryY is FileSystems.Directory)
                 {
                     return 0;
                 }
 
-                int sizeX = int.Parse(listviewX.SubItems[SortColumn].Text.TrimEnd(' ', 'B').Replace(".", "").Replace(",", ""));
-                int sizeY = int.Parse(listviewY.SubItems[SortColumn].Text.TrimEnd(' ', 'B').Replace(".", "").Replace(",", ""));
-
-                compareResult = ObjectCompare.Compare(sizeX, sizeY);
+                compareResult = ObjectCompare.Compare(entryX.Length, entryY.Length);
             }
             else if (main.lstFiles.Columns[SortColumn].Text == "Name")
             {
@@ -88,7 +82,7 @@
 
                 /* Sure would be nice to implement Explorer-like numeric string sorting here... */
 
-                compareResult = ObjectCompare.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
+                compareResult = ObjectCompare.Compare(entryX.Name, entryY.Name);
             }
             else
             {

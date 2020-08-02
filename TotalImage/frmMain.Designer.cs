@@ -1525,7 +1525,7 @@
         private System.Windows.Forms.ToolStripMenuItem injectAFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem formatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem defragmentToolStripMenuItem;
-        public TreeViewEx lstDirectories;
+        private TreeViewEx lstDirectories;
         public ListViewEx lstFiles;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;

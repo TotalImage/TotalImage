@@ -26,7 +26,7 @@ namespace TotalImage.FileSystems
 
         public FileSystem FileSystem => fileSystem;
 
-        public abstract long Length { get; set; }
+        public abstract ulong Length { get; set; }
 
         public abstract void Delete();
         public abstract void MoveTo(string path);
