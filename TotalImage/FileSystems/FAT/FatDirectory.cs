@@ -98,7 +98,8 @@ namespace TotalImage.FileSystems.FAT
                          * 0xE5/0x05 = deleted entry, skip for now 
                          * 0x2E      = virtual . and .. folders, skip*/
                         if (firstByte == 0x00 || firstByte == 0xF6) break;
-                        else if (firstByte == 0xE5 || firstByte == 0x05 || firstByte == 0x2E) continue;
+                        else if (firstByte == 0x2E) continue;
+                        else if ((firstByte == 0xE5 || firstByte == 0x05) && !Settings.ShowDeletedItems) continue;
 
                         stream.Seek(-0x01, SeekOrigin.Current);
                         var entry = DirectoryEntry.Parse(reader.ReadBytes(32));
@@ -118,7 +119,6 @@ namespace TotalImage.FileSystems.FAT
                         {
                             yield return new FatFile(fat, entry, this);
                         }
-
                     }
                     if (cluster % 2 == 0)
                     {
