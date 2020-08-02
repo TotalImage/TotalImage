@@ -990,12 +990,18 @@ namespace TotalImage
 
         private void showHiddenItems_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException("This feature is not implemented yet");
+            Settings.ShowHiddenItems = !Settings.ShowHiddenItems;
+            showHiddenToolStripMenuItem.Checked = Settings.ShowHiddenItems;
+            showHiddenItemsToolStripMenuItem1.Checked = Settings.ShowHiddenItems;
+            //At this point the directory tree needs to be traversed again...
         }
 
         private void showDeletedItems_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException("This feature is not implemented yet");
+            Settings.ShowDeletedItems = !Settings.ShowDeletedItems;
+            showDeletedToolStripMenuItem.Checked = Settings.ShowDeletedItems;
+            showDeletedItemsToolStripMenuItem.Checked = Settings.ShowDeletedItems;
+            //At this point the directory tree needs to be traversed again...
         }
 
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
