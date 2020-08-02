@@ -1,0 +1,11 @@
+RAW SECTOR IMAGES
+
+Raw sector images contain only the bytes from each sector. If the physical disk had a sector interleave, sectors in the image MAY OR MAY NOT BE reordered to logical sector order, depending on the program used to create the image. Detecting whether or not the physical sector interleave has been preserved is difficult.
+
+There is no header, footer or any other special metadata structures in this container. This makes detecting the format somewhat more complicated if the file extension alone is not enough. 
+
+Because only the actual data from the sectors is stored, this container cannot be used for imaging copy-protected disks. It is best suited for plain unprotected disks, preferably with no sector interleave or other obscure peculiarities.
+
+The most common file extensions for this container are .IMA, .IMG, .FLP, .VFD, .HDM, .DSK, .XDF.
+
+When storing IBM XDF-formatted disks (usually indicated by the .XDF file extension), sectors have different sizes, which must be taken into account when handling the image.

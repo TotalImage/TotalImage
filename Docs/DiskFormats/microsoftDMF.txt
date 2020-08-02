@@ -1,0 +1,25 @@
+MICROSOFT DMF DISK FORMAT (1680 KiB)
+
+Distribution Media Format was Microsoft's special 3.5" disk format for software installation media, designed to store more data than the conventional 1440 KiB disks. The format was first used in 1994 with the "c" revisions of Microsoft Office 4.x.
+
+Physical disks are standard 3.5" high-density (HD) disks that normally store 1440 KiB of data, or 1680 KiB when DMF-formatted. The format is sometimes also called "1.68 MB". Standard double-sided (DS) high-density (HD) drives can read DMF disks, but software must be aware of the format.
+
+Compared to the conventional 1440 KiB disks, DMF disks increased available capacity to 1680 KiB in two variants: one with 1024-byte clusters (2 sectors per cluster) and one with 2048-byte clusters (4 sectors per cluster). The first variant is more suited for media with a large number of smaller files, while the latter variant is more suited for media with a smaller number of larger files and appears to have been more commonly used. The very limited number of root directory entries implies the need to either put files in subdirectories or pack them into archives. Microsoft often complemented DMF with their CAB archive format.
+
+First three bytes in the observed disk images are EB 3C 90, followed by OEM ID 4D 53 44 4D 46 33 2E 32 ("MSDMF3.2"). A standard DOS 3.0 BIOS parameter block follows with the following values:
+
+Bytes per sector: 512
+Sectors per cluster: 2 or 4 (see notes)
+Reserved sectors: 1
+Number of FATs: 2
+Root directory entries: 16
+Total sectors: 3360
+Media descriptor: 0xF0
+Sectors per FAT: 5 or 3 (see notes)
+Sectors per track: 21
+Number of heads: 2
+
+Raw image size is 1720320 bytes.
+
+NOTES:
+-2 sectors per cluster and 5 sectors per FAT for the 1024-byte cluster variant, 4 sectors per cluster and 3 sectors per FAT for the 2048-byte cluster variant.
