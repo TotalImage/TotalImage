@@ -72,7 +72,7 @@ namespace TotalImage.FileSystems.FAT
             //And then mark all clusters in the chain as free, and do the same for all files and subdirectories inside.
         }
 
-        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects()
+        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool deleted)
         {
             var fat = FileSystem as Fat12;
             var dataAreaOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector + (fat.BiosParameterBlock.BytesPerLogicalSector *
@@ -95,10 +95,12 @@ namespace TotalImage.FileSystems.FAT
                         byte firstByte = reader.ReadByte();
 
                         /* 0x00/0xF6 = no more entries after this one, stop
-                         * 0xE5/0x05 = deleted entry, skip for now 
                          * 0x2E      = virtual . and .. folders, skip*/
                         if (firstByte == 0x00 || firstByte == 0xF6) break;
                         else if (firstByte == 0xE5 || firstByte == 0x05 || firstByte == 0x2E) continue;
+
+                        /* 0xE5/0x05 = deleted entry */
+                        if (!deleted && (firstByte == 0xE5 || firstByte == 0x05)) continue;
 
                         stream.Seek(-0x01, SeekOrigin.Current);
                         var entry = DirectoryEntry.Parse(reader.ReadBytes(32));
@@ -154,6 +156,11 @@ namespace TotalImage.FileSystems.FAT
             string ext = fullname.Substring(fullname.IndexOf('.'), fullname.Length - 1).PadRight(3, ' ');
 
             return false; //Bogus, needs to actually check all the entries which aren't in this class yet...
+        }
+
+        public override bool Deleted
+        {
+            get => Name[0] == 0xE5 || Name[0] == 0x05;
         }
     }
 }

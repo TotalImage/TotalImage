@@ -39,5 +39,7 @@ namespace TotalImage.FileSystems
         }
 
         public override string ToString() => FullName;
+
+        public abstract bool Deleted { get; }
     }
 }

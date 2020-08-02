@@ -73,5 +73,10 @@ namespace TotalImage.FileSystems.FAT
         {
             throw new NotImplementedException();
         }
+
+        public override bool Deleted
+        {
+            get => Name[0] == 0xE5 || Name[0] == 0x05;
+        }
     }
 }

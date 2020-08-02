@@ -18,7 +18,7 @@ namespace TotalImage.FileSystems.FAT
     {
         public FatRootDirectory(Fat12 fat) : base(fat, null) { }
 
-        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects()
+        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool deleted)
         {
             var fat = FileSystem as Fat12;
             var rootDirOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT * fat.BiosParameterBlock.NumberOfFATs));
@@ -34,10 +34,12 @@ namespace TotalImage.FileSystems.FAT
                     byte firstByte = reader.ReadByte();
 
                     /* 0x00/0xF6 = no more entries after this one, stop
-                     * 0xE5/0x05 = deleted entry, skip for now 
                      * 0x2E      = virtual . and .. folders, skip*/
                     if (firstByte == 0x00 || firstByte == 0xF6) break;
-                    else if (firstByte == 0xE5 || firstByte == 0x05 || firstByte == 0x2E) continue;
+                    else if (firstByte == 0x2E) continue;
+
+                    /* 0xE5/0x05 = deleted entry */
+                    if (!deleted && (firstByte == 0xE5 || firstByte == 0x05)) continue;
 
                     stream.Seek(-0x01, SeekOrigin.Current);
                     var entry = DirectoryEntry.Parse(reader.ReadBytes(32));
@@ -123,6 +125,11 @@ namespace TotalImage.FileSystems.FAT
             /* Bogus, this needs to actually check the number of normal (non-deleted) entries in the root directory and compare it
              * to the value in the BPB/floppyTable, then return the result... */
             return false;
+        }
+
+        public override bool Deleted
+        {
+            get => false;
         }
     }
 }

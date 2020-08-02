@@ -974,12 +974,50 @@ namespace TotalImage
 
         private void showHiddenItems_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException("This feature is not implemented yet");
+            Settings.ShowHiddenItems = (sender as ToolStripMenuItem).Checked;
+
+            var fileCount = 0ul;
+            var dirSize = 0ul;
+            lstFiles.BeginUpdate();
+            lstFiles.Items.Clear();
+            PopulateListView((FileSystems.Directory)lstDirectories.SelectedNode.Tag);
+            lstFiles.EndUpdate();
+
+            foreach (ListViewItem lvi in lstFiles.Items)
+            {
+                var entry = (FileSystems.FileSystemObject)lvi.Tag;
+                if (!(entry is FileSystems.Directory))
+                {
+                    fileCount++;
+                    dirSize += entry.Length;
+                }
+            }
+            lblStatusSize.Text = string.Format("{0:n0} bytes in {1} file(s)", dirSize, fileCount);
+            lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
         }
 
         private void showDeletedItems_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException("This feature is not implemented yet");
+            Settings.ShowDeletedItems = (sender as ToolStripMenuItem).Checked;
+
+            var fileCount = 0ul;
+            var dirSize = 0ul;
+            lstFiles.BeginUpdate();
+            lstFiles.Items.Clear();
+            PopulateListView((FileSystems.Directory)lstDirectories.SelectedNode.Tag);
+            lstFiles.EndUpdate();
+
+            foreach (ListViewItem lvi in lstFiles.Items)
+            {
+                var entry = (FileSystems.FileSystemObject)lvi.Tag;
+                if (!(entry is FileSystems.Directory))
+                {
+                    fileCount++;
+                    dirSize += entry.Length;
+                }
+            }
+            lblStatusSize.Text = string.Format("{0:n0} bytes in {1} file(s)", dirSize, fileCount);
+            lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
         }
 
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
@@ -1040,8 +1078,10 @@ namespace TotalImage
                 lstFiles.Items.Add(parentDirItem);
             }
 
-            foreach(var fso in dir.EnumerateFileSystemObjects())
+            foreach(var fso in dir.EnumerateFileSystemObjects(Settings.ShowDeletedItems))
             {
+                if (!Settings.ShowHiddenItems && fso.Attributes.HasFlag(FileAttributes.Hidden)) continue;
+
                 var item = new ListViewItem();
                 item.Text = fso.Name;
 
