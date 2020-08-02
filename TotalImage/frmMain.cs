@@ -590,7 +590,7 @@ namespace TotalImage
                 propertiesToolStripButton.Enabled = true;
 
                 lbStatuslPath.Text = ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).FullName;
-                lblStatusSize.Text = string.Format("{0:n0} in 1 item", ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).Length);
+                lblStatusSize.Text = string.Format("{0:n0} bytes in 1 item", ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).Length);
 
             }
             else
