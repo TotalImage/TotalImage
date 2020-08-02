@@ -1020,7 +1020,7 @@ namespace TotalImage
 
         private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
         {
-            foreach(var subdir in dir.EnumerateDirectories())
+            foreach(var subdir in dir.EnumerateDirectories(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
             {
                 var subnode = new TreeNode(subdir.Name);
                 subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
@@ -1046,7 +1046,7 @@ namespace TotalImage
                 lstFiles.Items.Add(parentDirItem);
             }
 
-            foreach(var fso in dir.EnumerateFileSystemObjects())
+            foreach(var fso in dir.EnumerateFileSystemObjects(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
             {
                 var item = new ListViewItem();
                 item.Text = fso.Name;
