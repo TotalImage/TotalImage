@@ -18,7 +18,7 @@ namespace TotalImage.FileSystems.FAT
     {
         public FatRootDirectory(Fat12 fat) : base(fat, null) { }
 
-        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects()
+        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
         {
             var fat = FileSystem as Fat12;
             var rootDirOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT * fat.BiosParameterBlock.NumberOfFATs));
@@ -34,11 +34,18 @@ namespace TotalImage.FileSystems.FAT
                     byte firstByte = reader.ReadByte();
 
                     /* 0x00/0xF6 = no more entries after this one, stop
-                     * 0xE5/0x05 = deleted entry, skip for now */
+                     * 0xE5/0x05 = deleted entry, skip for now 
+                     * 0x2E      = virtual . and .. folders, skip*/
                     if (firstByte == 0x00 || firstByte == 0xF6) break;
-                    else if (firstByte == 0xE5 || firstByte == 0x05) continue;
+                    else if (firstByte == 0x2E) continue;
+                    else if ((firstByte == 0xE5 || firstByte == 0x05) && !showDeleted) continue;
 
-                    stream.Seek(-0x01, SeekOrigin.Current);
+                    stream.Seek(10, SeekOrigin.Current);
+                    byte attrib = reader.ReadByte();
+
+                    if (Convert.ToBoolean(attrib & 2) && !showHidden) continue;
+
+                    stream.Seek(-12, SeekOrigin.Current);
                     var entry = DirectoryEntry.Parse(reader.ReadBytes(32));
 
                     //Skip LFN and volume label entries for now
@@ -98,7 +105,7 @@ namespace TotalImage.FileSystems.FAT
             get => null;
             set => throw new NotSupportedException();
         }
-        public override long Length
+        public override ulong Length
         {
             get => throw new NotSupportedException();
             set => throw new NotSupportedException();

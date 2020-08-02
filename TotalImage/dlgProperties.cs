@@ -94,7 +94,7 @@ namespace TotalImage
             if (entry is FileSystems.File file)
                 lblLocation1.Text = file.DirectoryName;
             else if (entry is FileSystems.Directory dir)
-                lblLocation1.Text = dir.Parent?.Name;
+                lblLocation1.Text = dir.Parent?.FullName;
 
             // These are indeed supposed to be assignments in the conditions.
             if (dateAccessed.Checked = entry.LastAccessTime.HasValue)

@@ -496,60 +496,62 @@ namespace TotalImage
          * This code is just a POC - needs to be improved to use all the selected options from the dialog */
         private void extract_Click(object sender, EventArgs e)
         {
-            dlgExtract dlg = new dlgExtract();
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                if (lstFiles.SelectedItems.Count == 1)
-                {
-                    DirectoryEntry entry = (DirectoryEntry)lstFiles.SelectedItems[0].Tag;
-                    if (Convert.ToBoolean(entry.attr & 0x10))
-                    {
-                        throw new NotImplementedException("This feature is not implemented yet");
-                    }
-                    else
-                    {
-                        /* Extract just one file based on the selected options from the dialog
-                         * Right now only the "Ignore folders" option works... */
-                        if (dlg.ExtractType == Settings.FolderExtract.Ignore)
-                        {
-                            image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, dlg.TargetPath);
-                        }
-                        else
-                        {
-                            throw new NotImplementedException("This feature is not implemented yet");
-                        }
-                    }
-                }
-                else if (lstFiles.SelectedItems.Count > 1)
-                {
-                    foreach (ListViewItem lvi in lstFiles.SelectedItems)
-                    {
-                        DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
-                        if (Convert.ToBoolean(entry.attr & 0x10))
-                        {
-                            throw new NotImplementedException("This feature is not implemented yet");
-                        }
-                        else
-                        {
-                            /* Extract just one file based on the selected options from the dialog
-                             * Right now only the "Ignore folders" option works... */
-                            if (dlg.ExtractType == Settings.FolderExtract.Ignore)
-                            {
-                                image.ExtractFile((DirectoryEntry)lvi.Tag, dlg.TargetPath);
-                            }
-                            else
-                            {
-                                throw new NotImplementedException("This feature is not implemented yet");
-                            }
-                        }
-                    }
-                }
-                if (dlg.OpenFolder)
-                {
-                    Process.Start(dlg.TargetPath);
-                }
-            }
-            dlg.Dispose();
+            // dlgExtract dlg = new dlgExtract();
+            // if (dlg.ShowDialog() == DialogResult.OK)
+            // {
+            //     if (lstFiles.SelectedItems.Count == 1)
+            //     {
+            //         DirectoryEntry entry = (DirectoryEntry)lstFiles.SelectedItems[0].Tag;
+            //         if (Convert.ToBoolean(entry.attr & 0x10))
+            //         {
+            //             throw new NotImplementedException("This feature is not implemented yet");
+            //         }
+            //         else
+            //         {
+            //             /* Extract just one file based on the selected options from the dialog
+            //              * Right now only the "Ignore folders" option works... */
+            //             if (dlg.ExtractType == Settings.FolderExtract.Ignore)
+            //             {
+            //                 image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, dlg.TargetPath);
+            //             }
+            //             else
+            //             {
+            //                 throw new NotImplementedException("This feature is not implemented yet");
+            //             }
+            //         }
+            //     }
+            //     else if (lstFiles.SelectedItems.Count > 1)
+            //     {
+            //         foreach (ListViewItem lvi in lstFiles.SelectedItems)
+            //         {
+            //             DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
+            //             if (Convert.ToBoolean(entry.attr & 0x10))
+            //             {
+            //                 throw new NotImplementedException("This feature is not implemented yet");
+            //             }
+            //             else
+            //             {
+            //                 /* Extract just one file based on the selected options from the dialog
+            //                  * Right now only the "Ignore folders" option works... */
+            //                 if (dlg.ExtractType == Settings.FolderExtract.Ignore)
+            //                 {
+            //                     image.ExtractFile((DirectoryEntry)lvi.Tag, dlg.TargetPath);
+            //                 }
+            //                 else
+            //                 {
+            //                     throw new NotImplementedException("This feature is not implemented yet");
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     if (dlg.OpenFolder)
+            //     {
+            //         Process.Start(dlg.TargetPath);
+            //     }
+            // }
+            // dlg.Dispose();
+
+            throw new NotImplementedException("This feature is not implemented yet");
         }
 
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
@@ -570,7 +572,7 @@ namespace TotalImage
                 propertiesToolStripButton.Enabled = false;
 
                 lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
-                lblStatusSize.Text = string.Format("{0:n0}", CalculateDirSize()).ToString() + " bytes in " + GetFileCount() + " item(s)";
+                lblStatusSize.Text = string.Format("{0:n0} bytes in {1} items", CalculateDirSize(), GetFileCount());
             }
             else if (lstFiles.SelectedItems.Count == 1)
             {
@@ -587,8 +589,8 @@ namespace TotalImage
                 extractToolStripButton.Enabled = true;
                 propertiesToolStripButton.Enabled = true;
 
-                lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator + lstFiles.SelectedItems[0].Text;
-                lblStatusSize.Text = string.Format("{0:n0}", ((DirectoryEntry)lstFiles.SelectedItems[0].Tag).fileSize).ToString() + " bytes in 1 item";
+                lbStatuslPath.Text = ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).FullName;
+                lblStatusSize.Text = string.Format("{0:n0} bytes in 1 item", ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).Length);
 
             }
             else
@@ -608,14 +610,14 @@ namespace TotalImage
 
                 lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
 
-                uint selectedSize = 0;
+                var selectedSize = 0ul;
                 foreach (ListViewItem lvi in lstFiles.SelectedItems)
                 {
-                    DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
-                    selectedSize += entry.fileSize;
+                    FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lvi.Tag;
+                    selectedSize += entry.Length;
                 }
 
-                lblStatusSize.Text = string.Format("{0:n0}", selectedSize) + " bytes in " + lstFiles.SelectedItems.Count + " items";
+                lblStatusSize.Text = string.Format("{0:n0} bytes in {1} items", selectedSize, lstFiles.SelectedItems.Count);
             }
         }
 
@@ -663,7 +665,7 @@ namespace TotalImage
 
         private void properties_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties((DirectoryEntry)lstFiles.SelectedItems[0].Tag);
+            dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
             dlg.Dispose();
         }
@@ -726,33 +728,23 @@ namespace TotalImage
         /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            uint fileCount = 0;
-            uint dirSize = 0;
+            var fileCount = 0ul;
+            var dirSize = 0ul;
             lstFiles.BeginUpdate();
-            //Subdirs
-            if (e.Node != lstDirectories.Nodes[0])
-            {
-                lstFiles.Items.Clear();
-                image.ListDirectory((DirectoryEntry)e.Node.Tag);
-            }
-            //Root dir
-            else
-            {
-                lstFiles.Items.Clear();
-                image.ListRootDirectory();
-            }
+            lstFiles.Items.Clear();
+            PopulateListView((FileSystems.Directory)e.Node.Tag);
             lstFiles.EndUpdate();
 
             foreach (ListViewItem lvi in lstFiles.Items)
             {
-                DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
-                if (!Convert.ToBoolean(entry.attr & 0x10))
+                var entry = (FileSystems.FileSystemObject)lvi.Tag;
+                if (!(entry is FileSystems.Directory))
                 {
                     fileCount++;
-                    dirSize += entry.fileSize;
+                    dirSize += entry.Length;
                 }
             }
-            lblStatusSize.Text = string.Format("{0:n0}", dirSize).ToString() + " bytes in " + fileCount + " file(s)";
+            lblStatusSize.Text = string.Format("{0:n0} bytes in {1} file(s)", dirSize, fileCount);
             lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
         }
 
@@ -761,29 +753,21 @@ namespace TotalImage
         {
             if (lstFiles.SelectedItems.Count == 1)
             {
-                if (lstFiles.SelectedItems[0].Text == "..")
+                if ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag is FileSystems.Directory dir) //A folder was double-clicked
                 {
-                    lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
+                    var node = FindNode(lstDirectories.Nodes[0], dir);
+                    if (node != null)
+                    {
+                        lstDirectories.SelectedNode = node;
+                    }
+                    else
+                    {
+                        throw new Exception("Associated treeview node was not found");
+                    }
                 }
-                else
+                else //A file was double-clicked
                 {
-                    if (Convert.ToBoolean(((DirectoryEntry)lstFiles.SelectedItems[0].Tag).attr & 0x10)) //A folder was double-clicked
-                    {
-                        uint sc = (((uint)((DirectoryEntry)lstFiles.SelectedItems[0].Tag).fstClusHI) << 16) + ((DirectoryEntry)lstFiles.SelectedItems[0].Tag).fstClusLO;
-                        TreeNode node = FindNode(lstDirectories.SelectedNode, sc);
-                        if (node != null)
-                        {
-                            lstDirectories.SelectedNode = node;
-                        }
-                        else
-                        {
-                            throw new Exception("Associated treeview node was not found");
-                        }
-                    }
-                    else //A file was double-clicked
-                    {
-                        throw new NotImplementedException("This feature is not implemented yet");
-                    }
+                    throw new NotImplementedException("This feature is not implemented yet");
                 }
             }
         }
@@ -990,12 +974,18 @@ namespace TotalImage
 
         private void showHiddenItems_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException("This feature is not implemented yet");
+            Settings.ShowHiddenItems = !Settings.ShowHiddenItems;
+            showHiddenToolStripMenuItem.Checked = Settings.ShowHiddenItems;
+            showHiddenItemsToolStripMenuItem1.Checked = Settings.ShowHiddenItems;
+            //At this point the directory tree needs to be traversed again...
         }
 
         private void showDeletedItems_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException("This feature is not implemented yet");
+            Settings.ShowDeletedItems = !Settings.ShowDeletedItems;
+            showDeletedToolStripMenuItem.Checked = Settings.ShowDeletedItems;
+            showDeletedItemsToolStripMenuItem.Checked = Settings.ShowDeletedItems;
+            //At this point the directory tree needs to be traversed again...
         }
 
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
@@ -1028,28 +1018,106 @@ namespace TotalImage
         }
         #endregion
 
+        private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
+        {
+            foreach(var subdir in dir.EnumerateDirectories(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
+            {
+                var subnode = new TreeNode(subdir.Name);
+                subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                subnode.Tag = subdir;
+                node.Nodes.Add(subnode);
+
+                PopulateTreeView(subnode, subdir);
+            }
+        }
+
+        private void PopulateListView(FileSystems.Directory dir)
+        {
+            if(dir.Parent != null)
+            {
+                //The ".." virtual folder
+                var parentDirItem = new ListViewItem();
+                parentDirItem.Text = "..";
+                parentDirItem.ImageIndex = 0;
+                parentDirItem.SubItems.Add("");
+                parentDirItem.SubItems.Add("");
+                parentDirItem.SubItems.Add("");
+                parentDirItem.Tag = dir.Parent;
+                lstFiles.Items.Add(parentDirItem);
+            }
+
+            foreach(var fso in dir.EnumerateFileSystemObjects(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
+            {
+                var item = new ListViewItem();
+                item.Text = fso.Name;
+
+                var filetype = GetShellFileType(fso.Name, fso.Attributes);
+                item.SubItems.Add(filetype);
+
+                if (fso is FileSystems.Directory)
+                {
+                    item.SubItems.Add(string.Empty);
+                    item.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                }
+                else
+                {
+                    item.SubItems.Add(string.Format("{0:n0} B", fso.Length).ToString());
+
+                    //This will only add a new icon to the list if the associated type hasn't been encountered yet
+                    if (!imgFilesSmall.Images.ContainsKey(filetype))
+                    {
+                        Icon icon = GetShellFileIcon(fso.Name, false, fso.Attributes);
+                        imgFilesSmall.Images.Add(filetype, icon);
+                        icon = GetShellFileIcon(fso.Name, true, fso.Attributes);
+                        imgFilesLarge.Images.Add(filetype, icon);
+                    }
+                    item.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype);
+                }
+
+                item.SubItems.Add(fso.LastWriteTime.ToString());
+                
+                item.Tag = fso;
+                lstFiles.Items.Add(item);
+            }
+        }
+
         /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private void OpenImage(string path)
         {
             filename = Path.GetFileName(path);
             Text = filename + " - TotalImage";
-            lstDirectories.Nodes.Clear();
-            lstFiles.Items.Clear();
 
-            TreeNode root = new TreeNode("\\");
+            image = new RawSector();
+            image.LoadImage(path);
+
+            lstDirectories.BeginUpdate();
+
+            var root = new TreeNode("\\");
             root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+            root.Tag = image.fat12.RootDirectory;
+
+            PopulateTreeView(root, image.fat12.RootDirectory);
+
+            lstDirectories.Nodes.Clear();
             lstDirectories.Nodes.Add(root);
-            image = new RawSector();
-            lstFiles.ListViewItemSorter = null;
-            lstFiles.BeginUpdate();
-            lstDirectories.BeginUpdate();
-            image.LoadImage(path);
+
+            lstDirectories.Sort();
+
             lstDirectories.EndUpdate();
-            SortDirTree();
+
             lstDirectories.SelectedNode = lstDirectories.Nodes[0];
-            lstFiles.EndUpdate();
+
+            lstFiles.BeginUpdate();
+            lstFiles.ListViewItemSorter = null;
+
+            lstFiles.Items.Clear();
+
+            PopulateListView(image.fat12.RootDirectory);
+
             lstFiles.ListViewItemSorter = sorter;
+            lstFiles.EndUpdate();
+
             lblStatusCapacity.Text = GetImageCapacity() + " KiB";
             EnableUI();
 
@@ -1059,16 +1127,16 @@ namespace TotalImage
 
         /* Returns size of directory
          * This needs to be moved to the appropriate file system classes and extended with the option to include subdirs as well. */
-        private uint CalculateDirSize()
+        private ulong CalculateDirSize()
         {
-            uint dirSize = 0;
+            var dirSize = 0ul;
 
             foreach (ListViewItem lvi in lstFiles.Items)
             {
-                DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
-                if (!Convert.ToBoolean(entry.attr & 0x10))
+                FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lvi.Tag;
+                if (!(entry is FileSystems.Directory))
                 {
-                    dirSize += entry.fileSize;
+                    dirSize += entry.Length;
                 }
             }
 
@@ -1083,8 +1151,8 @@ namespace TotalImage
 
             foreach (ListViewItem lvi in lstFiles.Items)
             {
-                DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
-                if (!Convert.ToBoolean(entry.attr & 0x10))
+                FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lvi.Tag;
+                if (!(entry is FileSystems.Directory))
                 {
                     fileCount++;
                 }
@@ -1102,35 +1170,24 @@ namespace TotalImage
             imgFilesLarge.Images.Add("folder", icon);
         }
 
-        //Adds a new node to the root directory in the directory tree
-        public void AddToRootDir(DirectoryEntry entry)
-        {
-            string filename = entry.name.TrimEnd('.');
-            TreeNode node = new TreeNode(filename);
-            node.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            node.Tag = entry;
-            lstDirectories.Nodes[0].Nodes.Add(node);
-        }
-
-        public void SortDirTree()
-        {
-            lstDirectories.Sort();
-        }
-
         //Finds the node with the specified entry
-        private TreeNode FindNode(TreeNode startNode, uint startCluster)
+        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
+        private TreeNode FindNode(TreeNode startNode, FileSystems.Directory dir)
         {
-            foreach (TreeNode node in startNode.Nodes)
+            if (((FileSystems.Directory)startNode.Tag).FullName == dir.FullName)
             {
-                uint sc = ((uint)((DirectoryEntry)node.Tag).fstClusHI << 16) + ((DirectoryEntry)node.Tag).fstClusLO;
-
-                if (sc == startCluster)
+                return startNode;
+            }
+            else foreach (TreeNode node in startNode.Nodes)
+            {
+                // hack
+                if (((FileSystems.Directory)node.Tag).FullName == dir.FullName)
                 {
                     return node;
                 }
                 else
                 {
-                    TreeNode nodeChild = FindNode(node, startCluster);
+                    TreeNode nodeChild = FindNode(node, dir);
                     if (nodeChild != null)
                     {
                         return nodeChild;
@@ -1139,23 +1196,6 @@ namespace TotalImage
             }
 
             return null;
-        }
-
-        public void AddToDir(DirectoryEntry parent, DirectoryEntry child)
-        {
-            string childFilename = child.name.TrimEnd('.');
-            TreeNode childNode = new TreeNode(childFilename);
-            childNode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            childNode.Tag = child;
-            TreeNode parentNode = FindNode(lstDirectories.Nodes[0], ((uint)(parent.fstClusHI << 16) + parent.fstClusLO));
-            if (parentNode != null)
-            {
-                parentNode.Nodes.Add(childNode);
-            }
-            else
-            {
-                throw new Exception("Parent node not found");
-            }
         }
 
         //Obtains the fancy file type name
@@ -1186,64 +1226,6 @@ namespace TotalImage
             Icon icon = (Icon)Icon.FromHandle(shinfo.hIcon).Clone();
             DestroyIcon(shinfo.hIcon);
             return icon;
-        }
-
-        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES
-         * Adds a new item to the file list */
-        public void AddToFileList(DirectoryEntry entry)
-        {
-            ListViewItem lvi = new ListViewItem();
-            if (entry.name.Substring(0, 2) != "..")
-            {
-                string filename = entry.name.TrimEnd('.');
-                lvi.Text = filename;
-                ushort year = (ushort)(((entry.wrtDate & 0xFE00) >> 9) + 1980);
-                byte month = (byte)((entry.wrtDate & 0x1E0) >> 5);
-                byte day = (byte)(entry.wrtDate & 0x1F);
-                byte hours = (byte)((entry.wrtTime & 0xF800) >> 11);
-                byte minutes = (byte)((entry.wrtTime & 0x7E0) >> 5);
-                byte seconds = (byte)((entry.wrtTime & 0x1F) * 2); //Resolution for seconds is 2s
-
-                if (month <= 0 || month >= 13) month = 1;
-                if (day <= 0 || day >= 31) day = 1; //We don't bother checking for February 31st etc. yet...
-
-                if (Convert.ToBoolean(entry.attr & 0x10))
-                {
-                    string filetype = GetShellFileType(filename, FileAttributes.Directory);
-                    lvi.SubItems.Add(filetype);
-                    lvi.SubItems.Add("");
-                    lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                }
-                else
-                {
-                    string filetype = GetShellFileType(filename, FileAttributes.Normal);
-                    lvi.SubItems.Add(filetype);
-                    lvi.SubItems.Add(string.Format("{0:n0}", entry.fileSize).ToString() + " B");
-
-                    //This will only add a new icon to the list if the associated type hasn't been encountered yet
-                    if (!imgFilesSmall.Images.ContainsKey(filetype))
-                    {
-                        Icon icon = GetShellFileIcon(filename, false, FileAttributes.Normal);
-                        imgFilesSmall.Images.Add(filetype, icon);
-                        icon = GetShellFileIcon(filename, true, FileAttributes.Normal);
-                        imgFilesLarge.Images.Add(filetype, icon);
-                    }
-                    lvi.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype);
-                }
-
-                DateTime date = new DateTime(year, month, day, hours, minutes, seconds);
-                lvi.SubItems.Add(date.ToString());
-            }
-            else //The ".." virtual folder
-            {
-                lvi.Text = "..";
-                lvi.ImageIndex = 0;
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add("");
-            }
-            lvi.Tag = entry;
-            lstFiles.Items.Add(lvi);
         }
 
         /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */

@@ -12,7 +12,7 @@ namespace TotalImage.ImageFormats
     {
         private byte[] imageBytes;
         private Stream stream;
-        private Fat12 fat12;
+        /*private*/ public Fat12 fat12;
       
         public byte[] GetImageBytes()
         {
@@ -41,7 +41,7 @@ namespace TotalImage.ImageFormats
             imageBytes = new byte[stream.Length];
             stream.Read(imageBytes, 0, (int)stream.Length);
             fat12 = new Fat12(stream);
-            fat12.ReadRootDir();
+            //fat12.ReadRootDir();
         }
 
         //Closes and unlocks the file
@@ -53,18 +53,6 @@ namespace TotalImage.ImageFormats
                 stream.Close();
                 stream.Dispose();
             }
-        }
-
-        //Lists the contents of the specified directory
-        public void ListDirectory(DirectoryEntry entry)
-        {
-            fat12.ListDir(entry);
-        }
-
-        //Lists the contents of the root directory
-        public void ListRootDirectory()
-        {
-            fat12.ListRootDir();
         }
 
         //Sets a new volume label
