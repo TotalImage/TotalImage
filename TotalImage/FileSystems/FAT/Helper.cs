@@ -42,7 +42,7 @@ namespace TotalImage.FileSystems.FAT
             var hour = (time & 0xF800) >> 11;
             var minute = (time & 0x7E0) >> 5;
             var second = (time & 0x1F) * 2 + (tenths / 100);
-            var millisecond = (tenths % 100) * 100;
+            var millisecond = (tenths % 100) * 10;
 
             if (month <= 0 || month >= 13) month = 1;
             if (day <= 0 || day >= 31) day = 1;
