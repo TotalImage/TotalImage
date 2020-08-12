@@ -8,11 +8,11 @@ namespace TotalImage.FileSystems
      */
     public abstract class FileSystemObject
     {
-        FileSystem fileSystem;
+        private readonly FileSystem _fileSystem;
 
         protected FileSystemObject(FileSystem fileSystem)
         {
-            this.fileSystem = fileSystem;
+            _fileSystem = fileSystem;
         }
 
         public abstract string Name { get; set; }
@@ -24,7 +24,7 @@ namespace TotalImage.FileSystems
         public abstract DateTime? LastWriteTime { get; set; }
         public abstract DateTime? CreationTime { get; set; }
 
-        public FileSystem FileSystem => fileSystem;
+        public FileSystem FileSystem => _fileSystem;
 
         public abstract ulong Length { get; set; }
 
@@ -35,7 +35,7 @@ namespace TotalImage.FileSystems
         public bool IsReadOnly
         {
             get => (Attributes & FileAttributes.ReadOnly) > 0;
-            set => Attributes = Attributes | (value ? FileAttributes.ReadOnly : 0);
+            set => Attributes |= value ? FileAttributes.ReadOnly : 0;
         }
 
         public override string ToString() => FullName;

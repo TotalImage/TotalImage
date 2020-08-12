@@ -7,7 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
-using TotalImage.ImageFormats;
+using TotalImage.ImageContainers;
 using static Interop.Shell32;
 using static Interop.User32;
 
@@ -18,7 +18,7 @@ namespace TotalImage
         public string filename = "";
         public string path = "";
         public bool unsavedChanges = false;
-        public RawSector image;
+        public ImageContainer image;
         private ListViewColumnSorter sorter;
 
         public frmMain()
@@ -71,7 +71,13 @@ namespace TotalImage
         //Allows viewing and editing both volume labels
         private void changeVolumeLabel_Click(object sender, EventArgs e)
         {
-            dlgChangeVolLabel dlg = new dlgChangeVolLabel(image.GetRDVolumeLabel(), image.GetBPBVolumeLabel());
+            if (!(image.FileSystem is Fat12 fs))
+            {
+                MessageBox.Show("This only works for FAT12 images");
+                return;
+            }
+            
+            dlgChangeVolLabel dlg = new dlgChangeVolLabel(fs.GetRDVolLabel(), fs.GetBPBVolLabel());
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 unsavedChanges = true;
@@ -118,7 +124,7 @@ namespace TotalImage
 
             if(image != null)
                 CloseImage();
-            image = new RawSector();
+            image = null;
             dlgNewImage dlg = new dlgNewImage();
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -159,12 +165,12 @@ namespace TotalImage
                 }
             }
 
-            image.CreateImage(bpb, dlg.TracksPerSide, dlg.WriteBPB);
+            image = RawContainer.CreateImage(bpb, dlg.TracksPerSide, dlg.WriteBPB);
             EnableUI();
             dlg.Dispose();
         }
 
-        /* The Save button on the command bar acts as either: 
+        /* The Save button on the command bar acts as either:
          * -"Save" when the file is already saved and there are unsaved changes
          * -"Save as" when the file has not been saved yet */
         private void saveToolStripButton_Click(object sender, EventArgs e)
@@ -354,8 +360,7 @@ namespace TotalImage
         //Save the changes made to the current image since the last save or since it was opened
         private void save_Click(object sender, EventArgs e)
         {
-            byte[] imageBytes = image.GetImageBytes();
-            File.WriteAllBytes(path, imageBytes);
+            image.SaveImage(path);
 
             saveToolStripButton.Enabled = false;
             saveToolStripMenuItem.Enabled = false;
@@ -371,7 +376,7 @@ namespace TotalImage
             sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             sfd.OverwritePrompt = true;
             sfd.DefaultExt = "img";
-            sfd.Filter = 
+            sfd.Filter =
                 "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "All files (*.*)|*.*";
 
@@ -385,8 +390,7 @@ namespace TotalImage
                     sfd.FileName.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase) ||
                     sfd.FileName.EndsWith(".hdm", StringComparison.OrdinalIgnoreCase))
                 {
-                    byte[] imageBytes = image.GetImageBytes();
-                    File.WriteAllBytes(sfd.FileName, imageBytes);
+                    image.SaveImage(sfd.FileName);
                 }
 
                 path = sfd.FileName;
@@ -1075,7 +1079,7 @@ namespace TotalImage
                 }
 
                 item.SubItems.Add(fso.LastWriteTime.ToString());
-                
+
                 item.Tag = fso;
                 lstFiles.Items.Add(item);
             }
@@ -1087,17 +1091,16 @@ namespace TotalImage
             filename = Path.GetFileName(path);
             Text = filename + " - TotalImage";
 
-            image = new RawSector();
-            image.LoadImage(path);
+            image = new RawContainer(path);
 
             lstDirectories.BeginUpdate();
 
             var root = new TreeNode("\\");
             root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            root.Tag = image.fat12.RootDirectory;
+            root.Tag = (image as RawContainer).FileSystem.RootDirectory;
 
-            PopulateTreeView(root, image.fat12.RootDirectory);
+            PopulateTreeView(root, (image as RawContainer).FileSystem.RootDirectory);
 
             lstDirectories.Nodes.Clear();
             lstDirectories.Nodes.Add(root);
@@ -1113,7 +1116,7 @@ namespace TotalImage
 
             lstFiles.Items.Clear();
 
-            PopulateListView(image.fat12.RootDirectory);
+            PopulateListView((image as RawContainer).FileSystem.RootDirectory);
 
             lstFiles.ListViewItemSorter = sorter;
             lstFiles.EndUpdate();
@@ -1318,8 +1321,7 @@ namespace TotalImage
             Text = "TotalImage";
             filename = "";
             path = "";
-            if(image != null)
-                image.CloseImage();
+            image?.Dispose();
             image = null;
             lstDirectories.Nodes.Clear();
             lstFiles.Items.Clear();
