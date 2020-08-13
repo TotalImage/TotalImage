@@ -1,13 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Windows.Forms;
 
 namespace TotalImage.FileSystems.FAT
 {
     public class Fat12 : FileSystem
     {
-        private frmMain main;
         private Stream stream;
         private BiosParameterBlock bpb;
         public BiosParameterBlock BiosParameterBlock => bpb;
@@ -31,7 +29,6 @@ namespace TotalImage.FileSystems.FAT
 
         protected Fat12()
         {
-            main = (frmMain)Application.OpenForms["frmMain"];
         }
 
         public Fat12(Stream stream) : this()
@@ -191,7 +188,7 @@ namespace TotalImage.FileSystems.FAT
                 bpb.LargeTotalLogicalSectors = reader.ReadUInt32();
 
                 /* At this point it's worth checking if there even is a valid BPB at the standard offset (0x0B).
-                 * 
+                 *
                  * If there isn't, then additional checks should be performed for the exotic disk formats that may have
                  * a BPB elsewhere (e.g. Apricot disks have it at 0x50...) or none at all (e.g. DOS 1.x disks)
                  */
@@ -351,7 +348,7 @@ namespace TotalImage.FileSystems.FAT
 
 
         /* Changes the volume label
-         * 
+         *
          * If BPB version <= 3.31, only the root dir label is changed
          * If BPB version >= 3.40, both the root dir and BPB label are changed
          */

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using static System.IO.Path;
+using Path = System.IO.Path;
 
 namespace TotalImage.FileSystems
 {
@@ -9,14 +9,14 @@ namespace TotalImage.FileSystems
      */
     public abstract class Directory : FileSystemObject
     {
-        Directory parent;
+        private readonly Directory _parent;
 
         protected Directory(FileSystem fileSystem, Directory parent) : base(fileSystem)
         {
-            this.parent = parent;
+            this._parent = parent;
         }
 
-        public Directory Parent => parent;
+        public Directory Parent => _parent;
         public Directory Root => FileSystem.RootDirectory;
 
         public abstract IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted);
@@ -31,17 +31,10 @@ namespace TotalImage.FileSystems
                 where x is File
                 select x as File;
 
-        public FileSystemObject[] GetFileSystemObjects(bool showHidden, bool showDeleted)
-            => EnumerateFileSystemObjects(showHidden, showDeleted).ToArray();
-
-        public Directory[] GetDirectories(bool showHidden, bool showDeleted)
-            => EnumerateDirectories(showHidden, showDeleted).ToArray();
-
-        public File[] GetFiles(bool showHidden, bool showDeleted)
-            => EnumerateFiles(showHidden, showDeleted).ToArray();
-
         public override string FullName
-            => Parent?.FullName + (Parent?.FullName.Last() == DirectorySeparatorChar ? "" : DirectorySeparatorChar.ToString()) + Name;
+            => _parent == null
+                ? Name
+                : Path.Combine(Parent.FullName, Name);
 
         public abstract Directory CreateSubdirectory(string path);
     }
