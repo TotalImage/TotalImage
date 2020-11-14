@@ -2,7 +2,7 @@ using System;
 
 namespace TotalImage.FileSystems.FAT
 {
-    public static class Helper
+    internal static class Helper
     {
         public static DateTime? FatToDateTime(ushort date)
         {
@@ -12,10 +12,14 @@ namespace TotalImage.FileSystems.FAT
             var month = (date & 0x1E0) >> 5;
             var day = date & 0x1F;
 
-            if (month <= 0 || month >= 13) month = 1;
-            if (day <= 0 || day >= 31) day = 1;
-
-            return new DateTime(year, month, day);
+            try
+            {
+                return new DateTime(year, month, day);
+            }
+            catch(ArgumentOutOfRangeException)
+            {
+                return null;
+            }
         }
 
         public static DateTime? FatToDateTime(ushort date, ushort time)
@@ -29,10 +33,14 @@ namespace TotalImage.FileSystems.FAT
             var minute = (time & 0x7E0) >> 5;
             var second = (time & 0x1F) * 2;
 
-            if (month <= 0 || month >= 13) month = 1;
-            if (day <= 0 || day >= 31) day = 1;
-
-            return new DateTime(year, month, day, hour, minute, second);
+            try
+            {
+                return new DateTime(year, month, day, hour, minute, second);
+            }
+            catch(ArgumentOutOfRangeException)
+            {
+                return null;
+            }
         }
 
         public static DateTime? FatToDateTime(ushort date, ushort time, byte tenths)
@@ -47,10 +55,14 @@ namespace TotalImage.FileSystems.FAT
             var second = (time & 0x1F) * 2 + (tenths / 100);
             var millisecond = (tenths % 100) * 10;
 
-            if (month <= 0 || month >= 13) month = 1;
-            if (day <= 0 || day >= 31) day = 1;
-
-            return new DateTime(year, month, day, hour, minute, second, millisecond);
+            try
+            {
+                return new DateTime(year, month, day, hour, minute, second, millisecond);
+            }
+            catch(ArgumentOutOfRangeException)
+            {
+                return null;
+            }
         }
 
         public static string TrimFileName(string filename)
