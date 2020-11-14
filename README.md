@@ -48,7 +48,7 @@ Please note that these lists are not exhaustive nor definitive. We're open to ad
 
 ## System requirements
 * Windows 7 Service Pack 1 or later
-* [.NET Framework 4.8](https://dotnet.microsoft.com/download/dotnet-framework/net48) or [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) runtime
+* [.NET Framework 4.8](https://dotnet.microsoft.com/download/dotnet-framework/net48) or [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) runtime
 
 Support for other operating systems will be considered within the limitations of .NET.
 
