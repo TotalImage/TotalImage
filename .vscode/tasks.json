@@ -9,8 +9,7 @@
                 "build",
                 "${workspaceFolder}/TotalImage/TotalImage.csproj",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary",
-                "-f", "netcoreapp3.1"
+                "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -22,8 +21,7 @@
                 "publish",
                 "${workspaceFolder}/TotalImage/TotalImage.csproj",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary",
-                "-f", "netcoreapp3.1"
+                "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -36,8 +34,7 @@
                 "run",
                 "${workspaceFolder}/TotalImage/TotalImage.csproj",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary",
-                "-f", "netcoreapp3.1"
+                "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
         }
