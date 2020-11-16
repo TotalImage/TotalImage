@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace TotalImage
 {
-    public class ListViewColumnSorter : IComparer<ListViewItem>
+    public class ListViewColumnSorter : IComparer, IComparer<ListViewItem>
     {
         private CaseInsensitiveComparer ObjectCompare;
 
@@ -15,6 +15,8 @@ namespace TotalImage
             Order = SortOrder.None;
             ObjectCompare = new CaseInsensitiveComparer();
         }
+
+        public int Compare(object x, object y) => Compare(x, y);
 
         public int Compare(ListViewItem x, ListViewItem y)
         {
@@ -29,13 +31,9 @@ namespace TotalImage
                 throw new IndexOutOfRangeException("SortColumn is out of range!");
 
             int compareResult;
-            ListViewItem listviewX, listviewY;
 
-            listviewX = (ListViewItem)x;
-            listviewY = (ListViewItem)y;
-
-            FileSystems.FileSystemObject entryX = (FileSystems.FileSystemObject)listviewX.Tag;
-            FileSystems.FileSystemObject entryY = (FileSystems.FileSystemObject)listviewY.Tag;
+            FileSystems.FileSystemObject entryX = (FileSystems.FileSystemObject)x.Tag;
+            FileSystems.FileSystemObject entryY = (FileSystems.FileSystemObject)x.Tag;
             if (entryX is FileSystems.Directory && !(entryY is FileSystems.Directory))
             {
                 return -1;
@@ -48,11 +46,11 @@ namespace TotalImage
             //This if-else block is needed so each column is handled properly
             if (main.lstFiles.Columns[SortColumn].Text == "Modified")
             {
-                if(listviewX.Text == "..") //This keeps the virtual .. directory always a the top
+                if(x.Text == "..") //This keeps the virtual .. directory always a the top
                 {
                     return -1;
                 }
-                else if(listviewY.Text == "..")
+                else if(y.Text == "..")
                 {
                     return 1;
                 }
@@ -70,11 +68,11 @@ namespace TotalImage
             }
             else if (main.lstFiles.Columns[SortColumn].Text == "Name")
             {
-                if (listviewX.Text == "..")
+                if (x.Text == "..")
                 {
                     return -1;
                 }
-                else if (listviewY.Text == "..")
+                else if (y.Text == "..")
                 {
                     return 1;
                 }
@@ -85,16 +83,16 @@ namespace TotalImage
             }
             else
             {
-                if (listviewX.Text == "..")
+                if (x.Text == "..")
                 {
                     return -1;
                 }
-                else if (listviewY.Text == "..")
+                else if (y.Text == "..")
                 {
                     return 1;
                 }
 
-                compareResult = ObjectCompare.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
+                compareResult = ObjectCompare.Compare(x.SubItems[SortColumn].Text, y.SubItems[SortColumn].Text);
             }
 
             if (Order == SortOrder.Ascending)
