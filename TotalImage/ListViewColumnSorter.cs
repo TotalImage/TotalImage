@@ -1,12 +1,11 @@
-﻿namespace TotalImage
-{
-    using System;
-    using System.Collections;
-    using System.Windows.Forms;
-    using TotalImage.FileSystems;
-    using TotalImage.FileSystems.FAT;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
-    public class ListViewColumnSorter : IComparer
+namespace TotalImage
+{
+    public class ListViewColumnSorter : IComparer<ListViewItem>
     {
         private CaseInsensitiveComparer ObjectCompare;
 
@@ -17,7 +16,7 @@
             ObjectCompare = new CaseInsensitiveComparer();
         }
 
-        public int Compare(object x, object y)
+        public int Compare(ListViewItem x, ListViewItem y)
         {
             if (x == null)
                 throw new ArgumentNullException(nameof(x), "x cannot be null!");
