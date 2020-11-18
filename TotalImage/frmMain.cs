@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Configuration;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -19,7 +21,6 @@ namespace TotalImage
         public string path = "";
         public bool unsavedChanges = false;
         public ImageContainer image;
-        private ListViewColumnSorter sorter;
 
         public frmMain()
         {
@@ -31,9 +32,6 @@ namespace TotalImage
         {
             Settings.Load();
             PopulateRecentList();
-
-            sorter = new ListViewColumnSorter();
-            lstFiles.ListViewItemSorter = sorter;
 
             //Because designer doesn't have the Enter key in the list for some reason...
             propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter;
@@ -703,30 +701,41 @@ namespace TotalImage
             CloseImage();
         }
 
+        SortOrder sortOrder;
+        int sortColumn;
+
         private void lstFiles_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            if (e.Column == sorter.SortColumn)
+            if (e.Column == sortColumn)
             {
                 // Reverse the current sort direction for this column.
-                if (sorter.Order == SortOrder.Ascending)
+                if (sortOrder == SortOrder.Ascending)
                 {
-                    sorter.Order = SortOrder.Descending;
+                    sortOrder = SortOrder.Descending;
                 }
                 else
                 {
-                    sorter.Order = SortOrder.Ascending;
+                    sortOrder = SortOrder.Ascending;
                 }
             }
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = e.Column;
-                sorter.Order = SortOrder.Ascending;
+                sortColumn = e.Column;
+                sortOrder = SortOrder.Ascending;
             }
+
+            // Get the sorter for the selected column
+            var sorter = FileListViewItemComparer.GetColumnSorter(sortColumn);
+
+            if(sortOrder == SortOrder.Descending)
+                sorter = new DescendingComparer(sorter); // U+1F926 🤦 FACE PALM
+
+            lstFiles.ListViewItemSorter = sorter;
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
-            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
+            lstFiles.SetSortIcon(sortColumn, sortOrder);
         }
 
         /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
@@ -1118,7 +1127,6 @@ namespace TotalImage
 
             PopulateListView((image as RawContainer).FileSystem.RootDirectory);
 
-            lstFiles.ListViewItemSorter = sorter;
             lstFiles.EndUpdate();
 
             lblStatusCapacity.Text = GetImageCapacity() + " KiB";
