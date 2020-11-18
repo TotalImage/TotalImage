@@ -11,6 +11,7 @@ using static Interop.Shell32;
 using static Interop.User32;
 using System.Drawing.Imaging;
 using System.Diagnostics;
+using System.Collections;
 
 namespace TotalImage
 {
@@ -21,7 +22,8 @@ namespace TotalImage
         public bool unsavedChanges = false;
         public Container? image;
         public int CurrentPartitionIndex;
-        private readonly ListViewColumnSorter sorter = new ListViewColumnSorter();
+        private int sortColumn;
+        private SortOrder sortOrder;
 
         public frmMain()
         {
@@ -61,11 +63,12 @@ namespace TotalImage
             splitContainer.Panel1Collapsed = !Settings.CurrentSettings.ShowDirectoryTree;
             statusBar.Visible = Settings.CurrentSettings.ShowStatusBar;
             commandBar.Visible = Settings.CurrentSettings.ShowCommandBar;
-            sorter.Order = Settings.CurrentSettings.FilesSortOrder;
-            sorter.SortColumn = Settings.CurrentSettings.FilesSortingColumn;
-            lstFiles.Sort();
-            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
+            sortOrder = Settings.CurrentSettings.FilesSortOrder;
+            sortColumn = Settings.CurrentSettings.FilesSortingColumn;
             splitContainer.SplitterDistance = Settings.CurrentSettings.SplitterDistance;
+
+            lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
+            lstFiles.SetSortIcon(sortColumn, sortOrder);
 
             PopulateRecentList();
         }
@@ -693,34 +696,61 @@ namespace TotalImage
             CloseImage();
         }
 
-        private void lstFiles_ColumnClick(object sender, ColumnClickEventArgs e)
+        private IComparer GetListViewItemSorter(int sortColumn, SortOrder sortOrder)
         {
-            if (e.Column == sorter.SortColumn)
+            // Get the sorter for the selected column
+            var sorter = FileListViewItemComparer.GetColumnSorter(sortColumn);
+
+            if(sortOrder == SortOrder.Descending)
+                sorter = new DescendingComparer(sorter); // U+1F926 🤦 FACE PALM
+
+            return sorter;
+        }
+
+        private void SortListViewBy(int column)
+        {
+            if (column == sortColumn)
             {
                 // Reverse the current sort direction for this column.
-                if (sorter.Order == SortOrder.Ascending)
+                if (sortOrder == SortOrder.Ascending)
                 {
-                    sorter.Order = SortOrder.Descending;
+                    sortOrder = SortOrder.Descending;
                 }
                 else
                 {
-                    sorter.Order = SortOrder.Ascending;
+                    sortOrder = SortOrder.Ascending;
                 }
             }
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = e.Column;
-                sorter.Order = SortOrder.Ascending;
+                sortColumn = column;
+                sortOrder = SortOrder.Ascending;
             }
 
             // Perform the sort with these new sort options.
+            lstFiles.ListViewItemSorter = GetListViewItemSorter(column, sortOrder);
             lstFiles.Sort();
-            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
+            lstFiles.SetSortIcon(column, sortOrder);
 
-            Settings.CurrentSettings.FilesSortingColumn = e.Column;
-            Settings.CurrentSettings.FilesSortOrder = sorter.Order;
+            Settings.CurrentSettings.FilesSortingColumn = column;
+            Settings.CurrentSettings.FilesSortOrder = sortOrder;
         }
+
+        private void lstFiles_ColumnClick(object sender, ColumnClickEventArgs e)
+            => SortListViewBy(e.Column);
+
+        private void sortByType_Click(object sender, EventArgs e)
+            => SortListViewBy(lstFiles.Columns.IndexOfKey("clmType"));
+
+        private void sortByModified_Click(object sender, EventArgs e)
+            => SortListViewBy(lstFiles.Columns.IndexOfKey("clmModified"));
+
+        private void sortByName_Click(object sender, EventArgs e)
+            => SortListViewBy(lstFiles.Columns.IndexOfKey("clmName"));
+
+        private void sortBySize_Click(object sender, EventArgs e)
+            => SortListViewBy(lstFiles.Columns.IndexOfKey("clmSize"));
 
         //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
         private void lstDirectories_BeforeSelect(object sender, TreeViewCancelEventArgs e)
@@ -827,127 +857,6 @@ namespace TotalImage
                     throw new NotImplementedException("This feature is not implemented yet");
                 }
             }
-        }
-
-        private void sortByType_Click(object sender, EventArgs e)
-        {
-            int columnIndex = lstFiles.Columns.IndexOfKey("clmType");
-            if (sorter.SortColumn == columnIndex)
-            {
-                // Reverse the current sort direction for this column.
-                if (sorter.Order == SortOrder.Ascending)
-                {
-                    sorter.Order = SortOrder.Descending;
-                }
-                else
-                {
-                    sorter.Order = SortOrder.Ascending;
-                }
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = columnIndex;
-                sorter.Order = SortOrder.Ascending;
-            }
-
-            Settings.CurrentSettings.FilesSortOrder = sorter.Order;
-            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
-
-            // Perform the sort with these new sort options.
-            lstFiles.Sort();
-            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
-        }
-
-        private void sortByModified_Click(object sender, EventArgs e)
-        {
-            int columnIndex = lstFiles.Columns.IndexOfKey("clmModified");
-            if (sorter.SortColumn == columnIndex)
-            {
-                // Reverse the current sort direction for this column.
-                if (sorter.Order == SortOrder.Ascending)
-                {
-                    sorter.Order = SortOrder.Descending;
-                }
-                else
-                {
-                    sorter.Order = SortOrder.Ascending;
-                }
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = columnIndex;
-                sorter.Order = SortOrder.Ascending;
-            }
-
-            Settings.CurrentSettings.FilesSortOrder = sorter.Order;
-            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
-
-            // Perform the sort with these new sort options.
-            lstFiles.Sort();
-            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
-        }
-
-        private void sortByName_Click(object sender, EventArgs e)
-        {
-            int columnIndex = lstFiles.Columns.IndexOfKey("clmName");
-            if (sorter.SortColumn == columnIndex)
-            {
-                // Reverse the current sort direction for this column.
-                if (sorter.Order == SortOrder.Ascending)
-                {
-                    sorter.Order = SortOrder.Descending;
-                }
-                else
-                {
-                    sorter.Order = SortOrder.Ascending;
-                }
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = columnIndex;
-                sorter.Order = SortOrder.Ascending;
-            }
-
-            Settings.CurrentSettings.FilesSortOrder = sorter.Order;
-            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
-
-            // Perform the sort with these new sort options.
-            lstFiles.Sort();
-            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
-        }
-
-        private void sortBySize_Click(object sender, EventArgs e)
-        {
-            int columnIndex = lstFiles.Columns.IndexOfKey("clmSize");
-
-            if (sorter.SortColumn == columnIndex)
-            {
-                // Reverse the current sort direction for this column.
-                if (sorter.Order == SortOrder.Ascending)
-                {
-                    sorter.Order = SortOrder.Descending;
-                }
-                else
-                {
-                    sorter.Order = SortOrder.Ascending;
-                }
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = columnIndex;
-                sorter.Order = SortOrder.Ascending;
-            }
-
-            Settings.CurrentSettings.FilesSortOrder = sorter.Order;
-            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
-
-            // Perform the sort with these new sort options.
-            lstFiles.Sort();
-            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
         }
 
         private void cmsDirTree_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1093,7 +1002,7 @@ namespace TotalImage
                 lstFiles.ListViewItemSorter = null;
                 lstFiles.Items.Clear();
                 PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
-                lstFiles.ListViewItemSorter = sorter;
+                lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
                 lstFiles.EndUpdate();
 
 #if NET5_0
@@ -1132,7 +1041,7 @@ namespace TotalImage
                 lstFiles.ListViewItemSorter = null;
                 lstFiles.Items.Clear();
                 PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
-                lstFiles.ListViewItemSorter = sorter;
+                lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
                 lstFiles.EndUpdate();
 
 #if NET5_0
@@ -1180,7 +1089,7 @@ namespace TotalImage
         {
             nameToolStripMenuItem.Checked = typeToolStripMenuItem.Checked = sizeToolStripMenuItem.Checked = 
                 modifiedToolStripMenuItem.Checked = false;
-            switch (sorter.SortColumn)
+            switch (sortColumn)
             {
                 case 0: nameToolStripMenuItem.Checked = true; break;
                 case 1: typeToolStripMenuItem.Checked = true; break;
@@ -1235,7 +1144,7 @@ namespace TotalImage
         {
             nameToolStripMenuItem1.Checked = typeToolStripMenuItem1.Checked = sizeToolStripMenuItem1.Checked =
                 modifiedToolStripMenuItem1.Checked = false;
-            switch (sorter.SortColumn)
+            switch (sortColumn)
             {
                 case 0: nameToolStripMenuItem1.Checked = true; break;
                 case 1: typeToolStripMenuItem1.Checked = true; break;
@@ -1506,7 +1415,7 @@ namespace TotalImage
             lstFiles.ListViewItemSorter = null;
             lstFiles.Items.Clear();
             PopulateListView(image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
-            lstFiles.ListViewItemSorter = sorter;
+            lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
             lstFiles.EndUpdate();
 
 #if NET5_0
