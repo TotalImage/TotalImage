@@ -40,8 +40,8 @@ namespace TotalImage.FileSystems.FAT
             }
             catch (InvalidDataException)
             {
-                /* This is very barebones... Additional checks should be performed to detect Apricot, RX50, etc. images
-                 * For now, it will just assume a DOS 1.x disk with no BPB */
+                /* This is very barebones... Right now, it just assumes a DOS 1.x image with no BPB based on file size. But I think
+                 * the overall detection code should be moved to the container or main form? */
                 switch (stream.Length)
                 {
                     case 163840: //5.25" 160 KiB
@@ -206,7 +206,7 @@ namespace TotalImage.FileSystems.FAT
                     throw new InvalidDataException("BPB paramaters don't match image size");
                 }
 
-                // Try to read the BPB further as a DOS 4.0 BPB.
+                //So far, the BPB seems to be OK, so try to read it further as a DOS 4.0 BPB.
                 var bpb40 = new BiosParameterBlock40(bpb);
                 bpb40.PhysicalDriveNumber = reader.ReadByte();
                 bpb40.Flags = reader.ReadByte();
@@ -348,6 +348,7 @@ namespace TotalImage.FileSystems.FAT
 
 
         /* Changes the volume label
+         * TODO: Rewrite this so the two labels can be changed separately
          *
          * If BPB version <= 3.31, only the root dir label is changed
          * If BPB version >= 3.40, both the root dir and BPB label are changed

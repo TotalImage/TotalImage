@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Configuration;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -8,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.ImageContainers;
+using TotalImage.DiskGeometries;
 using static Interop.Shell32;
 using static Interop.User32;
 
@@ -352,9 +351,19 @@ namespace TotalImage
         //Formats the selected partition
         private void format_Click(object sender, EventArgs e)
         {
-            dlgFormat dlg = new dlgFormat();
+            /* I'm not entirely sure why I made that dialog. Possibly for more advanced options when formatting HDD partitions?
+             * Anyhow, for floppies a simple confirmation msgbox is enough I guess. */
+            /*dlgFormat dlg = new dlgFormat();
             dlg.ShowDialog();
-            dlg.Dispose();
+            dlg.Dispose();*/
+
+            if(MessageBox.Show("Are you sure you want to format this image? This will erase all data inside!", "Warning", 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                //Need to figure out how to actually do this, because right now it's unclear...
+                // DoSomeFormatThing();
+                // MessageBox.Show("The image was successfully formatted!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         //Save the changes made to the current image since the last save or since it was opened
