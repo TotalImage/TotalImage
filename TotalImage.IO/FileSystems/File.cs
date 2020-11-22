@@ -1,4 +1,3 @@
-using System.Linq;
 using Path = System.IO.Path;
 
 namespace TotalImage.FileSystems

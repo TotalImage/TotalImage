@@ -23,13 +23,13 @@ namespace TotalImage.FileSystems
 
         public IEnumerable<Directory> EnumerateDirectories(bool showHidden, bool showDeleted)
             => from x in EnumerateFileSystemObjects(showHidden, showDeleted)
-                where x is Directory
-                select x as Directory;
+               where x is Directory
+               select x as Directory;
 
         public IEnumerable<File> EnumerateFiles(bool showHidden, bool showDeleted)
             => from x in EnumerateFileSystemObjects(showHidden, showDeleted)
-                where x is File
-                select x as File;
+               where x is File
+               select x as File;
 
         public override string FullName
             => _parent == null

@@ -5,7 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
-using TotalImage.ImageContainers;
+using TotalImage.Containers;
 using TotalImage.DiskGeometries;
 using static Interop.Shell32;
 using static Interop.User32;
@@ -17,7 +17,7 @@ namespace TotalImage
         public string filename = "";
         public string path = "";
         public bool unsavedChanges = false;
-        public ImageContainer image;
+        public Container image;
         private ListViewColumnSorter sorter;
 
         public frmMain()
@@ -70,12 +70,12 @@ namespace TotalImage
         //Allows viewing and editing both volume labels
         private void changeVolumeLabel_Click(object sender, EventArgs e)
         {
-            if (!(image.FileSystem is Fat12 fs))
+            if (!(image.PartitionTable.Partitions[0].FileSystem is Fat12 fs))
             {
                 MessageBox.Show("This only works for FAT12 images");
                 return;
             }
-            
+
             dlgChangeVolLabel dlg = new dlgChangeVolLabel(fs.GetRDVolLabel(), fs.GetBPBVolLabel());
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -358,7 +358,7 @@ namespace TotalImage
             dlg.ShowDialog();
             dlg.Dispose();*/
 
-            if(MessageBox.Show("Are you sure you want to format this image? This will erase all data inside!", "Warning", 
+            if(MessageBox.Show("Are you sure you want to format this image? This will erase all data inside!", "Warning",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 //Need to figure out how to actually do this, because right now it's unclear...
@@ -1108,9 +1108,9 @@ namespace TotalImage
             var root = new TreeNode("\\");
             root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            root.Tag = (image as RawContainer).FileSystem.RootDirectory;
+            root.Tag = (image as RawContainer).PartitionTable.Partitions[0].FileSystem.RootDirectory;
 
-            PopulateTreeView(root, (image as RawContainer).FileSystem.RootDirectory);
+            PopulateTreeView(root, (image as RawContainer).PartitionTable.Partitions[0].FileSystem.RootDirectory);
 
             lstDirectories.Nodes.Clear();
             lstDirectories.Nodes.Add(root);
@@ -1126,7 +1126,7 @@ namespace TotalImage
 
             lstFiles.Items.Clear();
 
-            PopulateListView((image as RawContainer).FileSystem.RootDirectory);
+            PopulateListView((image as RawContainer).PartitionTable.Partitions[0].FileSystem.RootDirectory);
 
             lstFiles.ListViewItemSorter = sorter;
             lstFiles.EndUpdate();

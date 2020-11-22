@@ -1,21 +1,26 @@
 ﻿using System;
 using System.IO;
+using TotalImage.Containers;
 using TotalImage.FileSystems;
 using TotalImage.FileSystems.FAT;
+using TotalImage.Partitions;
 using File = System.IO.File;
 
-namespace TotalImage.ImageContainers
+namespace TotalImage.Containers
 {
     /// <summary>
     /// Class for handling a container of raw sectors
     /// </summary>
-    public class RawContainer : ImageContainer
+    public class RawContainer : Container
     {
+        /// <inheritdoc />
+        public override Stream Content => containerStream;
+
         /// <inheritdoc />
         public RawContainer(string path) : base(path)
         {
         }
-        
+
         private RawContainer(MemoryStream stream) : base(stream)
         {
         }
@@ -54,16 +59,16 @@ namespace TotalImage.ImageContainers
         public void ExtractFile(DirectoryEntry entry, string path)
         {
             if (Convert.ToBoolean(entry.attr & 0x10)) return;
-            
+
             uint cluster = ((uint)entry.fstClusHI << 16) | entry.fstClusLO;
 
             using (var fs = new FileStream(path + Path.DirectorySeparatorChar + entry.name, FileMode.Append, FileAccess.Write))
             {
                 do
                 {
-                    byte[] clusterBytes = ((Fat12)FileSystem).ReadCluster(cluster);
+                    byte[] clusterBytes = ((Fat12)PartitionTable.Partitions[0].FileSystem).ReadCluster(cluster);
                     fs.Write(clusterBytes, 0, clusterBytes.Length);
-                    cluster = ((Fat12)FileSystem).FatGetNextCluster(cluster, false);
+                    cluster = ((Fat12)PartitionTable.Partitions[0].FileSystem).FatGetNextCluster(cluster, false);
                 }
                 while (cluster <= 0xFEF);
 
@@ -78,9 +83,9 @@ namespace TotalImage.ImageContainers
         }
 
         /// <inheritdoc />
-        protected override FileSystem LoadFileSystem()
+        protected override PartitionTable LoadPartitionTable()
         {
-            return new Fat12(containerStream);
+            return new NoPartitionTable(this);
         }
 
         /// <inheritdoc />

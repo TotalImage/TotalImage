@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace TotalImage.DiskGeometries
 {
@@ -7,59 +8,59 @@ namespace TotalImage.DiskGeometries
         /// <summary>
         /// What this?
         /// </summary>
-        public byte Hole { get; set; }
+        public byte Hole { get; }
         /// <summary>
         /// Number of sides, either one or two.
         /// </summary>
-        public byte Sides { get; set; }
+        public byte Sides { get; }
         /// <summary>
         /// The data rate.
         /// </summary>
-        public ushort DataRate { get; set; }
+        public ushort DataRate { get; }
         /// <summary>
         /// Encoding type, either FM or MFM.
         /// </summary>
-        public ushort Encoding { get; set; }
+        public ushort Encoding { get; }
         /// <summary>
         /// Revolutions per minute.
         /// </summary>
-        public ushort RPM { get; set; }
+        public ushort RPM { get; }
         /// <summary>
         /// Number of tracks per side.
         /// </summary>
-        public ushort Tracks { get; set; }
+        public ushort Tracks { get; }
         /// <summary>
         /// Number of sectors per track.
         /// </summary>
-        public ushort SPT { get; set; }
+        public ushort SPT { get; }
         /// <summary>
         /// Number of bytes per sector.
         /// </summary>
-        public ushort BPS { get; set; }
+        public ushort BPS { get; }
         /// <summary>
         /// Media descriptor byte.
         /// </summary>
-        public ushort MediaDescriptor { get; set; }
+        public ushort MediaDescriptor { get; }
         /// <summary>
         /// Number of sectors per cluster.
         /// </summary>
-        public ushort SPC { get; set; }
+        public ushort SPC { get; }
         /// <summary>
         /// Number of file allocation tables, usually two.
         /// </summary>
-        public ushort NoOfFATs { get; set; }
+        public ushort NoOfFATs { get; }
         /// <summary>
         /// Number of sectors per FAT.
         /// </summary>
-        public ushort SPF { get; set; }
+        public ushort SPF { get; }
         /// <summary>
         /// Number of root directory entries.
         /// </summary>
-        public ushort RootDirectoryEntries { get; set; }
+        public ushort RootDirectoryEntries { get; }
         /// <summary>
         /// Number of reserved sectors, usually one.
         /// </summary>
-        public ushort ReservedSectors { get; set; }
+        public ushort ReservedSectors { get; }
 
         public enum FriendlyName
         {
@@ -157,7 +158,7 @@ namespace TotalImage.DiskGeometries
         }
 
         //Key is the friendly name for a geometry/format, value is the FloppyGeometry object containing actual parameters
-        public static readonly Dictionary<FriendlyName, FloppyGeometry> KnownGeometries = new Dictionary<FriendlyName, FloppyGeometry>
+        public static readonly IReadOnlyDictionary<FriendlyName, FloppyGeometry> KnownGeometries = ImmutableDictionary.CreateRange(new Dictionary<FriendlyName, FloppyGeometry>()
         {
             { FriendlyName.DoubleDensity160k, new FloppyGeometry(0, 1, 2, 1, 0, 40,  8, 2, 0xFE, 2, 2,  1,  64, 1) },
             { FriendlyName.DoubleDensity180k, new FloppyGeometry(0, 1, 2, 1, 0, 40,  9, 2, 0xFC, 2, 2,  1,  64, 1) },
@@ -177,6 +178,6 @@ namespace TotalImage.DiskGeometries
             { FriendlyName.DMF2048, new FloppyGeometry(1, 2, 0, 1, 0, 80, 21, 2, 0xF0, 4, 2,  3,  16, 1) },
             { FriendlyName.HighDensity1722k, new FloppyGeometry(1, 2, 0, 1, 0, 82, 21, 2, 0xF0, 1, 2, 10, 224, 1) },
             { FriendlyName.ExtendedDensity, new FloppyGeometry(2, 2, 3, 1, 0, 80, 36, 2, 0xF0, 2, 2,  9, 240, 1) },
-        };
+        });
     }
 }
