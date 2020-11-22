@@ -12,10 +12,10 @@ namespace TotalImage
 {
     public partial class dlgProperties : Form
     {
-        public string NewName { get; private set; }
-        public DateTime DateModified { get; private set; }
-        public DateTime DateCreated { get; private set; }
-        public DateTime DateAccessed { get; private set; }
+        public string? NewName { get; private set; }
+        public DateTime? DateModified { get; private set; }
+        public DateTime? DateCreated { get; private set; }
+        public DateTime? DateAccessed { get; private set; }
         public bool AttrReadOnly { get; private set; }
         public bool AttrHidden { get; private set; }
         public bool AttrSystem { get; private set; }
@@ -98,13 +98,13 @@ namespace TotalImage
 
             // These are indeed supposed to be assignments in the conditions.
             if (dateAccessed.Checked = entry.LastAccessTime.HasValue)
-                dateAccessed.Value = entry.LastAccessTime.Value;
+                dateAccessed.Value = entry.LastAccessTime!.Value;
 
             if (dateModified.Checked = entry.LastWriteTime.HasValue)
-                dateModified.Value = entry.LastWriteTime.Value;
+                dateModified.Value = entry.LastWriteTime!.Value;
 
             if (dateCreated.Checked = entry.CreationTime.HasValue)
-                dateCreated.Value = entry.CreationTime.Value;
+                dateCreated.Value = entry.CreationTime!.Value;
 
             if (entry.Attributes.HasFlag(FileAttributes.ReadOnly))
                 cbxReadOnly.Checked = true;
@@ -129,7 +129,7 @@ namespace TotalImage
             {
                 using (var icon = Icon.FromHandle(shellInfo.hIcon))
                 {
-                    imgIcon.Image = (icon.Clone() as Icon).ToBitmap();
+                    imgIcon.Image = (icon.Clone() as Icon)?.ToBitmap();
                 }
 
                 lblType1.Text = shellInfo.szTypeName;

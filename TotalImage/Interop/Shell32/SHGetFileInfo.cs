@@ -43,7 +43,7 @@ internal static partial class Interop
 
         [DllImport("shell32.dll", EntryPoint = "SHGetFileInfoW", CharSet = CharSet.Unicode)]
         public static extern IntPtr SHGetFileInfo(
-            [MarshalAs(UnmanagedType.LPTStr)] [In] string pszPath,
+            [MarshalAs(UnmanagedType.LPWStr)] [In] string pszPath,
             [MarshalAs(UnmanagedType.U4)] FileAttributes dwFileAttributes,
             ref SHFILEINFO shinfo,
             uint cbfileInfo,

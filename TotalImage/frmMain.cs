@@ -17,8 +17,8 @@ namespace TotalImage
         public string filename = "";
         public string path = "";
         public bool unsavedChanges = false;
-        public Container image;
-        private ListViewColumnSorter sorter;
+        public Container? image;
+        private readonly ListViewColumnSorter sorter = new ListViewColumnSorter();
 
         public frmMain()
         {
@@ -31,7 +31,6 @@ namespace TotalImage
             Settings.Load();
             PopulateRecentList();
 
-            sorter = new ListViewColumnSorter();
             lstFiles.ListViewItemSorter = sorter;
 
             //Because designer doesn't have the Enter key in the list for some reason...
@@ -63,14 +62,14 @@ namespace TotalImage
         //Shows a hex view of the current image
         private void hexView_Click(object sender, EventArgs e)
         {
-            frmHexView frm = new frmHexView();
+            using frmHexView frm = new frmHexView();
             frm.Show();
         }
 
         //Allows viewing and editing both volume labels
         private void changeVolumeLabel_Click(object sender, EventArgs e)
         {
-            if (!(image.PartitionTable.Partitions[0].FileSystem is Fat12 fs))
+            if (!(image?.PartitionTable.Partitions[0].FileSystem is Fat12 fs))
             {
                 MessageBox.Show("This only works for FAT12 images");
                 return;
@@ -121,10 +120,10 @@ namespace TotalImage
                 else if (DialogResult == DialogResult.Cancel) return;
             }
 
-            if(image != null)
+            if (image != null)
                 CloseImage();
             image = null;
-            dlgNewImage dlg = new dlgNewImage();
+            using dlgNewImage dlg = new dlgNewImage();
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 Text = "(Untitled) - TotalImage";
@@ -191,9 +190,8 @@ namespace TotalImage
         //Creates a new folder
         private void newFolder_Click(object sender, EventArgs e)
         {
-            dlgNewFolder dlg = new dlgNewFolder();
+            using dlgNewFolder dlg = new dlgNewFolder();
             dlg.ShowDialog();
-            dlg.Dispose();
         }
 
         private void viewLargeIcons_Click(object sender, EventArgs e)
@@ -312,9 +310,8 @@ namespace TotalImage
         //Checks if a deleted file or folder can be undeleted and if so, offers to undelete it
         private void undelete_Click(object sender, EventArgs e)
         {
-            dlgUndelete dlg = new dlgUndelete();
+            using dlgUndelete dlg = new dlgUndelete();
             dlg.ShowDialog();
-            dlg.Dispose();
         }
 
         //Renames a file or folder
@@ -326,13 +323,11 @@ namespace TotalImage
             else if (lstDirectories.Focused)
                 oldname = lstDirectories.SelectedNode.Text;
 
-            dlgRename dlg = new dlgRename(oldname);
+            using dlgRename dlg = new dlgRename(oldname);
             dlg.ShowDialog();
 
             string newname = dlg.NewName;
             /* This is where the item gets actually renamed */
-
-            dlg.Dispose();
         }
 
         //Changes image format
@@ -344,9 +339,8 @@ namespace TotalImage
         //Defragments the selected partition
         private void defragment_Click(object sender, EventArgs e)
         {
-            dlgDefragment dlg = new dlgDefragment();
+            using dlgDefragment dlg = new dlgDefragment();
             dlg.ShowDialog();
-            dlg.Dispose();
         }
 
         //Formats the selected partition
@@ -358,7 +352,7 @@ namespace TotalImage
             dlg.ShowDialog();
             dlg.Dispose();*/
 
-            if(MessageBox.Show("Are you sure you want to format this image? This will erase all data inside!", "Warning",
+            if (MessageBox.Show("Are you sure you want to format this image? This will erase all data inside!", "Warning",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 //Need to figure out how to actually do this, because right now it's unclear...
@@ -370,6 +364,11 @@ namespace TotalImage
         //Save the changes made to the current image since the last save or since it was opened
         private void save_Click(object sender, EventArgs e)
         {
+            if (image == null)
+            {
+                throw new Exception("No image is currently loaded");
+            }
+
             image.SaveImage(path);
 
             saveToolStripButton.Enabled = false;
@@ -381,6 +380,11 @@ namespace TotalImage
         //Saves the current image as a new file, along with any changes made to it since the last save
         private void saveAs_Click(object sender, EventArgs e)
         {
+            if (image == null)
+            {
+                throw new Exception("No image is currently loaded");
+            }
+
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.AutoUpgradeEnabled = true;
             sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
@@ -473,7 +477,7 @@ namespace TotalImage
                 }
             }
 
-            OpenFileDialog ofd = new OpenFileDialog();
+            using OpenFileDialog ofd = new OpenFileDialog();
             ofd.AutoUpgradeEnabled = true;
             ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             ofd.CheckFileExists = true;
@@ -489,15 +493,12 @@ namespace TotalImage
                 CloseImage();
                 OpenImage(ofd.FileName);
             }
-
-            ofd.Dispose();
         }
 
         private void about_Click(object sender, EventArgs e)
         {
-            dlgAbout dlg = new dlgAbout();
+            using dlgAbout dlg = new dlgAbout();
             dlg.ShowDialog();
-            dlg.Dispose();
         }
 
         private void menuBarToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -665,28 +666,25 @@ namespace TotalImage
 
         private void managePartitions_Click(object sender, EventArgs e)
         {
-            dlgManagePart dlg = new dlgManagePart();
+            using dlgManagePart dlg = new dlgManagePart();
             dlg.ShowDialog();
-            dlg.Dispose();
         }
 
         private void settings_Click(object sender, EventArgs e)
         {
-            dlgSettings dlg = new dlgSettings();
+            using dlgSettings dlg = new dlgSettings();
             dlg.ShowDialog();
-            dlg.Dispose();
         }
 
         private void properties_Click(object sender, EventArgs e)
         {
-            dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag);
+            using dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag);
             dlg.ShowDialog();
-            dlg.Dispose();
         }
 
         private void injectFiles_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            using OpenFileDialog ofd = new OpenFileDialog();
             ofd.AutoUpgradeEnabled = true;
             ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             ofd.CheckFileExists = true;
@@ -698,8 +696,6 @@ namespace TotalImage
             {
                 throw new NotImplementedException("This feature is not implemented yet");
             }
-
-            ofd.Dispose();
         }
 
         private void closeImage_Click(object sender, EventArgs e)
@@ -1034,7 +1030,7 @@ namespace TotalImage
 
         private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
         {
-            foreach(var subdir in dir.EnumerateDirectories(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
+            foreach (var subdir in dir.EnumerateDirectories(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
             {
                 var subnode = new TreeNode(subdir.Name);
                 subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
@@ -1047,7 +1043,7 @@ namespace TotalImage
 
         private void PopulateListView(FileSystems.Directory dir)
         {
-            if(dir.Parent != null)
+            if (dir.Parent != null)
             {
                 //The ".." virtual folder
                 var parentDirItem = new ListViewItem();
@@ -1060,7 +1056,7 @@ namespace TotalImage
                 lstFiles.Items.Add(parentDirItem);
             }
 
-            foreach(var fso in dir.EnumerateFileSystemObjects(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
+            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
             {
                 var item = new ListViewItem();
                 item.Text = fso.Name;
@@ -1108,9 +1104,9 @@ namespace TotalImage
             var root = new TreeNode("\\");
             root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            root.Tag = (image as RawContainer).PartitionTable.Partitions[0].FileSystem.RootDirectory;
+            root.Tag = image.PartitionTable.Partitions[0].FileSystem.RootDirectory;
 
-            PopulateTreeView(root, (image as RawContainer).PartitionTable.Partitions[0].FileSystem.RootDirectory);
+            PopulateTreeView(root, image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
 
             lstDirectories.Nodes.Clear();
             lstDirectories.Nodes.Add(root);
@@ -1126,7 +1122,7 @@ namespace TotalImage
 
             lstFiles.Items.Clear();
 
-            PopulateListView((image as RawContainer).PartitionTable.Partitions[0].FileSystem.RootDirectory);
+            PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
 
             lstFiles.ListViewItemSorter = sorter;
             lstFiles.EndUpdate();
@@ -1185,28 +1181,28 @@ namespace TotalImage
 
         //Finds the node with the specified entry
         /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
-        private TreeNode FindNode(TreeNode startNode, FileSystems.Directory dir)
+        private TreeNode? FindNode(TreeNode startNode, FileSystems.Directory dir)
         {
             if (((FileSystems.Directory)startNode.Tag).FullName == dir.FullName)
             {
                 return startNode;
             }
             else foreach (TreeNode node in startNode.Nodes)
-            {
-                // hack
-                if (((FileSystems.Directory)node.Tag).FullName == dir.FullName)
                 {
-                    return node;
-                }
-                else
-                {
-                    TreeNode nodeChild = FindNode(node, dir);
-                    if (nodeChild != null)
+                    // hack
+                    if (((FileSystems.Directory)node.Tag).FullName == dir.FullName)
                     {
-                        return nodeChild;
+                        return node;
+                    }
+                    else
+                    {
+                        TreeNode? nodeChild = FindNode(node, dir);
+                        if (nodeChild != null)
+                        {
+                            return nodeChild;
+                        }
                     }
                 }
-            }
 
             return null;
         }

@@ -8,7 +8,7 @@ namespace TotalImage
         public static View FilesView { get; set; }
         public static int FilesSortingColumn { get; set; }
         public static SortOrder FilesSortOrder { get; set; }
-        public static List<string> RecentImages { get; private set; }
+        public static List<string> RecentImages { get; private set; } = new List<string>();
         public static bool ShowHiddenItems { get; set; }
         public static bool ShowDeletedItems { get; set; }
         public static bool ShowCommandBar { get; set; }
@@ -16,7 +16,7 @@ namespace TotalImage
         public static bool ShowFileList { get; set; }
         public static bool ShowStatusBar { get; set; }
         public static SizeUnit SizeUnits { get; set; }
-        public static string DefaultExtractPath { get; set; }
+        public static string? DefaultExtractPath { get; set; }
         public static FolderExtract DefaultExtractType { get; set; }
         public static bool OpenFolderAfterExtract { get; set; }
 
@@ -40,7 +40,7 @@ namespace TotalImage
 
         public static void Load()
         {
-            RecentImages = new List<string>();
+            RecentImages.Clear();
             //This is where all the settings and other stored variables would be loaded...
         }
 
