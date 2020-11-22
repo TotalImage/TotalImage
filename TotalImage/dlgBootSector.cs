@@ -11,6 +11,7 @@ namespace TotalImage
             InitializeComponent();
         }
 
+        //TODO: Get the relevant data from the main form etc. and display it in a text and hex view
         private void dlgBootSector_Load(object sender, EventArgs e)
         {
             frmMain main = (frmMain)Application.OpenForms["frmMain"];
@@ -20,22 +21,6 @@ namespace TotalImage
             }
 
             byte[] bytes = main.image.GetRawBytes(0, 512);
-
-            var sb = new StringBuilder();
-            for (int i = 0; i < 512; i++)
-            {
-                sb.Append(bytes[i].ToString("X2"));
-                if ((i + 1) % 16 == 0 && i < 511)
-                {
-                    sb.Append(Environment.NewLine);
-                }
-                else
-                {
-                    sb.Append(" ");
-                }
-            }
-
-            txtBytes.Text = sb.ToString();
         }
     }
 }

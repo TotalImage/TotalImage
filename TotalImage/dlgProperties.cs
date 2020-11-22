@@ -26,62 +26,7 @@ namespace TotalImage
             InitializeComponent();
         }
 
-        public dlgProperties(DirectoryEntry entry) : this()
-        {
-            /* For now both fields display the same 8.3 name, once VFAT/LFN support is added, the textbox will display
-             * the long name instead */
-            string filename = entry.name.TrimEnd('.');
-            txtFilename.Text = filename;
-            lblShortFilename1.Text = filename;
-
-            //Both size labels need to take display correct sizes for both files and directories - the latter is not handled at all for now...
-            lblSize1.Text = string.Format("{0:n0}", entry.fileSize).ToString() + " B";
-
-            //This needs to obtain the actual cluster size from the BPB/floppyTable and use it...
-            uint sizeOnDisk = (uint)Math.Ceiling(entry.fileSize / 1024.0) * 1024;
-            lblSizeOnDisk1.Text = string.Format("{0:n0}", sizeOnDisk).ToString() + " B";
-
-            ushort year = 1980;
-            byte month = 1;
-            byte day = 1;
-            byte hours = 0;
-            byte minutes = 0;
-            byte seconds = 0;
-            if (entry.wrtDate > 0)
-            {
-                year = (ushort)(((entry.wrtDate & 0xFE00) >> 9) + 1980);
-                month = (byte)((entry.wrtDate & 0x1E0) >> 5);
-                day = (byte)(entry.wrtDate & 0x1F);
-            }
-            if (entry.wrtTime > 0)
-            {
-                hours = (byte)((entry.wrtTime & 0xF800) >> 11);
-                minutes = (byte)((entry.wrtTime & 0x7E0) >> 5);
-                seconds = (byte)((entry.wrtTime & 0x1F) * 2);
-            }
-
-            DateTime modified = new DateTime(year, month, day, hours, minutes, seconds);
-            dateModified.Value = modified;
-            dateModified.Checked = true;
-
-            dateAccessed.Checked = entry.lstAccDate != 0;
-            dateCreated.Checked = entry.crtDate != 0;
-
-            cbxReadOnly.Checked = Convert.ToBoolean(entry.attr & 0x01);
-            cbxHidden.Checked = Convert.ToBoolean(entry.attr & 0x02);
-            cbxSystem.Checked = Convert.ToBoolean(entry.attr & 0x04);
-            cbxArchive.Checked = Convert.ToBoolean(entry.attr & 0x20);
-
-            if (Convert.ToBoolean(entry.attr & 0x10))
-            {
-                SetIconAndType(entry.name, FileAttributes.Directory);
-            }
-            else
-            {
-                SetIconAndType(entry.name, FileAttributes.Normal);
-            }
-        }
-
+        //TODO: VFAT/LFN support, proper size calculations
         public dlgProperties(FileSystemObject entry) : this()
         {
             if(entry == null)
@@ -90,6 +35,9 @@ namespace TotalImage
             txtFilename.Text = entry.Name.ToUpper();
             lblShortFilename1.Text = entry.Name.ToUpper();
             lblSize1.Text = $"{entry.Length:n0} B";
+
+            uint sizeOnDisk = (uint)Math.Ceiling(entry.Length / 1024.0) * 1024;
+            lblSizeOnDisk1.Text = string.Format("{0:n0}", sizeOnDisk).ToString() + " B";
 
             if (entry is FileSystems.File file)
                 lblLocation1.Text = file.DirectoryName;
@@ -106,17 +54,10 @@ namespace TotalImage
             if (dateCreated.Checked = entry.CreationTime.HasValue)
                 dateCreated.Value = entry.CreationTime!.Value;
 
-            if (entry.Attributes.HasFlag(FileAttributes.ReadOnly))
-                cbxReadOnly.Checked = true;
-
-            if (entry.Attributes.HasFlag(FileAttributes.Hidden))
-                cbxHidden.Checked = true;
-
-            if (entry.Attributes.HasFlag(FileAttributes.System))
-                cbxSystem.Checked = true;
-
-            if (entry.Attributes.HasFlag(FileAttributes.Archive))
-                cbxArchive.Checked = true;
+            cbxReadOnly.Checked = entry.Attributes.HasFlag(FileAttributes.ReadOnly);
+            cbxHidden.Checked = entry.Attributes.HasFlag(FileAttributes.Hidden);
+            cbxSystem.Checked = entry.Attributes.HasFlag(FileAttributes.System);
+            cbxArchive.Checked = entry.Attributes.HasFlag(FileAttributes.Archive);
 
             SetIconAndType(entry.Name, entry.Attributes);
         }
@@ -138,24 +79,28 @@ namespace TotalImage
             }
         }
 
+        //TODO: Perform filename validation
         private void btnOK_Click(object sender, EventArgs e)
         {
-            NewName = txtFilename.Text; //Name needs to be validated first...
+            NewName = txtFilename.Text;
+
             if (dateModified.Checked)
                 DateModified = dateModified.Value;
             if (dateCreated.Checked)
                 DateCreated = dateCreated.Value;
             if (dateAccessed.Checked)
                 DateAccessed = dateAccessed.Value;
+
             AttrArchive = cbxArchive.Checked;
             AttrHidden = cbxHidden.Checked;
             AttrReadOnly = cbxReadOnly.Checked;
             AttrSystem = cbxSystem.Checked;
         }
 
+        //TODO: Implement short name (8.3) generation
         private void txtFilename_TextChanged(object sender, EventArgs e)
         {
-            /* This is where short (8.3) name is generated */
+
         }
 
         private void dlgProperties_Load(object sender, EventArgs e)

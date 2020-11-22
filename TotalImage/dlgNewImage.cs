@@ -33,6 +33,7 @@ namespace TotalImage
         /*Value changed handlers should perform additional sanity checks and recalculate relevant values to make sure the user doesn't
          *try creating an impossible image! */
 
+        //Should the capacities list be loaded from the KnownGeometries list or something like that?
         private void dlgNewImage_Load(object sender, EventArgs e)
         {
             //Default values are for a 1440 KiB disk with DOS 4.0+ BPB
@@ -85,7 +86,8 @@ namespace TotalImage
             WriteBPB = cbxFloppyBPB.Checked;
         }
 
-        //Generates a random volume ID/serial number for DOS 3.4+ BPB
+        /* Generates a random volume ID/serial number for DOS 3.4+ BPB
+         * TODO: Should this be moved elsewhere? */
         private static int GenerateVolumeID()
         {
             Random rnd = new Random();
