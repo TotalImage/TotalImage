@@ -14,14 +14,14 @@ namespace TotalImage
         public byte NumberOfFATs { get; private set; }
         public ushort BytesPerSector { get; private set; }
         public byte SectorsPerCluster { get; private set; }
-        public ushort SectorsPerTrack { get; private set; }
-        public ushort SectorsPerFAT { get; private set; }
-        public ushort ReservedSectors { get; private set; }
+        public byte SectorsPerTrack { get; private set; }
+        public byte SectorsPerFAT { get; private set; }
+        public byte ReservedSectors { get; private set; }
         public ushort TotalSectors { get; private set; }
         public ushort RootDirEntries { get; private set; }
         public byte TracksPerSide { get; private set; }
         public byte MediaDescriptor { get; private set; }
-        public ushort NumberOfSides { get; private set; }
+        public byte NumberOfSides { get; private set; }
         public bool WriteBPB { get; private set; }
         public BiosParameterBlockVersion BPBVersion { get; private set; }
 
@@ -47,10 +47,10 @@ namespace TotalImage
             VolumeLabel = txtFloppyLabel.Text;
             FileSystemType = txtFloppyFSType.Text;
             NumberOfFATs = Convert.ToByte(txtFloppyNumFATs.Value);
-            ReservedSectors = Convert.ToUInt16(txtFloppyReservedSect.Value);
-            NumberOfSides = (ushort)(lstFloppySides.SelectedIndex + 1);
-            SectorsPerFAT = Convert.ToUInt16(txtFloppySPF.Value);
-            SectorsPerTrack = Convert.ToUInt16(txtFloppySPT.Value);
+            ReservedSectors = Convert.ToByte(txtFloppyReservedSect.Value);
+            NumberOfSides = (byte)(lstFloppySides.SelectedIndex + 1);
+            SectorsPerFAT = Convert.ToByte(txtFloppySPF.Value);
+            SectorsPerTrack = Convert.ToByte(txtFloppySPT.Value);
             SectorsPerCluster = Convert.ToByte(txtFloppySPC.Value);
             BytesPerSector = Convert.ToUInt16(txtFloppyBPS.Value);
             TotalSectors = Convert.ToUInt16(txtFloppyTotalSect.Value);
@@ -149,7 +149,7 @@ namespace TotalImage
         private void txtFloppyReserved_ValueChanged(object sender, EventArgs e)
         {
             int i = lstFloppyCapacity.SelectedIndex;
-            ReservedSectors = Convert.ToUInt16(txtFloppyReservedSect.Value);
+            ReservedSectors = Convert.ToByte(txtFloppyReservedSect.Value);
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyReservedSect.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].ReservedSectors)
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
@@ -159,7 +159,7 @@ namespace TotalImage
         private void lstFloppySides_SelectedIndexChanged(object sender, EventArgs e)
         {
             int i = lstFloppyCapacity.SelectedIndex;
-            NumberOfSides = (ushort)(lstFloppySides.SelectedIndex + 1);
+            NumberOfSides = (byte)(lstFloppySides.SelectedIndex + 1);
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && lstFloppySides.SelectedIndex != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides - 1)
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
@@ -169,7 +169,7 @@ namespace TotalImage
         private void txtFloppySPF_ValueChanged(object sender, EventArgs e)
         {
             int i = lstFloppyCapacity.SelectedIndex;
-            SectorsPerFAT = Convert.ToUInt16(txtFloppySPF.Value);
+            SectorsPerFAT = Convert.ToByte(txtFloppySPF.Value);
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPF.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPF)
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
@@ -179,7 +179,7 @@ namespace TotalImage
         private void txtFloppySPT_ValueChanged(object sender, EventArgs e)
         {
             int i = lstFloppyCapacity.SelectedIndex;
-            SectorsPerTrack = Convert.ToUInt16(txtFloppySPT.Value);
+            SectorsPerTrack = Convert.ToByte(txtFloppySPT.Value);
             if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPT.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT)
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
