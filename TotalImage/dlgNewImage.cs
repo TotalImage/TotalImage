@@ -57,17 +57,6 @@ namespace TotalImage
             RootDirEntries = Convert.ToUInt16(txtFloppyRootDir.Value);
             TracksPerSide = Convert.ToByte(txtFloppyTracks.Value);
             MediaDescriptor = Convert.ToByte(txtFloppyMediaDesc.Value);
-
-            //Populate the HDD type list
-            /*foreach (int[] type in hddTable.hdt)
-            {
-                int capacity = type[0] * type[1] * type[2] * 512 / 1048576;
-                string s = capacity.ToString() + " MiB (CHS: " + type[0] + ", " + type[1] + ", " + type[2] + ")";
-                lstHDDType.Items.Add(s);
-            }
-
-            lstHDDType.Items.Add("Custom...");
-            lstHDDType.SelectedIndex = 0;*/
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -130,42 +119,28 @@ namespace TotalImage
             int i = lstFloppyCapacity.SelectedIndex;
             if (i < lstFloppyCapacity.Items.Count - 1) //Ignore the last item ("Custom...")
             {
-                lstFloppySides.SelectedIndex = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides - 1; /*floppyTable.fdt[i][1] - 1;*/
-                txtFloppyTracks.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Tracks; /*floppyTable.fdt[i][5];*/
-                txtFloppySPT.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT; /*floppyTable.fdt[i][6];*/
-                txtFloppyBPS.Value = 128 << FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].BPS; /*floppyTable.fdt[i][7]*/
-                txtFloppyMediaDesc.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].MediaDescriptor; /*floppyTable.fdt[i][8]*/;
-                txtFloppySPC.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPC; /*floppyTable.fdt[i][9];*/
-                txtFloppyNumFATs.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].NoOfFATs; /*floppyTable.fdt[i][10];*/
-                txtFloppySPF.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPF; /*floppyTable.fdt[i][11];*/
-                txtFloppyRootDir.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].RootDirectoryEntries; /*floppyTable.fdt[i][12];*/
-                txtFloppyReservedSect.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].ReservedSectors; /*floppyTable.fdt[i][13];*/
+                lstFloppySides.SelectedIndex = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides - 1;
+                txtFloppyTracks.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Tracks;
+                txtFloppySPT.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT;
+                txtFloppyBPS.Value = 128 << FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].BPS;
+                txtFloppyMediaDesc.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].MediaDescriptor;
+                txtFloppySPC.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPC;
+                txtFloppyNumFATs.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].NoOfFATs;
+                txtFloppySPF.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPF;
+                txtFloppyRootDir.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].RootDirectoryEntries;
+                txtFloppyReservedSect.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].ReservedSectors;
                 txtFloppyTotalSect.Value = 
                     FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Tracks *
                     FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT *
-                    FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides; /*floppyTable.fdt[i][5] * floppyTable.fdt[i][6] * floppyTable.fdt[i][1];*/
+                    FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides;
             }
-        }
-
-        //Commented out until we implement HDD support
-        private void lstHDDCapacity_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            /*int i = lstHDDType.SelectedIndex;
-            if (lstHDDType.SelectedIndex < lstHDDType.Items.Count - 1) //Ignore the last item - "Custom..."
-            {
-                //HDD cpacity is displayed in MiB
-                txtHDDCapacity.Value = (hddTable.hdt[i][0] * hddTable.hdt[i][1] * hddTable.hdt[i][2] * 512 / 1048576);
-                txtHDDCylinders.Value = hddTable.hdt[i][0];
-                txtHDDHeads.Value = hddTable.hdt[i][1];
-                txtHDDSectors.Value = hddTable.hdt[i][2];
-            }*/
         }
 
         private void txtFloppyNumFATs_ValueChanged(object sender, EventArgs e)
         {
             int i = lstFloppyCapacity.SelectedIndex;
             NumberOfFATs = Convert.ToByte(txtFloppyNumFATs.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyNumFATs.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].NoOfFATs /*floppyTable.fdt[i][10]*/)
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyNumFATs.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].NoOfFATs)
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
             }
@@ -175,7 +150,7 @@ namespace TotalImage
         {
             int i = lstFloppyCapacity.SelectedIndex;
             ReservedSectors = Convert.ToUInt16(txtFloppyReservedSect.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyReservedSect.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].ReservedSectors /*floppyTable.fdt[i][13]*/)
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyReservedSect.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].ReservedSectors)
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
             }
@@ -185,7 +160,7 @@ namespace TotalImage
         {
             int i = lstFloppyCapacity.SelectedIndex;
             NumberOfSides = (ushort)(lstFloppySides.SelectedIndex + 1);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && lstFloppySides.SelectedIndex != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides - 1 /*floppyTable.fdt[i][1] - 1*/)
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && lstFloppySides.SelectedIndex != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides - 1)
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
             }
@@ -195,7 +170,7 @@ namespace TotalImage
         {
             int i = lstFloppyCapacity.SelectedIndex;
             SectorsPerFAT = Convert.ToUInt16(txtFloppySPF.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPF.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPF /*floppyTable.fdt[i][11]*/)
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPF.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPF)
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
             }
@@ -205,7 +180,7 @@ namespace TotalImage
         {
             int i = lstFloppyCapacity.SelectedIndex;
             SectorsPerTrack = Convert.ToUInt16(txtFloppySPT.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPT.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT /*floppyTable.fdt[i][6]*/)
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPT.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT)
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
             }
@@ -215,7 +190,7 @@ namespace TotalImage
         {
             int i = lstFloppyCapacity.SelectedIndex;
             SectorsPerCluster = Convert.ToByte(txtFloppySPC.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPC.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPC /*floppyTable.fdt[i][9]*/)
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPC.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPC)
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
             }
@@ -225,7 +200,7 @@ namespace TotalImage
         {
             int i = lstFloppyCapacity.SelectedIndex;
             BytesPerSector = Convert.ToUInt16(txtFloppyBPS.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyBPS.Value != (128 << FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].BPS /*floppyTable.fdt[i][7]*/))
+            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyBPS.Value != (128 << FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].BPS))
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
             }
@@ -241,7 +216,7 @@ namespace TotalImage
                     FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Tracks *
                     FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT *
                     FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides;
-                /*floppyTable.fdt[i][5] * floppyTable.fdt[i][6] * floppyTable.fdt[i][1];*/
+
                 if (txtFloppyTotalSect.Value != total_sect)
                 {
                     lstFloppyCapacity.SelectedItem = "Custom...";
@@ -277,23 +252,6 @@ namespace TotalImage
             {
                 lstFloppyCapacity.SelectedItem = "Custom...";
             }
-        }
-
-        //Commented out until we add HDD support
-        private void txtHDDCylinders_ValueChanged(object sender, EventArgs e)
-        {
-            /*int i = lstHDDType.SelectedIndex;
-
-            if (lstHDDType.SelectedIndex < lstHDDType.Items.Count - 2 && txtHDDCylinders.Value != hddTable.hdt[i][0])
-            {
-                lstHDDType.SelectedIndex = lstHDDType.Items.Count - 1;
-            }*/
-        }
-
-        //Temporarily disabled until hard drive support is implemented...
-        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            btnOK.Enabled = tabControl.SelectedTab != tabHDD;
         }
 
         private void txtFloppySerial_TextChanged(object sender, EventArgs e)

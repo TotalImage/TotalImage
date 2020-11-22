@@ -67,19 +67,8 @@
             this.txtFloppyReservedSect = new System.Windows.Forms.NumericUpDown();
             this.lblFloppyTracks = new System.Windows.Forms.Label();
             this.txtFloppyTracks = new System.Windows.Forms.NumericUpDown();
-            this.lstHDDType = new System.Windows.Forms.ComboBox();
-            this.lblHDDType = new System.Windows.Forms.Label();
-            this.txtHDDCapacity = new System.Windows.Forms.NumericUpDown();
-            this.lblHDDCapacity = new System.Windows.Forms.Label();
-            this.txtHDDSectors = new System.Windows.Forms.NumericUpDown();
-            this.lblHDDSectors = new System.Windows.Forms.Label();
-            this.txtHDDHeads = new System.Windows.Forms.NumericUpDown();
-            this.lblHDDHeads = new System.Windows.Forms.Label();
-            this.txtHDDCylinders = new System.Windows.Forms.NumericUpDown();
-            this.lblHDDCylinders = new System.Windows.Forms.Label();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabFloppy = new System.Windows.Forms.TabPage();
-            this.tabHDD = new System.Windows.Forms.TabPage();
             this.pnlBottom = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyBPS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppySPC)).BeginInit();
@@ -91,13 +80,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyNumFATs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyReservedSect)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyTracks)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtHDDCapacity)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtHDDSectors)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtHDDHeads)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtHDDCylinders)).BeginInit();
             this.tabControl.SuspendLayout();
             this.tabFloppy.SuspendLayout();
-            this.tabHDD.SuspendLayout();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -698,129 +682,12 @@
             0});
             this.txtFloppyTracks.ValueChanged += new System.EventHandler(this.txtFloppyTracks_ValueChanged);
             // 
-            // lstHDDType
-            // 
-            this.lstHDDType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.lstHDDType.Enabled = false;
-            this.lstHDDType.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.lstHDDType.FormattingEnabled = true;
-            this.lstHDDType.Location = new System.Drawing.Point(79, 13);
-            this.lstHDDType.MaxDropDownItems = 35;
-            this.lstHDDType.Name = "lstHDDType";
-            this.lstHDDType.Size = new System.Drawing.Size(223, 23);
-            this.lstHDDType.TabIndex = 9;
-            this.lstHDDType.SelectedIndexChanged += new System.EventHandler(this.lstHDDCapacity_SelectedIndexChanged);
-            // 
-            // lblHDDType
-            // 
-            this.lblHDDType.AutoSize = true;
-            this.lblHDDType.Enabled = false;
-            this.lblHDDType.Location = new System.Drawing.Point(14, 17);
-            this.lblHDDType.Name = "lblHDDType";
-            this.lblHDDType.Size = new System.Drawing.Size(34, 15);
-            this.lblHDDType.TabIndex = 8;
-            this.lblHDDType.Text = "Type:";
-            // 
-            // txtHDDCapacity
-            // 
-            this.txtHDDCapacity.Enabled = false;
-            this.txtHDDCapacity.Location = new System.Drawing.Point(414, 13);
-            this.txtHDDCapacity.Maximum = new decimal(new int[] {
-            999999,
-            0,
-            0,
-            0});
-            this.txtHDDCapacity.Name = "txtHDDCapacity";
-            this.txtHDDCapacity.Size = new System.Drawing.Size(75, 23);
-            this.txtHDDCapacity.TabIndex = 7;
-            // 
-            // lblHDDCapacity
-            // 
-            this.lblHDDCapacity.AutoSize = true;
-            this.lblHDDCapacity.Enabled = false;
-            this.lblHDDCapacity.Location = new System.Drawing.Point(320, 17);
-            this.lblHDDCapacity.Name = "lblHDDCapacity";
-            this.lblHDDCapacity.Size = new System.Drawing.Size(88, 15);
-            this.lblHDDCapacity.TabIndex = 6;
-            this.lblHDDCapacity.Text = "Capacity (MiB):";
-            // 
-            // txtHDDSectors
-            // 
-            this.txtHDDSectors.Enabled = false;
-            this.txtHDDSectors.Location = new System.Drawing.Point(414, 45);
-            this.txtHDDSectors.Maximum = new decimal(new int[] {
-            99,
-            0,
-            0,
-            0});
-            this.txtHDDSectors.Name = "txtHDDSectors";
-            this.txtHDDSectors.Size = new System.Drawing.Size(75, 23);
-            this.txtHDDSectors.TabIndex = 5;
-            // 
-            // lblHDDSectors
-            // 
-            this.lblHDDSectors.AutoSize = true;
-            this.lblHDDSectors.Enabled = false;
-            this.lblHDDSectors.Location = new System.Drawing.Point(320, 49);
-            this.lblHDDSectors.Name = "lblHDDSectors";
-            this.lblHDDSectors.Size = new System.Drawing.Size(48, 15);
-            this.lblHDDSectors.TabIndex = 4;
-            this.lblHDDSectors.Text = "Sectors:";
-            // 
-            // txtHDDHeads
-            // 
-            this.txtHDDHeads.Enabled = false;
-            this.txtHDDHeads.Location = new System.Drawing.Point(227, 45);
-            this.txtHDDHeads.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.txtHDDHeads.Name = "txtHDDHeads";
-            this.txtHDDHeads.Size = new System.Drawing.Size(75, 23);
-            this.txtHDDHeads.TabIndex = 3;
-            // 
-            // lblHDDHeads
-            // 
-            this.lblHDDHeads.AutoSize = true;
-            this.lblHDDHeads.Enabled = false;
-            this.lblHDDHeads.Location = new System.Drawing.Point(178, 49);
-            this.lblHDDHeads.Name = "lblHDDHeads";
-            this.lblHDDHeads.Size = new System.Drawing.Size(43, 15);
-            this.lblHDDHeads.TabIndex = 2;
-            this.lblHDDHeads.Text = "Heads:";
-            // 
-            // txtHDDCylinders
-            // 
-            this.txtHDDCylinders.Enabled = false;
-            this.txtHDDCylinders.Location = new System.Drawing.Point(79, 45);
-            this.txtHDDCylinders.Maximum = new decimal(new int[] {
-            266305,
-            0,
-            0,
-            0});
-            this.txtHDDCylinders.Name = "txtHDDCylinders";
-            this.txtHDDCylinders.Size = new System.Drawing.Size(75, 23);
-            this.txtHDDCylinders.TabIndex = 1;
-            this.txtHDDCylinders.ValueChanged += new System.EventHandler(this.txtHDDCylinders_ValueChanged);
-            // 
-            // lblHDDCylinders
-            // 
-            this.lblHDDCylinders.AutoSize = true;
-            this.lblHDDCylinders.Enabled = false;
-            this.lblHDDCylinders.Location = new System.Drawing.Point(14, 49);
-            this.lblHDDCylinders.Name = "lblHDDCylinders";
-            this.lblHDDCylinders.Size = new System.Drawing.Size(59, 15);
-            this.lblHDDCylinders.TabIndex = 0;
-            this.lblHDDCylinders.Text = "Cylinders:";
-            // 
             // tabControl
             // 
             this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabFloppy);
-            this.tabControl.Controls.Add(this.tabHDD);
             this.tabControl.HotTrack = true;
             this.tabControl.Location = new System.Drawing.Point(12, 12);
             this.tabControl.Name = "tabControl";
@@ -873,26 +740,6 @@
             this.tabFloppy.TabIndex = 0;
             this.tabFloppy.Text = "Floppy disk";
             // 
-            // tabHDD
-            // 
-            this.tabHDD.BackColor = System.Drawing.Color.White;
-            this.tabHDD.Controls.Add(this.lstHDDType);
-            this.tabHDD.Controls.Add(this.lblHDDCylinders);
-            this.tabHDD.Controls.Add(this.lblHDDType);
-            this.tabHDD.Controls.Add(this.txtHDDCylinders);
-            this.tabHDD.Controls.Add(this.txtHDDCapacity);
-            this.tabHDD.Controls.Add(this.lblHDDHeads);
-            this.tabHDD.Controls.Add(this.lblHDDCapacity);
-            this.tabHDD.Controls.Add(this.txtHDDHeads);
-            this.tabHDD.Controls.Add(this.txtHDDSectors);
-            this.tabHDD.Controls.Add(this.lblHDDSectors);
-            this.tabHDD.Location = new System.Drawing.Point(4, 24);
-            this.tabHDD.Name = "tabHDD";
-            this.tabHDD.Padding = new System.Windows.Forms.Padding(3);
-            this.tabHDD.Size = new System.Drawing.Size(712, 195);
-            this.tabHDD.TabIndex = 1;
-            this.tabHDD.Text = "Hard disk";
-            // 
             // pnlBottom
             // 
             this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
@@ -934,15 +781,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyNumFATs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyReservedSect)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtFloppyTracks)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtHDDCapacity)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtHDDSectors)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtHDDHeads)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtHDDCylinders)).EndInit();
             this.tabControl.ResumeLayout(false);
             this.tabFloppy.ResumeLayout(false);
             this.tabFloppy.PerformLayout();
-            this.tabHDD.ResumeLayout(false);
-            this.tabHDD.PerformLayout();
             this.pnlBottom.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -952,19 +793,8 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.ToolTip toolTip;
-        private System.Windows.Forms.Label lblHDDCylinders;
-        private System.Windows.Forms.NumericUpDown txtHDDCylinders;
-        private System.Windows.Forms.NumericUpDown txtHDDHeads;
-        private System.Windows.Forms.Label lblHDDHeads;
-        private System.Windows.Forms.NumericUpDown txtHDDSectors;
-        private System.Windows.Forms.Label lblHDDSectors;
-        private System.Windows.Forms.NumericUpDown txtHDDCapacity;
-        private System.Windows.Forms.Label lblHDDCapacity;
-        private System.Windows.Forms.Label lblHDDType;
-        private System.Windows.Forms.ComboBox lstHDDType;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabFloppy;
-        private System.Windows.Forms.TabPage tabHDD;
         private System.Windows.Forms.ComboBox lstFloppyCapacity;
         private System.Windows.Forms.Label lblFloppyType;
         private System.Windows.Forms.ComboBox lstFloppyBPB;
