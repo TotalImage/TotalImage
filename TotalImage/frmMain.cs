@@ -758,7 +758,6 @@ namespace TotalImage
             lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
         }
 
-        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private void lstFiles_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (lstFiles.SelectedItems.Count == 1)
@@ -950,7 +949,7 @@ namespace TotalImage
         }
 
         //Opens an image that's been dragged and dropped onto the file list
-        //Needs improvement, but the gist of it is there...
+        //TODO: Implement item movement for ListViewItem and TreeNode drag-n-drop
         private void lstFiles_DragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(typeof(ListViewItem)))
@@ -993,7 +992,7 @@ namespace TotalImage
         }
 
         //Opens an image that's been dragged and dropped onto the dir tree
-        //Needs improvement, but the gist of it is there...
+        //TODO: Implement item movement for ListViewItem and TreeNode drag-n-drop
         private void lstDirectories_DragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(typeof(ListViewItem)))
@@ -1168,6 +1167,20 @@ namespace TotalImage
 
             Settings.Save();
         }
+        private void viewMenu_DropDownOpening(object sender, EventArgs e)
+        {
+            nameToolStripMenuItem1.Checked = nameToolStripMenuItem.Checked = typeToolStripMenuItem.Checked = typeToolStripMenuItem1.Checked =
+                sizeToolStripMenuItem.Checked = sizeToolStripMenuItem1.Checked = modifiedToolStripMenuItem.Checked =
+                modifiedToolStripMenuItem1.Checked = false;
+            switch (sorter.SortColumn)
+            {
+                case 0: nameToolStripMenuItem.Checked = nameToolStripMenuItem1.Checked = true; break;
+                case 1: typeToolStripMenuItem.Checked = typeToolStripMenuItem1.Checked = true; break;
+                case 2: sizeToolStripMenuItem.Checked = sizeToolStripMenuItem1.Checked = true; break;
+                case 3: modifiedToolStripMenuItem.Checked = modifiedToolStripMenuItem1.Checked = true; break;
+            }
+        }
+
         #endregion
 
         private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
