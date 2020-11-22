@@ -157,9 +157,6 @@
   <data name="new_folder_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\new_folder_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="open_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\openHS.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="options_alt_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\options_alt_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -176,19 +173,19 @@
     <value>Error</value>
   </data>
   <data name="TI_Generic_Fatal" xml:space="preserve">
-    <value>Fatal</value>
+    <value>Fatal Error</value>
   </data>
   <data name="TI_Generic_Information" xml:space="preserve">
     <value>Information</value>
   </data>
-  <data name="TI_Generic_TotalImage" xml:space="preserve">
+  <data name="TI_Generic_TI" xml:space="preserve">
     <value>TotalImage</value>
   </data>
   <data name="TI_Generic_Warning" xml:space="preserve">
     <value>Warning</value>
   </data>
   <data name="TI_Validate_FirstChar_OnFail" xml:space="preserve">
-    <value>The characters " * + , / : ; &lt; = &gt; ? \ [ ] | are not valid in filenames.</value>
+    <value>An invalid last character was inserted. The characters " * + , / : ; &lt; = &gt; ? \ [ ] | are invalid.</value>
   </data>
   <data name="totalimage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\totalimage.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
