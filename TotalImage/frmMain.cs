@@ -1102,7 +1102,7 @@ namespace TotalImage
                 lstFiles.ListViewItemSorter = sorter;
                 lstFiles.EndUpdate();
 
-                lblStatusCapacity.Text = GetImageCapacity() + " KiB";
+                lblStatusCapacity.Text = "Dummy KiB";
             }
         }
 
@@ -1135,7 +1135,7 @@ namespace TotalImage
                 lstFiles.ListViewItemSorter = sorter;
                 lstFiles.EndUpdate();
 
-                lblStatusCapacity.Text = GetImageCapacity() + " KiB";
+                lblStatusCapacity.Text = "Dummy KiB";
             }
         }
 
@@ -1167,6 +1167,7 @@ namespace TotalImage
 
             Settings.Save();
         }
+
         private void viewMenu_DropDownOpening(object sender, EventArgs e)
         {
             nameToolStripMenuItem1.Checked = nameToolStripMenuItem.Checked = typeToolStripMenuItem.Checked = typeToolStripMenuItem1.Checked =
@@ -1254,35 +1255,27 @@ namespace TotalImage
 
             image = new RawContainer(path);
 
-            lstDirectories.BeginUpdate();
-
-            var root = new TreeNode("\\");
+            var root = new TreeNode(@"\");
             root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             root.Tag = image.PartitionTable.Partitions[0].FileSystem.RootDirectory;
-
             PopulateTreeView(root, image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
 
+            lstDirectories.BeginUpdate();
             lstDirectories.Nodes.Clear();
             lstDirectories.Nodes.Add(root);
-
             lstDirectories.Sort();
-
             lstDirectories.EndUpdate();
-
             lstDirectories.SelectedNode = lstDirectories.Nodes[0];
 
             lstFiles.BeginUpdate();
             lstFiles.ListViewItemSorter = null;
-
             lstFiles.Items.Clear();
-
             PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
-
             lstFiles.ListViewItemSorter = sorter;
             lstFiles.EndUpdate();
 
-            lblStatusCapacity.Text = GetImageCapacity() + " KiB";
+            lblStatusCapacity.Text = "Dummy KiB";
             EnableUI();
 
             Settings.AddRecentImage(path);
@@ -1290,7 +1283,7 @@ namespace TotalImage
         }
 
         /* Returns size of directory
-         * This needs to be moved to the appropriate file system classes and extended with the option to include subdirs as well. */
+         * TODO: Move to this to the appropriate file system class and implement support for subdirectories */
         private ulong CalculateDirSize()
         {
             var dirSize = 0ul;
@@ -1308,7 +1301,7 @@ namespace TotalImage
         }
 
         /* Returns the number of files in a directory
-         * This needs to be moved to the appropriate file system classes and extended with the option to include subdirs as well. */
+         * TODO: Move to this to the appropriate file system class and implement support for subdirectories */
         private uint GetFileCount()
         {
             uint fileCount = 0;
@@ -1335,7 +1328,6 @@ namespace TotalImage
         }
 
         //Finds the node with the specified entry
-        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private TreeNode? FindNode(TreeNode startNode, FileSystems.Directory dir)
         {
             if (((FileSystems.Directory)startNode.Tag).FullName == dir.FullName)
@@ -1392,12 +1384,6 @@ namespace TotalImage
             return icon;
         }
 
-        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
-        private uint GetImageCapacity()
-        {
-            return 0;
-        }
-
         //Enables various UI elements after an image is loaded
         public void EnableUI()
         {
@@ -1421,7 +1407,7 @@ namespace TotalImage
                 }
             }
 
-            //Not available for floppies - once there's HDD support, this code needs to be adjusted accordingly...
+            //TODO: Once HDD support is implemented, update this code
             managePartitionsToolStripMenuItem.Enabled = false;
             selectPartitionToolStripMenuItem.Enabled = false;
             managePartitionsToolStripButton.Enabled = false;
