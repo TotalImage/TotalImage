@@ -987,7 +987,32 @@ namespace TotalImage
             Settings.ShowHiddenItems = !Settings.ShowHiddenItems;
             showHiddenToolStripMenuItem.Checked = Settings.ShowHiddenItems;
             showHiddenItemsToolStripMenuItem1.Checked = Settings.ShowHiddenItems;
-            //At this point the directory tree needs to be traversed again...
+
+            if (image != null)
+            {
+                var root = new TreeNode(@"\");
+                root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                root.Tag = image.PartitionTable.Partitions[0].FileSystem.RootDirectory;
+
+                lstDirectories.BeginUpdate();
+                PopulateTreeView(root, image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+
+                lstDirectories.Nodes.Clear();
+                lstDirectories.Nodes.Add(root);
+                lstDirectories.Sort();
+                lstDirectories.EndUpdate();
+                lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+
+                lstFiles.BeginUpdate();
+                lstFiles.ListViewItemSorter = null;
+                lstFiles.Items.Clear();
+                PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+                lstFiles.ListViewItemSorter = sorter;
+                lstFiles.EndUpdate();
+
+                lblStatusCapacity.Text = GetImageCapacity() + " KiB";
+            }
         }
 
         private void showDeletedItems_Click(object sender, EventArgs e)
@@ -995,7 +1020,32 @@ namespace TotalImage
             Settings.ShowDeletedItems = !Settings.ShowDeletedItems;
             showDeletedToolStripMenuItem.Checked = Settings.ShowDeletedItems;
             showDeletedItemsToolStripMenuItem.Checked = Settings.ShowDeletedItems;
-            //At this point the directory tree needs to be traversed again...
+
+            if (image != null)
+            {
+                var root = new TreeNode(@"\");
+                root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                root.Tag = image.PartitionTable.Partitions[0].FileSystem.RootDirectory;
+
+                lstDirectories.BeginUpdate();
+                PopulateTreeView(root, image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+
+                lstDirectories.Nodes.Clear();
+                lstDirectories.Nodes.Add(root);
+                lstDirectories.Sort();
+                lstDirectories.EndUpdate();
+                lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+
+                lstFiles.BeginUpdate();
+                lstFiles.ListViewItemSorter = null;
+                lstFiles.Items.Clear();
+                PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+                lstFiles.ListViewItemSorter = sorter;
+                lstFiles.EndUpdate();
+
+                lblStatusCapacity.Text = GetImageCapacity() + " KiB";
+            }
         }
 
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
