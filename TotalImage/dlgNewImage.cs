@@ -59,7 +59,7 @@ namespace TotalImage
             MediaDescriptor = Convert.ToByte(txtFloppyMediaDesc.Value);
 
             //Populate the HDD type list
-            foreach (int[] type in hddTable.hdt)
+            /*foreach (int[] type in hddTable.hdt)
             {
                 int capacity = type[0] * type[1] * type[2] * 512 / 1048576;
                 string s = capacity.ToString() + " MiB (CHS: " + type[0] + ", " + type[1] + ", " + type[2] + ")";
@@ -67,7 +67,7 @@ namespace TotalImage
             }
 
             lstHDDType.Items.Add("Custom...");
-            lstHDDType.SelectedIndex = 0;
+            lstHDDType.SelectedIndex = 0;*/
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -125,7 +125,7 @@ namespace TotalImage
             }
         }
 
-        private void lstFloppyType_SelectedIndexChanged(object sender, EventArgs e)
+        private void lstFloppyCapacity_SelectedIndexChanged(object sender, EventArgs e)
         {
             int i = lstFloppyCapacity.SelectedIndex;
             if (i < lstFloppyCapacity.Items.Count - 1) //Ignore the last item ("Custom...")

@@ -129,43 +129,44 @@ namespace TotalImage
             {
                 Text = "(Untitled) - TotalImage";
                 unsavedChanges = true;
-            }
 
-            BiosParameterBlock bpb;
-            if(dlg.BPBVersion == BiosParameterBlockVersion.Dos34 || dlg.BPBVersion == BiosParameterBlockVersion.Dos40)
-                bpb = new BiosParameterBlock40() { BpbVersion = dlg.BPBVersion };
-            else
-                bpb = new BiosParameterBlock() { BpbVersion = dlg.BPBVersion };
+                BiosParameterBlock bpb;
+                if (dlg.BPBVersion == BiosParameterBlockVersion.Dos34 || dlg.BPBVersion == BiosParameterBlockVersion.Dos40)
+                    bpb = new BiosParameterBlock40() { BpbVersion = dlg.BPBVersion };
+                else
+                    bpb = new BiosParameterBlock() { BpbVersion = dlg.BPBVersion };
 
-            bpb.OemId = dlg.OEMID.ToUpper();
-            bpb.BytesPerLogicalSector = dlg.BytesPerSector;
-            bpb.HiddenSectors = 0;
-            bpb.LargeTotalLogicalSectors = 0;
-            bpb.LogicalSectorsPerCluster = dlg.SectorsPerCluster;
-            bpb.LogicalSectorsPerFAT = dlg.SectorsPerFAT;
-            bpb.MediaDescriptor = dlg.MediaDescriptor;
-            bpb.NumberOfFATs = dlg.NumberOfFATs;
-            bpb.NumberOfHeads = dlg.NumberOfSides;
-            bpb.PhysicalSectorsPerTrack = dlg.SectorsPerTrack;
-            bpb.ReservedLogicalSectors = dlg.ReservedSectors;
-            bpb.RootDirectoryEntries = dlg.RootDirEntries;
-            bpb.TotalLogicalSectors = dlg.TotalSectors;
+                bpb.OemId = dlg.OEMID.ToUpper();
+                bpb.BytesPerLogicalSector = dlg.BytesPerSector;
+                bpb.HiddenSectors = 0;
+                bpb.LargeTotalLogicalSectors = 0;
+                bpb.LogicalSectorsPerCluster = dlg.SectorsPerCluster;
+                bpb.LogicalSectorsPerFAT = dlg.SectorsPerFAT;
+                bpb.MediaDescriptor = dlg.MediaDescriptor;
+                bpb.NumberOfFATs = dlg.NumberOfFATs;
+                bpb.NumberOfHeads = dlg.NumberOfSides;
+                bpb.PhysicalSectorsPerTrack = dlg.SectorsPerTrack;
+                bpb.ReservedLogicalSectors = dlg.ReservedSectors;
+                bpb.RootDirectoryEntries = dlg.RootDirEntries;
+                bpb.TotalLogicalSectors = dlg.TotalSectors;
 
-            if (bpb is BiosParameterBlock40 bpb40) //DOS 3.4+ BPB
-            {
-                bpb40.PhysicalDriveNumber = 0;
-                bpb40.Flags = 0;
-                bpb40.VolumeSerialNumber = uint.Parse(dlg.SerialNumber, NumberStyles.HexNumber);
-
-                if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
+                if (bpb is BiosParameterBlock40 bpb40) //DOS 3.4+ BPB
                 {
-                    bpb40.FileSystemType = dlg.FileSystemType.ToUpper();
-                    bpb40.VolumeLabel = dlg.VolumeLabel.ToUpper();
+                    bpb40.PhysicalDriveNumber = 0;
+                    bpb40.Flags = 0;
+                    bpb40.VolumeSerialNumber = uint.Parse(dlg.SerialNumber, NumberStyles.HexNumber);
+
+                    if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
+                    {
+                        bpb40.FileSystemType = dlg.FileSystemType.ToUpper();
+                        bpb40.VolumeLabel = dlg.VolumeLabel.ToUpper();
+                    }
                 }
+
+                image = RawContainer.CreateImage(bpb, dlg.TracksPerSide, dlg.WriteBPB);
+                EnableUI();
             }
 
-            image = RawContainer.CreateImage(bpb, dlg.TracksPerSide, dlg.WriteBPB);
-            EnableUI();
             dlg.Dispose();
         }
 

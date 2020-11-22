@@ -176,7 +176,7 @@
             this.lstFloppyCapacity.TabIndex = 1;
             this.toolTip.SetToolTip(this.lstFloppyCapacity, "This will be the total storage capacity of your floppy disk image\r\nin kibibytes (" +
         "1 kibibyte =1024 bytes).");
-            this.lstFloppyCapacity.SelectedIndexChanged += new System.EventHandler(this.lstFloppyType_SelectedIndexChanged);
+            this.lstFloppyCapacity.SelectedIndexChanged += new System.EventHandler(this.lstFloppyCapacity_SelectedIndexChanged);
             // 
             // cbxFloppyBPB
             // 
