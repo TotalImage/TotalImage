@@ -793,7 +793,30 @@ namespace TotalImage
             modifiedToolStripMenuItem.Checked = false;
             modifiedToolStripMenuItem1.Checked = false;
 
+            if (sorter.SortColumn == 1)
+            {
+                // Reverse the current sort direction for this column.
+                if (sorter.Order == SortOrder.Ascending)
+                {
+                    sorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    sorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                sorter.SortColumn = 1;
+                sorter.Order = SortOrder.Ascending;
+            }
+
             Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Type");
+
+            // Perform the sort with these new sort options.
+            lstFiles.Sort();
+            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
         }
 
         private void sortByModified_Click(object sender, EventArgs e)
@@ -807,7 +830,30 @@ namespace TotalImage
             modifiedToolStripMenuItem.Checked = true;
             modifiedToolStripMenuItem1.Checked = true;
 
+            if (sorter.SortColumn == 3)
+            {
+                // Reverse the current sort direction for this column.
+                if (sorter.Order == SortOrder.Ascending)
+                {
+                    sorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    sorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                sorter.SortColumn = 3;
+                sorter.Order = SortOrder.Ascending;
+            }
+
             Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Modified");
+
+            // Perform the sort with these new sort options.
+            lstFiles.Sort();
+            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
         }
 
         private void sortByName_Click(object sender, EventArgs e)
@@ -822,6 +868,29 @@ namespace TotalImage
             modifiedToolStripMenuItem1.Checked = false;
 
             Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Name");
+
+            if (sorter.SortColumn == 0)
+            {
+                // Reverse the current sort direction for this column.
+                if (sorter.Order == SortOrder.Ascending)
+                {
+                    sorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    sorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                sorter.SortColumn = 0;
+                sorter.Order = SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            lstFiles.Sort();
+            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
         }
 
         private void sortBySize_Click(object sender, EventArgs e)
@@ -835,7 +904,30 @@ namespace TotalImage
             modifiedToolStripMenuItem.Checked = false;
             modifiedToolStripMenuItem1.Checked = false;
 
+            if (sorter.SortColumn == 2)
+            {
+                // Reverse the current sort direction for this column.
+                if (sorter.Order == SortOrder.Ascending)
+                {
+                    sorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    sorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                sorter.SortColumn = 2;
+                sorter.Order = SortOrder.Ascending;
+            }
+
             Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Size");
+
+            // Perform the sort with these new sort options.
+            lstFiles.Sort();
+            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
         }
 
         private void selectAll_Click(object sender, EventArgs e)
