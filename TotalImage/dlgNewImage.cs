@@ -30,10 +30,7 @@ namespace TotalImage
             InitializeComponent();
         }
 
-        /*Value changed handlers should perform additional sanity checks and recalculate relevant values to make sure the user doesn't
-         *try creating an impossible image! */
-
-        //Should the capacities list be loaded from the KnownGeometries list or something like that?
+        //TODO: Should the capacities list be loaded from the KnownGeometries list or something like that?
         private void dlgNewImage_Load(object sender, EventArgs e)
         {
             //Default values are for a 1440 KiB disk with DOS 4.0+ BPB
@@ -60,6 +57,7 @@ namespace TotalImage
             MediaDescriptor = Convert.ToByte(txtFloppyMediaDesc.Value);
         }
 
+        //TODO: Perform some validation of parameters before leaving in case the user tries to create an impossible image
         private void btnOK_Click(object sender, EventArgs e)
         {
             if (tabControl.SelectedTab == tabFloppy)

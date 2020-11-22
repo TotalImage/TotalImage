@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TotalImage
@@ -19,9 +12,10 @@ namespace TotalImage
             InitializeComponent();
         }
 
+        //TODO: Perform character/full name validation
         private void btnOK_Click(object sender, EventArgs e)
         {
-            FirstChar = txtFirstChar.Text[0]; //Character needs to be validated first...
+            FirstChar = txtFirstChar.Text[0];
         }
     }
 }

@@ -38,15 +38,16 @@ namespace TotalImage
             AlwaysAsk //The user will always be prompted with the Extract dialog
         }
 
+        //TODO: Implement loading the values from permanent storage
         public static void Load()
         {
             RecentImages.Clear();
-            //This is where all the settings and other stored variables would be loaded...
         }
 
+        //TODO: Implement saving the values to permanent storage
         public static void Save()
         {
-            //Still need to decide on the output format...
+
         }
 
         public static void AddRecentImage(string path)

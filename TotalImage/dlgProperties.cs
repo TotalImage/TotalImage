@@ -97,7 +97,7 @@ namespace TotalImage
             AttrSystem = cbxSystem.Checked;
         }
 
-        //TODO: Implement short name (8.3) generation
+        //TODO: Perform short file name (8.3) generation (via the FAT helper class?)
         private void txtFilename_TextChanged(object sender, EventArgs e)
         {
 
