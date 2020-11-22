@@ -1,25 +1,27 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
+using TotalImage.Partitions;
 
 namespace TotalImage.FileSystems.FAT
 {
     public class Fat12 : FileSystem
     {
-        private Stream stream;
-        private BiosParameterBlock bpb;
-        public BiosParameterBlock BiosParameterBlock => bpb;
-        private Directory rootDirectory;
+        private readonly Stream _stream;
+        private readonly BiosParameterBlock _bpb;
+        private Directory _rootDirectory;
+        public BiosParameterBlock BiosParameterBlock => _bpb;
 
         public override string Format => "FAT12";
 
         public override string VolumeLabel
         {
-            get => bpb is BiosParameterBlock40 bpb40 && bpb40.BpbVersion == BiosParameterBlockVersion.Dos40 ? bpb40.VolumeLabel : "UNSUPPORTED";
+            get => _bpb is BiosParameterBlock40 bpb40 && bpb40.BpbVersion == BiosParameterBlockVersion.Dos40 ? bpb40.VolumeLabel : "UNSUPPORTED";
             set => ChangeVolLabel(value);
         }
 
-        public override Directory RootDirectory => rootDirectory;
+        public override Directory RootDirectory => _rootDirectory;
 
         public override long AvailableFreeSpace => throw new NotImplementedException();
 
@@ -27,16 +29,18 @@ namespace TotalImage.FileSystems.FAT
 
         public override long TotalSize => throw new NotImplementedException();
 
-        protected Fat12()
+        protected Fat12(Stream stream, BiosParameterBlock bpb)
         {
+            _stream = stream;
+            _bpb = bpb;
         }
 
-        public Fat12(Stream stream) : this()
+        public Fat12(Stream stream)
         {
-            this.stream = stream;
+            this._stream = stream;
             try
             {
-                bpb = Parse();
+                _bpb = Parse();
             }
             catch (InvalidDataException)
             {
@@ -45,7 +49,7 @@ namespace TotalImage.FileSystems.FAT
                 switch (stream.Length)
                 {
                     case 163840: //5.25" 160 KiB
-                        bpb = new BiosParameterBlock
+                        _bpb = new BiosParameterBlock
                         {
                             BpbVersion = BiosParameterBlockVersion.Dos20,
                             BytesPerLogicalSector = 512,
@@ -63,7 +67,7 @@ namespace TotalImage.FileSystems.FAT
                         };
                         break;
                     case 184320: //5.25" 180 KiB
-                        bpb = new BiosParameterBlock
+                        _bpb = new BiosParameterBlock
                         {
                             BpbVersion = BiosParameterBlockVersion.Dos20,
                             BytesPerLogicalSector = 512,
@@ -81,7 +85,7 @@ namespace TotalImage.FileSystems.FAT
                         };
                         break;
                     case 327680: //5.25" 320 KiB
-                        bpb = new BiosParameterBlock
+                        _bpb = new BiosParameterBlock
                         {
                             BpbVersion = BiosParameterBlockVersion.Dos20,
                             BytesPerLogicalSector = 512,
@@ -99,7 +103,7 @@ namespace TotalImage.FileSystems.FAT
                         };
                         break;
                     case 368640: //5.25" 360 KiB
-                        bpb = new BiosParameterBlock
+                        _bpb = new BiosParameterBlock
                         {
                             BpbVersion = BiosParameterBlockVersion.Dos20,
                             BytesPerLogicalSector = 512,
@@ -117,7 +121,7 @@ namespace TotalImage.FileSystems.FAT
                         };
                         break;
                     case 256256: //8" 250 KiB
-                        bpb = new BiosParameterBlock
+                        _bpb = new BiosParameterBlock
                         {
                             BpbVersion = BiosParameterBlockVersion.Dos20,
                             BytesPerLogicalSector = 128,
@@ -135,7 +139,7 @@ namespace TotalImage.FileSystems.FAT
                         };
                         break;
                     case 1261568: //8" 1232 KiB
-                        bpb = new BiosParameterBlock
+                        _bpb = new BiosParameterBlock
                         {
                             BpbVersion = BiosParameterBlockVersion.Dos20,
                             BytesPerLogicalSector = 1024,
@@ -156,23 +160,23 @@ namespace TotalImage.FileSystems.FAT
                 using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
                 {
                     stream.Seek(3, SeekOrigin.Begin);
-                    bpb.OemId = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper();
+                    _bpb.OemId = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper();
                 }
             }
-            rootDirectory = new FatRootDirectory(this);
+            _rootDirectory = new FatRootDirectory(this);
         }
 
         public Stream GetStream()
         {
-            return stream;
+            return _stream;
         }
 
         public BiosParameterBlock Parse()
         {
             var bpb = new BiosParameterBlock();
-            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
             {
-                stream.Seek(0x0B, SeekOrigin.Begin); //BPB offset
+                _stream.Seek(0x0B, SeekOrigin.Begin); //BPB offset
 
                 bpb.BytesPerLogicalSector = reader.ReadUInt16();
                 bpb.LogicalSectorsPerCluster = reader.ReadByte();
@@ -243,8 +247,7 @@ namespace TotalImage.FileSystems.FAT
             if (bpb == null)
                 throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
 
-            var fat = new Fat12();
-            fat.stream = stream;
+            var fat = new Fat12(stream, bpb);
 
             uint totalSize = (uint)stream.Length;
             uint rootDirSize = (uint)(bpb.RootDirectoryEntries << 5);
@@ -341,8 +344,7 @@ namespace TotalImage.FileSystems.FAT
                 }
             }
 
-            fat.bpb = fat.Parse();
-            fat.rootDirectory = new FatRootDirectory(fat);
+            fat._rootDirectory = new FatRootDirectory(fat);
             return fat;
         }
 
@@ -358,17 +360,17 @@ namespace TotalImage.FileSystems.FAT
             if (string.IsNullOrEmpty(label))
                 throw new ArgumentNullException(nameof(label), "label cannot be null!");
 
-            uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
+            uint rootDirOffset = (uint)(_bpb.BytesPerLogicalSector + (_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT * 2));
             bool rootDirFull = false;
 
-            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
-            using (var writer = new BinaryWriter(stream, Encoding.ASCII, true))
+            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
+            using (var writer = new BinaryWriter(_stream, Encoding.ASCII, true))
             {
-                stream.Seek(rootDirOffset, SeekOrigin.Begin);
+                _stream.Seek(rootDirOffset, SeekOrigin.Begin);
 
-                for (int i = 0; i < bpb.RootDirectoryEntries; i++)
+                for (int i = 0; i < _bpb.RootDirectoryEntries; i++)
                 {
-                    stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
+                    _stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
                     byte firstChar = reader.ReadByte();
 
                     /* 0x00      = no more entries after this one, write the volume label
@@ -376,7 +378,7 @@ namespace TotalImage.FileSystems.FAT
                     if (firstChar == 0x00)
                     {
                         //Root dir is empty, so let's add the first entry
-                        stream.Seek(-0x01, SeekOrigin.Current);
+                        _stream.Seek(-0x01, SeekOrigin.Current);
                         writer.Write(label.ToCharArray());
                         writer.Write((byte)0x08); //Volume label attribute
                         break;
@@ -385,7 +387,7 @@ namespace TotalImage.FileSystems.FAT
                     {
                         if (rootDirFull)
                         {
-                            stream.Seek(-0x01, SeekOrigin.Current);
+                            _stream.Seek(-0x01, SeekOrigin.Current);
                             writer.Write(label.ToCharArray());
                             writer.Write((byte)0x08); //Volume label attribute
                             rootDirFull = false;
@@ -395,7 +397,7 @@ namespace TotalImage.FileSystems.FAT
                     }
 
                     /* Root directory is not empty, we need to find the volume label, as it may not be the first entry or it may not exist at all */
-                    stream.Seek(-0x01, SeekOrigin.Current);
+                    _stream.Seek(-0x01, SeekOrigin.Current);
                     DirectoryEntry entry = new DirectoryEntry
                     {
                         name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() + "." +
@@ -415,7 +417,7 @@ namespace TotalImage.FileSystems.FAT
 
                     if (entry.attr == 0x08)
                     {
-                        stream.Seek(-0x20, SeekOrigin.Current);
+                        _stream.Seek(-0x20, SeekOrigin.Current);
                         writer.Write(label.ToCharArray());
                         writer.Write((byte)0x08);
                         break;
@@ -423,7 +425,7 @@ namespace TotalImage.FileSystems.FAT
 
                     /* All entries have been checked and there are no free ones left
                      * Time to check again, this time overwriting the first deleted entry that's found */
-                    if (i == bpb.RootDirectoryEntries - 1 && !rootDirFull)
+                    if (i == _bpb.RootDirectoryEntries - 1 && !rootDirFull)
                     {
                         rootDirFull = true;
                         i = 0;
@@ -431,9 +433,9 @@ namespace TotalImage.FileSystems.FAT
                 }
 
                 //Writes the volume label to the BPB as well if BPBP is for DOS 4.0+
-                if (bpb is BiosParameterBlock40 && bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+                if (_bpb is BiosParameterBlock40 && _bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
                 {
-                    stream.Seek(0x2B, SeekOrigin.Begin);
+                    _stream.Seek(0x2B, SeekOrigin.Begin);
                     writer.Write(label.ToCharArray());
                 }
 
@@ -447,15 +449,15 @@ namespace TotalImage.FileSystems.FAT
         //Returns the current volume label in the root directory, if it exists
         public string GetRDVolLabel()
         {
-            uint rootDirOffset = (uint)(bpb.BytesPerLogicalSector + (bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT * 2));
+            uint rootDirOffset = (uint)(_bpb.BytesPerLogicalSector + (_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT * 2));
 
-            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
             {
-                stream.Seek(rootDirOffset, SeekOrigin.Begin);
+                _stream.Seek(rootDirOffset, SeekOrigin.Begin);
 
-                for (int i = 0; i < bpb.RootDirectoryEntries; i++)
+                for (int i = 0; i < _bpb.RootDirectoryEntries; i++)
                 {
-                    stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
+                    _stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
                     byte firstChar = reader.ReadByte();
 
                     /* 0x00      = no more entries after this one, stop
@@ -464,7 +466,7 @@ namespace TotalImage.FileSystems.FAT
                     else if (firstChar == 0xE5 || firstChar == 0x05) continue;
 
                     //Root directory is not empty, we need to find the volume label, as it may not be the first entry or it may not exist at all
-                    stream.Seek(-0x01, SeekOrigin.Current);
+                    _stream.Seek(-0x01, SeekOrigin.Current);
                     DirectoryEntry entry = new DirectoryEntry
                     {
                         name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() +
@@ -495,9 +497,9 @@ namespace TotalImage.FileSystems.FAT
         //Returns the current volume label in the BPB, if BPB is for DOS 4.0+
         public string GetBPBVolLabel()
         {
-            if (bpb is BiosParameterBlock40 && bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+            if (_bpb is BiosParameterBlock40 && _bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
             {
-                return ((BiosParameterBlock40)bpb).VolumeLabel;
+                return ((BiosParameterBlock40)_bpb).VolumeLabel;
             }
 
             return null;
@@ -506,18 +508,18 @@ namespace TotalImage.FileSystems.FAT
         //Returns the number of the next cluster in the chain from either primary or backup FAT
         public uint FatGetNextCluster(uint cluster, bool useBackupFat)
         {
-            uint fat1Offset = (uint)(bpb.BytesPerLogicalSector * bpb.ReservedLogicalSectors);
-            uint fatSize = (uint)bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT;
+            uint fat1Offset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors);
+            uint fatSize = (uint)_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT;
             uint fat2Offset = fat1Offset + fatSize;
 
-            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
             {
                 if (cluster % 2 == 0)
                 {
                     if (useBackupFat)
-                        stream.Seek(fat2Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
+                        _stream.Seek(fat2Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
                     else
-                        stream.Seek(fat1Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
+                        _stream.Seek(fat1Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
 
                     ushort lower8 = reader.ReadByte();
                     ushort upper4 = (ushort)((reader.ReadByte() & 0x0F) << 8);
@@ -527,9 +529,9 @@ namespace TotalImage.FileSystems.FAT
                 else
                 {
                     if (useBackupFat)
-                        stream.Seek(fat2Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
+                        _stream.Seek(fat2Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
                     else
-                        stream.Seek(fat1Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
+                        _stream.Seek(fat1Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
 
                     ushort lower4 = (ushort)(reader.ReadByte() >> 4);
                     ushort upper8 = (ushort)(reader.ReadByte() << 4);
@@ -545,15 +547,15 @@ namespace TotalImage.FileSystems.FAT
             if (cluster < 2 || cluster > 0xFEF)
                 return null;
 
-            uint fat1Offset = (uint)(bpb.BytesPerLogicalSector * bpb.ReservedLogicalSectors);
-            uint fatSize = (uint)bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT;
-            uint dataAreaOffset = (uint)(fat1Offset + fatSize * 2 + (bpb.RootDirectoryEntries << 5));
+            uint fat1Offset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors);
+            uint fatSize = (uint)_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT;
+            uint dataAreaOffset = (uint)(fat1Offset + fatSize * 2 + (_bpb.RootDirectoryEntries << 5));
 
-            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
             {
-                uint clusterOffset = (cluster - 2) * bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector;
-                stream.Seek(dataAreaOffset + clusterOffset, SeekOrigin.Begin);
-                byte[] bytes = reader.ReadBytes(bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerCluster);
+                uint clusterOffset = (cluster - 2) * _bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
+                _stream.Seek(dataAreaOffset + clusterOffset, SeekOrigin.Begin);
+                byte[] bytes = reader.ReadBytes(_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerCluster);
 
                 return bytes;
             }
@@ -565,14 +567,14 @@ namespace TotalImage.FileSystems.FAT
             if (cluster < 2 || cluster > 0xFEF)
                 return;
 
-            uint fat1Offset = (uint)(bpb.BytesPerLogicalSector * bpb.ReservedLogicalSectors);
-            uint fatSize = (uint)bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT;
-            uint dataAreaOffset = (uint)(fat1Offset + fatSize * 2 + (bpb.RootDirectoryEntries << 5));
+            uint fat1Offset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors);
+            uint fatSize = (uint)_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT;
+            uint dataAreaOffset = (uint)(fat1Offset + fatSize * 2 + (_bpb.RootDirectoryEntries << 5));
 
-            using (var writer = new BinaryWriter(stream, Encoding.ASCII, true))
+            using (var writer = new BinaryWriter(_stream, Encoding.ASCII, true))
             {
-                uint clusterOffset = (cluster - 2) * bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector;
-                stream.Seek(dataAreaOffset + clusterOffset, SeekOrigin.Begin);
+                uint clusterOffset = (cluster - 2) * _bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
+                _stream.Seek(dataAreaOffset + clusterOffset, SeekOrigin.Begin);
                 writer.Write(data);
             }
         }
@@ -580,35 +582,35 @@ namespace TotalImage.FileSystems.FAT
         //Marks a cluster in the FATs as free (0x00)
         public void FatFreeCluster(uint cluster)
         {
-            uint fat1Offset = (uint)(bpb.BytesPerLogicalSector * bpb.ReservedLogicalSectors);
-            uint fatSize = (uint)bpb.BytesPerLogicalSector * bpb.LogicalSectorsPerFAT;
+            uint fat1Offset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors);
+            uint fatSize = (uint)_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT;
             uint fat2Offset = fat1Offset + fatSize;
 
-            using (var writer = new BinaryWriter(stream, Encoding.ASCII, true))
-            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+            using (var writer = new BinaryWriter(_stream, Encoding.ASCII, true))
+            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
             {
                 if (cluster % 2 == 0)
                 {
-                    stream.Seek(fat1Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
+                    _stream.Seek(fat1Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
                     writer.Write((byte)0x00);
                     byte upper4 = (byte)(reader.ReadByte() & 0xF0); //Zero out the bottom 4 bits only - the upper 4 are for the next cluster!
-                    stream.Seek(-8, SeekOrigin.Current);
+                    _stream.Seek(-8, SeekOrigin.Current);
                     writer.Write(upper4);
 
                     //Repeat the process for the backup FAT
-                    stream.Seek(fat2Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
+                    _stream.Seek(fat2Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
                     writer.Write((byte)0x00);
                     writer.Write(upper4);
                 }
                 else
                 {
-                    stream.Seek(fat1Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
+                    _stream.Seek(fat1Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
                     byte lower4 = (byte)(reader.ReadByte() & 0x0F); //Zero out the top 4 bits only - the bottom 4 are for the previous cluster!
-                    stream.Seek(-8, SeekOrigin.Current);
+                    _stream.Seek(-8, SeekOrigin.Current);
                     writer.Write(lower4);
                     writer.Write(0x00);
 
-                    stream.Seek(fat2Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
+                    _stream.Seek(fat2Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
                     writer.Write(lower4);
                     writer.Write(0x00);
                 }

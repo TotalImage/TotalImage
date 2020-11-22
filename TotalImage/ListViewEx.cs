@@ -61,7 +61,7 @@ namespace TotalImage
         protected override void CreateHandle()
         {
             base.CreateHandle();
-            SetWindowTheme(Handle, "explorer", null); //Enables Explorer-like appearance
+            _ = SetWindowTheme(Handle, "explorer", null); //Enables Explorer-like appearance
             SendMessage(Handle, (uint)LVM.SETEXTENDEDLISTVIEWSTYLE, (IntPtr)LVS_EX.DOUBLEBUFFER, (IntPtr)LVS_EX.DOUBLEBUFFER); //Enables semi-transparent selection rectangle
         }
     }

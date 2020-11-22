@@ -5,8 +5,8 @@ namespace TotalImage
 {
     public partial class dlgRename : Form
     {
-        public string NewName { get; private set; }
-        private string oldname;
+        public string NewName => txtName.Text;
+        private readonly string oldname;
 
         public dlgRename(string oldname)
         {
@@ -18,7 +18,11 @@ namespace TotalImage
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            NewName = txtName.Text; //Name needs to be validated first...
+            // TODO: Proper validation and handling of invalid states should be done here...
+            if (string.IsNullOrEmpty(NewName))
+            {
+                throw new Exception("The new name must not be empty");
+            }
         }
 
         private void dlgRename_Load(object sender, EventArgs e)

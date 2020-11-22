@@ -5,10 +5,11 @@ namespace TotalImage
 {
     public partial class dlgChangeVolLabel : Form
     {
-        private string oldRDLabel;
-        private string oldBPBLabel;
-        public string NewRDLabel { get; private set; }
-        public string NewBPBLabel { get; private set; }
+        private readonly string oldRDLabel;
+        private readonly string oldBPBLabel;
+
+        public string NewRDLabel { get; private set; } = "";
+        public string NewBPBLabel { get; private set; } = "";
         public bool WriteBPBLabel { get; private set; }
 
         public dlgChangeVolLabel(string rdLabel, string bpbLabel)

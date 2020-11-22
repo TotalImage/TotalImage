@@ -4,7 +4,7 @@ namespace TotalImage
 {
     public partial class dlgExtract : Form
     {
-        public string TargetPath { get; private set; }
+        public string? TargetPath { get; private set; }
         public bool OpenFolder { get; private set; }
         public Settings.FolderExtract ExtractType { get; private set; }
 
@@ -33,15 +33,15 @@ namespace TotalImage
 
         private void btnBrowse_Click(object sender, System.EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            fbd.ShowNewFolderButton = true;
+            using FolderBrowserDialog fbd = new FolderBrowserDialog
+            {
+                ShowNewFolderButton = true
+            };
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {
                 txtPath.Text = fbd.SelectedPath;
             }
-
-            fbd.Dispose();
         }
     }
 }

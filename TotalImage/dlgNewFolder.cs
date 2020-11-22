@@ -1,10 +1,11 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace TotalImage
 {
     public partial class dlgNewFolder : Form
     {
-        public string NewName { get; private set; }
+        public string NewName => txtName.Text;
 
         public dlgNewFolder()
         {
@@ -13,13 +14,16 @@ namespace TotalImage
 
         private void btnOK_Click(object sender, System.EventArgs e)
         {
-            //Name needs to be validated first...
-            NewName = txtName.Text; 
+            // TODO: Proper validation and handling of invalid states should be done here...
+            if (string.IsNullOrEmpty(NewName))
+            {
+                throw new Exception("The new name must not be empty");
+            }
         }
 
         private void txtName_TextChanged(object sender, System.EventArgs e)
         {
-            /* Convert long name to short (8.3) name here */
+            // TODO: Convert long name to short (8.3) name here
         }
     }
 }

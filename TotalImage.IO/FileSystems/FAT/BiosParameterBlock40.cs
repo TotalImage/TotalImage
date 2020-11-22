@@ -18,10 +18,10 @@ namespace TotalImage.FileSystems.FAT
         public uint VolumeSerialNumber { get; set; }
         public string VolumeLabel
         {
-            get => volumeLabel; 
+            get => volumeLabel;
             set
             {
-                if(value.Length > 11)
+                if (value.Length > 11)
                     throw new ArgumentException("VolumeLabel must be 11 characters at most");
 
                 volumeLabel = value;
@@ -34,7 +34,7 @@ namespace TotalImage.FileSystems.FAT
             {
                 if (string.IsNullOrEmpty(value))
                     throw new ArgumentException("FileSystemType must not be null or empty string");
-                else if(value.Length > 8)
+                else if (value.Length > 8)
                     throw new ArgumentException("FileSystemType must be 8 characters at most");
 
                 fileSystemType = value;

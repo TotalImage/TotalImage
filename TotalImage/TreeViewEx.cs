@@ -12,7 +12,7 @@ namespace TotalImage
         protected override void CreateHandle()
         {
             base.CreateHandle();
-            SetWindowTheme(this.Handle, "explorer", null); //Enable Explorer-like appearance
+            _ = SetWindowTheme(this.Handle, "explorer", null); //Enable Explorer-like appearance
             SendMessage(this.Handle, (uint)TVM.SETEXTENDEDSTYLE, (IntPtr)TVS_EX.AUTOHSCROLL, (IntPtr)TVS_EX.AUTOHSCROLL); //Enable auto-scroll extended style
         }
     }

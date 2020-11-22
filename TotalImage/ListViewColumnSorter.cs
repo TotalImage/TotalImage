@@ -17,7 +17,7 @@ namespace TotalImage
             ObjectCompare = new CaseInsensitiveComparer();
         }
 
-        public int Compare(object x, object y)
+        public int Compare(object? x, object? y)
         {
             if (x == null)
                 throw new ArgumentNullException(nameof(x), "x cannot be null!");
@@ -61,7 +61,7 @@ namespace TotalImage
                 compareResult = ObjectCompare.Compare(entryX.LastWriteTime, entryY.LastWriteTime);
             }
             else if (main.lstFiles.Columns[SortColumn].Text == "Size")
-            {  
+            {
                 if(entryX is FileSystems.Directory && entryY is FileSystems.Directory)
                 {
                     return 0;

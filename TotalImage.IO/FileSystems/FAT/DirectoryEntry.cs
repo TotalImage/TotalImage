@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -29,8 +28,8 @@ namespace TotalImage.FileSystems.FAT
         {
             DirectoryEntry entry;
 
-            using(var stream = new MemoryStream(bytes))
-            using(var reader = new BinaryReader(stream, Encoding.ASCII))
+            using (var stream = new MemoryStream(bytes))
+            using (var reader = new BinaryReader(stream, Encoding.ASCII))
             {
                 entry.name = new string(reader.ReadChars(11));
                 entry.attr = reader.ReadByte();

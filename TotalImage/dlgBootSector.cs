@@ -14,8 +14,13 @@ namespace TotalImage
         private void dlgBootSector_Load(object sender, EventArgs e)
         {
             frmMain main = (frmMain)Application.OpenForms["frmMain"];
+            if (main.image == null)
+            {
+                return;
+            }
+
             byte[] bytes = main.image.GetRawBytes(0, 512);
-            
+
             var sb = new StringBuilder();
             for (int i = 0; i < 512; i++)
             {

@@ -1,55 +1,63 @@
 ﻿using System;
 using System.IO;
-using TotalImage.FileSystems;
+using TotalImage.Partitions;
 
-namespace TotalImage.ImageContainers
+namespace TotalImage.Containers
 {
     /// <summary>
     /// An abstract representation of container files
     /// </summary>
-    public abstract class ImageContainer : IDisposable
+    public abstract class Container : IDisposable
     {
         /// <summary>
         /// The underlying stream containing the image
         /// </summary>
-        protected readonly MemoryStream containerStream;
-        private FileSystem? _fileSystem;
+        protected readonly Stream containerStream;
+
+        private PartitionTable? _partitionTable;
 
         /// <summary>
-        /// Returns the file system contained within the image
+        /// Returns the partition table contained within the image
         /// </summary>
-        /// <exception cref="InvalidDataException">Thrown if no file system could be found within the image</exception>
-        public FileSystem FileSystem
+        /// <exception cref="InvalidDataException">Thrown if no partition table could be found within the image</exception>
+        public PartitionTable PartitionTable
         {
             get
             {
-                _fileSystem ??= LoadFileSystem();
-                if (_fileSystem == null)
+                _partitionTable ??= LoadPartitionTable();
+                if (_partitionTable == null)
                 {
                     throw new InvalidDataException();
                 }
 
-                return _fileSystem;
+                return _partitionTable;
             }
         }
-        
+
+        /// <summary>
+        /// A stream exposing the content of the container file
+        /// </summary>
+        public abstract Stream Content { get; }
+
+        /// <summary>
+        /// The length of the container file
+        /// </summary>
+        public long Length => Content.Length;
+
         /// <summary>
         /// Create a container file from an existing file
         /// </summary>
         /// <param name="path">The location of the image file</param>
-        protected ImageContainer(string path)
+        protected Container(string path)
         {
-            using var inStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-            containerStream = new MemoryStream();
-            inStream.CopyTo(containerStream);
-            containerStream.Flush();
+            containerStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
         /// <summary>
         /// Create a container file from a memory stream
         /// </summary>
         /// <param name="stream">The stream containing the image file</param>
-        protected ImageContainer(MemoryStream stream)
+        protected Container(Stream stream)
         {
             containerStream = stream;
             containerStream.Position = 0;
@@ -59,7 +67,7 @@ namespace TotalImage.ImageContainers
         /// Load the file system from the container image
         /// </summary>
         /// <returns>The file system found on the image</returns>
-        protected abstract FileSystem LoadFileSystem();
+        protected abstract PartitionTable LoadPartitionTable();
 
         /// <summary>
         /// Get raw bytes from the container image

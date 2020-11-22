@@ -7,10 +7,10 @@ namespace TotalImage
 {
     public partial class dlgNewImage : Form
     {
-        public string OEMID { get; private set; }
-        public string VolumeLabel { get; private set; }
-        public string SerialNumber { get; private set; }
-        public string FileSystemType { get; private set; }
+        public string OEMID { get; private set; } = "";
+        public string VolumeLabel { get; private set; } = "";
+        public string SerialNumber { get; private set; } = "";
+        public string FileSystemType { get; private set; } = "";
         public byte NumberOfFATs { get; private set; }
         public ushort BytesPerSector { get; private set; }
         public byte SectorsPerCluster { get; private set; }

@@ -10,7 +10,7 @@ namespace TotalImage.FileSystems.FAT
      */
     public class FatDirectory : Directory
     {
-        DirectoryEntry entry;
+        private DirectoryEntry entry;
 
         public FatDirectory(Fat12 fat, DirectoryEntry entry, Directory parent) : base(fat, parent)
         {

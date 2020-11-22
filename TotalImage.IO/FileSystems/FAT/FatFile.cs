@@ -11,7 +11,7 @@ namespace TotalImage.FileSystems.FAT
      */
     public class FatFile : File
     {
-        DirectoryEntry entry;
+        private DirectoryEntry entry;
 
         public FatFile(Fat12 fat, DirectoryEntry entry, Directory dir) : base(fat, dir)
         {

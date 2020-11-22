@@ -7,7 +7,7 @@ namespace TotalImage.FileSystems.FAT
         public static DateTime? FatToDateTime(ushort date)
         {
             if (date == 0) return null;
-            
+
             var year = ((date & 0xFE00) >> 9) + 1980;
             var month = (date & 0x1E0) >> 5;
             var day = date & 0x1F;
@@ -25,7 +25,7 @@ namespace TotalImage.FileSystems.FAT
         public static DateTime? FatToDateTime(ushort date, ushort time)
         {
             if (date == 0 && time == 0) return null;
-            
+
             var year = ((date & 0xFE00) >> 9) + 1980;
             var month = (date & 0x1E0) >> 5;
             var day = date & 0x1F;
@@ -46,7 +46,7 @@ namespace TotalImage.FileSystems.FAT
         public static DateTime? FatToDateTime(ushort date, ushort time, byte tenths)
         {
             if (date == 0 && time == 0 && tenths == 0) return null;
-            
+
             var year = ((date & 0xFE00) >> 9) + 1980;
             var month = (date & 0x1E0) >> 5;
             var day = date & 0x1F;
