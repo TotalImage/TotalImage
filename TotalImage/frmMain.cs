@@ -745,6 +745,14 @@ namespace TotalImage
             PopulateListView((FileSystems.Directory)e.Node.Tag);
             lstFiles.EndUpdate();
 
+#if NET5_0
+            //.NET 5 workaround because they broke ImageList...
+            lstFiles.LargeImageList = null;
+            lstFiles.LargeImageList = imgFilesLarge;
+            lstFiles.SmallImageList = null;
+            lstFiles.SmallImageList = imgFilesSmall;
+#endif
+
             foreach (ListViewItem lvi in lstFiles.Items)
             {
                 var entry = (FileSystems.FileSystemObject)lvi.Tag;
@@ -1102,6 +1110,14 @@ namespace TotalImage
                 lstFiles.ListViewItemSorter = sorter;
                 lstFiles.EndUpdate();
 
+#if NET5_0
+                //.NET 5 workaround because they broke ImageList...
+                lstFiles.LargeImageList = null;
+                lstFiles.LargeImageList = imgFilesLarge;
+                lstFiles.SmallImageList = null;
+                lstFiles.SmallImageList = imgFilesSmall;
+#endif
+
                 lblStatusCapacity.Text = "Dummy KiB";
             }
         }
@@ -1134,6 +1150,14 @@ namespace TotalImage
                 PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
                 lstFiles.ListViewItemSorter = sorter;
                 lstFiles.EndUpdate();
+
+#if NET5_0
+                //.NET 5 workaround because they broke ImageList...
+                lstFiles.LargeImageList = null;
+                lstFiles.LargeImageList = imgFilesLarge;
+                lstFiles.SmallImageList = null;
+                lstFiles.SmallImageList = imgFilesSmall;
+#endif
 
                 lblStatusCapacity.Text = "Dummy KiB";
             }
@@ -1274,6 +1298,14 @@ namespace TotalImage
             PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
             lstFiles.ListViewItemSorter = sorter;
             lstFiles.EndUpdate();
+
+#if NET5_0
+            //.NET 5 workaround because they broke ImageList...
+            lstFiles.LargeImageList = null;
+            lstFiles.LargeImageList = imgFilesLarge;
+            lstFiles.SmallImageList = null;
+            lstFiles.SmallImageList = imgFilesSmall;
+#endif
 
             lblStatusCapacity.Text = "Dummy KiB";
             EnableUI();
