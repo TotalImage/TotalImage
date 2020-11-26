@@ -643,24 +643,55 @@ namespace TotalImage
                 e.Cancel = true;
                 return;
             }
+            else if(lstFiles.SelectedItems.Count == 1)
+            {
+                deleteToolStripMenuItem2.Enabled = true;
+                renameToolStripMenuItem2.Enabled = true;
+                extractToolStripMenuItem2.Enabled = true;
+                propertiesToolStripMenuItem2.Enabled = true;
+
+                //Check if selected item is a deleted entry and enable the Undelete menuitem if so
+                FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag;
+                undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
+            }
+            else
+            {
+                deleteToolStripMenuItem2.Enabled = true;
+                renameToolStripMenuItem2.Enabled = false;
+                undeleteToolStripMenuItem2.Enabled = false;
+                extractToolStripMenuItem2.Enabled = true;
+                propertiesToolStripMenuItem2.Enabled = true;
+            }
         }
 
-        private void menuBar_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            if (e.ClickedItem == editToolStripMenuItem)
+            if (lstFiles.SelectedItems.Count == 0)
             {
-                if (lstFiles.SelectedItems.Count == 0)
-                {
-                    deleteToolStripMenuItem.Enabled = false;
-                    extractToolStripMenuItem.Enabled = false;
-                    propertiesToolStripMenuItem.Enabled = false;
-                }
-                else
-                {
-                    deleteToolStripMenuItem.Enabled = true;
-                    extractToolStripMenuItem.Enabled = true;
-                    propertiesToolStripMenuItem.Enabled = true;
-                }
+                deleteToolStripMenuItem.Enabled = false;
+                undeleteToolStripMenuItem.Enabled = false;
+                renameToolStripMenuItem.Enabled = false;
+                extractToolStripMenuItem.Enabled = false;
+                propertiesToolStripMenuItem.Enabled = false;
+            }
+            else if (lstFiles.SelectedItems.Count == 1)
+            {
+                deleteToolStripMenuItem.Enabled = true;
+                renameToolStripMenuItem.Enabled = true;
+                extractToolStripMenuItem.Enabled = true;
+                propertiesToolStripMenuItem.Enabled = true;
+
+                //Check if selected item is a deleted entry and enable the Undelete menuitem if so
+                FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag;
+                undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
+            }
+            else
+            {
+                deleteToolStripMenuItem.Enabled = true;
+                renameToolStripMenuItem.Enabled = false;
+                undeleteToolStripMenuItem.Enabled = false;
+                extractToolStripMenuItem.Enabled = true;
+                propertiesToolStripMenuItem.Enabled = true;
             }
         }
 
@@ -676,10 +707,29 @@ namespace TotalImage
             dlg.ShowDialog();
         }
 
+        //TODO: Implement the Properties dialog for multiple selected objects like Windows does it
         private void properties_Click(object sender, EventArgs e)
         {
-            using dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag);
-            dlg.ShowDialog();
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            if (item.GetCurrentParent() == cmsFileList && lstFiles.SelectedItems.Count > 0)
+            {
+                //Right now we only support showing the Properties dialog for a single item. Support for multiple items' properties
+                //needs to be implemented here and in the dialog itself.
+                if (lstFiles.SelectedItems.Count == 1)
+                {
+                    using dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag);
+                    dlg.ShowDialog();
+                }
+                else
+                {
+                    throw new NotImplementedException("This feature is not implemented yet.");
+                }
+            }
+            else if(item.GetCurrentParent() == cmsDirTree)
+            {
+                using dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstDirectories.SelectedNode.Tag);
+                dlg.ShowDialog();
+            }
         }
 
         private void injectFiles_Click(object sender, EventArgs e)
@@ -1055,7 +1105,7 @@ namespace TotalImage
                 {
                     deleteToolStripMenuItem1.Enabled = false;
                     renameToolStripMenuItem1.Enabled = false;
-                    propertiesToolStripMenuItem1.Enabled = false;
+                    propertiesToolStripMenuItem1.Enabled = true;
                     undeleteToolStripMenuItem1.Enabled = false;
                     newFolderToolStripMenuItem1.Enabled = true;
                     extractToolStripMenuItem1.Enabled = true;
@@ -1066,8 +1116,10 @@ namespace TotalImage
                     newFolderToolStripMenuItem1.Enabled = true;
                     renameToolStripMenuItem1.Enabled = true;
                     propertiesToolStripMenuItem1.Enabled = true;
-                    undeleteToolStripMenuItem1.Enabled = false;
                     deleteToolStripMenuItem1.Enabled = true;
+
+                    FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lstDirectories.SelectedNode.Tag;
+                    undeleteToolStripMenuItem1.Enabled = entry.Name.StartsWith("?");
                 }
             }
         }
@@ -1271,7 +1323,7 @@ namespace TotalImage
             }
         }
 
-        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
+        //TODO: This needs some serious rethinking and probably restructuring.
         private void OpenImage(string path)
         {
             filename = Path.GetFileName(path);

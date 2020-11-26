@@ -189,7 +189,7 @@
             this.propertiesToolStripMenuItem1});
             this.cmsDirTree.Name = "cmsDirTree";
             this.cmsDirTree.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.cmsDirTree.Size = new System.Drawing.Size(217, 186);
+            this.cmsDirTree.Size = new System.Drawing.Size(217, 208);
             this.cmsDirTree.Opening += new System.ComponentModel.CancelEventHandler(this.cmsDirTree_Opening);
             // 
             // expandDirectoryTreeToolStripMenuItem1
@@ -241,10 +241,9 @@
             // 
             // undeleteToolStripMenuItem1
             // 
-            this.undeleteToolStripMenuItem1.Enabled = false;
             this.undeleteToolStripMenuItem1.Name = "undeleteToolStripMenuItem1";
             this.undeleteToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
-            this.undeleteToolStripMenuItem1.Text = "Undelete";
+            this.undeleteToolStripMenuItem1.Text = "Undelete...";
             this.undeleteToolStripMenuItem1.Click += new System.EventHandler(this.undelete_Click);
             // 
             // renameToolStripMenuItem1
@@ -278,7 +277,6 @@
             this.menuBar.Size = new System.Drawing.Size(1057, 24);
             this.menuBar.TabIndex = 0;
             this.menuBar.Text = "menuStrip1";
-            this.menuBar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuBar_ItemClicked);
             // 
             // cmsToolbars
             // 
@@ -453,6 +451,7 @@
             this.editToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.E)));
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
+            this.editToolStripMenuItem.DropDownOpening += new System.EventHandler(this.editToolStripMenuItem_DropDownOpening);
             // 
             // injectFilesToolStripMenuItem
             // 
@@ -503,7 +502,7 @@
             // 
             this.undeleteToolStripMenuItem.Name = "undeleteToolStripMenuItem";
             this.undeleteToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.undeleteToolStripMenuItem.Text = "Undelete";
+            this.undeleteToolStripMenuItem.Text = "Undelete...";
             this.undeleteToolStripMenuItem.Click += new System.EventHandler(this.undelete_Click);
             // 
             // renameToolStripMenuItem
@@ -710,28 +709,28 @@
             // nameToolStripMenuItem
             // 
             this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
-            this.nameToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.nameToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.nameToolStripMenuItem.Text = "Name";
             this.nameToolStripMenuItem.Click += new System.EventHandler(this.sortByName_Click);
             // 
             // typeToolStripMenuItem
             // 
             this.typeToolStripMenuItem.Name = "typeToolStripMenuItem";
-            this.typeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.typeToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.typeToolStripMenuItem.Text = "Type";
             this.typeToolStripMenuItem.Click += new System.EventHandler(this.sortByType_Click);
             // 
             // sizeToolStripMenuItem
             // 
             this.sizeToolStripMenuItem.Name = "sizeToolStripMenuItem";
-            this.sizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sizeToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.sizeToolStripMenuItem.Text = "Size";
             this.sizeToolStripMenuItem.Click += new System.EventHandler(this.sortBySize_Click);
             // 
             // modifiedToolStripMenuItem
             // 
             this.modifiedToolStripMenuItem.Name = "modifiedToolStripMenuItem";
-            this.modifiedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.modifiedToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.modifiedToolStripMenuItem.Text = "Modified";
             this.modifiedToolStripMenuItem.Click += new System.EventHandler(this.sortByModified_Click);
             // 
@@ -1167,28 +1166,28 @@
             // nameToolStripMenuItem1
             // 
             this.nameToolStripMenuItem1.Name = "nameToolStripMenuItem1";
-            this.nameToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.nameToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
             this.nameToolStripMenuItem1.Text = "Name";
             this.nameToolStripMenuItem1.Click += new System.EventHandler(this.sortByName_Click);
             // 
             // typeToolStripMenuItem1
             // 
             this.typeToolStripMenuItem1.Name = "typeToolStripMenuItem1";
-            this.typeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.typeToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
             this.typeToolStripMenuItem1.Text = "Type";
             this.typeToolStripMenuItem1.Click += new System.EventHandler(this.sortByType_Click);
             // 
             // sizeToolStripMenuItem1
             // 
             this.sizeToolStripMenuItem1.Name = "sizeToolStripMenuItem1";
-            this.sizeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.sizeToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
             this.sizeToolStripMenuItem1.Text = "Size";
             this.sizeToolStripMenuItem1.Click += new System.EventHandler(this.sortBySize_Click);
             // 
             // modifiedToolStripMenuItem1
             // 
             this.modifiedToolStripMenuItem1.Name = "modifiedToolStripMenuItem1";
-            this.modifiedToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.modifiedToolStripMenuItem1.Size = new System.Drawing.Size(122, 22);
             this.modifiedToolStripMenuItem1.Text = "Modified";
             this.modifiedToolStripMenuItem1.Click += new System.EventHandler(this.sortByModified_Click);
             // 
@@ -1354,10 +1353,9 @@
             // 
             // undeleteToolStripMenuItem2
             // 
-            this.undeleteToolStripMenuItem2.Enabled = false;
             this.undeleteToolStripMenuItem2.Name = "undeleteToolStripMenuItem2";
             this.undeleteToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
-            this.undeleteToolStripMenuItem2.Text = "Undelete";
+            this.undeleteToolStripMenuItem2.Text = "Undelete...";
             this.undeleteToolStripMenuItem2.Click += new System.EventHandler(this.undelete_Click);
             // 
             // renameToolStripMenuItem2
