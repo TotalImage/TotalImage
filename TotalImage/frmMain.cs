@@ -48,15 +48,20 @@ namespace TotalImage
         //Injects a folder into the image
         private void injectFolder_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            using FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.ShowNewFolderButton = true;
+
+#if NET48
+            //We only do this for .NET Framework because it has the old FBD and there's a notable empty space at the top without the description.
+            //Meanwhile, .NET 5 has the new Vista+ FBD which doesn't handle the description well visually, especially if dark Explorer theme is used.
+            fbd.Description = "Select a folder to inject into the image.";
+#endif
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {
                 /* Inject the entire selected folder into the image */
                 throw new NotImplementedException("This feature is not implemented yet");
             }
-            fbd.Dispose();
         }
 
         //Shows a hex view of the current image
@@ -67,6 +72,7 @@ namespace TotalImage
         }
 
         //Allows viewing and editing both volume labels
+        //TODO: Actually change the volume labels
         private void changeVolumeLabel_Click(object sender, EventArgs e)
         {
             if (!(image?.PartitionTable.Partitions[0].FileSystem is Fat12 fs))
@@ -75,30 +81,27 @@ namespace TotalImage
                 return;
             }
 
-            dlgChangeVolLabel dlg = new dlgChangeVolLabel(fs.GetRDVolLabel(), fs.GetBPBVolLabel());
+            using dlgChangeVolLabel dlg = new dlgChangeVolLabel(fs.GetRDVolLabel(), fs.GetBPBVolLabel());
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 unsavedChanges = true;
                 saveToolStripButton.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
             }
-            dlg.Dispose();
         }
 
         //Allows viewing and editing bootsector properties
         private void bootSectorProperties_Click(object sender, EventArgs e)
         {
-            dlgBootSector dlg = new dlgBootSector();
+            using dlgBootSector dlg = new dlgBootSector();
             dlg.ShowDialog();
-            dlg.Dispose();
         }
 
         //Shows current image information
         private void imageInformation_Click(object sender, EventArgs e)
         {
-            dlgImageInfo dlg = new dlgImageInfo();
+            using dlgImageInfo dlg = new dlgImageInfo();
             dlg.ShowDialog();
-            dlg.Dispose();
         }
 
         //Click event handler for all menu items in the Recent images menu
@@ -110,9 +113,9 @@ namespace TotalImage
         }
 
         //Creates a new disk image
+        //TODO: Implement the "save changes first" code path
         private void newImage_Click(object sender, EventArgs e)
         {
-            //This needs to be implemented properly...
             if (unsavedChanges)
             {
                 DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before creating a new image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
@@ -165,8 +168,6 @@ namespace TotalImage
                 image = RawContainer.CreateImage(bpb, dlg.TracksPerSide, dlg.WriteBPB);
                 EnableUI();
             }
-
-            dlg.Dispose();
         }
 
         /* The Save button on the command bar acts as either:
@@ -275,6 +276,7 @@ namespace TotalImage
         }
 
         //Deletes a file or folder
+        //TODO: Implement deletion here and in the FS/container
         private void delete_Click(object sender, EventArgs e)
         {
             if (lstFiles.Focused)
@@ -307,7 +309,9 @@ namespace TotalImage
             }
         }
 
-        //Checks if a deleted file or folder can be undeleted and if so, offers to undelete it
+        //Undeletes a delete file or folder
+        //TODO: Implement this here and in FS/container. Although checks are already performed in menu item code to disable the option entirely
+        //when it's not applicable, some additional checks here probably wouldn't hurt either...
         private void undelete_Click(object sender, EventArgs e)
         {
             using dlgUndelete dlg = new dlgUndelete();
@@ -315,6 +319,7 @@ namespace TotalImage
         }
 
         //Renames a file or folder
+        //TODO: Implement this here and in FS/container.
         private void rename_Click(object sender, EventArgs e)
         {
             string oldname = "";
@@ -327,16 +332,17 @@ namespace TotalImage
             dlg.ShowDialog();
 
             string newname = dlg.NewName;
-            /* This is where the item gets actually renamed */
         }
 
         //Changes image format
+        //TODO: The best UI for this still needs to be determined. Once that's done, implement the functionality here and in FS/container.
         private void changeFormat_Click(object sender, EventArgs e)
         {
             throw new NotImplementedException("This feature is not implemented yet");
         }
 
         //Defragments the selected partition
+        //TODO: Implement this here and in FS/container.
         private void defragment_Click(object sender, EventArgs e)
         {
             using dlgDefragment dlg = new dlgDefragment();
@@ -344,13 +350,13 @@ namespace TotalImage
         }
 
         //Formats the selected partition
+        //TODO: Implement this here and in FS/container.
         private void format_Click(object sender, EventArgs e)
         {
             /* I'm not entirely sure why I made that dialog. Possibly for more advanced options when formatting HDD partitions?
              * Anyhow, for floppies a simple confirmation msgbox is enough I guess. */
-            /*dlgFormat dlg = new dlgFormat();
-            dlg.ShowDialog();
-            dlg.Dispose();*/
+            /* using dlgFormat dlg = new dlgFormat();
+             * dlg.ShowDialog(); */
 
             if (MessageBox.Show("Are you sure you want to format this image? This will erase all data inside!", "Warning",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
@@ -362,6 +368,7 @@ namespace TotalImage
         }
 
         //Save the changes made to the current image since the last save or since it was opened
+        //TODO: Perhaps this needs some rethinking too, depending on recent changes to the container?
         private void save_Click(object sender, EventArgs e)
         {
             if (image == null)
@@ -385,7 +392,7 @@ namespace TotalImage
                 throw new Exception("No image is currently loaded");
             }
 
-            SaveFileDialog sfd = new SaveFileDialog();
+            using SaveFileDialog sfd = new SaveFileDialog();
             sfd.AutoUpgradeEnabled = true;
             sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             sfd.OverwritePrompt = true;
@@ -414,8 +421,6 @@ namespace TotalImage
                 Settings.AddRecentImage(path);
                 PopulateRecentList();
             }
-
-            sfd.Dispose();
         }
 
         //Closes the application
@@ -423,8 +428,8 @@ namespace TotalImage
         {
             if (unsavedChanges)
             {
-                DialogResult = MessageBox.Show("You have unsaved changed. Would you like to save them before closing TotalImage?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (DialogResult == DialogResult.Yes)
+                DialogResult result = MessageBox.Show("You have unsaved changed. Would you like to save them before closing TotalImage?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
                 {
                     save_Click(sender, e);
                 }
@@ -465,6 +470,7 @@ namespace TotalImage
             Settings.ShowStatusBar = statusBar.Visible;
         }
 
+        //TODO: Implement the "save changes first" code path
         private void openImage_Click(object sender, EventArgs e)
         {
             if (unsavedChanges)
@@ -483,7 +489,8 @@ namespace TotalImage
             ofd.CheckFileExists = true;
             ofd.CheckPathExists = true;
             ofd.Multiselect = false;
-            //ofd.ShowReadOnly = true; //We probably want this, but it degrades the dialog appearance to XP dialog... Needs a workaround
+            //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
+            //ofd.ShowReadOnly = true; 
             ofd.Filter =
                 "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "All files (*.*)|*.*";
@@ -507,8 +514,8 @@ namespace TotalImage
             menuBarToolStripMenuItem.Checked = menuBarToolStripMenuItem1.Checked;
         }
 
-        /* Extracts file(s) or folder(s) from the image to the specified path
-         * This code is just a POC - needs to be improved to use all the selected options from the dialog */
+        //Extracts file(s) or folder(s) from the image to the specified path
+        //TODO: Implement this here, in the extraction dialog and in FS/container.
         private void extract_Click(object sender, EventArgs e)
         {
             // dlgExtract dlg = new dlgExtract();
@@ -569,18 +576,23 @@ namespace TotalImage
             throw new NotImplementedException("This feature is not implemented yet");
         }
 
+        //TODO: Implement status bar stuff based on the selected item in the listview. This includes proper path, size, etc.
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstFiles.SelectedItems.Count == 0 || lstFiles.SelectedItems.Count == 1 && lstFiles.SelectedItems[0].Text == "..")
             {
                 deleteToolStripMenuItem.Enabled = false;
-                deleteToolStripMenuItem1.Enabled = false;
+                deleteToolStripMenuItem2.Enabled = false;
                 extractToolStripMenuItem.Enabled = false;
                 extractToolStripMenuItem2.Enabled = false;
                 propertiesToolStripMenuItem.Enabled = false;
                 propertiesToolStripMenuItem2.Enabled = false;
-                renameToolStripMenuItem1.Enabled = false;
+                renameToolStripMenuItem2.Enabled = false;
                 renameToolStripMenuItem.Enabled = false;
+                undeleteToolStripMenuItem.Enabled = false;
+                undeleteToolStripMenuItem2.Enabled = false;
+                newFolderToolStripMenuItem.Enabled = false;
+                newFolderToolStripMenuItem2.Enabled = false;
 
                 deleteToolStripButton.Enabled = false;
                 extractToolStripButton.Enabled = false;
@@ -591,33 +603,43 @@ namespace TotalImage
             }
             else if (lstFiles.SelectedItems.Count == 1)
             {
-                deleteToolStripMenuItem.Enabled = true;
-                deleteToolStripMenuItem1.Enabled = true;
-                extractToolStripMenuItem.Enabled = true;
-                extractToolStripMenuItem2.Enabled = true;
                 propertiesToolStripMenuItem.Enabled = true;
                 propertiesToolStripMenuItem2.Enabled = true;
-                renameToolStripMenuItem1.Enabled = true;
-                renameToolStripMenuItem.Enabled = true;
 
-                deleteToolStripButton.Enabled = true;
-                extractToolStripButton.Enabled = true;
+                //Check if selected item is a deleted entry and enable the UI accordingly
+                FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag;
+                undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
+                undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
+                deleteToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                deleteToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                extractToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                extractToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                renameToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                renameToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                newFolderToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                newFolderToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+
+                deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
+                extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
                 propertiesToolStripButton.Enabled = true;
 
                 lbStatuslPath.Text = ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).FullName;
                 lblStatusSize.Text = string.Format("{0:n0} bytes in 1 item", ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).Length);
-
             }
             else
             {
                 deleteToolStripMenuItem.Enabled = true;
-                deleteToolStripMenuItem1.Enabled = true;
+                deleteToolStripMenuItem2.Enabled = true;
                 extractToolStripMenuItem.Enabled = true;
                 extractToolStripMenuItem2.Enabled = true;
-                propertiesToolStripMenuItem.Enabled = false;
-                propertiesToolStripMenuItem2.Enabled = false;
-                renameToolStripMenuItem1.Enabled = false;
+                propertiesToolStripMenuItem.Enabled = true;
+                propertiesToolStripMenuItem2.Enabled = true;
+                renameToolStripMenuItem2.Enabled = false;
                 renameToolStripMenuItem.Enabled = false;
+                undeleteToolStripMenuItem.Enabled = false;
+                undeleteToolStripMenuItem2.Enabled = false;
+                newFolderToolStripMenuItem.Enabled = false;
+                newFolderToolStripMenuItem2.Enabled = false;
 
                 deleteToolStripButton.Enabled = true;
                 extractToolStripButton.Enabled = true;
@@ -638,60 +660,10 @@ namespace TotalImage
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (lstFiles.SelectedItems.Count == 0 || lstFiles.SelectedItems[0].Text == "..")
+            if (lstFiles.SelectedItems.Count == 0 || lstFiles.SelectedItems.Count == 1 && lstFiles.SelectedItems[0].Text == "..")
             {
                 e.Cancel = true;
                 return;
-            }
-            else if(lstFiles.SelectedItems.Count == 1)
-            {
-                deleteToolStripMenuItem2.Enabled = true;
-                renameToolStripMenuItem2.Enabled = true;
-                extractToolStripMenuItem2.Enabled = true;
-                propertiesToolStripMenuItem2.Enabled = true;
-
-                //Check if selected item is a deleted entry and enable the Undelete menuitem if so
-                FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag;
-                undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
-            }
-            else
-            {
-                deleteToolStripMenuItem2.Enabled = true;
-                renameToolStripMenuItem2.Enabled = false;
-                undeleteToolStripMenuItem2.Enabled = false;
-                extractToolStripMenuItem2.Enabled = true;
-                propertiesToolStripMenuItem2.Enabled = true;
-            }
-        }
-
-        private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-        {
-            if (lstFiles.SelectedItems.Count == 0)
-            {
-                deleteToolStripMenuItem.Enabled = false;
-                undeleteToolStripMenuItem.Enabled = false;
-                renameToolStripMenuItem.Enabled = false;
-                extractToolStripMenuItem.Enabled = false;
-                propertiesToolStripMenuItem.Enabled = false;
-            }
-            else if (lstFiles.SelectedItems.Count == 1)
-            {
-                deleteToolStripMenuItem.Enabled = true;
-                renameToolStripMenuItem.Enabled = true;
-                extractToolStripMenuItem.Enabled = true;
-                propertiesToolStripMenuItem.Enabled = true;
-
-                //Check if selected item is a deleted entry and enable the Undelete menuitem if so
-                FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag;
-                undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
-            }
-            else
-            {
-                deleteToolStripMenuItem.Enabled = true;
-                renameToolStripMenuItem.Enabled = false;
-                undeleteToolStripMenuItem.Enabled = false;
-                extractToolStripMenuItem.Enabled = true;
-                propertiesToolStripMenuItem.Enabled = true;
             }
         }
 
@@ -785,7 +757,6 @@ namespace TotalImage
             lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
         }
 
-        /* TO BE REWRITTEN ACCORDING TO NEW FILE SYSTEM CLASSES */
         private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
         {
             var fileCount = 0ul;
@@ -814,11 +785,43 @@ namespace TotalImage
             }
             lblStatusSize.Text = string.Format("{0:n0} bytes in {1} file(s)", dirSize, fileCount);
             lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
+
+            if (lstDirectories.SelectedNode == null)
+            {
+                extractToolStripMenuItem1.Enabled = false;
+                newFolderToolStripMenuItem1.Enabled = false;
+                renameToolStripMenuItem1.Enabled = false;
+                propertiesToolStripMenuItem1.Enabled = false;
+                undeleteToolStripMenuItem1.Enabled = false;
+                deleteToolStripMenuItem1.Enabled = false;
+            }
+            else
+            {
+                if (lstDirectories.SelectedNode == lstDirectories.Nodes[0])
+                {
+                    deleteToolStripMenuItem1.Enabled = false;
+                    renameToolStripMenuItem1.Enabled = false;
+                    propertiesToolStripMenuItem1.Enabled = true;
+                    undeleteToolStripMenuItem1.Enabled = false;
+                    newFolderToolStripMenuItem1.Enabled = true;
+                    extractToolStripMenuItem1.Enabled = true;
+                }
+                else
+                {
+                    FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lstDirectories.SelectedNode.Tag;
+                    extractToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
+                    newFolderToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
+                    renameToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
+                    propertiesToolStripMenuItem1.Enabled = true;
+                    deleteToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
+                    undeleteToolStripMenuItem1.Enabled = entry.Name.StartsWith("?");
+                }
+            }
         }
 
         private void lstFiles_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (lstFiles.SelectedItems.Count == 1)
+            if (lstFiles.SelectedItems.Count == 1 && e.Button != MouseButtons.Right)
             {
                 if ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag is FileSystems.Directory dir) //A folder was double-clicked
                 {
@@ -1088,42 +1091,6 @@ namespace TotalImage
             lstDirectories.CollapseAll();
         }
 
-        private void cmsDirTree_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (lstDirectories.SelectedNode == null)
-            {
-                extractToolStripMenuItem1.Enabled = false;
-                newFolderToolStripMenuItem1.Enabled = false;
-                renameToolStripMenuItem1.Enabled = false;
-                propertiesToolStripMenuItem1.Enabled = false;
-                undeleteToolStripMenuItem1.Enabled = false;
-                deleteToolStripMenuItem1.Enabled = false;
-            }
-            else
-            {
-                if (lstDirectories.SelectedNode == lstDirectories.Nodes[0])
-                {
-                    deleteToolStripMenuItem1.Enabled = false;
-                    renameToolStripMenuItem1.Enabled = false;
-                    propertiesToolStripMenuItem1.Enabled = true;
-                    undeleteToolStripMenuItem1.Enabled = false;
-                    newFolderToolStripMenuItem1.Enabled = true;
-                    extractToolStripMenuItem1.Enabled = true;
-                }
-                else
-                {
-                    extractToolStripMenuItem1.Enabled = true;
-                    newFolderToolStripMenuItem1.Enabled = true;
-                    renameToolStripMenuItem1.Enabled = true;
-                    propertiesToolStripMenuItem1.Enabled = true;
-                    deleteToolStripMenuItem1.Enabled = true;
-
-                    FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lstDirectories.SelectedNode.Tag;
-                    undeleteToolStripMenuItem1.Enabled = entry.Name.StartsWith("?");
-                }
-            }
-        }
-
         private void lstDirectories_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -1258,7 +1225,7 @@ namespace TotalImage
             }
         }
 
-        #endregion
+#endregion
 
         private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
         {
