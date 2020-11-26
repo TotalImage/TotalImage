@@ -349,14 +349,14 @@ namespace TotalImage
             dlg.ShowDialog();
         }
 
-        //Formats the selected partition
+        //Formats the selected partition/floppy disk
         //TODO: Implement this here and in FS/container.
         private void format_Click(object sender, EventArgs e)
         {
-            /* I'm not entirely sure why I made that dialog. Possibly for more advanced options when formatting HDD partitions?
-             * Anyhow, for floppies a simple confirmation msgbox is enough I guess. */
-            /* using dlgFormat dlg = new dlgFormat();
-             * dlg.ShowDialog(); */
+#if DEBUG
+            using dlgFormat dlg = new dlgFormat();
+            dlg.ShowDialog();
+#endif
 
             if (MessageBox.Show("Are you sure you want to format this image? This will erase all data inside!", "Warning",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)

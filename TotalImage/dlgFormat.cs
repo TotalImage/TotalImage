@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TotalImage
@@ -15,6 +8,12 @@ namespace TotalImage
         public dlgFormat()
         {
             InitializeComponent();
+        }
+
+        //TODO: Obtain the list of available file systems and cluster sizes for this particular image and display them
+        private void dlgFormat_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
