@@ -757,6 +757,17 @@ namespace TotalImage
             lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
         }
 
+        //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
+        private void lstDirectories_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            FileSystems.Directory dir = (FileSystems.Directory)e.Node.Tag;
+            if (dir.Name.StartsWith("?"))
+            {
+                e.Cancel = true;
+                return;
+            }
+        }
+
         private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
         {
             var fileCount = 0ul;
@@ -988,6 +999,15 @@ namespace TotalImage
             // Perform the sort with these new sort options.
             lstFiles.Sort();
             lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
+        }
+
+        private void cmsDirTree_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (lstDirectories.Nodes.Count == 0)
+            {
+                e.Cancel = true;
+                return;
+            }
         }
 
         private void selectAll_Click(object sender, EventArgs e)
