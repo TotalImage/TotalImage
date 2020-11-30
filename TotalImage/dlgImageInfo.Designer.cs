@@ -44,6 +44,8 @@
             this.lblHash1 = new System.Windows.Forms.Label();
             this.lblHash = new System.Windows.Forms.Label();
             this.pnlBottom = new System.Windows.Forms.Panel();
+            this.lblComment = new System.Windows.Forms.Label();
+            this.txtComment = new System.Windows.Forms.TextBox();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,7 +54,7 @@
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(259, 12);
+            this.btnOK.Location = new System.Drawing.Point(332, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 0;
@@ -190,10 +192,28 @@
             this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 182);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 318);
             this.pnlBottom.Name = "pnlBottom";
-            this.pnlBottom.Size = new System.Drawing.Size(351, 50);
+            this.pnlBottom.Size = new System.Drawing.Size(424, 50);
             this.pnlBottom.TabIndex = 22;
+            // 
+            // lblComment
+            // 
+            this.lblComment.AutoSize = true;
+            this.lblComment.Location = new System.Drawing.Point(12, 177);
+            this.lblComment.Name = "lblComment";
+            this.lblComment.Size = new System.Drawing.Size(64, 15);
+            this.lblComment.TabIndex = 23;
+            this.lblComment.Text = "Comment:";
+            // 
+            // txtComment
+            // 
+            this.txtComment.Location = new System.Drawing.Point(15, 195);
+            this.txtComment.Multiline = true;
+            this.txtComment.Name = "txtComment";
+            this.txtComment.ReadOnly = true;
+            this.txtComment.Size = new System.Drawing.Size(397, 117);
+            this.txtComment.TabIndex = 24;
             // 
             // dlgImageInfo
             // 
@@ -202,7 +222,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnOK;
-            this.ClientSize = new System.Drawing.Size(351, 232);
+            this.ClientSize = new System.Drawing.Size(424, 368);
+            this.Controls.Add(this.txtComment);
+            this.Controls.Add(this.lblComment);
             this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.lblHash1);
             this.Controls.Add(this.lblHash);
@@ -251,5 +273,7 @@
         private System.Windows.Forms.Label lblHash1;
         private System.Windows.Forms.Label lblHash;
         private System.Windows.Forms.Panel pnlBottom;
+        private System.Windows.Forms.Label lblComment;
+        private System.Windows.Forms.TextBox txtComment;
     }
 }

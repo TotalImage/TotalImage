@@ -116,6 +116,7 @@ namespace TotalImage
 
         }
 
+        //TODO: Maybe we should follow the user's locale for such things?
         private void dlgProperties_Load(object sender, EventArgs e)
         {
             /* This is effectively the same as using CultureInfo.CurrentCulture.DateTimeFormat.UniversalSortableDateTimePattern, just without
