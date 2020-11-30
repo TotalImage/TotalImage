@@ -168,11 +168,8 @@ namespace TotalImage.FileSystems.FAT
                             break;
                     }
                 }
-                if (bpbOffset == 0x50)
-                {
-                    _bpb.OemId = "APRICOT"; //Bogus, Apricot disks don't have an OEM ID apparently
-                }
-                else //For other, more standard disk types, the OEM ID should begin right after the jump instruction, at offset 0x03
+                //For standard disk types the OEM ID should begin right after the jump instruction, at offset 0x03
+                if (bpbOffset == 0x0B)
                 {
                     using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
                     {
@@ -204,20 +201,24 @@ namespace TotalImage.FileSystems.FAT
                 bpb.TotalLogicalSectors = reader.ReadUInt16();
                 bpb.MediaDescriptor = reader.ReadByte();
                 bpb.LogicalSectorsPerFAT = reader.ReadUInt16();
-                bpb.PhysicalSectorsPerTrack = reader.ReadUInt16();
-                bpb.NumberOfHeads = reader.ReadUInt16();
-                bpb.HiddenSectors = reader.ReadUInt32();
-                bpb.LargeTotalLogicalSectors = reader.ReadUInt32();
 
-                //We're parsing an Apricot BPB, which doesn't have the number of heads and SPT, so we have to make some manual adjustments
-                if(offset == 0x50)
-                {     
-                    if(_stream.Length == 322560)
+                //Parsing a standard BPB
+                if (offset == 0x0B)
+                {
+                    bpb.PhysicalSectorsPerTrack = reader.ReadUInt16();
+                    bpb.NumberOfHeads = reader.ReadUInt16();
+                    bpb.HiddenSectors = reader.ReadUInt32();
+                    bpb.LargeTotalLogicalSectors = reader.ReadUInt32();
+                }
+                //Parsing an Apricot BPB, which doesn't have the number of heads and SPT, so we have to make some manual adjustments
+                else if (offset == 0x50)
+                {
+                    if (bpb.MediaDescriptor == 0xFC) //315k
                     {
                         bpb.NumberOfHeads = 1;
                         bpb.PhysicalSectorsPerTrack = 70;
                     }
-                    else if(_stream.Length == 737280)
+                    else if (bpb.MediaDescriptor == 0xFE) //720k
                     {
                         bpb.NumberOfHeads = 2;
                         bpb.PhysicalSectorsPerTrack = 80;

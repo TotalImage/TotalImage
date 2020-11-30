@@ -1305,6 +1305,16 @@ namespace TotalImage
 
                 item.SubItems.Add(fso.LastWriteTime.ToString());
 
+                //Do some fancy color coding for hidden and deleted items
+                if (fso.Name.StartsWith("?"))
+                {
+                    item.ForeColor = Color.DarkRed;
+                }
+                else if (fso.Attributes.HasFlag(FileAttributes.Hidden))
+                {
+                    item.ForeColor = Color.Gray;
+                }
+
                 item.Tag = fso;
                 lstFiles.Items.Add(item);
             }

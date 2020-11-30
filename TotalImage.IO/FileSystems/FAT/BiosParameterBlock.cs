@@ -2,22 +2,24 @@
 
 namespace TotalImage.FileSystems.FAT
 {
+    /// <summary>
+    /// Distinct BIOS Parameter Block versions.
+    /// </summary>
     public enum BiosParameterBlockVersion
     {
         Dos20,
-        //Dos33, //It seems this is effectively the same as DOS 2.0 BPB
         Dos34,
         Dos40,
         Fat32,
         Ntfs
     }
 
-    /*
-     * BIOS Parameter Block for FAT12 and FAT16 file systems 
-     * Use this class for BPB versions 2.0 and 3.31.
-     * 
-     * For BPB versions 3.4, 4.0 and HPFS, use BiosParameterBlock40 instead
-     */
+    /// <summary>
+    /// BIOS Parameter Block for FAT12 and FAT16 file systems versions 2.0-3.31.
+    /// </summary>
+    /// <remarks>
+    /// For versions 3.4, 4.0, or HPFS, use BiosParameterBlock40 instead.
+    /// </remarks>
     public class BiosParameterBlock
     {
         private string oemId;
