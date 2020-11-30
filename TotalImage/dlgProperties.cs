@@ -60,6 +60,19 @@ namespace TotalImage
             cbxArchive.Checked = entry.Attributes.HasFlag(FileAttributes.Archive);
 
             SetIconAndType(entry.Name, entry.Attributes);
+
+            //Prevent any changes to deleted items
+            if (entry.Name.StartsWith("?"))
+            {
+                txtFilename.Enabled = false;
+                cbxArchive.Enabled = false;
+                cbxHidden.Enabled = false;
+                cbxReadOnly.Enabled = false;
+                cbxSystem.Enabled = false;
+                dateAccessed.Enabled = false;
+                dateCreated.Enabled = false;
+                dateModified.Enabled = false;
+            }
         }
 
         public void SetIconAndType(string filename, FileAttributes attributes)
