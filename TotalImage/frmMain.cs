@@ -9,6 +9,8 @@ using TotalImage.Containers;
 using TotalImage.DiskGeometries;
 using static Interop.Shell32;
 using static Interop.User32;
+using System.Drawing.Imaging;
+using System.Diagnostics;
 
 namespace TotalImage
 {
@@ -1252,12 +1254,52 @@ namespace TotalImage
             foreach (var subdir in dir.EnumerateDirectories(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
             {
                 var subnode = new TreeNode(subdir.Name);
-                subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+
+                //Hidden folders have a 50% opacity for the icon
+                if (subdir.Attributes.HasFlag(FileAttributes.Hidden))
+                {
+                    subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder (Hidden)");
+                    subnode.ForeColor = Color.Gray;
+                }
+                else { 
+                    subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                }
+
+                //Deleted folders have strikthrough fontstyle
+                if (subdir.Name.StartsWith("?"))
+                {
+                    Font font = new Font("Segoe UI", 9f, FontStyle.Strikeout);
+                    subnode.NodeFont = font;
+                }
                 subnode.Tag = subdir;
                 node.Nodes.Add(subnode);
 
                 PopulateTreeView(subnode, subdir);
             }
+        }
+
+        private static Icon GetHiddenObjectIcon(Icon normalIcon)
+        {
+            Bitmap bmp = normalIcon.ToBitmap();
+            ColorMatrix cm = new ColorMatrix();
+            cm.Matrix33 = 0.5f; //50% opacity
+            ImageAttributes attributes = new ImageAttributes();
+            attributes.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+
+            Point[] points = { new Point(0, 0),
+                               new Point(bmp.Width, 0),
+                               new Point(0, bmp.Height),
+                             };
+            Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+
+            Bitmap bmp2 = new Bitmap(bmp.Width, bmp.Height);
+            using (Graphics gr = Graphics.FromImage(bmp2))
+            {
+                gr.DrawImage(bmp, points, rect, GraphicsUnit.Pixel, attributes);
+            }
+
+            IntPtr handle = bmp2.GetHicon();
+            return Icon.FromHandle(handle);
         }
 
         private void PopulateListView(FileSystems.Directory dir)
@@ -1286,7 +1328,14 @@ namespace TotalImage
                 if (fso is FileSystems.Directory)
                 {
                     item.SubItems.Add(string.Empty);
-                    item.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                    if (fso.Attributes.HasFlag(FileAttributes.Hidden)) //Hidden folders look different
+                    {
+                        item.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder (Hidden)");
+                    }
+                    else
+                    {
+                        item.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                    }
                 }
                 else
                 {
@@ -1300,19 +1349,38 @@ namespace TotalImage
                         icon = GetShellFileIcon(fso.Name, true, fso.Attributes);
                         imgFilesLarge.Images.Add(filetype, icon);
                     }
-                    item.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype);
+
+                    //Make the icon 50% transparent for hidden items
+                    //TODO: It seems the opacity isn't applied correctly, resulting icons look darker than they should. Should be fixed.
+                    if (fso.Attributes.HasFlag(FileAttributes.Hidden))
+                    {
+                        if (!imgFilesSmall.Images.ContainsKey(filetype + " (Hidden)"))
+                        {
+                            Icon icon = GetHiddenObjectIcon(GetShellFileIcon(fso.Name, false, fso.Attributes));
+                            imgFilesSmall.Images.Add(filetype + " (Hidden)", icon);
+                            icon = GetHiddenObjectIcon(GetShellFileIcon(fso.Name, true, fso.Attributes));
+                            imgFilesLarge.Images.Add(filetype + " (Hidden)", icon);              
+                        }
+
+                        item.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype + " (Hidden)");
+                    }
+                    else
+                    {
+                        item.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype);
+                    }
                 }
 
                 item.SubItems.Add(fso.LastWriteTime.ToString());
 
-                //Do some fancy color coding for hidden and deleted items
-                if (fso.Name.StartsWith("?"))
-                {
-                    item.ForeColor = Color.DarkRed;
-                }
-                else if (fso.Attributes.HasFlag(FileAttributes.Hidden))
+                //Do some simple styling for hidden and deleted items
+                if (fso.Attributes.HasFlag(FileAttributes.Hidden))
                 {
                     item.ForeColor = Color.Gray;
+                }
+                if (fso.Name.StartsWith("?"))
+                {
+                    Font sfont = new Font("Segoe UI", 9f, FontStyle.Strikeout);
+                    item.Font = sfont;
                 }
 
                 item.Tag = fso;
@@ -1404,8 +1472,12 @@ namespace TotalImage
         {
             Icon icon = GetShellFileIcon("C:\\Windows", false, FileAttributes.Directory);
             imgFilesSmall.Images.Add("folder", icon);
+            icon = GetHiddenObjectIcon(icon);
+            imgFilesSmall.Images.Add("folder (Hidden)", icon);
             icon = GetShellFileIcon("C:\\Windows", true, FileAttributes.Directory);
             imgFilesLarge.Images.Add("folder", icon);
+            icon = GetHiddenObjectIcon(icon);
+            imgFilesLarge.Images.Add("folder (Hidden)", icon);
         }
 
         //Finds the node with the specified entry
@@ -1436,7 +1508,7 @@ namespace TotalImage
         }
 
         //Obtains the fancy file type name
-        public string GetShellFileType(string filename, FileAttributes attributes)
+        public static string GetShellFileType(string filename, FileAttributes attributes)
         {
             var shinfo = new SHFILEINFO();
             var flags = SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
@@ -1450,7 +1522,7 @@ namespace TotalImage
         }
 
         //Obtains the icon for the file type
-        public Icon GetShellFileIcon(string filename, bool GetLargeIcon, FileAttributes attributes)
+        public static Icon GetShellFileIcon(string filename, bool GetLargeIcon, FileAttributes attributes)
         {
             var shinfo = new SHFILEINFO();
             var flags = SHGFI.ICON | SHGFI.USEFILEATTRIBUTES;
