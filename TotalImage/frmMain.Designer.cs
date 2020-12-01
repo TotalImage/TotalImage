@@ -1349,6 +1349,7 @@
             this.lstFiles.LargeImageList = this.imgFilesLarge;
             this.lstFiles.Location = new System.Drawing.Point(0, 0);
             this.lstFiles.Name = "lstFiles";
+            this.lstFiles.ShowGroups = false;
             this.lstFiles.ShowItemToolTips = true;
             this.lstFiles.Size = new System.Drawing.Size(780, 546);
             this.lstFiles.SmallImageList = this.imgFilesSmall;
