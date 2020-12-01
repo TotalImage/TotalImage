@@ -265,7 +265,7 @@ namespace TotalImage.FileSystems.FAT
                     bpb40.FileSystemType = new string(reader.ReadChars(8));
                 }
 
-                return bpb;
+                return bpb40;
             }
         }
 
