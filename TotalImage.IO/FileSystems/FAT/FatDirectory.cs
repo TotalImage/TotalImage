@@ -75,9 +75,9 @@ namespace TotalImage.FileSystems.FAT
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
         {
             var fat = FileSystem as Fat12;
-            var dataAreaOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector + (fat.BiosParameterBlock.BytesPerLogicalSector *
-                fat.BiosParameterBlock.LogicalSectorsPerFAT * fat.BiosParameterBlock.NumberOfFATs) + (fat.BiosParameterBlock.RootDirectoryEntries << 5));
-            var fat1Offset = fat.BiosParameterBlock.BytesPerLogicalSector;
+            var fat1Offset = fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.ReservedLogicalSectors;
+            var dataAreaOffset = (uint)(fat1Offset + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT 
+                * fat.BiosParameterBlock.NumberOfFATs) + (fat.BiosParameterBlock.RootDirectoryEntries << 5));
             var stream = fat.GetStream();
 
             using (var reader = new BinaryReader(stream, Encoding.ASCII, true))

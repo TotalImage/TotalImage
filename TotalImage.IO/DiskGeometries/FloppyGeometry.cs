@@ -115,6 +115,10 @@ namespace TotalImage.DiskGeometries
             /// </summary>
             Eagle1600,
             /// <summary>
+            /// A proprietary double-sided 5.25" format with 800 KiB formatted capacity, used by the Acorn BBC Master 512.
+            /// </summary>
+            Acorn800k,
+            /// <summary>
             /// A standard double-sided 5.25" PC-compatible format with 1200 KiB formatted capacity.
             /// </summary>
             HighDensity1200k,
@@ -196,6 +200,7 @@ namespace TotalImage.DiskGeometries
             { FriendlyName.SiemensPCD,        new FloppyGeometry(0, 2, 2, 1, 0, 80,  9, 2, 0xF9, 4, 2,  2, 144, 1) },
             { FriendlyName.DoubleDensity720k, new FloppyGeometry(0, 2, 2, 1, 0, 80,  9, 2, 0xF9, 2, 2,  3, 112, 1) },
             { FriendlyName.Eagle1600,         new FloppyGeometry(0, 2, 2, 1, 0, 80,  5, 3, 0xFD, 1, 2,  2, 320, 1) },
+            { FriendlyName.Acorn800k,         new FloppyGeometry(0, 2, 2, 1, 0, 80,  5, 3, 0xFD, 1, 1,  2, 192, 0) },
             { FriendlyName.HighDensity1200k,  new FloppyGeometry(1, 2, 0, 1, 1, 80, 15, 2, 0xF9, 1, 2,  7, 224, 1) },
             { FriendlyName.HighDensity1232k,  new FloppyGeometry(1, 2, 0, 1, 1, 77,  8, 3, 0xFE, 1, 2,  2, 192, 1) },
             { FriendlyName.HighDensity1440k,  new FloppyGeometry(1, 2, 0, 1, 0, 80, 18, 2, 0xF0, 1, 2,  9, 224, 1) },

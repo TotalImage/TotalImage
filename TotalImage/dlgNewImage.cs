@@ -134,6 +134,30 @@ namespace TotalImage
                     FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT *
                     FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides;
             }
+            if(lstFloppyCapacity.SelectedItem.Equals("800 KiB (Acorn BBC Master 512)"))
+            {
+                cbxFloppyBPB.Checked = false;
+                cbxFloppyBPB.Enabled = false;
+                lstFloppyBPB.Enabled = false;
+                txtFloppyFSType.Text = string.Empty;
+                txtFloppyFSType.Enabled = false;
+                txtFloppyOEMID.Text = string.Empty;
+                txtFloppyOEMID.Enabled = false;
+                txtFloppySerial.Text = string.Empty;
+                txtFloppySerial.Enabled = false;
+            }
+            else
+            {
+                cbxFloppyBPB.Checked = true;
+                cbxFloppyBPB.Enabled = true;
+                lstFloppyBPB.Enabled = true;
+                txtFloppyFSType.Text = "FAT12";
+                txtFloppyFSType.Enabled = true;
+                txtFloppyOEMID.Text = "MSDOS5.0";
+                txtFloppyOEMID.Enabled = true;
+                txtFloppySerial.Text = GenerateVolumeID().ToString("X8");
+                txtFloppySerial.Enabled = true;
+            }
         }
 
         private void txtFloppyNumFATs_ValueChanged(object sender, EventArgs e)

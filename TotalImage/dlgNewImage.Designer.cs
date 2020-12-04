@@ -146,6 +146,7 @@
             "720 KiB (Siemens PC-D)",
             "720 KiB",
             "800 KiB (Eagle 1600)",
+            "800 KiB (Acorn BBC Master 512)",
             "1200 KiB",
             "1232 KiB",
             "1440 KiB",
@@ -626,11 +627,6 @@
             this.txtFloppyReservedSect.Location = new System.Drawing.Point(387, 158);
             this.txtFloppyReservedSect.Maximum = new decimal(new int[] {
             20,
-            0,
-            0,
-            0});
-            this.txtFloppyReservedSect.Minimum = new decimal(new int[] {
-            1,
             0,
             0,
             0});

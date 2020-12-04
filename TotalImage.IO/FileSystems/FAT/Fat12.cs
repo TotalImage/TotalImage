@@ -39,133 +39,159 @@ namespace TotalImage.FileSystems.FAT
         public Fat12(Stream stream)
         {
             byte bpbOffset = 0x0B;
-            this._stream = stream;
+            _stream = stream;
             try
             {
                 _bpb = Parse(bpbOffset); //Try to parse the BPB at the standard offset
             }
             catch (InvalidDataException)
             {
-                //BPB likely invalid, try parsing it at 0x50 in case it's an Apricot disk
-                try
+                //BPB likely invalid, check if this is an Acorn 800k disk without one
+                if (CheckForAcorn800k())
                 {
-                    bpbOffset = 0x50;
-                    _bpb = Parse(bpbOffset);
-                }
-                catch(InvalidDataException)
-                {
-                    //BPB still invalid, it may not even be there, try to figure out if it's a DOS 1.x disk by looking at file length 
-                    //(we can do this for raw sector images) and the media descriptor byte
-                    switch (stream.Length)
+                    bpbOffset = 0xFF; //BPB not actually at this offset, this is just to avoid trying to parse it again later
+                    _bpb = new BiosParameterBlock
                     {
-                        case 163840: //5.25" 160 KiB
-                            _bpb = new BiosParameterBlock
-                            {
-                                BpbVersion = BiosParameterBlockVersion.Dos20,
-                                BytesPerLogicalSector = 512,
-                                LogicalSectorsPerCluster = 2,
-                                ReservedLogicalSectors = 1,
-                                NumberOfFATs = 2,
-                                LogicalSectorsPerFAT = 1,
-                                RootDirectoryEntries = 64,
-                                PhysicalSectorsPerTrack = 8,
-                                NumberOfHeads = 1,
-                                TotalLogicalSectors = 320,
-                                MediaDescriptor = 0xFE,
-                                HiddenSectors = 0,
-                                LargeTotalLogicalSectors = 0
-                            };
-                            break;
-                        case 184320: //5.25" 180 KiB
-                            _bpb = new BiosParameterBlock
-                            {
-                                BpbVersion = BiosParameterBlockVersion.Dos20,
-                                BytesPerLogicalSector = 512,
-                                LogicalSectorsPerCluster = 2,
-                                ReservedLogicalSectors = 1,
-                                NumberOfFATs = 2,
-                                LogicalSectorsPerFAT = 1,
-                                RootDirectoryEntries = 64,
-                                PhysicalSectorsPerTrack = 9,
-                                NumberOfHeads = 1,
-                                TotalLogicalSectors = 360,
-                                MediaDescriptor = 0xFC,
-                                HiddenSectors = 0,
-                                LargeTotalLogicalSectors = 0
-                            };
-                            break;
-                        case 327680: //5.25" 320 KiB
-                            _bpb = new BiosParameterBlock
-                            {
-                                BpbVersion = BiosParameterBlockVersion.Dos20,
-                                BytesPerLogicalSector = 512,
-                                LogicalSectorsPerCluster = 2,
-                                ReservedLogicalSectors = 1,
-                                NumberOfFATs = 2,
-                                LogicalSectorsPerFAT = 1,
-                                RootDirectoryEntries = 112,
-                                PhysicalSectorsPerTrack = 8,
-                                NumberOfHeads = 2,
-                                TotalLogicalSectors = 640,
-                                MediaDescriptor = 0xFF,
-                                HiddenSectors = 0,
-                                LargeTotalLogicalSectors = 0
-                            };
-                            break;
-                        case 368640: //5.25" 360 KiB
-                            _bpb = new BiosParameterBlock
-                            {
-                                BpbVersion = BiosParameterBlockVersion.Dos20,
-                                BytesPerLogicalSector = 512,
-                                LogicalSectorsPerCluster = 2,
-                                ReservedLogicalSectors = 1,
-                                NumberOfFATs = 2,
-                                LogicalSectorsPerFAT = 2,
-                                RootDirectoryEntries = 112,
-                                PhysicalSectorsPerTrack = 9,
-                                NumberOfHeads = 2,
-                                TotalLogicalSectors = 720,
-                                MediaDescriptor = 0xFD,
-                                HiddenSectors = 0,
-                                LargeTotalLogicalSectors = 0
-                            };
-                            break;
-                        case 256256: //8" 250 KiB
-                            _bpb = new BiosParameterBlock
-                            {
-                                BpbVersion = BiosParameterBlockVersion.Dos20,
-                                BytesPerLogicalSector = 128,
-                                LogicalSectorsPerCluster = 4,
-                                ReservedLogicalSectors = 1,
-                                NumberOfFATs = 2,
-                                LogicalSectorsPerFAT = 6,
-                                RootDirectoryEntries = 68,
-                                PhysicalSectorsPerTrack = 26,
-                                NumberOfHeads = 1,
-                                TotalLogicalSectors = 2002,
-                                MediaDescriptor = 0xFE,
-                                HiddenSectors = 0,
-                                LargeTotalLogicalSectors = 0
-                            };
-                            break;
-                        case 1261568: //8" 1232 KiB
-                            _bpb = new BiosParameterBlock
-                            {
-                                BpbVersion = BiosParameterBlockVersion.Dos20,
-                                BytesPerLogicalSector = 1024,
-                                LogicalSectorsPerCluster = 1,
-                                ReservedLogicalSectors = 1,
-                                NumberOfFATs = 2,
-                                LogicalSectorsPerFAT = 2,
-                                RootDirectoryEntries = 192,
-                                PhysicalSectorsPerTrack = 8,
-                                NumberOfHeads = 2,
-                                TotalLogicalSectors = 1232,
-                                MediaDescriptor = 0xFE,
-                                HiddenSectors = 0,
-                                LargeTotalLogicalSectors = 0
-                            };
-                            break;
+                        BpbVersion = BiosParameterBlockVersion.Dos20,
+                        BytesPerLogicalSector = 1024,
+                        LogicalSectorsPerCluster = 1,
+                        ReservedLogicalSectors = 0,
+                        NumberOfFATs = 1,
+                        LogicalSectorsPerFAT = 2,
+                        RootDirectoryEntries = 192,
+                        PhysicalSectorsPerTrack = 5,
+                        NumberOfHeads = 2,
+                        TotalLogicalSectors = 800,
+                        MediaDescriptor = 0xFD,
+                        HiddenSectors = 0,
+                        LargeTotalLogicalSectors = 0,
+                    };
+                    _rootDirectory = new FatRootDirectory(this);
+                    return;
+                }
+                else
+                {
+                    //BPB likely invalid, try parsing it at 0x50 in case it's an Apricot disk
+                    try
+                    {
+                        bpbOffset = 0x50;
+                        _bpb = Parse(bpbOffset);
+                    }
+                    catch (InvalidDataException)
+                    {
+                        //BPB still invalid, it may not even be there, try to figure out if it's a DOS 1.x disk by looking at file length 
+                        //(we can do this for raw sector images) and the media descriptor byte
+                        switch (stream.Length)
+                        {
+                            case 163840: //5.25" 160 KiB
+                                _bpb = new BiosParameterBlock
+                                {
+                                    BpbVersion = BiosParameterBlockVersion.Dos20,
+                                    BytesPerLogicalSector = 512,
+                                    LogicalSectorsPerCluster = 2,
+                                    ReservedLogicalSectors = 1,
+                                    NumberOfFATs = 2,
+                                    LogicalSectorsPerFAT = 1,
+                                    RootDirectoryEntries = 64,
+                                    PhysicalSectorsPerTrack = 8,
+                                    NumberOfHeads = 1,
+                                    TotalLogicalSectors = 320,
+                                    MediaDescriptor = 0xFE,
+                                    HiddenSectors = 0,
+                                    LargeTotalLogicalSectors = 0
+                                };
+                                break;
+                            case 184320: //5.25" 180 KiB
+                                _bpb = new BiosParameterBlock
+                                {
+                                    BpbVersion = BiosParameterBlockVersion.Dos20,
+                                    BytesPerLogicalSector = 512,
+                                    LogicalSectorsPerCluster = 2,
+                                    ReservedLogicalSectors = 1,
+                                    NumberOfFATs = 2,
+                                    LogicalSectorsPerFAT = 1,
+                                    RootDirectoryEntries = 64,
+                                    PhysicalSectorsPerTrack = 9,
+                                    NumberOfHeads = 1,
+                                    TotalLogicalSectors = 360,
+                                    MediaDescriptor = 0xFC,
+                                    HiddenSectors = 0,
+                                    LargeTotalLogicalSectors = 0
+                                };
+                                break;
+                            case 327680: //5.25" 320 KiB
+                                _bpb = new BiosParameterBlock
+                                {
+                                    BpbVersion = BiosParameterBlockVersion.Dos20,
+                                    BytesPerLogicalSector = 512,
+                                    LogicalSectorsPerCluster = 2,
+                                    ReservedLogicalSectors = 1,
+                                    NumberOfFATs = 2,
+                                    LogicalSectorsPerFAT = 1,
+                                    RootDirectoryEntries = 112,
+                                    PhysicalSectorsPerTrack = 8,
+                                    NumberOfHeads = 2,
+                                    TotalLogicalSectors = 640,
+                                    MediaDescriptor = 0xFF,
+                                    HiddenSectors = 0,
+                                    LargeTotalLogicalSectors = 0
+                                };
+                                break;
+                            case 368640: //5.25" 360 KiB
+                                _bpb = new BiosParameterBlock
+                                {
+                                    BpbVersion = BiosParameterBlockVersion.Dos20,
+                                    BytesPerLogicalSector = 512,
+                                    LogicalSectorsPerCluster = 2,
+                                    ReservedLogicalSectors = 1,
+                                    NumberOfFATs = 2,
+                                    LogicalSectorsPerFAT = 2,
+                                    RootDirectoryEntries = 112,
+                                    PhysicalSectorsPerTrack = 9,
+                                    NumberOfHeads = 2,
+                                    TotalLogicalSectors = 720,
+                                    MediaDescriptor = 0xFD,
+                                    HiddenSectors = 0,
+                                    LargeTotalLogicalSectors = 0
+                                };
+                                break;
+                            case 256256: //8" 250 KiB
+                                _bpb = new BiosParameterBlock
+                                {
+                                    BpbVersion = BiosParameterBlockVersion.Dos20,
+                                    BytesPerLogicalSector = 128,
+                                    LogicalSectorsPerCluster = 4,
+                                    ReservedLogicalSectors = 1,
+                                    NumberOfFATs = 2,
+                                    LogicalSectorsPerFAT = 6,
+                                    RootDirectoryEntries = 68,
+                                    PhysicalSectorsPerTrack = 26,
+                                    NumberOfHeads = 1,
+                                    TotalLogicalSectors = 2002,
+                                    MediaDescriptor = 0xFE,
+                                    HiddenSectors = 0,
+                                    LargeTotalLogicalSectors = 0
+                                };
+                                break;
+                            case 1261568: //8" 1232 KiB
+                                _bpb = new BiosParameterBlock
+                                {
+                                    BpbVersion = BiosParameterBlockVersion.Dos20,
+                                    BytesPerLogicalSector = 1024,
+                                    LogicalSectorsPerCluster = 1,
+                                    ReservedLogicalSectors = 1,
+                                    NumberOfFATs = 2,
+                                    LogicalSectorsPerFAT = 2,
+                                    RootDirectoryEntries = 192,
+                                    PhysicalSectorsPerTrack = 8,
+                                    NumberOfHeads = 2,
+                                    TotalLogicalSectors = 1232,
+                                    MediaDescriptor = 0xFE,
+                                    HiddenSectors = 0,
+                                    LargeTotalLogicalSectors = 0
+                                };
+                                break;
+                        }
                     }
                 }
                 //For standard disk types the OEM ID should begin right after the jump instruction, at offset 0x03
@@ -179,6 +205,27 @@ namespace TotalImage.FileSystems.FAT
                 }
             }
             _rootDirectory = new FatRootDirectory(this);
+        }
+
+        /// <summary>
+        /// Checks whether the image contains Acorn 800k format, which starts with the first (and only) FAT.
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckForAcorn800k()
+        {
+            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
+            {
+                _stream.Seek(0, SeekOrigin.Begin);
+                uint threeBytes = reader.ReadUInt32();
+                if ((threeBytes & 0xFFFFFF) == 0xFFFFFD) //The starting bytes of the FAT on Acorn 800k disks are 0xFDFFFF
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         public Stream GetStream()
@@ -479,7 +526,7 @@ namespace TotalImage.FileSystems.FAT
         //Returns the current volume label in the root directory, if it exists
         public string GetRDVolLabel()
         {
-            uint rootDirOffset = (uint)(_bpb.BytesPerLogicalSector + (_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT * 2));
+            uint rootDirOffset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors + (_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT * 2));
 
             using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
             {
