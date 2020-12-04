@@ -103,7 +103,7 @@ namespace TotalImage.FileSystems.FAT
                         if (firstByte == 0xE5 && showDeleted)
                         {
                             //This check is needed for old DOS 1.x disks that don't mark unused entries with 0x00 and instead use the deleted
-                            //marker 0xE5, which can trip the code
+                            //marker (0xE5), which can trip the code
                             if (reader.ReadUInt32() == 0xF6F6F6F6) break;
                             else stream.Seek(-4, SeekOrigin.Current);
                         }
