@@ -98,8 +98,15 @@ namespace TotalImage.FileSystems.FAT
                          * 0xE5/0x05 = deleted entry, skip for now 
                          * 0x2E      = virtual . and .. folders, skip*/
                         if (firstByte == 0x00 || firstByte == 0xF6) break;
-                        else if (firstByte == 0x2E) continue;
-                        else if ((firstByte == 0xE5 || firstByte == 0x05) && !showDeleted) continue;
+                        if (firstByte == 0x2E) continue;
+                        if ((firstByte == 0xE5 || firstByte == 0x05) && !showDeleted) continue;
+                        if (firstByte == 0xE5 && showDeleted)
+                        {
+                            //This check is needed for old DOS 1.x disks that don't mark unused entries with 0x00 and instead use the deleted
+                            //marker 0xE5, which can trip the code
+                            if (reader.ReadUInt32() == 0xF6F6F6F6) break;
+                            else stream.Seek(-4, SeekOrigin.Current);
+                        }
 
                         stream.Seek(10, SeekOrigin.Current);
                         byte attrib = reader.ReadByte();
