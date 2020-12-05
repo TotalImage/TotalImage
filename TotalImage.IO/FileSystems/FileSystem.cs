@@ -5,9 +5,12 @@ namespace TotalImage.FileSystems
 {
     public abstract class FileSystem
     {
-        protected FileSystem() { }
+        protected readonly Stream _stream;
 
-        public FileSystem(Stream containerStream, PartitionEntry partition) { }
+        protected FileSystem(Stream containerStream)
+        {
+            _stream = containerStream;
+        }
 
         public abstract string Format { get; }
         public abstract string VolumeLabel { get; set; }

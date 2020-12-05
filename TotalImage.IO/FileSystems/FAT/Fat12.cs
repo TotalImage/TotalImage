@@ -8,7 +8,6 @@ namespace TotalImage.FileSystems.FAT
 {
     public class Fat12 : FileSystem
     {
-        private readonly Stream _stream;
         private readonly BiosParameterBlock _bpb;
         private Directory _rootDirectory;
         public BiosParameterBlock BiosParameterBlock => _bpb;
@@ -29,17 +28,15 @@ namespace TotalImage.FileSystems.FAT
 
         public override long TotalSize => throw new NotImplementedException();
 
-        protected Fat12(Stream stream, BiosParameterBlock bpb)
+        protected Fat12(Stream stream, BiosParameterBlock bpb) : base(stream)
         {
-            _stream = stream;
             _bpb = bpb;
         }
 
         //TODO: Should the detection code be moved elsewhere, e.g. to the container or main form?
-        public Fat12(Stream stream)
+        public Fat12(Stream stream) : base(stream)
         {
             byte bpbOffset = 0x0B;
-            _stream = stream;
             try
             {
                 _bpb = Parse(bpbOffset); //Try to parse the BPB at the standard offset
