@@ -422,6 +422,7 @@ namespace TotalImage
 
                 Settings.AddRecentImage(path);
                 PopulateRecentList();
+                unsavedChanges = false;
             }
         }
 
