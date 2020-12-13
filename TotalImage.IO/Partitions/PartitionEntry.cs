@@ -53,7 +53,7 @@ namespace TotalImage.Partitions
         /// <returns>The file system from the partition</returns>
         private FileSystem? LoadFileSystem()
         {
-            return new Fat12(_stream);
+            return FileSystem.AttemptDetection(_stream);
         }
 
         /// <summary>
