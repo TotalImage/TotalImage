@@ -145,6 +145,7 @@ namespace TotalImage
                 txtFloppyOEMID.Enabled = false;
                 txtFloppySerial.Text = string.Empty;
                 txtFloppySerial.Enabled = false;
+                BPBVersion = BiosParameterBlockVersion.Dos20;
             }
             else
             {
