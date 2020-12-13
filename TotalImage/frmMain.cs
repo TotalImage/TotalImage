@@ -423,6 +423,7 @@ namespace TotalImage
                 Settings.AddRecentImage(path);
                 PopulateRecentList();
                 unsavedChanges = false;
+                saveToolStripButton.Enabled = false;
             }
         }
 
@@ -1561,6 +1562,10 @@ namespace TotalImage
             infoToolStripButton.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
             closeImageToolStripMenuItem.Enabled = true;
+
+            //New image was created, enable the Save button to act as Save as
+            if (unsavedChanges && string.IsNullOrEmpty(filename))
+                saveToolStripButton.Enabled = true;
 
             imageInformationToolStripMenuItem.Enabled = true;
             hexViewToolStripMenuItem.Enabled = true;
