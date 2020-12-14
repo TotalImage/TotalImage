@@ -41,7 +41,7 @@ namespace TotalImage.Containers
             uint imageSize = (uint)(bpb.BytesPerLogicalSector * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * tracks);
             var imageBytes = new byte[imageSize];
 
-            //At this point we need to consider writeBPB value...
+            //TODO: At this point we need to consider writeBPB value...
             var stream = new MemoryStream(imageBytes, true);
             Fat12.Create(stream, bpb);
 

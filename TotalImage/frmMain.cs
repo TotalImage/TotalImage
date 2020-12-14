@@ -141,18 +141,18 @@ namespace TotalImage
                     bpb = new BiosParameterBlock() { BpbVersion = dlg.BPBVersion };
 
                 bpb.OemId = dlg.OEMID.ToUpper();
-                bpb.BytesPerLogicalSector = dlg.BytesPerSector;
+                bpb.BytesPerLogicalSector = (ushort)(128 << dlg.Geometry.BPS);
                 bpb.HiddenSectors = 0;
-                bpb.LargeTotalLogicalSectors = 0;
-                bpb.LogicalSectorsPerCluster = dlg.SectorsPerCluster;
-                bpb.LogicalSectorsPerFAT = dlg.SectorsPerFAT;
-                bpb.MediaDescriptor = dlg.MediaDescriptor;
-                bpb.NumberOfFATs = dlg.NumberOfFATs;
-                bpb.NumberOfHeads = dlg.NumberOfSides;
-                bpb.PhysicalSectorsPerTrack = dlg.SectorsPerTrack;
-                bpb.ReservedLogicalSectors = dlg.ReservedSectors;
-                bpb.RootDirectoryEntries = dlg.RootDirEntries;
-                bpb.TotalLogicalSectors = dlg.TotalSectors;
+                bpb.LargeTotalLogicalSectors = 0; //Since we only do floppies for now, this can be assumed to be 0...
+                bpb.LogicalSectorsPerCluster = dlg.Geometry.SPC;
+                bpb.LogicalSectorsPerFAT = dlg.Geometry.SPF;
+                bpb.MediaDescriptor = dlg.Geometry.MediaDescriptor;
+                bpb.NumberOfFATs = dlg.Geometry.NoOfFATs;
+                bpb.NumberOfHeads = dlg.Geometry.Sides;
+                bpb.PhysicalSectorsPerTrack = dlg.Geometry.SPT;
+                bpb.ReservedLogicalSectors = dlg.Geometry.ReservedSectors;
+                bpb.RootDirectoryEntries = dlg.Geometry.RootDirectoryEntries;
+                bpb.TotalLogicalSectors = (ushort)(dlg.Geometry.Tracks * dlg.Geometry.SPT * dlg.Geometry.Sides);
 
                 if (bpb is BiosParameterBlock40 bpb40) //DOS 3.4+ BPB
                 {
@@ -167,7 +167,7 @@ namespace TotalImage
                     }
                 }
 
-                image = RawContainer.CreateImage(bpb, dlg.TracksPerSide, dlg.WriteBPB);
+                image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
                 EnableUI();
             }
         }

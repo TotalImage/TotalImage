@@ -2,26 +2,20 @@
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.DiskGeometries;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Diagnostics;
 
 namespace TotalImage
 {
     public partial class dlgNewImage : Form
     {
+        private FloppyGeometry.FriendlyName selectedItem;
+        public FloppyGeometry Geometry { get; private set; }
         public string OEMID { get; private set; } = "";
         public string VolumeLabel { get; private set; } = "";
         public string SerialNumber { get; private set; } = "";
         public string FileSystemType { get; private set; } = "";
-        public byte NumberOfFATs { get; private set; }
-        public ushort BytesPerSector { get; private set; }
-        public byte SectorsPerCluster { get; private set; }
-        public byte SectorsPerTrack { get; private set; }
-        public byte SectorsPerFAT { get; private set; }
-        public byte ReservedSectors { get; private set; }
-        public ushort TotalSectors { get; private set; }
-        public ushort RootDirEntries { get; private set; }
-        public byte TracksPerSide { get; private set; }
-        public byte MediaDescriptor { get; private set; }
-        public byte NumberOfSides { get; private set; }
         public bool WriteBPB { get; private set; }
         public BiosParameterBlockVersion BPBVersion { get; private set; }
 
@@ -38,40 +32,50 @@ namespace TotalImage
             WriteBPB = true;
             lstFloppyBPB.SelectedIndex = 3;
             BPBVersion = BiosParameterBlockVersion.Dos40;
-            lstFloppyCapacity.SelectedItem = "1440 KiB";
+
+            //Get the list of presets from KnownGeometries and display the fancy Name attribute of the enum
+            lstFloppyCapacity.DisplayMember = "Name";
+            lstFloppyCapacity.ValueMember = "Value";
+            lstFloppyCapacity.DataSource = Enum.GetValues(typeof(FloppyGeometry.FriendlyName))
+                .Cast<Enum>()
+                .Select(value => new
+                {
+                    (Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()), typeof(DisplayAttribute)) as
+                    DisplayAttribute).Name,
+                    value
+                })
+                .OrderBy(item => item.value)
+                .ToList();
+
+            lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.HighDensity1440k;
             txtFloppySerial.Text = GenerateVolumeID().ToString("X8");
             SerialNumber = txtFloppySerial.Text;
             OEMID = txtFloppyOEMID.Text;
             VolumeLabel = txtFloppyLabel.Text;
             FileSystemType = txtFloppyFSType.Text;
-            NumberOfFATs = Convert.ToByte(txtFloppyNumFATs.Value);
-            ReservedSectors = Convert.ToByte(txtFloppyReservedSect.Value);
-            NumberOfSides = (byte)(lstFloppySides.SelectedIndex + 1);
-            SectorsPerFAT = Convert.ToByte(txtFloppySPF.Value);
-            SectorsPerTrack = Convert.ToByte(txtFloppySPT.Value);
-            SectorsPerCluster = Convert.ToByte(txtFloppySPC.Value);
-            BytesPerSector = Convert.ToUInt16(txtFloppyBPS.Value);
-            TotalSectors = Convert.ToUInt16(txtFloppyTotalSect.Value);
-            RootDirEntries = Convert.ToUInt16(txtFloppyRootDir.Value);
-            TracksPerSide = Convert.ToByte(txtFloppyTracks.Value);
-            MediaDescriptor = Convert.ToByte(txtFloppyMediaDesc.Value);
         }
 
         //TODO: Perform some validation of parameters before leaving in case the user tries to create an impossible image
         private void btnOK_Click(object sender, EventArgs e)
         {
-            if (tabControl.SelectedTab == tabFloppy)
+            if (!cbxFloppyBPB.Checked)
             {
-                if (!cbxFloppyBPB.Checked)
+                DialogResult noBpb = MessageBox.Show("You chose not to write a DOS BIOS parameter block (BPB) to the boot sector of the image." +
+                    " Many programs and operating systems may not recognize the disk because of this." +
+                    "\n\nAre you sure you want to create an image without the BPB?", "No BPB", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (noBpb == DialogResult.No)
                 {
-                    DialogResult noBpb = MessageBox.Show("You chose not to write a DOS BIOS parameter block (BPB) to the boot sector of the image." +
-                        " Many programs and operating systems may not recognize the disk because of this." +
-                        "\n\nAre you sure you want to create an image without the BPB?", "No BPB", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                    if (noBpb == DialogResult.No)
-                    {
-                        return;
-                    }
+                    return;
                 }
+            }
+
+            //If the "Custom..." option is selected, create a new FloppyGeometry with the custom parameters
+            //We don't need some of the parameters yet for raw images, so let's just ignore them for now
+            if (selectedItem == FloppyGeometry.FriendlyName.Custom)
+            {
+                Geometry = new FloppyGeometry(0, (byte)(lstFloppySides.SelectedIndex + 1), 0, 0, 0, (byte)txtFloppyTracks.Value,
+                    (byte)txtFloppySPT.Value, (byte)(Math.Log((double)txtFloppyBPS.Value, 2) - 7), (byte)txtFloppyMediaDesc.Value, (byte)txtFloppySPC.Value,
+                    (byte)txtFloppyNumFATs.Value, (byte)txtFloppySPF.Value, (ushort)txtFloppyRootDir.Value, (byte)txtFloppyReservedSect.Value);
             }
         }
 
@@ -116,25 +120,25 @@ namespace TotalImage
 
         private void lstFloppyCapacity_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            if (i < lstFloppyCapacity.Items.Count - 1) //Ignore the last item ("Custom...")
+            _ = Enum.TryParse(lstFloppyCapacity.SelectedValue.ToString(), out selectedItem);
+
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom)
             {
-                lstFloppySides.SelectedIndex = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides - 1;
-                txtFloppyTracks.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Tracks;
-                txtFloppySPT.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT;
-                txtFloppyBPS.Value = 128 << FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].BPS;
-                txtFloppyMediaDesc.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].MediaDescriptor;
-                txtFloppySPC.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPC;
-                txtFloppyNumFATs.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].NoOfFATs;
-                txtFloppySPF.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPF;
-                txtFloppyRootDir.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].RootDirectoryEntries;
-                txtFloppyReservedSect.Value = FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].ReservedSectors;
-                txtFloppyTotalSect.Value = 
-                    FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Tracks *
-                    FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT *
-                    FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides;
+                Geometry = FloppyGeometry.KnownGeometries[selectedItem];
+                lstFloppySides.SelectedIndex = Geometry.Sides - 1;
+                txtFloppyTracks.Value = Geometry.Tracks;
+                txtFloppySPT.Value = Geometry.SPT;
+                txtFloppyBPS.Value = 128 << Geometry.BPS;
+                txtFloppyMediaDesc.Value = Geometry.MediaDescriptor;
+                txtFloppySPC.Value = Geometry.SPC;
+                txtFloppyNumFATs.Value = Geometry.NoOfFATs;
+                txtFloppySPF.Value = Geometry.SPF;
+                txtFloppyRootDir.Value = Geometry.RootDirectoryEntries;
+                txtFloppyReservedSect.Value = Geometry.ReservedSectors;
+                txtFloppyTotalSect.Value = Geometry.Tracks * Geometry.SPT * Geometry.Sides;
             }
-            if(lstFloppyCapacity.SelectedItem.Equals("800 KiB (Acorn BBC Master 512)"))
+
+            if (selectedItem == FloppyGeometry.FriendlyName.Acorn800k)
             {
                 cbxFloppyBPB.Checked = false;
                 cbxFloppyBPB.Enabled = false;
@@ -154,7 +158,10 @@ namespace TotalImage
                 lstFloppyBPB.Enabled = true;
                 txtFloppyFSType.Text = "FAT12";
                 txtFloppyFSType.Enabled = true;
-                txtFloppyOEMID.Text = "MSDOS5.0";
+                if (selectedItem == FloppyGeometry.FriendlyName.DMF1024 || selectedItem == FloppyGeometry.FriendlyName.DMF2048)
+                    txtFloppyOEMID.Text = "MSDMF3.2";
+                else
+                    txtFloppyOEMID.Text = "MSDOS5.0";
                 txtFloppyOEMID.Enabled = true;
                 txtFloppySerial.Text = GenerateVolumeID().ToString("X8");
                 txtFloppySerial.Enabled = true;
@@ -163,119 +170,94 @@ namespace TotalImage
 
         private void txtFloppyNumFATs_ValueChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            NumberOfFATs = Convert.ToByte(txtFloppyNumFATs.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyNumFATs.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].NoOfFATs)
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom && txtFloppyNumFATs.Value != Geometry.NoOfFATs)
             {
-                lstFloppyCapacity.SelectedItem = "Custom...";
+                lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
             }
         }
 
         private void txtFloppyReserved_ValueChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            ReservedSectors = Convert.ToByte(txtFloppyReservedSect.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyReservedSect.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].ReservedSectors)
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom && txtFloppyReservedSect.Value != Geometry.ReservedSectors)
             {
-                lstFloppyCapacity.SelectedItem = "Custom...";
+                lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
             }
         }
 
         private void lstFloppySides_SelectedIndexChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            NumberOfSides = (byte)(lstFloppySides.SelectedIndex + 1);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && lstFloppySides.SelectedIndex != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides - 1)
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom && lstFloppySides.SelectedIndex != Geometry.Sides - 1)
             {
-                lstFloppyCapacity.SelectedItem = "Custom...";
+                lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
             }
         }
 
         private void txtFloppySPF_ValueChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            SectorsPerFAT = Convert.ToByte(txtFloppySPF.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPF.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPF)
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom && txtFloppySPF.Value != Geometry.SPF)
             {
-                lstFloppyCapacity.SelectedItem = "Custom...";
+                lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
             }
         }
 
         private void txtFloppySPT_ValueChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            SectorsPerTrack = Convert.ToByte(txtFloppySPT.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPT.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT)
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom && txtFloppySPT.Value != Geometry.SPT)
             {
-                lstFloppyCapacity.SelectedItem = "Custom...";
+                lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
             }
         }
 
         private void txtFloppySPC_ValueChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            SectorsPerCluster = Convert.ToByte(txtFloppySPC.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppySPC.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPC)
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom && txtFloppySPC.Value != Geometry.SPC)
             {
-                lstFloppyCapacity.SelectedItem = "Custom...";
+                lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
             }
         }
 
         private void txtFloppyBPS_ValueChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            BytesPerSector = Convert.ToUInt16(txtFloppyBPS.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyBPS.Value != (128 << FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].BPS))
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom && txtFloppyBPS.Value != (128 << Geometry.BPS))
             {
-                lstFloppyCapacity.SelectedItem = "Custom...";
+                lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
             }
         }
 
         private void txtFloppyTotalSect_ValueChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            TotalSectors = Convert.ToUInt16(txtFloppyTotalSect.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1)
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom)
             {
-                int total_sect =
-                    FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Tracks *
-                    FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].SPT *
-                    FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Sides;
+                int total_sect = Geometry.Tracks * Geometry.SPT * Geometry.Sides;
 
                 if (txtFloppyTotalSect.Value != total_sect)
                 {
-                    lstFloppyCapacity.SelectedItem = "Custom...";
+                    lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
                 }
             }
         }
 
         private void txtFloppyRootDirEntries_ValueChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            RootDirEntries = Convert.ToUInt16(txtFloppyRootDir.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyRootDir.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].RootDirectoryEntries /*floppyTable.fdt[i][12]*/)
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom && txtFloppyRootDir.Value != Geometry.RootDirectoryEntries)
             {
-                lstFloppyCapacity.SelectedItem = "Custom...";
+                lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
             }
         }
 
         private void txtFloppyTracks_ValueChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            TracksPerSide = Convert.ToByte(txtFloppyTracks.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyTracks.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].Tracks /*floppyTable.fdt[i][5]*/)
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom && txtFloppyTracks.Value != Geometry.Tracks)
             {
-                lstFloppyCapacity.SelectedItem = "Custom...";
+                lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
             }
         }
 
         private void txtFloppyMediaDesc_ValueChanged(object sender, EventArgs e)
         {
-            int i = lstFloppyCapacity.SelectedIndex;
-            MediaDescriptor = Convert.ToByte(txtFloppyMediaDesc.Value);
-            if (lstFloppyCapacity.SelectedIndex < lstFloppyCapacity.Items.Count - 1 && txtFloppyMediaDesc.Value != FloppyGeometry.KnownGeometries[(FloppyGeometry.FriendlyName)i].MediaDescriptor /*floppyTable.fdt[i][8]*/)
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom && txtFloppyMediaDesc.Value != Geometry.MediaDescriptor)
             {
-                lstFloppyCapacity.SelectedItem = "Custom...";
+                lstFloppyCapacity.SelectedValue = FloppyGeometry.FriendlyName.Custom;
             }
         }
 

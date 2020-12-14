@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 
 namespace TotalImage.DiskGeometries
 {
@@ -73,79 +74,103 @@ namespace TotalImage.DiskGeometries
             /// <summary>
             /// A standard single-sided 5.25" PC-compatible format with 160 KiB formatted capacity.
             /// </summary>
+            [Display(Name = "160 KiB")]
             DoubleDensity160k,
             /// <summary>
             /// A standard single-sided 5.25" PC-compatible format with 180 KiB formatted capacity.
             /// </summary>
+            [Display(Name = "180 KiB")]
             DoubleDensity180k,
             /// <summary>
             /// A standard single-sided 8" format with 250 KiB formatted capacity.
             /// </summary>
+            [Display(Name = "250 KiB")]
             SingleDensity,
             /// <summary>
             /// A standard double-sided 5.25" PC-compatible format with 320 KiB formatted capacity.
             /// </summary>
+            [Display(Name = "320 KiB")]
             DoubleDensity320k,
             /// <summary>
             /// A standard double-sided 5.25" PC-compatible format with 360 KiB formatted capacity.
             /// </summary>
+            [Display(Name = "360 KiB")]
             DoubleDensity360k,
             /// <summary>
             /// A proprietary double-sided 5.25" format with 400 KiB formatted capacity, used by Triumph-Adler Alphatronic PC-16.
             /// </summary>
+            [Display(Name = "400 KiB (Alphatronic PC-16)")]
             AlphatronicPC16,
             /// <summary>
             /// A rare double-sided 5.25" or 3.5" format with 640 KiB formatted capacity.
             /// </summary>
+            [Display(Name = "640 KiB")]
             QuadDensity,
             /// <summary>
             /// A proprietary double-sided 5.25" format with 720 KiB formatted capacity, used by Tandy 2000.
             /// </summary>
+            [Display(Name = "720 KiB (Tandy 2000)")]
             Tandy2000,
             /// <summary>
             /// A proprietary double-sided 5.25" format with 720 KiB formatted capacity, used by Siemens PC-D.
             /// </summary>
+            [Display(Name = "720 KiB (Siemens PC-D)")]
             SiemensPCD,
             /// <summary>
             /// A standard double-sided 3.5" PC-compatible format with 720 KiB formatted capacity.
             /// </summary>
+            [Display(Name = "720 KiB")]
             DoubleDensity720k,
             /// <summary>
             /// A proprietary double-sided 5.25" format with 800 KiB formatted capacity, used by the Eagle 1600.
             /// </summary>
+            [Display(Name = "800 KiB (Eagle 1600)")]
             Eagle1600,
             /// <summary>
             /// A proprietary double-sided 5.25" format with 800 KiB formatted capacity, used by the Acorn BBC Master 512.
             /// </summary>
+            [Display(Name = "800 KiB (BBC Master 512)")]
             Acorn800k,
             /// <summary>
             /// A standard double-sided 5.25" PC-compatible format with 1200 KiB formatted capacity.
             /// </summary>
+            [Display(Name = "1200 KiB")]
             HighDensity1200k,
             /// <summary>
             /// A standard double-sided 8" or 5.25" or 3.5" format with 1232 KiB formatted capacity, mostly used by NEC PC-98.
             /// </summary>
+            [Display(Name = "1232 KiB")]
             HighDensity1232k,
             /// <summary>
             /// A standard double-sided 3.5" PC-compatible format with 1440 KiB formatted capacity.
             /// </summary>
+            [Display(Name = "1440 KiB")]
             HighDensity1440k,
             /// <summary>
             /// A proprietary double-sided 3.5" format with 1680 KiB formatted capacity and 1024 byte clusters, developed by Microsoft.
             /// </summary>
+            [Display(Name = "1680 KiB (DMF 1024)")]
             DMF1024,
             /// <summary>
             /// A proprietary double-sided 3.5" format with 1680 KiB formatted capacity and 2048 byte clusters, developed by Microsoft.
             /// </summary>
+            [Display(Name = "1680 KiB (DMF 2048)")]
             DMF2048,
             /// <summary>
             /// A rare double-sided 3.5" format with 1722 KiB formatted capacity.
             /// </summary>
+            [Display(Name = "1722 KiB")]
             HighDensity1722k,
             /// <summary>
             /// A standard double-sided 3.5" PC-compatible format with 2880 KiB formatted capacity.
             /// </summary>
-            ExtendedDensity
+            [Display(Name = "2880 KiB")]
+            ExtendedDensity,
+            /// <summary>
+            /// This value signals the use of custom parameters not included in KnownGeometries.
+            /// </summary>
+            [Display(Name = "Custom...")]
+            Custom
         }
 
         /// <summary>
