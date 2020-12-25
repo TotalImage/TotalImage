@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using TotalImage.Helpers;
 using TotalImage.Partitions;
 
 namespace TotalImage.FileSystems.FAT
@@ -11,9 +13,16 @@ namespace TotalImage.FileSystems.FAT
     /// </summary>
     public class Fat12 : FileSystem
     {
-        private readonly BiosParameterBlock _bpb;
+        private readonly BootSector _bs;
+        private readonly IBiosParameterBlock? _bpb;
         private Directory _rootDirectory;
-        public BiosParameterBlock BiosParameterBlock => _bpb;
+
+        public BootSector? BootSector => _bs;
+
+        /// <summary>
+        /// The BIOS Parameter Block structure for the file system
+        /// </summary>
+        public IBiosParameterBlock? BiosParameterBlock => _bpb;
 
         /// <inheritdoc />
         public override string Format => "FAT12";
@@ -38,9 +47,10 @@ namespace TotalImage.FileSystems.FAT
         public override long TotalSize => throw new NotImplementedException();
 
         //TODO: Should the detection code be moved elsewhere, e.g. to the container or main form?
-        public Fat12(Stream stream, BiosParameterBlock bpb) : base(stream)
+        public Fat12(Stream stream, in IBiosParameterBlock? bpb, in BootSector? bs = null) : base(stream)
         {
             _bpb = bpb;
+            _bs = bs ?? new BootSector();
             _rootDirectory = new FatRootDirectory(this);
         }
 
@@ -50,19 +60,27 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
-        public static Fat12 Create(Stream stream, BiosParameterBlock bpb)
+        public static Fat12 Create<T>(Stream? stream, in T? bpb, in BootSector bs)
+            where T : struct, IBiosParameterBlock
         {
             if (stream == null)
-                throw new ArgumentNullException(nameof(stream), "stream cannot be null!");
-            if (bpb == null)
-                throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
 
-            var fat = new Fat12(stream, bpb);
+            if (!bpb.HasValue)
+            {
+                throw new ArgumentNullException(nameof(bpb));
+            }
+
+            var bpbObj = bpb.Value;
+
+            var fat = new Fat12(stream, bpbObj, bs);
 
             uint totalSize = (uint)stream.Length;
-            uint rootDirSize = (uint)(bpb.RootDirectoryEntries << 5);
-            uint fatSize = (uint)(bpb.LogicalSectorsPerFAT * bpb.BytesPerLogicalSector);
-            uint fat1Offset = (uint)(bpb.ReservedLogicalSectors * bpb.BytesPerLogicalSector);
+            uint rootDirSize = (uint)(bpbObj.RootDirectoryEntries << 5);
+            uint fatSize = (uint)(bpbObj.LogicalSectorsPerFAT * bpbObj.BytesPerLogicalSector);
+            uint fat1Offset = (uint)(bpbObj.ReservedLogicalSectors * bpbObj.BytesPerLogicalSector);
             uint fat2Offset = fat1Offset + fatSize;
             uint dataAreaOffset = fat2Offset + fatSize + rootDirSize;
 
@@ -82,48 +100,8 @@ namespace TotalImage.FileSystems.FAT
                 }
 
                 stream.Seek(0, SeekOrigin.Begin);
-                writer.Write(bpb.BootJump, 0, 3);
-                writer.Write(bpb.OemId.PadRight(8, ' ').ToCharArray());
-                writer.Write(bpb.BytesPerLogicalSector);
-                writer.Write(bpb.LogicalSectorsPerCluster);
-                writer.Write(bpb.ReservedLogicalSectors);
-                writer.Write(bpb.NumberOfFATs);
-                writer.Write(bpb.RootDirectoryEntries);
-                writer.Write(bpb.TotalLogicalSectors);
-                writer.Write(bpb.MediaDescriptor);
-                writer.Write(bpb.LogicalSectorsPerFAT);
-                writer.Write(bpb.PhysicalSectorsPerTrack);
-                writer.Write(bpb.NumberOfHeads);
-                writer.Write(bpb.HiddenSectors);
-                writer.Write(bpb.LargeTotalLogicalSectors);
-
-                //DOS 3.4+ specific values
-                {
-                    if (bpb is BiosParameterBlock40 bpb40)
-                    {
-                        writer.Write(bpb40.PhysicalDriveNumber);
-                        writer.Write(bpb40.Flags);
-
-                        if (bpb.BpbVersion == BiosParameterBlockVersion.Dos34)
-                            writer.Write((byte)40);
-                        else if (bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
-                            writer.Write((byte)41);
-                        else
-                            throw new Exception("Invalid BPB version!");
-
-                        writer.Write(bpb40.VolumeSerialNumber);
-
-                        //DOS 4.0 adds volume label and FS type as well
-                        if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
-                        {
-                            if (string.IsNullOrEmpty(bpb40.VolumeLabel))
-                                writer.Write("NO NAME    ".ToCharArray());
-                            else
-                                writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
-                            writer.Write(bpb40.FileSystemType.PadRight(8, ' ').ToCharArray());
-                        }
-                    }
-                }
+                stream.WriteStruct(bs);
+                stream.WriteStruct(bpbObj);
 
                 //Boot signature
                 stream.Seek(0x1FE, SeekOrigin.Begin);
@@ -133,11 +111,11 @@ namespace TotalImage.FileSystems.FAT
                 /* Media descriptor needs to be written to each FAT as well, upper 4 bits must all be set.
                  * It takes up the first cluster entry (0), and the second entry (1) is also reserved */
                 stream.Seek(fat1Offset, SeekOrigin.Begin);
-                writer.Write(bpb.MediaDescriptor);
+                writer.Write(bpbObj.MediaDescriptor);
                 writer.Write((byte)0xFF);
                 writer.Write((byte)0xFF);
                 stream.Seek(fat2Offset, SeekOrigin.Begin);
-                writer.Write(bpb.MediaDescriptor);
+                writer.Write(bpbObj.MediaDescriptor);
                 writer.Write((byte)0xFF);
                 writer.Write((byte)0xFF);
 
@@ -146,7 +124,7 @@ namespace TotalImage.FileSystems.FAT
 
                 //First 11 bytes (8.3 space-padded filename without the period) are the label itself
                 {
-                    if (bpb is BiosParameterBlock40 bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
+                    if (bpbObj is BiosParameterBlock40 bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
                     {
                         writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
                         writer.Write((byte)0x08); //Volume label attribute

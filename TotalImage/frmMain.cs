@@ -134,43 +134,70 @@ namespace TotalImage
                 Text = "(Untitled) - TotalImage";
                 unsavedChanges = true;
 
-                BiosParameterBlock bpb;
-                if (dlg.BPBVersion == BiosParameterBlockVersion.Dos34 || dlg.BPBVersion == BiosParameterBlockVersion.Dos40)
-                    bpb = new BiosParameterBlock40() { BpbVersion = dlg.BPBVersion };
-                else
-                    bpb = new BiosParameterBlock() { BpbVersion = dlg.BPBVersion };
+                BootSector bs = new BootSector(dlg.OEMID.ToUpperInvariant());
 
-                bpb.OemId = dlg.OEMID.ToUpper();
-                bpb.BytesPerLogicalSector = (ushort)(128 << dlg.Geometry.BPS);
-                bpb.HiddenSectors = 0;
-                bpb.LargeTotalLogicalSectors = 0; //Since we only do floppies for now, this can be assumed to be 0...
-                bpb.LogicalSectorsPerCluster = dlg.Geometry.SPC;
-                bpb.LogicalSectorsPerFAT = dlg.Geometry.SPF;
-                bpb.MediaDescriptor = dlg.Geometry.MediaDescriptor;
-                bpb.NumberOfFATs = dlg.Geometry.NoOfFATs;
-                bpb.NumberOfHeads = dlg.Geometry.Sides;
-                bpb.PhysicalSectorsPerTrack = dlg.Geometry.SPT;
-                bpb.ReservedLogicalSectors = dlg.Geometry.ReservedSectors;
-                bpb.RootDirectoryEntries = dlg.Geometry.RootDirectoryEntries;
-                bpb.TotalLogicalSectors = (ushort)(dlg.Geometry.Tracks * dlg.Geometry.SPT * dlg.Geometry.Sides);
-
-                if (bpb is BiosParameterBlock40 bpb40) //DOS 3.4+ BPB
+                switch (dlg.BPBVersion)
                 {
-                    bpb40.PhysicalDriveNumber = 0;
-                    bpb40.Flags = 0;
-                    bpb40.VolumeSerialNumber = uint.Parse(dlg.SerialNumber, NumberStyles.HexNumber);
-
-                    if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
-                    {
-                        bpb40.FileSystemType = dlg.FileSystemType.ToUpper();
-                        bpb40.VolumeLabel = dlg.VolumeLabel.ToUpper();
-                    }
+                    case BiosParameterBlockVersion.Dos20:
+                        {
+                            var bpb = new BiosParameterBlock20();
+                            FillBpbData(dlg, ref bpb);
+                            image = RawContainer.CreateImage<BiosParameterBlock20>(bs, bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
+                            break;
+                        }
+                    case BiosParameterBlockVersion.Dos34:
+                        {
+                            var bpb = new BiosParameterBlock34();
+                            FillExtendedBpbData(dlg, ref bpb);
+                            image = RawContainer.CreateImage<BiosParameterBlock34>(bs, bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
+                            break;
+                        }
+                    case BiosParameterBlockVersion.Dos40:
+                    default:
+                        {
+                            var bpb = new BiosParameterBlock40();
+                            FillExtendedBpbData(dlg, ref bpb);
+                            image = RawContainer.CreateImage<BiosParameterBlock40>(bs, bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
+                            break;
+                        }
                 }
 
-                image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
                 EnableUI();
             }
         }
+
+        private static void FillBpbData<T>(dlgNewImage dlg, ref T bpb)
+            where T: struct, IBiosParameterBlock
+        {
+            bpb.BytesPerLogicalSector = (ushort)(128 << dlg.Geometry.BPS);
+            bpb.HiddenSectors = 0;
+            bpb.LogicalSectorsPerCluster = dlg.Geometry.SPC;
+            bpb.LogicalSectorsPerFAT = dlg.Geometry.SPF;
+            bpb.MediaDescriptor = dlg.Geometry.MediaDescriptor;
+            bpb.NumberOfFATs = dlg.Geometry.NoOfFATs;
+            bpb.NumberOfHeads = dlg.Geometry.Sides;
+            bpb.PhysicalSectorsPerTrack = dlg.Geometry.SPT;
+            bpb.ReservedLogicalSectors = dlg.Geometry.ReservedSectors;
+            bpb.RootDirectoryEntries = dlg.Geometry.RootDirectoryEntries;
+            bpb.TotalLogicalSectors = (ushort)(dlg.Geometry.Tracks * dlg.Geometry.SPT * dlg.Geometry.Sides);
+        }
+
+        private static void FillExtendedBpbData<T>(dlgNewImage dlg, ref T bpb)
+            where T : struct, IBiosParameterBlockExtended
+        {
+            FillBpbData(dlg, ref bpb);
+
+            bpb.PhysicalDriveNumber = 0;
+            bpb.Flags = 0;
+            bpb.VolumeSerialNumber = uint.Parse(dlg.SerialNumber, NumberStyles.HexNumber);
+
+            if (bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+            {
+                bpb.FileSystemType = dlg.FileSystemType.ToUpperInvariant();
+                bpb.VolumeLabel = dlg.VolumeLabel.ToUpperInvariant();
+            }
+        }
+
 
         /* The Save button on the command bar acts as either:
          * -"Save" when the file is already saved and there are unsaved changes

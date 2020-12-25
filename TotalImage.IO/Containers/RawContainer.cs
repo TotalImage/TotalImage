@@ -28,22 +28,27 @@ namespace TotalImage.Containers
         /// <summary>
         /// Create a new raw image with the provided parameters
         /// </summary>
+        /// <typeparam name="T">The type of BIOS Parameter Block</typeparam>
+        /// <param name="bs">The boot sector to use within the image</param>
         /// <param name="bpb">The BIOS Parameter Block to use within the image</param>
         /// <param name="tracks">The number of tracks within the image</param>
         /// <param name="writeBPB">Specifies whether the BIOS Parameter Block should be written to the image</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="bpb"/> is null</exception>
-        public static RawContainer CreateImage(BiosParameterBlock bpb, byte tracks, bool writeBPB)
+        public static RawContainer CreateImage<T>(in BootSector bs, in T? bpb, byte tracks, bool writeBPB)
+            where T : struct, IBiosParameterBlock
         {
             if (bpb == null)
+            {
                 throw new ArgumentNullException(nameof(bpb), "BPB cannot be null!");
+            }
 
-            uint imageSize = (uint)(bpb.BytesPerLogicalSector * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * tracks);
+            uint imageSize = (uint)(bpb.Value.BytesPerLogicalSector * bpb.Value.PhysicalSectorsPerTrack * bpb.Value.NumberOfHeads * tracks);
             var imageBytes = new byte[imageSize];
 
             //TODO: At this point we need to consider writeBPB value...
             var stream = new MemoryStream(imageBytes, true);
-            Fat12.Create(stream, bpb);
+            Fat12.Create(stream, bpb, bs);
 
             return new RawContainer(stream);
         }

@@ -5,6 +5,7 @@
         <RootNamespace>TotalImage</RootNamespace>
         <Nullable>enable</Nullable>
         <LangVersion>8</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
