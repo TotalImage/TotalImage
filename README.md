@@ -54,4 +54,4 @@ To develop TotalImage, we recommend you install Microsoft Visual Studio 2019 (fr
 ## Support
 Please open an issue on this repo for any bug reports and suggestions you may have. If you wish to talk to us directly, visit the official TotalImage Discord channel (currently part of the 86Box server):
 
-[![Visit our Discord server](https://discordapp.com/api/guilds/262614059009048590/embed.png)](https://discord.gg/GkqcR52Z)
+[![Visit our Discord server](https://discordapp.com/api/guilds/262614059009048590/embed.png)](https://discord.gg/WCDkTFwPQD)
