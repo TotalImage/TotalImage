@@ -31,10 +31,9 @@ namespace TotalImage
         #region Event Handlers
         private void frmMain_Load(object sender, EventArgs e)
         {
-            settings.Load();
             PopulateRecentList();
+            SyncUIWithSettings();
 
-            lstFiles.ListViewItemSorter = sorter;
 
             //Because designer doesn't have the Enter key in the list for some reason...
             propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter;
@@ -46,6 +45,18 @@ namespace TotalImage
 #endif
             GetFolderIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+        }
+
+        //Syncs the main form UI with the current settings
+        private void SyncUIWithSettings()
+        {
+            lstFiles.View = settings.FilesView;
+            splitContainer.Panel2Collapsed = !settings.ShowFileList;
+            fileListToolStripMenuItem.Checked = settings.ShowFileList;
+            fileListToolStripMenuItem1.Checked = settings.ShowFileList;
+            lstFiles.ListViewItemSorter = sorter;
+            lstFiles.Sort();
+            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
         }
 
         //Injects a folder into the image
@@ -760,6 +771,9 @@ namespace TotalImage
             // Perform the sort with these new sort options.
             lstFiles.Sort();
             lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
+
+            settings.FilesSortingColumn = e.Column;
+            settings.FilesSortOrder = sorter.Order;
         }
 
         //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
@@ -954,7 +968,7 @@ namespace TotalImage
             modifiedToolStripMenuItem.Checked = false;
             modifiedToolStripMenuItem1.Checked = false;
 
-            settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Name");
+            
 
             if (sorter.SortColumn == 0)
             {
@@ -974,6 +988,11 @@ namespace TotalImage
                 sorter.SortColumn = 0;
                 sorter.Order = SortOrder.Ascending;
             }
+
+            settings.FilesSortOrder = sorter.Order;
+            settings.FilesSortingColumn = sorter.SortColumn;
+            Debug.WriteLine("sort order: " + settings.FilesSortOrder);
+            Debug.WriteLine("sort column: " + settings.FilesSortingColumn);
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();

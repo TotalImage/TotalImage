@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
+using System.Diagnostics;
 
 namespace TotalImage
 {
@@ -20,17 +21,14 @@ namespace TotalImage
                 {
                     if (_instance == null)
                     {
-                        _instance = new Settings();
+                        _instance = Load();
                     }
                 }
             }
             return _instance;
         }
 
-        private Settings()
-        {
-            Load();
-        }
+        public Settings() { }
 
         private static readonly string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotalImage");
 
@@ -68,10 +66,8 @@ namespace TotalImage
         }
 
         //TODO: Implement loading the values from permanent storage
-        public void Load()
+        private static Settings Load()
         {
-            RecentImages.Clear();
-
             //If the file doesn't exist (yet), load default values and create the file
             if (!File.Exists(Path.Combine(SettingsPath, "settings.json")))
             {
@@ -81,18 +77,48 @@ namespace TotalImage
                     Directory.CreateDirectory(SettingsPath);
                 }
 
-                LoadDefaults();
-                Save();
-                return;
+                Settings defaults = new Settings();
+                defaults.LoadDefaults();
+                defaults.Save();
+                return defaults;
             }
 
-            //Deserialize from JSON here
+            string json = File.ReadAllText(Path.Combine(SettingsPath, "settings.json"));
+            Settings loaded = JsonSerializer.Deserialize<Settings>(json);
+            if(loaded != null)
+            {
+                Debug.WriteLine("Loaded values:");
+                Debug.WriteLine("FilesView: " + loaded.FilesView);
+                Debug.WriteLine("RecentImages list: ");
+                foreach (string s in loaded.RecentImages)
+                {
+                    Debug.WriteLine("-recent image: " + s);
+                }
+                return loaded;
+            }
+            else
+            {
+                throw new NullReferenceException();
+            }
         }
 
         //TODO: Load default values for all the settings
-        private void LoadDefaults()
+        public void LoadDefaults()
         {
             //Set all settings to a default value here
+            OpenFolderAfterExtract = true;
+            DefaultExtractType = FolderExtract.AlwaysAsk;
+            DefaultExtractPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            SizeUnits = SizeUnit.B;
+            ShowCommandBar = true;
+            ShowDeletedItems = false;
+            ShowDirectoryTree = true;
+            ShowFileList = true;
+            ShowHiddenItems = true;
+            ShowStatusBar = true;
+            FilesSortingColumn = 0;
+            FilesSortOrder = SortOrder.Ascending;
+            FilesView = View.Details;
         }
 
         //TODO: Implement saving the values to permanent storage
