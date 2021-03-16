@@ -71,12 +71,42 @@ namespace TotalImage
         public void Load()
         {
             RecentImages.Clear();
+
+            //If the file doesn't exist (yet), load default values and create the file
+            if (!File.Exists(Path.Combine(SettingsPath, "settings.json")))
+            {
+                //Also create the directory if even that doesn't exist (yet)
+                if (!Directory.Exists(SettingsPath))
+                {
+                    Directory.CreateDirectory(SettingsPath);
+                }
+
+                LoadDefaults();
+                Save();
+                return;
+            }
+
+            //Deserialize from JSON here
+        }
+
+        //TODO: Load default values for all the settings
+        private void LoadDefaults()
+        {
+            //Set all settings to a default value here
         }
 
         //TODO: Implement saving the values to permanent storage
         public void Save()
         {
+            string json = JsonSerializer.Serialize(this);
 
+            //Just in case...
+            if (!Directory.Exists(SettingsPath))
+            {
+                Directory.CreateDirectory(SettingsPath);
+            }
+
+            File.WriteAllText(Path.Combine(SettingsPath, "settings.json"), json);
         }
 
         public void AddRecentImage(string path)

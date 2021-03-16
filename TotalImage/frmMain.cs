@@ -21,6 +21,7 @@ namespace TotalImage
         public bool unsavedChanges = false;
         public Container? image;
         private readonly ListViewColumnSorter sorter = new ListViewColumnSorter();
+        public static readonly Settings settings = Settings.GetInstance();
 
         public frmMain()
         {
@@ -30,7 +31,7 @@ namespace TotalImage
         #region Event Handlers
         private void frmMain_Load(object sender, EventArgs e)
         {
-            Settings.Load();
+            settings.Load();
             PopulateRecentList();
 
             lstFiles.ListViewItemSorter = sorter;
@@ -210,7 +211,7 @@ namespace TotalImage
             listToolStripMenuItem.Checked = false;
             listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.LargeIcon;
-            Settings.FilesView = View.LargeIcon;
+            settings.FilesView = View.LargeIcon;
         }
 
         private void viewSmallIcons_Click(object sender, EventArgs e)
@@ -226,7 +227,7 @@ namespace TotalImage
             listToolStripMenuItem.Checked = false;
             listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.SmallIcon;
-            Settings.FilesView = View.SmallIcon;
+            settings.FilesView = View.SmallIcon;
         }
 
         private void viewList_Click(object sender, EventArgs e)
@@ -242,7 +243,7 @@ namespace TotalImage
             listToolStripMenuItem.Checked = true;
             listToolStripMenuItem1.Checked = true;
             lstFiles.View = View.List;
-            Settings.FilesView = View.List;
+            settings.FilesView = View.List;
         }
 
         private void viewDetails_Click(object sender, EventArgs e)
@@ -258,7 +259,7 @@ namespace TotalImage
             listToolStripMenuItem.Checked = false;
             listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.Details;
-            Settings.FilesView = View.Details;
+            settings.FilesView = View.Details;
         }
 
         private void viewTiles_Click(object sender, EventArgs e)
@@ -274,7 +275,7 @@ namespace TotalImage
             listToolStripMenuItem.Checked = false;
             listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.Tile;
-            Settings.FilesView = View.Tile;
+            settings.FilesView = View.Tile;
         }
 
         //Deletes a file or folder
@@ -420,7 +421,7 @@ namespace TotalImage
                 filename = Path.GetFileName(path);
                 Text = filename + " - TotalImage";
 
-                Settings.AddRecentImage(path);
+                settings.AddRecentImage(path);
                 PopulateRecentList();
                 unsavedChanges = false;
                 saveToolStripButton.Enabled = false;
@@ -447,7 +448,7 @@ namespace TotalImage
             commandBar.Visible = !commandBar.Visible;
             commandBarToolStripMenuItem.Checked = commandBar.Visible;
             commandBarToolStripMenuItem1.Checked = commandBar.Visible;
-            Settings.ShowCommandBar = commandBar.Visible;
+            settings.ShowCommandBar = commandBar.Visible;
         }
 
         private void toggleDirectoryTree_Click(object sender, EventArgs e)
@@ -455,7 +456,7 @@ namespace TotalImage
             splitContainer.Panel1Collapsed = !splitContainer.Panel1Collapsed;
             directoryTreeToolStripMenuItem.Checked = !splitContainer.Panel1Collapsed;
             directoryTreeToolStripMenuItem1.Checked = !splitContainer.Panel1Collapsed;
-            Settings.ShowDirectoryTree = !splitContainer.Panel1Collapsed;
+            settings.ShowDirectoryTree = !splitContainer.Panel1Collapsed;
         }
 
         private void toggleFileList_Click(object sender, EventArgs e)
@@ -463,7 +464,7 @@ namespace TotalImage
             splitContainer.Panel2Collapsed = !splitContainer.Panel2Collapsed;
             fileListToolStripMenuItem.Checked = !splitContainer.Panel2Collapsed;
             fileListToolStripMenuItem1.Checked = !splitContainer.Panel2Collapsed;
-            Settings.ShowFileList = !splitContainer.Panel2Collapsed;
+            settings.ShowFileList = !splitContainer.Panel2Collapsed;
         }
 
         private void toggleStatusBar_Click(object sender, EventArgs e)
@@ -471,7 +472,7 @@ namespace TotalImage
             statusBar.Visible = !statusBar.Visible;
             statusBarToolStripMenuItem.Checked = statusBar.Visible;
             statusBarToolStripMenuItem1.Checked = statusBar.Visible;
-            Settings.ShowStatusBar = statusBar.Visible;
+            settings.ShowStatusBar = statusBar.Visible;
         }
 
         //TODO: Implement the "save changes first" code path
@@ -898,7 +899,7 @@ namespace TotalImage
                 sorter.Order = SortOrder.Ascending;
             }
 
-            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Type");
+            settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Type");
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
@@ -935,7 +936,7 @@ namespace TotalImage
                 sorter.Order = SortOrder.Ascending;
             }
 
-            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Modified");
+            settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Modified");
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
@@ -953,7 +954,7 @@ namespace TotalImage
             modifiedToolStripMenuItem.Checked = false;
             modifiedToolStripMenuItem1.Checked = false;
 
-            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Name");
+            settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Name");
 
             if (sorter.SortColumn == 0)
             {
@@ -1009,7 +1010,7 @@ namespace TotalImage
                 sorter.Order = SortOrder.Ascending;
             }
 
-            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Size");
+            settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Size");
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
@@ -1137,9 +1138,9 @@ namespace TotalImage
 
         private void showHiddenItems_Click(object sender, EventArgs e)
         {
-            Settings.ShowHiddenItems = !Settings.ShowHiddenItems;
-            showHiddenToolStripMenuItem.Checked = Settings.ShowHiddenItems;
-            showHiddenItemsToolStripMenuItem1.Checked = Settings.ShowHiddenItems;
+            settings.ShowHiddenItems = !settings.ShowHiddenItems;
+            showHiddenToolStripMenuItem.Checked = settings.ShowHiddenItems;
+            showHiddenItemsToolStripMenuItem1.Checked = settings.ShowHiddenItems;
 
             if (image != null)
             {
@@ -1178,9 +1179,9 @@ namespace TotalImage
 
         private void showDeletedItems_Click(object sender, EventArgs e)
         {
-            Settings.ShowDeletedItems = !Settings.ShowDeletedItems;
-            showDeletedToolStripMenuItem.Checked = Settings.ShowDeletedItems;
-            showDeletedItemsToolStripMenuItem.Checked = Settings.ShowDeletedItems;
+            settings.ShowDeletedItems = !settings.ShowDeletedItems;
+            showDeletedToolStripMenuItem.Checked = settings.ShowDeletedItems;
+            showDeletedItemsToolStripMenuItem.Checked = settings.ShowDeletedItems;
 
             if (image != null)
             {
@@ -1243,7 +1244,7 @@ namespace TotalImage
                 }
             }
 
-            Settings.Save();
+            settings.Save();
         }
 
         private void viewMenu_DropDownOpening(object sender, EventArgs e)
@@ -1264,7 +1265,7 @@ namespace TotalImage
 
         private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
         {
-            foreach (var subdir in dir.EnumerateDirectories(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
+            foreach (var subdir in dir.EnumerateDirectories(settings.ShowHiddenItems, settings.ShowDeletedItems))
             {
                 var subnode = new TreeNode(subdir.Name);
 
@@ -1328,7 +1329,7 @@ namespace TotalImage
                 lstFiles.Items.Add(parentDirItem);
             }
 
-            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
+            foreach (var fso in dir.EnumerateFileSystemObjects(settings.ShowHiddenItems, settings.ShowDeletedItems))
             {
                 var item = new ListViewItem();
                 item.Text = fso.Name;
@@ -1441,7 +1442,7 @@ namespace TotalImage
             lblStatusCapacity.Text = "Dummy KiB";
             EnableUI();
 
-            Settings.AddRecentImage(path);
+            settings.AddRecentImage(path);
             PopulateRecentList();
         }
 
@@ -1622,10 +1623,10 @@ namespace TotalImage
         {
             recentFilesToolStripMenuItem.DropDownItems.Clear();
 
-            for (int i = Settings.RecentImages.Count - 1; i >= 0; i--)
+            for (int i = settings.RecentImages.Count - 1; i >= 0; i--)
             {
                 ToolStripMenuItem newItem = new ToolStripMenuItem();
-                newItem.Text = (Settings.RecentImages.Count - i).ToString() + ": " + Settings.RecentImages[i];
+                newItem.Text = (settings.RecentImages.Count - i).ToString() + ": " + settings.RecentImages[i];
                 newItem.Click += recentImage_Click;
                 recentFilesToolStripMenuItem.DropDownItems.Add(newItem);
             }
