@@ -1,24 +1,53 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Text.Json;
+using System.IO;
 
 namespace TotalImage
 {
-    public static class Settings
+    //This class is a singleton, thread-safe with a double check lock
+    public sealed class Settings
     {
-        public static View FilesView { get; set; }
-        public static int FilesSortingColumn { get; set; }
-        public static SortOrder FilesSortOrder { get; set; }
-        public static List<string> RecentImages { get; private set; } = new List<string>();
-        public static bool ShowHiddenItems { get; set; }
-        public static bool ShowDeletedItems { get; set; }
-        public static bool ShowCommandBar { get; set; }
-        public static bool ShowDirectoryTree { get; set; }
-        public static bool ShowFileList { get; set; }
-        public static bool ShowStatusBar { get; set; }
-        public static SizeUnit SizeUnits { get; set; }
-        public static string? DefaultExtractPath { get; set; }
-        public static FolderExtract DefaultExtractType { get; set; }
-        public static bool OpenFolderAfterExtract { get; set; }
+        private static Settings _instance;
+        private static readonly object _lock = new object();
+
+        public static Settings GetInstance()
+        {
+            if (_instance == null)
+            {
+                lock (_lock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new Settings();
+                    }
+                }
+            }
+            return _instance;
+        }
+
+        private Settings()
+        {
+            Load();
+        }
+
+        private static readonly string SettingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotalImage");
+
+        public View FilesView { get; set; }
+        public int FilesSortingColumn { get; set; }
+        public SortOrder FilesSortOrder { get; set; }
+        public List<string> RecentImages { get; private set; } = new List<string>();
+        public bool ShowHiddenItems { get; set; }
+        public bool ShowDeletedItems { get; set; }
+        public bool ShowCommandBar { get; set; }
+        public bool ShowDirectoryTree { get; set; }
+        public bool ShowFileList { get; set; }
+        public bool ShowStatusBar { get; set; }
+        public SizeUnit SizeUnits { get; set; }
+        public string? DefaultExtractPath { get; set; }
+        public FolderExtract DefaultExtractType { get; set; }
+        public bool OpenFolderAfterExtract { get; set; }
 
         public enum SizeUnit
         {
@@ -39,22 +68,23 @@ namespace TotalImage
         }
 
         //TODO: Implement loading the values from permanent storage
-        public static void Load()
+        public void Load()
         {
             RecentImages.Clear();
         }
 
         //TODO: Implement saving the values to permanent storage
-        public static void Save()
+        public void Save()
         {
 
         }
 
-        public static void AddRecentImage(string path)
+        public void AddRecentImage(string path)
         {
             //This prevents duplicate entries by removing the old entry first - the new one is then put at the start of the list
-            if (RecentImages.Count > 0) {
-                if(RecentImages.LastIndexOf(path) > -1)
+            if (RecentImages.Count > 0)
+            {
+                if (RecentImages.LastIndexOf(path) > -1)
                     RecentImages.RemoveAt(RecentImages.LastIndexOf(path));
             }
 
