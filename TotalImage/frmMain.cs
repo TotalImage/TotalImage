@@ -30,7 +30,6 @@ namespace TotalImage
         #region Event Handlers
         private void frmMain_Load(object sender, EventArgs e)
         {
-            PopulateRecentList();
             SyncUIWithSettings();
 
             //Because designer doesn't have the Enter key in the list for some reason...
@@ -44,7 +43,7 @@ namespace TotalImage
             GetFolderIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
 
-            //This is a workaround because the designer is apparently not settings ColumnHeader.Name attributes...
+            //This is a workaround because the designer is apparently not setting the ColumnHeader.Name attributes...
             lstFiles.Columns[0].Name = "clmName";
             lstFiles.Columns[1].Name = "clmType";
             lstFiles.Columns[2].Name = "clmSize";
@@ -62,6 +61,8 @@ namespace TotalImage
             lstFiles.ListViewItemSorter = sorter;
             lstFiles.Sort();
             lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
+
+            PopulateRecentList();
         }
 
         //Injects a folder into the image
@@ -633,7 +634,10 @@ namespace TotalImage
         private void settings_Click(object sender, EventArgs e)
         {
             using dlgSettings dlg = new dlgSettings();
-            dlg.ShowDialog();
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+                SyncUIWithSettings();
+            }
         }
 
         //TODO: Implement the Properties dialog for multiple selected objects like Windows does it

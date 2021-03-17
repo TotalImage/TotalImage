@@ -126,5 +126,10 @@ namespace TotalImage
                 CurrentSettings.RecentImages.RemoveAt(0);
             CurrentSettings.RecentImages.Add(path);
         }
+
+        public static void ClearRecentImages()
+        {
+            CurrentSettings.RecentImages.Clear();
+        }
     }
 }
