@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
-using System.Diagnostics;
 
 namespace TotalImage
 {

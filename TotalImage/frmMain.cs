@@ -43,6 +43,12 @@ namespace TotalImage
 #endif
             GetFolderIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+
+            //This is a workaround because the designer is apparently not settings ColumnHeader.Name attributes...
+            lstFiles.Columns[0].Name = "clmName";
+            lstFiles.Columns[1].Name = "clmType";
+            lstFiles.Columns[2].Name = "clmSize";
+            lstFiles.Columns[3].Name = "clmModified";
         }
 
         //Syncs the main form UI with the current settings
@@ -820,7 +826,8 @@ namespace TotalImage
 
         private void sortByType_Click(object sender, EventArgs e)
         {
-            if (sorter.SortColumn == 1)
+            int columnIndex = lstFiles.Columns.IndexOfKey("clmType");
+            if (sorter.SortColumn == columnIndex)
             {
                 // Reverse the current sort direction for this column.
                 if (sorter.Order == SortOrder.Ascending)
@@ -835,12 +842,12 @@ namespace TotalImage
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = 1;
+                sorter.SortColumn = columnIndex;
                 sorter.Order = SortOrder.Ascending;
             }
 
             Settings.CurrentSettings.FilesSortOrder = sorter.Order;
-            Settings.CurrentSettings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Type");
+            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
@@ -849,7 +856,8 @@ namespace TotalImage
 
         private void sortByModified_Click(object sender, EventArgs e)
         {
-            if (sorter.SortColumn == 3)
+            int columnIndex = lstFiles.Columns.IndexOfKey("clmModified");
+            if (sorter.SortColumn == columnIndex)
             {
                 // Reverse the current sort direction for this column.
                 if (sorter.Order == SortOrder.Ascending)
@@ -864,12 +872,12 @@ namespace TotalImage
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = 3;
+                sorter.SortColumn = columnIndex;
                 sorter.Order = SortOrder.Ascending;
             }
 
             Settings.CurrentSettings.FilesSortOrder = sorter.Order;
-            Settings.CurrentSettings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Modified");
+            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
@@ -878,7 +886,8 @@ namespace TotalImage
 
         private void sortByName_Click(object sender, EventArgs e)
         {
-            if (sorter.SortColumn == 0)
+            int columnIndex = lstFiles.Columns.IndexOfKey("clmName");
+            if (sorter.SortColumn == columnIndex)
             {
                 // Reverse the current sort direction for this column.
                 if (sorter.Order == SortOrder.Ascending)
@@ -893,7 +902,7 @@ namespace TotalImage
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = 0;
+                sorter.SortColumn = columnIndex;
                 sorter.Order = SortOrder.Ascending;
             }
 
@@ -907,7 +916,9 @@ namespace TotalImage
 
         private void sortBySize_Click(object sender, EventArgs e)
         {
-            if (sorter.SortColumn == 2)
+            int columnIndex = lstFiles.Columns.IndexOfKey("clmSize");
+
+            if (sorter.SortColumn == columnIndex)
             {
                 // Reverse the current sort direction for this column.
                 if (sorter.Order == SortOrder.Ascending)
@@ -922,12 +933,12 @@ namespace TotalImage
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = 2;
+                sorter.SortColumn = columnIndex;
                 sorter.Order = SortOrder.Ascending;
             }
 
             Settings.CurrentSettings.FilesSortOrder = sorter.Order;
-            Settings.CurrentSettings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Size");
+            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
