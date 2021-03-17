@@ -12,8 +12,8 @@ namespace TotalImage
 
         public ListViewColumnSorter()
         {
-            SortColumn = frmMain.settings.FilesSortingColumn;
-            Order = frmMain.settings.FilesSortOrder;
+            SortColumn = Settings.CurrentSettings.FilesSortingColumn;
+            Order = Settings.CurrentSettings.FilesSortOrder;
             ObjectCompare = new CaseInsensitiveComparer();
         }
 

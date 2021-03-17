@@ -80,8 +80,8 @@
             this.expandDirectoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseDirectoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
-            this.showHiddenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.showDeletedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showHiddenItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showDeletedItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.largeIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.smallIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -132,7 +132,7 @@
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.viewToolStripButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.showHiddenItemsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.showDeletedItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showDeletedItemsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.largeIconsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.smallIconsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -288,7 +288,8 @@
             this.statusBarToolStripMenuItem1});
             this.cmsToolbars.Name = "cmsToolbars";
             this.cmsToolbars.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.cmsToolbars.Size = new System.Drawing.Size(152, 114);
+            this.cmsToolbars.Size = new System.Drawing.Size(181, 136);
+            this.cmsToolbars.Opening += new System.ComponentModel.CancelEventHandler(this.cmsToolbars_Opening);
             // 
             // menuBarToolStripMenuItem1
             // 
@@ -297,9 +298,8 @@
             this.menuBarToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.menuBarToolStripMenuItem1.Enabled = false;
             this.menuBarToolStripMenuItem1.Name = "menuBarToolStripMenuItem1";
-            this.menuBarToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
+            this.menuBarToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.menuBarToolStripMenuItem1.Text = "Menu bar";
-            this.menuBarToolStripMenuItem1.Click += new System.EventHandler(this.menuBarToolStripMenuItem1_Click);
             // 
             // commandBarToolStripMenuItem1
             // 
@@ -307,7 +307,7 @@
             this.commandBarToolStripMenuItem1.CheckOnClick = true;
             this.commandBarToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.commandBarToolStripMenuItem1.Name = "commandBarToolStripMenuItem1";
-            this.commandBarToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
+            this.commandBarToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.commandBarToolStripMenuItem1.Text = "Command bar";
             this.commandBarToolStripMenuItem1.Click += new System.EventHandler(this.toggleCommandBar_Click);
             // 
@@ -317,7 +317,7 @@
             this.directoryTreeToolStripMenuItem1.CheckOnClick = true;
             this.directoryTreeToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.directoryTreeToolStripMenuItem1.Name = "directoryTreeToolStripMenuItem1";
-            this.directoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
+            this.directoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.directoryTreeToolStripMenuItem1.Text = "Directory tree";
             this.directoryTreeToolStripMenuItem1.Click += new System.EventHandler(this.toggleDirectoryTree_Click);
             // 
@@ -327,7 +327,7 @@
             this.fileListToolStripMenuItem1.CheckOnClick = true;
             this.fileListToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.fileListToolStripMenuItem1.Name = "fileListToolStripMenuItem1";
-            this.fileListToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
+            this.fileListToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.fileListToolStripMenuItem1.Text = "File list";
             this.fileListToolStripMenuItem1.Click += new System.EventHandler(this.toggleFileList_Click);
             // 
@@ -337,7 +337,7 @@
             this.statusBarToolStripMenuItem1.CheckOnClick = true;
             this.statusBarToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.statusBarToolStripMenuItem1.Name = "statusBarToolStripMenuItem1";
-            this.statusBarToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
+            this.statusBarToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.statusBarToolStripMenuItem1.Text = "Status bar";
             this.statusBarToolStripMenuItem1.Click += new System.EventHandler(this.toggleStatusBar_Click);
             // 
@@ -595,8 +595,8 @@
             this.expandDirectoryTreeToolStripMenuItem,
             this.collapseDirectoryTreeToolStripMenuItem,
             this.toolStripSeparator16,
-            this.showHiddenToolStripMenuItem,
-            this.showDeletedToolStripMenuItem,
+            this.showHiddenItemsToolStripMenuItem,
+            this.showDeletedItemsToolStripMenuItem,
             this.toolStripSeparator13,
             this.largeIconsToolStripMenuItem,
             this.smallIconsToolStripMenuItem,
@@ -631,21 +631,21 @@
             this.toolStripSeparator16.Name = "toolStripSeparator16";
             this.toolStripSeparator16.Size = new System.Drawing.Size(189, 6);
             // 
-            // showHiddenToolStripMenuItem
+            // showHiddenItemsToolStripMenuItem
             // 
-            this.showHiddenToolStripMenuItem.CheckOnClick = true;
-            this.showHiddenToolStripMenuItem.Name = "showHiddenToolStripMenuItem";
-            this.showHiddenToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.showHiddenToolStripMenuItem.Text = "Show hidden items";
-            this.showHiddenToolStripMenuItem.Click += new System.EventHandler(this.showHiddenItems_Click);
+            this.showHiddenItemsToolStripMenuItem.CheckOnClick = true;
+            this.showHiddenItemsToolStripMenuItem.Name = "showHiddenItemsToolStripMenuItem";
+            this.showHiddenItemsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.showHiddenItemsToolStripMenuItem.Text = "Show hidden items";
+            this.showHiddenItemsToolStripMenuItem.Click += new System.EventHandler(this.showHiddenItems_Click);
             // 
-            // showDeletedToolStripMenuItem
+            // showDeletedItemsToolStripMenuItem
             // 
-            this.showDeletedToolStripMenuItem.CheckOnClick = true;
-            this.showDeletedToolStripMenuItem.Name = "showDeletedToolStripMenuItem";
-            this.showDeletedToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            this.showDeletedToolStripMenuItem.Text = "Show deleted items";
-            this.showDeletedToolStripMenuItem.Click += new System.EventHandler(this.showDeletedItems_Click);
+            this.showDeletedItemsToolStripMenuItem.CheckOnClick = true;
+            this.showDeletedItemsToolStripMenuItem.Name = "showDeletedItemsToolStripMenuItem";
+            this.showDeletedItemsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.showDeletedItemsToolStripMenuItem.Text = "Show deleted items";
+            this.showDeletedItemsToolStripMenuItem.Click += new System.EventHandler(this.showDeletedItems_Click);
             // 
             // toolStripSeparator13
             // 
@@ -708,28 +708,28 @@
             // nameToolStripMenuItem
             // 
             this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
-            this.nameToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.nameToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.nameToolStripMenuItem.Text = "Name";
             this.nameToolStripMenuItem.Click += new System.EventHandler(this.sortByName_Click);
             // 
             // typeToolStripMenuItem
             // 
             this.typeToolStripMenuItem.Name = "typeToolStripMenuItem";
-            this.typeToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.typeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.typeToolStripMenuItem.Text = "Type";
             this.typeToolStripMenuItem.Click += new System.EventHandler(this.sortByType_Click);
             // 
             // sizeToolStripMenuItem
             // 
             this.sizeToolStripMenuItem.Name = "sizeToolStripMenuItem";
-            this.sizeToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.sizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.sizeToolStripMenuItem.Text = "Size";
             this.sizeToolStripMenuItem.Click += new System.EventHandler(this.sortBySize_Click);
             // 
             // modifiedToolStripMenuItem
             // 
             this.modifiedToolStripMenuItem.Name = "modifiedToolStripMenuItem";
-            this.modifiedToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.modifiedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.modifiedToolStripMenuItem.Text = "Modified";
             this.modifiedToolStripMenuItem.Click += new System.EventHandler(this.sortByModified_Click);
             // 
@@ -1076,7 +1076,7 @@
             this.viewToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.viewToolStripButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showHiddenItemsToolStripMenuItem1,
-            this.showDeletedItemsToolStripMenuItem,
+            this.showDeletedItemsToolStripMenuItem1,
             this.toolStripSeparator14,
             this.largeIconsToolStripMenuItem1,
             this.smallIconsToolStripMenuItem1,
@@ -1088,6 +1088,7 @@
             this.viewToolStripButton.Name = "viewToolStripButton";
             this.viewToolStripButton.Size = new System.Drawing.Size(45, 22);
             this.viewToolStripButton.Text = "View";
+            this.viewToolStripButton.DropDownOpening += new System.EventHandler(this.viewToolStripButton_DropDownOpening);
             // 
             // showHiddenItemsToolStripMenuItem1
             // 
@@ -1097,13 +1098,13 @@
             this.showHiddenItemsToolStripMenuItem1.Text = "Show hidden items";
             this.showHiddenItemsToolStripMenuItem1.Click += new System.EventHandler(this.showHiddenItems_Click);
             // 
-            // showDeletedItemsToolStripMenuItem
+            // showDeletedItemsToolStripMenuItem1
             // 
-            this.showDeletedItemsToolStripMenuItem.CheckOnClick = true;
-            this.showDeletedItemsToolStripMenuItem.Name = "showDeletedItemsToolStripMenuItem";
-            this.showDeletedItemsToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.showDeletedItemsToolStripMenuItem.Text = "Show deleted items";
-            this.showDeletedItemsToolStripMenuItem.Click += new System.EventHandler(this.showDeletedItems_Click);
+            this.showDeletedItemsToolStripMenuItem1.CheckOnClick = true;
+            this.showDeletedItemsToolStripMenuItem1.Name = "showDeletedItemsToolStripMenuItem1";
+            this.showDeletedItemsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
+            this.showDeletedItemsToolStripMenuItem1.Text = "Show deleted items";
+            this.showDeletedItemsToolStripMenuItem1.Click += new System.EventHandler(this.showDeletedItems_Click);
             // 
             // toolStripSeparator14
             // 
@@ -1160,7 +1161,7 @@
             this.sortToolStripButton.Name = "sortToolStripButton";
             this.sortToolStripButton.Size = new System.Drawing.Size(29, 22);
             this.sortToolStripButton.Text = "Sort by";
-            this.sortToolStripButton.DropDownOpening += new System.EventHandler(this.viewMenu_DropDownOpening);
+            this.sortToolStripButton.DropDownOpening += new System.EventHandler(this.sortMenu_DropDownOpening);
             // 
             // nameToolStripMenuItem1
             // 
@@ -1532,14 +1533,14 @@
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem2;
         public System.Windows.Forms.ImageList imgFilesSmall;
-        private System.Windows.Forms.ToolStripMenuItem showHiddenToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showHiddenItemsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
         private System.Windows.Forms.ToolStripMenuItem showHiddenItemsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
-        private System.Windows.Forms.ToolStripMenuItem showDeletedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showDeletedItemsToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel lblStatusSize;
         private System.Windows.Forms.ToolStripStatusLabel lbStatuslPath;
-        private System.Windows.Forms.ToolStripMenuItem showDeletedItemsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showDeletedItemsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem undeleteToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem undeleteToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
