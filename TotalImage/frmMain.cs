@@ -38,7 +38,7 @@ namespace TotalImage
             propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
 
 #if !DEBUG
-                DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
+            DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
 #endif
             GetFolderIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
@@ -54,13 +54,14 @@ namespace TotalImage
         private void SyncUIWithSettings()
         {
             lstFiles.View = Settings.CurrentSettings.FilesView;
-            splitContainer.Panel2Collapsed = !Settings.CurrentSettings.ShowFileList;
             splitContainer.Panel1Collapsed = !Settings.CurrentSettings.ShowDirectoryTree;
             statusBar.Visible = Settings.CurrentSettings.ShowStatusBar;
             commandBar.Visible = Settings.CurrentSettings.ShowCommandBar;
-            lstFiles.ListViewItemSorter = sorter;
+            sorter.Order = Settings.CurrentSettings.FilesSortOrder;
+            sorter.SortColumn = Settings.CurrentSettings.FilesSortingColumn;
             lstFiles.Sort();
             lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
+            splitContainer.SplitterDistance = Settings.CurrentSettings.SplitterDistance;
 
             PopulateRecentList();
         }
@@ -420,12 +421,6 @@ namespace TotalImage
         {
             splitContainer.Panel1Collapsed = !splitContainer.Panel1Collapsed;
             Settings.CurrentSettings.ShowDirectoryTree = !splitContainer.Panel1Collapsed;
-        }
-
-        private void toggleFileList_Click(object sender, EventArgs e)
-        {
-            splitContainer.Panel2Collapsed = !splitContainer.Panel2Collapsed;
-            Settings.CurrentSettings.ShowFileList = !splitContainer.Panel2Collapsed;
         }
 
         private void toggleStatusBar_Click(object sender, EventArgs e)
@@ -1200,7 +1195,6 @@ namespace TotalImage
 
             commandBarToolStripMenuItem.Checked = commandBar.Visible;
             directoryTreeToolStripMenuItem.Checked = !splitContainer.Panel1Collapsed;
-            fileListToolStripMenuItem.Checked = !splitContainer.Panel2Collapsed;
             statusBarToolStripMenuItem.Checked = statusBar.Visible;
 
             showHiddenItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
@@ -1211,7 +1205,6 @@ namespace TotalImage
         {
             commandBarToolStripMenuItem1.Checked = commandBar.Visible;
             directoryTreeToolStripMenuItem1.Checked = !splitContainer.Panel1Collapsed;
-            fileListToolStripMenuItem1.Checked = !splitContainer.Panel2Collapsed;
             statusBarToolStripMenuItem1.Checked = statusBar.Visible;
         }
 
@@ -1243,6 +1236,11 @@ namespace TotalImage
                 case 2: sizeToolStripMenuItem1.Checked = true; break;
                 case 3: modifiedToolStripMenuItem1.Checked = true; break;
             }
+        }
+
+        private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            Settings.CurrentSettings.SplitterDistance = splitContainer.SplitterDistance;
         }
 
         #endregion

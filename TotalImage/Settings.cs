@@ -11,20 +11,20 @@ namespace TotalImage
     {
         public class SettingsModel
         {
-            public View FilesView { get; set; }
-            public int FilesSortingColumn { get; set; }
-            public SortOrder FilesSortOrder { get; set; }
+            public View FilesView { get; set; } = View.Details;
+            public int FilesSortingColumn { get; set; } = 0;
+            public SortOrder FilesSortOrder { get; set; } = SortOrder.Ascending;
             public List<string> RecentImages { get; set; } = new List<string>();
-            public bool ShowHiddenItems { get; set; }
-            public bool ShowDeletedItems { get; set; }
-            public bool ShowCommandBar { get; set; }
-            public bool ShowDirectoryTree { get; set; }
-            public bool ShowFileList { get; set; }
-            public bool ShowStatusBar { get; set; }
-            public SizeUnit SizeUnits { get; set; }
-            public string DefaultExtractPath { get; set; }
-            public FolderExtract DefaultExtractType { get; set; }
-            public bool OpenFolderAfterExtract { get; set; }
+            public bool ShowHiddenItems { get; set; } = true;
+            public bool ShowDeletedItems { get; set; } = false;
+            public bool ShowCommandBar { get; set; } = true;
+            public bool ShowDirectoryTree { get; set; } = true;
+            public bool ShowStatusBar { get; set; } = true;
+            public SizeUnit SizeUnits { get; set; } = SizeUnit.B;
+            public string DefaultExtractPath { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            public FolderExtract DefaultExtractType { get; set; } = FolderExtract.AlwaysAsk;
+            public bool OpenFolderAfterExtract { get; set; } = true;
+            public int SplitterDistance { get; set; } = 280;
         }
 
         public static SettingsModel CurrentSettings;
@@ -86,12 +86,12 @@ namespace TotalImage
             CurrentSettings.ShowCommandBar = true;
             CurrentSettings.ShowDeletedItems = false;
             CurrentSettings.ShowDirectoryTree = true;
-            CurrentSettings.ShowFileList = true;
             CurrentSettings.ShowHiddenItems = true;
             CurrentSettings.ShowStatusBar = true;
             CurrentSettings.FilesSortingColumn = 0;
             CurrentSettings.FilesSortOrder = SortOrder.Ascending;
             CurrentSettings.FilesView = View.Details;
+            CurrentSettings.SplitterDistance = 280;
         }
 
         //Saves all settings to permanent storage (settings.json)

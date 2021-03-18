@@ -86,7 +86,6 @@ namespace TotalImage
             cbxOpenDir.Checked = Settings.CurrentSettings.OpenFolderAfterExtract;
             cbxShowCommandBar.Checked = Settings.CurrentSettings.ShowCommandBar;
             cbxShowStatusBar.Checked = Settings.CurrentSettings.ShowStatusBar;
-            cbxShowFileList.Checked = Settings.CurrentSettings.ShowFileList;
             cbxShowDirectoryTree.Checked = Settings.CurrentSettings.ShowDirectoryTree;
             cbxShowHiddenItems.Checked = Settings.CurrentSettings.ShowHiddenItems;
             cbxShowDeletedItems.Checked = Settings.CurrentSettings.ShowDeletedItems;
@@ -175,6 +174,50 @@ namespace TotalImage
             {
                 txtExtractPath.Text = fbd.SelectedPath;
             }
+        }
+
+        //Sync CurrentSettings with the UI state and save to file
+        private void btnOK_Click(object sender, System.EventArgs e)
+        {
+            Settings.CurrentSettings.DefaultExtractPath = txtExtractPath.Text;
+            Settings.CurrentSettings.FilesSortingColumn = lstSortBy.SelectedIndex;
+            Settings.CurrentSettings.FilesSortOrder = (SortOrder)(lstSortOrder.SelectedIndex + 1);
+            Settings.CurrentSettings.OpenFolderAfterExtract = cbxOpenDir.Checked;
+            Settings.CurrentSettings.ShowCommandBar = cbxShowCommandBar.Checked;
+            Settings.CurrentSettings.ShowDeletedItems = cbxShowDeletedItems.Checked;
+            Settings.CurrentSettings.ShowDirectoryTree = cbxShowDirectoryTree.Checked;
+            Settings.CurrentSettings.ShowHiddenItems = cbxShowHiddenItems.Checked;
+            Settings.CurrentSettings.ShowStatusBar = cbxShowStatusBar.Checked;
+
+            switch (lstSizeUnits.SelectedIndex)
+            {
+                case 0: Settings.CurrentSettings.SizeUnits = Settings.SizeUnit.B; break;
+                case 1: Settings.CurrentSettings.SizeUnits = Settings.SizeUnit.KB; break;
+                case 2: Settings.CurrentSettings.SizeUnits = Settings.SizeUnit.KiB; break;
+                case 3: Settings.CurrentSettings.SizeUnits = Settings.SizeUnit.MB; break;
+                case 4: Settings.CurrentSettings.SizeUnits = Settings.SizeUnit.MiB; break;
+            }
+
+            switch (lstViewType.SelectedIndex)
+            {
+                case 0: Settings.CurrentSettings.FilesView = View.LargeIcon; break;
+                case 1: Settings.CurrentSettings.FilesView = View.SmallIcon; break;
+                case 2: Settings.CurrentSettings.FilesView = View.List; break;
+                case 3: Settings.CurrentSettings.FilesView = View.Details; break;
+                case 4: Settings.CurrentSettings.FilesView = View.Tile; break;
+            }
+
+            if (rbnExtractFlat.Checked)
+                Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.Merge;
+            else if (rbnExtractPreserve.Checked)
+                Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.Preserve;
+            else if (rbnIgnoreFolders.Checked)
+                Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.Ignore;
+
+            if (cbxExtractAsk.Checked)
+                Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.AlwaysAsk;
+
+            Settings.Save();
         }
     }
 }

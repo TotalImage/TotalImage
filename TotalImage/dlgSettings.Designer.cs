@@ -39,7 +39,6 @@
             this.cbxShowStatusBar = new System.Windows.Forms.CheckBox();
             this.cbxShowDirectoryTree = new System.Windows.Forms.CheckBox();
             this.cbxShowHiddenItems = new System.Windows.Forms.CheckBox();
-            this.cbxShowFileList = new System.Windows.Forms.CheckBox();
             this.cbxShowCommandBar = new System.Windows.Forms.CheckBox();
             this.lstSizeUnits = new System.Windows.Forms.ComboBox();
             this.lblSizeUnits = new System.Windows.Forms.Label();
@@ -94,6 +93,7 @@
             this.btnOK.TabIndex = 0;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // pnlBottom
             // 
@@ -140,7 +140,6 @@
             this.tabView.Controls.Add(this.cbxShowStatusBar);
             this.tabView.Controls.Add(this.cbxShowDirectoryTree);
             this.tabView.Controls.Add(this.cbxShowHiddenItems);
-            this.tabView.Controls.Add(this.cbxShowFileList);
             this.tabView.Controls.Add(this.cbxShowCommandBar);
             this.tabView.Controls.Add(this.lstSizeUnits);
             this.tabView.Controls.Add(this.lblSizeUnits);
@@ -169,7 +168,7 @@
             // 
             this.cbxShowDeletedItems.AutoSize = true;
             this.cbxShowDeletedItems.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShowDeletedItems.Location = new System.Drawing.Point(284, 150);
+            this.cbxShowDeletedItems.Location = new System.Drawing.Point(163, 150);
             this.cbxShowDeletedItems.Name = "cbxShowDeletedItems";
             this.cbxShowDeletedItems.Size = new System.Drawing.Size(135, 20);
             this.cbxShowDeletedItems.TabIndex = 17;
@@ -180,7 +179,7 @@
             // 
             this.cbxShowStatusBar.AutoSize = true;
             this.cbxShowStatusBar.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShowStatusBar.Location = new System.Drawing.Point(163, 150);
+            this.cbxShowStatusBar.Location = new System.Drawing.Point(163, 124);
             this.cbxShowStatusBar.Name = "cbxShowStatusBar";
             this.cbxShowStatusBar.Size = new System.Drawing.Size(115, 20);
             this.cbxShowStatusBar.TabIndex = 16;
@@ -191,7 +190,7 @@
             // 
             this.cbxShowDirectoryTree.AutoSize = true;
             this.cbxShowDirectoryTree.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShowDirectoryTree.Location = new System.Drawing.Point(18, 150);
+            this.cbxShowDirectoryTree.Location = new System.Drawing.Point(301, 124);
             this.cbxShowDirectoryTree.Name = "cbxShowDirectoryTree";
             this.cbxShowDirectoryTree.Size = new System.Drawing.Size(134, 20);
             this.cbxShowDirectoryTree.TabIndex = 15;
@@ -202,23 +201,12 @@
             // 
             this.cbxShowHiddenItems.AutoSize = true;
             this.cbxShowHiddenItems.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShowHiddenItems.Location = new System.Drawing.Point(284, 124);
+            this.cbxShowHiddenItems.Location = new System.Drawing.Point(18, 150);
             this.cbxShowHiddenItems.Name = "cbxShowHiddenItems";
             this.cbxShowHiddenItems.Size = new System.Drawing.Size(133, 20);
             this.cbxShowHiddenItems.TabIndex = 14;
             this.cbxShowHiddenItems.Text = "Show hidden items";
             this.cbxShowHiddenItems.UseVisualStyleBackColor = true;
-            // 
-            // cbxShowFileList
-            // 
-            this.cbxShowFileList.AutoSize = true;
-            this.cbxShowFileList.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShowFileList.Location = new System.Drawing.Point(163, 124);
-            this.cbxShowFileList.Name = "cbxShowFileList";
-            this.cbxShowFileList.Size = new System.Drawing.Size(98, 20);
-            this.cbxShowFileList.TabIndex = 13;
-            this.cbxShowFileList.Text = "Show file list";
-            this.cbxShowFileList.UseVisualStyleBackColor = true;
             // 
             // cbxShowCommandBar
             // 
@@ -424,6 +412,7 @@
             // cbxShellIntegration
             // 
             this.cbxShellIntegration.AutoSize = true;
+            this.cbxShellIntegration.Enabled = false;
             this.cbxShellIntegration.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cbxShellIntegration.Location = new System.Drawing.Point(15, 41);
             this.cbxShellIntegration.Name = "cbxShellIntegration";
@@ -435,6 +424,7 @@
             // cbxFileAssociations
             // 
             this.cbxFileAssociations.AutoSize = true;
+            this.cbxFileAssociations.Enabled = false;
             this.cbxFileAssociations.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cbxFileAssociations.Location = new System.Drawing.Point(15, 15);
             this.cbxFileAssociations.Name = "cbxFileAssociations";
@@ -551,7 +541,6 @@
         private System.Windows.Forms.ComboBox lstViewType;
         private System.Windows.Forms.Label lblViewType;
         private System.Windows.Forms.CheckBox cbxShowCommandBar;
-        private System.Windows.Forms.CheckBox cbxShowFileList;
         private System.Windows.Forms.CheckBox cbxShowHiddenItems;
         private System.Windows.Forms.CheckBox cbxShowDirectoryTree;
         private System.Windows.Forms.CheckBox cbxShowStatusBar;

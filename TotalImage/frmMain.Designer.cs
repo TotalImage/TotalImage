@@ -45,7 +45,6 @@
             this.menuBarToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.commandBarToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.directoryTreeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileListToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,7 +97,6 @@
             this.menuBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.commandBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.directoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fileListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hexViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -284,11 +282,10 @@
             this.menuBarToolStripMenuItem1,
             this.commandBarToolStripMenuItem1,
             this.directoryTreeToolStripMenuItem1,
-            this.fileListToolStripMenuItem1,
             this.statusBarToolStripMenuItem1});
             this.cmsToolbars.Name = "cmsToolbars";
             this.cmsToolbars.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.cmsToolbars.Size = new System.Drawing.Size(152, 114);
+            this.cmsToolbars.Size = new System.Drawing.Size(152, 92);
             this.cmsToolbars.Opening += new System.ComponentModel.CancelEventHandler(this.cmsToolbars_Opening);
             // 
             // menuBarToolStripMenuItem1
@@ -320,16 +317,6 @@
             this.directoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
             this.directoryTreeToolStripMenuItem1.Text = "Directory tree";
             this.directoryTreeToolStripMenuItem1.Click += new System.EventHandler(this.toggleDirectoryTree_Click);
-            // 
-            // fileListToolStripMenuItem1
-            // 
-            this.fileListToolStripMenuItem1.Checked = true;
-            this.fileListToolStripMenuItem1.CheckOnClick = true;
-            this.fileListToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.fileListToolStripMenuItem1.Name = "fileListToolStripMenuItem1";
-            this.fileListToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
-            this.fileListToolStripMenuItem1.Text = "File list";
-            this.fileListToolStripMenuItem1.Click += new System.EventHandler(this.toggleFileList_Click);
             // 
             // statusBarToolStripMenuItem1
             // 
@@ -739,7 +726,6 @@
             this.menuBarToolStripMenuItem,
             this.commandBarToolStripMenuItem,
             this.directoryTreeToolStripMenuItem,
-            this.fileListToolStripMenuItem,
             this.statusBarToolStripMenuItem});
             this.toolbarsToolStripMenuItem.Name = "toolbarsToolStripMenuItem";
             this.toolbarsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
@@ -774,16 +760,6 @@
             this.directoryTreeToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.directoryTreeToolStripMenuItem.Text = "Directory tree";
             this.directoryTreeToolStripMenuItem.Click += new System.EventHandler(this.toggleDirectoryTree_Click);
-            // 
-            // fileListToolStripMenuItem
-            // 
-            this.fileListToolStripMenuItem.Checked = true;
-            this.fileListToolStripMenuItem.CheckOnClick = true;
-            this.fileListToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.fileListToolStripMenuItem.Name = "fileListToolStripMenuItem";
-            this.fileListToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
-            this.fileListToolStripMenuItem.Text = "File list";
-            this.fileListToolStripMenuItem.Click += new System.EventHandler(this.toggleFileList_Click);
             // 
             // statusBarToolStripMenuItem
             // 
@@ -1208,9 +1184,7 @@
             // 
             // splitContainer
             // 
-            this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer.Location = new System.Drawing.Point(0, 49);
             this.splitContainer.Name = "splitContainer";
@@ -1223,9 +1197,10 @@
             // 
             this.splitContainer.Panel2.Controls.Add(this.lstFiles);
             this.splitContainer.Size = new System.Drawing.Size(1057, 546);
-            this.splitContainer.SplitterDistance = 274;
+            this.splitContainer.SplitterDistance = 280;
             this.splitContainer.SplitterWidth = 3;
             this.splitContainer.TabIndex = 3;
+            this.splitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer_SplitterMoved);
             // 
             // imgFilesSmall
             // 
@@ -1326,7 +1301,7 @@
             this.lstDirectories.Name = "lstDirectories";
             this.lstDirectories.SelectedImageIndex = 0;
             this.lstDirectories.ShowLines = false;
-            this.lstDirectories.Size = new System.Drawing.Size(274, 546);
+            this.lstDirectories.Size = new System.Drawing.Size(280, 546);
             this.lstDirectories.TabIndex = 0;
             this.lstDirectories.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstDirectories_ItemDrag);
             this.lstDirectories.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.lstDirectories_BeforeSelect);
@@ -1354,7 +1329,7 @@
             this.lstFiles.Name = "lstFiles";
             this.lstFiles.ShowGroups = false;
             this.lstFiles.ShowItemToolTips = true;
-            this.lstFiles.Size = new System.Drawing.Size(780, 546);
+            this.lstFiles.Size = new System.Drawing.Size(774, 546);
             this.lstFiles.SmallImageList = this.imgFilesSmall;
             this.lstFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lstFiles.TabIndex = 0;
@@ -1479,14 +1454,12 @@
         private System.Windows.Forms.ToolStripMenuItem menuBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem commandBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem directoryTreeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fileListToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem undeleteToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip cmsToolbars;
         private System.Windows.Forms.ToolStripMenuItem menuBarToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem commandBarToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem directoryTreeToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem fileListToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem1;
         private System.Windows.Forms.ContextMenuStrip cmsDirTree;
         private System.Windows.Forms.ToolStripMenuItem extractToolStripMenuItem1;
