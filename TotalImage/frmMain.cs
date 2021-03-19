@@ -118,19 +118,20 @@ namespace TotalImage
         //TODO: Implement the "save changes first" code path
         private void newImage_Click(object sender, EventArgs e)
         {
-            if (unsavedChanges)
-            {
-                DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before creating a new image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (DialogResult == DialogResult.Yes) /*save_Click(sender, e);*/;
-                else if (DialogResult == DialogResult.Cancel) return;
-            }
-
-            if (image != null)
-                CloseImage();
-            image = null;
             using dlgNewImage dlg = new dlgNewImage();
             if (dlg.ShowDialog() == DialogResult.OK)
             {
+                if (unsavedChanges)
+                {
+                    DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before creating a new image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    if (DialogResult == DialogResult.Yes) /*save_Click(sender, e);*/;
+                    else if (DialogResult == DialogResult.Cancel) return;
+                }
+
+                if (image != null)
+                    CloseImage();
+                image = null;
+
                 Text = "(Untitled) - TotalImage";
                 unsavedChanges = true;
 
