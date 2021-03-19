@@ -1380,10 +1380,12 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuBar;
             this.Name = "frmMain";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "TotalImage";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.frmMain_Load);
+            this.Move += new System.EventHandler(this.frmMain_Move);
+            this.Resize += new System.EventHandler(this.frmMain_Resize);
             this.cmsDirTree.ResumeLayout(false);
             this.menuBar.ResumeLayout(false);
             this.menuBar.PerformLayout();

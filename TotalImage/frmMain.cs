@@ -53,6 +53,9 @@ namespace TotalImage
         //Syncs the main form UI with the current settings
         private void SyncUIWithSettings()
         {
+            this.WindowState = Settings.CurrentSettings.WindowState;
+            this.Location = Settings.CurrentSettings.WindowPosition;
+            this.Size = Settings.CurrentSettings.WindowSize;
             lstFiles.View = Settings.CurrentSettings.FilesView;
             splitContainer.Panel1Collapsed = !Settings.CurrentSettings.ShowDirectoryTree;
             statusBar.Visible = Settings.CurrentSettings.ShowStatusBar;
@@ -1243,6 +1246,27 @@ namespace TotalImage
             Settings.CurrentSettings.SplitterDistance = splitContainer.SplitterDistance;
         }
 
+        private void frmMain_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Maximized)
+            {
+                Settings.CurrentSettings.WindowState = FormWindowState.Maximized;
+            }
+            else if (WindowState == FormWindowState.Normal)
+            {
+                Settings.CurrentSettings.WindowState = FormWindowState.Normal;
+                Settings.CurrentSettings.WindowSize = this.Size;
+            }
+        }
+
+        private void frmMain_Move(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Normal)
+            {
+                Settings.CurrentSettings.WindowPosition = this.Location;
+            }
+        }
+
         #endregion
 
         private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
@@ -1628,5 +1652,6 @@ namespace TotalImage
             lstFiles.Items.Clear();
             DisableUI();
         }
+
     }
 }

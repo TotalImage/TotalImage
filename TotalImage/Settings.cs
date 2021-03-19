@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
+using System.Drawing;
 
 namespace TotalImage
 {
@@ -25,6 +26,9 @@ namespace TotalImage
             public FolderExtract DefaultExtractType { get; set; } = FolderExtract.AlwaysAsk;
             public bool OpenFolderAfterExtract { get; set; } = true;
             public int SplitterDistance { get; set; } = 280;
+            public Size WindowSize { get; set; } = new Size(1000, 700);
+            public  Point WindowPosition { get; set; } = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
+            public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
         }
 
         public static SettingsModel CurrentSettings;
@@ -92,6 +96,9 @@ namespace TotalImage
             CurrentSettings.FilesSortOrder = SortOrder.Ascending;
             CurrentSettings.FilesView = View.Details;
             CurrentSettings.SplitterDistance = 280;
+            CurrentSettings.WindowPosition = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
+            CurrentSettings.WindowSize = new Size(800, 600);
+            CurrentSettings.WindowState = FormWindowState.Normal;
         }
 
         //Saves all settings to permanent storage (settings.json)
@@ -112,6 +119,7 @@ namespace TotalImage
             File.WriteAllText(Path.Combine(SettingsDir, "settings.json"), json);
         }
 
+        //Adds an image to the recent list
         public static void AddRecentImage(string path)
         {
             //This prevents duplicate entries by removing the old entry first - the new one is then put at the start of the list
@@ -127,6 +135,7 @@ namespace TotalImage
             CurrentSettings.RecentImages.Add(path);
         }
 
+        //Clears all recent images
         public static void ClearRecentImages()
         {
             CurrentSettings.RecentImages.Clear();
