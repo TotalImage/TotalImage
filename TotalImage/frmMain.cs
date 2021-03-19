@@ -70,7 +70,7 @@ namespace TotalImage
         private void hexView_Click(object sender, EventArgs e)
         {
             using frmHexView frm = new frmHexView();
-            frm.Show();
+            frm.ShowDialog();
         }
 
         //Allows viewing and editing both volume labels
