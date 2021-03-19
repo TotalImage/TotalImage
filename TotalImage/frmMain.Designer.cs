@@ -274,7 +274,7 @@
             this.menuBar.Location = new System.Drawing.Point(0, 0);
             this.menuBar.Name = "menuBar";
             this.menuBar.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.menuBar.Size = new System.Drawing.Size(1057, 24);
+            this.menuBar.Size = new System.Drawing.Size(984, 24);
             this.menuBar.TabIndex = 0;
             this.menuBar.Text = "menuStrip1";
             // 
@@ -857,9 +857,9 @@
             this.lblStatusCapacity,
             this.lblStatusSize,
             this.lbStatuslPath});
-            this.statusBar.Location = new System.Drawing.Point(0, 595);
+            this.statusBar.Location = new System.Drawing.Point(0, 639);
             this.statusBar.Name = "statusBar";
-            this.statusBar.Size = new System.Drawing.Size(1057, 22);
+            this.statusBar.Size = new System.Drawing.Size(984, 22);
             this.statusBar.SizingGrip = false;
             this.statusBar.TabIndex = 1;
             this.statusBar.Text = "statusStrip1";
@@ -909,7 +909,7 @@
             this.commandBar.Location = new System.Drawing.Point(0, 24);
             this.commandBar.Name = "commandBar";
             this.commandBar.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.commandBar.Size = new System.Drawing.Size(1057, 25);
+            this.commandBar.Size = new System.Drawing.Size(984, 25);
             this.commandBar.TabIndex = 2;
             this.commandBar.Text = "toolStrip1";
             // 
@@ -1219,7 +1219,7 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.lstFiles);
-            this.splitContainer.Size = new System.Drawing.Size(1057, 546);
+            this.splitContainer.Size = new System.Drawing.Size(984, 590);
             this.splitContainer.SplitterDistance = 274;
             this.splitContainer.SplitterWidth = 3;
             this.splitContainer.TabIndex = 3;
@@ -1323,7 +1323,7 @@
             this.lstDirectories.Name = "lstDirectories";
             this.lstDirectories.SelectedImageIndex = 0;
             this.lstDirectories.ShowLines = false;
-            this.lstDirectories.Size = new System.Drawing.Size(274, 546);
+            this.lstDirectories.Size = new System.Drawing.Size(274, 590);
             this.lstDirectories.TabIndex = 0;
             this.lstDirectories.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstDirectories_ItemDrag);
             this.lstDirectories.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.lstDirectories_BeforeSelect);
@@ -1351,7 +1351,7 @@
             this.lstFiles.Name = "lstFiles";
             this.lstFiles.ShowGroups = false;
             this.lstFiles.ShowItemToolTips = true;
-            this.lstFiles.Size = new System.Drawing.Size(780, 546);
+            this.lstFiles.Size = new System.Drawing.Size(707, 590);
             this.lstFiles.SmallImageList = this.imgFilesSmall;
             this.lstFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lstFiles.TabIndex = 0;
@@ -1393,7 +1393,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1057, 617);
+            this.ClientSize = new System.Drawing.Size(984, 661);
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.commandBar);
             this.Controls.Add(this.statusBar);
@@ -1401,6 +1401,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuBar;
+            this.MinimumSize = new System.Drawing.Size(650, 400);
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "TotalImage";
