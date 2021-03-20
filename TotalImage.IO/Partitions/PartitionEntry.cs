@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using TotalImage.FileSystems;
-using TotalImage.FileSystems.FAT;
 
 namespace TotalImage.Partitions
 {

@@ -495,9 +495,10 @@ namespace TotalImage
             ofd.CheckPathExists = true;
             ofd.Multiselect = false;
             //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
-            //ofd.ShowReadOnly = true; 
+            //ofd.ShowReadOnly = true;
             ofd.Filter =
                 "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
+                "Microsoft VHD (*.vhd)|*.vhd|" +
                 "All files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -1275,7 +1276,7 @@ namespace TotalImage
                     subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder (Hidden)");
                     subnode.ForeColor = Color.Gray;
                 }
-                else { 
+                else {
                     subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 }
 
@@ -1409,7 +1410,16 @@ namespace TotalImage
             filename = Path.GetFileName(path);
             Text = filename + " - TotalImage";
 
-            image = new RawContainer(path);
+            var ext = Path.GetExtension(filename).ToLowerInvariant();
+            switch (ext)
+            {
+                case "vhd":
+                    image = new VhdContainer(path);
+                    break;
+                default:
+                    image = new RawContainer(path);
+                    break;
+            }
 
             var root = new TreeNode(@"\");
             root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");

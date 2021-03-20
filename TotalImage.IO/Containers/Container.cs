@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using TotalImage.Partitions;
 
 namespace TotalImage.Containers
@@ -67,7 +68,28 @@ namespace TotalImage.Containers
         /// Load the file system from the container image
         /// </summary>
         /// <returns>The file system found on the image</returns>
-        protected abstract PartitionTable LoadPartitionTable();
+        protected virtual PartitionTable LoadPartitionTable()
+        {
+            // TODO: introduce a factory system that tries and then fails as required, like file systems have
+
+            using BinaryReader br = new BinaryReader(Content, Encoding.ASCII, true);
+            br.BaseStream.Seek(0x1FE, SeekOrigin.Begin);
+            var signature = br.ReadUInt16();
+
+            if (signature != 0xaa55)
+            {
+                return new NoPartitionTable(this);
+            }
+
+            var mbrPartition = new MbrPartitionTable(this);
+            // TODO: very naive check, assumse first partition will always start in third sector
+            if (mbrPartition.Partitions.Count >= 1 && mbrPartition.Partitions[0].Offset == 0x10000)
+            {
+                return mbrPartition;
+            }
+
+            return new NoPartitionTable(this);
+        }
 
         /// <summary>
         /// Get raw bytes from the container image
