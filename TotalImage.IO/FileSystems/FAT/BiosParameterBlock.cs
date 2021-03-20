@@ -22,7 +22,7 @@ namespace TotalImage.FileSystems.FAT
     /// </remarks>
     public class BiosParameterBlock
     {
-        private string oemId;
+        private string oemId = "";
 
         public BiosParameterBlockVersion BpbVersion { get; set; }
         public byte[] BootJump { get; set; } = new byte[] { 0xEB, 0x58, 0x90 };
@@ -34,7 +34,7 @@ namespace TotalImage.FileSystems.FAT
                 if (value?.Length > 8)
                     throw new ArgumentException("OEM ID must be 8 characters at most");
 
-                oemId = value;
+                oemId = value ?? "";
             }
         }
         public ushort BytesPerLogicalSector { get; set; }

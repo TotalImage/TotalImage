@@ -74,9 +74,13 @@ namespace TotalImage.FileSystems.FAT
 
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
         {
-            var fat = FileSystem as Fat12;
+            if (!(FileSystem is Fat12 fat))
+            {
+                throw new NotSupportedException("Only FAT12 is supported at the moment");
+            }
+
             var fat1Offset = fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.ReservedLogicalSectors;
-            var dataAreaOffset = (uint)(fat1Offset + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT 
+            var dataAreaOffset = (uint)(fat1Offset + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT
                 * fat.BiosParameterBlock.NumberOfFATs) + (fat.BiosParameterBlock.RootDirectoryEntries << 5));
             var stream = fat.GetStream();
 
@@ -95,7 +99,7 @@ namespace TotalImage.FileSystems.FAT
                         byte firstByte = reader.ReadByte();
 
                         /* 0x00/0xF6 = no more entries after this one, stop
-                         * 0xE5/0x05 = deleted entry, skip for now 
+                         * 0xE5/0x05 = deleted entry, skip for now
                          * 0x2E      = virtual . and .. folders, skip*/
                         if (firstByte == 0x00 || firstByte == 0xF6) break;
                         if (firstByte == 0x2E) continue;

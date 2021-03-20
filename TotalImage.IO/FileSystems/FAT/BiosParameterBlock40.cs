@@ -41,12 +41,19 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
-        public BiosParameterBlock40() { }
+        public BiosParameterBlock40()
+        {
+            volumeLabel = "";
+            fileSystemType = "";
+        }
 
         public BiosParameterBlock40(BiosParameterBlock bpb)
         {
             if (bpb == null)
                 throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
+
+            volumeLabel = "";
+            fileSystemType = "";
 
             BpbVersion = bpb.BpbVersion;
             BootJump = bpb.BootJump;

@@ -257,7 +257,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Returns the current volume label in the root directory, if it exists
-        public string GetRDVolLabel()
+        public string? GetRDVolLabel()
         {
             uint rootDirOffset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors + (_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT * 2));
 
@@ -305,7 +305,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Returns the current volume label in the BPB, if BPB is for DOS 4.0+
-        public string GetBPBVolLabel()
+        public string? GetBPBVolLabel()
         {
             if (_bpb is BiosParameterBlock40 && _bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
             {
@@ -355,7 +355,7 @@ namespace TotalImage.FileSystems.FAT
         public byte[] ReadCluster(uint cluster)
         {
             if (cluster < 2 || cluster > 0xFEF)
-                return null;
+                return Array.Empty<byte>();
 
             uint fat1Offset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors);
             uint fatSize = (uint)_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT;

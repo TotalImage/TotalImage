@@ -44,6 +44,11 @@ namespace TotalImage.FileSystems.FAT
             try
             {
                 _bpb = Parse(stream, bpbOffset); //Try to parse the BPB at the standard offset
+
+                //For standard disk types the OEM ID should begin right after the jump instruction, at offset 0x03
+                using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+                stream.Seek(3, SeekOrigin.Begin);
+                _bpb.OemId = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper();
             }
             catch (InvalidDataException)
             {
@@ -192,15 +197,6 @@ namespace TotalImage.FileSystems.FAT
                                 };
                                 break;
                         }
-                    }
-                }
-                //For standard disk types the OEM ID should begin right after the jump instruction, at offset 0x03
-                if (bpbOffset == 0x0B)
-                {
-                    using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
-                    {
-                        stream.Seek(3, SeekOrigin.Begin);
-                        _bpb.OemId = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper();
                     }
                 }
             }
