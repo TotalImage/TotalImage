@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text;
@@ -8,16 +8,16 @@ using TotalImage.Containers;
 namespace TotalImage.Partitions
 {
     /// <summary>
-    ///
+    /// A partition table class that represents a basic MBR partition table
     /// </summary>
     public class MbrPartitionTable : PartitionTable
     {
-        // this is a hardcoded assumption that holds true for currently supported formats but should probably be reconsidered in the future
-        private const int SECTOR_SIZE = 512;
+        private readonly uint _sectorSize;
 
         /// <inheritdoc />
-        public MbrPartitionTable(Container container) : base(container)
+        public MbrPartitionTable(Container container, uint sectorSize = 512) : base(container)
         {
+            _sectorSize = sectorSize;
         }
 
         /// <inheritdoc />
@@ -34,13 +34,13 @@ namespace TotalImage.Partitions
 
             br.BaseStream.Seek(0x1BE, SeekOrigin.Begin);
 
-            List<PartitionEntry> entries = new List<PartitionEntry>();
+            var entries = ImmutableList.CreateBuilder<PartitionEntry>();
             for (int i = 0; i < 4; i++)
             {
                 byte status = br.ReadByte();
-                byte[] chsStart = br.ReadBytes(3);
+                CHSAddress chsStart = new CHSAddress(br.ReadBytes(3));
                 MbrPartitionType type = (MbrPartitionType)br.ReadByte();
-                byte[] chsEnd = br.ReadBytes(3);
+                CHSAddress chsEnd = new CHSAddress(br.ReadBytes(3));
                 uint lbaStart = br.ReadUInt32();
                 uint lbaLength = br.ReadUInt32();
 
@@ -49,13 +49,13 @@ namespace TotalImage.Partitions
                     continue;
                 }
 
-                uint offset = lbaStart * SECTOR_SIZE;
-                uint length = lbaLength * SECTOR_SIZE;
+                uint offset = lbaStart * _sectorSize;
+                uint length = lbaLength * _sectorSize;
                 var entry = new MbrPartitionEntry((status & 0x80) != 0, type, offset, length, new PartialStream(_container.Content, offset, length));
                 entries.Add(entry);
             }
 
-            return entries;
+            return entries.ToImmutableList();
         }
 
         /// <summary>
@@ -115,7 +115,13 @@ namespace TotalImage.Partitions
             /// A FAT-12 partition for use with DOS
             /// </summary>
             [Display(Name = "DOS (FAT-12)")]
-            DosFat12 = 0x01
+            DosFat12 = 0x01,
+
+            /// <summary>
+            /// A protective MBR partition for GPT drives
+            /// </summary>
+            [Display(Name = "GPT Protective Partition")]
+            GptProtectivePartition = 0xEE,
         }
     }
 }

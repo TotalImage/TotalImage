@@ -82,10 +82,30 @@ namespace TotalImage.Containers
             }
 
             var mbrPartition = new MbrPartitionTable(this);
-            // TODO: very naive check, assumse first partition will always start in third sector
-            if (mbrPartition.Partitions.Count >= 1 && mbrPartition.Partitions[0].Offset == 0x10000)
+            if (mbrPartition.Partitions.Count >= 1)
             {
-                return mbrPartition;
+                if (mbrPartition.Partitions[0] is MbrPartitionTable.MbrPartitionEntry entry
+                    && (entry.Offset + entry.Length) > uint.MaxValue
+                    && entry.Type == MbrPartitionTable.MbrPartitionType.GptProtectivePartition)
+                {
+                    return new GptPartitionTable(this);
+                }
+
+                // check partitions seem fine (ie, no overlapping)
+                bool sanity = true;
+                long lastOffset = 512;
+                foreach (var partition in mbrPartition.Partitions)
+                {
+                    sanity &= (partition.Offset >= lastOffset);
+                    sanity &= (partition.Length > 0);
+                    lastOffset += partition.Offset + partition.Length;
+                    sanity &= (lastOffset <= br.BaseStream.Length);
+                }
+
+                if (sanity)
+                {
+                    return mbrPartition;
+                }
             }
 
             return new NoPartitionTable(this);
