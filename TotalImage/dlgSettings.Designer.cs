@@ -28,13 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Raw sector images (.IMG, .IMA, .VFD, .FLP)");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("WinImage compressed image (.IMZ)");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Anex86 disk images (.FDI, .FDM, .HDI, .HDM)");
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("IBM SafeDskF image (.DSK)");
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("DiskDupe image (.DDI)");
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.pnlBottom = new System.Windows.Forms.Panel();
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.gbxMisc = new System.Windows.Forms.GroupBox();
+            this.btnClearRecent = new System.Windows.Forms.Button();
+            this.btnReset = new System.Windows.Forms.Button();
+            this.gbxBehavior = new System.Windows.Forms.GroupBox();
             this.tabView = new System.Windows.Forms.TabPage();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lstSortOrder = new System.Windows.Forms.ComboBox();
+            this.lblSortOrder = new System.Windows.Forms.Label();
             this.cbxShowDeletedItems = new System.Windows.Forms.CheckBox();
             this.cbxShowStatusBar = new System.Windows.Forms.CheckBox();
             this.cbxShowDirectoryTree = new System.Windows.Forms.CheckBox();
@@ -56,18 +66,17 @@
             this.lblExtractPath = new System.Windows.Forms.Label();
             this.cbxExtractAsk = new System.Windows.Forms.CheckBox();
             this.tabIntegration = new System.Windows.Forms.TabPage();
-            this.cbxShellIntegration = new System.Windows.Forms.CheckBox();
-            this.cbxFileAssociations = new System.Windows.Forms.CheckBox();
-            this.tabMisc = new System.Windows.Forms.TabPage();
-            this.btnClearRecent = new System.Windows.Forms.Button();
-            this.btnReset = new System.Windows.Forms.Button();
-            this.lstSortOrder = new System.Windows.Forms.ComboBox();
+            this.cbxSelectAll = new System.Windows.Forms.CheckBox();
+            this.lstFileTypes = new System.Windows.Forms.ListView();
+            this.columnType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lblFileAssociations = new System.Windows.Forms.Label();
             this.pnlBottom.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.tabGeneral.SuspendLayout();
+            this.gbxMisc.SuspendLayout();
             this.tabView.SuspendLayout();
             this.tabExtraction.SuspendLayout();
             this.tabIntegration.SuspendLayout();
-            this.tabMisc.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCancel
@@ -115,7 +124,6 @@
             this.tabs.Controls.Add(this.tabView);
             this.tabs.Controls.Add(this.tabExtraction);
             this.tabs.Controls.Add(this.tabIntegration);
-            this.tabs.Controls.Add(this.tabMisc);
             this.tabs.Location = new System.Drawing.Point(12, 12);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
@@ -124,6 +132,8 @@
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.gbxMisc);
+            this.tabGeneral.Controls.Add(this.gbxBehavior);
             this.tabGeneral.Location = new System.Drawing.Point(4, 24);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
@@ -132,10 +142,50 @@
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
+            // gbxMisc
+            // 
+            this.gbxMisc.Controls.Add(this.btnClearRecent);
+            this.gbxMisc.Controls.Add(this.btnReset);
+            this.gbxMisc.Location = new System.Drawing.Point(6, 199);
+            this.gbxMisc.Name = "gbxMisc";
+            this.gbxMisc.Size = new System.Drawing.Size(441, 59);
+            this.gbxMisc.TabIndex = 1;
+            this.gbxMisc.TabStop = false;
+            this.gbxMisc.Text = "Miscellaneous";
+            // 
+            // btnClearRecent
+            // 
+            this.btnClearRecent.Location = new System.Drawing.Point(121, 22);
+            this.btnClearRecent.Name = "btnClearRecent";
+            this.btnClearRecent.Size = new System.Drawing.Size(147, 26);
+            this.btnClearRecent.TabIndex = 5;
+            this.btnClearRecent.Text = "Clear recent images list";
+            this.btnClearRecent.UseVisualStyleBackColor = true;
+            this.btnClearRecent.Click += new System.EventHandler(this.btnClearRecent_Click);
+            // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(6, 22);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(109, 26);
+            this.btnReset.TabIndex = 4;
+            this.btnReset.Text = "Reset to defaults";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            // 
+            // gbxBehavior
+            // 
+            this.gbxBehavior.Location = new System.Drawing.Point(6, 6);
+            this.gbxBehavior.Name = "gbxBehavior";
+            this.gbxBehavior.Size = new System.Drawing.Size(441, 187);
+            this.gbxBehavior.TabIndex = 0;
+            this.gbxBehavior.TabStop = false;
+            this.gbxBehavior.Text = "Behavior";
+            // 
             // tabView
             // 
             this.tabView.Controls.Add(this.lstSortOrder);
-            this.tabView.Controls.Add(this.label1);
+            this.tabView.Controls.Add(this.lblSortOrder);
             this.tabView.Controls.Add(this.cbxShowDeletedItems);
             this.tabView.Controls.Add(this.cbxShowStatusBar);
             this.tabView.Controls.Add(this.cbxShowDirectoryTree);
@@ -155,14 +205,27 @@
             this.tabView.Text = "View";
             this.tabView.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // lstSortOrder
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(211, 66);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(134, 15);
-            this.label1.TabIndex = 18;
-            this.label1.Text = "Sorting order for file list:";
+            this.lstSortOrder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstSortOrder.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.lstSortOrder.FormattingEnabled = true;
+            this.lstSortOrder.Items.AddRange(new object[] {
+            "Ascending",
+            "Descending"});
+            this.lstSortOrder.Location = new System.Drawing.Point(214, 84);
+            this.lstSortOrder.Name = "lstSortOrder";
+            this.lstSortOrder.Size = new System.Drawing.Size(170, 23);
+            this.lstSortOrder.TabIndex = 19;
+            // 
+            // lblSortOrder
+            // 
+            this.lblSortOrder.AutoSize = true;
+            this.lblSortOrder.Location = new System.Drawing.Point(211, 66);
+            this.lblSortOrder.Name = "lblSortOrder";
+            this.lblSortOrder.Size = new System.Drawing.Size(134, 15);
+            this.lblSortOrder.TabIndex = 18;
+            this.lblSortOrder.Text = "Sorting order for file list:";
             // 
             // cbxShowDeletedItems
             // 
@@ -230,7 +293,7 @@
             "Kibibytes (KiB = 1024 B)",
             "Megabytes (MB = 1000 KB)",
             "Mebibytes (MiB = 1024 KiB)"});
-            this.lstSizeUnits.Location = new System.Drawing.Point(214, 31);
+            this.lstSizeUnits.Location = new System.Drawing.Point(214, 33);
             this.lstSizeUnits.Name = "lstSizeUnits";
             this.lstSizeUnits.Size = new System.Drawing.Size(170, 23);
             this.lstSizeUnits.TabIndex = 11;
@@ -238,7 +301,7 @@
             // lblSizeUnits
             // 
             this.lblSizeUnits.AutoSize = true;
-            this.lblSizeUnits.Location = new System.Drawing.Point(211, 13);
+            this.lblSizeUnits.Location = new System.Drawing.Point(211, 15);
             this.lblSizeUnits.Name = "lblSizeUnits";
             this.lblSizeUnits.Size = new System.Drawing.Size(59, 15);
             this.lblSizeUnits.TabIndex = 10;
@@ -279,7 +342,7 @@
             "List",
             "Details",
             "Tiles"});
-            this.lstViewType.Location = new System.Drawing.Point(18, 31);
+            this.lstViewType.Location = new System.Drawing.Point(18, 33);
             this.lstViewType.Name = "lstViewType";
             this.lstViewType.Size = new System.Drawing.Size(170, 23);
             this.lstViewType.TabIndex = 7;
@@ -287,7 +350,7 @@
             // lblViewType
             // 
             this.lblViewType.AutoSize = true;
-            this.lblViewType.Location = new System.Drawing.Point(15, 13);
+            this.lblViewType.Location = new System.Drawing.Point(15, 15);
             this.lblViewType.Name = "lblViewType";
             this.lblViewType.Size = new System.Drawing.Size(144, 15);
             this.lblViewType.TabIndex = 6;
@@ -361,7 +424,7 @@
             // btnBrowse
             // 
             this.btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnBrowse.Location = new System.Drawing.Point(372, 65);
+            this.btnBrowse.Location = new System.Drawing.Point(364, 65);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(75, 25);
             this.btnBrowse.TabIndex = 3;
@@ -373,13 +436,13 @@
             // 
             this.txtExtractPath.Location = new System.Drawing.Point(15, 66);
             this.txtExtractPath.Name = "txtExtractPath";
-            this.txtExtractPath.Size = new System.Drawing.Size(351, 23);
+            this.txtExtractPath.Size = new System.Drawing.Size(343, 23);
             this.txtExtractPath.TabIndex = 2;
             // 
             // lblExtractPath
             // 
             this.lblExtractPath.AutoSize = true;
-            this.lblExtractPath.Location = new System.Drawing.Point(12, 47);
+            this.lblExtractPath.Location = new System.Drawing.Point(12, 48);
             this.lblExtractPath.Name = "lblExtractPath";
             this.lblExtractPath.Size = new System.Drawing.Size(269, 15);
             this.lblExtractPath.TabIndex = 1;
@@ -389,7 +452,7 @@
             // 
             this.cbxExtractAsk.AutoSize = true;
             this.cbxExtractAsk.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxExtractAsk.Location = new System.Drawing.Point(15, 16);
+            this.cbxExtractAsk.Location = new System.Drawing.Point(15, 15);
             this.cbxExtractAsk.Name = "cbxExtractAsk";
             this.cbxExtractAsk.Size = new System.Drawing.Size(206, 20);
             this.cbxExtractAsk.TabIndex = 0;
@@ -399,8 +462,9 @@
             // 
             // tabIntegration
             // 
-            this.tabIntegration.Controls.Add(this.cbxShellIntegration);
-            this.tabIntegration.Controls.Add(this.cbxFileAssociations);
+            this.tabIntegration.Controls.Add(this.cbxSelectAll);
+            this.tabIntegration.Controls.Add(this.lstFileTypes);
+            this.tabIntegration.Controls.Add(this.lblFileAssociations);
             this.tabIntegration.Location = new System.Drawing.Point(4, 24);
             this.tabIntegration.Name = "tabIntegration";
             this.tabIntegration.Padding = new System.Windows.Forms.Padding(3);
@@ -409,74 +473,61 @@
             this.tabIntegration.Text = "Integration";
             this.tabIntegration.UseVisualStyleBackColor = true;
             // 
-            // cbxShellIntegration
+            // cbxSelectAll
             // 
-            this.cbxShellIntegration.AutoSize = true;
-            this.cbxShellIntegration.Enabled = false;
-            this.cbxShellIntegration.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShellIntegration.Location = new System.Drawing.Point(15, 41);
-            this.cbxShellIntegration.Name = "cbxShellIntegration";
-            this.cbxShellIntegration.Size = new System.Drawing.Size(351, 20);
-            this.cbxShellIntegration.TabIndex = 1;
-            this.cbxShellIntegration.Text = "Add TotalImage to the right-click menu in Windows Explorer";
-            this.cbxShellIntegration.UseVisualStyleBackColor = true;
+            this.cbxSelectAll.AutoSize = true;
+            this.cbxSelectAll.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxSelectAll.Location = new System.Drawing.Point(18, 149);
+            this.cbxSelectAll.Name = "cbxSelectAll";
+            this.cbxSelectAll.Size = new System.Drawing.Size(78, 20);
+            this.cbxSelectAll.TabIndex = 2;
+            this.cbxSelectAll.Text = "Select all";
+            this.cbxSelectAll.UseVisualStyleBackColor = true;
+            this.cbxSelectAll.Click += new System.EventHandler(this.cbxSelectAll_Click);
             // 
-            // cbxFileAssociations
+            // lstFileTypes
             // 
-            this.cbxFileAssociations.AutoSize = true;
-            this.cbxFileAssociations.Enabled = false;
-            this.cbxFileAssociations.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxFileAssociations.Location = new System.Drawing.Point(15, 15);
-            this.cbxFileAssociations.Name = "cbxFileAssociations";
-            this.cbxFileAssociations.Size = new System.Drawing.Size(291, 20);
-            this.cbxFileAssociations.TabIndex = 0;
-            this.cbxFileAssociations.Text = "Associate TotalImage with all supported file types";
-            this.cbxFileAssociations.UseVisualStyleBackColor = true;
+            this.lstFileTypes.AutoArrange = false;
+            this.lstFileTypes.CheckBoxes = true;
+            this.lstFileTypes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnType});
+            this.lstFileTypes.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.lstFileTypes.HideSelection = false;
+            listViewItem1.StateImageIndex = 0;
+            listViewItem2.StateImageIndex = 0;
+            listViewItem3.StateImageIndex = 0;
+            listViewItem4.StateImageIndex = 0;
+            listViewItem5.StateImageIndex = 0;
+            this.lstFileTypes.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4,
+            listViewItem5});
+            this.lstFileTypes.Location = new System.Drawing.Point(18, 33);
+            this.lstFileTypes.MultiSelect = false;
+            this.lstFileTypes.Name = "lstFileTypes";
+            this.lstFileTypes.ShowGroups = false;
+            this.lstFileTypes.Size = new System.Drawing.Size(416, 110);
+            this.lstFileTypes.TabIndex = 1;
+            this.lstFileTypes.UseCompatibleStateImageBehavior = false;
+            this.lstFileTypes.View = System.Windows.Forms.View.Details;
+            this.lstFileTypes.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lstFileTypes_ItemChecked);
+            this.lstFileTypes.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lstFileTypes_ItemSelectionChanged);
             // 
-            // tabMisc
+            // columnType
             // 
-            this.tabMisc.Controls.Add(this.btnClearRecent);
-            this.tabMisc.Controls.Add(this.btnReset);
-            this.tabMisc.Location = new System.Drawing.Point(4, 24);
-            this.tabMisc.Name = "tabMisc";
-            this.tabMisc.Padding = new System.Windows.Forms.Padding(3);
-            this.tabMisc.Size = new System.Drawing.Size(453, 454);
-            this.tabMisc.TabIndex = 4;
-            this.tabMisc.Text = "Miscellaneous";
-            this.tabMisc.UseVisualStyleBackColor = true;
+            this.columnType.Text = "";
+            this.columnType.Width = 410;
             // 
-            // btnClearRecent
+            // lblFileAssociations
             // 
-            this.btnClearRecent.Location = new System.Drawing.Point(141, 16);
-            this.btnClearRecent.Name = "btnClearRecent";
-            this.btnClearRecent.Size = new System.Drawing.Size(147, 26);
-            this.btnClearRecent.TabIndex = 3;
-            this.btnClearRecent.Text = "Clear recent images list";
-            this.btnClearRecent.UseVisualStyleBackColor = true;
-            this.btnClearRecent.Click += new System.EventHandler(this.btnClearRecent_Click);
-            // 
-            // btnReset
-            // 
-            this.btnReset.Location = new System.Drawing.Point(16, 16);
-            this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(109, 26);
-            this.btnReset.TabIndex = 0;
-            this.btnReset.Text = "Reset to defaults";
-            this.btnReset.UseVisualStyleBackColor = true;
-            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
-            // 
-            // lstSortOrder
-            // 
-            this.lstSortOrder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.lstSortOrder.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.lstSortOrder.FormattingEnabled = true;
-            this.lstSortOrder.Items.AddRange(new object[] {
-            "Ascending",
-            "Descending"});
-            this.lstSortOrder.Location = new System.Drawing.Point(214, 84);
-            this.lstSortOrder.Name = "lstSortOrder";
-            this.lstSortOrder.Size = new System.Drawing.Size(170, 23);
-            this.lstSortOrder.TabIndex = 19;
+            this.lblFileAssociations.AutoSize = true;
+            this.lblFileAssociations.Location = new System.Drawing.Point(15, 15);
+            this.lblFileAssociations.Name = "lblFileAssociations";
+            this.lblFileAssociations.Size = new System.Drawing.Size(270, 15);
+            this.lblFileAssociations.TabIndex = 0;
+            this.lblFileAssociations.Text = "Associate the following file types with TotalImage:";
             // 
             // dlgSettings
             // 
@@ -500,13 +551,14 @@
             this.Load += new System.EventHandler(this.dlgSettings_Load);
             this.pnlBottom.ResumeLayout(false);
             this.tabs.ResumeLayout(false);
+            this.tabGeneral.ResumeLayout(false);
+            this.gbxMisc.ResumeLayout(false);
             this.tabView.ResumeLayout(false);
             this.tabView.PerformLayout();
             this.tabExtraction.ResumeLayout(false);
             this.tabExtraction.PerformLayout();
             this.tabIntegration.ResumeLayout(false);
             this.tabIntegration.PerformLayout();
-            this.tabMisc.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -521,9 +573,6 @@
         private System.Windows.Forms.TabPage tabIntegration;
         private System.Windows.Forms.TabPage tabView;
         private System.Windows.Forms.TabPage tabExtraction;
-        private System.Windows.Forms.TabPage tabMisc;
-        private System.Windows.Forms.Button btnReset;
-        private System.Windows.Forms.Button btnClearRecent;
         private System.Windows.Forms.CheckBox cbxExtractAsk;
         private System.Windows.Forms.Label lblExtractPath;
         private System.Windows.Forms.Button btnBrowse;
@@ -532,8 +581,6 @@
         private System.Windows.Forms.RadioButton rbnExtractPreserve;
         private System.Windows.Forms.RadioButton rbnExtractFlat;
         private System.Windows.Forms.CheckBox cbxOpenDir;
-        private System.Windows.Forms.CheckBox cbxFileAssociations;
-        private System.Windows.Forms.CheckBox cbxShellIntegration;
         private System.Windows.Forms.ComboBox lstSizeUnits;
         private System.Windows.Forms.Label lblSizeUnits;
         private System.Windows.Forms.ComboBox lstSortBy;
@@ -545,7 +592,15 @@
         private System.Windows.Forms.CheckBox cbxShowDirectoryTree;
         private System.Windows.Forms.CheckBox cbxShowStatusBar;
         private System.Windows.Forms.CheckBox cbxShowDeletedItems;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblSortOrder;
         private System.Windows.Forms.ComboBox lstSortOrder;
+        private System.Windows.Forms.GroupBox gbxBehavior;
+        private System.Windows.Forms.Label lblFileAssociations;
+        private System.Windows.Forms.ListView lstFileTypes;
+        private System.Windows.Forms.ColumnHeader columnType;
+        private System.Windows.Forms.CheckBox cbxSelectAll;
+        private System.Windows.Forms.GroupBox gbxMisc;
+        private System.Windows.Forms.Button btnClearRecent;
+        private System.Windows.Forms.Button btnReset;
     }
 }

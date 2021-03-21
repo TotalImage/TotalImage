@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace TotalImage
 {
@@ -77,10 +78,32 @@ namespace TotalImage
                     DefaultButton = TaskDialogButton.OK
                 });
             }
+#elif NET48
+            DialogResult result = MessageBox.Show("All settings will be reset to their default values. Are you sure you want to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if(result == DialogResult.Yes)
+            {
+                Settings.LoadDefaults();
+                Settings.Save();
+
+                MessageBox.Show("All settings were successfully reset to their default values.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            }
 #endif
+
+            SyncUIWithSettings();
         }
 
         private void dlgSettings_Load(object sender, System.EventArgs e)
+        {
+            /* I'm putting this here since CurrentSettings may be outdated if multiple instances are running and one of them changes settings
+            /* and saves them to disk. With this in place, at least they'll be updated for the current instance if the user then clicks OK. */
+            Settings.Load();
+
+            SyncUIWithSettings();
+        }
+
+        //Syncs the dialog UI with CurrentSettings
+        private void SyncUIWithSettings()
         {
             txtExtractPath.Text = Settings.CurrentSettings.DefaultExtractPath;
             cbxOpenDir.Checked = Settings.CurrentSettings.OpenFolderAfterExtract;
@@ -112,8 +135,8 @@ namespace TotalImage
 
             switch (Settings.CurrentSettings.DefaultExtractType)
             {
-                case Settings.FolderExtract.AlwaysAsk: 
-                    { 
+                case Settings.FolderExtract.AlwaysAsk:
+                    {
                         cbxExtractAsk.Checked = true;
                         txtExtractPath.Enabled = false;
                         rbnExtractFlat.Enabled = false;
@@ -121,7 +144,8 @@ namespace TotalImage
                         rbnIgnoreFolders.Enabled = false;
                         btnBrowse.Enabled = false;
                         cbxOpenDir.Enabled = false;
-                    } break;
+                    }
+                    break;
                 case Settings.FolderExtract.Ignore:
                     {
                         cbxExtractAsk.Checked = false;
@@ -132,7 +156,8 @@ namespace TotalImage
                         btnBrowse.Enabled = true;
                         cbxOpenDir.Enabled = true;
                         rbnIgnoreFolders.Checked = true;
-                    } break;
+                    }
+                    break;
                 case Settings.FolderExtract.Merge:
                     {
                         cbxExtractAsk.Checked = false;
@@ -143,7 +168,8 @@ namespace TotalImage
                         btnBrowse.Enabled = true;
                         cbxOpenDir.Enabled = true;
                         rbnExtractFlat.Checked = true;
-                    } break;
+                    }
+                    break;
                 case Settings.FolderExtract.Preserve:
                     {
                         cbxExtractAsk.Checked = false;
@@ -157,6 +183,14 @@ namespace TotalImage
                     }
                     break;
             }
+
+            //CheckFileAssociations();
+        }
+
+        //TODO: This method should check the registry for current file associations and update the UI accordingly
+        private void CheckFileAssociations()
+        {
+            throw new NotImplementedException();
         }
 
         private void btnBrowse_Click(object sender, System.EventArgs e)
@@ -218,6 +252,69 @@ namespace TotalImage
                 Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.AlwaysAsk;
 
             Settings.Save();
+        }
+
+        private void lstFileTypes_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.Item.Selected)
+            {
+                e.Item.Checked = !e.Item.Checked;
+
+                if (lstFileTypes.CheckedItems.Count == lstFileTypes.Items.Count)
+                {
+                    cbxSelectAll.CheckState = CheckState.Checked;
+                    cbxSelectAll.Checked = true;
+                }
+                else if (lstFileTypes.CheckedItems.Count == 0)
+                {
+                    cbxSelectAll.CheckState = CheckState.Unchecked;
+                    cbxSelectAll.Checked = false;
+                }
+                else
+                {
+                    cbxSelectAll.CheckState = CheckState.Indeterminate;
+                    cbxSelectAll.Checked = true;
+                }
+            }
+        }
+
+        private void lstFileTypes_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            if (lstFileTypes.CheckedItems.Count == lstFileTypes.Items.Count)
+            {
+                cbxSelectAll.CheckState = CheckState.Checked;
+                cbxSelectAll.Checked = true;
+            }
+            else if (lstFileTypes.CheckedItems.Count == 0)
+            {
+                cbxSelectAll.CheckState = CheckState.Unchecked;
+                cbxSelectAll.Checked = false;
+            }
+            else
+            {
+                cbxSelectAll.CheckState = CheckState.Indeterminate;
+                cbxSelectAll.Checked = true;
+            }
+        }
+
+        private void cbxSelectAll_Click(object sender, System.EventArgs e)
+        {
+            if (cbxSelectAll.Checked)
+            {
+                foreach (ListViewItem lvi in lstFileTypes.Items)
+                {
+                    lvi.Selected = false;
+                    lvi.Checked = true;
+                }
+            }
+            else if (!cbxSelectAll.Checked)
+            {
+                foreach (ListViewItem lvi in lstFileTypes.Items)
+                {
+                    lvi.Selected = false;
+                    lvi.Checked = false;
+                }
+            }
         }
     }
 }

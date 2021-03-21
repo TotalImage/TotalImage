@@ -95,10 +95,12 @@ namespace TotalImage
             CurrentSettings.FilesSortingColumn = 0;
             CurrentSettings.FilesSortOrder = SortOrder.Ascending;
             CurrentSettings.FilesView = View.Details;
-            CurrentSettings.SplitterDistance = 280;
+
+            //This should probably be preserved...
+            /*CurrentSettings.SplitterDistance = 280;
             CurrentSettings.WindowPosition = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
             CurrentSettings.WindowSize = new Size(800, 600);
-            CurrentSettings.WindowState = FormWindowState.Normal;
+            CurrentSettings.WindowState = FormWindowState.Normal;*/
         }
 
         //Saves all settings to permanent storage (settings.json)
