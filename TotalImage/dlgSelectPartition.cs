@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using TotalImage.Partitions;
 
 namespace TotalImage
@@ -45,9 +46,8 @@ namespace TotalImage
                 lvi.SubItems.Add(entry.FileSystem.Format);
                 lvi.SubItems.Add(entry.Offset.ToString());
                 lvi.SubItems.Add((entry.Offset + entry.Length).ToString());
-                lvi.SubItems.Add(entry.Length.ToString());
+                lvi.SubItems.Add((entry.Length / (int)Settings.CurrentSettings.SizeUnits).ToString() + " " + Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
                 lvi.SubItems.Add(((MbrPartitionTable.MbrPartitionEntry)entry).Active.ToString());
-
                 lstPartitions.Items.Add(lvi);
             }
         }

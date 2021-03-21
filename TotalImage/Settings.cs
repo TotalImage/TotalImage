@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
 using System.Drawing;
+using System.ComponentModel.DataAnnotations;
 
 namespace TotalImage
 {

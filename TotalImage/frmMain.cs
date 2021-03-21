@@ -1468,8 +1468,7 @@ namespace TotalImage
                 {
                     for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
                     {
-                        selectPartitionToolStripComboBox.Items.Add(i.ToString() + ": " + image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')
-                            + " (" + image.PartitionTable.Partitions[i].FileSystem.Format + ", " + image.PartitionTable.Partitions[i].Length + ")");
+                        selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.Format}, {image.PartitionTable.Partitions[i].Length / (int)Settings.CurrentSettings.SizeUnits} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)})");
 
                         if (i == CurrentPartitionIndex)
                         {
@@ -1733,6 +1732,7 @@ namespace TotalImage
             image = null;
             lstDirectories.Nodes.Clear();
             lstFiles.Items.Clear();
+            selectPartitionToolStripComboBox.Items.Clear();
             DisableUI();
         }
 
