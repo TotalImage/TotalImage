@@ -273,7 +273,8 @@ namespace TotalImage.FileSystems.FAT
 
                 uint tracks = (uint)(bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack);
 
-                if (tracks == 0 || tracks > 82)
+                // TODO: This probably needs reviewing to better check BPB params match the correct size
+                if (tracks == 0)
                 {
                     throw new InvalidDataException("BPB paramaters don't match image size");
                 }
