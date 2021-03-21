@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using TotalImage.FileSystems;
 using TotalImage.FileSystems.FAT;
 using TotalImage.Partitions;
 using File = System.IO.File;
