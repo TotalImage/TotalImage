@@ -703,7 +703,7 @@ namespace TotalImage
                     throw new NotImplementedException("This feature is not implemented yet.");
                 }
             }
-            else if(item.GetCurrentParent() == cmsDirTree)
+            else if (item.GetCurrentParent() == cmsDirTree)
             {
                 using dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstDirectories.SelectedNode.Tag);
                 dlg.ShowDialog();
@@ -1282,7 +1282,8 @@ namespace TotalImage
                     subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder (Hidden)");
                     subnode.ForeColor = Color.Gray;
                 }
-                else {
+                else
+                {
                     subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 }
 
@@ -1427,11 +1428,39 @@ namespace TotalImage
                     break;
             }
 
+            int partitionIndex = 0;
+            if (image.PartitionTable.Partitions.Count == 0)
+            {
+                MessageBox.Show("There are no partitions in the selected image", "Error loading HDD image", MessageBoxButtons.OK);
+                return;
+            }
+            else if (image.PartitionTable.Partitions.Count > 1)
+            {
+                dlgSelectPartition selectFrm = new dlgSelectPartition()
+                {
+                    PartitionTable = image.PartitionTable
+                };
+
+                selectFrm.ShowDialog();
+                partitionIndex = selectFrm.SelectedEntry;
+            }
+
+            LoadPartitionInCurrentImage(partitionIndex);
+        }
+
+        private void LoadPartitionInCurrentImage(int index)
+        {
+            if (image == null)
+            {
+                return;
+            }
+
             var root = new TreeNode(@"\");
             root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            root.Tag = image.PartitionTable.Partitions[0].FileSystem.RootDirectory;
-            PopulateTreeView(root, image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+
+            root.Tag = image.PartitionTable.Partitions[index].FileSystem.RootDirectory;
+            PopulateTreeView(root, image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
 
             lstDirectories.BeginUpdate();
             lstDirectories.Nodes.Clear();
@@ -1443,7 +1472,7 @@ namespace TotalImage
             lstFiles.BeginUpdate();
             lstFiles.ListViewItemSorter = null;
             lstFiles.Items.Clear();
-            PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+            PopulateListView(image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
             lstFiles.ListViewItemSorter = sorter;
             lstFiles.EndUpdate();
 

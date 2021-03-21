@@ -1,9 +1,12 @@
 ﻿using System.Windows.Forms;
+using TotalImage.Partitions;
 
 namespace TotalImage
 {
     public partial class dlgSelectPartition : Form
     {
+        public PartitionTable PartitionTable { get; set; }
+
         public bool ReadOnly { get; private set; }
         public int SelectedEntry { get; private set; }
 
@@ -28,6 +31,23 @@ namespace TotalImage
         {
             ReadOnly = cbxReadOnly.Checked;
             SelectedEntry = int.Parse(lstPartitions.SelectedItems[0].Text);
+        }
+
+        private void dlgSelectPartition_Load(object sender, System.EventArgs e)
+        {
+            lstPartitions.Items.Clear();
+
+            for (int i = 0; i < PartitionTable.Partitions.Count; i++)
+            {
+                var entry = PartitionTable.Partitions[i];
+                ListViewItem lvi = new ListViewItem(i.ToString());
+                lvi.SubItems.Add("");
+                lvi.SubItems.Add(entry.Offset.ToString());
+                lvi.SubItems.Add((entry.Offset + entry.Length).ToString());
+                lvi.SubItems.Add(entry.Length.ToString());
+
+                lstPartitions.Items.Add(lvi);
+            }
         }
     }
 }

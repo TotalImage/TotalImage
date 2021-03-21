@@ -98,7 +98,7 @@ namespace TotalImage.Containers
                 {
                     sanity &= (partition.Offset >= lastOffset);
                     sanity &= (partition.Length > 0);
-                    lastOffset += partition.Offset + partition.Length;
+                    lastOffset = partition.Offset + partition.Length;
                     sanity &= (lastOffset <= br.BaseStream.Length);
                 }
 
