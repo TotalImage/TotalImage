@@ -8,6 +8,7 @@ namespace TotalImage
         [STAThread]
         static void Main()
         {
+            Settings.Load();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmMain());

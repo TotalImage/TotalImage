@@ -30,10 +30,7 @@ namespace TotalImage
         #region Event Handlers
         private void frmMain_Load(object sender, EventArgs e)
         {
-            Settings.Load();
-            PopulateRecentList();
-
-            lstFiles.ListViewItemSorter = sorter;
+            SyncUIWithSettings();
 
             //Because designer doesn't have the Enter key in the list for some reason...
             propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter;
@@ -41,10 +38,35 @@ namespace TotalImage
             propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
 
 #if !DEBUG
-                DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
+            DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
 #endif
             GetFolderIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+
+            //This is a workaround because the designer is apparently not setting the ColumnHeader.Name attributes...
+            lstFiles.Columns[0].Name = "clmName";
+            lstFiles.Columns[1].Name = "clmType";
+            lstFiles.Columns[2].Name = "clmSize";
+            lstFiles.Columns[3].Name = "clmModified";
+        }
+
+        //Syncs the main form UI with the current settings
+        private void SyncUIWithSettings()
+        {
+            this.WindowState = Settings.CurrentSettings.WindowState;
+            this.Location = Settings.CurrentSettings.WindowPosition;
+            this.Size = Settings.CurrentSettings.WindowSize;
+            lstFiles.View = Settings.CurrentSettings.FilesView;
+            splitContainer.Panel1Collapsed = !Settings.CurrentSettings.ShowDirectoryTree;
+            statusBar.Visible = Settings.CurrentSettings.ShowStatusBar;
+            commandBar.Visible = Settings.CurrentSettings.ShowCommandBar;
+            sorter.Order = Settings.CurrentSettings.FilesSortOrder;
+            sorter.SortColumn = Settings.CurrentSettings.FilesSortingColumn;
+            lstFiles.Sort();
+            lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
+            splitContainer.SplitterDistance = Settings.CurrentSettings.SplitterDistance;
+
+            PopulateRecentList();
         }
 
         //Injects a folder into the image
@@ -200,82 +222,32 @@ namespace TotalImage
 
         private void viewLargeIcons_Click(object sender, EventArgs e)
         {
-            largeIconsToolStripMenuItem.Checked = true;
-            largeIconsToolStripMenuItem1.Checked = true;
-            smallIconsToolStripMenuItem.Checked = false;
-            smallIconsToolStripMenuItem1.Checked = false;
-            detailsToolStripMenuItem.Checked = false;
-            detailsToolStripMenuItem1.Checked = false;
-            tilesToolStripMenuItem.Checked = false;
-            tilesToolStripMenuItem1.Checked = false;
-            listToolStripMenuItem.Checked = false;
-            listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.LargeIcon;
-            Settings.FilesView = View.LargeIcon;
+            Settings.CurrentSettings.FilesView = View.LargeIcon;
         }
 
         private void viewSmallIcons_Click(object sender, EventArgs e)
         {
-            largeIconsToolStripMenuItem.Checked = false;
-            largeIconsToolStripMenuItem1.Checked = false;
-            smallIconsToolStripMenuItem.Checked = true;
-            smallIconsToolStripMenuItem1.Checked = true;
-            detailsToolStripMenuItem.Checked = false;
-            detailsToolStripMenuItem1.Checked = false;
-            tilesToolStripMenuItem.Checked = false;
-            tilesToolStripMenuItem1.Checked = false;
-            listToolStripMenuItem.Checked = false;
-            listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.SmallIcon;
-            Settings.FilesView = View.SmallIcon;
+            Settings.CurrentSettings.FilesView = View.SmallIcon;
         }
 
         private void viewList_Click(object sender, EventArgs e)
         {
-            largeIconsToolStripMenuItem.Checked = false;
-            largeIconsToolStripMenuItem1.Checked = false;
-            smallIconsToolStripMenuItem.Checked = false;
-            smallIconsToolStripMenuItem1.Checked = false;
-            detailsToolStripMenuItem.Checked = false;
-            detailsToolStripMenuItem1.Checked = false;
-            tilesToolStripMenuItem.Checked = false;
-            tilesToolStripMenuItem1.Checked = false;
-            listToolStripMenuItem.Checked = true;
-            listToolStripMenuItem1.Checked = true;
             lstFiles.View = View.List;
-            Settings.FilesView = View.List;
+            Settings.CurrentSettings.FilesView = View.List;
         }
 
         private void viewDetails_Click(object sender, EventArgs e)
         {
-            largeIconsToolStripMenuItem.Checked = false;
-            largeIconsToolStripMenuItem1.Checked = false;
-            smallIconsToolStripMenuItem.Checked = false;
-            smallIconsToolStripMenuItem1.Checked = false;
-            detailsToolStripMenuItem.Checked = true;
-            detailsToolStripMenuItem1.Checked = true;
-            tilesToolStripMenuItem.Checked = false;
-            tilesToolStripMenuItem1.Checked = false;
-            listToolStripMenuItem.Checked = false;
-            listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.Details;
-            Settings.FilesView = View.Details;
+            Settings.CurrentSettings.FilesView = View.Details;
         }
 
         private void viewTiles_Click(object sender, EventArgs e)
         {
-            largeIconsToolStripMenuItem.Checked = false;
-            largeIconsToolStripMenuItem1.Checked = false;
-            smallIconsToolStripMenuItem.Checked = false;
-            smallIconsToolStripMenuItem1.Checked = false;
-            detailsToolStripMenuItem.Checked = false;
-            detailsToolStripMenuItem1.Checked = false;
-            tilesToolStripMenuItem.Checked = true;
-            tilesToolStripMenuItem1.Checked = true;
-            listToolStripMenuItem.Checked = false;
-            listToolStripMenuItem1.Checked = false;
             lstFiles.View = View.Tile;
-            Settings.FilesView = View.Tile;
+            Settings.CurrentSettings.FilesView = View.Tile;
         }
 
         //Deletes a file or folder
@@ -446,33 +418,19 @@ namespace TotalImage
         private void toggleCommandBar_Click(object sender, EventArgs e)
         {
             commandBar.Visible = !commandBar.Visible;
-            commandBarToolStripMenuItem.Checked = commandBar.Visible;
-            commandBarToolStripMenuItem1.Checked = commandBar.Visible;
-            Settings.ShowCommandBar = commandBar.Visible;
+            Settings.CurrentSettings.ShowCommandBar = commandBar.Visible;
         }
 
         private void toggleDirectoryTree_Click(object sender, EventArgs e)
         {
             splitContainer.Panel1Collapsed = !splitContainer.Panel1Collapsed;
-            directoryTreeToolStripMenuItem.Checked = !splitContainer.Panel1Collapsed;
-            directoryTreeToolStripMenuItem1.Checked = !splitContainer.Panel1Collapsed;
-            Settings.ShowDirectoryTree = !splitContainer.Panel1Collapsed;
-        }
-
-        private void toggleFileList_Click(object sender, EventArgs e)
-        {
-            splitContainer.Panel2Collapsed = !splitContainer.Panel2Collapsed;
-            fileListToolStripMenuItem.Checked = !splitContainer.Panel2Collapsed;
-            fileListToolStripMenuItem1.Checked = !splitContainer.Panel2Collapsed;
-            Settings.ShowFileList = !splitContainer.Panel2Collapsed;
+            Settings.CurrentSettings.ShowDirectoryTree = !splitContainer.Panel1Collapsed;
         }
 
         private void toggleStatusBar_Click(object sender, EventArgs e)
         {
             statusBar.Visible = !statusBar.Visible;
-            statusBarToolStripMenuItem.Checked = statusBar.Visible;
-            statusBarToolStripMenuItem1.Checked = statusBar.Visible;
-            Settings.ShowStatusBar = statusBar.Visible;
+            Settings.CurrentSettings.ShowStatusBar = statusBar.Visible;
         }
 
         //TODO: Implement the "save changes first" code path
@@ -511,12 +469,6 @@ namespace TotalImage
         {
             using dlgAbout dlg = new dlgAbout();
             dlg.ShowDialog();
-        }
-
-        private void menuBarToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            menuBar.Visible = menuBarToolStripMenuItem1.Checked;
-            menuBarToolStripMenuItem.Checked = menuBarToolStripMenuItem1.Checked;
         }
 
         //Extracts file(s) or folder(s) from the image to the specified path
@@ -681,7 +633,10 @@ namespace TotalImage
         private void settings_Click(object sender, EventArgs e)
         {
             using dlgSettings dlg = new dlgSettings();
-            dlg.ShowDialog();
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+                SyncUIWithSettings();
+            }
         }
 
         //TODO: Implement the Properties dialog for multiple selected objects like Windows does it
@@ -760,6 +715,9 @@ namespace TotalImage
             // Perform the sort with these new sort options.
             lstFiles.Sort();
             lstFiles.SetSortIcon(sorter.SortColumn, sorter.Order);
+
+            Settings.CurrentSettings.FilesSortingColumn = e.Column;
+            Settings.CurrentSettings.FilesSortOrder = sorter.Order;
         }
 
         //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
@@ -871,16 +829,8 @@ namespace TotalImage
 
         private void sortByType_Click(object sender, EventArgs e)
         {
-            nameToolStripMenuItem.Checked = false;
-            nameToolStripMenuItem1.Checked = false;
-            typeToolStripMenuItem.Checked = true;
-            typeToolStripMenuItem1.Checked = true;
-            sizeToolStripMenuItem.Checked = false;
-            sizeToolStripMenuItem1.Checked = false;
-            modifiedToolStripMenuItem.Checked = false;
-            modifiedToolStripMenuItem1.Checked = false;
-
-            if (sorter.SortColumn == 1)
+            int columnIndex = lstFiles.Columns.IndexOfKey("clmType");
+            if (sorter.SortColumn == columnIndex)
             {
                 // Reverse the current sort direction for this column.
                 if (sorter.Order == SortOrder.Ascending)
@@ -895,11 +845,12 @@ namespace TotalImage
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = 1;
+                sorter.SortColumn = columnIndex;
                 sorter.Order = SortOrder.Ascending;
             }
 
-            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Type");
+            Settings.CurrentSettings.FilesSortOrder = sorter.Order;
+            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
@@ -908,16 +859,8 @@ namespace TotalImage
 
         private void sortByModified_Click(object sender, EventArgs e)
         {
-            nameToolStripMenuItem.Checked = false;
-            nameToolStripMenuItem1.Checked = false;
-            typeToolStripMenuItem.Checked = false;
-            typeToolStripMenuItem1.Checked = false;
-            sizeToolStripMenuItem.Checked = false;
-            sizeToolStripMenuItem1.Checked = false;
-            modifiedToolStripMenuItem.Checked = true;
-            modifiedToolStripMenuItem1.Checked = true;
-
-            if (sorter.SortColumn == 3)
+            int columnIndex = lstFiles.Columns.IndexOfKey("clmModified");
+            if (sorter.SortColumn == columnIndex)
             {
                 // Reverse the current sort direction for this column.
                 if (sorter.Order == SortOrder.Ascending)
@@ -932,11 +875,12 @@ namespace TotalImage
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = 3;
+                sorter.SortColumn = columnIndex;
                 sorter.Order = SortOrder.Ascending;
             }
 
-            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Modified");
+            Settings.CurrentSettings.FilesSortOrder = sorter.Order;
+            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
@@ -945,18 +889,8 @@ namespace TotalImage
 
         private void sortByName_Click(object sender, EventArgs e)
         {
-            nameToolStripMenuItem.Checked = true;
-            nameToolStripMenuItem1.Checked = true;
-            typeToolStripMenuItem.Checked = false;
-            typeToolStripMenuItem1.Checked = false;
-            sizeToolStripMenuItem.Checked = false;
-            sizeToolStripMenuItem1.Checked = false;
-            modifiedToolStripMenuItem.Checked = false;
-            modifiedToolStripMenuItem1.Checked = false;
-
-            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Name");
-
-            if (sorter.SortColumn == 0)
+            int columnIndex = lstFiles.Columns.IndexOfKey("clmName");
+            if (sorter.SortColumn == columnIndex)
             {
                 // Reverse the current sort direction for this column.
                 if (sorter.Order == SortOrder.Ascending)
@@ -971,9 +905,12 @@ namespace TotalImage
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = 0;
+                sorter.SortColumn = columnIndex;
                 sorter.Order = SortOrder.Ascending;
             }
+
+            Settings.CurrentSettings.FilesSortOrder = sorter.Order;
+            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
@@ -982,16 +919,9 @@ namespace TotalImage
 
         private void sortBySize_Click(object sender, EventArgs e)
         {
-            nameToolStripMenuItem.Checked = false;
-            nameToolStripMenuItem1.Checked = false;
-            typeToolStripMenuItem.Checked = false;
-            typeToolStripMenuItem1.Checked = false;
-            sizeToolStripMenuItem.Checked = true;
-            sizeToolStripMenuItem1.Checked = true;
-            modifiedToolStripMenuItem.Checked = false;
-            modifiedToolStripMenuItem1.Checked = false;
+            int columnIndex = lstFiles.Columns.IndexOfKey("clmSize");
 
-            if (sorter.SortColumn == 2)
+            if (sorter.SortColumn == columnIndex)
             {
                 // Reverse the current sort direction for this column.
                 if (sorter.Order == SortOrder.Ascending)
@@ -1006,11 +936,12 @@ namespace TotalImage
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                sorter.SortColumn = 2;
+                sorter.SortColumn = columnIndex;
                 sorter.Order = SortOrder.Ascending;
             }
 
-            Settings.FilesSortingColumn = lstFiles.Columns.IndexOfKey("Size");
+            Settings.CurrentSettings.FilesSortOrder = sorter.Order;
+            Settings.CurrentSettings.FilesSortingColumn = sorter.SortColumn;
 
             // Perform the sort with these new sort options.
             lstFiles.Sort();
@@ -1138,9 +1069,7 @@ namespace TotalImage
 
         private void showHiddenItems_Click(object sender, EventArgs e)
         {
-            Settings.ShowHiddenItems = !Settings.ShowHiddenItems;
-            showHiddenToolStripMenuItem.Checked = Settings.ShowHiddenItems;
-            showHiddenItemsToolStripMenuItem1.Checked = Settings.ShowHiddenItems;
+            Settings.CurrentSettings.ShowHiddenItems = !Settings.CurrentSettings.ShowHiddenItems;
 
             if (image != null)
             {
@@ -1179,9 +1108,7 @@ namespace TotalImage
 
         private void showDeletedItems_Click(object sender, EventArgs e)
         {
-            Settings.ShowDeletedItems = !Settings.ShowDeletedItems;
-            showDeletedToolStripMenuItem.Checked = Settings.ShowDeletedItems;
-            showDeletedItemsToolStripMenuItem.Checked = Settings.ShowDeletedItems;
+            Settings.CurrentSettings.ShowDeletedItems = !Settings.CurrentSettings.ShowDeletedItems;
 
             if (image != null)
             {
@@ -1249,23 +1176,103 @@ namespace TotalImage
 
         private void viewMenu_DropDownOpening(object sender, EventArgs e)
         {
-            nameToolStripMenuItem1.Checked = nameToolStripMenuItem.Checked = typeToolStripMenuItem.Checked = typeToolStripMenuItem1.Checked =
-                sizeToolStripMenuItem.Checked = sizeToolStripMenuItem1.Checked = modifiedToolStripMenuItem.Checked =
+            nameToolStripMenuItem.Checked = typeToolStripMenuItem.Checked = sizeToolStripMenuItem.Checked = 
+                modifiedToolStripMenuItem.Checked = false;
+            switch (sorter.SortColumn)
+            {
+                case 0: nameToolStripMenuItem.Checked = true; break;
+                case 1: typeToolStripMenuItem.Checked = true; break;
+                case 2: sizeToolStripMenuItem.Checked = true; break;
+                case 3: modifiedToolStripMenuItem.Checked = true; break;
+            }
+
+            largeIconsToolStripMenuItem.Checked = smallIconsToolStripMenuItem.Checked = detailsToolStripMenuItem.Checked =
+                tilesToolStripMenuItem.Checked = listToolStripMenuItem.Checked = false;
+            switch (Settings.CurrentSettings.FilesView)
+            {
+                case View.LargeIcon: largeIconsToolStripMenuItem.Checked = true; break;
+                case View.SmallIcon: smallIconsToolStripMenuItem.Checked = true; break;
+                case View.Details: detailsToolStripMenuItem.Checked = true; break;
+                case View.Tile: tilesToolStripMenuItem.Checked = true; break;
+                case View.List: listToolStripMenuItem.Checked = true; break;
+            }
+
+            commandBarToolStripMenuItem.Checked = commandBar.Visible;
+            directoryTreeToolStripMenuItem.Checked = !splitContainer.Panel1Collapsed;
+            statusBarToolStripMenuItem.Checked = statusBar.Visible;
+
+            showHiddenItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showDeletedItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowDeletedItems;
+        }
+
+        private void cmsToolbars_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            commandBarToolStripMenuItem1.Checked = commandBar.Visible;
+            directoryTreeToolStripMenuItem1.Checked = !splitContainer.Panel1Collapsed;
+            statusBarToolStripMenuItem1.Checked = statusBar.Visible;
+        }
+
+        private void viewToolStripButton_DropDownOpening(object sender, EventArgs e)
+        {
+            largeIconsToolStripMenuItem1.Checked = smallIconsToolStripMenuItem1.Checked = detailsToolStripMenuItem1.Checked =
+               tilesToolStripMenuItem1.Checked = listToolStripMenuItem1.Checked = false;
+            switch (Settings.CurrentSettings.FilesView)
+            {
+                case View.LargeIcon: largeIconsToolStripMenuItem1.Checked = true; break;
+                case View.SmallIcon: smallIconsToolStripMenuItem1.Checked = true; break;
+                case View.Details: detailsToolStripMenuItem1.Checked = true; break;
+                case View.Tile: tilesToolStripMenuItem1.Checked = true; break;
+                case View.List: listToolStripMenuItem1.Checked = true; break;
+            }
+
+            showHiddenItemsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showDeletedItemsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowDeletedItems;
+        }
+
+        private void sortMenu_DropDownOpening(object sender, EventArgs e)
+        {
+            nameToolStripMenuItem1.Checked = typeToolStripMenuItem1.Checked = sizeToolStripMenuItem1.Checked =
                 modifiedToolStripMenuItem1.Checked = false;
             switch (sorter.SortColumn)
             {
-                case 0: nameToolStripMenuItem.Checked = nameToolStripMenuItem1.Checked = true; break;
-                case 1: typeToolStripMenuItem.Checked = typeToolStripMenuItem1.Checked = true; break;
-                case 2: sizeToolStripMenuItem.Checked = sizeToolStripMenuItem1.Checked = true; break;
-                case 3: modifiedToolStripMenuItem.Checked = modifiedToolStripMenuItem1.Checked = true; break;
+                case 0: nameToolStripMenuItem1.Checked = true; break;
+                case 1: typeToolStripMenuItem1.Checked = true; break;
+                case 2: sizeToolStripMenuItem1.Checked = true; break;
+                case 3: modifiedToolStripMenuItem1.Checked = true; break;
             }
         }
 
-#endregion
+        private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            Settings.CurrentSettings.SplitterDistance = splitContainer.SplitterDistance;
+        }
+
+        private void frmMain_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Maximized)
+            {
+                Settings.CurrentSettings.WindowState = FormWindowState.Maximized;
+            }
+            else if (WindowState == FormWindowState.Normal)
+            {
+                Settings.CurrentSettings.WindowState = FormWindowState.Normal;
+                Settings.CurrentSettings.WindowSize = this.Size;
+            }
+        }
+
+        private void frmMain_Move(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Normal)
+            {
+                Settings.CurrentSettings.WindowPosition = this.Location;
+            }
+        }
+
+        #endregion
 
         private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
         {
-            foreach (var subdir in dir.EnumerateDirectories(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
+            foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems))
             {
                 var subnode = new TreeNode(subdir.Name);
 
@@ -1329,7 +1336,7 @@ namespace TotalImage
                 lstFiles.Items.Add(parentDirItem);
             }
 
-            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.ShowHiddenItems, Settings.ShowDeletedItems))
+            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems))
             {
                 var item = new ListViewItem();
                 item.Text = fso.Name;
@@ -1623,10 +1630,10 @@ namespace TotalImage
         {
             recentFilesToolStripMenuItem.DropDownItems.Clear();
 
-            for (int i = Settings.RecentImages.Count - 1; i >= 0; i--)
+            for (int i = Settings.CurrentSettings.RecentImages.Count - 1; i >= 0; i--)
             {
                 ToolStripMenuItem newItem = new ToolStripMenuItem();
-                newItem.Text = (Settings.RecentImages.Count - i).ToString() + ": " + Settings.RecentImages[i];
+                newItem.Text = (Settings.CurrentSettings.RecentImages.Count - i).ToString() + ": " + Settings.CurrentSettings.RecentImages[i];
                 newItem.Click += recentImage_Click;
                 recentFilesToolStripMenuItem.DropDownItems.Add(newItem);
             }
@@ -1646,5 +1653,6 @@ namespace TotalImage
             lstFiles.Items.Clear();
             DisableUI();
         }
+
     }
 }
