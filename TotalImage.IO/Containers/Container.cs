@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using TotalImage.Partitions;
 
 namespace TotalImage.Containers
@@ -67,7 +68,48 @@ namespace TotalImage.Containers
         /// Load the file system from the container image
         /// </summary>
         /// <returns>The file system found on the image</returns>
-        protected abstract PartitionTable LoadPartitionTable();
+        protected virtual PartitionTable LoadPartitionTable()
+        {
+            // TODO: introduce a factory system that tries and then fails as required, like file systems have
+
+            using BinaryReader br = new BinaryReader(Content, Encoding.ASCII, true);
+            br.BaseStream.Seek(0x1FE, SeekOrigin.Begin);
+            var signature = br.ReadUInt16();
+
+            if (signature != 0xaa55)
+            {
+                return new NoPartitionTable(this);
+            }
+
+            var mbrPartition = new MbrPartitionTable(this);
+            if (mbrPartition.Partitions.Count >= 1)
+            {
+                if (mbrPartition.Partitions[0] is MbrPartitionTable.MbrPartitionEntry entry
+                    && (entry.Offset + entry.Length) > uint.MaxValue
+                    && entry.Type == MbrPartitionTable.MbrPartitionType.GptProtectivePartition)
+                {
+                    return new GptPartitionTable(this);
+                }
+
+                // check partitions seem fine (ie, no overlapping)
+                bool sanity = true;
+                long lastOffset = 512;
+                foreach (var partition in mbrPartition.Partitions)
+                {
+                    sanity &= (partition.Offset >= lastOffset);
+                    sanity &= (partition.Length > 0);
+                    lastOffset = partition.Offset + partition.Length;
+                    sanity &= (lastOffset <= br.BaseStream.Length);
+                }
+
+                if (sanity)
+                {
+                    return mbrPartition;
+                }
+            }
+
+            return new NoPartitionTable(this);
+        }
 
         /// <summary>
         /// Get raw bytes from the container image

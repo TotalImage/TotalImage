@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using TotalImage.Containers;
 
 namespace TotalImage.Partitions
@@ -17,10 +18,7 @@ namespace TotalImage.Partitions
         /// <inheritdoc />
         protected override IEnumerable<PartitionEntry> LoadPartitions()
         {
-            return new[]
-            {
-                new PartitionEntry(0, _container.Length, _container.Content),
-            };
+            return ImmutableList.Create(new PartitionEntry(0, _container.Length, _container.Content));
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using TotalImage.Containers;
-using TotalImage.FileSystems;
 using TotalImage.FileSystems.FAT;
 using TotalImage.Partitions;
 using File = System.IO.File;
@@ -80,12 +78,6 @@ namespace TotalImage.Containers
             {
                 File.SetLastWriteTime(Path.Combine(path, entry.name), date.Value);
             }
-        }
-
-        /// <inheritdoc />
-        protected override PartitionTable LoadPartitionTable()
-        {
-            return new NoPartitionTable(this);
         }
 
         /// <inheritdoc />

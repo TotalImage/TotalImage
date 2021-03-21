@@ -20,6 +20,7 @@ namespace TotalImage
         public string path = "";
         public bool unsavedChanges = false;
         public Container? image;
+        public int CurrentPartitionIndex;
         private readonly ListViewColumnSorter sorter = new ListViewColumnSorter();
 
         public frmMain()
@@ -453,9 +454,10 @@ namespace TotalImage
             ofd.CheckPathExists = true;
             ofd.Multiselect = false;
             //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
-            //ofd.ShowReadOnly = true; 
+            //ofd.ShowReadOnly = true;
             ofd.Filter =
                 "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
+                "Microsoft VHD (*.vhd)|*.vhd|" +
                 "All files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -657,7 +659,7 @@ namespace TotalImage
                     throw new NotImplementedException("This feature is not implemented yet.");
                 }
             }
-            else if(item.GetCurrentParent() == cmsDirTree)
+            else if (item.GetCurrentParent() == cmsDirTree)
             {
                 using dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstDirectories.SelectedNode.Tag);
                 dlg.ShowDialog();
@@ -1265,6 +1267,19 @@ namespace TotalImage
             if (this.WindowState == FormWindowState.Normal)
             {
                 Settings.CurrentSettings.WindowPosition = this.Location;
+			}
+		}
+
+        private void selectPartitionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dlgSelectPartition dlg = new dlgSelectPartition()
+            {
+                PartitionTable = image.PartitionTable
+            };
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                LoadPartitionInCurrentImage(dlg.SelectedEntry);
             }
         }
 
@@ -1282,7 +1297,8 @@ namespace TotalImage
                     subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder (Hidden)");
                     subnode.ForeColor = Color.Gray;
                 }
-                else { 
+                else
+                {
                     subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 }
 
@@ -1416,13 +1432,69 @@ namespace TotalImage
             filename = Path.GetFileName(path);
             Text = filename + " - TotalImage";
 
-            image = new RawContainer(path);
+            var ext = Path.GetExtension(filename).ToLowerInvariant();
+            switch (ext)
+            {
+                case ".vhd":
+                    image = new VhdContainer(path);
+                    break;
+                default:
+                    image = new RawContainer(path);
+                    break;
+            }
+
+            CurrentPartitionIndex = 0;
+            if (image.PartitionTable.Partitions.Count == 0)
+            {
+                MessageBox.Show("There are no partitions in the selected image", "Error loading HDD image", MessageBoxButtons.OK);
+                return;
+            }
+            else if (image.PartitionTable.Partitions.Count > 1)
+            {
+                dlgSelectPartition selectFrm = new dlgSelectPartition()
+                {
+                    PartitionTable = image.PartitionTable
+                };
+
+                if (selectFrm.ShowDialog() == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                CurrentPartitionIndex = selectFrm.SelectedEntry;
+                selectPartitionToolStripComboBox.Items.Clear();
+
+                if (image.PartitionTable.Partitions.Count > 1)
+                {
+                    for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
+                    {
+                        selectPartitionToolStripComboBox.Items.Add(i.ToString() + ": " + image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')
+                            + " (" + image.PartitionTable.Partitions[i].FileSystem.Format + ", " + image.PartitionTable.Partitions[i].Length + ")");
+
+                        if (i == CurrentPartitionIndex)
+                        {
+                            selectPartitionToolStripComboBox.SelectedIndex = i;
+                        }
+                    }
+                }
+            }
+
+            LoadPartitionInCurrentImage(CurrentPartitionIndex);
+        }
+
+        private void LoadPartitionInCurrentImage(int index)
+        {
+            if (image == null)
+            {
+                return;
+            }
 
             var root = new TreeNode(@"\");
             root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            root.Tag = image.PartitionTable.Partitions[0].FileSystem.RootDirectory;
-            PopulateTreeView(root, image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+
+            root.Tag = image.PartitionTable.Partitions[index].FileSystem.RootDirectory;
+            PopulateTreeView(root, image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
 
             lstDirectories.BeginUpdate();
             lstDirectories.Nodes.Clear();
@@ -1434,7 +1506,7 @@ namespace TotalImage
             lstFiles.BeginUpdate();
             lstFiles.ListViewItemSorter = null;
             lstFiles.Items.Clear();
-            PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+            PopulateListView(image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
             lstFiles.ListViewItemSorter = sorter;
             lstFiles.EndUpdate();
 
@@ -1447,6 +1519,7 @@ namespace TotalImage
 #endif
 
             lblStatusCapacity.Text = "Dummy KiB";
+
             EnableUI();
 
             Settings.AddRecentImage(path);
@@ -1586,11 +1659,21 @@ namespace TotalImage
                 }
             }
 
-            //TODO: Once HDD support is implemented, update this code
-            managePartitionsToolStripMenuItem.Enabled = false;
-            selectPartitionToolStripMenuItem.Enabled = false;
-            managePartitionsToolStripButton.Enabled = false;
-            selectPartitionToolStripComboBox.Enabled = false;
+            //Enabling this now since we have rudimentary HDD support.
+            if (image.PartitionTable.Partitions.Count > 1)
+            {
+                managePartitionsToolStripMenuItem.Enabled = true;
+                selectPartitionToolStripMenuItem.Enabled = true;
+                managePartitionsToolStripButton.Enabled = true;
+                selectPartitionToolStripComboBox.Enabled = true;
+            }
+            else
+            {
+                managePartitionsToolStripMenuItem.Enabled = true;
+                selectPartitionToolStripMenuItem.Enabled = false;
+                managePartitionsToolStripButton.Enabled = true;
+                selectPartitionToolStripComboBox.Enabled = false;
+            }
         }
 
         //Disables various UI elements after an image is loaded
@@ -1608,7 +1691,6 @@ namespace TotalImage
             saveToolStripButton.Enabled = false;
             managePartitionsToolStripButton.Enabled = false;
             selectPartitionToolStripComboBox.Enabled = false;
-
             managePartitionsToolStripMenuItem.Enabled = false;
             selectPartitionToolStripMenuItem.Enabled = false;
             saveAsToolStripMenuItem.Enabled = false;
@@ -1654,5 +1736,13 @@ namespace TotalImage
             DisableUI();
         }
 
+        private void selectPartitionToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (selectPartitionToolStripComboBox.SelectedIndex != CurrentPartitionIndex)
+            {
+                LoadPartitionInCurrentImage(selectPartitionToolStripComboBox.SelectedIndex);
+                CurrentPartitionIndex = selectPartitionToolStripComboBox.SelectedIndex;
+            }
+        }
     }
 }
