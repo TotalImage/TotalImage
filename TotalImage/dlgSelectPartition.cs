@@ -41,10 +41,11 @@ namespace TotalImage
             {
                 var entry = PartitionTable.Partitions[i];
                 ListViewItem lvi = new ListViewItem(i.ToString());
-                lvi.SubItems.Add("");
+                lvi.SubItems.Add(entry.FileSystem.Format);
                 lvi.SubItems.Add(entry.Offset.ToString());
                 lvi.SubItems.Add((entry.Offset + entry.Length).ToString());
                 lvi.SubItems.Add(entry.Length.ToString());
+                lvi.SubItems.Add(((MbrPartitionTable.MbrPartitionEntry)entry).Active.ToString());
 
                 lstPartitions.Items.Add(lvi);
             }

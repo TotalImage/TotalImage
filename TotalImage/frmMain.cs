@@ -20,6 +20,7 @@ namespace TotalImage
         public string path = "";
         public bool unsavedChanges = false;
         public Container? image;
+        public int CurrentPartitionIndex;
         private readonly ListViewColumnSorter sorter = new ListViewColumnSorter();
 
         public frmMain()
@@ -1264,8 +1265,15 @@ namespace TotalImage
 
         private void selectPartitionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            dlgSelectPartition dlg = new dlgSelectPartition();
-            dlg.ShowDialog();
+            dlgSelectPartition dlg = new dlgSelectPartition()
+            {
+                PartitionTable = image.PartitionTable
+            };
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                LoadPartitionInCurrentImage(dlg.SelectedEntry);
+            }
         }
 
         #endregion
@@ -1420,7 +1428,7 @@ namespace TotalImage
             var ext = Path.GetExtension(filename).ToLowerInvariant();
             switch (ext)
             {
-                case "vhd":
+                case ".vhd":
                     image = new VhdContainer(path);
                     break;
                 default:
@@ -1428,7 +1436,7 @@ namespace TotalImage
                     break;
             }
 
-            int partitionIndex = 0;
+            CurrentPartitionIndex = 0;
             if (image.PartitionTable.Partitions.Count == 0)
             {
                 MessageBox.Show("There are no partitions in the selected image", "Error loading HDD image", MessageBoxButtons.OK);
@@ -1441,11 +1449,14 @@ namespace TotalImage
                     PartitionTable = image.PartitionTable
                 };
 
-                selectFrm.ShowDialog();
-                partitionIndex = selectFrm.SelectedEntry;
+                if (selectFrm.ShowDialog() == DialogResult.Cancel)
+                {
+                    return;
+                }
+                CurrentPartitionIndex = selectFrm.SelectedEntry;
             }
 
-            LoadPartitionInCurrentImage(partitionIndex);
+            LoadPartitionInCurrentImage(CurrentPartitionIndex);
         }
 
         private void LoadPartitionInCurrentImage(int index)
@@ -1485,6 +1496,20 @@ namespace TotalImage
 #endif
 
             lblStatusCapacity.Text = "Dummy KiB";
+
+            if (image.PartitionTable.Partitions.Count > 1)
+            {
+                for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
+                {
+                    selectPartitionToolStripComboBox.Items.Add("Partition " + i.ToString() + ": " + image.PartitionTable.Partitions[i].FileSystem.Format
+                        + ", " + image.PartitionTable.Partitions[i].Length);
+                    if (i == index)
+                    {
+                        selectPartitionToolStripComboBox.SelectedIndex = i;
+                    }
+                }
+            }
+
             EnableUI();
 
             Settings.AddRecentImage(path);
@@ -1624,11 +1649,21 @@ namespace TotalImage
                 }
             }
 
-            //Enabling this now since we have rudimentary HDD support. Nee
-            managePartitionsToolStripMenuItem.Enabled = true;
-            selectPartitionToolStripMenuItem.Enabled = true;
-            managePartitionsToolStripButton.Enabled = true;
-            selectPartitionToolStripComboBox.Enabled = true;
+            //Enabling this now since we have rudimentary HDD support.
+            if (image.PartitionTable.Partitions.Count > 1)
+            {
+                managePartitionsToolStripMenuItem.Enabled = true;
+                selectPartitionToolStripMenuItem.Enabled = true;
+                managePartitionsToolStripButton.Enabled = true;
+                selectPartitionToolStripComboBox.Enabled = true;
+            }
+            else
+            {
+                managePartitionsToolStripMenuItem.Enabled = true;
+                selectPartitionToolStripMenuItem.Enabled = false;
+                managePartitionsToolStripButton.Enabled = true;
+                selectPartitionToolStripComboBox.Enabled = false;
+            }
         }
 
         //Disables various UI elements after an image is loaded
@@ -1646,7 +1681,6 @@ namespace TotalImage
             saveToolStripButton.Enabled = false;
             managePartitionsToolStripButton.Enabled = false;
             selectPartitionToolStripComboBox.Enabled = false;
-
             managePartitionsToolStripMenuItem.Enabled = false;
             selectPartitionToolStripMenuItem.Enabled = false;
             saveAsToolStripMenuItem.Enabled = false;
