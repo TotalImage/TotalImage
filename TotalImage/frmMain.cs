@@ -1262,7 +1262,13 @@ namespace TotalImage
             }
         }
 
-#endregion
+        private void selectPartitionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dlgSelectPartition dlg = new dlgSelectPartition();
+            dlg.ShowDialog();
+        }
+
+        #endregion
 
         private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
         {
@@ -1589,11 +1595,11 @@ namespace TotalImage
                 }
             }
 
-            //TODO: Once HDD support is implemented, update this code
-            managePartitionsToolStripMenuItem.Enabled = false;
-            selectPartitionToolStripMenuItem.Enabled = false;
-            managePartitionsToolStripButton.Enabled = false;
-            selectPartitionToolStripComboBox.Enabled = false;
+            //Enabling this now since we have rudimentary HDD support. Nee
+            managePartitionsToolStripMenuItem.Enabled = true;
+            selectPartitionToolStripMenuItem.Enabled = true;
+            managePartitionsToolStripButton.Enabled = true;
+            selectPartitionToolStripComboBox.Enabled = true;
         }
 
         //Disables various UI elements after an image is loaded
