@@ -1453,7 +1453,23 @@ namespace TotalImage
                 {
                     return;
                 }
+
                 CurrentPartitionIndex = selectFrm.SelectedEntry;
+                selectPartitionToolStripComboBox.Items.Clear();
+
+                if (image.PartitionTable.Partitions.Count > 1)
+                {
+                    for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
+                    {
+                        selectPartitionToolStripComboBox.Items.Add(i.ToString() + ": " + image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')
+                            + " (" + image.PartitionTable.Partitions[i].FileSystem.Format + ", " + image.PartitionTable.Partitions[i].Length + ")");
+
+                        if (i == CurrentPartitionIndex)
+                        {
+                            selectPartitionToolStripComboBox.SelectedIndex = i;
+                        }
+                    }
+                }
             }
 
             LoadPartitionInCurrentImage(CurrentPartitionIndex);
@@ -1496,19 +1512,6 @@ namespace TotalImage
 #endif
 
             lblStatusCapacity.Text = "Dummy KiB";
-
-            if (image.PartitionTable.Partitions.Count > 1)
-            {
-                for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
-                {
-                    selectPartitionToolStripComboBox.Items.Add("Partition " + i.ToString() + ": " + image.PartitionTable.Partitions[i].FileSystem.Format
-                        + ", " + image.PartitionTable.Partitions[i].Length);
-                    if (i == index)
-                    {
-                        selectPartitionToolStripComboBox.SelectedIndex = i;
-                    }
-                }
-            }
 
             EnableUI();
 
@@ -1724,6 +1727,15 @@ namespace TotalImage
             lstDirectories.Nodes.Clear();
             lstFiles.Items.Clear();
             DisableUI();
+        }
+
+        private void selectPartitionToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (selectPartitionToolStripComboBox.SelectedIndex != CurrentPartitionIndex)
+            {
+                LoadPartitionInCurrentImage(selectPartitionToolStripComboBox.SelectedIndex);
+                CurrentPartitionIndex = selectPartitionToolStripComboBox.SelectedIndex;
+            }
         }
     }
 }

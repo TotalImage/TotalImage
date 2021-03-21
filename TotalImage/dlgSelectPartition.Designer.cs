@@ -41,6 +41,7 @@ namespace TotalImage
             this.clmEnd = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clmSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clmActive = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.clmLabel = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,13 +56,14 @@ namespace TotalImage
             // 
             // pnlBottom
             // 
+            this.pnlBottom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
-            this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 185);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 211);
             this.pnlBottom.Name = "pnlBottom";
-            this.pnlBottom.Size = new System.Drawing.Size(537, 50);
+            this.pnlBottom.Size = new System.Drawing.Size(584, 50);
             this.pnlBottom.TabIndex = 3;
             // 
             // btnCancel
@@ -69,7 +71,7 @@ namespace TotalImage
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(445, 12);
+            this.btnCancel.Location = new System.Drawing.Point(492, 12);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 26);
             this.btnCancel.TabIndex = 1;
@@ -82,7 +84,7 @@ namespace TotalImage
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Enabled = false;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(359, 12);
+            this.btnOK.Location = new System.Drawing.Point(406, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 0;
@@ -92,9 +94,11 @@ namespace TotalImage
             // 
             // cbxReadOnly
             // 
+            this.cbxReadOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbxReadOnly.AutoSize = true;
+            this.cbxReadOnly.Enabled = false;
             this.cbxReadOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxReadOnly.Location = new System.Drawing.Point(15, 159);
+            this.cbxReadOnly.Location = new System.Drawing.Point(15, 185);
             this.cbxReadOnly.Name = "cbxReadOnly";
             this.cbxReadOnly.Size = new System.Drawing.Size(86, 20);
             this.cbxReadOnly.TabIndex = 5;
@@ -103,8 +107,12 @@ namespace TotalImage
             // 
             // lstPartitions
             // 
+            this.lstPartitions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstPartitions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.clmNumber,
+            this.clmLabel,
             this.clmType,
             this.clmStart,
             this.clmEnd,
@@ -118,7 +126,7 @@ namespace TotalImage
             this.lstPartitions.MultiSelect = false;
             this.lstPartitions.Name = "lstPartitions";
             this.lstPartitions.ShowGroups = false;
-            this.lstPartitions.Size = new System.Drawing.Size(510, 124);
+            this.lstPartitions.Size = new System.Drawing.Size(557, 150);
             this.lstPartitions.TabIndex = 6;
             this.lstPartitions.UseCompatibleStateImageBehavior = false;
             this.lstPartitions.View = System.Windows.Forms.View.Details;
@@ -127,7 +135,7 @@ namespace TotalImage
             // clmNumber
             // 
             this.clmNumber.Text = "No.";
-            this.clmNumber.Width = 41;
+            this.clmNumber.Width = 31;
             // 
             // clmType
             // 
@@ -147,12 +155,17 @@ namespace TotalImage
             // clmSize
             // 
             this.clmSize.Text = "Size";
-            this.clmSize.Width = 85;
+            this.clmSize.Width = 87;
             // 
             // clmActive
             // 
             this.clmActive.Text = "Active";
-            this.clmActive.Width = 59;
+            this.clmActive.Width = 49;
+            // 
+            // clmLabel
+            // 
+            this.clmLabel.Text = "Volume label";
+            this.clmLabel.Width = 88;
             // 
             // dlgSelectPartition
             // 
@@ -161,7 +174,7 @@ namespace TotalImage
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(537, 235);
+            this.ClientSize = new System.Drawing.Size(584, 261);
             this.Controls.Add(this.lstPartitions);
             this.Controls.Add(this.cbxReadOnly);
             this.Controls.Add(this.pnlBottom);
@@ -196,5 +209,6 @@ namespace TotalImage
         private System.Windows.Forms.ColumnHeader clmEnd;
         private System.Windows.Forms.ColumnHeader clmActive;
         private System.Windows.Forms.ColumnHeader clmSize;
+        private System.Windows.Forms.ColumnHeader clmLabel;
     }
 }

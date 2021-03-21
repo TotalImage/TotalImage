@@ -41,6 +41,7 @@ namespace TotalImage
             {
                 var entry = PartitionTable.Partitions[i];
                 ListViewItem lvi = new ListViewItem(i.ToString());
+                lvi.SubItems.Add(entry.FileSystem.VolumeLabel);
                 lvi.SubItems.Add(entry.FileSystem.Format);
                 lvi.SubItems.Add(entry.Offset.ToString());
                 lvi.SubItems.Add((entry.Offset + entry.Length).ToString());
