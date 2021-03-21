@@ -1236,38 +1236,6 @@
             this.imgFilesSmall.TransparentColor = System.Drawing.Color.Transparent;
             this.imgFilesSmall.Images.SetKeyName(0, "up_folder_16.png");
             // 
-            // lstFiles
-            // 
-            this.lstFiles.AllowColumnReorder = true;
-            this.lstFiles.AllowDrop = true;
-            this.lstFiles.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.clmName,
-            this.clmType,
-            this.clmSize,
-            this.clmModified});
-            this.lstFiles.ContextMenuStrip = this.cmsFileList;
-            this.lstFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstFiles.FullRowSelect = true;
-            this.lstFiles.HideSelection = false;
-            this.lstFiles.LargeImageList = this.imgFilesLarge;
-            this.lstFiles.Location = new System.Drawing.Point(0, 0);
-            this.lstFiles.Name = "lstFiles";
-            this.lstFiles.ShowGroups = false;
-            this.lstFiles.ShowItemToolTips = true;
-            this.lstFiles.Size = new System.Drawing.Size(707, 590);
-            this.lstFiles.SmallImageList = this.imgFilesSmall;
-            this.lstFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lstFiles.TabIndex = 0;
-            this.lstFiles.UseCompatibleStateImageBehavior = false;
-            this.lstFiles.View = System.Windows.Forms.View.Details;
-            this.lstFiles.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstFiles_ColumnClick);
-            this.lstFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstFiles_ItemDrag);
-            this.lstFiles.SelectedIndexChanged += new System.EventHandler(this.lstFiles_SelectedIndexChanged);
-            this.lstFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragDrop);
-            this.lstFiles.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragEnter);
-            this.lstFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstFiles_MouseDoubleClick);
-            // 
             // clmName
             // 
             this.clmName.Tag = "Name";
@@ -1426,31 +1394,6 @@
             this.lstFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragDrop);
             this.lstFiles.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragEnter);
             this.lstFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstFiles_MouseDoubleClick);
-            // 
-            // clmName
-            // 
-            this.clmName.Tag = "Name";
-            this.clmName.Text = "Name";
-            this.clmName.Width = 128;
-            // 
-            // clmType
-            // 
-            this.clmType.Tag = "Type";
-            this.clmType.Text = "Type";
-            this.clmType.Width = 127;
-            // 
-            // clmSize
-            // 
-            this.clmSize.Tag = "Size";
-            this.clmSize.Text = "Size";
-            this.clmSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.clmSize.Width = 118;
-            // 
-            // clmModified
-            // 
-            this.clmModified.Tag = "Modified";
-            this.clmModified.Text = "Modified";
-            this.clmModified.Width = 148;
             // 
             // frmMain
             // 
