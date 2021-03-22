@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.Json;
@@ -128,7 +128,11 @@ namespace TotalImage
         //Saves all settings to permanent storage (settings.json)
         public static void Save()
         {
-            string json = JsonSerializer.Serialize(CurrentSettings);
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            var json = JsonSerializer.Serialize(CurrentSettings, options);
 
             //Just in case...
             if (!Directory.Exists(SettingsDir))
