@@ -210,8 +210,7 @@ namespace TotalImage.FileSystems.FAT
                     _stream.Seek(-0x01, SeekOrigin.Current);
                     DirectoryEntry entry = new DirectoryEntry
                     {
-                        name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() + "." +
-                               Encoding.ASCII.GetString(reader.ReadBytes(3)).TrimEnd(' ').ToUpper(),
+                        name = $"{Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper()}.{Encoding.ASCII.GetString(reader.ReadBytes(3)).TrimEnd(' ').ToUpper()}",
                         attr = reader.ReadByte(),
                         ntRes = reader.ReadByte(),
                         crtTimeTenth = reader.ReadByte(),

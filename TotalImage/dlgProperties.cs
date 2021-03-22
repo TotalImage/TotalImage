@@ -37,7 +37,7 @@ namespace TotalImage
             lblSize1.Text = $"{entry.Length:n0} B";
 
             uint sizeOnDisk = (uint)Math.Ceiling(entry.Length / 1024.0) * 1024;
-            lblSizeOnDisk1.Text = string.Format("{0:n0}", sizeOnDisk).ToString() + " B";
+            lblSizeOnDisk1.Text = $"{string.Format("{0:n0}", sizeOnDisk)} B";
 
             if (entry is FileSystems.File file)
                 lblLocation1.Text = file.DirectoryName;

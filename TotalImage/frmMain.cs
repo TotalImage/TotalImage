@@ -294,7 +294,7 @@ namespace TotalImage
             {
                 if (lstFiles.SelectedItems.Count == 1)
                 {
-                    DialogResult = MessageBox.Show("Are you sure you want to delete 1 item occupying X bytes?", "Delete item", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    DialogResult = MessageBox.Show("Are you sure you want to delete 1 item occupying <x> bytes?", "Delete item", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (DialogResult == DialogResult.No || DialogResult == DialogResult.Cancel)
                     {
                         return;
@@ -303,7 +303,7 @@ namespace TotalImage
                 else if (lstFiles.SelectedItems.Count > 1)
                 {
                     //First get the total size of all selected items
-                    DialogResult = MessageBox.Show("Are you sure you want to delete " + lstFiles.SelectedItems.Count + " items occupying X bytes?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    DialogResult = MessageBox.Show($"Are you sure you want to delete {lstFiles.SelectedItems.Count} items occupying <x> bytes?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (DialogResult == DialogResult.No || DialogResult == DialogResult.Cancel)
                     {
                         return;
@@ -391,7 +391,7 @@ namespace TotalImage
 
             saveToolStripButton.Enabled = false;
             saveToolStripMenuItem.Enabled = false;
-            Text = filename + " - TotalImage";
+            Text = $"{filename} - TotalImage";
             unsavedChanges = false;
         }
 
@@ -427,7 +427,7 @@ namespace TotalImage
 
                 path = sfd.FileName;
                 filename = Path.GetFileName(path);
-                Text = filename + " - TotalImage";
+                Text = $"{filename} - TotalImage";
 
                 Settings.AddRecentImage(path);
                 PopulateRecentList();
@@ -592,8 +592,8 @@ namespace TotalImage
                 extractToolStripButton.Enabled = false;
                 propertiesToolStripButton.Enabled = false;
 
-                lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
-                lblStatusSize.Text = string.Format("{0:n0} bytes in {1} items", CalculateDirSize(), GetFileCount());
+                lbStatuslPath.Text = $"{lstDirectories.SelectedNode.FullPath}{lstDirectories.PathSeparator}";
+                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", CalculateDirSize() / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), GetFileCount());            
             }
             else if (lstFiles.SelectedItems.Count == 1)
             {
@@ -618,7 +618,7 @@ namespace TotalImage
                 propertiesToolStripButton.Enabled = true;
 
                 lbStatuslPath.Text = ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).FullName;
-                lblStatusSize.Text = string.Format("{0:n0} bytes in 1 item", ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).Length);
+                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in 1 item" : "{0:n2} {1} in 1 item", ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
             else
             {
@@ -639,7 +639,7 @@ namespace TotalImage
                 extractToolStripButton.Enabled = true;
                 propertiesToolStripButton.Enabled = false;
 
-                lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
+                lbStatuslPath.Text = $"{lstDirectories.SelectedNode.FullPath}{lstDirectories.PathSeparator}";
 
                 var selectedSize = 0ul;
                 foreach (ListViewItem lvi in lstFiles.SelectedItems)
@@ -648,7 +648,7 @@ namespace TotalImage
                     selectedSize += entry.Length;
                 }
 
-                lblStatusSize.Text = string.Format("{0:n0} bytes in {1} items", selectedSize, lstFiles.SelectedItems.Count);
+                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} items" : "{0:n2} {1} in {2} items", selectedSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), lstFiles.SelectedItems.Count);
             }
         }
 
@@ -832,8 +832,8 @@ namespace TotalImage
                     dirSize += entry.Length;
                 }
             }
-            lblStatusSize.Text = string.Format("{0:n0} bytes in {1} file(s)", dirSize, fileCount);
-            lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath + lstDirectories.PathSeparator;
+            lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", dirSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits),  fileCount);
+            lbStatuslPath.Text = $"{lstDirectories.SelectedNode.FullPath}{lstDirectories.PathSeparator}";
 
             if (lstDirectories.SelectedNode == null)
             {
@@ -1045,7 +1045,7 @@ namespace TotalImage
                 lstFiles.SmallImageList = imgFilesSmall;
 #endif
 
-                lblStatusCapacity.Text = "Dummy KiB";
+                lblStatusCapacity.Text = "<placeholder>";
             }
         }
 
@@ -1084,7 +1084,7 @@ namespace TotalImage
                 lstFiles.SmallImageList = imgFilesSmall;
 #endif
 
-                lblStatusCapacity.Text = "Dummy KiB";
+                lblStatusCapacity.Text = "<placeholder>";
             }
         }
 
@@ -1315,7 +1315,8 @@ namespace TotalImage
                 }
                 else
                 {
-                    item.SubItems.Add(string.Format("{0:n0} B", fso.Length).ToString());
+
+                    item.SubItems.Add(string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1}" : "{0:n2} {1}", fso.Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)));
 
                     //This will only add a new icon to the list if the associated type hasn't been encountered yet
                     if (!imgFilesSmall.Images.ContainsKey(filetype))
@@ -1329,15 +1330,15 @@ namespace TotalImage
                     //Make the icon 65% transparent for hidden items
                     if (fso.Attributes.HasFlag(FileAttributes.Hidden))
                     {
-                        if (!imgFilesSmall.Images.ContainsKey(filetype + " (Hidden)"))
+                        if (!imgFilesSmall.Images.ContainsKey($"{filetype} (Hidden)"))
                         {
                             Bitmap hiddenIcon = CreateHiddenIcon((Bitmap)imgFilesSmall.Images[filetype]);
-                            imgFilesSmall.Images.Add(filetype + " (Hidden)", hiddenIcon);
+                            imgFilesSmall.Images.Add($"{filetype} (Hidden)", hiddenIcon);
                             hiddenIcon = CreateHiddenIcon((Bitmap)imgFilesLarge.Images[filetype]);
-                            imgFilesLarge.Images.Add(filetype + " (Hidden)", hiddenIcon);
+                            imgFilesLarge.Images.Add($"{filetype} (Hidden)", hiddenIcon);
                         }
 
-                        item.ImageIndex = imgFilesSmall.Images.IndexOfKey(filetype + " (Hidden)");
+                        item.ImageIndex = imgFilesSmall.Images.IndexOfKey($"{filetype} (Hidden)");
                     }
                     else
                     {
@@ -1394,7 +1395,7 @@ namespace TotalImage
         private void OpenImage(string path)
         {
             filename = Path.GetFileName(path);
-            Text = filename + " - TotalImage";
+            Text = $"{filename} - TotalImage";
 
             var ext = Path.GetExtension(filename).ToLowerInvariant();
             switch (ext)
@@ -1481,7 +1482,7 @@ namespace TotalImage
             lstFiles.SmallImageList = imgFilesSmall;
 #endif
 
-            lblStatusCapacity.Text = "Dummy KiB";
+            lblStatusCapacity.Text = "<placeholder>";
 
             EnableUI();
 
@@ -1678,7 +1679,7 @@ namespace TotalImage
             for (int i = Settings.CurrentSettings.RecentImages.Count - 1; i >= 0; i--)
             {
                 ToolStripMenuItem newItem = new ToolStripMenuItem();
-                newItem.Text = (Settings.CurrentSettings.RecentImages.Count - i).ToString() + ": " + Settings.CurrentSettings.RecentImages[i];
+                newItem.Text = $"{(Settings.CurrentSettings.RecentImages.Count - i)}: {Settings.CurrentSettings.RecentImages[i]}";
                 newItem.Click += recentImage_Click;
                 recentFilesToolStripMenuItem.DropDownItems.Add(newItem);
             }

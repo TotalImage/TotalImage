@@ -27,7 +27,7 @@ namespace TotalImage
 
         private void dlgRename_Load(object sender, EventArgs e)
         {
-            lblDesc.Text = "Enter a new name for " + oldname + ":";
+            lblDesc.Text = $"Enter a new name for {oldname}:";
         }
     }
 }
