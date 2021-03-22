@@ -97,7 +97,7 @@ namespace TotalImage
         {
             /* I'm putting this here since CurrentSettings may be outdated if multiple instances are running and one of them changes settings
             /* and saves them to disk. With this in place, at least they'll be updated for the current instance if the user then clicks OK. */
-            Settings.Load();
+            Settings.Reload();
 
             SyncUIWithSettings();
         }

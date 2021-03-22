@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.Json;
@@ -35,6 +35,8 @@ namespace TotalImage
         public static SettingsModel CurrentSettings { get; private set; }
 
         private static readonly string SettingsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotalImage");
+        private static readonly string SettingsFile = Path.Combine(SettingsDir, "settings.json");
+
         public enum SizeUnit
         {
             B = 1,
@@ -54,10 +56,10 @@ namespace TotalImage
         }
 
         //Loads all settings from permanent storage (settings.json)
-        public static void Load()
+        static Settings()
         {
             //If the file doesn't exist (yet), load default values and create the file
-            if (!File.Exists(Path.Combine(SettingsDir, "settings.json")))
+            if (!File.Exists(SettingsFile))
             {
                 //Also create the directory if even that doesn't exist (yet)
                 if (!Directory.Exists(SettingsDir))
@@ -65,24 +67,43 @@ namespace TotalImage
                     Directory.CreateDirectory(SettingsDir);
                 }
 
-                LoadDefaults();
+                CurrentSettings = new SettingsModel();
                 Save();
             }
             else
             {
-                string json = File.ReadAllText(Path.Combine(SettingsDir, "settings.json"));
-                CurrentSettings = JsonSerializer.Deserialize<SettingsModel>(json);
+                var json = File.ReadAllText(SettingsFile);
+                var settings = JsonSerializer.Deserialize<SettingsModel>(json);
+
+                if (settings != null)
+                    CurrentSettings = settings;
+                else
+                {
+                    CurrentSettings = new SettingsModel();
+                    Save();
+                }
+            }
+        }
+
+        public static void Reload()
+        {
+            var json = File.ReadAllText(SettingsFile);
+            var settings = JsonSerializer.Deserialize<SettingsModel>(json);
+
+            if (settings != null)
+                CurrentSettings = settings;
+            else
+            {
+                // for some reason we didn't read any settings
+                // what do we do? let's just load default settings for now
+                CurrentSettings = new SettingsModel();
+                Save();
             }
         }
 
         //Sets all settings to their default values
         public static void LoadDefaults()
         {
-            if(CurrentSettings == null)
-            {
-                CurrentSettings = new SettingsModel();
-            }
-
             //Set all settings to a default value here
             CurrentSettings.OpenFolderAfterExtract = true;
             CurrentSettings.DefaultExtractType = FolderExtract.AlwaysAsk;
@@ -107,10 +128,6 @@ namespace TotalImage
         //Saves all settings to permanent storage (settings.json)
         public static void Save()
         {
-            if(CurrentSettings == null)
-            {
-                LoadDefaults();
-            }
             string json = JsonSerializer.Serialize(CurrentSettings);
 
             //Just in case...
@@ -119,7 +136,7 @@ namespace TotalImage
                 Directory.CreateDirectory(SettingsDir);
             }
 
-            File.WriteAllText(Path.Combine(SettingsDir, "settings.json"), json);
+            File.WriteAllText(SettingsFile, json);
         }
 
         //Adds an image to the recent list
