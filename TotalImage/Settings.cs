@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.Json;
@@ -36,6 +36,8 @@ namespace TotalImage
 
         private static readonly string SettingsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotalImage");
         private static readonly string SettingsFile = Path.Combine(SettingsDir, "settings.json");
+
+        private static FileSystemWatcher settingsWatcher = new FileSystemWatcher(SettingsDir, "settings.json");
 
         public enum SizeUnit
         {
@@ -82,6 +84,39 @@ namespace TotalImage
                     CurrentSettings = new SettingsModel();
                     Save();
                 }
+            }
+
+            settingsWatcher.EnableRaisingEvents = true;
+            settingsWatcher.NotifyFilter = NotifyFilters.LastWrite;
+            settingsWatcher.Changed += settingsWatcher_Changed;
+        }
+
+        // Handles the settings file being changed behind our back
+        private static void settingsWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            try
+            {
+                var json = File.ReadAllText(SettingsFile);
+                var settings = JsonSerializer.Deserialize<SettingsModel>(json);
+
+                if (settings != null)
+                {
+                    // We could just reload the entire settings, however:
+                    // 1. The loaded settings could include changes to UI options.
+                    // 2. It is not nice to change UI options out of the blue.
+                    // 3. We are not on the UI thread anyway.
+
+                    CurrentSettings.OpenFolderAfterExtract = settings.OpenFolderAfterExtract;
+                    CurrentSettings.DefaultExtractType = settings.DefaultExtractType;
+                    CurrentSettings.DefaultExtractPath = settings.DefaultExtractPath;
+                    CurrentSettings.RecentImages = settings.RecentImages;
+                }
+
+                MessageBox.Show("The settings have been changed and reloaded.", "TotalImage", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch(IOException)
+            {
+                // We can't read the file. Carry on.
             }
         }
 
@@ -140,7 +175,12 @@ namespace TotalImage
                 Directory.CreateDirectory(SettingsDir);
             }
 
+            // Let's not make us reload the very settings we're about to save
+            settingsWatcher.EnableRaisingEvents = false;
+
             File.WriteAllText(SettingsFile, json);
+
+            settingsWatcher.EnableRaisingEvents = true;
         }
 
         //Adds an image to the recent list
