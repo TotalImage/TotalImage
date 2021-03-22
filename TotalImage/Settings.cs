@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.Json;
@@ -32,7 +32,7 @@ namespace TotalImage
             public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
         }
 
-        public static SettingsModel CurrentSettings;
+        public static SettingsModel CurrentSettings { get; private set; }
 
         private static readonly string SettingsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotalImage");
         public enum SizeUnit
