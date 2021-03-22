@@ -53,6 +53,36 @@ namespace TotalImage
             lstFiles.Columns[2].Name = "clmSize";
             lstFiles.Columns[3].Name = "clmModified";
             lstFiles.Columns[4].Name = "clmAttributes";
+
+            //Open the file that was dragged onto the exe/shortcut or passed as a command line argument
+            string[] args = Environment.GetCommandLineArgs();
+            if(args.Length > 1)
+            {
+                string argPath = args[1];
+                if (File.Exists(argPath))
+                {
+                    OpenImage(argPath);
+                }
+                else
+                {
+#if NET5_0_OR_GREATER
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"The file \"{Path.GetFileName(argPath)}\" could not be opened because it's inaccessible or does not exist.",
+                        Heading = "Could not open file",
+                        Caption = "Error",
+                        Buttons =
+                    {
+                        TaskDialogButton.OK
+                    },
+                        Icon = TaskDialogIcon.Error,
+                        DefaultButton = TaskDialogButton.OK
+                    });
+#elif NET48
+                    MessageBox.Show($"The file \"{Path.GetFileName(argPath)}\" could not be opened because it's inaccessible or does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+#endif
+                }
+            }
         }
 
         //Syncs the main form UI with the current settings
@@ -1194,7 +1224,7 @@ namespace TotalImage
             }
         }
 
-        #endregion
+#endregion
 
         private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
         {
