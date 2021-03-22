@@ -12,6 +12,7 @@ using static Interop.User32;
 using System.Drawing.Imaging;
 using System.Diagnostics;
 using System.Collections;
+using System.Text;
 
 namespace TotalImage
 {
@@ -51,6 +52,7 @@ namespace TotalImage
             lstFiles.Columns[1].Name = "clmType";
             lstFiles.Columns[2].Name = "clmSize";
             lstFiles.Columns[3].Name = "clmModified";
+            lstFiles.Columns[4].Name = "clmAttributes";
         }
 
         //Syncs the main form UI with the current settings
@@ -1314,6 +1316,7 @@ namespace TotalImage
                 }
 
                 item.SubItems.Add(fso.LastWriteTime.ToString());
+                item.SubItems.Add(FileAttributesToString(fso.Attributes));
 
                 //Do some simple styling for hidden and deleted items
                 if (fso.Attributes.HasFlag(FileAttributes.Hidden))
@@ -1333,6 +1336,28 @@ namespace TotalImage
                 item.Tag = fso;
                 lstFiles.Items.Add(item);
             }
+        }
+
+        private string FileAttributesToString(FileAttributes attr)
+        {
+            if (attr.HasFlag(FileAttributes.Directory))
+                return "<DIR>";
+
+            var sb = new StringBuilder();
+
+            if (attr.HasFlag(FileAttributes.ReadOnly))
+                sb.Append("R");
+
+            if (attr.HasFlag(FileAttributes.Hidden))
+                sb.Append("H");
+
+            if (attr.HasFlag(FileAttributes.System))
+                sb.Append("S");
+
+            if (attr.HasFlag(FileAttributes.Archive))
+                sb.Append("A");
+
+            return sb.ToString();
         }
 
         //TODO: This needs some serious rethinking and probably restructuring.

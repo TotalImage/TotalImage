@@ -161,6 +161,7 @@
             this.propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.selectAllToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.imgFilesLarge = new System.Windows.Forms.ImageList(this.components);
+            this.clmAttributes = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cmsDirTree.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.cmsToolbars.SuspendLayout();
@@ -1202,7 +1203,7 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.lstFiles);
-            this.splitContainer.Size = new System.Drawing.Size(1057, 546);
+            this.splitContainer.Size = new System.Drawing.Size(984, 590);
             this.splitContainer.SplitterDistance = 280;
             this.splitContainer.SplitterWidth = 3;
             this.splitContainer.TabIndex = 3;
@@ -1221,7 +1222,7 @@
             this.lstDirectories.Name = "lstDirectories";
             this.lstDirectories.SelectedImageIndex = 0;
             this.lstDirectories.ShowLines = false;
-            this.lstDirectories.Size = new System.Drawing.Size(274, 590);
+            this.lstDirectories.Size = new System.Drawing.Size(280, 590);
             this.lstDirectories.TabIndex = 0;
             this.lstDirectories.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstDirectories_ItemDrag);
             this.lstDirectories.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.lstDirectories_BeforeSelect);
@@ -1235,6 +1236,39 @@
             this.imgFilesSmall.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgFilesSmall.ImageStream")));
             this.imgFilesSmall.TransparentColor = System.Drawing.Color.Transparent;
             this.imgFilesSmall.Images.SetKeyName(0, "up_folder_16.png");
+            // 
+            // lstFiles
+            // 
+            this.lstFiles.AllowColumnReorder = true;
+            this.lstFiles.AllowDrop = true;
+            this.lstFiles.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.clmName,
+            this.clmType,
+            this.clmSize,
+            this.clmModified,
+            this.clmAttributes});
+            this.lstFiles.ContextMenuStrip = this.cmsFileList;
+            this.lstFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstFiles.FullRowSelect = true;
+            this.lstFiles.HideSelection = false;
+            this.lstFiles.LargeImageList = this.imgFilesLarge;
+            this.lstFiles.Location = new System.Drawing.Point(0, 0);
+            this.lstFiles.Name = "lstFiles";
+            this.lstFiles.ShowGroups = false;
+            this.lstFiles.ShowItemToolTips = true;
+            this.lstFiles.Size = new System.Drawing.Size(701, 590);
+            this.lstFiles.SmallImageList = this.imgFilesSmall;
+            this.lstFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lstFiles.TabIndex = 0;
+            this.lstFiles.UseCompatibleStateImageBehavior = false;
+            this.lstFiles.View = System.Windows.Forms.View.Details;
+            this.lstFiles.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstFiles_ColumnClick);
+            this.lstFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstFiles_ItemDrag);
+            this.lstFiles.SelectedIndexChanged += new System.EventHandler(this.lstFiles_SelectedIndexChanged);
+            this.lstFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragDrop);
+            this.lstFiles.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragEnter);
+            this.lstFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstFiles_MouseDoubleClick);
             // 
             // clmName
             // 
@@ -1341,59 +1375,10 @@
             this.imgFilesLarge.TransparentColor = System.Drawing.Color.Transparent;
             this.imgFilesLarge.Images.SetKeyName(0, "up_folder_16.png");
             // 
-            // lstDirectories
+            // clmAttributes
             // 
-            this.lstDirectories.AllowDrop = true;
-            this.lstDirectories.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstDirectories.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstDirectories.FullRowSelect = true;
-            this.lstDirectories.HideSelection = false;
-            this.lstDirectories.ImageKey = "folder_closed_16.png";
-            this.lstDirectories.ImageList = this.imgFilesSmall;
-            this.lstDirectories.Location = new System.Drawing.Point(0, 0);
-            this.lstDirectories.Name = "lstDirectories";
-            this.lstDirectories.SelectedImageIndex = 0;
-            this.lstDirectories.ShowLines = false;
-            this.lstDirectories.Size = new System.Drawing.Size(280, 546);
-            this.lstDirectories.TabIndex = 0;
-            this.lstDirectories.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstDirectories_ItemDrag);
-            this.lstDirectories.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.lstDirectories_BeforeSelect);
-            this.lstDirectories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstDirectories_AfterSelect);
-            this.lstDirectories.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstDirectories_DragDrop);
-            this.lstDirectories.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstDirectories_DragEnter);
-            this.lstDirectories.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstDirectories_MouseUp);
-            // 
-            // lstFiles
-            // 
-            this.lstFiles.AllowColumnReorder = true;
-            this.lstFiles.AllowDrop = true;
-            this.lstFiles.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.clmName,
-            this.clmType,
-            this.clmSize,
-            this.clmModified});
-            this.lstFiles.ContextMenuStrip = this.cmsFileList;
-            this.lstFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstFiles.FullRowSelect = true;
-            this.lstFiles.HideSelection = false;
-            this.lstFiles.LargeImageList = this.imgFilesLarge;
-            this.lstFiles.Location = new System.Drawing.Point(0, 0);
-            this.lstFiles.Name = "lstFiles";
-            this.lstFiles.ShowGroups = false;
-            this.lstFiles.ShowItemToolTips = true;
-            this.lstFiles.Size = new System.Drawing.Size(774, 546);
-            this.lstFiles.SmallImageList = this.imgFilesSmall;
-            this.lstFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lstFiles.TabIndex = 0;
-            this.lstFiles.UseCompatibleStateImageBehavior = false;
-            this.lstFiles.View = System.Windows.Forms.View.Details;
-            this.lstFiles.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstFiles_ColumnClick);
-            this.lstFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstFiles_ItemDrag);
-            this.lstFiles.SelectedIndexChanged += new System.EventHandler(this.lstFiles_SelectedIndexChanged);
-            this.lstFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragDrop);
-            this.lstFiles.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragEnter);
-            this.lstFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstFiles_MouseDoubleClick);
+            this.clmAttributes.Tag = "Attrib.";
+            this.clmAttributes.Text = "Attrib.";
             // 
             // frmMain
             // 
@@ -1566,6 +1551,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator17;
         private System.Windows.Forms.ToolStripMenuItem hexViewToolStripMenuItem;
         public System.Windows.Forms.ImageList imgFilesLarge;
+        private System.Windows.Forms.ColumnHeader clmAttributes;
     }
 }
 

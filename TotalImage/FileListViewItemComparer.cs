@@ -14,6 +14,7 @@ namespace TotalImage
             Type,
             Size,
             Modified,
+            Attributes
         }
 
         FileListViewColumn SortColumn { get; }
@@ -33,6 +34,7 @@ namespace TotalImage
                 case FileListViewColumn.Name:
                     return FileSystemObjectComparer.NameDirectoriesFirst.Compare(x.Tag as FileSystemObject, y.Tag as FileSystemObject);
                 case FileListViewColumn.Type:
+                case FileListViewColumn.Attributes:
                     if(x.Tag is Directory && !(y.Tag is Directory))
                         return -1;
                     if(y.Tag is Directory && !(x.Tag is Directory))
@@ -59,6 +61,8 @@ namespace TotalImage
                     return FileListViewItemComparer.Size;
                 case FileListViewColumn.Modified:
                     return FileListViewItemComparer.Modified;
+                case FileListViewColumn.Attributes:
+                    return FileListViewItemComparer.Attributes;
                 default:
                     return null;
             }
@@ -68,5 +72,6 @@ namespace TotalImage
         public static FileListViewItemComparer Type { get => new FileListViewItemComparer(FileListViewColumn.Type); }
         public static FileListViewItemComparer Size { get => new FileListViewItemComparer(FileListViewColumn.Size); }
         public static FileListViewItemComparer Modified { get => new FileListViewItemComparer(FileListViewColumn.Modified); }
+        public static FileListViewItemComparer Attributes { get => new FileListViewItemComparer(FileListViewColumn.Attributes); }
     }
 }
