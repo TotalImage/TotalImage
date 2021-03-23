@@ -112,14 +112,6 @@ namespace TotalImage.Containers
         }
 
         /// <summary>
-        /// Get raw bytes from the container image
-        /// </summary>
-        /// <param name="offset">The offset from the start of the image</param>
-        /// <param name="length">The number of bytes to retrieve</param>
-        /// <returns>An array of bytes from the container</returns>
-        public abstract byte[] GetRawBytes(int offset, int length);
-
-        /// <summary>
         /// Save out the container to a file
         /// </summary>
         /// <param name="path">The path to save out the image to</param>

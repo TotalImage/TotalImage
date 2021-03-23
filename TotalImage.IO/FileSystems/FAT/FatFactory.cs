@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Threading;
 
 namespace TotalImage.FileSystems.FAT
 {
+    /// <summary>
+    /// A factory class that can create a FAT file system
+    /// </summary>
     public class FatFactory : IFileSystemFactory
     {
         private static FileSystem GetFatFromBiosParameterBlock(Stream stream, BiosParameterBlock bpb)

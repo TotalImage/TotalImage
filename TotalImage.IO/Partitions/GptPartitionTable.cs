@@ -174,14 +174,36 @@ namespace TotalImage.Partitions
         /// </summary>
         public class GptPartitionEntry : PartitionEntry
         {
+            /// <summary>
+            /// A unique identifier indicating the type of partition
+            /// </summary>
             public Guid TypeId { get; }
 
+            /// <summary>
+            /// A unique identifier for the partition
+            /// </summary>
             public Guid EntryId { get; }
 
+            /// <summary>
+            /// The flags set on the partition
+            /// </summary>
             public GptPartitionFlags Flags { get; }
 
+            /// <summary>
+            /// The name of the partition
+            /// </summary>
             public string Name { get; }
 
+            /// <summary>
+            /// Create a GUID Partition Table entry
+            /// </summary>
+            /// <param name="typeId">A unique identifier indicating the type of the partition</param>
+            /// <param name="entryId">A unique identifier for the partition</param>
+            /// <param name="flags">The flags to set on the partition</param>
+            /// <param name="name">The name of the partition</param>
+            /// <param name="offset">The offset of the partition in it's container file</param>
+            /// <param name="length">The length of the partition</param>
+            /// <param name="stream">The stream containing the partition data</param>
             public GptPartitionEntry(Guid typeId, Guid entryId, GptPartitionFlags flags, string name, long offset, long length, Stream stream) : base(offset, length, stream)
             {
                 TypeId = typeId;

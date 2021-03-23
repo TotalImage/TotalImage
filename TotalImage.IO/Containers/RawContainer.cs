@@ -79,14 +79,5 @@ namespace TotalImage.Containers
                 File.SetLastWriteTime(Path.Combine(path, entry.name), date.Value);
             }
         }
-
-        /// <inheritdoc />
-        public override byte[] GetRawBytes(int offset, int length)
-        {
-            byte[] bytes = new byte[length];
-            containerStream.Position = 0;
-            containerStream.Read(bytes, offset, length);
-            return bytes;
-        }
     }
 }
