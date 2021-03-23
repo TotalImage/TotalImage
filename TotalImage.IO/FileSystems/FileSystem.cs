@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Immutable;
 using System.IO;
 using TotalImage.FileSystems.FAT;
-using TotalImage.Partitions;
 
 namespace TotalImage.FileSystems
 {
@@ -34,12 +32,15 @@ namespace TotalImage.FileSystems
             return null;
         }
 
+        /// <summary>
+        /// The stream containing the file system
+        /// </summary>
         protected readonly Stream _stream;
 
         /// <summary>
         /// Create a representation of the file system
         /// </summary>
-        /// <param name="containerStream">The underlying stream containing the file system</param>
+        /// <param name="containerStream">The stream containing the file system</param>
         protected FileSystem(Stream containerStream)
         {
             _stream = containerStream;

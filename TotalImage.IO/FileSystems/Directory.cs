@@ -4,17 +4,17 @@ using Path = System.IO.Path;
 namespace TotalImage.FileSystems
 {
     /// <summary>
-    /// Base directory class to be implemented by the file system handlers
+    /// Represents a directory within a file system.
     /// </summary>
     public abstract class Directory : FileSystemObject
     {
         private readonly Directory? _parent;
 
         /// <summary>
-        /// A directory on a filesystem
+        /// Create a directory on a filesystem
         /// </summary>
         /// <param name="fileSystem">The file system containing the directory</param>
-        /// <param name="parent">The parent directory, if exists</param>
+        /// <param name="parent">The parent directory, if it exists</param>
         protected Directory(FileSystem fileSystem, Directory? parent) : base(fileSystem)
         {
             this._parent = parent;

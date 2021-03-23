@@ -18,6 +18,7 @@ namespace TotalImage.FileSystems.FAT
     {
         public FatRootDirectory(Fat12 fat) : base(fat, null) { }
 
+        /// <inheritdoc />
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
         {
             if (!(FileSystem is Fat12 fat))
@@ -79,43 +80,56 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
+        /// <inheritdoc />
         public override Directory CreateSubdirectory(string path)
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override void Delete()
             => throw new InvalidOperationException();
 
+        /// <inheritdoc />
         public override void MoveTo(string path)
             => throw new InvalidOperationException();
 
+        /// <inheritdoc />
         public override string Name
         {
             get => string.Empty;
             set => throw new InvalidOperationException();
         }
 
+        /// <inheritdoc />
         public override FileAttributes Attributes
         {
             get => FileAttributes.Directory;
             set => throw new NotSupportedException();
         }
+
+        /// <inheritdoc />
         public override DateTime? LastAccessTime
         {
             get => null;
             set => throw new NotSupportedException();
         }
+
+        /// <inheritdoc />
         public override DateTime? LastWriteTime
         {
             get => null;
             set => throw new NotSupportedException();
         }
+
+        /// <inheritdoc />
         public override DateTime? CreationTime
         {
             get => null;
             set => throw new NotSupportedException();
         }
+
+        /// <inheritdoc />
         public override ulong Length
         {
             get => throw new NotSupportedException();

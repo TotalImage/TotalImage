@@ -17,47 +17,55 @@ namespace TotalImage.FileSystems.FAT
             this.entry = entry;
         }
 
+        /// <inheritdoc />
         public override string Name
         {
             get => Helper.TrimFileName(entry.name);
             set => throw new NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override FileAttributes Attributes
         {
             get => (FileAttributes)entry.attr;
             set => throw new NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override DateTime? LastAccessTime
         {
             get => Helper.FatToDateTime(entry.lstAccDate);
             set => throw new NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override DateTime? LastWriteTime
         {
             get => Helper.FatToDateTime(entry.wrtDate, entry.wrtTime);
             set => throw new NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override DateTime? CreationTime
         {
             get => Helper.FatToDateTime(entry.crtDate, entry.crtTime, entry.crtTimeTenth);
             set => throw new NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override ulong Length
         {
             get => entry.fileSize;
             set => throw new NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override Directory CreateSubdirectory(string path)
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override void Delete()
         {
             /* When deleting a directory, the first character of the name needs to be changed to 0xE5.
@@ -72,6 +80,7 @@ namespace TotalImage.FileSystems.FAT
             //And then mark all clusters in the chain as free, and do the same for all files and subdirectories inside.
         }
 
+        /// <inheritdoc />
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
         {
             if (!(FileSystem is Fat12 fat))
@@ -155,6 +164,7 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
+        /// <inheritdoc />
         public override void MoveTo(string path)
         {
             throw new NotImplementedException();
