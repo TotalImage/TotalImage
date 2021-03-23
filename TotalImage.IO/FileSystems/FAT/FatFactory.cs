@@ -196,6 +196,9 @@ namespace TotalImage.FileSystems.FAT
                                     LargeTotalLogicalSectors = 0
                                 };
                                 break;
+                            default:
+                                // This is likely not a FAT filesystem.
+                                return null;
                         }
                     }
                 }
