@@ -734,7 +734,7 @@ namespace TotalImage
             var sorter = FileListViewItemComparer.GetColumnSorter(sortColumn);
 
             if(sortOrder == SortOrder.Descending)
-                sorter = new DescendingComparer(sorter); // U+1F926 🤦 FACE PALM
+                sorter = new InvertedComparer(sorter);
 
             return sorter;
         }
