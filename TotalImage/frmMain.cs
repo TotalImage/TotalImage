@@ -17,7 +17,7 @@ namespace TotalImage
     public partial class frmMain : Form
     {
         public string filename = "";
-        public string path = "";
+        public string filepath = "";
         public bool unsavedChanges = false;
         public Container? image;
         public int CurrentPartitionIndex;
@@ -385,7 +385,7 @@ namespace TotalImage
                 throw new Exception("No image is currently loaded");
             }
 
-            image.SaveImage(path);
+            image.SaveImage(filepath);
 
             saveToolStripButton.Enabled = false;
             saveToolStripMenuItem.Enabled = false;
@@ -423,11 +423,11 @@ namespace TotalImage
                     image.SaveImage(sfd.FileName);
                 }
 
-                path = sfd.FileName;
-                filename = Path.GetFileName(path);
+                filepath = sfd.FileName;
+                filename = Path.GetFileName(filepath);
                 Text = $"{filename} - TotalImage";
 
-                Settings.AddRecentImage(path);
+                Settings.AddRecentImage(filepath);
                 PopulateRecentList();
                 unsavedChanges = false;
                 saveToolStripButton.Enabled = false;
@@ -940,7 +940,10 @@ namespace TotalImage
                 if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
                 {
                     if (items.Length == 1)
-                        OpenImage(items[0]);
+                    {
+                        filepath = items[0];
+                        OpenImage(filepath);
+                    }
                 }
                 else if (!string.IsNullOrWhiteSpace(filename) || unsavedChanges) //An image is open (either saved or new)
                 {
@@ -983,7 +986,8 @@ namespace TotalImage
                 {
                     if (items.Length == 1)
                     {
-                        OpenImage(items[0]);
+                        filepath = items[0];
+                        OpenImage(filepath);
                     }
                 }
             }
@@ -1392,6 +1396,7 @@ namespace TotalImage
         //TODO: This needs some serious rethinking and probably restructuring.
         private void OpenImage(string path)
         {
+            filepath = path;
             filename = Path.GetFileName(path);
             Text = $"{filename} - TotalImage";
 
@@ -1484,7 +1489,7 @@ namespace TotalImage
 
             EnableUI();
 
-            Settings.AddRecentImage(path);
+            Settings.AddRecentImage(filepath);
             PopulateRecentList();
         }
 
@@ -1690,7 +1695,7 @@ namespace TotalImage
             unsavedChanges = false;
             Text = "TotalImage";
             filename = "";
-            path = "";
+            filepath = "";
             image?.Dispose();
             image = null;
             lstDirectories.Nodes.Clear();
