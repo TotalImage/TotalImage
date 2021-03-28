@@ -6,11 +6,9 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.Containers;
-using TotalImage.DiskGeometries;
 using static Interop.Shell32;
 using static Interop.User32;
 using System.Drawing.Imaging;
-using System.Diagnostics;
 using System.Collections;
 using System.Text;
 

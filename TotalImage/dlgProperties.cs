@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
-using TotalImage.FileSystems.FAT;
+using System.Diagnostics;
 using static Interop.Shell32;
 using static Interop.User32;
 
@@ -29,15 +29,36 @@ namespace TotalImage
         //TODO: VFAT/LFN support, proper size calculations
         public dlgProperties(FileSystemObject entry) : this()
         {
-            if(entry == null)
+            string sizeUnitName = Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits);
+
+            if (entry == null)
                 throw new ArgumentNullException(nameof(entry), "entry cannot be null!");
 
             txtFilename.Text = entry.Name.ToUpper();
             lblShortFilename1.Text = entry.Name.ToUpper();
-            lblSize1.Text = $"{entry.Length:n0} B";
 
-            uint sizeOnDisk = (uint)Math.Ceiling(entry.Length / 1024.0) * 1024;
-            lblSizeOnDisk1.Text = $"{string.Format("{0:n0}", sizeOnDisk)} B";
+            lblSize1.Text = $"{entry.Length:n0} B";
+            if (Settings.CurrentSettings.SizeUnits != Settings.SizeUnit.B)
+            {
+                float sizeInUnit = entry.Length / (float)Settings.CurrentSettings.SizeUnits;
+                lblSize1.Text = lblSize1.Text.Insert(0, $"{sizeInUnit:n2} {sizeUnitName} (");
+                lblSize1.Text = lblSize1.Text.Insert(lblSize1.Text.Length, ")");
+            }
+
+            frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
+            FileSystems.FAT.Fat12 fs = (FileSystems.FAT.Fat12)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
+            uint clusterSize = (uint)fs.BiosParameterBlock.LogicalSectorsPerCluster * fs.BiosParameterBlock.BytesPerLogicalSector;
+            Debug.WriteLine($"Cluster size: {clusterSize}");
+            uint sizeOnDisk = (uint)Math.Ceiling(entry.Length / (double)clusterSize) * clusterSize;
+            Debug.WriteLine($"Size on disk: {sizeOnDisk}");
+
+            lblSizeOnDisk1.Text = $"{sizeOnDisk:n0} B";
+            if (Settings.CurrentSettings.SizeUnits != Settings.SizeUnit.B)
+            {
+                float sizeInUnit = sizeOnDisk / (float)Settings.CurrentSettings.SizeUnits;
+                lblSizeOnDisk1.Text = lblSizeOnDisk1.Text.Insert(0, $"{sizeInUnit:n2} {sizeUnitName} (");
+                lblSizeOnDisk1.Text = lblSizeOnDisk1.Text.Insert(lblSizeOnDisk1.Text.Length, ")");
+            }
 
             if (entry is FileSystems.File file)
                 lblLocation1.Text = file.DirectoryName;
