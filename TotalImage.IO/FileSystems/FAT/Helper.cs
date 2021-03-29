@@ -16,9 +16,9 @@ namespace TotalImage.FileSystems.FAT
 
             try
             {
-                return new DateTime(year, month, day);
+                return new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Unspecified);
             }
-            catch(ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 return null;
             }
@@ -37,9 +37,9 @@ namespace TotalImage.FileSystems.FAT
 
             try
             {
-                return new DateTime(year, month, day, hour, minute, second);
+                return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified);
             }
-            catch(ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 return null;
             }
@@ -59,9 +59,9 @@ namespace TotalImage.FileSystems.FAT
 
             try
             {
-                return new DateTime(year, month, day, hour, minute, second, millisecond);
+                return new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
             }
-            catch(ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 return null;
             }
