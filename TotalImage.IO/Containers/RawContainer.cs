@@ -15,6 +15,9 @@ namespace TotalImage.Containers
         public override Stream Content => containerStream;
 
         /// <inheritdoc />
+        public override string DisplayName => "Raw sector image";
+
+        /// <inheritdoc />
         public RawContainer(string path) : base(path)
         {
         }

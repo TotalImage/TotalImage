@@ -24,5 +24,8 @@ namespace TotalImage.Containers
 
         /// <inheritdoc />
         public override Stream Content => _contentStream;
+
+        /// <inheritdoc />
+        public override string DisplayName => "Microsoft VHD";
     }
 }

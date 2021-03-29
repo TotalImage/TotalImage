@@ -141,5 +141,10 @@ namespace TotalImage.Containers
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        /// <summary>
+        /// The display name of the container.
+        /// </summary>
+        public abstract string DisplayName { get; }
     }
 }
