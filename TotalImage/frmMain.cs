@@ -590,7 +590,10 @@ namespace TotalImage
                 extractToolStripButton.Enabled = false;
                 propertiesToolStripButton.Enabled = false;
 
-                lbStatuslPath.Text = $"{lstDirectories.SelectedNode.FullPath}{lstDirectories.PathSeparator}";
+                lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath;
+                if (lbStatuslPath.Text.Substring(lbStatuslPath.Text.Length - 1) != lstDirectories.PathSeparator)
+                    lbStatuslPath.Text += lstDirectories.PathSeparator;
+
                 lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", CalculateDirSize() / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), GetFileCount());            
             }
             else if (lstFiles.SelectedItems.Count == 1)
@@ -637,7 +640,9 @@ namespace TotalImage
                 extractToolStripButton.Enabled = true;
                 propertiesToolStripButton.Enabled = false;
 
-                lbStatuslPath.Text = $"{lstDirectories.SelectedNode.FullPath}{lstDirectories.PathSeparator}";
+                lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath;
+                if (lbStatuslPath.Text.Substring(lbStatuslPath.Text.Length - 1) != lstDirectories.PathSeparator)
+                    lbStatuslPath.Text += lstDirectories.PathSeparator;
 
                 var selectedSize = 0ul;
                 foreach (ListViewItem lvi in lstFiles.SelectedItems)
@@ -831,7 +836,9 @@ namespace TotalImage
                 }
             }
             lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", dirSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits),  fileCount);
-            lbStatuslPath.Text = $"{lstDirectories.SelectedNode.FullPath}{lstDirectories.PathSeparator}";
+            lbStatuslPath.Text = lstDirectories.SelectedNode.FullPath;
+                if (lbStatuslPath.Text.Substring(lbStatuslPath.Text.Length - 1) != lstDirectories.PathSeparator)
+                    lbStatuslPath.Text += lstDirectories.PathSeparator;
 
             if (lstDirectories.SelectedNode == null)
             {

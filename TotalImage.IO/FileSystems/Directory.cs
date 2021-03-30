@@ -77,7 +77,7 @@ namespace TotalImage.FileSystems
         /// </summary>
         public override string FullName
             => _parent == null
-                ? Name
+                ? Path.DirectorySeparatorChar.ToString()
                 : Path.Combine(_parent.FullName, Name);
 
         /// <summary>
