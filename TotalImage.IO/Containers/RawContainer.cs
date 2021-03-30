@@ -59,7 +59,7 @@ namespace TotalImage.Containers
         /// <param name="path">The path to extract the entry to</param>
         public void ExtractFile(DirectoryEntry entry, string path)
         {
-            if (Convert.ToBoolean(entry.attr & 0x10)) return;
+            if (entry.attr.HasFlag(FatAttributes.Subdirectory)) return;
 
             uint cluster = ((uint)entry.fstClusHI << 16) | entry.fstClusLO;
 

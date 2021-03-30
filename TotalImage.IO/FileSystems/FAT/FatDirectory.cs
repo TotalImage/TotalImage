@@ -130,13 +130,13 @@ namespace TotalImage.FileSystems.FAT
                         var entry = DirectoryEntry.Parse(reader.ReadBytes(32));
 
                         //Skip LFN and volume label entries for now
-                        if (Convert.ToBoolean(entry.attr & 0x08))
+                        if (entry.attr.HasFlag(FatAttributes.VolumeId))
                         {
                             continue;
                         }
 
                         //Folder entry
-                        if (Convert.ToBoolean(entry.attr & 0x10))
+                        if (entry.attr.HasFlag(FatAttributes.Subdirectory))
                         {
                             yield return new FatDirectory(fat, entry, this);
                         }

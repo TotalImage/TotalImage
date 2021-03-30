@@ -12,7 +12,7 @@ namespace TotalImage.FileSystems.FAT
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 11)]
         public string name; // “Short” file name limited to 11 characters.
-        public byte attr; // File attributes.
+        public FatAttributes attr; // File attributes.
         public byte ntRes; // Reserved. Must be set to 0. 
         public byte crtTimeTenth; // Component of the file creation time. Count of tenths of a second. 
         public ushort crtTime; // Creation time. Granularity is 2 seconds. 
@@ -32,7 +32,7 @@ namespace TotalImage.FileSystems.FAT
             using (var reader = new BinaryReader(stream, Encoding.ASCII))
             {
                 entry.name = new string(reader.ReadChars(11));
-                entry.attr = reader.ReadByte();
+                entry.attr = (FatAttributes)reader.ReadByte();
                 entry.ntRes = reader.ReadByte();
                 entry.crtTimeTenth = reader.ReadByte();
                 entry.crtTime = reader.ReadUInt16();
