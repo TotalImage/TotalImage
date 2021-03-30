@@ -15,6 +15,8 @@ namespace TotalImage.Partitions
         /// </summary>
         protected readonly Container _container;
 
+        public abstract string DisplayName { get; }
+
         /// <summary>
         /// A list of partitions contained within the partition table, to be validated and exposed by <see cref="Partitions" />
         ///

@@ -21,6 +21,8 @@ namespace TotalImage.Partitions
         /// </summary>
         public GptHeader? Header => _header;
 
+        public override string DisplayName => "GUID Partition Table";
+
         /// <inheritdoc />
         public GptPartitionTable(Container container, uint sectorSize = 512) : base(container)
         {

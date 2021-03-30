@@ -14,6 +14,8 @@ namespace TotalImage.Partitions
     {
         private readonly uint _sectorSize;
 
+        public override string DisplayName => "Master Boot Record";
+
         /// <inheritdoc />
         public MbrPartitionTable(Container container, uint sectorSize = 512) : base(container)
         {

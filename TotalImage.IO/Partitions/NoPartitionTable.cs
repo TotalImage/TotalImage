@@ -15,6 +15,8 @@ namespace TotalImage.Partitions
         {
         }
 
+        public override string DisplayName => "N/A";
+
         /// <inheritdoc />
         protected override IEnumerable<PartitionEntry> LoadPartitions()
         {
