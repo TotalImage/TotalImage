@@ -28,7 +28,7 @@ namespace TotalImage
             public bool OpenFolderAfterExtract { get; set; } = true;
             public int SplitterDistance { get; set; } = 280;
             public Size WindowSize { get; set; } = new Size(1000, 700);
-            public  Point WindowPosition { get; set; } = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
+            public Point WindowPosition { get; set; } = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
             public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
         }
 
@@ -37,7 +37,7 @@ namespace TotalImage
         private static readonly string SettingsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotalImage");
         private static readonly string SettingsFile = Path.Combine(SettingsDir, "settings.json");
 
-        private static FileSystemWatcher settingsWatcher = new FileSystemWatcher(SettingsDir, "settings.json");
+        private static FileSystemWatcher settingsWatcher;
 
         public enum SizeUnit
         {
@@ -86,6 +86,7 @@ namespace TotalImage
                 }
             }
 
+            settingsWatcher = new FileSystemWatcher(SettingsDir, "settings.json");
             settingsWatcher.EnableRaisingEvents = true;
             settingsWatcher.NotifyFilter = NotifyFilters.LastWrite;
             settingsWatcher.Changed += settingsWatcher_Changed;
@@ -114,7 +115,7 @@ namespace TotalImage
 
                 MessageBox.Show("The settings have been changed and reloaded.", "TotalImage", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            catch(IOException)
+            catch (IOException)
             {
                 // We can't read the file. Carry on.
             }
@@ -176,11 +177,17 @@ namespace TotalImage
             }
 
             // Let's not make us reload the very settings we're about to save
-            settingsWatcher.EnableRaisingEvents = false;
+            if (settingsWatcher != null)
+            {
+                settingsWatcher.EnableRaisingEvents = false;
+            }
 
             File.WriteAllText(SettingsFile, json);
 
-            settingsWatcher.EnableRaisingEvents = true;
+            if (settingsWatcher != null)
+            {
+                settingsWatcher.EnableRaisingEvents = true;
+            }
         }
 
         //Adds an image to the recent list
