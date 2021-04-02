@@ -40,23 +40,25 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public FileSystem? TryLoadFileSystem(Stream stream)
         {
-            BiosParameterBlock? _bpb = null;
+            using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+
+            BiosParameterBlock? _bpb;
             byte bpbOffset = 0x0B;
+
             try
             {
-                _bpb = Parse(stream, bpbOffset); //Try to parse the BPB at the standard offset
+                _bpb = Parse(reader, bpbOffset); //Try to parse the BPB at the standard offset
 
                 //For standard disk types the OEM ID should begin right after the jump instruction, at offset 0x03
-                using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+
                 stream.Seek(3, SeekOrigin.Begin);
-                _bpb.OemId = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper();
+                _bpb.OemId = new string(reader.ReadChars(8)).TrimEnd(' ').ToUpper();
             }
             catch (InvalidDataException)
             {
                 //BPB likely invalid, check if this is an Acorn 800k disk without one
-                if (CheckForAcorn800k(stream))
+                if (CheckForAcorn800k(reader))
                 {
-                    bpbOffset = 0xFF; //BPB not actually at this offset, this is just to avoid trying to parse it again later
                     _bpb = new BiosParameterBlock
                     {
                         BpbVersion = BiosParameterBlockVersion.Dos20,
@@ -73,6 +75,7 @@ namespace TotalImage.FileSystems.FAT
                         HiddenSectors = 0,
                         LargeTotalLogicalSectors = 0,
                     };
+
                     return new Fat12(stream, _bpb);
                 }
                 else
@@ -81,7 +84,7 @@ namespace TotalImage.FileSystems.FAT
                     try
                     {
                         bpbOffset = 0x50;
-                        _bpb = Parse(stream, bpbOffset);
+                        _bpb = Parse(reader, bpbOffset);
                     }
                     catch (InvalidDataException)
                     {
@@ -205,111 +208,104 @@ namespace TotalImage.FileSystems.FAT
                 }
             }
 
-            return new Fat12(stream, _bpb);
+            return GetFatFromBiosParameterBlock(stream, _bpb);
         }
 
         /// <summary>
         /// Checks whether the image contains Acorn 800k format, which starts with the first (and only) FAT.
         /// </summary>
         /// <returns></returns>
-        private bool CheckForAcorn800k(Stream stream)
+        private static bool CheckForAcorn800k(BinaryReader reader)
         {
-            using var reader = new BinaryReader(stream, Encoding.ASCII, true);
-
-            stream.Seek(0, SeekOrigin.Begin);
-            uint threeBytes = reader.ReadUInt32();
-
-            if ((threeBytes & 0xFFFFFF) == 0xFFFFFD) //The starting bytes of the FAT on Acorn 800k disks are 0xFDFFFF
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            reader.BaseStream.Seek(0, SeekOrigin.Begin);
+            return (reader.ReadUInt32() & 0xFFFFFF) == 0xFFFFFD;
         }
-        private BiosParameterBlock Parse(Stream stream, uint offset)
+
+        private static BiosParameterBlock Parse(BinaryReader reader, uint offset)
         {
-            var bpb = new BiosParameterBlock();
-            using (var reader = new BinaryReader(stream, Encoding.ASCII, true))
+
+            reader.BaseStream.Seek(offset, SeekOrigin.Begin); //BPB offset
+
+            var bpb = new BiosParameterBlock
             {
-                stream.Seek(offset, SeekOrigin.Begin); //BPB offset
+                BytesPerLogicalSector = reader.ReadUInt16(),
+                LogicalSectorsPerCluster = reader.ReadByte(),
+                ReservedLogicalSectors = reader.ReadUInt16(),
+                NumberOfFATs = reader.ReadByte(),
+                RootDirectoryEntries = reader.ReadUInt16(),
+                TotalLogicalSectors = reader.ReadUInt16(),
+                MediaDescriptor = reader.ReadByte(),
+                LogicalSectorsPerFAT = reader.ReadUInt16()
+            };
 
-                bpb.BytesPerLogicalSector = reader.ReadUInt16();
-                bpb.LogicalSectorsPerCluster = reader.ReadByte();
-                bpb.ReservedLogicalSectors = reader.ReadUInt16();
-                bpb.NumberOfFATs = reader.ReadByte();
-                bpb.RootDirectoryEntries = reader.ReadUInt16();
-                bpb.TotalLogicalSectors = reader.ReadUInt16();
-                bpb.MediaDescriptor = reader.ReadByte();
-                bpb.LogicalSectorsPerFAT = reader.ReadUInt16();
-
-                //Parsing a standard BPB
-                if (offset == 0x0B)
-                {
-                    bpb.PhysicalSectorsPerTrack = reader.ReadUInt16();
-                    bpb.NumberOfHeads = reader.ReadUInt16();
-                    bpb.HiddenSectors = reader.ReadUInt32();
-                    bpb.LargeTotalLogicalSectors = reader.ReadUInt32();
-                }
-                //Parsing an Apricot BPB, which doesn't have the number of heads and SPT, so we have to make some manual adjustments
-                else if (offset == 0x50)
-                {
-                    if (bpb.MediaDescriptor == 0xFC) //315k
-                    {
-                        bpb.NumberOfHeads = 1;
-                        bpb.PhysicalSectorsPerTrack = 70;
-                    }
-                    else if (bpb.MediaDescriptor == 0xFE) //720k
-                    {
-                        bpb.NumberOfHeads = 2;
-                        bpb.PhysicalSectorsPerTrack = 80;
-                    }
-                }
-
-                //TODO: These are just some very simple checks to see if the BPB is valid, this should probably be improved upon
-                if (bpb.NumberOfHeads == 0 || bpb.PhysicalSectorsPerTrack == 0 || bpb.BytesPerLogicalSector == 0 || bpb.NumberOfFATs == 0 ||
-                    bpb.TotalLogicalSectors == 0 || bpb.ReservedLogicalSectors == 0 || bpb.LogicalSectorsPerCluster == 0 ||
-                    bpb.LogicalSectorsPerFAT == 0 || bpb.RootDirectoryEntries == 0)
-                {
-                    throw new InvalidDataException("At least one of BPB parameters is 0");
-                }
-
-                uint tracks = (uint)(bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack);
-
-                // TODO: This probably needs reviewing to better check BPB params match the correct size
-                if (tracks == 0)
-                {
-                    throw new InvalidDataException("BPB paramaters don't match image size");
-                }
-
-                //So far, the BPB seems to be OK, so try to read it further as a DOS 4.0 BPB.
-                var bpb40 = new BiosParameterBlock40(bpb);
-                bpb40.PhysicalDriveNumber = reader.ReadByte();
-                bpb40.Flags = reader.ReadByte();
-
-                switch (reader.ReadByte())
-                {
-                    case 40:
-                        bpb40.BpbVersion = BiosParameterBlockVersion.Dos34;
-                        break;
-                    case 41:
-                        bpb40.BpbVersion = BiosParameterBlockVersion.Dos40;
-                        break;
-                    default:
-                        return bpb; // it's not a DOS 4.0 BPB, don't bother any further
-                }
-
-                bpb40.VolumeSerialNumber = reader.ReadUInt32();
-
-                if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
-                {
-                    bpb40.VolumeLabel = new string(reader.ReadChars(11));
-                    bpb40.FileSystemType = new string(reader.ReadChars(8));
-                }
-
-                return bpb40;
+            //Parsing a standard BPB
+            if (offset == 0x0B)
+            {
+                bpb.PhysicalSectorsPerTrack = reader.ReadUInt16();
+                bpb.NumberOfHeads = reader.ReadUInt16();
+                bpb.HiddenSectors = reader.ReadUInt32();
+                bpb.LargeTotalLogicalSectors = reader.ReadUInt32();
             }
+
+            //Parsing an Apricot BPB, which doesn't have the number of heads and SPT, so we have to make some manual adjustments
+            else if (offset == 0x50)
+            {
+                if (bpb.MediaDescriptor == 0xFC) //315k
+                {
+                    bpb.NumberOfHeads = 1;
+                    bpb.PhysicalSectorsPerTrack = 70;
+                }
+                else if (bpb.MediaDescriptor == 0xFE) //720k
+                {
+                    bpb.NumberOfHeads = 2;
+                    bpb.PhysicalSectorsPerTrack = 80;
+                }
+            }
+
+            //TODO: These are just some very simple checks to see if the BPB is valid, this should probably be improved upon
+            if (bpb.NumberOfHeads == 0 || bpb.PhysicalSectorsPerTrack == 0 || bpb.BytesPerLogicalSector == 0 || bpb.NumberOfFATs == 0 ||
+                bpb.TotalLogicalSectors == 0 || bpb.ReservedLogicalSectors == 0 || bpb.LogicalSectorsPerCluster == 0 ||
+                bpb.LogicalSectorsPerFAT == 0 || bpb.RootDirectoryEntries == 0)
+            {
+                throw new InvalidDataException("At least one of BPB parameters is 0");
+            }
+
+            uint tracks = (uint)(bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack);
+
+            // TODO: This probably needs reviewing to better check BPB params match the correct size
+            if (tracks == 0)
+            {
+                throw new InvalidDataException("BPB paramaters don't match image size");
+            }
+
+            //So far, the BPB seems to be OK, so try to read it further as a DOS 4.0 BPB.
+            var bpb40 = new BiosParameterBlock40(bpb)
+            {
+                PhysicalDriveNumber = reader.ReadByte(),
+                Flags = reader.ReadByte()
+            };
+
+            switch (reader.ReadByte())
+            {
+                case 40:
+                    bpb40.BpbVersion = BiosParameterBlockVersion.Dos34;
+                    break;
+                case 41:
+                    bpb40.BpbVersion = BiosParameterBlockVersion.Dos40;
+                    break;
+                default:
+                    return bpb; // it's not a DOS 4.0 BPB, don't bother any further
+            }
+
+            bpb40.VolumeSerialNumber = reader.ReadUInt32();
+
+            if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
+            {
+                bpb40.VolumeLabel = new string(reader.ReadChars(11));
+                bpb40.FileSystemType = new string(reader.ReadChars(8));
+            }
+
+            return bpb40;
         }
     }
 }
