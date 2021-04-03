@@ -9,7 +9,7 @@ namespace TotalImage.FileSystems.FAT
      *
      * Just for looks atm
      */
-    public class FatFile : File
+    public class FatFile : File, IFatFileSystemObject
     {
         private DirectoryEntry entry;
 
@@ -19,9 +19,23 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override string Name
+        public string ShortName
         {
             get => Helper.TrimFileName(entry.name);
+            set => throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public string? LongName
+        {
+            get => null;
+            set => throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override string Name
+        {
+            get => LongName ?? ShortName;
             set => throw new NotImplementedException();
         }
 

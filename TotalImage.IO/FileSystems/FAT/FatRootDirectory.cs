@@ -14,7 +14,7 @@ namespace TotalImage.FileSystems.FAT
      *
      * Separate class for now, aim to integrate this into FatDirectory.cs
      */
-    public class FatRootDirectory : Directory
+    public class FatRootDirectory : Directory, IFatFileSystemObject
     {
         public FatRootDirectory(Fat12 fat) : base(fat, null) { }
 
@@ -94,10 +94,24 @@ namespace TotalImage.FileSystems.FAT
             => throw new InvalidOperationException();
 
         /// <inheritdoc />
-        public override string Name
+        public string ShortName
         {
             get => string.Empty;
-            set => throw new InvalidOperationException();
+            set => throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public string? LongName
+        {
+            get => null;
+            set => throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override string Name
+        {
+            get => LongName ?? ShortName;
+            set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />

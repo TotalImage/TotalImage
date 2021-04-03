@@ -8,7 +8,7 @@ namespace TotalImage.FileSystems.FAT
     /*
      * FAT12/FAT16/FAT32 directory class. Implements directory entry enumeration.
      */
-    public class FatDirectory : Directory
+    public class FatDirectory : Directory, IFatFileSystemObject
     {
         private DirectoryEntry entry;
 
@@ -18,9 +18,23 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override string Name
+        public string ShortName
         {
             get => Helper.TrimFileName(entry.name);
+            set => throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public string? LongName
+        {
+            get => null;
+            set => throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public override string Name
+        {
+            get => LongName ?? ShortName;
             set => throw new NotImplementedException();
         }
 
