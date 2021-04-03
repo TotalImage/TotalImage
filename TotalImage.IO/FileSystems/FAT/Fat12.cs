@@ -425,5 +425,55 @@ namespace TotalImage.FileSystems.FAT
                 }
             }
         }
+
+
+        public uint DataAreaFirstSector
+        {
+            get
+            {
+                var fatOffset = (uint)_bpb.ReservedLogicalSectors;
+                var fatSize = (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
+                var rootDirSize = (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
+                return fatOffset + fatSize + rootDirSize;
+            }
+        }
+
+        public uint BytesPerCluster => (uint)_bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
+        public uint ClusterCount => (uint)_bpb.LogicalSectorsPerFAT * _bpb.BytesPerLogicalSector * 3 / 2;
+
+        public uint GetNextCluster(uint index, int fat = 0)
+        {
+            if (index >= ClusterCount) throw new ArgumentOutOfRangeException();
+            if (fat >= _bpb.NumberOfFATs) throw new ArgumentOutOfRangeException();
+
+            using var reader = new BinaryReader(GetStream(), Encoding.ASCII, true);
+
+            // Seek to the beginning of the cluster map.
+            reader.BaseStream.Position = _bpb.ReservedLogicalSectors * _bpb.BytesPerLogicalSector;
+
+            if (fat > 0)
+            {
+                // Reading from a backup FAT, so seek to the beginning of that.
+                var fatOffset = fat * _bpb.LogicalSectorsPerFAT * _bpb.BytesPerLogicalSector;
+                reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
+            }
+
+            // FAT12 uses 12-bit cluster indices, therefore it's time for some
+            // crazy maths! Let's first seek further to the nearest even index.
+            reader.BaseStream.Seek(index / 2 * 3, SeekOrigin.Current);
+ 
+            // Now we want to read two values. Considering there is no 24-bit
+            // integer type, we have to read 32 bits, which means we're going
+            // to read more than we need, so we have to discard the MSB.
+            var pair = reader.ReadUInt32() & 0xFFFFFF;
+
+            // Right now, `pair` has the value of 0x00123ABC, bits 0-11 contain
+            // the value of the even index and bits 12-23 contain the value of
+            // the odd index. All we need to do is return the relevant part.
+            if (index % 2 == 0)
+                return pair & 0xFFF;
+            else
+                return pair >> 12;
+        }
     }
 }
