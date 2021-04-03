@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
-using TotalImage.FileSystems.FAT;
 using TotalImage.DiskGeometries;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Diagnostics;
+using TotalImage.FileSystems.BPB;
 
 namespace TotalImage
 {

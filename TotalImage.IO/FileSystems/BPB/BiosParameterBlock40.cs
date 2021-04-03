@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Globalization;
+using TotalImage.DiskGeometries;
+using TotalImage.FileSystems.FAT;
 
-namespace TotalImage.FileSystems.FAT
+namespace TotalImage.FileSystems.BPB
 {
     /// <summary>
     /// BIOS Parameter Block versions 3.4 and 4.0 for FAT12, FAT16, FAT16B and HPFS file systems.
@@ -41,35 +44,37 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
-        public BiosParameterBlock40()
+        private BiosParameterBlock40() : base()
         {
             volumeLabel = "";
             fileSystemType = "";
         }
 
-        public BiosParameterBlock40(BiosParameterBlock bpb)
+        public BiosParameterBlock40(BiosParameterBlock bpb) : base(bpb)
         {
             if (bpb == null)
                 throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
 
             volumeLabel = "";
             fileSystemType = "";
+        }
 
-            BpbVersion = bpb.BpbVersion;
-            BootJump = bpb.BootJump;
-            OemId = bpb.OemId;
-            BytesPerLogicalSector = bpb.BytesPerLogicalSector;
-            LogicalSectorsPerCluster = bpb.LogicalSectorsPerCluster;
-            ReservedLogicalSectors = bpb.ReservedLogicalSectors;
-            NumberOfFATs = bpb.NumberOfFATs;
-            RootDirectoryEntries = bpb.RootDirectoryEntries;
-            //TLS = bpb.TLS;
-            MediaDescriptor = bpb.MediaDescriptor;
-            LogicalSectorsPerFAT = bpb.LogicalSectorsPerFAT;
-            PhysicalSectorsPerTrack = bpb.PhysicalSectorsPerTrack;
-            NumberOfHeads = bpb.NumberOfHeads;
-            HiddenSectors = bpb.HiddenSectors;
-            LargeTotalLogicalSectors = bpb.LargeTotalLogicalSectors;
+        public static BiosParameterBlock40 FromGeometry(FloppyGeometry geometry, BiosParameterBlockVersion version, string oemId, string serialNumber, string fileSystemType, string volumeLabel)
+        {
+            var bpb = new BiosParameterBlock40(FromGeometry(geometry, version, oemId))
+            {
+                PhysicalDriveNumber = 0,
+                Flags = 0,
+                VolumeSerialNumber = uint.Parse(serialNumber, NumberStyles.HexNumber)
+            };
+
+            if (bpb.Version == BiosParameterBlockVersion.Dos40)
+            {
+                bpb.FileSystemType = Helper.UseAsLabel(fileSystemType);
+                bpb.VolumeLabel = Helper.UseAsLabel(volumeLabel, 11);
+            }
+
+            return bpb;
         }
     }
 }

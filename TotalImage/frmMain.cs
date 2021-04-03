@@ -13,6 +13,7 @@ using TotalImage.Containers;
 using static Interop.Shell32;
 using static Interop.User32;
 using System.Diagnostics;
+using TotalImage.FileSystems.BPB;
 
 namespace TotalImage
 {
@@ -194,38 +195,9 @@ namespace TotalImage
                 Text = "(Untitled) - TotalImage";
                 unsavedChanges = true;
 
-                BiosParameterBlock bpb;
-                if (dlg.BPBVersion == BiosParameterBlockVersion.Dos34 || dlg.BPBVersion == BiosParameterBlockVersion.Dos40)
-                    bpb = new BiosParameterBlock40() { BpbVersion = dlg.BPBVersion };
-                else
-                    bpb = new BiosParameterBlock() { BpbVersion = dlg.BPBVersion };
-
-                bpb.OemId = dlg.OEMID.ToUpper();
-                bpb.BytesPerLogicalSector = (ushort)(128 << dlg.Geometry.BPS);
-                bpb.HiddenSectors = 0;
-                bpb.LargeTotalLogicalSectors = 0; //Since we only do floppies for now, this can be assumed to be 0...
-                bpb.LogicalSectorsPerCluster = dlg.Geometry.SPC;
-                bpb.LogicalSectorsPerFAT = dlg.Geometry.SPF;
-                bpb.MediaDescriptor = dlg.Geometry.MediaDescriptor;
-                bpb.NumberOfFATs = dlg.Geometry.NoOfFATs;
-                bpb.NumberOfHeads = dlg.Geometry.Sides;
-                bpb.PhysicalSectorsPerTrack = dlg.Geometry.SPT;
-                bpb.ReservedLogicalSectors = dlg.Geometry.ReservedSectors;
-                bpb.RootDirectoryEntries = dlg.Geometry.RootDirectoryEntries;
-                bpb.TotalLogicalSectors = (ushort)(dlg.Geometry.Tracks * dlg.Geometry.SPT * dlg.Geometry.Sides);
-
-                if (bpb is BiosParameterBlock40 bpb40) //DOS 3.4+ BPB
-                {
-                    bpb40.PhysicalDriveNumber = 0;
-                    bpb40.Flags = 0;
-                    bpb40.VolumeSerialNumber = uint.Parse(dlg.SerialNumber, NumberStyles.HexNumber);
-
-                    if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
-                    {
-                        bpb40.FileSystemType = dlg.FileSystemType.ToUpper();
-                        bpb40.VolumeLabel = dlg.VolumeLabel.ToUpper();
-                    }
-                }
+                BiosParameterBlock bpb = dlg.BPBVersion == BiosParameterBlockVersion.Dos34 || dlg.BPBVersion == BiosParameterBlockVersion.Dos40
+                    ? BiosParameterBlock40.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID, dlg.SerialNumber, dlg.FileSystemType, dlg.VolumeLabel)
+                    : BiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID);
 
                 image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
                 EnableUI();
@@ -567,7 +539,7 @@ namespace TotalImage
                 if (lbStatusPath.Text.Substring(lbStatusPath.Text.Length - 1) != lstDirectories.PathSeparator)
                     lbStatusPath.Text += lstDirectories.PathSeparator;
 
-                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", CalculateDirSize() / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), GetFileCount());            
+                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", CalculateDirSize() / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), GetFileCount());
             }
             else if (lstFiles.SelectedItems.Count == 1)
             {
@@ -1105,7 +1077,7 @@ namespace TotalImage
 
         private void viewMenu_DropDownOpening(object sender, EventArgs e)
         {
-            nameToolStripMenuItem.Checked = typeToolStripMenuItem.Checked = sizeToolStripMenuItem.Checked = 
+            nameToolStripMenuItem.Checked = typeToolStripMenuItem.Checked = sizeToolStripMenuItem.Checked =
                 modifiedToolStripMenuItem.Checked = false;
             switch (sortColumn)
             {
@@ -1194,8 +1166,8 @@ namespace TotalImage
             if (this.WindowState == FormWindowState.Normal)
             {
                 Settings.CurrentSettings.WindowPosition = this.Location;
-			}
-		}
+            }
+        }
 
         private void selectPartitionToolStripMenuItem_Click(object sender, EventArgs e)
         {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Text;
-using TotalImage.Partitions;
+using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -21,7 +20,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override string VolumeLabel
         {
-            get => _bpb is BiosParameterBlock40 bpb40 && bpb40.BpbVersion == BiosParameterBlockVersion.Dos40 ? bpb40.VolumeLabel : "UNSUPPORTED";
+            get => _bpb is BiosParameterBlock40 bpb40 && bpb40.Version == BiosParameterBlockVersion.Dos40 ? bpb40.VolumeLabel : "UNSUPPORTED";
             set => ChangeVolLabel(value);
         }
 
@@ -56,6 +55,8 @@ namespace TotalImage.FileSystems.FAT
                 throw new ArgumentNullException(nameof(stream), "stream cannot be null!");
             if (bpb == null)
                 throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
+            if (!bpb.Validate())
+                throw new InvalidDataException("bpb is invalid!");
 
             var fat = new Fat12(stream, bpb);
 
@@ -89,13 +90,13 @@ namespace TotalImage.FileSystems.FAT
                 writer.Write(bpb.ReservedLogicalSectors);
                 writer.Write(bpb.NumberOfFATs);
                 writer.Write(bpb.RootDirectoryEntries);
-                writer.Write(bpb.TotalLogicalSectors);
+                writer.Write(bpb.TotalLogicalSectors <= ushort.MaxValue ? (ushort)bpb.TotalLogicalSectors : (ushort)0);
                 writer.Write(bpb.MediaDescriptor);
                 writer.Write(bpb.LogicalSectorsPerFAT);
                 writer.Write(bpb.PhysicalSectorsPerTrack);
                 writer.Write(bpb.NumberOfHeads);
                 writer.Write(bpb.HiddenSectors);
-                writer.Write(bpb.LargeTotalLogicalSectors);
+                writer.Write(bpb.TotalLogicalSectors > ushort.MaxValue ? bpb.TotalLogicalSectors : 0);
 
                 //DOS 3.4+ specific values
                 {
@@ -104,9 +105,9 @@ namespace TotalImage.FileSystems.FAT
                         writer.Write(bpb40.PhysicalDriveNumber);
                         writer.Write(bpb40.Flags);
 
-                        if (bpb.BpbVersion == BiosParameterBlockVersion.Dos34)
+                        if (bpb.Version == BiosParameterBlockVersion.Dos34)
                             writer.Write((byte)40);
-                        else if (bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+                        else if (bpb.Version == BiosParameterBlockVersion.Dos40)
                             writer.Write((byte)41);
                         else
                             throw new Exception("Invalid BPB version!");
@@ -114,7 +115,7 @@ namespace TotalImage.FileSystems.FAT
                         writer.Write(bpb40.VolumeSerialNumber);
 
                         //DOS 4.0 adds volume label and FS type as well
-                        if (bpb40.BpbVersion == BiosParameterBlockVersion.Dos40)
+                        if (bpb40.Version == BiosParameterBlockVersion.Dos40)
                         {
                             if (string.IsNullOrEmpty(bpb40.VolumeLabel))
                                 writer.Write("NO NAME    ".ToCharArray());
@@ -242,7 +243,7 @@ namespace TotalImage.FileSystems.FAT
                 }
 
                 //Writes the volume label to the BPB as well if BPBP is for DOS 4.0+
-                if (_bpb is BiosParameterBlock40 && _bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+                if (_bpb is BiosParameterBlock40 && _bpb.Version == BiosParameterBlockVersion.Dos40)
                 {
                     _stream.Seek(0x2B, SeekOrigin.Begin);
                     writer.Write(label.ToCharArray());
@@ -305,7 +306,7 @@ namespace TotalImage.FileSystems.FAT
         //Returns the current volume label in the BPB, if BPB is for DOS 4.0+
         public string? GetBPBVolLabel()
         {
-            if (_bpb is BiosParameterBlock40 && _bpb.BpbVersion == BiosParameterBlockVersion.Dos40)
+            if (_bpb is BiosParameterBlock40 && _bpb.Version == BiosParameterBlockVersion.Dos40)
             {
                 return ((BiosParameterBlock40)_bpb).VolumeLabel;
             }
