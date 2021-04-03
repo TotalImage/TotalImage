@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using TotalImage.FileSystems.FAT;
 using TotalImage.Partitions;
 using File = System.IO.File;
@@ -61,9 +62,10 @@ namespace TotalImage.Containers
         {
             if (entry.attr.HasFlag(FatAttributes.Subdirectory)) return;
 
+            var name = Encoding.ASCII.GetString(entry.name);
             uint cluster = ((uint)entry.fstClusHI << 16) | entry.fstClusLO;
 
-            using (var fs = new FileStream(path + Path.DirectorySeparatorChar + entry.name, FileMode.Append, FileAccess.Write))
+            using (var fs = new FileStream(path + Path.DirectorySeparatorChar + name, FileMode.Append, FileAccess.Write))
             {
                 do
                 {
@@ -79,7 +81,7 @@ namespace TotalImage.Containers
             var date = Helper.FatToDateTime(entry.wrtDate, entry.wrtTime);
             if (date.HasValue)
             {
-                File.SetLastWriteTime(Path.Combine(path, entry.name), date.Value);
+                File.SetLastWriteTime(Path.Combine(path, name), date.Value);
             }
         }
     }

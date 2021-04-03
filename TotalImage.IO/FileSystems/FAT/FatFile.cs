@@ -21,7 +21,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string ShortName
         {
-            get => Helper.TrimFileName(entry.name);
+            get => Helper.TrimFileName(Encoding.ASCII.GetString(entry.name));
             set => throw new NotImplementedException();
         }
 
@@ -75,7 +75,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override string Extension => entry.name.Substring(8).Trim();
+        public override string Extension => Encoding.ASCII.GetString(entry.name).Substring(8).Trim();
 
         /// <inheritdoc />
         public override void Delete()
@@ -84,9 +84,7 @@ namespace TotalImage.FileSystems.FAT
              * The file's directory entry can then be reused, and its clusters are marked as free until they're
              * overwritten.
              * This code is untested until this class is hooked up to the UI... */
-            byte[] bytes = Encoding.ASCII.GetBytes(entry.name);
-            bytes[0] = 0xE5;
-            entry.name = Encoding.ASCII.GetString(bytes);
+            entry.name[0] = 0xE5;
 
             //And then mark all clusters in the chain as free...
         }

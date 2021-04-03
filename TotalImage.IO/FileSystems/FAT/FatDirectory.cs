@@ -20,7 +20,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string ShortName
         {
-            get => Helper.TrimFileName(entry.name);
+            get => Helper.TrimFileName(Encoding.ASCII.GetString(entry.name));
             set => throw new NotImplementedException();
         }
 
@@ -87,9 +87,7 @@ namespace TotalImage.FileSystems.FAT
             * overwritten. The same must then be done for all files and subdirectories inside.
             * This code is untested until this class is hooked up to the UI... */
 
-            byte[] bytes = Encoding.ASCII.GetBytes(entry.name);
-            bytes[0] = 0xE5;
-            entry.name = Encoding.ASCII.GetString(bytes);
+            entry.name[0] = 0xE5;
 
             //And then mark all clusters in the chain as free, and do the same for all files and subdirectories inside.
         }
@@ -102,9 +100,22 @@ namespace TotalImage.FileSystems.FAT
                 throw new NotSupportedException("Only FAT12 is supported at the moment");
             }
 
+            var lfn = new Stack<DirectoryEntry>();
+
             foreach (var entry in DirectoryEntry.ReadSubdirectory(fat, entry, showDeleted))
             {
-                //Skip LFN and volume label entries for now
+                if (entry.attr == FatAttributes.LongName)
+                {
+                    lfn.Push(entry);
+                    continue;
+                }
+                else
+                {
+                    /* process */
+                    lfn.Clear();
+                }
+
+                //Skip volume label entries for now
                 if (entry.attr.HasFlag(FatAttributes.VolumeId))
                 {
                     continue;

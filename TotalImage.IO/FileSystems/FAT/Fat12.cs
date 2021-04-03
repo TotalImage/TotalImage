@@ -210,7 +210,7 @@ namespace TotalImage.FileSystems.FAT
                     _stream.Seek(-0x01, SeekOrigin.Current);
                     DirectoryEntry entry = new DirectoryEntry
                     {
-                        name = $"{Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper()}.{Encoding.ASCII.GetString(reader.ReadBytes(3)).TrimEnd(' ').ToUpper()}",
+                        name = reader.ReadBytes(11),
                         attr = (FatAttributes)reader.ReadByte(),
                         ntRes = reader.ReadByte(),
                         crtTimeTenth = reader.ReadByte(),
@@ -278,8 +278,7 @@ namespace TotalImage.FileSystems.FAT
                     _stream.Seek(-0x01, SeekOrigin.Current);
                     DirectoryEntry entry = new DirectoryEntry
                     {
-                        name = Encoding.ASCII.GetString(reader.ReadBytes(8)).TrimEnd(' ').ToUpper() +
-                               Encoding.ASCII.GetString(reader.ReadBytes(3)).TrimEnd(' ').ToUpper(),
+                        name = reader.ReadBytes(11),
                         attr = (FatAttributes)reader.ReadByte(),
                         ntRes = reader.ReadByte(),
                         crtTimeTenth = reader.ReadByte(),
@@ -295,7 +294,7 @@ namespace TotalImage.FileSystems.FAT
 
                     if (entry.attr == FatAttributes.VolumeId)
                     {
-                        return entry.name;
+                        return Encoding.ASCII.GetString(entry.name);
                     }
                 }
 
