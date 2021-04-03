@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -46,6 +47,70 @@ namespace TotalImage.FileSystems.FAT
             }
 
             return entry;
+        }
+
+        public static IEnumerable<DirectoryEntry> ReadRootDirectory(Fat12 fat, bool includeDeleted = false)
+        {
+            var bpb = fat.BiosParameterBlock;
+            var sector = bpb.ReservedLogicalSectors + (uint)(bpb.LogicalSectorsPerFAT * bpb.NumberOfFATs);
+
+            return ReadDirectory(fat, sector, bpb.RootDirectoryEntries, includeDeleted);
+        }
+
+        public static IEnumerable<DirectoryEntry> ReadSubdirectory(Fat12 fat, DirectoryEntry entry, bool includeDeleted = false)
+        {
+            var cluster = (uint)(entry.fstClusHI << 16) | entry.fstClusLO;
+
+            do
+            {
+                foreach (var subentry in ReadSubdirectory(fat, cluster, includeDeleted))
+                {
+                    yield return subentry;
+                }
+
+                cluster = fat.GetNextCluster(cluster);
+            }
+            while (cluster <= 0xFEF);
+        }
+
+        public static IEnumerable<DirectoryEntry> ReadSubdirectory(Fat12 fat, uint cluster, bool includeDeleted = false)
+        {
+            var bpb = fat.BiosParameterBlock;
+            var sector = (cluster - 2) * bpb.LogicalSectorsPerCluster;
+            var entries = bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector / 32;
+
+            return ReadDirectory(fat, fat.DataAreaFirstSector + sector, entries, includeDeleted);
+        }
+
+        private static IEnumerable<DirectoryEntry> ReadDirectory(Fat12 fat, uint sector, int entries, bool includeDeleted)
+        {
+            var stream = fat.GetStream();
+            using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+
+            for(var i = 0; i < entries; i++)
+            {
+                stream.Seek(sector * fat.BiosParameterBlock.BytesPerLogicalSector + i * 32, SeekOrigin.Begin);
+
+                var firstByte = reader.ReadByte();
+
+                /* 0x00/0xF6 = no more entries after this one, stop
+                 * 0xE5/0x05 = deleted entry, skip for now
+                 * 0x2E      = virtual . and .. folders, skip*/
+                if (firstByte == 0x00 || firstByte == 0xF6) break;
+                if (firstByte == 0x2E) continue;
+                if ((firstByte == 0xE5 || firstByte == 0x05) && !includeDeleted) continue;
+                if (firstByte == 0xE5 && includeDeleted)
+                {
+                    //This check is needed for old DOS 1.x disks that don't mark unused entries with 0x00 and instead use the deleted
+                    //marker (0xE5), which can trip the code
+                    if (reader.ReadUInt32() == 0xF6F6F6F6) break;
+                    else stream.Seek(-4, SeekOrigin.Current);
+                }
+
+                stream.Seek(-1, SeekOrigin.Current);
+
+                yield return DirectoryEntry.Parse(reader.ReadBytes(32));
+            }
         }
     }
 }

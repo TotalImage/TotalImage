@@ -26,34 +26,9 @@ namespace TotalImage.FileSystems.FAT
                 throw new NotSupportedException("Only FAT12 is supported at the moment");
             }
 
-            var rootDirOffset = (uint)(fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.ReservedLogicalSectors + (fat.BiosParameterBlock.BytesPerLogicalSector * fat.BiosParameterBlock.LogicalSectorsPerFAT * fat.BiosParameterBlock.NumberOfFATs));
-            var stream = fat.GetStream();
-            using var reader = new BinaryReader(stream, Encoding.ASCII, true);
-
             //Read the entries top to bottom
-            for (int i = 0; i < fat.BiosParameterBlock.RootDirectoryEntries; i++)
+            foreach(var entry in DirectoryEntry.ReadRootDirectory(fat, showDeleted))
             {
-                stream.Position = rootDirOffset + i * 32;
-                var firstByte = reader.ReadByte();
-
-                /* 0x00/0xF6 = no more entries after this one, stop
-                 * 0xE5/0x05 = deleted entry, skip for now
-                 * 0x2E      = virtual . and .. folders, skip*/
-                if (firstByte == 0x00 || firstByte == 0xF6) break;
-                if (firstByte == 0x2E) continue;
-                if ((firstByte == 0xE5 || firstByte == 0x05) && !showDeleted) continue;
-                if (firstByte == 0xE5 && showDeleted)
-                {
-                    //This check is needed for old DOS 1.x disks that don't mark unused entries with 0x00 and instead use the deleted
-                    //marker (0xE5), which can trip the code
-                    if (reader.ReadUInt32() == 0xF6F6F6F6) break;
-                    else stream.Seek(-4, SeekOrigin.Current);
-                }
-
-                stream.Seek(-1, SeekOrigin.Current);
-
-                var entry = DirectoryEntry.Parse(reader.ReadBytes(32));
-
                 //Skip LFN and volume label entries for now
                 if (entry.attr.HasFlag(FatAttributes.VolumeId))
                 {
