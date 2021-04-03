@@ -69,7 +69,7 @@ namespace TotalImage.Containers
                 {
                     byte[] clusterBytes = ((Fat12)PartitionTable.Partitions[0].FileSystem).ReadCluster(cluster);
                     fs.Write(clusterBytes, 0, clusterBytes.Length);
-                    cluster = ((Fat12)PartitionTable.Partitions[0].FileSystem).FatGetNextCluster(cluster, false);
+                    cluster = ((Fat12)PartitionTable.Partitions[0].FileSystem).GetNextCluster(cluster);
                 }
                 while (cluster <= 0xFEF);
 

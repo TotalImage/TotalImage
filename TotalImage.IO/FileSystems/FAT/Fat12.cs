@@ -314,42 +314,6 @@ namespace TotalImage.FileSystems.FAT
             return null;
         }
 
-        //Returns the number of the next cluster in the chain from either primary or backup FAT
-        public uint FatGetNextCluster(uint cluster, bool useBackupFat)
-        {
-            uint fat1Offset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors);
-            uint fatSize = (uint)_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT;
-            uint fat2Offset = fat1Offset + fatSize;
-
-            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
-            {
-                if (cluster % 2 == 0)
-                {
-                    if (useBackupFat)
-                        _stream.Seek(fat2Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
-                    else
-                        _stream.Seek(fat1Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
-
-                    ushort lower8 = reader.ReadByte();
-                    ushort upper4 = (ushort)((reader.ReadByte() & 0x0F) << 8);
-
-                    return (uint)(upper4 | lower8);
-                }
-                else
-                {
-                    if (useBackupFat)
-                        _stream.Seek(fat2Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
-                    else
-                        _stream.Seek(fat1Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
-
-                    ushort lower4 = (ushort)(reader.ReadByte() >> 4);
-                    ushort upper8 = (ushort)(reader.ReadByte() << 4);
-
-                    return (uint)(upper8 | lower4);
-                }
-            }
-        }
-
         //Reads the specified cluster in the data area and returns its bytes
         public byte[] ReadCluster(uint cluster)
         {
@@ -441,6 +405,11 @@ namespace TotalImage.FileSystems.FAT
         public uint BytesPerCluster => (uint)_bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
         public uint ClusterCount => (uint)_bpb.LogicalSectorsPerFAT * _bpb.BytesPerLogicalSector * 3 / 2;
 
+        /// <summary>
+        /// Retrieves the value stored under an index in the FAT cluster map.
+        /// </summary>
+        /// <param name="index">Cluster map index</param>
+        /// <param name="fat">Specifies which copy of the FAT should be used</param>
         public uint GetNextCluster(uint index, int fat = 0)
         {
             if (index >= ClusterCount) throw new ArgumentOutOfRangeException();
@@ -464,7 +433,8 @@ namespace TotalImage.FileSystems.FAT
  
             // Now we want to read two values. Considering there is no 24-bit
             // integer type, we have to read 32 bits, which means we're going
-            // to read more than we need, so we have to discard the MSB.
+            // to read more than we need, so we have to discard the most
+            // significant byte.
             var pair = reader.ReadUInt32() & 0xFFFFFF;
 
             // Right now, `pair` has the value of 0x00123ABC, bits 0-11 contain
