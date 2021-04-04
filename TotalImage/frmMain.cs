@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.Containers;
 using static Interop.Shell32;
 using static Interop.User32;
-using System.Drawing.Imaging;
-using System.Collections;
-using System.Text;
+using System.Diagnostics;
 
 namespace TotalImage
 {
@@ -510,62 +512,32 @@ namespace TotalImage
         //TODO: Implement this here, in the extraction dialog and in FS/container.
         private void extract_Click(object sender, EventArgs e)
         {
-            // dlgExtract dlg = new dlgExtract();
-            // if (dlg.ShowDialog() == DialogResult.OK)
-            // {
-            //     if (lstFiles.SelectedItems.Count == 1)
-            //     {
-            //         DirectoryEntry entry = (DirectoryEntry)lstFiles.SelectedItems[0].Tag;
-            //         if (Convert.ToBoolean(entry.attr & 0x10))
-            //         {
-            //             throw new NotImplementedException("This feature is not implemented yet");
-            //         }
-            //         else
-            //         {
-            //             /* Extract just one file based on the selected options from the dialog
-            //              * Right now only the "Ignore folders" option works... */
-            //             if (dlg.ExtractType == Settings.FolderExtract.Ignore)
-            //             {
-            //                 image.ExtractFile((DirectoryEntry)lstFiles.SelectedItems[0].Tag, dlg.TargetPath);
-            //             }
-            //             else
-            //             {
-            //                 throw new NotImplementedException("This feature is not implemented yet");
-            //             }
-            //         }
-            //     }
-            //     else if (lstFiles.SelectedItems.Count > 1)
-            //     {
-            //         foreach (ListViewItem lvi in lstFiles.SelectedItems)
-            //         {
-            //             DirectoryEntry entry = (DirectoryEntry)lvi.Tag;
-            //             if (Convert.ToBoolean(entry.attr & 0x10))
-            //             {
-            //                 throw new NotImplementedException("This feature is not implemented yet");
-            //             }
-            //             else
-            //             {
-            //                 /* Extract just one file based on the selected options from the dialog
-            //                  * Right now only the "Ignore folders" option works... */
-            //                 if (dlg.ExtractType == Settings.FolderExtract.Ignore)
-            //                 {
-            //                     image.ExtractFile((DirectoryEntry)lvi.Tag, dlg.TargetPath);
-            //                 }
-            //                 else
-            //                 {
-            //                     throw new NotImplementedException("This feature is not implemented yet");
-            //                 }
-            //             }
-            //         }
-            //     }
-            //     if (dlg.OpenFolder)
-            //     {
-            //         Process.Start(dlg.TargetPath);
-            //     }
-            // }
-            // dlg.Dispose();
+            var selectedItems = from x in lstFiles.SelectedItems.Cast<ListViewItem>() select x.Tag as FileSystems.FileSystemObject;
+            if (selectedItems.Count(x => x is FileSystems.Directory) > 0)
+            {
+                throw new NotImplementedException("This feature is not implemented yet");
+            }
 
-            throw new NotImplementedException("This feature is not implemented yet");
+            var files = from x in selectedItems where x is FileSystems.File select x as FileSystems.File;
+
+            using dlgExtract dlg = new dlgExtract();
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                foreach(var file in files)
+                {
+                    using var destStream = new FileStream(Path.Combine(dlg.TargetPath, file.Name), FileMode.Create);
+                    file.GetStream().CopyTo(destStream);
+                }
+
+                if (dlg.OpenFolder && dlg.TargetPath != null)
+                {
+                    Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = dlg.TargetPath,
+                        UseShellExecute = true
+                    });
+                }
+            }
         }
 
         //TODO: Implement status bar stuff based on the selected item in the listview. This includes proper path, size, etc.
