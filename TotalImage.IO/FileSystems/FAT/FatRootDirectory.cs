@@ -26,10 +26,23 @@ namespace TotalImage.FileSystems.FAT
                 throw new NotSupportedException("Only FAT12 is supported at the moment");
             }
 
+            var lfn = new Stack<DirectoryEntry>();
+
             //Read the entries top to bottom
             foreach(var entry in DirectoryEntry.ReadRootDirectory(fat, showDeleted))
             {
-                //Skip LFN and volume label entries for now
+                if (entry.attr == FatAttributes.LongName && entry.name[0] != 0xE5)
+                {
+                    if (Convert.ToBoolean(entry.name[0] & 0x40))
+                    {
+                        lfn.Clear();
+                    }
+                    
+                    lfn.Push(entry);
+                    continue;
+                }
+
+                //Skip volume label entries for now
                 if (entry.attr.HasFlag(FatAttributes.VolumeId))
                 {
                     continue;
@@ -42,12 +55,12 @@ namespace TotalImage.FileSystems.FAT
                 //Folder entry
                 else if (entry.attr.HasFlag(FatAttributes.Subdirectory))
                 {
-                    yield return new FatDirectory(fat, entry, this);
+                    yield return new FatDirectory(fat, entry, lfn.ToArray(), this);
                 }
                 //File entry
                 else
                 {
-                    yield return new FatFile(fat, entry, this);
+                    yield return new FatFile(fat, entry, lfn.ToArray(), this);
                 }
             }
         }

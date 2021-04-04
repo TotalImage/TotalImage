@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -67,5 +68,38 @@ namespace TotalImage.FileSystems.FAT
 
         public static string TrimFileName(string filename)
             => filename.Substring(0, 8).Trim() + (string.IsNullOrWhiteSpace(filename.Substring(8, 3)) ? "" : $".{filename.Substring(8, 3).TrimEnd()}");
+
+        public static byte LfnChecksum(byte[] filename)
+        {
+            if (filename.Length != 11) throw new ArgumentException();
+
+            byte sum = 0;
+
+            for (var i = 11; i > 0; i++)
+            {
+                sum = (byte)(((sum & 1) << 7) + (sum >> 1) + filename[i]);
+            }
+
+            return sum;
+        }
+
+        public static byte[] RetrieveLongNameBytes(DirectoryEntry entry)
+        {
+            var bytes = new byte[26];
+
+            Buffer.BlockCopy(entry.name, 1, bytes, 0, 10);
+            BitConverter.GetBytes(entry.crtTime).CopyTo(bytes, 10);
+            BitConverter.GetBytes(entry.crtDate).CopyTo(bytes, 12);
+            BitConverter.GetBytes(entry.lstAccDate).CopyTo(bytes, 14);
+            BitConverter.GetBytes(entry.fstClusHI).CopyTo(bytes, 16);
+            BitConverter.GetBytes(entry.wrtTime).CopyTo(bytes, 18);
+            BitConverter.GetBytes(entry.wrtDate).CopyTo(bytes, 20);
+            BitConverter.GetBytes(entry.fileSize).CopyTo(bytes, 22);
+
+            return bytes;
+        }
+
+        public static byte[] RetrieveLongNameBytes(DirectoryEntry[] entries)
+            => entries.SelectMany(x => RetrieveLongNameBytes(x)).ToArray();
     }
 }

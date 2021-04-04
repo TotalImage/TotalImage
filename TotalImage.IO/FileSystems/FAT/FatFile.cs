@@ -12,10 +12,12 @@ namespace TotalImage.FileSystems.FAT
     public class FatFile : File, IFatFileSystemObject
     {
         private DirectoryEntry entry;
+        private DirectoryEntry[]? lfnEntries;
 
-        public FatFile(Fat12 fat, DirectoryEntry entry, Directory dir) : base(fat, dir)
+        public FatFile(Fat12 fat, DirectoryEntry entry, DirectoryEntry[]? lfnEntries, Directory dir) : base(fat, dir)
         {
             this.entry = entry;
+            this.lfnEntries = lfnEntries;
         }
 
         /// <inheritdoc />
@@ -28,7 +30,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string? LongName
         {
-            get => null;
+            get => lfnEntries != null && lfnEntries.Length != 0 ? Encoding.Unicode.GetString(Helper.RetrieveLongNameBytes(lfnEntries)) : null;
             set => throw new NotImplementedException();
         }
 

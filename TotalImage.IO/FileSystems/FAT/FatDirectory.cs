@@ -11,10 +11,12 @@ namespace TotalImage.FileSystems.FAT
     public class FatDirectory : Directory, IFatFileSystemObject
     {
         private DirectoryEntry entry;
+        private DirectoryEntry[]? lfnEntries;
 
-        public FatDirectory(Fat12 fat, DirectoryEntry entry, Directory parent) : base(fat, parent)
+        public FatDirectory(Fat12 fat, DirectoryEntry entry, DirectoryEntry[]? lfnEntries, Directory parent) : base(fat, parent)
         {
             this.entry = entry;
+            this.lfnEntries = lfnEntries;
         }
 
         /// <inheritdoc />
@@ -27,7 +29,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string? LongName
         {
-            get => null;
+            get => lfnEntries != null && lfnEntries.Length != 0 ? Encoding.Unicode.GetString(Helper.RetrieveLongNameBytes(lfnEntries)) : null;
             set => throw new NotImplementedException();
         }
 
@@ -104,15 +106,15 @@ namespace TotalImage.FileSystems.FAT
 
             foreach (var entry in DirectoryEntry.ReadSubdirectory(fat, entry, showDeleted))
             {
-                if (entry.attr == FatAttributes.LongName)
+                if (entry.attr == FatAttributes.LongName && entry.name[0] != 0xE5)
                 {
+                    if (Convert.ToBoolean(entry.name[0] & 0x40))
+                    {
+                        lfn.Clear();
+                    }
+                    
                     lfn.Push(entry);
                     continue;
-                }
-                else
-                {
-                    /* process */
-                    lfn.Clear();
                 }
 
                 //Skip volume label entries for now
@@ -128,12 +130,12 @@ namespace TotalImage.FileSystems.FAT
                 //Folder entry
                 else if (entry.attr.HasFlag(FatAttributes.Subdirectory))
                 {
-                    yield return new FatDirectory(fat, entry, this);
+                    yield return new FatDirectory(fat, entry, lfn.ToArray(), this);
                 }
                 //File entry
                 else
                 {
-                    yield return new FatFile(fat, entry, this);
+                    yield return new FatFile(fat, entry, lfn.ToArray(), this);
                 }
             }
         }
