@@ -96,5 +96,11 @@ namespace TotalImage.FileSystems.FAT
         {
             throw new NotImplementedException();
         }
+
+        /// <inheritdoc/>
+        public override Stream GetStream()
+        {
+            return new FatDataStream((Fat12)FileSystem, entry);
+        }
     }
 }

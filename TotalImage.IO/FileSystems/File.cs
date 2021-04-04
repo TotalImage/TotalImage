@@ -38,5 +38,10 @@ namespace TotalImage.FileSystems
         /// The full path to the file
         /// </summary>
         public override string FullName => Path.Combine(DirectoryName, Name);
+
+        /// <summary>
+        /// Retrieves a stream of the file contents.
+        /// </summary>
+        public abstract System.IO.Stream GetStream();
     }
 }
