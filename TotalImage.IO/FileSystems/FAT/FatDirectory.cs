@@ -30,7 +30,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string? LongName
         {
-            get => lfnEntries != null && lfnEntries.Length != 0 ? Encoding.Unicode.GetString(Helper.RetrieveLongNameBytes(lfnEntries)).Split('\0')[0] : null;
+            get => lfnEntries != null ? Helper.RetrieveLongName(lfnEntries) : null;
             set => throw new NotImplementedException();
         }
 

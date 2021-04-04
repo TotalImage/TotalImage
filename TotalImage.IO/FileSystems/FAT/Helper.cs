@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Text;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -99,7 +100,11 @@ namespace TotalImage.FileSystems.FAT
             return bytes;
         }
 
-        public static byte[] RetrieveLongNameBytes(DirectoryEntry[] entries)
-            => entries.SelectMany(x => RetrieveLongNameBytes(x)).ToArray();
+        public static string RetrieveLongName(DirectoryEntry[] entries)
+        {
+            var bytes = entries.SelectMany(x => RetrieveLongNameBytes(x)).ToArray();
+            var name = Encoding.Unicode.GetString(bytes);
+            return name.Substring(0, name.IndexOf('\0'));
+        }
     }
 }
