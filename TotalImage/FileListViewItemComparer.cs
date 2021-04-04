@@ -30,18 +30,18 @@ namespace TotalImage
             if (x == null) return 1;
             if (y == null) return -1;
 
-            if(x.Text == "..") return -1;
-            if(y.Text == "..") return 1;
+            if (x.Text == "..") return -1;
+            if (y.Text == "..") return 1;
 
-            switch(SortColumn)
+            switch (SortColumn)
             {
                 case FileListViewColumn.Name:
                     return FileSystemObjectComparer.NameDirectoriesFirst.Compare(x.Tag as FileSystemObject, y.Tag as FileSystemObject);
                 case FileListViewColumn.Type:
                 case FileListViewColumn.Attributes:
-                    if(x.Tag is Directory && !(y.Tag is Directory))
+                    if (x.Tag is Directory && !(y.Tag is Directory))
                         return -1;
-                    if(y.Tag is Directory && !(x.Tag is Directory))
+                    if (y.Tag is Directory && !(x.Tag is Directory))
                         return 1;
                     return string.Compare(x.SubItems[(int)SortColumn].Text, y.SubItems[(int)SortColumn].Text);
                 case FileListViewColumn.Size:
@@ -72,10 +72,10 @@ namespace TotalImage
             }
         }
 
-        public static FileListViewItemComparer Name { get => new FileListViewItemComparer(FileListViewColumn.Name); }
-        public static FileListViewItemComparer Type { get => new FileListViewItemComparer(FileListViewColumn.Type); }
-        public static FileListViewItemComparer Size { get => new FileListViewItemComparer(FileListViewColumn.Size); }
-        public static FileListViewItemComparer Modified { get => new FileListViewItemComparer(FileListViewColumn.Modified); }
-        public static FileListViewItemComparer Attributes { get => new FileListViewItemComparer(FileListViewColumn.Attributes); }
+        public static FileListViewItemComparer Name => new FileListViewItemComparer(FileListViewColumn.Name);
+        public static FileListViewItemComparer Type => new FileListViewItemComparer(FileListViewColumn.Type);
+        public static FileListViewItemComparer Size => new FileListViewItemComparer(FileListViewColumn.Size);
+        public static FileListViewItemComparer Modified => new FileListViewItemComparer(FileListViewColumn.Modified);
+        public static FileListViewItemComparer Attributes => new FileListViewItemComparer(FileListViewColumn.Attributes);
     }
 }

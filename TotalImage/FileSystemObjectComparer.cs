@@ -31,13 +31,13 @@ namespace TotalImage
 
             if(DirectoriesFirst)
             {
-                if(x is Directory && !(y is Directory))
+                if (x is Directory && !(y is Directory))
                     return -1;
-                if(y is Directory && !(x is Directory))
+                if (y is Directory && !(x is Directory))
                     return 1;
             }
 
-            switch(Criterion)
+            switch (Criterion)
             {
                 case SortCriterion.Name:
                     return string.Compare(x.Name, y.Name, true);
@@ -53,12 +53,12 @@ namespace TotalImage
             }
         }
 
-        public static FileSystemObjectComparer Name { get => new FileSystemObjectComparer(SortCriterion.Name, false); }
-        public static FileSystemObjectComparer Length { get => new FileSystemObjectComparer(SortCriterion.Length, false); }
-        public static FileSystemObjectComparer LastWriteDate { get => new FileSystemObjectComparer(SortCriterion.LastWriteDate, false); }
+        public static FileSystemObjectComparer Name => new FileSystemObjectComparer(SortCriterion.Name, false);
+        public static FileSystemObjectComparer Length => new FileSystemObjectComparer(SortCriterion.Length, false);
+        public static FileSystemObjectComparer LastWriteDate => new FileSystemObjectComparer(SortCriterion.LastWriteDate, false);
 
-        public static FileSystemObjectComparer NameDirectoriesFirst { get => new FileSystemObjectComparer(SortCriterion.Name, true); }
-        public static FileSystemObjectComparer LengthDirectoriesFirst { get => new FileSystemObjectComparer(SortCriterion.Length, true); }
-        public static FileSystemObjectComparer LastWriteDateDirectoriesFirst { get => new FileSystemObjectComparer(SortCriterion.LastWriteDate, true); }
+        public static FileSystemObjectComparer NameDirectoriesFirst => new FileSystemObjectComparer(SortCriterion.Name, true);
+        public static FileSystemObjectComparer LengthDirectoriesFirst => new FileSystemObjectComparer(SortCriterion.Length, true);
+        public static FileSystemObjectComparer LastWriteDateDirectoriesFirst => new FileSystemObjectComparer(SortCriterion.LastWriteDate, true);
     }
 }
