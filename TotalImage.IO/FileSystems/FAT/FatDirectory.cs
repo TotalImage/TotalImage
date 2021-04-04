@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace TotalImage.FileSystems.FAT
@@ -103,18 +104,59 @@ namespace TotalImage.FileSystems.FAT
             }
 
             var lfn = new Stack<DirectoryEntry>();
+            var useLfn = false;
 
             foreach (var entry in DirectoryEntry.ReadSubdirectory(fat, entry, showDeleted))
             {
-                if (entry.attr == FatAttributes.LongName && entry.name[0] != 0xE5)
+                if (entry.attr == FatAttributes.LongName)
                 {
-                    if (Convert.ToBoolean(entry.name[0] & 0x40))
+                    if (entry.name[0] == 0xE5)
                     {
-                        lfn.Clear();
+                        // This is a deleted LFN entry
+                        useLfn = false;
                     }
-                    
-                    lfn.Push(entry);
+                    else if (Convert.ToBoolean(entry.name[0] & 0x40))
+                    {
+                        // This is the first LFN entry
+                        useLfn = true;
+                        lfn.Clear();
+                        lfn.Push(entry);
+                    }
+                    else if (useLfn)
+                    {
+                        if ((lfn.Peek().name[0] & 0x1F) != (entry.name[0] & 0x1F) + 1)
+                        {
+                            // The LFN entry is out of order
+                            useLfn = false;
+                        }
+                        else if (lfn.Peek().crtTimeTenth != entry.crtTimeTenth)
+                        {
+                            // Short name checksum is different from the last entry
+                            useLfn = false;
+                        }
+                        else
+                        {
+                            lfn.Push(entry);
+                        }
+                    }
+
                     continue;
+                }
+                else if (useLfn)
+                {
+                    // We reached a non-LFN entry, so let's see if we retrieved
+                    // a valid long file name.
+
+                    if ((lfn.Peek().name[0] & 0x1F) != 0x01)
+                    {
+                        // The top LFN entry is not the logically first entry
+                        useLfn = false;
+                    }
+                    else if (lfn.Peek().crtTimeTenth != Helper.LfnChecksum(entry.name))
+                    {
+                        // This is a valid long name for a different file!
+                        useLfn = false;
+                    }
                 }
 
                 //Skip volume label entries for now
@@ -130,13 +172,16 @@ namespace TotalImage.FileSystems.FAT
                 //Folder entry
                 else if (entry.attr.HasFlag(FatAttributes.Subdirectory))
                 {
-                    yield return new FatDirectory(fat, entry, lfn.ToArray(), this);
+                    yield return new FatDirectory(fat, entry, useLfn ? lfn.ToArray() : null, this);
                 }
                 //File entry
                 else
                 {
-                    yield return new FatFile(fat, entry, lfn.ToArray(), this);
+                    yield return new FatFile(fat, entry, useLfn ? lfn.ToArray() : null, this);
                 }
+
+                useLfn = false;
+                lfn.Clear();
             }
         }
 

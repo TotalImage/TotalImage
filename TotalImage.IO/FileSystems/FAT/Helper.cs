@@ -75,7 +75,7 @@ namespace TotalImage.FileSystems.FAT
 
             byte sum = 0;
 
-            for (var i = 11; i > 0; i++)
+            for (var i = 0; i < 11; i++)
             {
                 sum = (byte)(((sum & 1) << 7) + (sum >> 1) + filename[i]);
             }
