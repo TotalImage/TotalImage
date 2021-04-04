@@ -27,7 +27,7 @@ namespace TotalImage.FileSystems.FAT
             }
 
             var lfn = new Stack<DirectoryEntry>();
-            var useLfn = true;
+            var useLfn = false;
 
             //Read the entries top to bottom
             foreach(var entry in DirectoryEntry.ReadRootDirectory(fat, showDeleted))
