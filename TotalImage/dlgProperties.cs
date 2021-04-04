@@ -34,8 +34,10 @@ namespace TotalImage
             if (entry == null)
                 throw new ArgumentNullException(nameof(entry), "entry cannot be null!");
 
-            txtFilename.Text = entry.Name.ToUpper();
-            lblShortFilename1.Text = entry.Name.ToUpper();
+            txtFilename.Text = entry.Name;
+
+            if (entry is IFatFileSystemObject fatObj)
+                lblShortFilename1.Text = fatObj.ShortName;
 
             lblSize1.Text = $"{entry.Length:n0} B";
             if (Settings.CurrentSettings.SizeUnits != Settings.SizeUnit.B)
