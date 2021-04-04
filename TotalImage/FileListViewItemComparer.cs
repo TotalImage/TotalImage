@@ -24,8 +24,12 @@ namespace TotalImage
             SortColumn = sortColumn;
         }
 
-        public override int Compare(ListViewItem x, ListViewItem y)
+        public override int Compare(ListViewItem? x, ListViewItem? y)
         {
+            if (x == null && y == null) return 0;
+            if (x == null) return 1;
+            if (y == null) return -1;
+
             if(x.Text == "..") return -1;
             if(y.Text == "..") return 1;
 
@@ -64,7 +68,7 @@ namespace TotalImage
                 case FileListViewColumn.Attributes:
                     return FileListViewItemComparer.Attributes;
                 default:
-                    return null;
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

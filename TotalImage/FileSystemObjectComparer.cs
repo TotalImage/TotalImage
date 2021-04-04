@@ -23,8 +23,12 @@ namespace TotalImage
             DirectoriesFirst = prioritizeDirectories;
         }
 
-        public override int Compare(FileSystemObject x, FileSystemObject y)
+        public override int Compare(FileSystemObject? x, FileSystemObject? y)
         {
+            if (x == null && y == null) return 0;
+            if (x == null) return 1;
+            if (y == null) return -1;
+
             if(DirectoriesFirst)
             {
                 if(x is Directory && !(y is Directory))
