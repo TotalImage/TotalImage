@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using TotalImage.FileSystems.BPB;
@@ -410,7 +410,7 @@ namespace TotalImage.FileSystems.FAT
         /// </summary>
         /// <param name="index">Cluster map index</param>
         /// <param name="fat">Specifies which copy of the FAT should be used</param>
-        public uint GetNextCluster(uint index, int fat = 0)
+        public uint? GetNextCluster(uint index, int fat = 0)
         {
             if (index >= ClusterCount) throw new ArgumentOutOfRangeException();
             if (fat >= _bpb.NumberOfFATs) throw new ArgumentOutOfRangeException();
@@ -440,10 +440,8 @@ namespace TotalImage.FileSystems.FAT
             // Right now, `pair` has the value of 0x00123ABC, bits 0-11 contain
             // the value of the even index and bits 12-23 contain the value of
             // the odd index. All we need to do is return the relevant part.
-            if (index % 2 == 0)
-                return pair & 0xFFF;
-            else
-                return pair >> 12;
+            var nextCluster = index % 2 == 0 ? pair & 0xFFF : pair >> 12;
+            return (nextCluster < 0xFEF) ? (uint?)nextCluster : null;
         }
     }
 }

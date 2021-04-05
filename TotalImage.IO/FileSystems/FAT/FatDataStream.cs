@@ -28,9 +28,9 @@ namespace TotalImage.FileSystems.FAT
             _firstCluster = firstCluster;
             _length = _fat12.BytesPerCluster;
 
-            var cluster = firstCluster;
-            while((cluster = _fat12.GetNextCluster(cluster)) <= 0xFEF)
-                _length += _fat12.BytesPerCluster;
+            var cluster = (uint?)firstCluster;
+            while((cluster = _fat.GetNextCluster(cluster.Value)).HasValue)
+                _length += _fat.BytesPerCluster;
         }
 
         /// <inheritdoc />
@@ -94,11 +94,11 @@ namespace TotalImage.FileSystems.FAT
             if (target < 0 || target >= _length)
                 throw new ArgumentOutOfRangeException();
 
-            var cluster = _firstCluster;
+            var cluster = (uint?) _firstCluster;
 
-            for(int i = 0; i < target / _fat12.BytesPerCluster; i++)
+            for(int i = 0; i < target / _fat.BytesPerCluster; i++)
             {
-                cluster = _fat12.GetNextCluster(cluster);
+                cluster = _fat.GetNextCluster(cluster.Value) ?? cluster;
             }
 
             _base.Seek(_fat12.DataAreaFirstSector * _fat12.BiosParameterBlock.BytesPerLogicalSector, SeekOrigin.Begin);

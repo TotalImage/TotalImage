@@ -57,18 +57,18 @@ namespace TotalImage.FileSystems.FAT
 
         public static IEnumerable<DirectoryEntry> ReadSubdirectory(Fat12 fat, DirectoryEntry entry, bool includeDeleted = false)
         {
-            var cluster = (uint)(entry.fstClusHI << 16) | entry.fstClusLO;
+            var cluster = (uint?)(entry.fstClusHI << 16) | entry.fstClusLO;
 
             do
             {
-                foreach (var subentry in ReadSubdirectory(fat, cluster, includeDeleted))
+                foreach (var subentry in ReadSubdirectory(fat, cluster.Value, includeDeleted))
                 {
                     yield return subentry;
                 }
 
-                cluster = fat.GetNextCluster(cluster);
+                cluster = fat.GetNextCluster(cluster.Value);
             }
-            while (cluster <= 0xFEF);
+            while (cluster.HasValue);
         }
 
         public static IEnumerable<DirectoryEntry> ReadSubdirectory(Fat12 fat, uint cluster, bool includeDeleted = false)

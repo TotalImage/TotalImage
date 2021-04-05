@@ -64,17 +64,17 @@ namespace TotalImage.Containers
             if (entry.attr.HasFlag(FatAttributes.Subdirectory)) return;
 
             var name = Encoding.ASCII.GetString(entry.name);
-            uint cluster = ((uint)entry.fstClusHI << 16) | entry.fstClusLO;
+            var cluster = ((uint?)entry.fstClusHI << 16) | entry.fstClusLO;
 
             using (var fs = new FileStream(path + Path.DirectorySeparatorChar + name, FileMode.Append, FileAccess.Write))
             {
                 do
                 {
-                    byte[] clusterBytes = ((Fat12)PartitionTable.Partitions[0].FileSystem).ReadCluster(cluster);
+                    byte[] clusterBytes = ((Fat12)PartitionTable.Partitions[0].FileSystem).ReadCluster(cluster.Value);
                     fs.Write(clusterBytes, 0, clusterBytes.Length);
-                    cluster = ((Fat12)PartitionTable.Partitions[0].FileSystem).GetNextCluster(cluster);
+                    cluster = ((Fat12)PartitionTable.Partitions[0].FileSystem).GetNextCluster(cluster.Value);
                 }
-                while (cluster <= 0xFEF);
+                while (cluster.HasValue);
 
                 fs.SetLength(entry.fileSize); //Remove the trailing unused bytes from the last cluster
             }
