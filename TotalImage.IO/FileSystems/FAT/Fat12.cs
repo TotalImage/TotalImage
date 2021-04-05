@@ -466,6 +466,6 @@ namespace TotalImage.FileSystems.FAT
 
         /// <inheritdoc/>
         public override uint? GetNextCluster(uint index, int fat = 0)
-            => ClusterMaps[fat][index] < 0xFEF ? (uint?)ClusterMaps[fat][index] : null;
+            => index > 1 && ClusterMaps[fat][index] < 0xFEF ? (uint?)ClusterMaps[fat][index] : null;
     }
 }
