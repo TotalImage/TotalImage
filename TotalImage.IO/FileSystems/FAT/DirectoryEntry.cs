@@ -6,29 +6,74 @@ using System.Text;
 
 namespace TotalImage.FileSystems.FAT
 {
-    /*
-     * This class represents the traditional 32-byte FAT directory entry, used in FAT12, FAT16 and FAT32
-     */
+    /// <summary>
+    /// This class represents the traditional 32-byte FAT directory entry, used in FAT12, FAT16 and FAT32
+    /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct DirectoryEntry
     {
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 11)]
-        public byte[] name; // “Short” file name limited to 11 characters.
-        public FatAttributes attr; // File attributes.
-        public byte ntRes; // Reserved. Must be set to 0.
-        public byte crtTimeTenth; // Component of the file creation time. Count of tenths of a second.
-        public ushort crtTime; // Creation time. Granularity is 2 seconds.
-        public ushort crtDate; // Creation date.
-        public ushort lstAccDate; // Last access date. Last access is defined as a read or write operation performed on the file/directory described by this entry
-        public ushort fstClusHI; //High word of first data cluster number for file/directory described by this entry. Only valid for volumes formatted FAT32. Must be set to 0 on volumes formatted FAT12/FAT16.
-        public ushort wrtTime; // Last modification (write) time.
-        public ushort wrtDate; // Last modification (write) date.
-        public ushort fstClusLO; // Low word of first data cluster number for file/directory described by this entry.
-        public uint fileSize; // 32-bit quantity containing size in bytes of file/directory described by this entry.
+        /// <summary>
+        /// “Short” file name limited to 11 characters.
+        /// </summary>
+        public byte[] name;
+
+        /// <summary>
+        /// File attributes.
+        /// </summary>
+        public FatAttributes attr;
+
+        /// <summary>
+        /// Reserved. Must be set to 0.
+        /// </summary>
+        public byte ntRes;
+
+        /// <summary>
+        /// Component of the file creation time. Count of tenths of a second.
+        /// </summary>
+        public byte crtTimeTenth;
+
+        /// <summary>
+        /// Creation time. Granularity is 2 seconds.
+        /// </summary>
+        public ushort crtTime;
+
+        /// <summary>
+        /// Creation date.
+        /// </summary>
+        public ushort crtDate;
+
+        /// <summary>
+        /// Last access date. Last access is defined as a read or write operation performed on the file/directory described by this entry
+        /// </summary>
+        public ushort lstAccDate;
+
+        /// <summary>
+        /// High word of first data cluster number for file/directory described by this entry. Only valid for volumes formatted FAT32. Must be set to 0 on volumes formatted FAT12/FAT16.
+        /// </summary>
+        public ushort fstClusHI;
+
+        /// <summary>
+        /// Last modification (write) time.
+        /// </summary>
+        public ushort wrtTime;
+
+        /// <summary>
+        /// Last modification (write) date.
+        /// </summary>
+        public ushort wrtDate;
+
+        /// <summary>
+        /// Low word of first data cluster number for file/directory described by this entry.
+        /// </summary>
+        public ushort fstClusLO;
+
+        /// <summary>
+        /// 32-bit quantity containing size in bytes of file/directory described by this entry.
+        /// </summary>
+        public uint fileSize;
 
         public static DirectoryEntry Parse(BinaryReader reader)
-        {
-            DirectoryEntry entry = new DirectoryEntry
+            => new DirectoryEntry
             {
                 name = reader.ReadBytes(11),
                 attr = (FatAttributes)reader.ReadByte(),
@@ -43,9 +88,6 @@ namespace TotalImage.FileSystems.FAT
                 fstClusLO = reader.ReadUInt16(),
                 fileSize = reader.ReadUInt32()
             };
-
-            return entry;
-        }
 
         public static IEnumerable<DirectoryEntry> ReadRootDirectory(FatFileSystem fat, bool includeDeleted = false)
         {
