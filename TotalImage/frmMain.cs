@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -14,6 +14,10 @@ using static Interop.Shell32;
 using static Interop.User32;
 using System.Diagnostics;
 using TotalImage.FileSystems.BPB;
+
+using TiFile = TotalImage.FileSystems.File;
+using TiDirectory = TotalImage.FileSystems.Directory;
+using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
 namespace TotalImage
 {
@@ -485,13 +489,13 @@ namespace TotalImage
         //TODO: Implement this here, in the extraction dialog and in FS/container.
         private void extract_Click(object sender, EventArgs e)
         {
-            var selectedItems = from x in lstFiles.SelectedItems.Cast<ListViewItem>() select x.Tag as FileSystems.FileSystemObject;
-            if (selectedItems.Count(x => x is FileSystems.Directory) > 0)
+            var selectedItems = from x in lstFiles.SelectedItems.Cast<ListViewItem>() select x.Tag as TiFileSystemObject;
+            if (selectedItems.Count(x => x is TiDirectory) > 0)
             {
                 throw new NotImplementedException("This feature is not implemented yet");
             }
 
-            var files = from x in selectedItems where x is FileSystems.File select x as FileSystems.File;
+            var files = from x in selectedItems where x is TiFile select x as TiFile;
 
             using dlgExtract dlg = new dlgExtract();
             if (dlg.ShowDialog() == DialogResult.OK)
@@ -547,7 +551,7 @@ namespace TotalImage
                 propertiesToolStripMenuItem2.Enabled = true;
 
                 //Check if selected item is a deleted entry and enable the UI accordingly
-                FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag;
+                TiFileSystemObject entry = (TiFileSystemObject)lstFiles.SelectedItems[0].Tag;
                 undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
                 undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
                 deleteToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
@@ -563,8 +567,8 @@ namespace TotalImage
                 extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
                 propertiesToolStripButton.Enabled = true;
 
-                lbStatusPath.Text = ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).FullName;
-                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in 1 item" : "{0:n2} {1} in 1 item", ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag).Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
+                lbStatusPath.Text = ((TiFileSystemObject)lstFiles.SelectedItems[0].Tag).FullName;
+                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in 1 item" : "{0:n2} {1} in 1 item", ((TiFileSystemObject)lstFiles.SelectedItems[0].Tag).Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
             else
             {
@@ -592,7 +596,7 @@ namespace TotalImage
                 var selectedSize = 0ul;
                 foreach (ListViewItem lvi in lstFiles.SelectedItems)
                 {
-                    FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lvi.Tag;
+                    TiFileSystemObject entry = (TiFileSystemObject)lvi.Tag;
                     selectedSize += entry.Length;
                 }
 
@@ -636,7 +640,7 @@ namespace TotalImage
                 if (lstFiles.SelectedItems.Count == 1)
                 {
                     // Single selected item
-                    using dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag);
+                    using dlgProperties dlg = new dlgProperties((TiFileSystemObject)lstFiles.SelectedItems[0].Tag);
                     dlg.ShowDialog();
                 }
                 else if (lstFiles.SelectedItems.Count > 1)
@@ -648,7 +652,7 @@ namespace TotalImage
             else if (itemParent == cmsDirTree)
             {
                 // Show properties for the selected directory in the tree view
-                using dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstDirectories.SelectedNode.Tag);
+                using dlgProperties dlg = new dlgProperties((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
                 dlg.ShowDialog();
             }
         }
@@ -739,7 +743,7 @@ namespace TotalImage
         //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
         private void lstDirectories_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
-            FileSystems.Directory dir = (FileSystems.Directory)e.Node.Tag;
+            TiDirectory dir = (TiDirectory)e.Node.Tag;
             if (dir.Name.StartsWith("?"))
             {
                 e.Cancel = true;
@@ -751,7 +755,7 @@ namespace TotalImage
         private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
         {
             //This makes sure the selected image doesn't change when a hidden folder is selected
-            if (((FileSystems.FileSystemObject)lstDirectories.SelectedNode.Tag).Attributes.HasFlag(FileAttributes.Hidden))
+            if (((TiFileSystemObject)lstDirectories.SelectedNode.Tag).Attributes.HasFlag(FileAttributes.Hidden))
             {
                 lstDirectories.SelectedImageKey = "folder (Hidden)";
             }
@@ -764,7 +768,7 @@ namespace TotalImage
             var dirSize = 0ul;
             lstFiles.BeginUpdate();
             lstFiles.Items.Clear();
-            PopulateListView((FileSystems.Directory)e.Node.Tag);
+            PopulateListView((TiDirectory)e.Node.Tag);
             lstFiles.EndUpdate();
 
 #if NET5_0
@@ -777,8 +781,8 @@ namespace TotalImage
 
             foreach (ListViewItem lvi in lstFiles.Items)
             {
-                var entry = (FileSystems.FileSystemObject)lvi.Tag;
-                if (!(entry is FileSystems.Directory))
+                var entry = (TiFileSystemObject)lvi.Tag;
+                if (!(entry is TiDirectory))
                 {
                     fileCount++;
                     dirSize += entry.Length;
@@ -811,7 +815,7 @@ namespace TotalImage
                 }
                 else
                 {
-                    FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lstDirectories.SelectedNode.Tag;
+                    TiFileSystemObject entry = (TiFileSystemObject)lstDirectories.SelectedNode.Tag;
                     extractToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
                     newFolderToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
                     renameToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
@@ -826,7 +830,7 @@ namespace TotalImage
         {
             if (lstFiles.SelectedItems.Count == 1 && e.Button != MouseButtons.Right)
             {
-                if ((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag is FileSystems.Directory dir) //A folder was double-clicked
+                if ((TiFileSystemObject)lstFiles.SelectedItems[0].Tag is TiDirectory dir) //A folder was double-clicked
                 {
                     var node = FindNode(lstDirectories.Nodes[0], dir);
                     if (node != null)
@@ -1184,7 +1188,7 @@ namespace TotalImage
 
 #endregion
 
-        private void PopulateTreeView(TreeNode node, FileSystems.Directory dir)
+        private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
             foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems))
             {
@@ -1236,7 +1240,7 @@ namespace TotalImage
             return bmp;
         }
 
-        private void PopulateListView(FileSystems.Directory dir)
+        private void PopulateListView(TiDirectory dir)
         {
             if (dir.Parent != null)
             {
@@ -1259,7 +1263,7 @@ namespace TotalImage
                 var filetype = GetShellFileType(fso.Name, fso.Attributes);
                 item.SubItems.Add(filetype);
 
-                if (fso is FileSystems.Directory)
+                if (fso is TiDirectory)
                 {
                     item.SubItems.Add(string.Empty);
                     if (fso.Attributes.HasFlag(FileAttributes.Hidden)) //Hidden folders look different
@@ -1458,8 +1462,8 @@ namespace TotalImage
 
             foreach (ListViewItem lvi in lstFiles.Items)
             {
-                FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lvi.Tag;
-                if (!(entry is FileSystems.Directory))
+                TiFileSystemObject entry = (TiFileSystemObject)lvi.Tag;
+                if (!(entry is TiDirectory))
                 {
                     dirSize += entry.Length;
                 }
@@ -1476,8 +1480,8 @@ namespace TotalImage
 
             foreach (ListViewItem lvi in lstFiles.Items)
             {
-                FileSystems.FileSystemObject entry = (FileSystems.FileSystemObject)lvi.Tag;
-                if (!(entry is FileSystems.Directory))
+                TiFileSystemObject entry = (TiFileSystemObject)lvi.Tag;
+                if (!(entry is TiDirectory))
                 {
                     fileCount++;
                 }
@@ -1500,16 +1504,16 @@ namespace TotalImage
         }
 
         //Finds the node with the specified entry
-        private TreeNode? FindNode(TreeNode startNode, FileSystems.Directory dir)
+        private TreeNode? FindNode(TreeNode startNode, TiDirectory dir)
         {
-            if (((FileSystems.Directory)startNode.Tag).FullName == dir.FullName)
+            if (((TiDirectory)startNode.Tag).FullName == dir.FullName)
             {
                 return startNode;
             }
             else foreach (TreeNode node in startNode.Nodes)
                 {
                     // hack
-                    if (((FileSystems.Directory)node.Tag).FullName == dir.FullName)
+                    if (((TiDirectory)node.Tag).FullName == dir.FullName)
                     {
                         return node;
                     }
