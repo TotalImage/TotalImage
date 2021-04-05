@@ -5,7 +5,7 @@ namespace TotalImage.FileSystems.FAT
 {
     public class FatDataStream : Stream
     {
-        private readonly IFatFileSystem _fat;
+        private readonly FatFileSystem _fat;
         private readonly Stream _base;
 
         private readonly uint _firstCluster;
@@ -13,7 +13,7 @@ namespace TotalImage.FileSystems.FAT
 
         private uint _position = 0;
 
-        public FatDataStream(IFatFileSystem fat, DirectoryEntry entry)
+        public FatDataStream(FatFileSystem fat, DirectoryEntry entry)
         {
             _fat = fat;
             _base = fat.GetStream();
@@ -21,7 +21,7 @@ namespace TotalImage.FileSystems.FAT
             _length = entry.fileSize;
         }
 
-        public FatDataStream(IFatFileSystem fat, uint firstCluster)
+        public FatDataStream(FatFileSystem fat, uint firstCluster)
         {
             _fat = fat;
             _base = fat.GetStream();

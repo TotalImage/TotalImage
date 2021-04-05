@@ -8,11 +8,11 @@ namespace TotalImage.FileSystems.FAT
     /// <summary>
     /// A representation of a FAT12 file system
     /// </summary>
-    public class Fat12 : FileSystem, IFatFileSystem
+    public class Fat12 : FatFileSystem
     {
         private readonly BiosParameterBlock _bpb;
         private Directory _rootDirectory;
-        public BiosParameterBlock BiosParameterBlock => _bpb;
+        public override BiosParameterBlock BiosParameterBlock => _bpb;
 
         /// <inheritdoc />
         public override string Format => "FAT12";
@@ -41,6 +41,11 @@ namespace TotalImage.FileSystems.FAT
         {
             _bpb = bpb;
             _rootDirectory = new FatRootDirectory(this);
+
+            ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
+            for(int i = 0; i < bpb.NumberOfFATs; i++)
+                ClusterMaps[i] = new ClusterMap(this, i);
+
         }
 
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
@@ -386,7 +391,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
 
-        public uint DataAreaFirstSector
+        public override uint DataAreaFirstSector
         {
             get
             {
@@ -397,46 +402,70 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
-        public uint BytesPerCluster => (uint)_bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
-        public uint ClusterCount => (uint)_bpb.LogicalSectorsPerFAT * _bpb.BytesPerLogicalSector * 3 / 2;
+        public override uint BytesPerCluster => (uint)_bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
+        public override uint ClusterCount => (uint)_bpb.LogicalSectorsPerFAT * _bpb.BytesPerLogicalSector * 3 / 2;
 
-        /// <summary>
-        /// Retrieves the value stored under an index in the FAT cluster map.
-        /// </summary>
-        /// <param name="index">Cluster map index</param>
-        /// <param name="fat">Specifies which copy of the FAT should be used</param>
-        public uint? GetNextCluster(uint index, int fat = 0)
+        public new class ClusterMap : FatFileSystem.ClusterMap
         {
-            if (index >= ClusterCount) throw new ArgumentOutOfRangeException();
-            if (fat >= _bpb.NumberOfFATs) throw new ArgumentOutOfRangeException();
-
-            using var reader = new BinaryReader(GetStream(), Encoding.ASCII, true);
-
-            // Seek to the beginning of the cluster map.
-            reader.BaseStream.Position = _bpb.ReservedLogicalSectors * _bpb.BytesPerLogicalSector;
-
-            if (fat > 0)
+            Fat12 _fat12;
+            int _fatIndex;
+            internal ClusterMap(Fat12 fat12, int fatIndex)
             {
-                // Reading from a backup FAT, so seek to the beginning of that.
-                var fatOffset = fat * _bpb.LogicalSectorsPerFAT * _bpb.BytesPerLogicalSector;
-                reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
+                if (fatIndex >= fat12._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();
+
+                _fat12 = fat12;
+                _fatIndex = fatIndex;
             }
 
-            // FAT12 uses 12-bit cluster indices, therefore it's time for some
-            // crazy maths! Let's first seek further to the nearest even index.
-            reader.BaseStream.Seek(index / 2 * 3, SeekOrigin.Current);
- 
-            // Now we want to read two values. Considering there is no 24-bit
-            // integer type, we have to read 32 bits, which means we're going
-            // to read more than we need, so we have to discard the most
-            // significant byte.
-            var pair = reader.ReadUInt32() & 0xFFFFFF;
+            public override uint this[uint index]
+            {
+                get
+                {
+                    if (index >= _fat12.ClusterCount) throw new ArgumentOutOfRangeException();
 
-            // Right now, `pair` has the value of 0x00123ABC, bits 0-11 contain
-            // the value of the even index and bits 12-23 contain the value of
-            // the odd index. All we need to do is return the relevant part.
-            var nextCluster = index % 2 == 0 ? pair & 0xFFF : pair >> 12;
-            return (nextCluster < 0xFEF) ? (uint?)nextCluster : null;
+                    var stream = _fat12.GetStream();
+                    using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+
+                    // Seek to the beginning of the cluster map.
+                    stream.Position = _fat12._bpb.ReservedLogicalSectors * _fat12._bpb.BytesPerLogicalSector;
+
+                    if (_fatIndex > 0)
+                    {
+                        // Reading from a backup FAT, so seek to the beginning of that.
+                        var fatOffset = _fatIndex * _fat12._bpb.LogicalSectorsPerFAT * _fat12._bpb.BytesPerLogicalSector;
+                        reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
+                    }
+
+                    // FAT12 uses 12-bit cluster indices, therefore it's time for some
+                    // crazy maths! Let's first seek further to the nearest even index.
+                    reader.BaseStream.Seek(index / 2 * 3, SeekOrigin.Current);
+        
+                    // Now we want to read two values. Considering there is no 24-bit
+                    // integer type, we have to read 32 bits, which means we're going
+                    // to read more than we need, so we have to discard the most
+                    // significant byte.
+                    var pair = reader.ReadUInt32() & 0xFFFFFF;
+
+                    // Right now, `pair` has the value of 0x00123ABC, bits 0-11 contain
+                    // the value of the even index and bits 12-23 contain the value of
+                    // the odd index. All we need to do is return the relevant part.
+                    if (index % 2 == 0)
+                        return pair & 0xFFF;
+                    else
+                        return pair >> 12;
+                }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
         }
+
+        public override FatFileSystem.ClusterMap[] ClusterMaps { get; }
+
+        /// <inheritdoc/>
+        public override uint? GetNextCluster(uint index, int fat = 0)
+            => ClusterMaps[fat][index] < 0xFEF ? (uint?)ClusterMaps[fat][index] : null;
     }
 }
