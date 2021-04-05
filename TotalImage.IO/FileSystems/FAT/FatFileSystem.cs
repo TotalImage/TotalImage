@@ -7,12 +7,46 @@ namespace TotalImage.FileSystems.FAT
 {
     public abstract class FatFileSystem : FileSystem
     {
-        protected FatFileSystem(Stream stream) : base(stream) { }
+        protected readonly BiosParameterBlock _bpb;
+        public BiosParameterBlock BiosParameterBlock => _bpb;
 
-        public abstract BiosParameterBlock BiosParameterBlock { get; }
-        public abstract uint DataAreaFirstSector { get; }
-        public abstract uint BytesPerCluster { get; }
-        public abstract uint ClusterCount { get; }
+        protected FatFileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
+        { 
+            _bpb = bpb;
+        }
+
+        public uint DataAreaFirstSector
+        {
+            get
+            {
+                var fatOffset = (uint)_bpb.ReservedLogicalSectors;
+                var fatSize = (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
+                var rootDirSize = (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
+                return fatOffset + fatSize + RootDirectorySectors;
+            }
+        }
+
+        public uint TotalSectors
+            => (uint)_bpb.TotalLogicalSectors;
+
+        public uint ReservedSectors
+            => (uint)_bpb.ReservedLogicalSectors;
+
+        public uint ClusterMapsSectors
+            => (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
+
+        public uint RootDirectorySectors
+            => (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
+
+        public uint DataAreaSectors
+            => TotalSectors - ReservedSectors - ClusterMapsSectors - RootDirectorySectors;
+
+        public uint BytesPerCluster
+            => (uint)_bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
+
+        public uint ClusterCount
+            => (uint)DataAreaSectors / _bpb.LogicalSectorsPerCluster;
+        
 
         /// <summary>
         /// Retrieves the number of the next cluster in a cluster chain.

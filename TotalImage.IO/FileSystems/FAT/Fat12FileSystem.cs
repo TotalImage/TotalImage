@@ -10,9 +10,7 @@ namespace TotalImage.FileSystems.FAT
     /// </summary>
     public class Fat12FileSystem : FatFileSystem
     {
-        private readonly BiosParameterBlock _bpb;
         private Directory _rootDirectory;
-        public override BiosParameterBlock BiosParameterBlock => _bpb;
 
         /// <inheritdoc />
         public override string Format => "FAT12";
@@ -30,9 +28,8 @@ namespace TotalImage.FileSystems.FAT
         public override long TotalSize => throw new NotImplementedException();
 
         //TODO: Should the detection code be moved elsewhere, e.g. to the container or main form?
-        public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
+        public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            _bpb = bpb;
             _rootDirectory = new FatRootDirectory(this);
 
             ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
@@ -383,20 +380,6 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
-
-        public override uint DataAreaFirstSector
-        {
-            get
-            {
-                var fatOffset = (uint)_bpb.ReservedLogicalSectors;
-                var fatSize = (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
-                var rootDirSize = (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
-                return fatOffset + fatSize + rootDirSize;
-            }
-        }
-
-        public override uint BytesPerCluster => (uint)_bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
-        public override uint ClusterCount => (uint)_bpb.LogicalSectorsPerFAT * _bpb.BytesPerLogicalSector * 3 / 2;
 
         public new class ClusterMap : FatFileSystem.ClusterMap
         {
