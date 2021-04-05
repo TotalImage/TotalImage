@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
@@ -490,30 +491,57 @@ namespace TotalImage
         private void extract_Click(object sender, EventArgs e)
         {
             var selectedItems = from x in lstFiles.SelectedItems.Cast<ListViewItem>() select x.Tag as TiFileSystemObject;
-            if (selectedItems.Count(x => x is TiDirectory) > 0)
+
+            if (Settings.CurrentSettings.DefaultExtractType == Settings.FolderExtract.AlwaysAsk)
             {
-                throw new NotImplementedException("This feature is not implemented yet");
+                using dlgExtract dlg = new dlgExtract();
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    ExtractFiles(selectedItems, dlg.TargetPath, dlg.ExtractType, dlg.OpenFolder);
+                }
+            }
+            else
+            {
+                ExtractFiles(selectedItems, Settings.CurrentSettings.DefaultExtractPath, Settings.CurrentSettings.DefaultExtractType, Settings.CurrentSettings.OpenFolderAfterExtract);
+            }
+        }
+
+        private void ExtractFiles(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder)
+        {
+            var files = from x in items where x is TiFile select x as TiFile;
+
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+            foreach(var file in files)
+            {
+                using var destStream = new FileStream(Path.Combine(path, file.Name), FileMode.Create);
+                file.GetStream().CopyTo(destStream);
             }
 
-            var files = from x in selectedItems where x is TiFile select x as TiFile;
-
-            using dlgExtract dlg = new dlgExtract();
-            if (dlg.ShowDialog() == DialogResult.OK)
+            if (extractType != Settings.FolderExtract.Ignore)
             {
-                foreach(var file in files)
-                {
-                    using var destStream = new FileStream(Path.Combine(dlg.TargetPath, file.Name), FileMode.Create);
-                    file.GetStream().CopyTo(destStream);
-                }
+                var dirs = from x in items where x is TiDirectory select x as TiDirectory;
 
-                if (dlg.OpenFolder && dlg.TargetPath != null)
+                foreach(var dir in dirs)
                 {
-                    Process.Start(new ProcessStartInfo()
-                    {
-                        FileName = dlg.TargetPath,
-                        UseShellExecute = true
-                    });
+                    ExtractFiles(
+                        dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems),
+                        extractType switch
+                        {
+                            Settings.FolderExtract.Merge => path,
+                            Settings.FolderExtract.Preserve => Path.Combine(path, dir.Name),
+                            _ => throw new ArgumentException()
+                        }, extractType, false);
                 }
+            }
+
+            if (openFolder)
+            {
+                Process.Start(new ProcessStartInfo()
+                {
+                    FileName = path,
+                    UseShellExecute = true
+                });
             }
         }
 

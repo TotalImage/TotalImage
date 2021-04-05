@@ -109,7 +109,6 @@
             // rbnExtractSameFolder
             // 
             this.rbnExtractSameFolder.AutoSize = true;
-            this.rbnExtractSameFolder.Enabled = false;
             this.rbnExtractSameFolder.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.rbnExtractSameFolder.Location = new System.Drawing.Point(122, 74);
             this.rbnExtractSameFolder.Name = "rbnExtractSameFolder";
@@ -122,7 +121,6 @@
             // rbnPreserveDirs
             // 
             this.rbnPreserveDirs.AutoSize = true;
-            this.rbnPreserveDirs.Enabled = false;
             this.rbnPreserveDirs.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.rbnPreserveDirs.Location = new System.Drawing.Point(343, 74);
             this.rbnPreserveDirs.Name = "rbnPreserveDirs";
