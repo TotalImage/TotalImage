@@ -131,7 +131,8 @@ namespace TotalImage.FileSystems.FAT
         {
             var bytes = entries.SelectMany(x => RetrieveLongNameBytes(x)).ToArray();
             var name = Encoding.Unicode.GetString(bytes);
-            return name.Substring(0, name.IndexOf('\0'));
+            var nullIndex = name.IndexOf('\0');
+            return nullIndex > 0 ? name.Substring(0, nullIndex) : name;
         }
     }
 }
