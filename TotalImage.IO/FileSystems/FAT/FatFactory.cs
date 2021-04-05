@@ -28,8 +28,8 @@ namespace TotalImage.FileSystems.FAT
             }
             else if (clusterCount < 65525)
             {
-                // return FAT16 - NOT SUPPORTED YET
-                return null;
+                // return FAT16
+                return new Fat16FileSystem(stream, bpb);
             }
             else
             {
