@@ -22,41 +22,47 @@ namespace TotalImage.FileSystems.FAT
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
         {
             var fat = (FatFileSystem)FileSystem;
-            var lfn = new Stack<DirectoryEntry>();
+            var lfn = new Stack<LongDirectoryEntry>();
             var useLfn = false;
 
-            //Read the entries top to bottom
-            foreach(var entry in DirectoryEntry.ReadRootDirectory(fat, showDeleted))
+            foreach (var entry in DirectoryEntry.ReadRootDirectory(fat, showDeleted))
             {
                 if (entry.attr == FatAttributes.LongName)
                 {
-                    if (entry.name[0] == 0xE5)
+                    var lfnEntry = new LongDirectoryEntry(entry);
+
+                    if (lfnEntry.type != 0)
+                    {
+                        // Type is supposed to be zero
+                        useLfn = false;
+                    }
+                    else if (lfnEntry.ord == 0xE5)
                     {
                         // This is a deleted LFN entry
                         useLfn = false;
                     }
-                    else if (Convert.ToBoolean(entry.name[0] & 0x40))
+                    else if (Convert.ToBoolean(lfnEntry.ord & 0x40))
                     {
                         // This is the first LFN entry
                         useLfn = true;
                         lfn.Clear();
-                        lfn.Push(entry);
+                        lfn.Push(lfnEntry);
                     }
                     else if (useLfn)
                     {
-                        if ((lfn.Peek().name[0] & 0x1F) != (entry.name[0] & 0x1F) + 1)
+                        if ((lfn.Peek().ord & 0x1F) != (lfnEntry.ord & 0x1F) + 1)
                         {
                             // The LFN entry is out of order
                             useLfn = false;
                         }
-                        else if (lfn.Peek().crtTimeTenth != entry.crtTimeTenth)
+                        else if (lfn.Peek().chksum != lfnEntry.chksum)
                         {
                             // Short name checksum is different from the last entry
                             useLfn = false;
                         }
                         else
                         {
-                            lfn.Push(entry);
+                            lfn.Push(lfnEntry);
                         }
                     }
 
@@ -67,12 +73,12 @@ namespace TotalImage.FileSystems.FAT
                     // We reached a non-LFN entry, so let's see if we retrieved
                     // a valid long file name.
 
-                    if ((lfn.Peek().name[0] & 0x1F) != 0x01)
+                    if ((lfn.Peek().ord & 0x1F) != 0x01)
                     {
                         // The top LFN entry is not the logically first entry
                         useLfn = false;
                     }
-                    else if (lfn.Peek().crtTimeTenth != Helper.LfnChecksum(entry.name))
+                    else if (lfn.Peek().chksum != LongDirectoryEntry.GetShortNameChecksum(entry.name))
                     {
                         // This is a valid long name for a different file!
                         useLfn = false;
