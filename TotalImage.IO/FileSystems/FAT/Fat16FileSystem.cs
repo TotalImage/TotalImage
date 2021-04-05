@@ -53,11 +53,14 @@ namespace TotalImage.FileSystems.FAT
                 _fatIndex = fatIndex;
             }
 
+            public override uint Length
+                => (uint)(_fat16.BytesPerClusterMap) / 2;
+
             public override uint this[uint index]
             {
                 get
                 {
-                    if (index >= _fat16.ClusterCount) throw new ArgumentOutOfRangeException();
+                    if (index >= Length) throw new ArgumentOutOfRangeException();
 
                     var stream = _fat16.GetStream();
                     using var reader = new BinaryReader(stream, Encoding.ASCII, true);

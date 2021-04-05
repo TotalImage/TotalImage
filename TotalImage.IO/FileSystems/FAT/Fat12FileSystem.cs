@@ -393,11 +393,14 @@ namespace TotalImage.FileSystems.FAT
                 _fatIndex = fatIndex;
             }
 
+            public override uint Length
+                => (uint)(_fat12.BytesPerClusterMap) / 2 * 3;
+
             public override uint this[uint index]
             {
                 get
                 {
-                    if (index >= _fat12.ClusterCount) throw new ArgumentOutOfRangeException();
+                    if (index >= Length) throw new ArgumentOutOfRangeException();
 
                     var stream = _fat12.GetStream();
                     using var reader = new BinaryReader(stream, Encoding.ASCII, true);

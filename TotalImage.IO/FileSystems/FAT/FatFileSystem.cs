@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using TotalImage.FileSystems.BPB;
@@ -44,6 +46,9 @@ namespace TotalImage.FileSystems.FAT
         public uint BytesPerCluster
             => (uint)_bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
 
+        public uint BytesPerClusterMap
+            => (uint)_bpb.LogicalSectorsPerFAT * _bpb.BytesPerLogicalSector;
+
         public uint ClusterCount
             => (uint)DataAreaSectors / _bpb.LogicalSectorsPerCluster;
         
@@ -59,9 +64,43 @@ namespace TotalImage.FileSystems.FAT
         public abstract ClusterMap[] ClusterMaps { get; }
         public ClusterMap MainClusterMap => ClusterMaps[0];
 
-        public abstract class ClusterMap
+        public abstract class ClusterMap : IEnumerable<uint>
         {
             public abstract uint this[uint index] { get; set; }
+
+            public abstract uint Length { get; }
+
+            /// <inheritdoc/>
+            public IEnumerator<uint> GetEnumerator() => new ClusterMapEnumerator(this);
+
+            /// <inheritdoc/>
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+            public class ClusterMapEnumerator : IEnumerator<uint>
+            {
+                uint _currentIndex = 0;
+                ClusterMap _map;
+
+                /// <inheritdoc/>
+                public uint Current => _map[_currentIndex];
+
+                /// <inheritdoc/>
+                object IEnumerator.Current => Current;
+
+                internal ClusterMapEnumerator(ClusterMap map)
+                {
+                    _map = map;
+                }
+
+                /// <inheritdoc/>
+                public void Dispose() { }
+
+                /// <inheritdoc/>
+                public bool MoveNext() => ++_currentIndex < _map.Length ? false : true;
+
+                /// <inheritdoc/>
+                public void Reset() => _currentIndex = 0;
+            }
         }
 
         public override string VolumeLabel { get => RootDirectoryVolumeLabel ?? BpbVolumeLabel ?? "NO NAME"; set => throw new NotImplementedException(); }
