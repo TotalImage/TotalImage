@@ -61,6 +61,8 @@ namespace TotalImage.FileSystems.FAT
             var lastCluster = (_position + count) / _fat12.BytesPerCluster;
             var bytesLeftFromCluster = _fat12.BytesPerCluster - (_position % _fat12.BytesPerCluster);
 
+            if ((_position + count) %_fat12.BytesPerCluster == 0) lastCluster--;
+
             Seek(0, SeekOrigin.Current);
 
             var totalRead = _base.Read(buffer, offset, Math.Min(count, (int)bytesLeftFromCluster));
@@ -89,7 +91,7 @@ namespace TotalImage.FileSystems.FAT
                 _ => throw new ArgumentException()
             };
 
-            if (target < 0 || target > _length)
+            if (target < 0 || target >= _length)
                 throw new ArgumentOutOfRangeException();
 
             var cluster = _firstCluster;
