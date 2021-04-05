@@ -1405,6 +1405,7 @@ namespace TotalImage
 
                 if (selectFrm.ShowDialog() == DialogResult.Cancel)
                 {
+                    CloseImage();
                     return;
                 }
 
