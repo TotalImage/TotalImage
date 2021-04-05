@@ -48,7 +48,7 @@ namespace TotalImage
             }
 
             frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
-            FileSystems.FAT.Fat12 fs = (FileSystems.FAT.Fat12)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
+            FileSystems.FAT.Fat12FileSystem fs = (FileSystems.FAT.Fat12FileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
             uint clusterSize = (uint)fs.BiosParameterBlock.LogicalSectorsPerCluster * fs.BiosParameterBlock.BytesPerLogicalSector;
             Debug.WriteLine($"Cluster size: {clusterSize}");
             uint sizeOnDisk = (uint)Math.Ceiling(entry.Length / (double)clusterSize) * clusterSize;

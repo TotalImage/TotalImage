@@ -24,7 +24,7 @@ namespace TotalImage.FileSystems.FAT
             if (clusterCount < 4085)
             {
                 // return FAT12
-                return new Fat12(stream, bpb);
+                return new Fat12FileSystem(stream, bpb);
             }
             else if (clusterCount < 65525)
             {
@@ -55,7 +55,7 @@ namespace TotalImage.FileSystems.FAT
                 //BPB likely invalid, check if this is an Acorn 800k disk without one
                 if (CheckForAcorn800k(reader))
                 {
-                    return new Fat12(stream, BiosParameterBlock.DefaultAcornParameters);
+                    return new Fat12FileSystem(stream, BiosParameterBlock.DefaultAcornParameters);
                 }
                 else
                 {

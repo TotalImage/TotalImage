@@ -14,7 +14,7 @@ namespace TotalImage.FileSystems.FAT
         private DirectoryEntry entry;
         private DirectoryEntry[]? lfnEntries;
 
-        public FatFile(Fat12 fat, DirectoryEntry entry, DirectoryEntry[]? lfnEntries, Directory dir) : base(fat, dir)
+        public FatFile(Fat12FileSystem fat, DirectoryEntry entry, DirectoryEntry[]? lfnEntries, Directory dir) : base(fat, dir)
         {
             this.entry = entry;
             this.lfnEntries = lfnEntries;
@@ -100,7 +100,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc/>
         public override Stream GetStream()
         {
-            return new FatDataStream((Fat12)FileSystem, entry);
+            return new FatDataStream((Fat12FileSystem)FileSystem, entry);
         }
     }
 }

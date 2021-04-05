@@ -142,7 +142,7 @@ namespace TotalImage
         //TODO: Actually change the volume labels
         private void changeVolumeLabel_Click(object sender, EventArgs e)
         {
-            if (!(image?.PartitionTable.Partitions[0].FileSystem is Fat12 fs))
+            if (!(image?.PartitionTable.Partitions[0].FileSystem is Fat12FileSystem fs))
             {
                 MessageBox.Show("This only works for FAT12 images");
                 return;

@@ -46,7 +46,7 @@ namespace TotalImage.Containers
 
             //TODO: At this point we need to consider writeBPB value...
             var stream = new MemoryStream(imageBytes, true);
-            Fat12.Create(stream, bpb);
+            Fat12FileSystem.Create(stream, bpb);
 
             return new RawContainer(stream);
         }
@@ -70,9 +70,9 @@ namespace TotalImage.Containers
             {
                 do
                 {
-                    byte[] clusterBytes = ((Fat12)PartitionTable.Partitions[0].FileSystem).ReadCluster(cluster.Value);
+                    byte[] clusterBytes = ((Fat12FileSystem)PartitionTable.Partitions[0].FileSystem).ReadCluster(cluster.Value);
                     fs.Write(clusterBytes, 0, clusterBytes.Length);
-                    cluster = ((Fat12)PartitionTable.Partitions[0].FileSystem).GetNextCluster(cluster.Value);
+                    cluster = ((Fat12FileSystem)PartitionTable.Partitions[0].FileSystem).GetNextCluster(cluster.Value);
                 }
                 while (cluster.HasValue);
 

@@ -8,7 +8,7 @@ namespace TotalImage.FileSystems.FAT
     /// <summary>
     /// A representation of a FAT12 file system
     /// </summary>
-    public class Fat12 : FatFileSystem
+    public class Fat12FileSystem : FatFileSystem
     {
         private readonly BiosParameterBlock _bpb;
         private Directory _rootDirectory;
@@ -37,7 +37,7 @@ namespace TotalImage.FileSystems.FAT
         public override long TotalSize => throw new NotImplementedException();
 
         //TODO: Should the detection code be moved elsewhere, e.g. to the container or main form?
-        public Fat12(Stream stream, BiosParameterBlock bpb) : base(stream)
+        public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
         {
             _bpb = bpb;
             _rootDirectory = new FatRootDirectory(this);
@@ -49,7 +49,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
-        public static Fat12 Create(Stream stream, BiosParameterBlock bpb)
+        public static Fat12FileSystem Create(Stream stream, BiosParameterBlock bpb)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream), "stream cannot be null!");
@@ -58,7 +58,7 @@ namespace TotalImage.FileSystems.FAT
             if (!bpb.Validate())
                 throw new InvalidDataException("bpb is invalid!");
 
-            var fat = new Fat12(stream, bpb);
+            var fat = new Fat12FileSystem(stream, bpb);
 
             uint totalSize = (uint)stream.Length;
             uint rootDirSize = (uint)(bpb.RootDirectoryEntries << 5);
@@ -407,9 +407,9 @@ namespace TotalImage.FileSystems.FAT
 
         public new class ClusterMap : FatFileSystem.ClusterMap
         {
-            Fat12 _fat12;
+            Fat12FileSystem _fat12;
             int _fatIndex;
-            internal ClusterMap(Fat12 fat12, int fatIndex)
+            internal ClusterMap(Fat12FileSystem fat12, int fatIndex)
             {
                 if (fatIndex >= fat12._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();
 

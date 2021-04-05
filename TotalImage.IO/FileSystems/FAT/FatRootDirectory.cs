@@ -16,12 +16,12 @@ namespace TotalImage.FileSystems.FAT
      */
     public class FatRootDirectory : Directory, IFatFileSystemObject
     {
-        public FatRootDirectory(Fat12 fat) : base(fat, null) { }
+        public FatRootDirectory(Fat12FileSystem fat) : base(fat, null) { }
 
         /// <inheritdoc />
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
         {
-            if (!(FileSystem is Fat12 fat))
+            if (!(FileSystem is Fat12FileSystem fat))
             {
                 throw new NotSupportedException("Only FAT12 is supported at the moment");
             }
