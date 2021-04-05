@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
+using TotalImage.FileSystems.FAT;
 using System.Diagnostics;
 using static Interop.Shell32;
 using static Interop.User32;
@@ -47,11 +48,10 @@ namespace TotalImage
                 lblSize1.Text = lblSize1.Text.Insert(lblSize1.Text.Length, ")");
             }
 
-            frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
-            FileSystems.FAT.Fat12FileSystem fs = (FileSystems.FAT.Fat12FileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
-            uint clusterSize = (uint)fs.BiosParameterBlock.LogicalSectorsPerCluster * fs.BiosParameterBlock.BytesPerLogicalSector;
+            var fs = (FatFileSystem)entry.FileSystem;
+            var clusterSize = fs.BytesPerCluster;
             Debug.WriteLine($"Cluster size: {clusterSize}");
-            uint sizeOnDisk = (uint)Math.Ceiling(entry.Length / (double)clusterSize) * clusterSize;
+            var sizeOnDisk = (uint)Math.Ceiling(entry.Length / (double)clusterSize) * clusterSize;
             Debug.WriteLine($"Size on disk: {sizeOnDisk}");
 
             lblSizeOnDisk1.Text = $"{sizeOnDisk:n0} B";
