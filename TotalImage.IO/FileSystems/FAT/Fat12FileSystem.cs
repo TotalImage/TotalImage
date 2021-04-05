@@ -18,13 +18,6 @@ namespace TotalImage.FileSystems.FAT
         public override string Format => "FAT12";
 
         /// <inheritdoc />
-        public override string VolumeLabel
-        {
-            get => _bpb is BiosParameterBlock40 bpb40 && bpb40.Version == BiosParameterBlockVersion.Dos40 ? bpb40.VolumeLabel : "UNSUPPORTED";
-            set => ChangeVolLabel(value);
-        }
-
-        /// <inheritdoc />
         public override Directory RootDirectory => _rootDirectory;
 
         /// <inheritdoc />

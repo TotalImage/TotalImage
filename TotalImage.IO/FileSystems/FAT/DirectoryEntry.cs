@@ -47,7 +47,7 @@ namespace TotalImage.FileSystems.FAT
             return entry;
         }
 
-        public static IEnumerable<DirectoryEntry> ReadRootDirectory(Fat12FileSystem fat, bool includeDeleted = false)
+        public static IEnumerable<DirectoryEntry> ReadRootDirectory(FatFileSystem fat, bool includeDeleted = false)
         {
             var bpb = fat.BiosParameterBlock;
             var sector = bpb.ReservedLogicalSectors + (uint)(bpb.LogicalSectorsPerFAT * bpb.NumberOfFATs);
@@ -55,7 +55,7 @@ namespace TotalImage.FileSystems.FAT
             return ReadDirectory(fat, sector, bpb.RootDirectoryEntries, includeDeleted);
         }
 
-        public static IEnumerable<DirectoryEntry> ReadSubdirectory(Fat12FileSystem fat, DirectoryEntry entry, bool includeDeleted = false)
+        public static IEnumerable<DirectoryEntry> ReadSubdirectory(FatFileSystem fat, DirectoryEntry entry, bool includeDeleted = false)
         {
             var cluster = (uint?)(entry.fstClusHI << 16) | entry.fstClusLO;
 
@@ -71,7 +71,7 @@ namespace TotalImage.FileSystems.FAT
             while (cluster.HasValue);
         }
 
-        public static IEnumerable<DirectoryEntry> ReadSubdirectory(Fat12FileSystem fat, uint cluster, bool includeDeleted = false)
+        public static IEnumerable<DirectoryEntry> ReadSubdirectory(FatFileSystem fat, uint cluster, bool includeDeleted = false)
         {
             var bpb = fat.BiosParameterBlock;
             var sector = (cluster - 2) * bpb.LogicalSectorsPerCluster;
@@ -80,7 +80,7 @@ namespace TotalImage.FileSystems.FAT
             return ReadDirectory(fat, fat.DataAreaFirstSector + sector, entries, includeDeleted);
         }
 
-        private static IEnumerable<DirectoryEntry> ReadDirectory(Fat12FileSystem fat, uint sector, int entries, bool includeDeleted)
+        private static IEnumerable<DirectoryEntry> ReadDirectory(FatFileSystem fat, uint sector, int entries, bool includeDeleted)
         {
             var stream = fat.GetStream();
             using var reader = new BinaryReader(stream, Encoding.ASCII, true);
