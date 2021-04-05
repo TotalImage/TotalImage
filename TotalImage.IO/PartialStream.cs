@@ -42,7 +42,7 @@ namespace TotalImage
         /// <inheritdoc />
         public override long Position
         {
-            get => _base.Position + _offsetStart;
+            get => _base.Position - _offsetStart;
             set
             {
                 if (value >= _length)

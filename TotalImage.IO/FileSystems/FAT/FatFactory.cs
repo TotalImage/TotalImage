@@ -10,7 +10,7 @@ namespace TotalImage.FileSystems.FAT
     /// </summary>
     public class FatFactory : IFileSystemFactory
     {
-        private static FileSystem GetFatFromBiosParameterBlock(Stream stream, BiosParameterBlock bpb)
+        private static FileSystem? GetFatFromBiosParameterBlock(Stream stream, BiosParameterBlock bpb)
         {
             uint rootDirSectors = (((uint)bpb.RootDirectoryEntries * 32) + ((uint)bpb.BytesPerLogicalSector - 1)) / (uint)bpb.BytesPerLogicalSector;
 
@@ -28,13 +28,13 @@ namespace TotalImage.FileSystems.FAT
             }
             else if (clusterCount < 65525)
             {
-                // return FAT16
-                throw new NotSupportedException();
+                // return FAT16 - NOT SUPPORTED YET
+                return null;
             }
             else
             {
-                // return FAT32
-                throw new NotSupportedException();
+                // return FAT32 - NOT SUPPORTED YET
+                return null;
             }
         }
 

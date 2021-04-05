@@ -1425,7 +1425,13 @@ namespace TotalImage
                 {
                     for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
                     {
-                        selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.Format}, {image.PartitionTable.Partitions[i].Length / (int)Settings.CurrentSettings.SizeUnits} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)})");
+                        try
+                        {
+                            selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.Format}, {image.PartitionTable.Partitions[i].Length / (int)Settings.CurrentSettings.SizeUnits} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)})");
+                        }
+                        catch (InvalidDataException)
+                        {
+                        }
 
                         if (i == CurrentPartitionIndex)
                         {

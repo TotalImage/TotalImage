@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using TotalImage.Partitions;
 
@@ -20,7 +22,14 @@ namespace TotalImage
         {
             if (lstPartitions.SelectedItems.Count >= 1)
             {
-                btnOK.Enabled = true;
+                if (lstPartitions.SelectedItems[0].SubItems[2].Text == "RAW")
+                {
+                    lstPartitions.SelectedItems.Clear();
+                }
+                else
+                {
+                    btnOK.Enabled = true;
+                }
             }
             else
             {
@@ -42,8 +51,18 @@ namespace TotalImage
             {
                 var entry = PartitionTable.Partitions[i];
                 ListViewItem lvi = new ListViewItem(i.ToString());
-                lvi.SubItems.Add(entry.FileSystem.VolumeLabel);
-                lvi.SubItems.Add(entry.FileSystem.Format);
+                try
+                {
+                    lvi.SubItems.Add(entry.FileSystem.VolumeLabel);
+                    lvi.SubItems.Add(entry.FileSystem.Format);
+                }
+                catch (InvalidDataException)
+                {
+                    // this is probably an unsupported file system - we'll just mark it as RAW
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("RAW");
+                    lvi.ForeColor = Color.Gray;
+                }
                 lvi.SubItems.Add(entry.Offset.ToString());
                 lvi.SubItems.Add((entry.Offset + entry.Length).ToString());
                 lvi.SubItems.Add($"{entry.Length / (int)Settings.CurrentSettings.SizeUnits} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)}");
