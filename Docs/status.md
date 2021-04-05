@@ -9,18 +9,22 @@ This is the list of all currently supported media types, image containers, parti
 ## Media types
 | Name | Read | Write | Create |
 | --- | --- | --- | --- |
-| Floppy disk | ✔ Yes | ❌ No | ✔ Yes |
+| Floppy disks | ✔ Yes | ❌ No | ✔ Yes |
+| Hard disks | ✔ Yes | ❌ No | ❌ No |
 
-Read and Create functionality is limited to supported image containers and disk formats (see below).
+Read and Create functionality is limited to supported features below.
 
 ## Image containers
 | Name | Common file extensions | Read | Write | Create |
 | --- | --- | --- | --- | --- |
 | Raw sector image | IMG, IMA, FLP, VFD, DSK | ✔ Yes | ❌ No | ✔ Yes |
+| Microsoft VHD | VHD | ⚠ Partial | ❌ No | ❌ No |
 
-Read and Create functionality is limited to supported disk formats (see below).
+Read and Create functionality is limited to supported features below.
 
-## Disk formats
+Only fixed-size VHDs are currently supported.
+
+## Disk geometries
 | Name | Read | Write | Create |
 | --- | --- | --- | --- |
 | Common PC-compatible formats with a BPB | ✔ Yes | ❌ No | ✔ Yes |
@@ -33,17 +37,23 @@ Read and Create functionality is limited to supported disk formats (see below).
 | Tandy 2000 720k | ✔ Yes | ❌ No | ✔ Yes |
 | Acorn 800k | ✔ Yes | ❌ No | ⚠ Partial |
 | Apricot 315k/720k | ✔ Yes | ❌ No | ❌ No |
+| Hard disks with 512-byte sectors | ✔ Yes | ❌ No | ❌ No |
 
 These disk formats are only supported when formatted with FAT12 and contained in a supported container (see above).
 
-Acorn 800k Create functionality currently incorrectly writes a broken bootsector even though it shouldn't.
+Acorn 800k Create functionality currently incorrectly writes a broken bootsector.
 
 ## Partitioning schemes
-Since floppy disks are not partitioned (the entire capacity is allocated to a single partition and there is no partition table), no partitioning scheme is currently implemented.
+| Name | Read | Write | Create |
+| --- | --- | --- | --- |
+| Master Boot Record | ✔ Yes | ❌ No | ❌ No |
+| GUID Partition Table | ✔ Yes | ❌ No | ❌ No |
+
+Only FAT12 partitions are currently supported.
 
 ## File systems and extensions
 | Name | Read | Write | Create |
 | --- | --- | --- | --- |
 | FAT12 | ⚠ Partial | ❌ No | ✔ Yes |
 
-Read functionality is currently limited to listing directories and displaying attributes.
+Read functionality is currently limited to listing directories, displaying attributes and rudimentary file extraction.
