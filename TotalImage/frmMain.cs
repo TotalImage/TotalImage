@@ -34,6 +34,10 @@ namespace TotalImage
         #region Event Handlers
         private void frmMain_Load(object sender, EventArgs e)
         {
+            //These three are outside Sync because otherwise they'd be applied whenever settings are saved...
+            WindowState = Settings.CurrentSettings.WindowState;
+            Location = Settings.CurrentSettings.WindowPosition;
+            Size = Settings.CurrentSettings.WindowSize;
             SyncUIWithSettings();
 
             //Because designer doesn't have the Enter key in the list for some reason...
@@ -88,9 +92,6 @@ namespace TotalImage
         //Syncs the main form UI with the current settings
         private void SyncUIWithSettings()
         {
-            this.WindowState = Settings.CurrentSettings.WindowState;
-            this.Location = Settings.CurrentSettings.WindowPosition;
-            this.Size = Settings.CurrentSettings.WindowSize;
             lstFiles.View = Settings.CurrentSettings.FilesView;
             splitContainer.Panel1Collapsed = !Settings.CurrentSettings.ShowDirectoryTree;
             statusBar.Visible = Settings.CurrentSettings.ShowStatusBar;
