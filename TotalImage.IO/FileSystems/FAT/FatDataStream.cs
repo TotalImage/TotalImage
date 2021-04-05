@@ -89,7 +89,7 @@ namespace TotalImage.FileSystems.FAT
                 _ => throw new ArgumentException()
             };
 
-            if (target < 0 || target >= _length)
+            if (target < 0 || target > _length)
                 throw new ArgumentOutOfRangeException();
 
             var cluster = _firstCluster;
