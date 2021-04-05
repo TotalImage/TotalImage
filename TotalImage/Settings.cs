@@ -24,8 +24,11 @@ namespace TotalImage
             public bool ShowStatusBar { get; set; } = true;
             public SizeUnit SizeUnits { get; set; } = SizeUnit.B;
             public string DefaultExtractPath { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            public FolderExtract DefaultExtractType { get; set; } = FolderExtract.AlwaysAsk;
+            public FolderExtract DefaultExtractType { get; set; } = FolderExtract.Preserve;
+            public bool ExtractAlwaysAsk { get; set; } = true;
             public bool OpenFolderAfterExtract { get; set; } = true;
+            public bool ExtractPreserveDates { get; set; } = true;
+            public bool ExtractPreserveAttributes { get; set; } = false;
             public int SplitterDistance { get; set; } = 280;
             public Size WindowSize { get; set; } = new Size(1000, 700);
             public Point WindowPosition { get; set; } = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
@@ -54,7 +57,6 @@ namespace TotalImage
             Ignore,   //Folders will be ignored by default
             Merge,    //All files will be extracted into the same directory
             Preserve, //Directory structure will be preserved
-            AlwaysAsk //The user will always be prompted with the Extract dialog
         }
 
         //Loads all settings from permanent storage (settings.json)
@@ -142,7 +144,7 @@ namespace TotalImage
         {
             //Set all settings to a default value here
             CurrentSettings.OpenFolderAfterExtract = true;
-            CurrentSettings.DefaultExtractType = FolderExtract.AlwaysAsk;
+            CurrentSettings.DefaultExtractType = FolderExtract.Preserve;
             CurrentSettings.DefaultExtractPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             CurrentSettings.SizeUnits = SizeUnit.B;
             CurrentSettings.ShowCommandBar = true;
@@ -153,6 +155,9 @@ namespace TotalImage
             CurrentSettings.FilesSortingColumn = 0;
             CurrentSettings.FilesSortOrder = SortOrder.Ascending;
             CurrentSettings.FilesView = View.Details;
+            CurrentSettings.ExtractPreserveAttributes = false;
+            CurrentSettings.ExtractPreserveDates = true;
+            CurrentSettings.ExtractAlwaysAsk = true;
 
             //This should probably be preserved...
             /*CurrentSettings.SplitterDistance = 280;

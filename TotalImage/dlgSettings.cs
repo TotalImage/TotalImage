@@ -10,19 +10,6 @@ namespace TotalImage
             InitializeComponent();
         }
 
-        private void cbxExtractAsk_CheckedChanged(object sender, System.EventArgs e)
-        {
-            txtExtractPath.Enabled = !cbxExtractAsk.Checked;
-            btnBrowse.Enabled = !cbxExtractAsk.Checked;
-            rbnExtractFlat.Enabled = !cbxExtractAsk.Checked;
-            rbnIgnoreFolders.Enabled = !cbxExtractAsk.Checked;
-            rbnExtractPreserve.Enabled = !cbxExtractAsk.Checked;
-            cbxOpenDir.Enabled = !cbxExtractAsk.Checked;
-
-            if (Settings.CurrentSettings.DefaultExtractType == Settings.FolderExtract.AlwaysAsk && !cbxExtractAsk.Checked)
-                rbnIgnoreFolders.Checked = true;
-        }
-
         private void btnClearRecent_Click(object sender, System.EventArgs e)
         {
             Settings.ClearRecentImages();
@@ -114,6 +101,9 @@ namespace TotalImage
             cbxShowDeletedItems.Checked = Settings.CurrentSettings.ShowDeletedItems;
             lstSortBy.SelectedIndex = Settings.CurrentSettings.FilesSortingColumn;
             lstSortOrder.SelectedIndex = (int)Settings.CurrentSettings.FilesSortOrder - 1;
+            cbxExtractAsk.Checked = Settings.CurrentSettings.ExtractAlwaysAsk;
+            cbxPreserveAttributes.Checked = Settings.CurrentSettings.ExtractPreserveAttributes;
+            cbxPreserveDates.Checked = Settings.CurrentSettings.ExtractPreserveDates;
 
             switch (Settings.CurrentSettings.FilesView)
             {
@@ -135,53 +125,9 @@ namespace TotalImage
 
             switch (Settings.CurrentSettings.DefaultExtractType)
             {
-                case Settings.FolderExtract.AlwaysAsk:
-                    {
-                        cbxExtractAsk.Checked = true;
-                        txtExtractPath.Enabled = false;
-                        rbnExtractFlat.Enabled = false;
-                        rbnExtractPreserve.Enabled = false;
-                        rbnIgnoreFolders.Enabled = false;
-                        btnBrowse.Enabled = false;
-                        cbxOpenDir.Enabled = false;
-                    }
-                    break;
-                case Settings.FolderExtract.Ignore:
-                    {
-                        cbxExtractAsk.Checked = false;
-                        txtExtractPath.Enabled = true;
-                        rbnExtractFlat.Enabled = true;
-                        rbnExtractPreserve.Enabled = true;
-                        rbnIgnoreFolders.Enabled = true;
-                        btnBrowse.Enabled = true;
-                        cbxOpenDir.Enabled = true;
-                        rbnIgnoreFolders.Checked = true;
-                    }
-                    break;
-                case Settings.FolderExtract.Merge:
-                    {
-                        cbxExtractAsk.Checked = false;
-                        txtExtractPath.Enabled = true;
-                        rbnExtractFlat.Enabled = true;
-                        rbnExtractPreserve.Enabled = true;
-                        rbnIgnoreFolders.Enabled = true;
-                        btnBrowse.Enabled = true;
-                        cbxOpenDir.Enabled = true;
-                        rbnExtractFlat.Checked = true;
-                    }
-                    break;
-                case Settings.FolderExtract.Preserve:
-                    {
-                        cbxExtractAsk.Checked = false;
-                        txtExtractPath.Enabled = true;
-                        rbnExtractFlat.Enabled = true;
-                        rbnExtractPreserve.Enabled = true;
-                        rbnIgnoreFolders.Enabled = true;
-                        btnBrowse.Enabled = true;
-                        cbxOpenDir.Enabled = true;
-                        rbnExtractPreserve.Checked = true;
-                    }
-                    break;
+                case Settings.FolderExtract.Ignore: rbnIgnoreFolders.Checked = true; break;
+                case Settings.FolderExtract.Merge: rbnExtractFlat.Checked = true; break;
+                case Settings.FolderExtract.Preserve: rbnExtractPreserve.Checked = true; break;
             }
 
             //CheckFileAssociations();
@@ -222,6 +168,9 @@ namespace TotalImage
             Settings.CurrentSettings.ShowDirectoryTree = cbxShowDirectoryTree.Checked;
             Settings.CurrentSettings.ShowHiddenItems = cbxShowHiddenItems.Checked;
             Settings.CurrentSettings.ShowStatusBar = cbxShowStatusBar.Checked;
+            Settings.CurrentSettings.ExtractAlwaysAsk = cbxExtractAsk.Checked;
+            Settings.CurrentSettings.ExtractPreserveAttributes = cbxPreserveAttributes.Checked;
+            Settings.CurrentSettings.ExtractPreserveDates = cbxPreserveDates.Checked;
 
             switch (lstSizeUnits.SelectedIndex)
             {
@@ -247,9 +196,6 @@ namespace TotalImage
                 Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.Preserve;
             else if (rbnIgnoreFolders.Checked)
                 Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.Ignore;
-
-            if (cbxExtractAsk.Checked)
-                Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.AlwaysAsk;
 
             Settings.Save();
         }

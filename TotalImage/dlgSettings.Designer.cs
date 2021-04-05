@@ -57,6 +57,8 @@
             this.lstViewType = new System.Windows.Forms.ComboBox();
             this.lblViewType = new System.Windows.Forms.Label();
             this.tabExtraction = new System.Windows.Forms.TabPage();
+            this.cbxPreserveAttributes = new System.Windows.Forms.CheckBox();
+            this.cbxPreserveDates = new System.Windows.Forms.CheckBox();
             this.cbxOpenDir = new System.Windows.Forms.CheckBox();
             this.rbnExtractPreserve = new System.Windows.Forms.RadioButton();
             this.rbnExtractFlat = new System.Windows.Forms.RadioButton();
@@ -231,7 +233,7 @@
             // 
             this.cbxShowDeletedItems.AutoSize = true;
             this.cbxShowDeletedItems.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShowDeletedItems.Location = new System.Drawing.Point(163, 150);
+            this.cbxShowDeletedItems.Location = new System.Drawing.Point(214, 150);
             this.cbxShowDeletedItems.Name = "cbxShowDeletedItems";
             this.cbxShowDeletedItems.Size = new System.Drawing.Size(135, 20);
             this.cbxShowDeletedItems.TabIndex = 17;
@@ -242,7 +244,7 @@
             // 
             this.cbxShowStatusBar.AutoSize = true;
             this.cbxShowStatusBar.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShowStatusBar.Location = new System.Drawing.Point(163, 124);
+            this.cbxShowStatusBar.Location = new System.Drawing.Point(214, 124);
             this.cbxShowStatusBar.Name = "cbxShowStatusBar";
             this.cbxShowStatusBar.Size = new System.Drawing.Size(115, 20);
             this.cbxShowStatusBar.TabIndex = 16;
@@ -253,7 +255,7 @@
             // 
             this.cbxShowDirectoryTree.AutoSize = true;
             this.cbxShowDirectoryTree.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShowDirectoryTree.Location = new System.Drawing.Point(301, 124);
+            this.cbxShowDirectoryTree.Location = new System.Drawing.Point(18, 150);
             this.cbxShowDirectoryTree.Name = "cbxShowDirectoryTree";
             this.cbxShowDirectoryTree.Size = new System.Drawing.Size(134, 20);
             this.cbxShowDirectoryTree.TabIndex = 15;
@@ -264,7 +266,7 @@
             // 
             this.cbxShowHiddenItems.AutoSize = true;
             this.cbxShowHiddenItems.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShowHiddenItems.Location = new System.Drawing.Point(18, 150);
+            this.cbxShowHiddenItems.Location = new System.Drawing.Point(18, 176);
             this.cbxShowHiddenItems.Name = "cbxShowHiddenItems";
             this.cbxShowHiddenItems.Size = new System.Drawing.Size(133, 20);
             this.cbxShowHiddenItems.TabIndex = 14;
@@ -358,6 +360,8 @@
             // 
             // tabExtraction
             // 
+            this.tabExtraction.Controls.Add(this.cbxPreserveAttributes);
+            this.tabExtraction.Controls.Add(this.cbxPreserveDates);
             this.tabExtraction.Controls.Add(this.cbxOpenDir);
             this.tabExtraction.Controls.Add(this.rbnExtractPreserve);
             this.tabExtraction.Controls.Add(this.rbnExtractFlat);
@@ -373,6 +377,28 @@
             this.tabExtraction.TabIndex = 3;
             this.tabExtraction.Text = "Extraction";
             this.tabExtraction.UseVisualStyleBackColor = true;
+            // 
+            // cbxPreserveAttributes
+            // 
+            this.cbxPreserveAttributes.AutoSize = true;
+            this.cbxPreserveAttributes.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxPreserveAttributes.Location = new System.Drawing.Point(15, 240);
+            this.cbxPreserveAttributes.Name = "cbxPreserveAttributes";
+            this.cbxPreserveAttributes.Size = new System.Drawing.Size(236, 20);
+            this.cbxPreserveAttributes.TabIndex = 9;
+            this.cbxPreserveAttributes.Text = "Preserve file attributes when extracting";
+            this.cbxPreserveAttributes.UseVisualStyleBackColor = true;
+            // 
+            // cbxPreserveDates
+            // 
+            this.cbxPreserveDates.AutoSize = true;
+            this.cbxPreserveDates.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxPreserveDates.Location = new System.Drawing.Point(15, 214);
+            this.cbxPreserveDates.Name = "cbxPreserveDates";
+            this.cbxPreserveDates.Size = new System.Drawing.Size(214, 20);
+            this.cbxPreserveDates.TabIndex = 8;
+            this.cbxPreserveDates.Text = "Preserve file dates when extracting";
+            this.cbxPreserveDates.UseVisualStyleBackColor = true;
             // 
             // cbxOpenDir
             // 
@@ -454,11 +480,10 @@
             this.cbxExtractAsk.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cbxExtractAsk.Location = new System.Drawing.Point(15, 15);
             this.cbxExtractAsk.Name = "cbxExtractAsk";
-            this.cbxExtractAsk.Size = new System.Drawing.Size(206, 20);
+            this.cbxExtractAsk.Size = new System.Drawing.Size(292, 20);
             this.cbxExtractAsk.TabIndex = 0;
-            this.cbxExtractAsk.Text = "Always ask for extraction options";
+            this.cbxExtractAsk.Text = "Always show extraction options before extracting";
             this.cbxExtractAsk.UseVisualStyleBackColor = true;
-            this.cbxExtractAsk.CheckedChanged += new System.EventHandler(this.cbxExtractAsk_CheckedChanged);
             // 
             // tabIntegration
             // 
@@ -602,5 +627,7 @@
         private System.Windows.Forms.GroupBox gbxMisc;
         private System.Windows.Forms.Button btnClearRecent;
         private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.CheckBox cbxPreserveAttributes;
+        private System.Windows.Forms.CheckBox cbxPreserveDates;
     }
 }

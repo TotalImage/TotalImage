@@ -492,7 +492,7 @@ namespace TotalImage
         {
             var selectedItems = from x in lstFiles.SelectedItems.Cast<ListViewItem>() select x.Tag as TiFileSystemObject;
 
-            if (Settings.CurrentSettings.DefaultExtractType == Settings.FolderExtract.AlwaysAsk)
+            if (Settings.CurrentSettings.ExtractAlwaysAsk)
             {
                 using dlgExtract dlg = new dlgExtract();
                 if (dlg.ShowDialog() == DialogResult.OK)
