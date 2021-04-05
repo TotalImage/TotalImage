@@ -1,20 +1,24 @@
 # TotalImage
 **TotalImage** is a free and open source disk image editor licensed under the MIT license. For more information, see the `LICENSE` file. It is written in C# and uses Windows Forms for the UI.
 
-## Features
-The goal of TotalImage is to be a better alternative to some of the more widely used disk image tools of today. Our goal is to create a tool that:
+Our goal is to create a tool that:
 * is completely free and open-source
 * is updated and improved regularly, as much as personal circumstances of the developers permit
 * supports a wide range of disk image containers, physical disk formats, file systems and partitioning schemes
 * handles and reports exceptions properly
 * offers other related advanced features that might come in handy
 
-Because TotalImage is still under development, not all of the above can be achieved immediately. Some of the things we wish to support eventually are:
+## Current status
+See the [Status page](https://github.com/TotalImage/TotalImage/blob/master/Docs/status.md) for details about currently implemented features.
+
+## Planned features
+Here is a list of things we plan to support:
 
 ### Media types
 * Floppy disks
 * Hard disks
-* Optical disks
+* Optical discs
+* Superfloppies
 
 ### Disk image containers
 * Raw sector images (.IMG, .IMA etc.)
@@ -41,6 +45,8 @@ Because TotalImage is still under development, not all of the above can be achie
 * GPT
 
 Please note that this list is not exhaustive nor definitive. We're open to adding support for more stuff in the future, but we have to start with the basics.
+
+
 
 ## System requirements
 * Windows 7 Service Pack 1 or later
