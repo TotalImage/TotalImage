@@ -47,7 +47,10 @@ namespace TotalImage
                 lvi.SubItems.Add(entry.Offset.ToString());
                 lvi.SubItems.Add((entry.Offset + entry.Length).ToString());
                 lvi.SubItems.Add($"{entry.Length / (int)Settings.CurrentSettings.SizeUnits} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)}");
-                lvi.SubItems.Add(((MbrPartitionTable.MbrPartitionEntry)entry).Active.ToString());
+                if (entry is MbrPartitionTable.MbrPartitionEntry mbrEntry)
+                {
+                    lvi.SubItems.Add(mbrEntry.Active.ToString());
+                }
                 lstPartitions.Items.Add(lvi);
             }
         }
