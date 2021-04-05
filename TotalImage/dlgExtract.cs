@@ -43,5 +43,11 @@ namespace TotalImage
                 txtPath.Text = fbd.SelectedPath;
             }
         }
+
+        private void dlgExtract_Load(object sender, System.EventArgs e)
+        {
+            txtPath.Text = Settings.CurrentSettings.DefaultExtractPath;
+            cbxOpenFolder.Checked = Settings.CurrentSettings.OpenFolderAfterExtract;
+        }
     }
 }
