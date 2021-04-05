@@ -14,7 +14,7 @@ namespace TotalImage.FileSystems.FAT
         private DirectoryEntry entry;
         private DirectoryEntry[]? lfnEntries;
 
-        public FatDirectory(Fat12FileSystem fat, DirectoryEntry entry, DirectoryEntry[]? lfnEntries, Directory parent) : base(fat, parent)
+        public FatDirectory(FatFileSystem fat, DirectoryEntry entry, DirectoryEntry[]? lfnEntries, Directory parent) : base(fat, parent)
         {
             this.entry = entry;
             this.lfnEntries = lfnEntries;
@@ -98,11 +98,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
         {
-            if (!(FileSystem is Fat12FileSystem fat))
-            {
-                throw new NotSupportedException("Only FAT12 is supported at the moment");
-            }
-
+            var fat = (FatFileSystem)FileSystem;
             var lfn = new Stack<DirectoryEntry>();
             var useLfn = false;
 
