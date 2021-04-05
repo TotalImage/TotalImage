@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using TotalImage.FileSystems.BPB;
@@ -8,7 +8,7 @@ namespace TotalImage.FileSystems.FAT
     /// <summary>
     /// A representation of a FAT12 file system
     /// </summary>
-    public class Fat12 : FileSystem
+    public class Fat12 : FileSystem, IFatFileSystem
     {
         private readonly BiosParameterBlock _bpb;
         private Directory _rootDirectory;

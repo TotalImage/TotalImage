@@ -5,7 +5,7 @@ namespace TotalImage.FileSystems.FAT
 {
     public class FatDataStream : Stream
     {
-        private readonly Fat12 _fat12;
+        private readonly IFatFileSystem _fat;
         private readonly Stream _base;
 
         private readonly uint _firstCluster;
@@ -13,20 +13,20 @@ namespace TotalImage.FileSystems.FAT
 
         private uint _position = 0;
 
-        public FatDataStream(Fat12 fat12, DirectoryEntry entry)
+        public FatDataStream(IFatFileSystem fat, DirectoryEntry entry)
         {
-            _fat12 = fat12;
-            _base = fat12.GetStream();
+            _fat = fat;
+            _base = fat.GetStream();
             _firstCluster = (uint)(entry.fstClusHI << 16) | entry.fstClusLO;
             _length = entry.fileSize;
         }
 
-        public FatDataStream(Fat12 fat12, uint firstCluster)
+        public FatDataStream(IFatFileSystem fat, uint firstCluster)
         {
-            _fat12 = fat12;
-            _base = fat12.GetStream();
+            _fat = fat;
+            _base = fat.GetStream();
             _firstCluster = firstCluster;
-            _length = _fat12.BytesPerCluster;
+            _length = _fat.BytesPerCluster;
 
             var cluster = (uint?)firstCluster;
             while((cluster = _fat.GetNextCluster(cluster.Value)).HasValue)
@@ -57,11 +57,11 @@ namespace TotalImage.FileSystems.FAT
 
             if (count <= 0) return 0;
 
-            var firstCluster = _position / _fat12.BytesPerCluster;
-            var lastCluster = (_position + count) / _fat12.BytesPerCluster;
-            var bytesLeftFromCluster = _fat12.BytesPerCluster - (_position % _fat12.BytesPerCluster);
+            var firstCluster = _position / _fat.BytesPerCluster;
+            var lastCluster = (_position + count) / _fat.BytesPerCluster;
+            var bytesLeftFromCluster = _fat.BytesPerCluster - (_position % _fat.BytesPerCluster);
 
-            if ((_position + count) %_fat12.BytesPerCluster == 0) lastCluster--;
+            if ((_position + count) %_fat.BytesPerCluster == 0) lastCluster--;
 
             Seek(0, SeekOrigin.Current);
 
@@ -72,7 +72,7 @@ namespace TotalImage.FileSystems.FAT
             {
                 Seek(0, SeekOrigin.Current);
 
-                var readBytes = _base.Read(buffer, offset + totalRead, Math.Min(count - totalRead, (int)_fat12.BytesPerCluster));
+                var readBytes = _base.Read(buffer, offset + totalRead, Math.Min(count - totalRead, (int)_fat.BytesPerCluster));
 
                 _position += (uint)readBytes;
                 totalRead += readBytes;
@@ -101,9 +101,9 @@ namespace TotalImage.FileSystems.FAT
                 cluster = _fat.GetNextCluster(cluster.Value) ?? cluster;
             }
 
-            _base.Seek(_fat12.DataAreaFirstSector * _fat12.BiosParameterBlock.BytesPerLogicalSector, SeekOrigin.Begin);
-            _base.Seek((cluster - 2) * _fat12.BytesPerCluster, SeekOrigin.Current);
-            _base.Seek(target % _fat12.BytesPerCluster, SeekOrigin.Current);
+            _base.Seek(_fat.DataAreaFirstSector * _fat.BiosParameterBlock.BytesPerLogicalSector, SeekOrigin.Begin);
+            _base.Seek((cluster - 2).Value * _fat.BytesPerCluster, SeekOrigin.Current);
+            _base.Seek(target % _fat.BytesPerCluster, SeekOrigin.Current);
 
             _position = (uint)target;
             return target;
