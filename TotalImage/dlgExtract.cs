@@ -4,8 +4,8 @@ namespace TotalImage
 {
     public partial class dlgExtract : Form
     {
-        public string? TargetPath { get; private set; }
-        public bool OpenFolder { get; private set; }
+        public string TargetPath { get; private set; } = Settings.CurrentSettings.DefaultExtractPath;
+        public bool OpenFolder { get; private set; } = Settings.CurrentSettings.OpenFolderAfterExtract;
         public Settings.FolderExtract ExtractType { get; private set; }
 
         public dlgExtract()
@@ -46,8 +46,8 @@ namespace TotalImage
 
         private void dlgExtract_Load(object sender, System.EventArgs e)
         {
-            txtPath.Text = Settings.CurrentSettings.DefaultExtractPath;
-            cbxOpenFolder.Checked = Settings.CurrentSettings.OpenFolderAfterExtract;
+            txtPath.Text = TargetPath;
+            cbxOpenFolder.Checked = OpenFolder;
         }
     }
 }
