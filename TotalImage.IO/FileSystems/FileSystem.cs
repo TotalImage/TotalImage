@@ -47,6 +47,14 @@ namespace TotalImage.FileSystems
         }
 
         /// <summary>
+        /// Retrieves a stream of the file system contents
+        /// </summary>
+        public Stream GetStream()
+        {
+            return _stream;
+        }
+
+        /// <summary>
         /// A display name for the format of the file system
         /// </summary>
         public abstract string Format { get; }

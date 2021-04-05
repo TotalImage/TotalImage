@@ -43,11 +43,6 @@ namespace TotalImage.FileSystems.FAT
             _rootDirectory = new FatRootDirectory(this);
         }
 
-        public Stream GetStream()
-        {
-            return _stream;
-        }
-
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
         public static Fat12 Create(Stream stream, BiosParameterBlock bpb)
         {
