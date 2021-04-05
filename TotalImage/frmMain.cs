@@ -655,23 +655,27 @@ namespace TotalImage
         //TODO: Implement the Properties dialog for multiple selected objects like Windows does it
         private void properties_Click(object sender, EventArgs e)
         {
-            ToolStripMenuItem item = (ToolStripMenuItem)sender;
-            if (item.GetCurrentParent() == cmsFileList && lstFiles.SelectedItems.Count > 0)
+            var itemParent = (sender as ToolStripItem)?.GetCurrentParent();
+            
+            if (itemParent == cmsFileList || itemParent == commandBar)
             {
-                //Right now we only support showing the Properties dialog for a single item. Support for multiple items' properties
-                //needs to be implemented here and in the dialog itself.
+                // Show properties for the selected file list view items
+
                 if (lstFiles.SelectedItems.Count == 1)
                 {
+                    // Single selected item
                     using dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstFiles.SelectedItems[0].Tag);
                     dlg.ShowDialog();
                 }
-                else
+                else if (lstFiles.SelectedItems.Count > 1)
                 {
+                    // More selected items
                     throw new NotImplementedException("This feature is not implemented yet.");
                 }
             }
-            else if (item.GetCurrentParent() == cmsDirTree)
+            else if (itemParent == cmsDirTree)
             {
+                // Show properties for the selected directory in the tree view
                 using dlgProperties dlg = new dlgProperties((FileSystems.FileSystemObject)lstDirectories.SelectedNode.Tag);
                 dlg.ShowDialog();
             }
