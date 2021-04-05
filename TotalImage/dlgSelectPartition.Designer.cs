@@ -36,12 +36,12 @@ namespace TotalImage
             this.cbxReadOnly = new System.Windows.Forms.CheckBox();
             this.lstPartitions = new System.Windows.Forms.ListView();
             this.clmNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.clmLabel = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clmType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clmStart = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clmEnd = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clmSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.clmActive = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmLabel = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -131,11 +131,17 @@ namespace TotalImage
             this.lstPartitions.UseCompatibleStateImageBehavior = false;
             this.lstPartitions.View = System.Windows.Forms.View.Details;
             this.lstPartitions.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lstPartitions_ItemSelectionChanged);
+            this.lstPartitions.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstPartitions_MouseDoubleClick);
             // 
             // clmNumber
             // 
             this.clmNumber.Text = "No.";
             this.clmNumber.Width = 31;
+            // 
+            // clmLabel
+            // 
+            this.clmLabel.Text = "Volume label";
+            this.clmLabel.Width = 88;
             // 
             // clmType
             // 
@@ -161,11 +167,6 @@ namespace TotalImage
             // 
             this.clmActive.Text = "Active";
             this.clmActive.Width = 49;
-            // 
-            // clmLabel
-            // 
-            this.clmLabel.Text = "Volume label";
-            this.clmLabel.Width = 88;
             // 
             // dlgSelectPartition
             // 

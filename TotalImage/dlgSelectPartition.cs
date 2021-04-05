@@ -68,9 +68,23 @@ namespace TotalImage
                 lvi.SubItems.Add($"{entry.Length / (int)Settings.CurrentSettings.SizeUnits} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)}");
                 if (entry is MbrPartitionTable.MbrPartitionEntry mbrEntry)
                 {
-                    lvi.SubItems.Add(mbrEntry.Active.ToString());
+                    lvi.SubItems.Add(mbrEntry.Active ? "Yes" : "No");
                 }
                 lstPartitions.Items.Add(lvi);
+            }
+        }
+
+        private void lstPartitions_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ListViewHitTestInfo hitTestInfo = lstPartitions.HitTest(e.X, e.Y);
+            ListViewItem lvi = hitTestInfo.Item;
+
+            if (lvi != null)
+            {
+                ReadOnly = cbxReadOnly.Checked;
+                SelectedEntry = int.Parse(lvi.Text);
+                DialogResult = DialogResult.OK;
+                Close();
             }
         }
     }
