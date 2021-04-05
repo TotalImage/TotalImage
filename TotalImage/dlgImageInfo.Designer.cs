@@ -126,7 +126,6 @@
             // 
             // lstProperties
             // 
-            this.lstProperties.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstProperties.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.clmProperty,
             this.clmValue});
