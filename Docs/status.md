@@ -39,7 +39,7 @@ Only fixed-size VHDs are currently supported.
 | Apricot 315k/720k | ✔ Yes | ❌ No | ❌ No |
 | Hard disks with 512-byte sectors | ✔ Yes | ❌ No | ❌ No |
 
-These disk formats are only supported when formatted with FAT12 and contained in a supported container (see above).
+These disk formats are only supported when formatted with FAT12 or FAT16 and contained in a supported container (see above).
 
 Acorn 800k Create functionality currently incorrectly writes a broken bootsector.
 
@@ -49,11 +49,14 @@ Acorn 800k Create functionality currently incorrectly writes a broken bootsector
 | Master Boot Record | ✔ Yes | ❌ No | ❌ No |
 | GUID Partition Table | ✔ Yes | ❌ No | ❌ No |
 
-Only FAT12 primary partitions are currently supported.
+Only FAT12 and FAT16 primary partitions are currently supported.
 
 ## File systems and extensions
 | Name | Read | Write | Create |
 | --- | --- | --- | --- |
 | FAT12 | ⚠ Partial | ❌ No | ✔ Yes |
+| FAT16 | ⚠ Partial | ❌ No | ❌ No |
 
 Read functionality is currently limited to listing directories, displaying attributes and rudimentary file extraction.
+
+Long file names (LFN) are supported on all supported FAT variants.
