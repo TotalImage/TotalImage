@@ -41,7 +41,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override FatFileSystem.ClusterMap[] ClusterMaps { get; }
 
-        public new class ClusterMap : FatFileSystem.ClusterMap
+        private new class ClusterMap : FatFileSystem.ClusterMap
         {
             Fat16FileSystem _fat16;
             int _fatIndex;

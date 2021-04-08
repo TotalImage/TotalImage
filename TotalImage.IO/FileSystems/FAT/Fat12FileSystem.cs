@@ -380,8 +380,7 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
-
-        public new class ClusterMap : FatFileSystem.ClusterMap
+        private new class ClusterMap : FatFileSystem.ClusterMap
         {
             Fat12FileSystem _fat12;
             int _fatIndex;
