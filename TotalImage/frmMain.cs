@@ -576,9 +576,11 @@ namespace TotalImage
                 extractToolStripButton.Enabled = false;
                 propertiesToolStripButton.Enabled = false;
 
-                lbStatusPath.Text = lstDirectories.SelectedNode.FullPath;
-                if (lbStatusPath.Text.Substring(lbStatusPath.Text.Length - 1) != lstDirectories.PathSeparator)
-                    lbStatusPath.Text += lstDirectories.PathSeparator;
+                var path = lstDirectories.SelectedNode.FullPath;
+                if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
+                    path += lstDirectories.PathSeparator;
+
+                lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
 
                 lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", CalculateDirSize() / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), GetFileCount());
             }
@@ -626,9 +628,11 @@ namespace TotalImage
                 extractToolStripButton.Enabled = true;
                 propertiesToolStripButton.Enabled = false;
 
-                lbStatusPath.Text = lstDirectories.SelectedNode.FullPath;
-                if (lbStatusPath.Text.Substring(lbStatusPath.Text.Length - 1) != lstDirectories.PathSeparator)
-                    lbStatusPath.Text += lstDirectories.PathSeparator;
+                var path = lstDirectories.SelectedNode.FullPath;
+                if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
+                    path += lstDirectories.PathSeparator;
+
+                lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
 
                 var selectedSize = 0ul;
                 foreach (ListViewItem lvi in lstFiles.SelectedItems)
@@ -826,9 +830,12 @@ namespace TotalImage
                 }
             }
             lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", dirSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits),  fileCount);
-            lbStatusPath.Text = lstDirectories.SelectedNode.FullPath;
-                if (lbStatusPath.Text.Substring(lbStatusPath.Text.Length - 1) != lstDirectories.PathSeparator)
-                    lbStatusPath.Text += lstDirectories.PathSeparator;
+
+            var path = lstDirectories.SelectedNode.FullPath;
+            if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
+                path += lstDirectories.PathSeparator;
+
+            lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
 
             if (lstDirectories.SelectedNode == null)
             {
