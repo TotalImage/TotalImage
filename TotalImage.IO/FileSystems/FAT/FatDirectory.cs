@@ -11,8 +11,13 @@ namespace TotalImage.FileSystems.FAT
      */
     public class FatDirectory : Directory, IFatFileSystemObject
     {
-        private DirectoryEntry entry;
-        private LongDirectoryEntry[]? lfnEntries;
+        private DirectoryEntry? entry = null;
+        private LongDirectoryEntry[]? lfnEntries = null;
+
+        public FatDirectory(FatFileSystem fat) : base(fat, null)
+        {
+            
+        }
 
         public FatDirectory(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[]? lfnEntries, Directory parent) : base(fat, parent)
         {
@@ -23,7 +28,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string ShortName
         {
-            get => Helper.TrimFileName(Encoding.ASCII.GetString(entry.name));
+            get => entry.HasValue ? Helper.TrimFileName(Encoding.ASCII.GetString(entry.Value.name)) : string.Empty;
             set => throw new NotImplementedException();
         }
 
@@ -44,36 +49,36 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override FileAttributes Attributes
         {
-            get => (FileAttributes)entry.attr;
+            get => entry.HasValue ? (FileAttributes)entry.Value.attr : FileAttributes.Directory;
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? LastAccessTime
         {
-            get => Helper.FatToDateTime(entry.lstAccDate);
+            get => entry.HasValue ? Helper.FatToDateTime(entry.Value.lstAccDate) : null;
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? LastWriteTime
         {
-            get => Helper.FatToDateTime(entry.wrtDate, entry.wrtTime);
+            get => entry.HasValue ? Helper.FatToDateTime(entry.Value.wrtDate, entry.Value.wrtTime) : null;
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? CreationTime
         {
-            get => Helper.FatToDateTime(entry.crtDate, entry.crtTime, entry.crtTimeTenth);
+            get => entry.HasValue ? Helper.FatToDateTime(entry.Value.crtDate, entry.Value.crtTime, entry.Value.crtTimeTenth) : null;
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override ulong Length
         {
-            get => entry.fileSize;
-            set => throw new NotImplementedException();
+            get => 0;
+            set => throw new NotSupportedException();
         }
 
         /// <inheritdoc />
@@ -85,12 +90,13 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override void Delete()
         {
+            throw new NotImplementedException();
             /* When deleting a directory, the first character of the name needs to be changed to 0xE5.
             * The directory's directory entry can then be reused, and its clusters are marked as free until they're
             * overwritten. The same must then be done for all files and subdirectories inside.
             * This code is untested until this class is hooked up to the UI... */
 
-            entry.name[0] = 0xE5;
+            //entry.name[0] = 0xE5;
 
             //And then mark all clusters in the chain as free, and do the same for all files and subdirectories inside.
         }
@@ -102,7 +108,7 @@ namespace TotalImage.FileSystems.FAT
             var lfn = new Stack<LongDirectoryEntry>();
             var useLfn = false;
 
-            foreach (var entry in DirectoryEntry.ReadSubdirectory(fat, entry, showDeleted))
+            foreach (var entry in entry.HasValue ? DirectoryEntry.ReadSubdirectory(fat, entry.Value, showDeleted) : DirectoryEntry.ReadRootDirectory(fat, showDeleted))
             {
                 if (entry.attr == FatAttributes.LongName)
                 {

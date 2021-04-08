@@ -30,7 +30,7 @@ namespace TotalImage.FileSystems.FAT
         //TODO: Should the detection code be moved elsewhere, e.g. to the container or main form?
         public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            _rootDirectory = new FatRootDirectory(this);
+            _rootDirectory = new FatDirectory(this);
 
             ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
             for(int i = 0; i < bpb.NumberOfFATs; i++)
@@ -145,7 +145,7 @@ namespace TotalImage.FileSystems.FAT
                 }
             }
 
-            fat._rootDirectory = new FatRootDirectory(fat);
+            fat._rootDirectory = new FatDirectory(fat);
             return fat;
         }
 

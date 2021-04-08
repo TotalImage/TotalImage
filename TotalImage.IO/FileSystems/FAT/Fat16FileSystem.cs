@@ -12,7 +12,7 @@ namespace TotalImage.FileSystems.FAT
     {
         public Fat16FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            RootDirectory = new FatRootDirectory(this);
+            RootDirectory = new FatDirectory(this);
 
             ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
             for(int i = 0; i < bpb.NumberOfFATs; i++)
