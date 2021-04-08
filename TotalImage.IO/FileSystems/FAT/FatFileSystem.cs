@@ -61,6 +61,20 @@ namespace TotalImage.FileSystems.FAT
         /// <returns>The next cluster number if any, otherwise <c>null</c>.</returns>
         public abstract uint? GetNextCluster(uint index, int fat = 0);
 
+        public uint[] GetClusterChain(uint firstCluster)
+        {
+            var clusters = new List<uint>();
+            var cluster = (uint?)firstCluster;
+
+            while (cluster.HasValue)
+            {
+                clusters.Add(cluster.Value);
+                cluster = GetNextCluster(cluster.Value);
+            }
+
+            return clusters.ToArray();
+        }
+
         public abstract ClusterMap[] ClusterMaps { get; }
         public ClusterMap MainClusterMap => ClusterMaps[0];
 
