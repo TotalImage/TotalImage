@@ -91,46 +91,21 @@ namespace TotalImage.FileSystems.FAT
 
         public static IEnumerable<DirectoryEntry> ReadRootDirectory(FatFileSystem fat, bool includeDeleted = false)
         {
-            var bpb = fat.BiosParameterBlock;
-            var sector = bpb.ReservedLogicalSectors + (uint)(bpb.LogicalSectorsPerFAT * bpb.NumberOfFATs);
+            var stream = fat.GetStream();
+            stream.Position = (fat.ReservedSectors + fat.ClusterMapsSectors) * fat.BiosParameterBlock.BytesPerLogicalSector;
 
-            return ReadDirectory(fat, sector, bpb.RootDirectoryEntries, includeDeleted);
+            return ReadDirectory(stream, fat.BiosParameterBlock.RootDirectoryEntries, includeDeleted);
         }
 
         public static IEnumerable<DirectoryEntry> ReadSubdirectory(FatFileSystem fat, DirectoryEntry entry, bool includeDeleted = false)
+            => ReadDirectory(new FatDataStream(fat, entry, true), int.MaxValue, includeDeleted);
+
+        private static IEnumerable<DirectoryEntry> ReadDirectory(Stream stream, int entries, bool includeDeleted)
         {
-            var cluster = (uint?)(entry.fstClusHI << 16) | entry.fstClusLO;
-
-            do
-            {
-                foreach (var subentry in ReadSubdirectory(fat, cluster.Value, includeDeleted))
-                {
-                    yield return subentry;
-                }
-
-                cluster = fat.GetNextCluster(cluster.Value);
-            }
-            while (cluster.HasValue);
-        }
-
-        public static IEnumerable<DirectoryEntry> ReadSubdirectory(FatFileSystem fat, uint cluster, bool includeDeleted = false)
-        {
-            var bpb = fat.BiosParameterBlock;
-            var sector = (cluster - 2) * bpb.LogicalSectorsPerCluster;
-            var entries = bpb.LogicalSectorsPerCluster * bpb.BytesPerLogicalSector / 32;
-
-            return ReadDirectory(fat, fat.DataAreaFirstSector + sector, entries, includeDeleted);
-        }
-
-        private static IEnumerable<DirectoryEntry> ReadDirectory(FatFileSystem fat, uint sector, int entries, bool includeDeleted)
-        {
-            var stream = fat.GetStream();
             using var reader = new BinaryReader(stream, Encoding.ASCII, true);
 
             for(var i = 0; i < entries; i++)
             {
-                stream.Seek(sector * fat.BiosParameterBlock.BytesPerLogicalSector + i * 32, SeekOrigin.Begin);
-
                 var entry = DirectoryEntry.Parse(reader);
 
                 /* 0x00/0xF6 = no more entries after this one, stop
