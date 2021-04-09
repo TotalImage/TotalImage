@@ -531,6 +531,8 @@ namespace TotalImage
 
                 if (Settings.CurrentSettings.ExtractPreserveAttributes)
                 {
+                    /* NOTE: Windows automatically sets the Archive attribute on all newly created files, so even if the attribute is cleared in the
+                     * image, Windows will still automatically set it anyway. Should we perhaps try to work around this by manually clearing it after? */
                     File.SetAttributes(Path.Combine(path, file.Name), file.Attributes);
                 }
             }

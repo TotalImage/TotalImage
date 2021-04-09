@@ -48,6 +48,12 @@ namespace TotalImage
         {
             txtPath.Text = TargetPath;
             cbxOpenFolder.Checked = OpenFolder;
+            switch (Settings.CurrentSettings.DefaultExtractType)
+            {
+                case Settings.FolderExtract.Ignore: rbnIgnoreFolders.Checked = true; break;
+                case Settings.FolderExtract.Merge: rbnExtractSameFolder.Checked = true; break;
+                case Settings.FolderExtract.Preserve: rbnPreserveDirs.Checked = true; break;
+            }
         }
     }
 }
