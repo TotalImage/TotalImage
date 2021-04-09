@@ -517,14 +517,22 @@ namespace TotalImage
                 using (var destStream = new FileStream(Path.Combine(path, file.Name), FileMode.Create))
                     file.GetStream().CopyTo(destStream);
 
-                if (file.CreationTime.HasValue)
-                    File.SetCreationTime(Path.Combine(path, file.Name), file.CreationTime.Value);
+                if (Settings.CurrentSettings.ExtractPreserveDates)
+                {
+                    if (file.CreationTime.HasValue)
+                        File.SetCreationTime(Path.Combine(path, file.Name), file.CreationTime.Value);
 
-                if (file.LastAccessTime.HasValue)
-                    File.SetLastAccessTime(Path.Combine(path, file.Name), file.LastAccessTime.Value);
+                    if (file.LastAccessTime.HasValue)
+                        File.SetLastAccessTime(Path.Combine(path, file.Name), file.LastAccessTime.Value);
 
-                if (file.LastWriteTime.HasValue)
-                    File.SetLastWriteTime(Path.Combine(path, file.Name), file.LastWriteTime.Value);
+                    if (file.LastWriteTime.HasValue)
+                        File.SetLastWriteTime(Path.Combine(path, file.Name), file.LastWriteTime.Value);
+                }
+
+                if (Settings.CurrentSettings.ExtractPreserveAttributes)
+                {
+                    File.SetAttributes(Path.Combine(path, file.Name), file.Attributes);
+                }
             }
 
             if (extractType != Settings.FolderExtract.Ignore)
