@@ -1061,7 +1061,7 @@ namespace TotalImage
                 lstFiles.SmallImageList = imgFilesSmall;
 #endif
 
-                lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1}" : "{0:n2} {1}", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
+                lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
         }
 
@@ -1100,7 +1100,7 @@ namespace TotalImage
                 lstFiles.SmallImageList = imgFilesSmall;
 #endif
 
-                lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1}" : "{0:n2} {1}", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
+                lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
         }
 
@@ -1506,7 +1506,7 @@ namespace TotalImage
             lstFiles.SmallImageList = imgFilesSmall;
 #endif
 
-            lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1}" : "{0:n2} {1}", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
+            lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
 
             EnableUI();
 
