@@ -10,7 +10,7 @@ namespace TotalImage.FileSystems.FAT
     /// This struct represents the special directory entry used to store long
     /// file names.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
     public struct LongDirectoryEntry
     {
         /// <summary>
@@ -23,6 +23,7 @@ namespace TotalImage.FileSystems.FAT
         /// <summary>
         /// Characters 1-5 of the long name sub-component.
         /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
         public char[] name1;
 
         /// <summary>
@@ -44,6 +45,7 @@ namespace TotalImage.FileSystems.FAT
         /// <summary>
         /// Characters 6-11 of the long name sub-component.
         /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
         public char[] name2;
 
         /// <summary>
@@ -54,22 +56,25 @@ namespace TotalImage.FileSystems.FAT
         /// <summary>
         /// Characters 12-13 of the long name sub-component.
         /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public char[] name3;
 
-        public LongDirectoryEntry(DirectoryEntry entry)
+        public static explicit operator LongDirectoryEntry(DirectoryEntry entry)
         {
+            LongDirectoryEntry lfnEntry;
+
             var name1 = new byte[10];
             var name2 = new byte[12];
             var name3 = new byte[4];
 
-            ord = entry.name[0];
+            lfnEntry.ord = entry.name[0];
 
             Buffer.BlockCopy(entry.name, 1, name1, 0, 10);
-            this.name1 = Encoding.Unicode.GetChars(name1);
+            lfnEntry.name1 = Encoding.Unicode.GetChars(name1);
 
-            attr = entry.attr;
-            type = entry.ntRes;
-            chksum = entry.crtTimeTenth;
+            lfnEntry.attr = entry.attr;
+            lfnEntry.type = entry.ntRes;
+            lfnEntry.chksum = entry.crtTimeTenth;
 
             BitConverter.GetBytes(entry.crtTime).CopyTo(name2, 0);
             BitConverter.GetBytes(entry.crtDate).CopyTo(name2, 2);
@@ -77,12 +82,14 @@ namespace TotalImage.FileSystems.FAT
             BitConverter.GetBytes(entry.fstClusHI).CopyTo(name2, 6);
             BitConverter.GetBytes(entry.wrtTime).CopyTo(name2, 8);
             BitConverter.GetBytes(entry.wrtDate).CopyTo(name2, 10);
-            this.name2 = Encoding.Unicode.GetChars(name2);
+            lfnEntry.name2 = Encoding.Unicode.GetChars(name2);
 
-            fstClusLO = entry.fstClusLO;
+            lfnEntry.fstClusLO = entry.fstClusLO;
 
             BitConverter.GetBytes(entry.fileSize).CopyTo(name3, 0);
-            this.name3 = Encoding.Unicode.GetChars(name3);
+            lfnEntry.name3 = Encoding.Unicode.GetChars(name3);
+
+            return lfnEntry;
         }
 
         public static string CombineEntries(LongDirectoryEntry[] entries)

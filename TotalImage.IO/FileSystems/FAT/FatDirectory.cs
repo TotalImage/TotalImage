@@ -112,7 +112,7 @@ namespace TotalImage.FileSystems.FAT
             {
                 if (entry.attr == FatAttributes.LongName)
                 {
-                    var lfnEntry = new LongDirectoryEntry(entry);
+                    var lfnEntry = (LongDirectoryEntry)entry;
 
                     if (lfnEntry.type != 0)
                     {
