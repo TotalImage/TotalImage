@@ -925,8 +925,8 @@ namespace TotalImage
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 e.Effect = DragDropEffects.Copy;
-            else if (e.Data.GetDataPresent(typeof(ListViewItem)) || e.Data.GetDataPresent(typeof(TreeNode)))
-                e.Effect = DragDropEffects.Move;
+            /*else if (e.Data.GetDataPresent(typeof(ListViewItem)) || e.Data.GetDataPresent(typeof(TreeNode)))
+                e.Effect = DragDropEffects.Move;*/
             else
                 e.Effect = DragDropEffects.None;
         }
@@ -935,18 +935,19 @@ namespace TotalImage
         //TODO: Implement item movement for ListViewItem and TreeNode drag-n-drop
         private void lstFiles_DragDrop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(typeof(ListViewItem)))
+            /*if (e.Data.GetDataPresent(typeof(ListViewItem)))
             {
-                /* A file or folder is being moved within the listview */
+                //A file or folder is being moved within the listview
                 throw new NotImplementedException("This feature is not implemented yet");
             }
             else if (e.Data.GetDataPresent(typeof(TreeNode)))
             {
-                /* A folder is being moved from the treeview to the listview. First needs to check if such a move is even legal;
-                 * as this could potentially allow the user to move a parent folder into its own subfolder... */
+                //A folder is being moved from the treeview to the listview. First needs to check if such a move is even legal;
+                 //as this could potentially allow the user to move a parent folder into its own subfolder...
                 throw new NotImplementedException("This feature is not implemented yet");
             }
-            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            else */
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 //Files are being dragged into the listview from outside the form
                 string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
@@ -958,10 +959,14 @@ namespace TotalImage
                         filepath = items[0];
                         OpenImage(filepath);
                     }
+                    else //We don't support this yet - I suppose we should offer to create a new image first?
+                    {
+                        throw new NotImplementedException("This feature is not implemented yet");
+                    }
                 }
                 else if (!string.IsNullOrWhiteSpace(filename) || unsavedChanges) //An image is open (either saved or new)
                 {
-                    /* Inject files/folder instead */
+                    //Inject files/folder instead
                     throw new NotImplementedException("This feature is not implemented yet");
                 }
             }
@@ -971,8 +976,8 @@ namespace TotalImage
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 e.Effect = DragDropEffects.Copy;
-            else if (e.Data.GetDataPresent(typeof(ListViewItem)) || e.Data.GetDataPresent(typeof(TreeNode)))
-                e.Effect = DragDropEffects.Move;
+            /*else if (e.Data.GetDataPresent(typeof(ListViewItem)) || e.Data.GetDataPresent(typeof(TreeNode)))
+                e.Effect = DragDropEffects.Move;*/
             else
                 e.Effect = DragDropEffects.None;
         }
@@ -981,18 +986,19 @@ namespace TotalImage
         //TODO: Implement item movement for ListViewItem and TreeNode drag-n-drop
         private void lstDirectories_DragDrop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(typeof(ListViewItem)))
+            /*if (e.Data.GetDataPresent(typeof(ListViewItem)))
             {
-                /* A file or folder is being moved from the listview to the treeview */
+                //A file or folder is being moved from the listview to the treeview
                 throw new NotImplementedException("This feature is not implemented yet");
             }
             else if (e.Data.GetDataPresent(typeof(TreeNode)))
             {
-                /* A folder is being moved within the treeview. First needs to check if such a move is even legal;
-                 * as this could potentially allow the user to move a parent folder into its own subfolder... */
+                //A folder is being moved within the treeview. First needs to check if such a move is even legal;
+                //as this could potentially allow the user to move a parent folder into its own subfolder...
                 throw new NotImplementedException("This feature is not implemented yet");
             }
-            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            else */
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
@@ -1002,6 +1008,10 @@ namespace TotalImage
                     {
                         filepath = items[0];
                         OpenImage(filepath);
+                    }
+                    else //We don't support this yet - I suppose we should offer to create a new image first?
+                    {
+                        throw new NotImplementedException("This feature is not implemented yet");
                     }
                 }
             }
@@ -1106,12 +1116,12 @@ namespace TotalImage
 
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            DoDragDrop(e.Item, DragDropEffects.Move);
+            //DoDragDrop(e.Item, DragDropEffects.Move);
         }
 
         private void lstDirectories_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            DoDragDrop(e.Item, DragDropEffects.Move);
+            //DoDragDrop(e.Item, DragDropEffects.Move);
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
