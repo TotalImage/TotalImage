@@ -103,10 +103,15 @@ namespace TotalImage.FileSystems.FAT
         private static IEnumerable<DirectoryEntry> ReadDirectory(Stream stream, int entries, bool includeDeleted)
         {
             using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+            var position = stream.Position;
 
             for(var i = 0; i < entries; i++)
             {
+                if (position != stream.Position) stream.Position = position;
+
                 var entry = DirectoryEntry.Parse(reader);
+
+                position = stream.Position;
 
                 /* 0x00/0xF6 = no more entries after this one, stop
                  * 0xE5/0x05 = deleted entry, skip for now
