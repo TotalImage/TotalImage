@@ -19,7 +19,7 @@ namespace TotalImage.FileSystems.BPB
         /// <summary>
         /// The version of the BIOS Parameter Block
         /// </summary>
-        public BiosParameterBlockVersion Version { get; private set; }
+        public virtual BiosParameterBlockVersion Version => BiosParameterBlockVersion.Dos20;
 
         /// <summary>
         /// The three-byte boot jump from the boot sector
@@ -69,7 +69,7 @@ namespace TotalImage.FileSystems.BPB
         /// <summary>
         /// The size of the file allocation table in logical sectors
         /// </summary>
-        public uint LogicalSectorsPerFAT { get; private set; }
+        public uint LogicalSectorsPerFAT { get; protected set; }
 
         /// <summary>
         /// The number of physical sectors per track
@@ -102,7 +102,6 @@ namespace TotalImage.FileSystems.BPB
         /// <param name="bpb">The BPB to use data from</param>
         protected BiosParameterBlock(BiosParameterBlock bpb)
         {
-            Version = bpb.Version;
             BootJump = bpb.BootJump;
             OemId = bpb.OemId;
             BytesPerLogicalSector = bpb.BytesPerLogicalSector;
@@ -133,7 +132,7 @@ namespace TotalImage.FileSystems.BPB
                 && TotalLogicalSectors != 0
                 && ReservedLogicalSectors != 0
                 && LogicalSectorsPerCluster != 0
-                && LogicalSectorsPerFAT != 0
+                //&& LogicalSectorsPerFAT != 0 <-- This is a valid value for FAT32 volumes at this point.
                 && RootDirectoryEntries != 0;
         }
 
@@ -217,61 +216,15 @@ namespace TotalImage.FileSystems.BPB
                 reader.BaseStream.Seek(endOffset, SeekOrigin.Begin);
             }
 
-            ExtendedBiosParameterBlock ebpb;
-
             if (bpb.LogicalSectorsPerFAT == 0)
             {
-                // This is a FAT32 BPB.
-                ebpb = new Fat32BiosParameterBlock(bpb)
-                {
-                    Version = BiosParameterBlockVersion.Fat32,
-                    LogicalSectorsPerFAT = reader.ReadUInt32(),
-                    ExtFlags = reader.ReadUInt16(),
-                    FileSystemVersion = reader.ReadUInt16(),
-                    RootDirectoryCluster = reader.ReadUInt32(),
-                    FsInfo = reader.ReadUInt32(),
-                    BackupBootSector = reader.ReadUInt32(),
-                    Reserved = reader.ReadBytes(12),
-                    PhysicalDriveNumber = reader.ReadByte(),
-                    Flags = reader.ReadByte(),
-                    ExtendedBootSignature = (ExtendedBootSignature)reader.ReadByte()
-                };
+                // This could be a FAT32 BPB.
+                return Fat32BiosParameterBlock.ContinueParsing(bpb, reader) ?? throw new InvalidDataException("FAT size is 0");
             }
             else
             {
                 //So far, the BPB seems to be OK, so try to read it further as a DOS 4.0 BPB.
-                ebpb = new ExtendedBiosParameterBlock(bpb)
-                {
-                    PhysicalDriveNumber = reader.ReadByte(),
-                    Flags = reader.ReadByte(),
-                    ExtendedBootSignature = (ExtendedBootSignature)reader.ReadByte(),
-                };
-
-                ebpb.Version = ebpb.ExtendedBootSignature switch
-                {
-                    ExtendedBootSignature.Dos34 => BiosParameterBlockVersion.Dos34,
-                    ExtendedBootSignature.Dos40 => BiosParameterBlockVersion.Dos40,
-                    _ => ebpb.Version
-                };
-            }
-
-            if (ebpb.ExtendedBootSignature == ExtendedBootSignature.Dos40)
-            {
-                ebpb.VolumeSerialNumber = reader.ReadUInt32();
-                ebpb.VolumeLabel = new string(reader.ReadChars(11));
-                ebpb.FileSystemType = new string(reader.ReadChars(8));
-                return ebpb;
-            }
-            else if (ebpb.ExtendedBootSignature == ExtendedBootSignature.Dos34)
-            {
-                // This is a shorter EBPB format used by PC-DOS 3.4 and
-                // some early OS/2 versions.
-                return ebpb;
-            }
-            else
-            {
-                // Unknown extended boot signature, retreat
-                return bpb;
+                return ExtendedBiosParameterBlock.ContinueParsing(bpb, reader) ?? bpb;
             }
         }
 
@@ -285,7 +238,6 @@ namespace TotalImage.FileSystems.BPB
         public static BiosParameterBlock FromGeometry(FloppyGeometry geometry, BiosParameterBlockVersion version, string oemId)
             => new BiosParameterBlock
             {
-                Version = version,
                 OemId = Helper.UseAsLabel(oemId),
                 BytesPerLogicalSector = (ushort)(128 << geometry.BPS),
                 HiddenSectors = 0,
@@ -312,7 +264,6 @@ namespace TotalImage.FileSystems.BPB
         /// </summary>
         public static readonly BiosParameterBlock DefaultAcornParameters = new BiosParameterBlock
         {
-            Version = BiosParameterBlockVersion.Dos20,
             BytesPerLogicalSector = 1024,
             LogicalSectorsPerCluster = 1,
             ReservedLogicalSectors = 0,
@@ -334,7 +285,6 @@ namespace TotalImage.FileSystems.BPB
                     163840, //5.25" 160 KiB
                     new BiosParameterBlock
                     {
-                        Version = BiosParameterBlockVersion.Dos20,
                         BytesPerLogicalSector = 512,
                         LogicalSectorsPerCluster = 2,
                         ReservedLogicalSectors = 1,
@@ -352,7 +302,6 @@ namespace TotalImage.FileSystems.BPB
                     184320, //5.25" 180 KiB
                     new BiosParameterBlock
                     {
-                        Version = BiosParameterBlockVersion.Dos20,
                         BytesPerLogicalSector = 512,
                         LogicalSectorsPerCluster = 2,
                         ReservedLogicalSectors = 1,
@@ -370,7 +319,6 @@ namespace TotalImage.FileSystems.BPB
                     327680, //5.25" 320 KiB
                     new BiosParameterBlock
                     {
-                        Version = BiosParameterBlockVersion.Dos20,
                         BytesPerLogicalSector = 512,
                         LogicalSectorsPerCluster = 2,
                         ReservedLogicalSectors = 1,
@@ -388,7 +336,6 @@ namespace TotalImage.FileSystems.BPB
                     368640, //5.25" 360 KiB
                     new BiosParameterBlock
                     {
-                        Version = BiosParameterBlockVersion.Dos20,
                         BytesPerLogicalSector = 512,
                         LogicalSectorsPerCluster = 2,
                         ReservedLogicalSectors = 1,
@@ -406,7 +353,6 @@ namespace TotalImage.FileSystems.BPB
                     256256, //8" 250 KiB
                     new BiosParameterBlock
                     {
-                        Version = BiosParameterBlockVersion.Dos20,
                         BytesPerLogicalSector = 128,
                         LogicalSectorsPerCluster = 4,
                         ReservedLogicalSectors = 1,
@@ -424,7 +370,6 @@ namespace TotalImage.FileSystems.BPB
                     1261568, //8" 1232 KiB
                     new BiosParameterBlock
                     {
-                        Version = BiosParameterBlockVersion.Dos20,
                         BytesPerLogicalSector = 1024,
                         LogicalSectorsPerCluster = 1,
                         ReservedLogicalSectors = 1,

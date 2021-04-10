@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 using TotalImage.DiskGeometries;
 using TotalImage.FileSystems.FAT;
 
@@ -13,50 +16,71 @@ namespace TotalImage.FileSystems.BPB
     /// </remarks>
     public class ExtendedBiosParameterBlock : BiosParameterBlock
     {
-        private string volumeLabel, fileSystemType;
+        private byte drvNum;
+        private byte reserved1;
+        private ExtendedBootSignature bootSig;
+        private uint volId;
+        private byte[] volLab = new byte[11];
+        private byte[] filSysType = new byte[8];
 
-        public byte PhysicalDriveNumber { get; set; }
-        public byte Flags { get; set; }
-        public ExtendedBootSignature ExtendedBootSignature { get; set; }
-        public uint VolumeSerialNumber { get; set; }
-        public string VolumeLabel
-        {
-            get => volumeLabel;
-            set
+        public override BiosParameterBlockVersion Version
+            => ExtendedBootSignature switch
             {
-                if (value.Length > 11)
-                    throw new ArgumentException("VolumeLabel must be 11 characters at most");
+                ExtendedBootSignature.Dos34 => BiosParameterBlockVersion.Dos34,
+                ExtendedBootSignature.Dos40 => BiosParameterBlockVersion.Dos40,
+                _ => throw new InvalidDataException()
+            };
 
-                volumeLabel = value;
+        public byte PhysicalDriveNumber { get => drvNum; private set => drvNum = value; }
+        public byte Flags { get => reserved1; private set => reserved1 = value; }
+        public ExtendedBootSignature ExtendedBootSignature { get => bootSig; private set => bootSig = value; }
+
+        public uint? VolumeSerialNumber
+        {
+            get => ExtendedBootSignature == ExtendedBootSignature.Dos40 ? (uint?)volId : null;
+            private set
+            {
+                if (ExtendedBootSignature == ExtendedBootSignature.Dos40 && value.HasValue)
+                    volId = value.Value;
+                else throw new InvalidOperationException();
             }
         }
-        public string FileSystemType
+        public string? VolumeLabel
         {
-            get => fileSystemType;
-            set
+            get => ExtendedBootSignature == ExtendedBootSignature.Dos40 ? Encoding.ASCII.GetString(volLab) : null;
+            private set
             {
-                if (string.IsNullOrEmpty(value))
-                    throw new ArgumentException("FileSystemType must not be null or empty string");
-                else if (value.Length > 8)
-                    throw new ArgumentException("FileSystemType must be 8 characters at most");
-
-                fileSystemType = value;
+                if (ExtendedBootSignature == ExtendedBootSignature.Dos40 && value != null)
+                {
+                    if (value.Length > 11) throw new ArgumentException();
+                    volLab = Encoding.ASCII.GetBytes(value.PadRight(11));
+                }
+                else throw new InvalidOperationException();
+            }
+        }
+        public string? FileSystemType
+        {
+            get => ExtendedBootSignature == ExtendedBootSignature.Dos40 ? Encoding.ASCII.GetString(filSysType) : null;
+            private set
+            {
+                if (ExtendedBootSignature == ExtendedBootSignature.Dos40 && value != null)
+                {
+                    if (value.Length > 11) throw new ArgumentException();
+                    filSysType = Encoding.ASCII.GetBytes(value.PadRight(8));
+                }
+                else throw new InvalidOperationException();
             }
         }
 
         private ExtendedBiosParameterBlock() : base()
         {
-            volumeLabel = "";
-            fileSystemType = "";
+
         }
 
         public ExtendedBiosParameterBlock(BiosParameterBlock bpb) : base(bpb)
         {
             if (bpb == null)
                 throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
-
-            volumeLabel = "";
-            fileSystemType = "";
         }
 
         public static ExtendedBiosParameterBlock FromGeometry(FloppyGeometry geometry, BiosParameterBlockVersion version, string oemId, string serialNumber, string fileSystemType, string volumeLabel)
@@ -65,16 +89,53 @@ namespace TotalImage.FileSystems.BPB
             {
                 PhysicalDriveNumber = 0,
                 Flags = 0,
-                VolumeSerialNumber = uint.Parse(serialNumber, NumberStyles.HexNumber)
             };
 
             if (bpb.Version == BiosParameterBlockVersion.Dos40)
             {
+                bpb.ExtendedBootSignature = ExtendedBootSignature.Dos40;
+                bpb.VolumeSerialNumber = uint.Parse(serialNumber, NumberStyles.HexNumber);
                 bpb.FileSystemType = Helper.UseAsLabel(fileSystemType);
                 bpb.VolumeLabel = Helper.UseAsLabel(volumeLabel, 11);
+            }
+            else if (bpb.Version == BiosParameterBlockVersion.Dos34)
+            {
+                bpb.ExtendedBootSignature = ExtendedBootSignature.Dos34;
             }
 
             return bpb;
         }
+
+        public static ExtendedBiosParameterBlock? ContinueParsing(BiosParameterBlock bpb, BinaryReader reader)
+        {
+            var ebpb = new ExtendedBiosParameterBlock(bpb);
+            return ebpb.ReadEbpbFields(reader) ? ebpb : null;
+        }
+
+        protected bool ReadEbpbFields(BinaryReader reader)
+        {
+            drvNum = reader.ReadByte();
+            reserved1 = reader.ReadByte();
+            bootSig = (ExtendedBootSignature)reader.ReadByte();
+
+            if (bootSig == ExtendedBootSignature.Dos40)
+            {
+                volId = reader.ReadUInt32();
+                volLab = reader.ReadBytes(11);
+                filSysType = reader.ReadBytes(8);
+                return true;
+            }
+            else if (ExtendedBootSignature == ExtendedBootSignature.Dos34)
+            {
+                // This is a shorter EBPB format used by PC-DOS 3.4 and
+                // some early OS/2 versions.
+                return true;
+            }
+            else
+            {
+                // Unknown extended boot signature, retreat
+                return false;
+            }
+        } 
     }
 }

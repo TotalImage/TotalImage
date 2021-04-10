@@ -90,28 +90,22 @@ namespace TotalImage.FileSystems.FAT
 
                 //DOS 3.4+ specific values
                 {
-                    if (bpb is ExtendedBiosParameterBlock bpb40)
+                    if (bpb.Version == BiosParameterBlockVersion.Dos40)
                     {
-                        writer.Write(bpb40.PhysicalDriveNumber);
-                        writer.Write(bpb40.Flags);
-
-                        if (bpb.Version == BiosParameterBlockVersion.Dos34)
-                            writer.Write((byte)40);
-                        else if (bpb.Version == BiosParameterBlockVersion.Dos40)
-                            writer.Write((byte)41);
-                        else
-                            throw new Exception("Invalid BPB version!");
-
-                        writer.Write(bpb40.VolumeSerialNumber);
+                        var ebpb = (ExtendedBiosParameterBlock)bpb;
+                        writer.Write(ebpb.PhysicalDriveNumber);
+                        writer.Write(ebpb.Flags);
+                        writer.Write((byte)ebpb.ExtendedBootSignature);
 
                         //DOS 4.0 adds volume label and FS type as well
-                        if (bpb40.Version == BiosParameterBlockVersion.Dos40)
+                        if (ebpb.ExtendedBootSignature == ExtendedBootSignature.Dos40)
                         {
-                            if (string.IsNullOrEmpty(bpb40.VolumeLabel))
+                            writer.Write(ebpb.VolumeSerialNumber.Value);
+                            if (string.IsNullOrEmpty(ebpb.VolumeLabel))
                                 writer.Write("NO NAME    ".ToCharArray());
                             else
-                                writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
-                            writer.Write(bpb40.FileSystemType.PadRight(8, ' ').ToCharArray());
+                                writer.Write(ebpb.VolumeLabel.PadRight(11, ' ').ToCharArray());
+                            writer.Write(ebpb.FileSystemType.PadRight(8, ' ').ToCharArray());
                         }
                     }
                 }
