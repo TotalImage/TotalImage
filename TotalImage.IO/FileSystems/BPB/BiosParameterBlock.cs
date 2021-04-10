@@ -131,9 +131,9 @@ namespace TotalImage.FileSystems.BPB
                 && NumberOfFATs != 0
                 && TotalLogicalSectors != 0
                 && ReservedLogicalSectors != 0
-                && LogicalSectorsPerCluster != 0
+                && LogicalSectorsPerCluster != 0;
                 //&& LogicalSectorsPerFAT != 0 <-- This is a valid value for FAT32 volumes at this point.
-                && RootDirectoryEntries != 0;
+                //&& RootDirectoryEntries != 0; <-- This is a valid value for FAT32 volumes at this point.
         }
 
         /// <summary>

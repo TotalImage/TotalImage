@@ -13,9 +13,9 @@ namespace TotalImage.FileSystems.BPB
 
         public uint RootDirectoryCluster { get; private set; }
 
-        public uint FsInfo { get; private set; }
+        public ushort FsInfo { get; private set; }
 
-        public uint BackupBootSector { get; private set; }
+        public ushort BackupBootSector { get; private set; }
 
         public byte[] Reserved { get; private set; } = new byte[11];
 
@@ -37,11 +37,9 @@ namespace TotalImage.FileSystems.BPB
             ExtFlags = reader.ReadUInt16();
             FileSystemVersion = reader.ReadUInt16();
             RootDirectoryCluster = reader.ReadUInt32();
-            FsInfo = reader.ReadUInt32();
-            BackupBootSector = reader.ReadUInt32();
+            FsInfo = reader.ReadUInt16();
+            BackupBootSector = reader.ReadUInt16();
             Reserved = reader.ReadBytes(12);
-
-            
         }
     }
 }
