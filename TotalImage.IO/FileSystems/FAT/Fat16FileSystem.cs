@@ -12,8 +12,6 @@ namespace TotalImage.FileSystems.FAT
     {
         public Fat16FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            RootDirectory = new FatDirectory(this);
-
             ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
             for(int i = 0; i < bpb.NumberOfFATs; i++)
                 ClusterMaps[i] = new ClusterMap(this, i);
@@ -21,9 +19,6 @@ namespace TotalImage.FileSystems.FAT
 
         /// <inheritdoc />
         public override string Format => "FAT16";
-
-        /// <inheritdoc />
-        public override Directory RootDirectory { get; }
 
         /// <inheritdoc />
         public override long AvailableFreeSpace => throw new NotImplementedException();

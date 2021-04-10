@@ -15,7 +15,11 @@ namespace TotalImage.FileSystems.FAT
         protected FatFileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
         { 
             _bpb = bpb;
+            RootDirectory = new FatDirectory(this);
         }
+
+        /// <inheritdoc />
+        public override Directory RootDirectory { get; }
 
         public uint DataAreaFirstSector
         {

@@ -10,13 +10,8 @@ namespace TotalImage.FileSystems.FAT
     /// </summary>
     public class Fat12FileSystem : FatFileSystem
     {
-        private Directory _rootDirectory;
-
         /// <inheritdoc />
         public override string Format => "FAT12";
-
-        /// <inheritdoc />
-        public override Directory RootDirectory => _rootDirectory;
 
         /// <inheritdoc />
         public override long AvailableFreeSpace => throw new NotImplementedException();
@@ -30,8 +25,6 @@ namespace TotalImage.FileSystems.FAT
         //TODO: Should the detection code be moved elsewhere, e.g. to the container or main form?
         public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            _rootDirectory = new FatDirectory(this);
-
             ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
             for(int i = 0; i < bpb.NumberOfFATs; i++)
                 ClusterMaps[i] = new ClusterMap(this, i);
@@ -139,7 +132,6 @@ namespace TotalImage.FileSystems.FAT
                 }
             }
 
-            fat._rootDirectory = new FatDirectory(fat);
             return fat;
         }
 
