@@ -57,7 +57,7 @@ namespace TotalImage.FileSystems
         /// <summary>
         /// A display name for the format of the file system
         /// </summary>
-        public abstract string Format { get; }
+        public abstract string DisplayName { get; }
 
         /// <summary>
         /// The volume label specified within the file system

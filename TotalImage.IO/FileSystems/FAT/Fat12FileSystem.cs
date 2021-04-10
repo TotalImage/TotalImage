@@ -11,7 +11,7 @@ namespace TotalImage.FileSystems.FAT
     public class Fat12FileSystem : FatFileSystem
     {
         /// <inheritdoc />
-        public override string Format => "FAT12";
+        public override string DisplayName => "FAT12";
 
         /// <inheritdoc />
         public override long AvailableFreeSpace => throw new NotImplementedException();

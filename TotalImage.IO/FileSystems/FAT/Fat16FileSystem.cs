@@ -18,7 +18,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override string Format => "FAT16";
+        public override string DisplayName => "FAT16";
 
         /// <inheritdoc />
         public override long AvailableFreeSpace => throw new NotImplementedException();

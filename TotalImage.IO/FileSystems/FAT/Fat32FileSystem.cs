@@ -18,7 +18,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override string Format => "FAT32";
+        public override string DisplayName => "FAT32";
 
         /// <inheritdoc />
         public override long AvailableFreeSpace => throw new NotImplementedException();

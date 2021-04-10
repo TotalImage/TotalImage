@@ -54,7 +54,7 @@ namespace TotalImage
                 try
                 {
                     lvi.SubItems.Add(entry.FileSystem.VolumeLabel);
-                    lvi.SubItems.Add(entry.FileSystem.Format);
+                    lvi.SubItems.Add(entry.FileSystem.DisplayName);
                 }
                 catch (InvalidDataException)
                 {
