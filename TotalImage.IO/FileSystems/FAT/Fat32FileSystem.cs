@@ -10,11 +10,20 @@ namespace TotalImage.FileSystems.FAT
     /// </summary>
     public class Fat32FileSystem : FatFileSystem
     {
+        private FsInfo _fsInfo;
+
         public Fat32FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
             ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
             for(int i = 0; i < bpb.NumberOfFATs; i++)
                 ClusterMaps[i] = new ClusterMap(this, i);
+
+            if (bpb is Fat32BiosParameterBlock fat32bpb)
+            {
+                using var reader = new BinaryReader(stream);
+                stream.Position = fat32bpb.BytesPerLogicalSector * fat32bpb.FsInfo;
+                _fsInfo = FsInfo.Parse(reader);
+            }
         }
 
         /// <inheritdoc />
