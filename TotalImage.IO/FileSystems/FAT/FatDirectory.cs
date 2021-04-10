@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -108,7 +109,19 @@ namespace TotalImage.FileSystems.FAT
             var lfn = new Stack<LongDirectoryEntry>();
             var useLfn = false;
 
-            foreach (var entry in entry.HasValue ? DirectoryEntry.ReadSubdirectory(fat, entry.Value, showDeleted) : DirectoryEntry.ReadRootDirectory(fat, showDeleted))
+            IEnumerable<DirectoryEntry> entries;
+
+            if (entry.HasValue)
+                // This is a regular subdirectory
+                entries = DirectoryEntry.ReadSubdirectory(fat, entry.Value, showDeleted);
+            else if (fat.BiosParameterBlock is Fat32BiosParameterBlock fat32bpb && fat32bpb.RootDirectoryEntries == 0)
+                // This is a root directory located in the data area (typical for FAT32)
+                entries = DirectoryEntry.ReadSubdirectory(fat, fat32bpb.RootDirectoryCluster, showDeleted);
+            else
+                // This is a root directory in the system area (typical for FAT12 and FAT16)
+                entries = DirectoryEntry.ReadRootDirectory(fat, showDeleted);
+
+            foreach (var entry in entries)
             {
                 if (entry.attr == FatAttributes.LongName)
                 {

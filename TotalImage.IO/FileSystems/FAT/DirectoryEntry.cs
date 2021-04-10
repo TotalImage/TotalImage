@@ -101,6 +101,9 @@ namespace TotalImage.FileSystems.FAT
         public static IEnumerable<DirectoryEntry> ReadSubdirectory(FatFileSystem fat, DirectoryEntry entry, bool includeDeleted = false)
             => ReadDirectory(new FatDataStream(fat, entry, true), int.MaxValue, includeDeleted);
 
+        public static IEnumerable<DirectoryEntry> ReadSubdirectory(FatFileSystem fat, uint cluster, bool includeDeleted = false)
+            => ReadDirectory(new FatDataStream(fat, cluster), int.MaxValue, includeDeleted);
+
         private static IEnumerable<DirectoryEntry> ReadDirectory(Stream stream, int entries, bool includeDeleted)
         {
             using var reader = new BinaryReader(stream, Encoding.ASCII, true);
