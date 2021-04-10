@@ -66,7 +66,7 @@ namespace TotalImage
 
             //Open the file that was dragged onto the exe/shortcut or passed as a command line argument
             string[] args = Environment.GetCommandLineArgs();
-            if(args.Length > 1)
+            if (args.Length > 1)
             {
                 string argPath = args[1];
                 if (File.Exists(argPath))
@@ -541,7 +541,7 @@ namespace TotalImage
             {
                 var dirs = from x in items where x is TiDirectory select x as TiDirectory;
 
-                foreach(var dir in dirs)
+                foreach (var dir in dirs)
                 {
                     ExtractFiles(
                         dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems),
@@ -673,7 +673,7 @@ namespace TotalImage
         private void settings_Click(object sender, EventArgs e)
         {
             using dlgSettings dlg = new dlgSettings();
-            if(dlg.ShowDialog() == DialogResult.OK)
+            if (dlg.ShowDialog() == DialogResult.OK)
             {
                 SyncUIWithSettings();
             }
@@ -683,11 +683,10 @@ namespace TotalImage
         private void properties_Click(object sender, EventArgs e)
         {
             var itemParent = (sender as ToolStripItem)?.GetCurrentParent();
-            
+
             if (itemParent == cmsFileList || itemParent == commandBar)
             {
                 // Show properties for the selected file list view items
-
                 if (lstFiles.SelectedItems.Count == 1)
                 {
                     // Single selected item
@@ -740,7 +739,7 @@ namespace TotalImage
             // Get the sorter for the selected column
             var sorter = FileListViewItemComparer.GetColumnSorter(sortColumn);
 
-            if(sortOrder == SortOrder.Descending)
+            if (sortOrder == SortOrder.Descending)
                 sorter = new InvertedComparer(sorter);
 
             return sorter;
@@ -822,14 +821,6 @@ namespace TotalImage
             PopulateListView((TiDirectory)e.Node.Tag);
             lstFiles.EndUpdate();
 
-#if NET5_0
-            //.NET 5 workaround because they broke ImageList...
-            lstFiles.LargeImageList = null;
-            lstFiles.LargeImageList = imgFilesLarge;
-            lstFiles.SmallImageList = null;
-            lstFiles.SmallImageList = imgFilesSmall;
-#endif
-
             foreach (ListViewItem lvi in lstFiles.Items)
             {
                 var entry = (TiFileSystemObject)lvi.Tag;
@@ -839,7 +830,7 @@ namespace TotalImage
                     dirSize += entry.Length;
                 }
             }
-            lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", dirSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits),  fileCount);
+            lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", dirSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), fileCount);
 
             var path = lstDirectories.SelectedNode.FullPath;
             if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
@@ -862,7 +853,7 @@ namespace TotalImage
                 {
                     deleteToolStripMenuItem1.Enabled = false;
                     renameToolStripMenuItem1.Enabled = false;
-                    propertiesToolStripMenuItem1.Enabled = true;
+                    propertiesToolStripMenuItem1.Enabled = false;
                     undeleteToolStripMenuItem1.Enabled = false;
                     newFolderToolStripMenuItem1.Enabled = true;
                     extractToolStripMenuItem1.Enabled = true;
@@ -1063,14 +1054,6 @@ namespace TotalImage
                 lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
                 lstFiles.EndUpdate();
 
-#if NET5_0
-                //.NET 5 workaround because they broke ImageList...
-                lstFiles.LargeImageList = null;
-                lstFiles.LargeImageList = imgFilesLarge;
-                lstFiles.SmallImageList = null;
-                lstFiles.SmallImageList = imgFilesSmall;
-#endif
-
                 lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
         }
@@ -1101,14 +1084,6 @@ namespace TotalImage
                 PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
                 lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
                 lstFiles.EndUpdate();
-
-#if NET5_0
-                //.NET 5 workaround because they broke ImageList...
-                lstFiles.LargeImageList = null;
-                lstFiles.LargeImageList = imgFilesLarge;
-                lstFiles.SmallImageList = null;
-                lstFiles.SmallImageList = imgFilesSmall;
-#endif
 
                 lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
@@ -1250,7 +1225,7 @@ namespace TotalImage
             }
         }
 
-#endregion
+        #endregion
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
@@ -1285,7 +1260,7 @@ namespace TotalImage
         private Bitmap CreateHiddenIcon(Bitmap normalIcon)
         {
             ColorMatrix cm = new ColorMatrix();
-            cm.Matrix33 = 0.65f; //75% opacity
+            cm.Matrix33 = 0.65f; //65% opacity
             ImageAttributes attributes = new ImageAttributes();
             attributes.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
@@ -1374,6 +1349,8 @@ namespace TotalImage
 
                 item.SubItems.Add(fso.LastWriteTime.ToString());
                 item.SubItems.Add(FileAttributesToString(fso.Attributes));
+                item.UseItemStyleForSubItems = false;
+                item.SubItems[4].Font = new Font(FontFamily.GenericMonospace, 9);
 
                 //Do some simple styling for hidden and deleted items
                 if (fso.Attributes.HasFlag(FileAttributes.Hidden))
@@ -1397,22 +1374,32 @@ namespace TotalImage
 
         private string FileAttributesToString(FileAttributes attr)
         {
-            if (attr.HasFlag(FileAttributes.Directory))
-                return "<DIR>";
-
             var sb = new StringBuilder();
 
-            if (attr.HasFlag(FileAttributes.ReadOnly))
-                sb.Append("R");
-
-            if (attr.HasFlag(FileAttributes.Hidden))
-                sb.Append("H");
-
-            if (attr.HasFlag(FileAttributes.System))
-                sb.Append("S");
+            if (attr.HasFlag(FileAttributes.Directory))
+                sb.Append('D');
+            else
+                sb.Append('-');
 
             if (attr.HasFlag(FileAttributes.Archive))
-                sb.Append("A");
+                sb.Append('A');
+            else
+                sb.Append('-');
+
+            if (attr.HasFlag(FileAttributes.System))
+                sb.Append('S');
+            else
+                sb.Append('-');
+
+            if (attr.HasFlag(FileAttributes.Hidden))
+                sb.Append('H');
+            else
+                sb.Append('-');
+
+            if (attr.HasFlag(FileAttributes.ReadOnly))
+                sb.Append('R');
+            else
+                sb.Append('-');
 
             return sb.ToString();
         }
@@ -1507,14 +1494,6 @@ namespace TotalImage
             PopulateListView(image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
             lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
             lstFiles.EndUpdate();
-
-#if NET5_0
-            //.NET 5 workaround because they broke ImageList...
-            lstFiles.LargeImageList = null;
-            lstFiles.LargeImageList = imgFilesLarge;
-            lstFiles.SmallImageList = null;
-            lstFiles.SmallImageList = imgFilesSmall;
-#endif
 
             lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
 
