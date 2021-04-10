@@ -217,7 +217,7 @@ namespace TotalImage.FileSystems.BPB
                 reader.BaseStream.Seek(endOffset, SeekOrigin.Begin);
             }
 
-            BiosParameterBlock40 ebpb;
+            ExtendedBiosParameterBlock ebpb;
 
             if (bpb.LogicalSectorsPerFAT == 0)
             {
@@ -240,7 +240,7 @@ namespace TotalImage.FileSystems.BPB
             else
             {
                 //So far, the BPB seems to be OK, so try to read it further as a DOS 4.0 BPB.
-                ebpb = new BiosParameterBlock40(bpb)
+                ebpb = new ExtendedBiosParameterBlock(bpb)
                 {
                     PhysicalDriveNumber = reader.ReadByte(),
                     Flags = reader.ReadByte(),

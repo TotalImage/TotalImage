@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace TotalImage.FileSystems.BPB
 {
-    public class Fat32BiosParameterBlock : BiosParameterBlock40
+    public class Fat32BiosParameterBlock : ExtendedBiosParameterBlock
     {
         public ushort ExtFlags { get; set; }
 

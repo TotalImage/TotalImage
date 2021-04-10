@@ -121,7 +121,7 @@ namespace TotalImage.FileSystems.FAT
 
         public string? BpbVolumeLabel
         {
-            get => BiosParameterBlock.Version == BiosParameterBlockVersion.Dos40 ? ((BiosParameterBlock40)BiosParameterBlock).VolumeLabel : null;
+            get => BiosParameterBlock.Version == BiosParameterBlockVersion.Dos40 ? ((ExtendedBiosParameterBlock)BiosParameterBlock).VolumeLabel : null;
             set => throw new NotImplementedException();
         }
 

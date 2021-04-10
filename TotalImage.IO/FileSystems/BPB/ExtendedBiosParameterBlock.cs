@@ -11,7 +11,7 @@ namespace TotalImage.FileSystems.BPB
     /// <remarks>
     /// For versions 2.0-3.31 for FAT12 and FAT16 file systems, use BiosParameterBlock instead.
     /// </remarks>
-    public class BiosParameterBlock40 : BiosParameterBlock
+    public class ExtendedBiosParameterBlock : BiosParameterBlock
     {
         private string volumeLabel, fileSystemType;
 
@@ -44,13 +44,13 @@ namespace TotalImage.FileSystems.BPB
             }
         }
 
-        private BiosParameterBlock40() : base()
+        private ExtendedBiosParameterBlock() : base()
         {
             volumeLabel = "";
             fileSystemType = "";
         }
 
-        public BiosParameterBlock40(BiosParameterBlock bpb) : base(bpb)
+        public ExtendedBiosParameterBlock(BiosParameterBlock bpb) : base(bpb)
         {
             if (bpb == null)
                 throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
@@ -59,9 +59,9 @@ namespace TotalImage.FileSystems.BPB
             fileSystemType = "";
         }
 
-        public static BiosParameterBlock40 FromGeometry(FloppyGeometry geometry, BiosParameterBlockVersion version, string oemId, string serialNumber, string fileSystemType, string volumeLabel)
+        public static ExtendedBiosParameterBlock FromGeometry(FloppyGeometry geometry, BiosParameterBlockVersion version, string oemId, string serialNumber, string fileSystemType, string volumeLabel)
         {
-            var bpb = new BiosParameterBlock40(FromGeometry(geometry, version, oemId))
+            var bpb = new ExtendedBiosParameterBlock(FromGeometry(geometry, version, oemId))
             {
                 PhysicalDriveNumber = 0,
                 Flags = 0,

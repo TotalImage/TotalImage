@@ -90,7 +90,7 @@ namespace TotalImage.FileSystems.FAT
 
                 //DOS 3.4+ specific values
                 {
-                    if (bpb is BiosParameterBlock40 bpb40)
+                    if (bpb is ExtendedBiosParameterBlock bpb40)
                     {
                         writer.Write(bpb40.PhysicalDriveNumber);
                         writer.Write(bpb40.Flags);
@@ -137,7 +137,7 @@ namespace TotalImage.FileSystems.FAT
 
                 //First 11 bytes (8.3 space-padded filename without the period) are the label itself
                 {
-                    if (bpb is BiosParameterBlock40 bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
+                    if (bpb is ExtendedBiosParameterBlock bpb40 && !string.IsNullOrEmpty(bpb40.VolumeLabel))
                     {
                         writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
                         writer.Write((byte)0x08); //Volume label attribute
@@ -233,7 +233,7 @@ namespace TotalImage.FileSystems.FAT
                 }
 
                 //Writes the volume label to the BPB as well if BPBP is for DOS 4.0+
-                if (_bpb is BiosParameterBlock40 && _bpb.Version == BiosParameterBlockVersion.Dos40)
+                if (_bpb is ExtendedBiosParameterBlock && _bpb.Version == BiosParameterBlockVersion.Dos40)
                 {
                     _stream.Seek(0x2B, SeekOrigin.Begin);
                     writer.Write(label.ToCharArray());
@@ -296,9 +296,9 @@ namespace TotalImage.FileSystems.FAT
         //Returns the current volume label in the BPB, if BPB is for DOS 4.0+
         public string? GetBPBVolLabel()
         {
-            if (_bpb is BiosParameterBlock40 && _bpb.Version == BiosParameterBlockVersion.Dos40)
+            if (_bpb is ExtendedBiosParameterBlock && _bpb.Version == BiosParameterBlockVersion.Dos40)
             {
-                return ((BiosParameterBlock40)_bpb).VolumeLabel;
+                return ((ExtendedBiosParameterBlock)_bpb).VolumeLabel;
             }
 
             return null;
