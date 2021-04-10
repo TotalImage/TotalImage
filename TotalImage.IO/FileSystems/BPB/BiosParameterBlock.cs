@@ -69,7 +69,7 @@ namespace TotalImage.FileSystems.BPB
         /// <summary>
         /// The size of the file allocation table in logical sectors
         /// </summary>
-        public ushort LogicalSectorsPerFAT { get; private set; }
+        public uint LogicalSectorsPerFAT { get; private set; }
 
         /// <summary>
         /// The number of physical sectors per track
@@ -217,34 +217,62 @@ namespace TotalImage.FileSystems.BPB
                 reader.BaseStream.Seek(endOffset, SeekOrigin.Begin);
             }
 
-            //So far, the BPB seems to be OK, so try to read it further as a DOS 4.0 BPB.
-            var bpb40 = new BiosParameterBlock40(bpb)
-            {
-                PhysicalDriveNumber = reader.ReadByte(),
-                Flags = reader.ReadByte()
-            };
+            BiosParameterBlock40 ebpb;
 
-            switch (reader.ReadByte())
+            if (bpb.LogicalSectorsPerFAT == 0)
             {
-                case 40:
-                    bpb40.Version = BiosParameterBlockVersion.Dos34;
-                    break;
-                case 41:
-                    bpb40.Version = BiosParameterBlockVersion.Dos40;
-                    break;
-                default:
-                    return bpb; // it's not a DOS 4.0 BPB, don't bother any further
+                // This is a FAT32 BPB.
+                ebpb = new Fat32BiosParameterBlock(bpb)
+                {
+                    Version = BiosParameterBlockVersion.Fat32,
+                    LogicalSectorsPerFAT = reader.ReadUInt32(),
+                    ExtFlags = reader.ReadUInt16(),
+                    FileSystemVersion = reader.ReadUInt16(),
+                    RootDirectoryCluster = reader.ReadUInt32(),
+                    FsInfo = reader.ReadUInt32(),
+                    BackupBootSector = reader.ReadUInt32(),
+                    Reserved = reader.ReadBytes(12),
+                    PhysicalDriveNumber = reader.ReadByte(),
+                    Flags = reader.ReadByte(),
+                    ExtendedBootSignature = (ExtendedBootSignature)reader.ReadByte()
+                };
+            }
+            else
+            {
+                //So far, the BPB seems to be OK, so try to read it further as a DOS 4.0 BPB.
+                ebpb = new BiosParameterBlock40(bpb)
+                {
+                    PhysicalDriveNumber = reader.ReadByte(),
+                    Flags = reader.ReadByte(),
+                    ExtendedBootSignature = (ExtendedBootSignature)reader.ReadByte(),
+                };
+
+                ebpb.Version = ebpb.ExtendedBootSignature switch
+                {
+                    ExtendedBootSignature.Dos34 => BiosParameterBlockVersion.Dos34,
+                    ExtendedBootSignature.Dos40 => BiosParameterBlockVersion.Dos40,
+                    _ => ebpb.Version
+                };
             }
 
-            bpb40.VolumeSerialNumber = reader.ReadUInt32();
-
-            if (bpb40.Version == BiosParameterBlockVersion.Dos40)
+            if (ebpb.ExtendedBootSignature == ExtendedBootSignature.Dos40)
             {
-                bpb40.VolumeLabel = new string(reader.ReadChars(11));
-                bpb40.FileSystemType = new string(reader.ReadChars(8));
+                ebpb.VolumeSerialNumber = reader.ReadUInt32();
+                ebpb.VolumeLabel = new string(reader.ReadChars(11));
+                ebpb.FileSystemType = new string(reader.ReadChars(8));
+                return ebpb;
             }
-
-            return bpb40;
+            else if (ebpb.ExtendedBootSignature == ExtendedBootSignature.Dos34)
+            {
+                // This is a shorter EBPB format used by PC-DOS 3.4 and
+                // some early OS/2 versions.
+                return ebpb;
+            }
+            else
+            {
+                // Unknown extended boot signature, retreat
+                return bpb;
+            }
         }
 
         /// <summary>

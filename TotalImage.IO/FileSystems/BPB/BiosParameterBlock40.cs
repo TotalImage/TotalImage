@@ -17,7 +17,7 @@ namespace TotalImage.FileSystems.BPB
 
         public byte PhysicalDriveNumber { get; set; }
         public byte Flags { get; set; }
-        //public byte ExtendedBootSignature { get; set; } <-- this can be deducted from the BpbVersion field - commenting out for now.
+        public ExtendedBootSignature ExtendedBootSignature { get; set; }
         public uint VolumeSerialNumber { get; set; }
         public string VolumeLabel
         {
