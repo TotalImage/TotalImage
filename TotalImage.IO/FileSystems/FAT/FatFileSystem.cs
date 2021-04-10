@@ -133,7 +133,14 @@ namespace TotalImage.FileSystems.FAT
         {
             get
             {
-                foreach(var entry in DirectoryEntry.ReadRootDirectory(this))
+                IEnumerable<DirectoryEntry> entries;
+
+                if (_bpb is Fat32BiosParameterBlock fat32bpb && _bpb.RootDirectoryEntries == 0)
+                    entries = DirectoryEntry.ReadSubdirectory(this, fat32bpb.RootDirectoryCluster);
+                else
+                    entries = DirectoryEntry.ReadRootDirectory(this);
+
+                foreach(var entry in entries)
                 {
                     if (entry.attr.HasFlag(FatAttributes.VolumeId) && !entry.attr.HasFlag(FatAttributes.LongName))
                     {
