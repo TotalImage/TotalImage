@@ -33,8 +33,8 @@ namespace TotalImage.FileSystems.FAT
             }
             else
             {
-                // return FAT32 - NOT SUPPORTED YET
-                return null;
+                // return FAT32
+                return new Fat32FileSystem(stream, bpb);
             }
         }
 
