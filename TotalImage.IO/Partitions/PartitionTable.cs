@@ -15,6 +15,9 @@ namespace TotalImage.Partitions
         /// </summary>
         protected readonly Container _container;
 
+        /// <summary>
+        /// Name of the partition table for displaying in the UI
+        /// </summary>
         public abstract string DisplayName { get; }
 
         /// <summary>

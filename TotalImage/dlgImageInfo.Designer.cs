@@ -54,24 +54,27 @@
             "Selected partition",
             "<selectedpartition>"}, -1);
             System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Selected partition ID",
+            "<selectedpartitionID>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
             "File system",
             "<filesystem>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
             "Total storage capacity",
             "<capacity>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
             "Free space",
             "<freespace>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] {
             "No. of files",
             "<nofiles>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] {
             "No. of subdirectories",
             "<subdirectories>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] {
             "MD5 hash",
             "<md5hash>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] {
             "SHA-1 hash",
             "<sha1hash>"}, -1);
             this.btnOK = new System.Windows.Forms.Button();
@@ -164,25 +167,26 @@
             listViewItem7.Group = listViewGroup2;
             listViewItem7.StateImageIndex = 0;
             listViewItem7.Tag = "Selpart";
-            listViewItem8.Group = listViewGroup3;
-            listViewItem8.StateImageIndex = 0;
-            listViewItem8.Tag = "Fs";
+            listViewItem8.Group = listViewGroup2;
             listViewItem9.Group = listViewGroup3;
             listViewItem9.StateImageIndex = 0;
-            listViewItem9.Tag = "Capacity";
+            listViewItem9.Tag = "Fs";
             listViewItem10.Group = listViewGroup3;
             listViewItem10.StateImageIndex = 0;
-            listViewItem10.Tag = "Freespace";
+            listViewItem10.Tag = "Capacity";
             listViewItem11.Group = listViewGroup3;
             listViewItem11.StateImageIndex = 0;
-            listViewItem11.Tag = "Filecount";
+            listViewItem11.Tag = "Freespace";
             listViewItem12.Group = listViewGroup3;
             listViewItem12.StateImageIndex = 0;
-            listViewItem12.Tag = "Dircount";
-            listViewItem13.Group = listViewGroup4;
-            listViewItem13.Tag = "md5";
+            listViewItem12.Tag = "Filecount";
+            listViewItem13.Group = listViewGroup3;
+            listViewItem13.StateImageIndex = 0;
+            listViewItem13.Tag = "Dircount";
             listViewItem14.Group = listViewGroup4;
-            listViewItem14.Tag = "sha1";
+            listViewItem14.Tag = "md5";
+            listViewItem15.Group = listViewGroup4;
+            listViewItem15.Tag = "sha1";
             this.lstProperties.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -197,7 +201,8 @@
             listViewItem11,
             listViewItem12,
             listViewItem13,
-            listViewItem14});
+            listViewItem14,
+            listViewItem15});
             this.lstProperties.LabelWrap = false;
             this.lstProperties.Location = new System.Drawing.Point(12, 12);
             this.lstProperties.MultiSelect = false;

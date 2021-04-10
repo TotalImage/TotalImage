@@ -14,6 +14,7 @@ namespace TotalImage.Partitions
     {
         private readonly uint _sectorSize;
 
+        /// <inheritdoc />
         public override string DisplayName => "Master Boot Record";
 
         /// <inheritdoc />

@@ -15,7 +15,8 @@ namespace TotalImage.Partitions
         {
         }
 
-        public override string DisplayName => "N/A";
+        /// <inheritdoc />
+        public override string DisplayName => "Unpartitioned";
 
         /// <inheritdoc />
         protected override IEnumerable<PartitionEntry> LoadPartitions()
