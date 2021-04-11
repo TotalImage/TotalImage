@@ -113,6 +113,8 @@ namespace TotalImage
                     CurrentSettings.DefaultExtractType = settings.DefaultExtractType;
                     CurrentSettings.DefaultExtractPath = settings.DefaultExtractPath;
                     CurrentSettings.RecentImages = settings.RecentImages;
+                    CurrentSettings.ExtractPreserveAttributes = settings.ExtractPreserveAttributes;
+                    CurrentSettings.ExtractPreserveDates = settings.ExtractPreserveDates;
                 }
 
                 MessageBox.Show("The settings have been changed and reloaded.", "TotalImage", MessageBoxButtons.OK, MessageBoxIcon.Information);

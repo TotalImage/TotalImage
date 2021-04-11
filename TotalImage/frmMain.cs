@@ -31,6 +31,7 @@ namespace TotalImage
         public int CurrentPartitionIndex;
         private int sortColumn;
         private SortOrder sortOrder;
+        private string folderTypeName;
 
         public frmMain()
         {
@@ -54,7 +55,7 @@ namespace TotalImage
 #if !DEBUG
             DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
 #endif
-            GetFolderIcons();
+            GetFolderInfo();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
 
             //This is a workaround because the designer is apparently not setting the ColumnHeader.Name attributes...
@@ -174,9 +175,32 @@ namespace TotalImage
         //Click event handler for all menu items in the Recent images menu
         private void recentImage_Click(object sender, EventArgs e)
         {
-            CloseImage();
-            string imagePath = ((ToolStripMenuItem)sender).Text.Substring(3, ((ToolStripMenuItem)sender).Text.Length - 3).Trim(' ');
-            OpenImage(imagePath);
+            try
+            {
+                CloseImage();
+                string imagePath = ((ToolStripMenuItem)sender).Text.Substring(3, ((ToolStripMenuItem)sender).Text.Length - 3).Trim(' ');
+                OpenImage(imagePath);
+            }
+            catch (IOException)
+            {
+                //Should we also remove a non-working recent image entry?
+#if NET48
+                MessageBox.Show("Selected file could not be opened because it's inaccessible or no longer exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+#elif NET5_0_OR_GREATER
+                TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = $"Selected file could not be opened because it's inaccessible or no longer exists.",
+                    Heading = "Could not open file",
+                    Caption = "Error",
+                    Buttons =
+                    {
+                        TaskDialogButton.OK
+                    },
+                    Icon = TaskDialogIcon.Error,
+                    DefaultButton = TaskDialogButton.OK
+                });
+#endif
+            }
         }
 
         //Creates a new disk image
@@ -1225,7 +1249,7 @@ namespace TotalImage
             }
         }
 
-        #endregion
+#endregion
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
@@ -1299,11 +1323,9 @@ namespace TotalImage
                 var item = new ListViewItem();
                 item.Text = fso.Name;
 
-                var filetype = GetShellFileType(fso.Name, fso.Attributes);
-                item.SubItems.Add(filetype);
-
                 if (fso is TiDirectory)
                 {
+                    item.SubItems.Add(folderTypeName);
                     item.SubItems.Add(string.Empty);
                     if (fso.Attributes.HasFlag(FileAttributes.Hidden)) //Hidden folders look different
                     {
@@ -1316,7 +1338,8 @@ namespace TotalImage
                 }
                 else
                 {
-
+                    var filetype = GetShellFileType(fso.Name, fso.Attributes);
+                    item.SubItems.Add(filetype);
                     item.SubItems.Add(string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1}" : "{0:n2} {1}", fso.Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)));
 
                     //This will only add a new icon to the list if the associated type hasn't been encountered yet
@@ -1539,8 +1562,8 @@ namespace TotalImage
             return fileCount;
         }
 
-        //Gets the default Windows folder icon with SHGetFileInfo that will be used for folders
-        public void GetFolderIcons()
+        //Gets the default Windows folder icon and type name with SHGetFileInfo
+        public void GetFolderInfo()
         {
             Bitmap smallIcon = GetShellFileIcon(@"C:\Windows", false, FileAttributes.Directory);
             imgFilesSmall.Images.Add("folder", smallIcon);
@@ -1550,6 +1573,8 @@ namespace TotalImage
             imgFilesLarge.Images.Add("folder", largeIcon);
             Bitmap hiddenLargeIcon = CreateHiddenIcon(largeIcon);
             imgFilesLarge.Images.Add("folder (Hidden)", hiddenLargeIcon);
+
+            folderTypeName = GetShellFileType(@"C:\Windows", FileAttributes.Directory);
         }
 
         //Finds the node with the specified entry

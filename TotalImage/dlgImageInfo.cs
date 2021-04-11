@@ -39,6 +39,13 @@ namespace TotalImage
             lstProperties.FindItemWithText("Selected partition").SubItems[1].Text = mainForm.CurrentPartitionIndex.ToString();
             lstProperties.FindItemWithText("Created by").SubItems[1].Text = "N/A"; //Obtain this from the container metadata if it exists
             lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text = $"{ mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length:n0} B";
+
+            if (Settings.CurrentSettings.SizeUnits != Settings.SizeUnit.B)
+            {
+                float sizeInUnit = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits;
+                lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text = lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text.Insert(0, $"{sizeInUnit:n2} {sizeUnitName} (");
+                lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text = lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text.Insert(lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text.Length, ")");
+            }
         }
     }
 }
