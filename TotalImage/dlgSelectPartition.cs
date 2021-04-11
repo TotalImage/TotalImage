@@ -45,11 +45,14 @@ namespace TotalImage
 
         private void dlgSelectPartition_Load(object sender, System.EventArgs e)
         {
+            string sizeUnitName = System.Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits);
+
             lstPartitions.Items.Clear();
 
             for (int i = 0; i < PartitionTable.Partitions.Count; i++)
             {
                 var entry = PartitionTable.Partitions[i];
+                float sizeInUnit = entry.Length / (float)Settings.CurrentSettings.SizeUnits;
                 ListViewItem lvi = new ListViewItem(i.ToString());
                 try
                 {
@@ -63,12 +66,17 @@ namespace TotalImage
                     lvi.SubItems.Add("RAW");
                     lvi.ForeColor = Color.Gray;
                 }
-                lvi.SubItems.Add(entry.Offset.ToString());
-                lvi.SubItems.Add((entry.Offset + entry.Length).ToString());
-                lvi.SubItems.Add($"{entry.Length / (int)Settings.CurrentSettings.SizeUnits} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)}");
+                lvi.SubItems.Add($"{entry.Offset:n0}");
+                lvi.SubItems.Add($"{entry.Offset + entry.Length:n0}");
+                lvi.SubItems.Add(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? $"{sizeInUnit:n0} B" : $"{sizeInUnit:n2} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)}");
+
                 if (entry is MbrPartitionTable.MbrPartitionEntry mbrEntry)
                 {
                     lvi.SubItems.Add(mbrEntry.Active ? "Yes" : "No");
+                }
+                else
+                {
+                    lvi.SubItems.Add("Unknown");
                 }
                 lstPartitions.Items.Add(lvi);
             }
