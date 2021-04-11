@@ -11,6 +11,7 @@ using System.Text;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.Containers;
+using static Interop.ComCtl32;
 using static Interop.Shell32;
 using static Interop.User32;
 using System.Diagnostics;
@@ -1347,7 +1348,7 @@ namespace TotalImage
                     //This will only add a new icon to the list if the associated type hasn't been encountered yet
                     if (!imgFilesSmall.Images.ContainsKey(filetype))
                     {
-                        Bitmap icon = GetShellFileIcon(fso.Name, false, fso.Attributes);
+                        var icon = GetShellFileIcon(fso.Name, false, fso.Attributes);
                         imgFilesSmall.Images.Add(filetype, icon);
                         icon = GetShellFileIcon(fso.Name, true, fso.Attributes);
                         imgFilesLarge.Images.Add(filetype, icon);
@@ -1358,7 +1359,7 @@ namespace TotalImage
                     {
                         if (!imgFilesSmall.Images.ContainsKey($"{filetype} (Hidden)"))
                         {
-                            Bitmap hiddenIcon = CreateHiddenIcon((Bitmap)imgFilesSmall.Images[filetype]);
+                            var hiddenIcon = CreateHiddenIcon((Bitmap)imgFilesSmall.Images[filetype]);
                             imgFilesSmall.Images.Add($"{filetype} (Hidden)", hiddenIcon);
                             hiddenIcon = CreateHiddenIcon((Bitmap)imgFilesLarge.Images[filetype]);
                             imgFilesLarge.Images.Add($"{filetype} (Hidden)", hiddenIcon);
@@ -1567,13 +1568,13 @@ namespace TotalImage
         //Gets the default Windows folder icon and type name with SHGetFileInfo
         public void GetFolderInfo()
         {
-            Bitmap smallIcon = GetShellFileIcon(@"C:\Windows", false, FileAttributes.Directory);
+            var smallIcon = GetShellFileIcon(@"C:\Windows", false, FileAttributes.Directory);
             imgFilesSmall.Images.Add("folder", smallIcon);
-            Bitmap hiddenSmallIcon = CreateHiddenIcon(smallIcon);
+            var hiddenSmallIcon = CreateHiddenIcon(smallIcon.ToBitmap());
             imgFilesSmall.Images.Add("folder (Hidden)", hiddenSmallIcon);
-            Bitmap largeIcon = GetShellFileIcon(@"C:\Windows", true, FileAttributes.Directory);
+            var largeIcon = GetShellFileIcon(@"C:\Windows", true, FileAttributes.Directory);
             imgFilesLarge.Images.Add("folder", largeIcon);
-            Bitmap hiddenLargeIcon = CreateHiddenIcon(largeIcon);
+            var hiddenLargeIcon = CreateHiddenIcon(largeIcon.ToBitmap());
             imgFilesLarge.Images.Add("folder (Hidden)", hiddenLargeIcon);
 
             folderTypeName = GetShellFileType(@"C:\Windows", FileAttributes.Directory);
@@ -1606,34 +1607,51 @@ namespace TotalImage
             return null;
         }
 
+        private static Dictionary<string, (string name, int imageListIndex)> fileTypes
+            = new Dictionary<string, (string name, int imageListIndex)>(StringComparer.InvariantCultureIgnoreCase);
+
         //Obtains the fancy file type name
         public static string GetShellFileType(string filename, FileAttributes attributes)
         {
-            var shinfo = new SHFILEINFO();
-            var flags = SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
+            var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
 
-            if (SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
-            {
-                return "File";
-            }
+            if (!fileTypes.ContainsKey(extension))
+                GetShellFileInfo(filename, attributes);
 
-            return shinfo.szTypeName;
+            return fileTypes[extension].name;
         }
 
         //Obtains the icon for the file type
-        public static Bitmap GetShellFileIcon(string filename, bool GetLargeIcon, FileAttributes attributes)
+        public static Icon GetShellFileIcon(string filename, bool getLargeIcon, FileAttributes attributes)
         {
-            var shinfo = new SHFILEINFO();
-            var flags = SHGFI.ICON | SHGFI.USEFILEATTRIBUTES;
-            if (GetLargeIcon)
-                flags |= SHGFI.LARGEICON;
-            else
-                flags |= SHGFI.SMALLICON;
+            var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
 
-            SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
-            Icon icon = (Icon)Icon.FromHandle(shinfo.hIcon).Clone();
-            DestroyIcon(shinfo.hIcon);
-            return icon.ToBitmap();
+            if (!fileTypes.ContainsKey(extension))
+                GetShellFileInfo(filename, attributes);
+
+            IImageList list;
+            var iid = new Guid(IID_IImageList);
+            SHGetImageList(getLargeIcon ? SHIL.LARGE : SHIL.SMALL, ref iid, out list);
+
+            IntPtr hIcon;
+            list.GetIcon(fileTypes[extension].imageListIndex, ILD.TRANSPARENT, out hIcon);
+
+            Icon icon = (Icon)Icon.FromHandle(hIcon).Clone();
+            DestroyIcon(hIcon);
+            return icon;
+        }
+
+        public static bool GetShellFileInfo(string filename, FileAttributes attributes)
+        {
+            var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
+            var shinfo = new SHFILEINFO();
+            var flags = SHGFI.TYPENAME | SHGFI.SYSICONINDEX | SHGFI.USEFILEATTRIBUTES;
+
+            if (SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags) == IntPtr.Zero)
+                return false;
+
+            fileTypes.Add(extension, (shinfo.szTypeName, shinfo.iIcon));
+            return true;
         }
 
         //Enables various UI elements after an image is loaded
