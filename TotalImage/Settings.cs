@@ -213,6 +213,12 @@ namespace TotalImage
             CurrentSettings.RecentImages.Add(path);
         }
 
+        //Removes the specified entry from the recent list
+        public static void RemoveRecentImage(string path)
+        {
+            CurrentSettings.RecentImages.Remove(path);
+        }
+
         //Clears all recent images
         public static void ClearRecentImages()
         {

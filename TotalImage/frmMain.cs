@@ -175,15 +175,14 @@ namespace TotalImage
         //Click event handler for all menu items in the Recent images menu
         private void recentImage_Click(object sender, EventArgs e)
         {
+            string imagePath = ((ToolStripMenuItem)sender).Text.Substring(3, ((ToolStripMenuItem)sender).Text.Length - 3).Trim(' ');
             try
             {
                 CloseImage();
-                string imagePath = ((ToolStripMenuItem)sender).Text.Substring(3, ((ToolStripMenuItem)sender).Text.Length - 3).Trim(' ');
                 OpenImage(imagePath);
             }
             catch (IOException)
             {
-                //Should we also remove a non-working recent image entry?
 #if NET48
                 MessageBox.Show("Selected file could not be opened because it's inaccessible or no longer exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 #elif NET5_0_OR_GREATER
@@ -200,6 +199,9 @@ namespace TotalImage
                     DefaultButton = TaskDialogButton.OK
                 });
 #endif
+                //Remove the non-working entry
+                Settings.RemoveRecentImage(imagePath);
+                PopulateRecentList();
             }
         }
 
