@@ -34,6 +34,8 @@ namespace TotalImage
         private SortOrder sortOrder;
         private string folderTypeName;
 
+        private List<ListViewItem> currentFolderView = new List<ListViewItem>();
+
         public frmMain()
         {
             InitializeComponent();
@@ -297,7 +299,7 @@ namespace TotalImage
         {
             if (lstFiles.Focused)
             {
-                if (lstFiles.SelectedItems.Count == 1)
+                if (lstFiles.SelectedIndices.Count == 1)
                 {
                     DialogResult = MessageBox.Show("Are you sure you want to delete 1 item occupying <x> bytes?", "Delete item", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (DialogResult == DialogResult.No || DialogResult == DialogResult.Cancel)
@@ -305,19 +307,17 @@ namespace TotalImage
                         return;
                     }
                 }
-                else if (lstFiles.SelectedItems.Count > 1)
+                else if (lstFiles.SelectedIndices.Count > 1)
                 {
                     //First get the total size of all selected items
-                    DialogResult = MessageBox.Show($"Are you sure you want to delete {lstFiles.SelectedItems.Count} items occupying <x> bytes?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    DialogResult = MessageBox.Show($"Are you sure you want to delete {lstFiles.SelectedIndices.Count} items occupying <x> bytes?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (DialogResult == DialogResult.No || DialogResult == DialogResult.Cancel)
                     {
                         return;
                     }
                 }
-                foreach (ListViewItem lvi in lstFiles.SelectedItems)
-                {
-                    throw new NotImplementedException("This feature is not implemented yet");
-                }
+                
+                throw new NotImplementedException("This feature is not implemented yet");
             }
             else if (lstDirectories.Focused)
             {
@@ -340,7 +340,7 @@ namespace TotalImage
         {
             string oldname = "";
             if (lstFiles.Focused)
-                oldname = lstFiles.SelectedItems[0].Text;
+                oldname = currentFolderView[lstFiles.SelectedIndices[0]].Text;
             else if (lstDirectories.Focused)
                 oldname = lstDirectories.SelectedNode.Text;
 
@@ -517,7 +517,8 @@ namespace TotalImage
         //TODO: Implement this here, in the extraction dialog and in FS/container.
         private void extract_Click(object sender, EventArgs e)
         {
-            var selectedItems = from x in lstFiles.SelectedItems.Cast<ListViewItem>() select x.Tag as TiFileSystemObject;
+            var selectedItems = from int x in lstFiles.SelectedIndices
+                select GetSelectedItemData(x);
 
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
             {
@@ -594,7 +595,7 @@ namespace TotalImage
         //TODO: Implement status bar stuff based on the selected item in the listview. This includes proper path, size, etc.
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lstFiles.SelectedItems.Count == 0 || lstFiles.SelectedItems.Count == 1 && lstFiles.SelectedItems[0].Text == "..")
+            if (lstFiles.SelectedIndices.Count == 0 || lstFiles.SelectedIndices.Count == 1 && currentFolderView[lstFiles.SelectedIndices[0]].Text == "..")
             {
                 deleteToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem2.Enabled = false;
@@ -621,13 +622,13 @@ namespace TotalImage
 
                 lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", CalculateDirSize() / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), GetFileCount());
             }
-            else if (lstFiles.SelectedItems.Count == 1)
+            else if (lstFiles.SelectedIndices.Count == 1)
             {
                 propertiesToolStripMenuItem.Enabled = true;
                 propertiesToolStripMenuItem2.Enabled = true;
 
                 //Check if selected item is a deleted entry and enable the UI accordingly
-                TiFileSystemObject entry = (TiFileSystemObject)lstFiles.SelectedItems[0].Tag;
+                TiFileSystemObject entry = GetSelectedItemData(0);
                 undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
                 undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
                 deleteToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
@@ -643,8 +644,8 @@ namespace TotalImage
                 extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
                 propertiesToolStripButton.Enabled = true;
 
-                lbStatusPath.Text = ((TiFileSystemObject)lstFiles.SelectedItems[0].Tag).FullName;
-                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in 1 item" : "{0:n2} {1} in 1 item", ((TiFileSystemObject)lstFiles.SelectedItems[0].Tag).Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
+                lbStatusPath.Text = entry.FullName;
+                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in 1 item" : "{0:n2} {1} in 1 item", entry.Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
             else
             {
@@ -672,19 +673,19 @@ namespace TotalImage
                 lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
 
                 var selectedSize = 0ul;
-                foreach (ListViewItem lvi in lstFiles.SelectedItems)
+                foreach (int idx in lstFiles.SelectedIndices)
                 {
-                    TiFileSystemObject entry = (TiFileSystemObject)lvi.Tag;
+                    TiFileSystemObject entry = GetSelectedItemData(idx);
                     selectedSize += entry.Length;
                 }
 
-                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} items" : "{0:n2} {1} in {2} items", selectedSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), lstFiles.SelectedItems.Count);
+                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} items" : "{0:n2} {1} in {2} items", selectedSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), lstFiles.SelectedIndices.Count);
             }
         }
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (lstFiles.SelectedItems.Count == 0 || lstFiles.SelectedItems.Count == 1 && lstFiles.SelectedItems[0].Text == "..")
+            if (lstFiles.SelectedIndices.Count == 0 || lstFiles.SelectedIndices.Count == 1 && currentFolderView[lstFiles.SelectedIndices[0]].Text == "..")
             {
                 e.Cancel = true;
                 return;
@@ -714,13 +715,13 @@ namespace TotalImage
             if (itemParent == cmsFileList || itemParent == commandBar)
             {
                 // Show properties for the selected file list view items
-                if (lstFiles.SelectedItems.Count == 1)
+                if (lstFiles.SelectedIndices.Count == 1)
                 {
                     // Single selected item
-                    using dlgProperties dlg = new dlgProperties((TiFileSystemObject)lstFiles.SelectedItems[0].Tag);
+                    using dlgProperties dlg = new dlgProperties(GetSelectedItemData(0));
                     dlg.ShowDialog();
                 }
-                else if (lstFiles.SelectedItems.Count > 1)
+                else if (lstFiles.SelectedIndices.Count > 1)
                 {
                     // More selected items
                     throw new NotImplementedException("This feature is not implemented yet.");
@@ -794,8 +795,11 @@ namespace TotalImage
             }
 
             // Perform the sort with these new sort options.
-            lstFiles.ListViewItemSorter = GetListViewItemSorter(column, sortOrder);
-            lstFiles.Sort();
+            currentFolderView = sortOrder == SortOrder.Ascending
+                ? currentFolderView.OrderBy(e => e.SubItems[sortColumn].Text).ToList()
+                : currentFolderView.OrderByDescending(e => e.SubItems[sortColumn].Text).ToList();
+
+            lstFiles.Refresh();
             lstFiles.SetSortIcon(column, sortOrder);
 
             Settings.CurrentSettings.FilesSortingColumn = column;
@@ -845,7 +849,7 @@ namespace TotalImage
             var dirSize = 0ul;
             PopulateListView((TiDirectory)e.Node.Tag);
 
-            foreach (ListViewItem lvi in lstFiles.Items)
+            foreach (ListViewItem lvi in currentFolderView)
             {
                 var entry = (TiFileSystemObject)lvi.Tag;
                 if (!(entry is TiDirectory))
@@ -897,9 +901,9 @@ namespace TotalImage
 
         private void lstFiles_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (lstFiles.SelectedItems.Count == 1 && e.Button != MouseButtons.Right)
+            if (lstFiles.SelectedIndices.Count == 1 && e.Button != MouseButtons.Right)
             {
-                if ((TiFileSystemObject)lstFiles.SelectedItems[0].Tag is TiDirectory dir) //A folder was double-clicked
+                if (GetSelectedItemData(0) is TiDirectory dir) //A folder was double-clicked
                 {
                     var node = FindNode(lstDirectories.Nodes[0], dir);
                     if (node != null)
@@ -930,7 +934,7 @@ namespace TotalImage
         private void selectAll_Click(object sender, EventArgs e)
         {
             lstFiles.Focus();
-            foreach (ListViewItem lvi in lstFiles.Items)
+            foreach (ListViewItem lvi in currentFolderView)
             {
                 lvi.Selected = true;
             }
@@ -1256,9 +1260,9 @@ namespace TotalImage
             }
             else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
             {
-                if (lstFiles.SelectedItems.Count == 1)
+                if (lstFiles.SelectedIndices.Count == 1)
                 {
-                    TiFileSystemObject fso = (TiFileSystemObject)lstFiles.SelectedItems[0].Tag;
+                    TiFileSystemObject fso = GetSelectedItemData(0);
                     if (fso is TiDirectory)
                     {
                         var node = FindNode(lstDirectories.Nodes[0], (TiDirectory)fso);
@@ -1276,7 +1280,7 @@ namespace TotalImage
                         //Extract the selected file (and open it?)
                     }
                 }
-                else if (lstFiles.SelectedItems.Count > 1)
+                else if (lstFiles.SelectedIndices.Count > 1)
                 {
                     //Extract all selected objects
                 }
@@ -1340,8 +1344,9 @@ namespace TotalImage
         private void PopulateListView(TiDirectory dir)
         {
             lstFiles.BeginUpdate();
-            lstFiles.Items.Clear();
+            currentFolderView.Clear();
 
+            int count = 0;
             if (dir.Parent != null)
             {
                 //The ".." virtual folder
@@ -1351,8 +1356,11 @@ namespace TotalImage
                 parentDirItem.SubItems.Add("");
                 parentDirItem.SubItems.Add("");
                 parentDirItem.SubItems.Add("");
+                parentDirItem.SubItems.Add("");
+                parentDirItem.SubItems.Add("");
                 parentDirItem.Tag = dir.Parent;
-                lstFiles.Items.Add(parentDirItem);
+                currentFolderView.Add(parentDirItem);
+                count++;
             }
 
             foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems))
@@ -1428,10 +1436,11 @@ namespace TotalImage
                 }
 
                 item.Tag = fso;
-                lstFiles.Items.Add(item);
-
-                Application.DoEvents();
+                currentFolderView.Add(item);
+                count++;
             }
+
+            lstFiles.VirtualListSize = count;
 
             lstFiles.EndUpdate();
         }
@@ -1568,7 +1577,7 @@ namespace TotalImage
         {
             var dirSize = 0ul;
 
-            foreach (ListViewItem lvi in lstFiles.Items)
+            foreach (ListViewItem lvi in currentFolderView)
             {
                 TiFileSystemObject entry = (TiFileSystemObject)lvi.Tag;
                 if (!(entry is TiDirectory))
@@ -1586,7 +1595,7 @@ namespace TotalImage
         {
             uint fileCount = 0;
 
-            foreach (ListViewItem lvi in lstFiles.Items)
+            foreach (ListViewItem lvi in currentFolderView)
             {
                 TiFileSystemObject entry = (TiFileSystemObject)lvi.Tag;
                 if (!(entry is TiDirectory))
@@ -1798,12 +1807,33 @@ namespace TotalImage
             image?.Dispose();
             image = null;
             lstDirectories.Nodes.Clear();
-            lstFiles.Items.Clear();
+            currentFolderView.Clear();
+            lstFiles.VirtualListSize = 0;
             selectPartitionToolStripComboBox.Items.Clear();
             DisableUI();
             lblStatusCapacity.Text = string.Empty;
             lblStatusSize.Text = string.Empty;
             lbStatusPath.Text = string.Empty;
+        }
+
+        private TiFileSystemObject GetSelectedItemData(int idx)
+        {
+            return currentFolderView[lstFiles.SelectedIndices[idx]].Tag as TiFileSystemObject;
+        }
+
+        private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            e.Item = currentFolderView[e.ItemIndex];
+        }
+
+        private void lstFiles_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
+        {
+
+        }
+
+        private void lstFiles_SearchForVirtualItem(object sender, SearchForVirtualItemEventArgs e)
+        {
+
         }
     }
 }
