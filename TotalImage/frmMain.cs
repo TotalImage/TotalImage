@@ -843,10 +843,7 @@ namespace TotalImage
 
             var fileCount = 0ul;
             var dirSize = 0ul;
-            lstFiles.BeginUpdate();
-            lstFiles.Items.Clear();
             PopulateListView((TiDirectory)e.Node.Tag);
-            lstFiles.EndUpdate();
 
             foreach (ListViewItem lvi in lstFiles.Items)
             {
@@ -1074,12 +1071,7 @@ namespace TotalImage
                 lstDirectories.EndUpdate();
                 lstDirectories.SelectedNode = lstDirectories.Nodes[0];
 
-                lstFiles.BeginUpdate();
-                lstFiles.ListViewItemSorter = null;
-                lstFiles.Items.Clear();
                 PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
-                lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
-                lstFiles.EndUpdate();
 
                 lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
@@ -1105,12 +1097,7 @@ namespace TotalImage
                 lstDirectories.EndUpdate();
                 lstDirectories.SelectedNode = lstDirectories.Nodes[0];
 
-                lstFiles.BeginUpdate();
-                lstFiles.ListViewItemSorter = null;
-                lstFiles.Items.Clear();
                 PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
-                lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
-                lstFiles.EndUpdate();
 
                 lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
@@ -1352,6 +1339,9 @@ namespace TotalImage
 
         private void PopulateListView(TiDirectory dir)
         {
+            lstFiles.BeginUpdate();
+            lstFiles.Items.Clear();
+
             if (dir.Parent != null)
             {
                 //The ".." virtual folder
@@ -1439,7 +1429,11 @@ namespace TotalImage
 
                 item.Tag = fso;
                 lstFiles.Items.Add(item);
+
+                Application.DoEvents();
             }
+
+            lstFiles.EndUpdate();
         }
 
         private string FileAttributesToString(FileAttributes attr)
@@ -1558,12 +1552,7 @@ namespace TotalImage
             lstDirectories.EndUpdate();
             lstDirectories.SelectedNode = lstDirectories.Nodes[0];
 
-            lstFiles.BeginUpdate();
-            lstFiles.ListViewItemSorter = null;
-            lstFiles.Items.Clear();
             PopulateListView(image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
-            lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
-            lstFiles.EndUpdate();
 
             lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
 
