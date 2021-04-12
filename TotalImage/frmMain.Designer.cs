@@ -145,7 +145,14 @@
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.settingsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
+            this.lstDirectories = new TotalImage.TreeViewEx();
             this.imgFilesSmall = new System.Windows.Forms.ImageList(this.components);
+            this.lstFiles = new TotalImage.ListViewEx();
+            this.clmName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.clmType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.clmSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.clmModified = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.clmAttributes = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cmsFileList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.extractToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.newFolderToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
@@ -155,13 +162,6 @@
             this.propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.selectAllToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.imgFilesLarge = new System.Windows.Forms.ImageList(this.components);
-            this.lstDirectories = new TotalImage.TreeViewEx();
-            this.lstFiles = new TotalImage.ListViewEx();
-            this.clmName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmModified = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmAttributes = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cmsDirTree.SuspendLayout();
             this.menuBar.SuspendLayout();
             this.cmsToolbars.SuspendLayout();
@@ -824,7 +824,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.about_Click);
             // 
@@ -1085,7 +1085,7 @@
             // 
             this.showHiddenItemsToolStripMenuItem1.CheckOnClick = true;
             this.showHiddenItemsToolStripMenuItem1.Name = "showHiddenItemsToolStripMenuItem1";
-            this.showHiddenItemsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.showHiddenItemsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.showHiddenItemsToolStripMenuItem1.Text = "Show hidden items";
             this.showHiddenItemsToolStripMenuItem1.Click += new System.EventHandler(this.showHiddenItems_Click);
             // 
@@ -1093,33 +1093,33 @@
             // 
             this.showDeletedItemsToolStripMenuItem1.CheckOnClick = true;
             this.showDeletedItemsToolStripMenuItem1.Name = "showDeletedItemsToolStripMenuItem1";
-            this.showDeletedItemsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.showDeletedItemsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.showDeletedItemsToolStripMenuItem1.Text = "Show deleted items";
             this.showDeletedItemsToolStripMenuItem1.Click += new System.EventHandler(this.showDeletedItems_Click);
             // 
             // toolStripSeparator14
             // 
             this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator14.Size = new System.Drawing.Size(174, 6);
             // 
             // largeIconsToolStripMenuItem1
             // 
             this.largeIconsToolStripMenuItem1.Name = "largeIconsToolStripMenuItem1";
-            this.largeIconsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.largeIconsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.largeIconsToolStripMenuItem1.Text = "Large icons";
             this.largeIconsToolStripMenuItem1.Click += new System.EventHandler(this.viewLargeIcons_Click);
             // 
             // smallIconsToolStripMenuItem1
             // 
             this.smallIconsToolStripMenuItem1.Name = "smallIconsToolStripMenuItem1";
-            this.smallIconsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.smallIconsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.smallIconsToolStripMenuItem1.Text = "Small icons";
             this.smallIconsToolStripMenuItem1.Click += new System.EventHandler(this.viewSmallIcons_Click);
             // 
             // listToolStripMenuItem1
             // 
             this.listToolStripMenuItem1.Name = "listToolStripMenuItem1";
-            this.listToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.listToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.listToolStripMenuItem1.Text = "List";
             this.listToolStripMenuItem1.Click += new System.EventHandler(this.viewList_Click);
             // 
@@ -1128,14 +1128,14 @@
             this.detailsToolStripMenuItem1.Checked = true;
             this.detailsToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.detailsToolStripMenuItem1.Name = "detailsToolStripMenuItem1";
-            this.detailsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.detailsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.detailsToolStripMenuItem1.Text = "Details";
             this.detailsToolStripMenuItem1.Click += new System.EventHandler(this.viewDetails_Click);
             // 
             // tilesToolStripMenuItem1
             // 
             this.tilesToolStripMenuItem1.Name = "tilesToolStripMenuItem1";
-            this.tilesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.tilesToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.tilesToolStripMenuItem1.Text = "Tiles";
             this.tilesToolStripMenuItem1.Click += new System.EventHandler(this.viewTiles_Click);
             // 
@@ -1218,11 +1218,98 @@
             this.splitContainer.TabIndex = 3;
             this.splitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer_SplitterMoved);
             // 
+            // lstDirectories
+            // 
+            this.lstDirectories.AllowDrop = true;
+            this.lstDirectories.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstDirectories.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstDirectories.FullRowSelect = true;
+            this.lstDirectories.HideSelection = false;
+            this.lstDirectories.ImageKey = "folder_closed_16.png";
+            this.lstDirectories.ImageList = this.imgFilesSmall;
+            this.lstDirectories.Location = new System.Drawing.Point(0, 0);
+            this.lstDirectories.Name = "lstDirectories";
+            this.lstDirectories.SelectedImageIndex = 0;
+            this.lstDirectories.ShowLines = false;
+            this.lstDirectories.Size = new System.Drawing.Size(280, 590);
+            this.lstDirectories.TabIndex = 0;
+            this.lstDirectories.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstDirectories_ItemDrag);
+            this.lstDirectories.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.lstDirectories_BeforeSelect);
+            this.lstDirectories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstDirectories_AfterSelect);
+            this.lstDirectories.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstDirectories_DragDrop);
+            this.lstDirectories.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstDirectories_DragEnter);
+            this.lstDirectories.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstDirectories_MouseUp);
+            // 
             // imgFilesSmall
             // 
             this.imgFilesSmall.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgFilesSmall.ImageStream")));
             this.imgFilesSmall.TransparentColor = System.Drawing.Color.Transparent;
             this.imgFilesSmall.Images.SetKeyName(0, "up_folder_16.png");
+            // 
+            // lstFiles
+            // 
+            this.lstFiles.AllowColumnReorder = true;
+            this.lstFiles.AllowDrop = true;
+            this.lstFiles.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.clmName,
+            this.clmType,
+            this.clmSize,
+            this.clmModified,
+            this.clmAttributes});
+            this.lstFiles.ContextMenuStrip = this.cmsFileList;
+            this.lstFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstFiles.FullRowSelect = true;
+            this.lstFiles.HideSelection = false;
+            this.lstFiles.LargeImageList = this.imgFilesLarge;
+            this.lstFiles.Location = new System.Drawing.Point(0, 0);
+            this.lstFiles.Name = "lstFiles";
+            this.lstFiles.ShowGroups = false;
+            this.lstFiles.ShowItemToolTips = true;
+            this.lstFiles.Size = new System.Drawing.Size(701, 590);
+            this.lstFiles.SmallImageList = this.imgFilesSmall;
+            this.lstFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lstFiles.TabIndex = 0;
+            this.lstFiles.UseCompatibleStateImageBehavior = false;
+            this.lstFiles.View = System.Windows.Forms.View.Details;
+            this.lstFiles.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstFiles_ColumnClick);
+            this.lstFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstFiles_ItemDrag);
+            this.lstFiles.SelectedIndexChanged += new System.EventHandler(this.lstFiles_SelectedIndexChanged);
+            this.lstFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragDrop);
+            this.lstFiles.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragEnter);
+            this.lstFiles.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lstFiles_KeyUp);
+            this.lstFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstFiles_MouseDoubleClick);
+            // 
+            // clmName
+            // 
+            this.clmName.Tag = "Name";
+            this.clmName.Text = "Name";
+            this.clmName.Width = 128;
+            // 
+            // clmType
+            // 
+            this.clmType.Tag = "Type";
+            this.clmType.Text = "Type";
+            this.clmType.Width = 127;
+            // 
+            // clmSize
+            // 
+            this.clmSize.Tag = "Size";
+            this.clmSize.Text = "Size";
+            this.clmSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.clmSize.Width = 118;
+            // 
+            // clmModified
+            // 
+            this.clmModified.Tag = "Modified";
+            this.clmModified.Text = "Modified";
+            this.clmModified.Width = 148;
+            // 
+            // clmAttributes
+            // 
+            this.clmAttributes.Tag = "Attributes";
+            this.clmAttributes.Text = "Attributes";
+            this.clmAttributes.Width = 86;
             // 
             // cmsFileList
             // 
@@ -1303,92 +1390,6 @@
             this.imgFilesLarge.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgFilesLarge.ImageStream")));
             this.imgFilesLarge.TransparentColor = System.Drawing.Color.Transparent;
             this.imgFilesLarge.Images.SetKeyName(0, "up_folder_16.png");
-            // 
-            // lstDirectories
-            // 
-            this.lstDirectories.AllowDrop = true;
-            this.lstDirectories.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstDirectories.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstDirectories.FullRowSelect = true;
-            this.lstDirectories.HideSelection = false;
-            this.lstDirectories.ImageKey = "folder_closed_16.png";
-            this.lstDirectories.ImageList = this.imgFilesSmall;
-            this.lstDirectories.Location = new System.Drawing.Point(0, 0);
-            this.lstDirectories.Name = "lstDirectories";
-            this.lstDirectories.SelectedImageIndex = 0;
-            this.lstDirectories.ShowLines = false;
-            this.lstDirectories.Size = new System.Drawing.Size(280, 590);
-            this.lstDirectories.TabIndex = 0;
-            this.lstDirectories.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstDirectories_ItemDrag);
-            this.lstDirectories.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.lstDirectories_BeforeSelect);
-            this.lstDirectories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstDirectories_AfterSelect);
-            this.lstDirectories.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstDirectories_DragDrop);
-            this.lstDirectories.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstDirectories_DragEnter);
-            this.lstDirectories.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstDirectories_MouseUp);
-            // 
-            // lstFiles
-            // 
-            this.lstFiles.AllowColumnReorder = true;
-            this.lstFiles.AllowDrop = true;
-            this.lstFiles.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.clmName,
-            this.clmType,
-            this.clmSize,
-            this.clmModified,
-            this.clmAttributes});
-            this.lstFiles.ContextMenuStrip = this.cmsFileList;
-            this.lstFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstFiles.FullRowSelect = true;
-            this.lstFiles.HideSelection = false;
-            this.lstFiles.LargeImageList = this.imgFilesLarge;
-            this.lstFiles.Location = new System.Drawing.Point(0, 0);
-            this.lstFiles.Name = "lstFiles";
-            this.lstFiles.ShowGroups = false;
-            this.lstFiles.ShowItemToolTips = true;
-            this.lstFiles.Size = new System.Drawing.Size(701, 590);
-            this.lstFiles.SmallImageList = this.imgFilesSmall;
-            this.lstFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.lstFiles.TabIndex = 0;
-            this.lstFiles.UseCompatibleStateImageBehavior = false;
-            this.lstFiles.View = System.Windows.Forms.View.Details;
-            this.lstFiles.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstFiles_ColumnClick);
-            this.lstFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstFiles_ItemDrag);
-            this.lstFiles.SelectedIndexChanged += new System.EventHandler(this.lstFiles_SelectedIndexChanged);
-            this.lstFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragDrop);
-            this.lstFiles.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragEnter);
-            this.lstFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstFiles_MouseDoubleClick);
-            // 
-            // clmName
-            // 
-            this.clmName.Tag = "Name";
-            this.clmName.Text = "Name";
-            this.clmName.Width = 128;
-            // 
-            // clmType
-            // 
-            this.clmType.Tag = "Type";
-            this.clmType.Text = "Type";
-            this.clmType.Width = 127;
-            // 
-            // clmSize
-            // 
-            this.clmSize.Tag = "Size";
-            this.clmSize.Text = "Size";
-            this.clmSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.clmSize.Width = 118;
-            // 
-            // clmModified
-            // 
-            this.clmModified.Tag = "Modified";
-            this.clmModified.Text = "Modified";
-            this.clmModified.Width = 148;
-            // 
-            // clmAttributes
-            // 
-            this.clmAttributes.Tag = "Attributes";
-            this.clmAttributes.Text = "Attributes";
-            this.clmAttributes.Width = 86;
             // 
             // frmMain
             // 

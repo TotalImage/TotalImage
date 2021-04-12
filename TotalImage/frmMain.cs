@@ -1252,7 +1252,51 @@ namespace TotalImage
             }
         }
 
-#endregion
+        private void selectPartitionToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (selectPartitionToolStripComboBox.SelectedIndex != CurrentPartitionIndex)
+            {
+                LoadPartitionInCurrentImage(selectPartitionToolStripComboBox.SelectedIndex);
+                CurrentPartitionIndex = selectPartitionToolStripComboBox.SelectedIndex;
+            }
+        }
+
+        private void lstFiles_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Back && lstDirectories.SelectedNode.Parent != null)
+            {
+                lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
+            }
+            else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
+            {
+                if (lstFiles.SelectedItems.Count == 1)
+                {
+                    TiFileSystemObject fso = (TiFileSystemObject)lstFiles.SelectedItems[0].Tag;
+                    if (fso is TiDirectory)
+                    {
+                        var node = FindNode(lstDirectories.Nodes[0], (TiDirectory)fso);
+                        if (node != null)
+                        {
+                            lstDirectories.SelectedNode = node;
+                        }
+                        else
+                        {
+                            throw new Exception("Associated treeview node was not found");
+                        }
+                    }
+                    else
+                    {
+                        //Extract the selected file (and open it?)
+                    }
+                }
+                else if (lstFiles.SelectedItems.Count > 1)
+                {
+                    //Extract all selected objects
+                }
+            }
+        }
+
+        #endregion
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
@@ -1760,15 +1804,6 @@ namespace TotalImage
             lblStatusCapacity.Text = string.Empty;
             lblStatusSize.Text = string.Empty;
             lbStatusPath.Text = string.Empty;
-        }
-
-        private void selectPartitionToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (selectPartitionToolStripComboBox.SelectedIndex != CurrentPartitionIndex)
-            {
-                LoadPartitionInCurrentImage(selectPartitionToolStripComboBox.SelectedIndex);
-                CurrentPartitionIndex = selectPartitionToolStripComboBox.SelectedIndex;
-            }
         }
     }
 }
