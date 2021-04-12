@@ -110,7 +110,6 @@ namespace TotalImage
             sortColumn = Settings.CurrentSettings.FilesSortingColumn;
             splitContainer.SplitterDistance = Settings.CurrentSettings.SplitterDistance;
 
-            lstFiles.ListViewItemSorter = GetListViewItemSorter(sortColumn, sortOrder);
             lstFiles.SetSortIcon(sortColumn, sortOrder);
 
             PopulateRecentList();
@@ -762,15 +761,25 @@ namespace TotalImage
             CloseImage();
         }
 
-        private IComparer GetListViewItemSorter(int sortColumn, SortOrder sortOrder)
+        private static IComparer<ListViewItem> GetListViewItemSorter(int sortColumn, SortOrder sortOrder)
         {
             // Get the sorter for the selected column
             var sorter = FileListViewItemComparer.GetColumnSorter(sortColumn);
 
             if (sortOrder == SortOrder.Descending)
-                sorter = new InvertedComparer(sorter);
+                sorter = new InvertedComparer<ListViewItem>(sorter);
 
             return sorter;
+        }
+
+
+        private void SortListView()
+        {
+            IComparer<ListViewItem> sort = GetListViewItemSorter(sortColumn, sortOrder);
+            currentFolderView.Sort(sort);
+
+            lstFiles.Refresh();
+            lstFiles.SetSortIcon(sortColumn, sortOrder);
         }
 
         private void SortListViewBy(int column)
@@ -794,13 +803,9 @@ namespace TotalImage
                 sortOrder = SortOrder.Ascending;
             }
 
-            // Perform the sort with these new sort options.
-            currentFolderView = sortOrder == SortOrder.Ascending
-                ? currentFolderView.OrderBy(e => e.SubItems[sortColumn].Text).ToList()
-                : currentFolderView.OrderByDescending(e => e.SubItems[sortColumn].Text).ToList();
 
-            lstFiles.Refresh();
-            lstFiles.SetSortIcon(column, sortOrder);
+            // Perform the sort with these new sort options.
+            SortListView();
 
             Settings.CurrentSettings.FilesSortingColumn = column;
             Settings.CurrentSettings.FilesSortOrder = sortOrder;
@@ -1440,6 +1445,7 @@ namespace TotalImage
                 count++;
             }
 
+            SortListView();
             lstFiles.VirtualListSize = count;
 
             lstFiles.EndUpdate();

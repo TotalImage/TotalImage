@@ -53,7 +53,7 @@ namespace TotalImage
             }
         }
 
-        public static IComparer GetColumnSorter(int column)
+        public static IComparer<ListViewItem> GetColumnSorter(int column)
         {
             switch((FileListViewColumn) column)
             {
