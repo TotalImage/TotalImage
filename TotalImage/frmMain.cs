@@ -1347,7 +1347,7 @@ namespace TotalImage
                 //The ".." virtual folder
                 var parentDirItem = new ListViewItem();
                 parentDirItem.Text = "..";
-                parentDirItem.ImageIndex = 0;
+                parentDirItem.ImageKey = "up";
                 parentDirItem.SubItems.Add("");
                 parentDirItem.SubItems.Add("");
                 parentDirItem.SubItems.Add("");
@@ -1611,6 +1611,17 @@ namespace TotalImage
             imgFilesLarge.Images.Add("folder (Hidden)", hiddenLargeIcon);
 
             folderTypeName = GetShellFileType(@"C:\Windows", FileAttributes.Directory);
+
+            var largeIcons = new IntPtr[1];
+            var smallIcons = new IntPtr[1];
+
+            ExtractIconEx("shell32.dll", 45, largeIcons, smallIcons, 1);
+
+            smallIcon = (Icon)Icon.FromHandle(smallIcons[0]).Clone();
+            largeIcon = (Icon)Icon.FromHandle(largeIcons[0]).Clone();
+
+            imgFilesSmall.Images.Add("up", smallIcon);
+            imgFilesLarge.Images.Add("up", largeIcon);
         }
 
         //Finds the node with the specified entry
