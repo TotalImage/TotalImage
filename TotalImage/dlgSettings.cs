@@ -110,7 +110,7 @@ namespace TotalImage
                 case View.Tile: lstViewType.SelectedIndex = 4; break;
             }
 
-            switch (Settings.CurrentSettings.SizeUnits)
+            switch (Settings.CurrentSettings.SizeUnit)
             {
                 case SizeUnits.Bytes: lstSizeUnits.SelectedIndex = 0; break;
                 case SizeUnits.Decimal: lstSizeUnits.SelectedIndex = 1; break;
@@ -168,9 +168,9 @@ namespace TotalImage
 
             switch (lstSizeUnits.SelectedIndex)
             {
-                case 0: Settings.CurrentSettings.SizeUnits = SizeUnits.Bytes; break;
-                case 1: Settings.CurrentSettings.SizeUnits = SizeUnits.Decimal; break;
-                case 2: Settings.CurrentSettings.SizeUnits = SizeUnits.Binary; break;
+                case 0: Settings.CurrentSettings.SizeUnit = SizeUnits.Bytes; break;
+                case 1: Settings.CurrentSettings.SizeUnit = SizeUnits.Decimal; break;
+                case 2: Settings.CurrentSettings.SizeUnit = SizeUnits.Binary; break;
             }
 
             switch (lstViewType.SelectedIndex)

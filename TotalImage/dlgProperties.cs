@@ -38,13 +38,13 @@ namespace TotalImage
             if (entry is IFatFileSystemObject fatObj)
                 lblShortFilename1.Text = fatObj.ShortName;
 
-            lblSize1.Text = Settings.CurrentSettings.SizeUnits.FormatSize(entry.Length, true);
+            lblSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.Length, true);
 
             var fs = (FatFileSystem)entry.FileSystem;
             var clusterSize = fs.BytesPerCluster;
             var sizeOnDisk = (uint)Math.Ceiling(entry.Length / (double)clusterSize) * clusterSize;
 
-            lblSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnits.FormatSize(sizeOnDisk, true);
+            lblSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(sizeOnDisk, true);
 
             if (entry is FileSystems.File file)
                 lblLocation1.Text = file.DirectoryName;
