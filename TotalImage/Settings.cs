@@ -33,6 +33,7 @@ namespace TotalImage
             public Size WindowSize { get; set; } = new Size(1000, 700);
             public Point WindowPosition { get; set; } = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
             public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
+            public bool QueryShellForFileTypeInfo { get; set; } = true;
         }
 
         public static SettingsModel CurrentSettings { get; private set; }
