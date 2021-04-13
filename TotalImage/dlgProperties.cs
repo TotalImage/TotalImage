@@ -30,8 +30,6 @@ namespace TotalImage
         //TODO: VFAT/LFN support, proper size calculations
         public dlgProperties(FileSystemObject entry) : this()
         {
-            string sizeUnitName = Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits);
-
             if (entry == null)
                 throw new ArgumentNullException(nameof(entry), "entry cannot be null!");
 
@@ -40,25 +38,13 @@ namespace TotalImage
             if (entry is IFatFileSystemObject fatObj)
                 lblShortFilename1.Text = fatObj.ShortName;
 
-            lblSize1.Text = $"{entry.Length:n0} B";
-            if (Settings.CurrentSettings.SizeUnits != Settings.SizeUnit.B)
-            {
-                float sizeInUnit = entry.Length / (float)Settings.CurrentSettings.SizeUnits;
-                lblSize1.Text = lblSize1.Text.Insert(0, $"{sizeInUnit:n2} {sizeUnitName} (");
-                lblSize1.Text = lblSize1.Text.Insert(lblSize1.Text.Length, ")");
-            }
+            lblSize1.Text = Settings.CurrentSettings.SizeUnits.FormatSize(entry.Length, true);
 
             var fs = (FatFileSystem)entry.FileSystem;
             var clusterSize = fs.BytesPerCluster;
             var sizeOnDisk = (uint)Math.Ceiling(entry.Length / (double)clusterSize) * clusterSize;
 
-            lblSizeOnDisk1.Text = $"{sizeOnDisk:n0} B";
-            if (Settings.CurrentSettings.SizeUnits != Settings.SizeUnit.B)
-            {
-                float sizeInUnit = sizeOnDisk / (float)Settings.CurrentSettings.SizeUnits;
-                lblSizeOnDisk1.Text = lblSizeOnDisk1.Text.Insert(0, $"{sizeInUnit:n2} {sizeUnitName} (");
-                lblSizeOnDisk1.Text = lblSizeOnDisk1.Text.Insert(lblSizeOnDisk1.Text.Length, ")");
-            }
+            lblSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnits.FormatSize(sizeOnDisk, true);
 
             if (entry is FileSystems.File file)
                 lblLocation1.Text = file.DirectoryName;

@@ -299,7 +299,7 @@ namespace TotalImage
                 var selectedSize = 0ul;
                 foreach (var entry in SelectedItems) selectedSize += entry.Length;
 
-                //DialogResult = MessageBox.Show($"Are you sure that you want to delete {lstFiles.SelectedIndices.Count} item(s) occupying {FormatSize(selectedSize)}?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                //DialogResult = MessageBox.Show($"Are you sure that you want to delete {lstFiles.SelectedIndices.Count} item(s) occupying {Settings.CurrentSettings.SizeUnits.FormatSize(selectedSize)}?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 //if (DialogResult == DialogResult.Yes)
                 {
@@ -605,9 +605,6 @@ namespace TotalImage
             }
         }
 
-        private string FormatSize(ulong size)
-            => $"{(size / (float)Settings.CurrentSettings.SizeUnits):#,0.##} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)}";
-
         private void UpdateStatusBar()
         {
             if (image == null)
@@ -618,7 +615,7 @@ namespace TotalImage
             }
             else
             {
-                lblStatusCapacity.Text = $"{FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)} total";
+                lblStatusCapacity.Text = $"{Settings.CurrentSettings.SizeUnits.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)} total";
 
                 switch (StatusBarState)
                 {
@@ -626,14 +623,14 @@ namespace TotalImage
                     {
                         var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
                         lbStatusPath.Text = dir.FullName;
-                        lblStatusSize.Text = $"{FormatSize(CalculateDirSize())} in {GetFileCount()} item(s)";
+                        lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnits.FormatSize(CalculateDirSize())} in {GetFileCount()} item(s)";
                         break;
                     }
                     case StatusBarStates.OneSelected:
                     {
                         var item = GetSelectedItemData(0);
                         lbStatusPath.Text = item.FullName;
-                        lblStatusSize.Text = $"{FormatSize(item.Length)} in 1 item";
+                        lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnits.FormatSize(item.Length)} in 1 item";
                         break;
                     }
                     case StatusBarStates.MultipleSelected:
@@ -643,7 +640,7 @@ namespace TotalImage
                         foreach (var entry in SelectedItems) selectedSize += entry.Length; 
 
                         lbStatusPath.Text = dir.FullName;
-                        lblStatusSize.Text = $"{FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
+                        lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnits.FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
                         break;
                     }
                 }
@@ -1418,7 +1415,7 @@ namespace TotalImage
                 if (fso is TiDirectory)
                     item.SubItems.Add(string.Empty);
                 else
-                    item.SubItems.Add(FormatSize(fso.Length));
+                    item.SubItems.Add(Settings.CurrentSettings.SizeUnits.FormatSize(fso.Length));
 
                 item.ImageIndex = GetFileTypeIconIndex(fso.Name, fso.Attributes);
 
@@ -1531,7 +1528,7 @@ namespace TotalImage
                     {
                         try
                         {
-                            selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
+                            selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnits.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
                         }
                         catch (InvalidDataException)
                         {
