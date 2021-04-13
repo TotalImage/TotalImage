@@ -1616,10 +1616,10 @@ namespace TotalImage
 
         private string GetFileTypeName(string filename, FileAttributes attributes)
         {
+            var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
+
             if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
             {
-                var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
-
                 if (!fileTypes.ContainsKey(extension))
                     fileTypes.Add(extension, GetShellFileTypeInfo(filename, attributes));
 
@@ -1629,7 +1629,10 @@ namespace TotalImage
             {
                 if (attributes.HasFlag(FileAttributes.Directory))
                     return "File folder";
-                return $"{Path.GetExtension(filename)} file";
+                else if (extension.Length > 0)
+                    return $"{extension.Substring(1).ToUpper()} file";
+                else
+                    return "File";
             }
         }
 
