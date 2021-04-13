@@ -50,9 +50,7 @@ namespace TotalImage
 
             var fs = (FatFileSystem)entry.FileSystem;
             var clusterSize = fs.BytesPerCluster;
-            Debug.WriteLine($"Cluster size: {clusterSize}");
             var sizeOnDisk = (uint)Math.Ceiling(entry.Length / (double)clusterSize) * clusterSize;
-            Debug.WriteLine($"Size on disk: {sizeOnDisk}");
 
             lblSizeOnDisk1.Text = $"{sizeOnDisk:n0} B";
             if (Settings.CurrentSettings.SizeUnits != Settings.SizeUnit.B)

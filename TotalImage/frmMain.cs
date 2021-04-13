@@ -31,6 +31,7 @@ namespace TotalImage
         private int sortColumn;
         private SortOrder sortOrder;
         private string folderTypeName;
+        private TiDirectory lastViewedDir;
 
         private List<ListViewItem> currentFolderView = new List<ListViewItem>();
 
@@ -509,7 +510,7 @@ namespace TotalImage
         private void extract_Click(object sender, EventArgs e)
         {
             var selectedItems = from int x in lstFiles.SelectedIndices
-                select currentFolderView[x].Tag as TiFileSystemObject;
+                                select currentFolderView[x].Tag as TiFileSystemObject;
 
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
             {
@@ -1057,6 +1058,8 @@ namespace TotalImage
 
             if (image != null)
             {
+                lastViewedDir = (TiDirectory)lstDirectories.SelectedNode.Tag;
+
                 var root = new TreeNode(@"\");
                 root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
@@ -1069,9 +1072,21 @@ namespace TotalImage
                 lstDirectories.Nodes.Add(root);
                 lstDirectories.Sort();
                 lstDirectories.EndUpdate();
-                lstDirectories.SelectedNode = lstDirectories.Nodes[0];
 
-                PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+                if (lastViewedDir != null)
+                {
+                    TreeNode? node = FindNode(lstDirectories.Nodes[0], lastViewedDir);
+                    if (node == null)
+                        lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                    else
+                        lstDirectories.SelectedNode = node;
+                }
+                else
+                {
+                    lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                }
+
+                PopulateListView((TiDirectory)lstDirectories.SelectedNode.Tag);
 
                 lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
@@ -1083,6 +1098,8 @@ namespace TotalImage
 
             if (image != null)
             {
+                lastViewedDir = (TiDirectory)lstDirectories.SelectedNode.Tag;
+
                 var root = new TreeNode(@"\");
                 root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
@@ -1095,9 +1112,21 @@ namespace TotalImage
                 lstDirectories.Nodes.Add(root);
                 lstDirectories.Sort();
                 lstDirectories.EndUpdate();
-                lstDirectories.SelectedNode = lstDirectories.Nodes[0];
 
-                PopulateListView(image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+                if (lastViewedDir != null)
+                {
+                    TreeNode? node = FindNode(lstDirectories.Nodes[0], lastViewedDir);
+                    if (node == null)
+                        lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                    else
+                        lstDirectories.SelectedNode = node;
+                }
+                else
+                {
+                    lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                }
+
+                PopulateListView((TiDirectory)lstDirectories.SelectedNode.Tag);
 
                 lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
             }
