@@ -9,6 +9,21 @@ namespace TotalImage
 {
     internal static class ListViewExtensions
     {
+        private static void SetItemState(ListView list, int itemIndex, uint state, uint mask)
+        {
+            ListViewItemMessageParam lvItem = new ListViewItemMessageParam
+            {
+                state = state,
+                stateMask = mask
+            };
+
+            SendMessageListViewItem(list.Handle, (uint)LVM.SETITEMSTATE, new IntPtr(itemIndex), ref lvItem);
+        }
+
+        public static void SelectAllItems(this ListView listView)
+        {
+            SetItemState(listView, -1, 2, 2);
+        }
 
         public static void SetSortIcon(this ListView listView, int columnIndex, SortOrder order)
         {

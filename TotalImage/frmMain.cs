@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -286,12 +284,6 @@ namespace TotalImage
             Settings.CurrentSettings.FilesView = View.Details;
         }
 
-        private void viewTiles_Click(object sender, EventArgs e)
-        {
-            lstFiles.View = View.Tile;
-            Settings.CurrentSettings.FilesView = View.Tile;
-        }
-
         //Deletes a file or folder
         //TODO: Implement deletion here and in the FS/container
         private void delete_Click(object sender, EventArgs e)
@@ -315,7 +307,7 @@ namespace TotalImage
                         return;
                     }
                 }
-                
+
                 throw new NotImplementedException("This feature is not implemented yet");
             }
             else if (lstDirectories.Focused)
@@ -517,7 +509,7 @@ namespace TotalImage
         private void extract_Click(object sender, EventArgs e)
         {
             var selectedItems = from int x in lstFiles.SelectedIndices
-                select GetSelectedItemData(x);
+                select currentFolderView[x].Tag as TiFileSystemObject;
 
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
             {
@@ -674,8 +666,10 @@ namespace TotalImage
                 var selectedSize = 0ul;
                 foreach (int idx in lstFiles.SelectedIndices)
                 {
-                    TiFileSystemObject entry = GetSelectedItemData(idx);
-                    selectedSize += entry.Length;
+                    if (currentFolderView[idx].Tag is TiFileSystemObject entry)
+                    {
+                        selectedSize += entry.Length;
+                    }
                 }
 
                 lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} items" : "{0:n2} {1} in {2} items", selectedSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), lstFiles.SelectedIndices.Count);
@@ -939,10 +933,7 @@ namespace TotalImage
         private void selectAll_Click(object sender, EventArgs e)
         {
             lstFiles.Focus();
-            foreach (ListViewItem lvi in currentFolderView)
-            {
-                lvi.Selected = true;
-            }
+            lstFiles.SelectAllItems();
         }
 
         private void lstFiles_DragEnter(object sender, DragEventArgs e)
@@ -1153,14 +1144,12 @@ namespace TotalImage
                 case 3: modifiedToolStripMenuItem.Checked = true; break;
             }
 
-            largeIconsToolStripMenuItem.Checked = smallIconsToolStripMenuItem.Checked = detailsToolStripMenuItem.Checked =
-                tilesToolStripMenuItem.Checked = listToolStripMenuItem.Checked = false;
+            largeIconsToolStripMenuItem.Checked = smallIconsToolStripMenuItem.Checked = detailsToolStripMenuItem.Checked = listToolStripMenuItem.Checked = false;
             switch (Settings.CurrentSettings.FilesView)
             {
                 case View.LargeIcon: largeIconsToolStripMenuItem.Checked = true; break;
                 case View.SmallIcon: smallIconsToolStripMenuItem.Checked = true; break;
                 case View.Details: detailsToolStripMenuItem.Checked = true; break;
-                case View.Tile: tilesToolStripMenuItem.Checked = true; break;
                 case View.List: listToolStripMenuItem.Checked = true; break;
             }
 
@@ -1181,14 +1170,12 @@ namespace TotalImage
 
         private void viewToolStripButton_DropDownOpening(object sender, EventArgs e)
         {
-            largeIconsToolStripMenuItem1.Checked = smallIconsToolStripMenuItem1.Checked = detailsToolStripMenuItem1.Checked =
-               tilesToolStripMenuItem1.Checked = listToolStripMenuItem1.Checked = false;
+            largeIconsToolStripMenuItem1.Checked = smallIconsToolStripMenuItem1.Checked = detailsToolStripMenuItem1.Checked = listToolStripMenuItem1.Checked = false;
             switch (Settings.CurrentSettings.FilesView)
             {
                 case View.LargeIcon: largeIconsToolStripMenuItem1.Checked = true; break;
                 case View.SmallIcon: smallIconsToolStripMenuItem1.Checked = true; break;
                 case View.Details: detailsToolStripMenuItem1.Checked = true; break;
-                case View.Tile: tilesToolStripMenuItem1.Checked = true; break;
                 case View.List: listToolStripMenuItem1.Checked = true; break;
             }
 
