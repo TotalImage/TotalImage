@@ -49,13 +49,14 @@ Acorn 800k Create functionality currently incorrectly writes a broken bootsector
 | Master Boot Record | ✔ Yes | ❌ No | ❌ No |
 | GUID Partition Table | ✔ Yes | ❌ No | ❌ No |
 
-Only FAT12 and FAT16 primary partitions are currently supported.
+Only FAT12, FAT16 and FAT32 primary partitions are currently supported (see below).
 
 ## File systems and extensions
 | Name | Read | Write | Create |
 | --- | --- | --- | --- |
 | FAT12 | ⚠ Partial | ❌ No | ✔ Yes |
 | FAT16 | ⚠ Partial | ❌ No | ❌ No |
+| FAT32 | ⚠ Partial | ❌ No | ❌ No |
 
 Read functionality is currently limited to listing directories, displaying attributes and rudimentary file extraction.
 
