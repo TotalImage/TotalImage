@@ -515,6 +515,10 @@ namespace TotalImage
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
             {
                 using dlgExtract dlg = new dlgExtract();
+                int count = selectedItems.Count();
+                string extractString = $"Extract {count} selected {(count > 1 ? "items" : "item")}";
+                dlg.Text = extractString;
+                dlg.lblPath.Text = $"{extractString} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     ExtractFiles(selectedItems, dlg.TargetPath, dlg.ExtractType, dlg.OpenFolder);
