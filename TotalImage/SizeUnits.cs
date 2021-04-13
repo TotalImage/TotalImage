@@ -15,8 +15,10 @@ namespace TotalImage
 
         private static int GetPrefixIndexForSize(this SizeUnits sizeUnit, ulong size)
         {
+            if (sizeUnit == SizeUnits.Bytes) return 0;
+
             var i = 0;
-            while (size / (ulong)sizeUnit > 0)
+            while ((size /= (ulong)sizeUnit) > 0)
                 i++;
 
             return i;
