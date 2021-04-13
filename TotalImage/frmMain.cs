@@ -1345,7 +1345,7 @@ namespace TotalImage
                 //The ".." virtual folder
                 var parentDirItem = new ListViewItem();
                 parentDirItem.Text = "..";
-                parentDirItem.ImageKey = "up";
+                parentDirItem.ImageIndex = imgFilesLarge.Images.IndexOfKey("up"); //Workaround because setting ImageKey no longer works for some reason...
                 parentDirItem.SubItems.Add("");
                 parentDirItem.SubItems.Add("");
                 parentDirItem.SubItems.Add("");
