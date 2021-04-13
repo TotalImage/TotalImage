@@ -285,42 +285,23 @@ namespace TotalImage
             Settings.CurrentSettings.FilesView = View.Details;
         }
 
+        private IEnumerable<TiFileSystemObject> SelectedItems
+            => from x in lstFiles.SelectedIndices.Cast<int>()
+                where currentFolderView[x].Tag is TiFileSystemObject 
+                select (TiFileSystemObject)currentFolderView[x].Tag;
+
         //Deletes a file or folder
         //TODO: Implement deletion here and in the FS/container
         private void delete_Click(object sender, EventArgs e)
         {
             if (lstFiles.Focused)
             {
-                /* Original code. Will re-write it.
-                if (lstFiles.SelectedIndices.Count == 1)
-                {
-                    DialogResult = MessageBox.Show("Are you sure you want to delete 1 item occupying <x> bytes?", "Delete item", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (DialogResult == DialogResult.No || DialogResult == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-                }
-                else if (lstFiles.SelectedIndices.Count > 1)
-                {
-                    //First get the total size of all selected items
-                    DialogResult = MessageBox.Show($"Are you sure you want to delete {lstFiles.SelectedIndices.Count} items occupying <x> bytes?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (DialogResult == DialogResult.No || DialogResult == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-                }
-                throw new NotImplementedException("This feature is not implemented yet");
-                */
-                ulong selectedSize = 0ul;
-                foreach (int idx in lstFiles.SelectedIndices)
-                {
-                    if (currentFolderView[idx].Tag is TiFileSystemObject entry)
-                    {
-                        selectedSize += entry.Length;
-                    }
-                }
-                DialogResult = MessageBox.Show($"Are you sure that you want to delete {(lstFiles.SelectedIndices.Count > 1 ? $"{lstFiles.SelectedIndices.Count} items" : "1 item")} occupying {string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1}" : "{0:n2} {1}", selectedSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), lstFiles.SelectedIndices.Count)}?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (DialogResult == DialogResult.Yes)
+                var selectedSize = 0ul;
+                foreach (var entry in SelectedItems) selectedSize += entry.Length;
+
+                //DialogResult = MessageBox.Show($"Are you sure that you want to delete {lstFiles.SelectedIndices.Count} item(s) occupying {FormatSize(selectedSize)}?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                //if (DialogResult == DialogResult.Yes)
                 {
                     throw new NotImplementedException("This feature is not implemented yet");
                 }
@@ -599,8 +580,78 @@ namespace TotalImage
             }
         }
 
+        enum StatusBarStates
+        {
+            NoneSelected,
+            OneSelected,
+            MultipleSelected
+        }
+
+        StatusBarStates StatusBarState
+        {
+            get
+            {
+                switch (lstFiles.SelectedIndices.Count)
+                {
+                    case 0:
+                        return StatusBarStates.NoneSelected;
+                    case 1:
+                        if (currentFolderView[lstFiles.SelectedIndices[0]].Text == "..")
+                            return StatusBarStates.NoneSelected;
+                        return StatusBarStates.OneSelected;
+                    default:
+                        return StatusBarStates.MultipleSelected;
+                }
+            }
+        }
+
+        private string FormatSize(ulong size)
+            => $"{(size / (float)Settings.CurrentSettings.SizeUnits):0.##} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)}";
+
+        private void UpdateStatusBar()
+        {
+            if (image == null)
+            {
+                lblStatusCapacity.Text = string.Empty;
+                lbStatusPath.Text = string.Empty;
+                lblStatusSize.Text = string.Empty;
+            }
+            else
+            {
+                lblStatusCapacity.Text = $"{FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)} total";
+
+                switch (StatusBarState)
+                {
+                    case StatusBarStates.NoneSelected:
+                    {
+                        var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
+                        lbStatusPath.Text = dir.FullName;
+                        lblStatusSize.Text = $"{FormatSize(CalculateDirSize())} in {GetFileCount()} item(s)";
+                        break;
+                    }
+                    case StatusBarStates.OneSelected:
+                    {
+                        var item = GetSelectedItemData(0);
+                        lbStatusPath.Text = item.FullName;
+                        lblStatusSize.Text = $"{FormatSize(item.Length)} in 1 item";
+                        break;
+                    }
+                    case StatusBarStates.MultipleSelected:
+                    {
+                        var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
+                        var selectedSize = 0ul;
+                        foreach (var entry in SelectedItems) selectedSize += entry.Length; 
+
+                        lbStatusPath.Text = dir.FullName;
+                        lblStatusSize.Text = $"{FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
+                        break;
+                    }
+                }
+            }
+        }
+
         //TODO: Implement status bar stuff based on the selected item in the listview. This includes proper path, size, etc.
-        private void lstFiles_SelectedIndexChanged_Method() // This method will be used more than once, thus it is separated from the main event.
+        private void lstFiles_SelectedIndexChanged(object sender, EventArgs e) // This method will be used more than once, thus it is separated from the main event.
         {
             if (image != null)
             {
@@ -623,13 +674,7 @@ namespace TotalImage
                     extractToolStripButton.Enabled = false;
                     propertiesToolStripButton.Enabled = false;
 
-                    var path = lstDirectories.SelectedNode.FullPath;
-                    if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
-                        path += lstDirectories.PathSeparator;
-
-                    lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
-
-                    lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", CalculateDirSize() / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), GetFileCount());
+                    UpdateStatusBar();
                 }
                 else if (lstFiles.SelectedIndices.Count == 1)
                 {
@@ -653,8 +698,7 @@ namespace TotalImage
                     extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
                     propertiesToolStripButton.Enabled = true;
 
-                    lbStatusPath.Text = entry.FullName;
-                    lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in 1 item" : "{0:n2} {1} in 1 item", entry.Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
+                    UpdateStatusBar();
                 }
                 else
                 {
@@ -679,22 +723,10 @@ namespace TotalImage
                     if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
                         path += lstDirectories.PathSeparator;
 
-                    lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
-
-                    var selectedSize = 0ul;
-                    foreach (int idx in lstFiles.SelectedIndices)
-                    {
-                        if (currentFolderView[idx].Tag is TiFileSystemObject entry)
-                        {
-                            selectedSize += entry.Length;
-                        }
-                    }
-
-                    lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} items" : "{0:n2} {1} in {2} items", selectedSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), lstFiles.SelectedIndices.Count);
+                    UpdateStatusBar();
                 }
             }
         }
-        private void lstFiles_SelectedIndexChanged(object sender, EventArgs e) => lstFiles_SelectedIndexChanged_Method();
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -717,7 +749,7 @@ namespace TotalImage
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 SyncUIWithSettings();
-                lstFiles_SelectedIndexChanged_Method();
+                UpdateStatusBar();
             }
         }
 
@@ -878,13 +910,8 @@ namespace TotalImage
                     dirSize += entry.Length;
                 }
             }
-            lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", dirSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), fileCount);
-
-            var path = lstDirectories.SelectedNode.FullPath;
-            if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
-                path += lstDirectories.PathSeparator;
-
-            lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
+            
+            UpdateStatusBar();
 
             if (lstDirectories.SelectedNode == null)
             {
@@ -1109,7 +1136,7 @@ namespace TotalImage
 
                 PopulateListView((TiDirectory)lstDirectories.SelectedNode.Tag);
 
-                lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
+                lblStatusCapacity.Text = $"{FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)} total |";
             }
         }
 
@@ -1378,7 +1405,7 @@ namespace TotalImage
                 if (fso is TiDirectory)
                     item.SubItems.Add(string.Empty);
                 else
-                    item.SubItems.Add(string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1}" : "{0:n2} {1}", fso.Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)));
+                    item.SubItems.Add(FormatSize(fso.Length));
 
                 item.ImageIndex = GetFileTypeIconIndex(fso.Name, fso.Attributes);
 
@@ -1491,7 +1518,7 @@ namespace TotalImage
                     {
                         try
                         {
-                            selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {image.PartitionTable.Partitions[i].Length / (int)Settings.CurrentSettings.SizeUnits} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)})");
+                            selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
                         }
                         catch (InvalidDataException)
                         {
@@ -1530,8 +1557,6 @@ namespace TotalImage
             lstDirectories.SelectedNode = lstDirectories.Nodes[0];
 
             PopulateListView(image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
-
-            lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
 
             EnableUI();
 
@@ -1827,9 +1852,7 @@ namespace TotalImage
             lstFiles.VirtualListSize = 0;
             selectPartitionToolStripComboBox.Items.Clear();
             DisableUI();
-            lblStatusCapacity.Text = string.Empty;
-            lblStatusSize.Text = string.Empty;
-            lbStatusPath.Text = string.Empty;
+            UpdateStatusBar();
         }
 
         private TiFileSystemObject GetSelectedItemData(int idx)
