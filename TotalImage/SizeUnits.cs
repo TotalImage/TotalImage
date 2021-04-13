@@ -14,13 +14,23 @@ namespace TotalImage
         static readonly char[] prefixes = { '☢', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' };
 
         private static int GetPrefixIndexForSize(this SizeUnits sizeUnit, ulong size)
-            => (int)Math.Log(size, (double)sizeUnit);
+        {
+            var i = 0;
+            while (size / (ulong)sizeUnit > 0)
+                i++;
+
+            return i;
+        }
 
         public static string FormatSize(this SizeUnits sizeUnit, ulong size)
         {
             var prefix = sizeUnit.GetPrefixIndexForSize(size);
 
-            double formattedSize = size / Math.Pow(size, (double)prefix);
+            var denominator = 1ul;
+            for (var i = 0; i < prefix; i++)
+                denominator *= (ulong)sizeUnit;
+
+            var formattedSize = size / denominator;
 
             if (prefix == 0)
                 sizeUnit = SizeUnits.Bytes;
