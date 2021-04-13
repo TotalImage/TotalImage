@@ -116,8 +116,6 @@ namespace TotalImage
                     CurrentSettings.ExtractPreserveAttributes = settings.ExtractPreserveAttributes;
                     CurrentSettings.ExtractPreserveDates = settings.ExtractPreserveDates;
                 }
-
-                MessageBox.Show("The settings have been changed and reloaded.", "TotalImage", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (IOException)
             {
