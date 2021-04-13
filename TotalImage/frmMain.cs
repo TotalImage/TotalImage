@@ -606,7 +606,7 @@ namespace TotalImage
         }
 
         private string FormatSize(ulong size)
-            => $"{(size / (float)Settings.CurrentSettings.SizeUnits):0.##} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)}";
+            => $"{(size / (float)Settings.CurrentSettings.SizeUnits):#,0.##} {Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits)}";
 
         private void UpdateStatusBar()
         {
