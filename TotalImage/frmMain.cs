@@ -1336,6 +1336,7 @@ namespace TotalImage
         private void PopulateListView(TiDirectory dir)
         {
             lstFiles.BeginUpdate();
+            lstFiles.SelectedIndices.Clear();
             currentFolderView.Clear();
 
             int count = 0;
