@@ -43,15 +43,6 @@ namespace TotalImage
 
         private static FileSystemWatcher settingsWatcher;
 
-        public enum SizeUnit
-        {
-            B = 1,
-            KB = 1000,
-            KiB = 1024,
-            MB = 1000000,
-            MiB = 1048576
-        }
-
         //Default folder options for extraction
         public enum FolderExtract
         {

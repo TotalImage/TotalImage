@@ -48,11 +48,5 @@ namespace TotalImage
 
         public static string FormatSize(this SizeUnits sizeUnit, ulong size, bool includeBytes)
             => includeBytes ? $"{sizeUnit.FormatSize(size)} ({SizeUnits.Bytes.FormatSize(size)})" : sizeUnit.FormatSize(size);
-
-        public static string FormatSize(this Settings.SizeUnit sizeUnit, ulong size)
-            => $"{(size / (float)sizeUnit):#,0.##} {Enum.GetName(typeof(Settings.SizeUnit), sizeUnit)}";
-
-        public static string FormatSize(this Settings.SizeUnit sizeUnit, ulong size, bool includeBytes)
-            => includeBytes ? $"{sizeUnit.FormatSize(size)} ({Settings.SizeUnit.B.FormatSize(size)})" : sizeUnit.FormatSize(size);
     }
 }
