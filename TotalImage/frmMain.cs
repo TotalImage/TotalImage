@@ -291,6 +291,7 @@ namespace TotalImage
         {
             if (lstFiles.Focused)
             {
+                /* Original code. Will re-write it.
                 if (lstFiles.SelectedIndices.Count == 1)
                 {
                     DialogResult = MessageBox.Show("Are you sure you want to delete 1 item occupying <x> bytes?", "Delete item", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -308,8 +309,21 @@ namespace TotalImage
                         return;
                     }
                 }
-
                 throw new NotImplementedException("This feature is not implemented yet");
+                */
+                ulong selectedSize = 0ul;
+                foreach (int idx in lstFiles.SelectedIndices)
+                {
+                    if (currentFolderView[idx].Tag is TiFileSystemObject entry)
+                    {
+                        selectedSize += entry.Length;
+                    }
+                }
+                DialogResult = MessageBox.Show($"Are you sure that you want to delete {(lstFiles.SelectedIndices.Count > 1 ? $"{lstFiles.SelectedIndices.Count} items" : "1 item")} occupying {string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1}" : "{0:n2} {1}", selectedSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), lstFiles.SelectedIndices.Count)}?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (DialogResult == DialogResult.Yes)
+                {
+                    throw new NotImplementedException("This feature is not implemented yet");
+                }
             }
             else if (lstDirectories.Focused)
             {
@@ -586,97 +600,101 @@ namespace TotalImage
         }
 
         //TODO: Implement status bar stuff based on the selected item in the listview. This includes proper path, size, etc.
-        private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
+        private void lstFiles_SelectedIndexChanged_Method() // This method will be used more than once, thus it is separated from the main event.
         {
-            if (lstFiles.SelectedIndices.Count == 0 || lstFiles.SelectedIndices.Count == 1 && currentFolderView[lstFiles.SelectedIndices[0]].Text == "..")
+            if (image != null)
             {
-                deleteToolStripMenuItem.Enabled = false;
-                deleteToolStripMenuItem2.Enabled = false;
-                extractToolStripMenuItem.Enabled = false;
-                extractToolStripMenuItem2.Enabled = false;
-                propertiesToolStripMenuItem.Enabled = false;
-                propertiesToolStripMenuItem2.Enabled = false;
-                renameToolStripMenuItem2.Enabled = false;
-                renameToolStripMenuItem.Enabled = false;
-                undeleteToolStripMenuItem.Enabled = false;
-                undeleteToolStripMenuItem2.Enabled = false;
-                newFolderToolStripMenuItem.Enabled = false;
-                newFolderToolStripMenuItem2.Enabled = false;
-
-                deleteToolStripButton.Enabled = false;
-                extractToolStripButton.Enabled = false;
-                propertiesToolStripButton.Enabled = false;
-
-                var path = lstDirectories.SelectedNode.FullPath;
-                if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
-                    path += lstDirectories.PathSeparator;
-
-                lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
-
-                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", CalculateDirSize() / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), GetFileCount());
-            }
-            else if (lstFiles.SelectedIndices.Count == 1)
-            {
-                propertiesToolStripMenuItem.Enabled = true;
-                propertiesToolStripMenuItem2.Enabled = true;
-
-                //Check if selected item is a deleted entry and enable the UI accordingly
-                TiFileSystemObject entry = GetSelectedItemData(0);
-                undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
-                undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
-                deleteToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                deleteToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-                extractToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                extractToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-                renameToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                renameToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-                newFolderToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                newFolderToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-
-                deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
-                extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
-                propertiesToolStripButton.Enabled = true;
-
-                lbStatusPath.Text = entry.FullName;
-                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in 1 item" : "{0:n2} {1} in 1 item", entry.Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
-            }
-            else
-            {
-                deleteToolStripMenuItem.Enabled = true;
-                deleteToolStripMenuItem2.Enabled = true;
-                extractToolStripMenuItem.Enabled = true;
-                extractToolStripMenuItem2.Enabled = true;
-                propertiesToolStripMenuItem.Enabled = true;
-                propertiesToolStripMenuItem2.Enabled = true;
-                renameToolStripMenuItem2.Enabled = false;
-                renameToolStripMenuItem.Enabled = false;
-                undeleteToolStripMenuItem.Enabled = false;
-                undeleteToolStripMenuItem2.Enabled = false;
-                newFolderToolStripMenuItem.Enabled = false;
-                newFolderToolStripMenuItem2.Enabled = false;
-
-                deleteToolStripButton.Enabled = true;
-                extractToolStripButton.Enabled = true;
-                propertiesToolStripButton.Enabled = false;
-
-                var path = lstDirectories.SelectedNode.FullPath;
-                if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
-                    path += lstDirectories.PathSeparator;
-
-                lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
-
-                var selectedSize = 0ul;
-                foreach (int idx in lstFiles.SelectedIndices)
+                if (lstFiles.SelectedIndices.Count == 0 || lstFiles.SelectedIndices.Count == 1 && currentFolderView[lstFiles.SelectedIndices[0]].Text == "..")
                 {
-                    if (currentFolderView[idx].Tag is TiFileSystemObject entry)
-                    {
-                        selectedSize += entry.Length;
-                    }
-                }
+                    deleteToolStripMenuItem.Enabled = false;
+                    deleteToolStripMenuItem2.Enabled = false;
+                    extractToolStripMenuItem.Enabled = false;
+                    extractToolStripMenuItem2.Enabled = false;
+                    propertiesToolStripMenuItem.Enabled = false;
+                    propertiesToolStripMenuItem2.Enabled = false;
+                    renameToolStripMenuItem2.Enabled = false;
+                    renameToolStripMenuItem.Enabled = false;
+                    undeleteToolStripMenuItem.Enabled = false;
+                    undeleteToolStripMenuItem2.Enabled = false;
+                    newFolderToolStripMenuItem.Enabled = false;
+                    newFolderToolStripMenuItem2.Enabled = false;
 
-                lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} items" : "{0:n2} {1} in {2} items", selectedSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), lstFiles.SelectedIndices.Count);
+                    deleteToolStripButton.Enabled = false;
+                    extractToolStripButton.Enabled = false;
+                    propertiesToolStripButton.Enabled = false;
+
+                    var path = lstDirectories.SelectedNode.FullPath;
+                    if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
+                        path += lstDirectories.PathSeparator;
+
+                    lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
+
+                    lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} item(s)" : "{0:n2} {1} in {2} item(s)", CalculateDirSize() / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), GetFileCount());
+                }
+                else if (lstFiles.SelectedIndices.Count == 1)
+                {
+                    propertiesToolStripMenuItem.Enabled = true;
+                    propertiesToolStripMenuItem2.Enabled = true;
+
+                    //Check if selected item is a deleted entry and enable the UI accordingly
+                    TiFileSystemObject entry = GetSelectedItemData(0);
+                    undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
+                    undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
+                    deleteToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                    deleteToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                    extractToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                    extractToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                    renameToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                    renameToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                    newFolderToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                    newFolderToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+
+                    deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
+                    extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
+                    propertiesToolStripButton.Enabled = true;
+
+                    lbStatusPath.Text = entry.FullName;
+                    lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in 1 item" : "{0:n2} {1} in 1 item", entry.Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
+                }
+                else
+                {
+                    deleteToolStripMenuItem.Enabled = true;
+                    deleteToolStripMenuItem2.Enabled = true;
+                    extractToolStripMenuItem.Enabled = true;
+                    extractToolStripMenuItem2.Enabled = true;
+                    propertiesToolStripMenuItem.Enabled = true;
+                    propertiesToolStripMenuItem2.Enabled = true;
+                    renameToolStripMenuItem2.Enabled = false;
+                    renameToolStripMenuItem.Enabled = false;
+                    undeleteToolStripMenuItem.Enabled = false;
+                    undeleteToolStripMenuItem2.Enabled = false;
+                    newFolderToolStripMenuItem.Enabled = false;
+                    newFolderToolStripMenuItem2.Enabled = false;
+
+                    deleteToolStripButton.Enabled = true;
+                    extractToolStripButton.Enabled = true;
+                    propertiesToolStripButton.Enabled = false;
+
+                    var path = lstDirectories.SelectedNode.FullPath;
+                    if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
+                        path += lstDirectories.PathSeparator;
+
+                    lbStatusPath.Text = path == lstDirectories.PathSeparator ? path : path.Substring(lstDirectories.PathSeparator.Length);
+
+                    var selectedSize = 0ul;
+                    foreach (int idx in lstFiles.SelectedIndices)
+                    {
+                        if (currentFolderView[idx].Tag is TiFileSystemObject entry)
+                        {
+                            selectedSize += entry.Length;
+                        }
+                    }
+
+                    lblStatusSize.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} in {2} items" : "{0:n2} {1} in {2} items", selectedSize / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits), lstFiles.SelectedIndices.Count);
+                }
             }
         }
+        private void lstFiles_SelectedIndexChanged(object sender, EventArgs e) => lstFiles_SelectedIndexChanged_Method();
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -699,6 +717,7 @@ namespace TotalImage
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 SyncUIWithSettings();
+                lstFiles_SelectedIndexChanged_Method();
             }
         }
 
@@ -1053,7 +1072,8 @@ namespace TotalImage
             }
         }
 
-        private void showHiddenItems_Click(object sender, EventArgs e)
+        // Used for the following two events.
+        private void updateListView_Click()
         {
             Settings.CurrentSettings.ShowHiddenItems = !Settings.CurrentSettings.ShowHiddenItems;
 
@@ -1093,45 +1113,9 @@ namespace TotalImage
             }
         }
 
-        private void showDeletedItems_Click(object sender, EventArgs e)
-        {
-            Settings.CurrentSettings.ShowDeletedItems = !Settings.CurrentSettings.ShowDeletedItems;
+        private void showHiddenItems_Click(object sender, EventArgs e) => updateListView_Click();
 
-            if (image != null)
-            {
-                lastViewedDir = (TiDirectory)lstDirectories.SelectedNode.Tag;
-
-                var root = new TreeNode(@"\");
-                root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                root.Tag = image.PartitionTable.Partitions[0].FileSystem.RootDirectory;
-
-                lstDirectories.BeginUpdate();
-                PopulateTreeView(root, image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
-
-                lstDirectories.Nodes.Clear();
-                lstDirectories.Nodes.Add(root);
-                lstDirectories.Sort();
-                lstDirectories.EndUpdate();
-
-                if (lastViewedDir != null)
-                {
-                    TreeNode? node = FindNode(lstDirectories.Nodes[0], lastViewedDir);
-                    if (node == null)
-                        lstDirectories.SelectedNode = lstDirectories.Nodes[0];
-                    else
-                        lstDirectories.SelectedNode = node;
-                }
-                else
-                {
-                    lstDirectories.SelectedNode = lstDirectories.Nodes[0];
-                }
-
-                PopulateListView((TiDirectory)lstDirectories.SelectedNode.Tag);
-
-                lblStatusCapacity.Text = string.Format(Settings.CurrentSettings.SizeUnits == Settings.SizeUnit.B ? "{0:n0} {1} total |" : "{0:n2} {1} total |", image.PartitionTable.Partitions[CurrentPartitionIndex].Length / (float)Settings.CurrentSettings.SizeUnits, Enum.GetName(typeof(Settings.SizeUnit), Settings.CurrentSettings.SizeUnits));
-            }
-        }
+        private void showDeletedItems_Click(object sender, EventArgs e) => updateListView_Click();
 
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
         {
