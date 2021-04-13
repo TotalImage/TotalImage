@@ -1100,7 +1100,7 @@ namespace TotalImage
         }
 
         // Used for the following two events.
-        private void updateListView_Click()
+        private void ResetView()
         {
             Settings.CurrentSettings.ShowHiddenItems = !Settings.CurrentSettings.ShowHiddenItems;
 
@@ -1135,14 +1135,28 @@ namespace TotalImage
                 }
 
                 PopulateListView((TiDirectory)lstDirectories.SelectedNode.Tag);
-
-                lblStatusCapacity.Text = $"{FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)} total |";
             }
         }
 
-        private void showHiddenItems_Click(object sender, EventArgs e) => updateListView_Click();
+        private void showHiddenItems_Click(object sender, EventArgs e)
+        {
+            Settings.CurrentSettings.ShowHiddenItems = !Settings.CurrentSettings.ShowHiddenItems;
 
-        private void showDeletedItems_Click(object sender, EventArgs e) => updateListView_Click();
+            showHiddenItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showHiddenItemsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowHiddenItems;
+
+            ResetView();
+        }
+
+        private void showDeletedItems_Click(object sender, EventArgs e)
+        {
+            Settings.CurrentSettings.ShowDeletedItems = !Settings.CurrentSettings.ShowDeletedItems;
+
+            showDeletedItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowDeletedItems;
+            showDeletedItemsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowDeletedItems;
+
+            ResetView();
+        }
 
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
         {
