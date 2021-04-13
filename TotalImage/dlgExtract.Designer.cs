@@ -187,7 +187,6 @@
 
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Label lblPath;
         private System.Windows.Forms.TextBox txtPath;
         private System.Windows.Forms.CheckBox cbxOpenFolder;
         private System.Windows.Forms.RadioButton rbnIgnoreFolders;
@@ -195,5 +194,6 @@
         private System.Windows.Forms.RadioButton rbnPreserveDirs;
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Panel pnlBottom;
+        internal System.Windows.Forms.Label lblPath;
     }
 }
