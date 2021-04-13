@@ -112,11 +112,9 @@ namespace TotalImage
 
             switch (Settings.CurrentSettings.SizeUnits)
             {
-                case Settings.SizeUnit.B: lstSizeUnits.SelectedIndex = 0; break;
-                case Settings.SizeUnit.KB: lstSizeUnits.SelectedIndex = 1; break;
-                case Settings.SizeUnit.KiB: lstSizeUnits.SelectedIndex = 2; break;
-                case Settings.SizeUnit.MB: lstSizeUnits.SelectedIndex = 3; break;
-                case Settings.SizeUnit.MiB: lstSizeUnits.SelectedIndex = 4; break;
+                case SizeUnits.Bytes: lstSizeUnits.SelectedIndex = 0; break;
+                case SizeUnits.Decimal: lstSizeUnits.SelectedIndex = 1; break;
+                case SizeUnits.Binary: lstSizeUnits.SelectedIndex = 2; break;
             }
 
             switch (Settings.CurrentSettings.DefaultExtractType)
@@ -170,11 +168,9 @@ namespace TotalImage
 
             switch (lstSizeUnits.SelectedIndex)
             {
-                case 0: Settings.CurrentSettings.SizeUnits = Settings.SizeUnit.B; break;
-                case 1: Settings.CurrentSettings.SizeUnits = Settings.SizeUnit.KB; break;
-                case 2: Settings.CurrentSettings.SizeUnits = Settings.SizeUnit.KiB; break;
-                case 3: Settings.CurrentSettings.SizeUnits = Settings.SizeUnit.MB; break;
-                case 4: Settings.CurrentSettings.SizeUnits = Settings.SizeUnit.MiB; break;
+                case 0: Settings.CurrentSettings.SizeUnits = SizeUnits.Bytes; break;
+                case 1: Settings.CurrentSettings.SizeUnits = SizeUnits.Decimal; break;
+                case 2: Settings.CurrentSettings.SizeUnits = SizeUnits.Binary; break;
             }
 
             switch (lstViewType.SelectedIndex)

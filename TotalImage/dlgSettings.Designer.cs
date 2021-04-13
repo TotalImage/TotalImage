@@ -290,11 +290,9 @@
             this.lstSizeUnits.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstSizeUnits.FormattingEnabled = true;
             this.lstSizeUnits.Items.AddRange(new object[] {
-            "Bytes (B)",
-            "Kilobytes (KB = 1000 B)",
-            "Kibibytes (KiB = 1024 B)",
-            "Megabytes (MB = 1000 KB)",
-            "Mebibytes (MiB = 1024 KiB)"});
+            "Bytes",
+            "Decimal units (1000)",
+            "Binary units (1024)"});
             this.lstSizeUnits.Location = new System.Drawing.Point(214, 33);
             this.lstSizeUnits.Name = "lstSizeUnits";
             this.lstSizeUnits.Size = new System.Drawing.Size(170, 23);

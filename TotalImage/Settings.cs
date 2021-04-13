@@ -22,7 +22,7 @@ namespace TotalImage
             public bool ShowCommandBar { get; set; } = true;
             public bool ShowDirectoryTree { get; set; } = true;
             public bool ShowStatusBar { get; set; } = true;
-            public SizeUnit SizeUnits { get; set; } = SizeUnit.B;
+            public SizeUnits SizeUnits { get; set; } = SizeUnits.Bytes;
             public string DefaultExtractPath { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             public FolderExtract DefaultExtractType { get; set; } = FolderExtract.Preserve;
             public bool ExtractAlwaysAsk { get; set; } = true;
@@ -147,7 +147,7 @@ namespace TotalImage
             CurrentSettings.OpenFolderAfterExtract = true;
             CurrentSettings.DefaultExtractType = FolderExtract.Preserve;
             CurrentSettings.DefaultExtractPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            CurrentSettings.SizeUnits = SizeUnit.B;
+            CurrentSettings.SizeUnits = SizeUnits.Bytes;
             CurrentSettings.ShowCommandBar = true;
             CurrentSettings.ShowDeletedItems = false;
             CurrentSettings.ShowDirectoryTree = true;
