@@ -749,6 +749,7 @@ namespace TotalImage
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 SyncUIWithSettings();
+                ResetView();
                 UpdateStatusBar();
             }
         }
@@ -1102,8 +1103,6 @@ namespace TotalImage
         // Used for the following two events.
         private void ResetView()
         {
-            Settings.CurrentSettings.ShowHiddenItems = !Settings.CurrentSettings.ShowHiddenItems;
-
             if (image != null)
             {
                 lastViewedDir = (TiDirectory)lstDirectories.SelectedNode.Tag;
@@ -1630,7 +1629,7 @@ namespace TotalImage
                 if (attributes.HasFlag(FileAttributes.Directory))
                     return "File folder";
                 else if (extension.Length > 0)
-                    return $"{extension.Substring(1).ToUpper()} file";
+                    return $"{extension.Substring(1).ToUpper()} File";
                 else
                     return "File";
             }
