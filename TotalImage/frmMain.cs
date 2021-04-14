@@ -610,12 +610,29 @@ namespace TotalImage
             if (image == null)
             {
                 lblStatusCapacity.Text = string.Empty;
+                lblStatusFreeCapacity.Text = string.Empty;
                 lbStatusPath.Text = string.Empty;
                 lblStatusSize.Text = string.Empty;
             }
             else
             {
-                lblStatusCapacity.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)} total";
+                lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
+                /*
+                string FreeSpacePercentage = ((double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.AvailableFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length).ToString("p2");
+                int FreeSpacePercentage_Int = Convert.ToInt32(FreeSpacePercentage.Substring(0, FreeSpacePercentage.Length - 4));
+                
+                lblStatusFreeCapacity.Text = $"Free space left: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.AvailableFreeSpace)} ({FreeSpacePercentage})";
+                if (FreeSpacePercentage_Int <= 20)
+                    SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(2), IntPtr.Zero); // Set the progress bar colour to red.
+                else
+                    SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(1), IntPtr.Zero); // Set the progress bar colour to green.
+
+                // Set progress bar value with a bit of a hack to disable the glow.
+                lblStatusProgressBar.Minimum = FreeSpacePercentage_Int;
+                lblStatusProgressBar.Value = FreeSpacePercentage_Int;
+                lblStatusProgressBar.Minimum = 0;
+                */
+                // Uncomment code using AvailableFreeSpace when method is implemented.
 
                 switch (StatusBarState)
                 {
@@ -1772,6 +1789,11 @@ namespace TotalImage
             infoToolStripButton.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
             closeImageToolStripMenuItem.Enabled = true;
+            lblStatusProgressBar.Visible = true;
+
+            // Change border sides for status bar children to add seperator-like looks.
+            lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.Right;
+            lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.Left;
 
             //New image was created, enable the Save button to act as Save as
             if (unsavedChanges && string.IsNullOrEmpty(filename))
@@ -1827,6 +1849,11 @@ namespace TotalImage
             closeImageToolStripMenuItem.Enabled = false;
             imageInformationToolStripMenuItem.Enabled = false;
             hexViewToolStripMenuItem.Enabled = false;
+            lblStatusProgressBar.Visible = false;
+
+            // Change border sides for status bar children to remove seperator-like looks.
+            lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.None;
+            lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.None;
 
             foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
             {
