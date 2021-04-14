@@ -13,7 +13,7 @@ namespace TotalImage
     {
         static readonly char[] prefixes = { '☢', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' };
 
-        private static int GetPrefixIndexForSize(this SizeUnits sizeUnit, ulong size)
+        private static int DeterminePrefix(this SizeUnits sizeUnit, ulong size)
         {
             if (sizeUnit == SizeUnits.Bytes) return 0;
 
@@ -26,9 +26,9 @@ namespace TotalImage
 
         public static string FormatSize(this SizeUnits sizeUnit, ulong size)
         {
-            var prefix = sizeUnit.GetPrefixIndexForSize(size);
+            var prefix = sizeUnit.DeterminePrefix(size);
 
-            var denominator = 1ul;
+            var denominator = 1.0;
             for (var i = 0; i < prefix; i++)
                 denominator *= (ulong)sizeUnit;
 
@@ -36,6 +36,12 @@ namespace TotalImage
 
             if (prefix == 0)
                 sizeUnit = SizeUnits.Bytes;
+
+            if (formattedSize >= 1000 && sizeUnit == SizeUnits.Binary)
+            {
+                prefix++;
+                formattedSize /= (double)sizeUnit;
+            }
 
             var prefixSign = sizeUnit switch
             {
