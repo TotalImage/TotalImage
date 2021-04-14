@@ -150,6 +150,7 @@ namespace TotalImage
             CurrentSettings.ExtractPreserveAttributes = false;
             CurrentSettings.ExtractPreserveDates = true;
             CurrentSettings.ExtractAlwaysAsk = true;
+            CurrentSettings.QueryShellForFileTypeInfo = true;
 
             //This should probably be preserved...
             /*CurrentSettings.SplitterDistance = 280;

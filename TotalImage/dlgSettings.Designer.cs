@@ -68,6 +68,7 @@
             this.lblExtractPath = new System.Windows.Forms.Label();
             this.cbxExtractAsk = new System.Windows.Forms.CheckBox();
             this.tabIntegration = new System.Windows.Forms.TabPage();
+            this.cbxShellFileIcons = new System.Windows.Forms.CheckBox();
             this.cbxSelectAll = new System.Windows.Forms.CheckBox();
             this.lstFileTypes = new System.Windows.Forms.ListView();
             this.columnType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -157,6 +158,7 @@
             // 
             // btnClearRecent
             // 
+            this.btnClearRecent.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnClearRecent.Location = new System.Drawing.Point(121, 22);
             this.btnClearRecent.Name = "btnClearRecent";
             this.btnClearRecent.Size = new System.Drawing.Size(147, 26);
@@ -167,6 +169,7 @@
             // 
             // btnReset
             // 
+            this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnReset.Location = new System.Drawing.Point(6, 22);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(109, 26);
@@ -303,9 +306,9 @@
             this.lblSizeUnits.AutoSize = true;
             this.lblSizeUnits.Location = new System.Drawing.Point(211, 15);
             this.lblSizeUnits.Name = "lblSizeUnits";
-            this.lblSizeUnits.Size = new System.Drawing.Size(59, 15);
+            this.lblSizeUnits.Size = new System.Drawing.Size(54, 15);
             this.lblSizeUnits.TabIndex = 10;
-            this.lblSizeUnits.Text = "Size units:";
+            this.lblSizeUnits.Text = "Size unit:";
             // 
             // lstSortBy
             // 
@@ -485,6 +488,7 @@
             // 
             // tabIntegration
             // 
+            this.tabIntegration.Controls.Add(this.cbxShellFileIcons);
             this.tabIntegration.Controls.Add(this.cbxSelectAll);
             this.tabIntegration.Controls.Add(this.lstFileTypes);
             this.tabIntegration.Controls.Add(this.lblFileAssociations);
@@ -495,6 +499,17 @@
             this.tabIntegration.TabIndex = 1;
             this.tabIntegration.Text = "Integration";
             this.tabIntegration.UseVisualStyleBackColor = true;
+            // 
+            // cbxShellFileIcons
+            // 
+            this.cbxShellFileIcons.AutoSize = true;
+            this.cbxShellFileIcons.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxShellFileIcons.Location = new System.Drawing.Point(18, 185);
+            this.cbxShellFileIcons.Name = "cbxShellFileIcons";
+            this.cbxShellFileIcons.Size = new System.Drawing.Size(317, 20);
+            this.cbxShellFileIcons.TabIndex = 3;
+            this.cbxShellFileIcons.Text = "Display system icons and file type names in the file list";
+            this.cbxShellFileIcons.UseVisualStyleBackColor = true;
             // 
             // cbxSelectAll
             // 
@@ -627,5 +642,6 @@
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.CheckBox cbxPreserveAttributes;
         private System.Windows.Forms.CheckBox cbxPreserveDates;
+        private System.Windows.Forms.CheckBox cbxShellFileIcons;
     }
 }

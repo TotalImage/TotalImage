@@ -100,6 +100,7 @@ namespace TotalImage
             cbxExtractAsk.Checked = Settings.CurrentSettings.ExtractAlwaysAsk;
             cbxPreserveAttributes.Checked = Settings.CurrentSettings.ExtractPreserveAttributes;
             cbxPreserveDates.Checked = Settings.CurrentSettings.ExtractPreserveDates;
+            cbxShellFileIcons.Checked = Settings.CurrentSettings.QueryShellForFileTypeInfo;
 
             switch (Settings.CurrentSettings.FilesView)
             {
@@ -165,6 +166,7 @@ namespace TotalImage
             Settings.CurrentSettings.ExtractAlwaysAsk = cbxExtractAsk.Checked;
             Settings.CurrentSettings.ExtractPreserveAttributes = cbxPreserveAttributes.Checked;
             Settings.CurrentSettings.ExtractPreserveDates = cbxPreserveDates.Checked;
+            Settings.CurrentSettings.QueryShellForFileTypeInfo = cbxShellFileIcons.Checked;
 
             switch (lstSizeUnits.SelectedIndex)
             {
