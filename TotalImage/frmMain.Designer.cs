@@ -110,6 +110,7 @@
             this.lblStatusProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.lblStatusSize = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbStatusPath = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lblNotifications = new System.Windows.Forms.ToolStripSplitButton();
             this.commandBar = new System.Windows.Forms.ToolStrip();
             this.newToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -552,7 +553,7 @@
             // 
             // bootSectorPropertiesToolStripMenuItem
             // 
-            this.bootSectorPropertiesToolStripMenuItem.Image = global::TotalImage.Properties.Resources.boot_sector_16;
+            this.bootSectorPropertiesToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("bootSectorPropertiesToolStripMenuItem.Image")));
             this.bootSectorPropertiesToolStripMenuItem.Name = "bootSectorPropertiesToolStripMenuItem";
             this.bootSectorPropertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.bootSectorPropertiesToolStripMenuItem.Text = "Boot sector properties...";
@@ -828,7 +829,9 @@
             this.lblStatusFreeCapacity,
             this.lblStatusProgressBar,
             this.lblStatusSize,
-            this.lbStatusPath});
+            this.lbStatusPath,
+            this.lblNotifications});
+            this.statusBar.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.statusBar.Location = new System.Drawing.Point(0, 639);
             this.statusBar.Name = "statusBar";
             this.statusBar.Size = new System.Drawing.Size(984, 22);
@@ -861,6 +864,18 @@
             // 
             this.lbStatusPath.Name = "lbStatusPath";
             this.lbStatusPath.Size = new System.Drawing.Size(0, 17);
+            // 
+            // lblNotifications
+            // 
+            this.lblNotifications.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.lblNotifications.DropDownButtonWidth = 0;
+            this.lblNotifications.Image = ((System.Drawing.Image)(resources.GetObject("lblNotifications.Image")));
+            this.lblNotifications.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.lblNotifications.Name = "lblNotifications";
+            this.lblNotifications.Size = new System.Drawing.Size(96, 20);
+            this.lblNotifications.Text = "Notifications";
+            this.lblNotifications.Visible = false;
+            this.lblNotifications.ButtonClick += new System.EventHandler(this.lblNotifications_ButtonClick);
             // 
             // commandBar
             // 
@@ -1043,7 +1058,7 @@
             // bootsectToolStripButton
             // 
             this.bootsectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bootsectToolStripButton.Image = global::TotalImage.Properties.Resources.boot_sector_16;
+            this.bootsectToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("bootsectToolStripButton.Image")));
             this.bootsectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.bootsectToolStripButton.Name = "bootsectToolStripButton";
             this.bootsectToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1564,6 +1579,7 @@
         private System.Windows.Forms.ColumnHeader clmAttributes;
         private System.Windows.Forms.ToolStripStatusLabel lblStatusFreeCapacity;
         private System.Windows.Forms.ToolStripProgressBar lblStatusProgressBar;
+        private System.Windows.Forms.ToolStripSplitButton lblNotifications;
     }
 }
 

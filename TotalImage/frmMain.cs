@@ -1914,5 +1914,11 @@ namespace TotalImage
         {
 
         }
+
+        private void lblNotifications_ButtonClick(object sender, EventArgs e)
+        {
+            using dlgNotifications dlg = new dlgNotifications();
+            dlg.ShowDialog();
+        }
     }
 }
