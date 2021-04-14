@@ -106,8 +106,11 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusBar = new System.Windows.Forms.StatusStrip();
             this.lblStatusCapacity = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lblStatusFreeCapacity = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lblStatusProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.lblStatusSize = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbStatusPath = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lblNotifications = new System.Windows.Forms.ToolStripSplitButton();
             this.commandBar = new System.Windows.Forms.ToolStrip();
             this.newToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -550,7 +553,7 @@
             // 
             // bootSectorPropertiesToolStripMenuItem
             // 
-            this.bootSectorPropertiesToolStripMenuItem.Image = global::TotalImage.Properties.Resources.boot_sector_16;
+            this.bootSectorPropertiesToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("bootSectorPropertiesToolStripMenuItem.Image")));
             this.bootSectorPropertiesToolStripMenuItem.Name = "bootSectorPropertiesToolStripMenuItem";
             this.bootSectorPropertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.bootSectorPropertiesToolStripMenuItem.Text = "Boot sector properties...";
@@ -823,8 +826,12 @@
             this.statusBar.ContextMenuStrip = this.cmsToolbars;
             this.statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatusCapacity,
+            this.lblStatusFreeCapacity,
+            this.lblStatusProgressBar,
             this.lblStatusSize,
-            this.lbStatusPath});
+            this.lbStatusPath,
+            this.lblNotifications});
+            this.statusBar.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.statusBar.Location = new System.Drawing.Point(0, 639);
             this.statusBar.Name = "statusBar";
             this.statusBar.Size = new System.Drawing.Size(984, 22);
@@ -837,6 +844,17 @@
             this.lblStatusCapacity.Name = "lblStatusCapacity";
             this.lblStatusCapacity.Size = new System.Drawing.Size(0, 17);
             // 
+            // lblStatusFreeCapacity
+            // 
+            this.lblStatusFreeCapacity.Name = "lblStatusFreeCapacity";
+            this.lblStatusFreeCapacity.Size = new System.Drawing.Size(0, 17);
+            // 
+            // lblStatusProgressBar
+            // 
+            this.lblStatusProgressBar.Margin = new System.Windows.Forms.Padding(0, 3, 4, 2);
+            this.lblStatusProgressBar.Name = "lblStatusProgressBar";
+            this.lblStatusProgressBar.Size = new System.Drawing.Size(100, 17);
+            // 
             // lblStatusSize
             // 
             this.lblStatusSize.Name = "lblStatusSize";
@@ -846,6 +864,18 @@
             // 
             this.lbStatusPath.Name = "lbStatusPath";
             this.lbStatusPath.Size = new System.Drawing.Size(0, 17);
+            // 
+            // lblNotifications
+            // 
+            this.lblNotifications.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.lblNotifications.DropDownButtonWidth = 0;
+            this.lblNotifications.Image = ((System.Drawing.Image)(resources.GetObject("lblNotifications.Image")));
+            this.lblNotifications.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.lblNotifications.Name = "lblNotifications";
+            this.lblNotifications.Size = new System.Drawing.Size(96, 20);
+            this.lblNotifications.Text = "Notifications";
+            this.lblNotifications.Visible = false;
+            this.lblNotifications.ButtonClick += new System.EventHandler(this.lblNotifications_ButtonClick);
             // 
             // commandBar
             // 
@@ -1028,7 +1058,7 @@
             // bootsectToolStripButton
             // 
             this.bootsectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.bootsectToolStripButton.Image = global::TotalImage.Properties.Resources.boot_sector_16;
+            this.bootsectToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("bootsectToolStripButton.Image")));
             this.bootsectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.bootsectToolStripButton.Name = "bootsectToolStripButton";
             this.bootsectToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1074,7 +1104,7 @@
             // 
             this.showHiddenItemsToolStripMenuItem1.CheckOnClick = true;
             this.showHiddenItemsToolStripMenuItem1.Name = "showHiddenItemsToolStripMenuItem1";
-            this.showHiddenItemsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.showHiddenItemsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.showHiddenItemsToolStripMenuItem1.Text = "Show hidden items";
             this.showHiddenItemsToolStripMenuItem1.Click += new System.EventHandler(this.showHiddenItems_Click);
             // 
@@ -1082,33 +1112,33 @@
             // 
             this.showDeletedItemsToolStripMenuItem1.CheckOnClick = true;
             this.showDeletedItemsToolStripMenuItem1.Name = "showDeletedItemsToolStripMenuItem1";
-            this.showDeletedItemsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.showDeletedItemsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.showDeletedItemsToolStripMenuItem1.Text = "Show deleted items";
             this.showDeletedItemsToolStripMenuItem1.Click += new System.EventHandler(this.showDeletedItems_Click);
             // 
             // toolStripSeparator14
             // 
             this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator14.Size = new System.Drawing.Size(174, 6);
             // 
             // largeIconsToolStripMenuItem1
             // 
             this.largeIconsToolStripMenuItem1.Name = "largeIconsToolStripMenuItem1";
-            this.largeIconsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.largeIconsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.largeIconsToolStripMenuItem1.Text = "Large icons";
             this.largeIconsToolStripMenuItem1.Click += new System.EventHandler(this.viewLargeIcons_Click);
             // 
             // smallIconsToolStripMenuItem1
             // 
             this.smallIconsToolStripMenuItem1.Name = "smallIconsToolStripMenuItem1";
-            this.smallIconsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.smallIconsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.smallIconsToolStripMenuItem1.Text = "Small icons";
             this.smallIconsToolStripMenuItem1.Click += new System.EventHandler(this.viewSmallIcons_Click);
             // 
             // listToolStripMenuItem1
             // 
             this.listToolStripMenuItem1.Name = "listToolStripMenuItem1";
-            this.listToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.listToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.listToolStripMenuItem1.Text = "List";
             this.listToolStripMenuItem1.Click += new System.EventHandler(this.viewList_Click);
             // 
@@ -1117,7 +1147,7 @@
             this.detailsToolStripMenuItem1.Checked = true;
             this.detailsToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.detailsToolStripMenuItem1.Name = "detailsToolStripMenuItem1";
-            this.detailsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.detailsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
             this.detailsToolStripMenuItem1.Text = "Details";
             this.detailsToolStripMenuItem1.Click += new System.EventHandler(this.viewDetails_Click);
             // 
@@ -1547,6 +1577,9 @@
         private System.Windows.Forms.ToolStripMenuItem hexViewToolStripMenuItem;
         public System.Windows.Forms.ImageList imgFilesLarge;
         private System.Windows.Forms.ColumnHeader clmAttributes;
+        private System.Windows.Forms.ToolStripStatusLabel lblStatusFreeCapacity;
+        private System.Windows.Forms.ToolStripProgressBar lblStatusProgressBar;
+        private System.Windows.Forms.ToolStripSplitButton lblNotifications;
     }
 }
 
