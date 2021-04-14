@@ -109,6 +109,8 @@ namespace TotalImage.FileSystems.FAT
             using var reader = new BinaryReader(stream, Encoding.ASCII, true);
             var position = stream.Position;
 
+            if (entries == int.MaxValue) entries = (int)(stream.Length / 32);
+
             for(var i = 0; i < entries; i++)
             {
                 if (position != stream.Position) stream.Position = position;
