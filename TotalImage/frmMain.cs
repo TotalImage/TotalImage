@@ -1895,9 +1895,12 @@ namespace TotalImage
 
         private TiFileSystemObject GetSelectedItemData(int idx)
         {
-            if (idx == 0 && upOneFolderListViewItem.Tag != null)
+            if (upOneFolderListViewItem.Tag == null)
+                return currentFolderView[lstFiles.SelectedIndices[idx]].Tag as TiFileSystemObject;
+            else if (idx > 0)
+                return currentFolderView[lstFiles.SelectedIndices[idx - 1]].Tag as TiFileSystemObject;
+            else
                 return upOneFolderListViewItem.Tag as TiFileSystemObject;
-            return currentFolderView[lstFiles.SelectedIndices[idx]].Tag as TiFileSystemObject;
         }
 
         private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
