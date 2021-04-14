@@ -618,18 +618,18 @@ namespace TotalImage
             {
                 lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
                 /*
-                string FreeSpacePercentage = ((double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.AvailableFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length).ToString("p2");
-                int FreeSpacePercentage_Int = Convert.ToInt32(FreeSpacePercentage.Substring(0, FreeSpacePercentage.Length - 4));
-                
-                lblStatusFreeCapacity.Text = $"Free space left: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.AvailableFreeSpace)} ({FreeSpacePercentage})";
-                if (FreeSpacePercentage_Int <= 20)
+                double FreeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.AvailableFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
+                lblStatusFreeCapacity.Text = $"Free space left: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.AvailableFreeSpace)} ({FreeSpacePercentage / 100:p2})";
+                if ((int)FreeSpacePercentage <= 10)
                     SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(2), IntPtr.Zero); // Set the progress bar colour to red.
+                else if ((int)FreeSpacePercentage <= 20)
+                    SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(3), IntPtr.Zero); // Set the progress bar colour to yellow.
                 else
                     SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(1), IntPtr.Zero); // Set the progress bar colour to green.
 
                 // Set progress bar value with a bit of a hack to disable the glow.
-                lblStatusProgressBar.Minimum = FreeSpacePercentage_Int;
-                lblStatusProgressBar.Value = FreeSpacePercentage_Int;
+                lblStatusProgressBar.Minimum = 100 - (int)FreeSpacePercentage;
+                lblStatusProgressBar.Value = 100 - (int)FreeSpacePercentage;
                 lblStatusProgressBar.Minimum = 0;
                 */
                 // Uncomment code using AvailableFreeSpace when method is implemented.
