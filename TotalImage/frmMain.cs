@@ -293,10 +293,12 @@ namespace TotalImage
             Settings.CurrentSettings.FilesView = View.Details;
         }
 
+        private int IndexShift => lstFiles.VirtualListSize - currentFolderView.Count;
+
         private IEnumerable<TiFileSystemObject> SelectedItems
             => from x in lstFiles.SelectedIndices.Cast<int>()
-                where currentFolderView[x].Tag is TiFileSystemObject 
-                select (TiFileSystemObject)currentFolderView[x].Tag;
+                where x >= IndexShift && currentFolderView[x - IndexShift].Tag is TiFileSystemObject 
+                select (TiFileSystemObject)currentFolderView[x - IndexShift].Tag;
 
         //Deletes a file or folder
         //TODO: Implement deletion here and in the FS/container
