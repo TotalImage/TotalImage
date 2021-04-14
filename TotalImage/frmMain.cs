@@ -632,6 +632,13 @@ namespace TotalImage
                 lblStatusProgressBar.Value = 100 - (int)FreeSpacePercentage;
                 lblStatusProgressBar.Minimum = 0;
                 */
+// Uncomment code using AvailableFreeSpace when method is implemented.
+
+=========
+                lblStatusProgressBar.Minimum = FreeSpacePercentage_Int;
+                lblStatusProgressBar.Value = FreeSpacePercentage_Int;
+                lblStatusProgressBar.Minimum = 0;
+                */
                 // Uncomment code using AvailableFreeSpace when method is implemented.
 
                 switch (StatusBarState)
