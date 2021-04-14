@@ -33,6 +33,11 @@ namespace TotalImage
         private string folderTypeName;
         private TiDirectory lastViewedDir;
 
+        private ListViewItem upOneFolderListViewItem = new ListViewItem()
+        {
+            Text = ".."
+        };
+
         private List<ListViewItem> currentFolderView = new List<ListViewItem>();
 
         public frmMain()
@@ -96,6 +101,9 @@ namespace TotalImage
 #endif
                 }
             }
+
+            for (var i = 1; i < lstFiles.Columns.Count; i++)
+                upOneFolderListViewItem.SubItems.Add(string.Empty);
         }
 
         //Syncs the main form UI with the current settings
@@ -1407,22 +1415,10 @@ namespace TotalImage
             lstFiles.SelectedIndices.Clear();
             currentFolderView.Clear();
 
-            int count = 0;
-            if (dir.Parent != null)
-            {
-                //The ".." virtual folder
-                var parentDirItem = new ListViewItem();
-                parentDirItem.Text = "..";
-                parentDirItem.ImageIndex = imgFilesLarge.Images.IndexOfKey("up"); //Workaround because setting ImageKey no longer works for some reason...
-                parentDirItem.SubItems.Add("");
-                parentDirItem.SubItems.Add("");
-                parentDirItem.SubItems.Add("");
-                parentDirItem.SubItems.Add("");
-                parentDirItem.SubItems.Add("");
-                parentDirItem.Tag = dir.Parent;
-                currentFolderView.Add(parentDirItem);
-                count++;
-            }
+            upOneFolderListViewItem.Tag = dir.Parent;
+
+            var count = 0;
+            if (dir.Parent != null) count++;
 
             foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems))
             {
@@ -1749,6 +1745,8 @@ namespace TotalImage
 
             imgFilesSmall.Images.Add("up", (Icon)Icon.FromHandle(smallIcons[0]).Clone());
             imgFilesLarge.Images.Add("up", (Icon)Icon.FromHandle(largeIcons[0]).Clone());
+
+            upOneFolderListViewItem.ImageIndex = imgFilesSmall.Images.IndexOfKey("up");
         }
 
         //Finds the node with the specified entry
@@ -1897,12 +1895,19 @@ namespace TotalImage
 
         private TiFileSystemObject GetSelectedItemData(int idx)
         {
+            if (idx == 0 && upOneFolderListViewItem.Tag != null)
+                return upOneFolderListViewItem.Tag as TiFileSystemObject;
             return currentFolderView[lstFiles.SelectedIndices[idx]].Tag as TiFileSystemObject;
         }
 
         private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
-            e.Item = currentFolderView[e.ItemIndex];
+            if (upOneFolderListViewItem.Tag == null)
+                e.Item = currentFolderView[e.ItemIndex];
+            else if (e.ItemIndex > 0)
+                e.Item = currentFolderView[e.ItemIndex - 1];
+            else
+                e.Item = upOneFolderListViewItem;
         }
 
         private void lstFiles_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
