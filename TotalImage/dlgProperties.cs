@@ -27,7 +27,6 @@ namespace TotalImage
             InitializeComponent();
         }
 
-        //TODO: VFAT/LFN support, proper size calculations
         public dlgProperties(FileSystemObject entry) : this()
         {
             if (entry == null)
@@ -66,7 +65,24 @@ namespace TotalImage
             cbxSystem.Checked = entry.Attributes.HasFlag(FileAttributes.System);
             cbxArchive.Checked = entry.Attributes.HasFlag(FileAttributes.Archive);
 
-            SetIconAndType(entry.Name, entry.Attributes);
+            if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
+            {
+                SetIconAndType(entry.Name, entry.Attributes);
+            }
+            else
+            {
+                frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
+                string extension = Path.GetExtension(entry.Name);
+                string key = entry.Attributes.HasFlag(FileAttributes.Directory) ? "folder" : "file";
+                imgIcon.Image = mainForm.imgFilesLarge.Images[key];
+
+                if (entry.Attributes.HasFlag(FileAttributes.Directory))
+                    lblType1.Text = "File folder";
+                else if (extension.Length > 0)
+                    lblType1.Text = $"{extension.Substring(1).ToUpper()} File";
+                else
+                    lblType1.Text = "File";
+            }
 
             //Prevent any changes to deleted items
             if (entry.Name.StartsWith("?"))
