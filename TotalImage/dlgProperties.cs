@@ -101,23 +101,6 @@ namespace TotalImage
             }
         }
 
-        public void SetIconAndType(string filename, FileAttributes attributes)
-        {
-            /*var shellInfo = new SHFILEINFO();
-            var flags = SHGFI.ICON | SHGFI.LARGEICON | SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
-            if (SHGetFileInfo(filename, attributes, ref shellInfo, (uint)Marshal.SizeOf(shellInfo), flags) != IntPtr.Zero)
-            {
-                using (var icon = Icon.FromHandle(shellInfo.hIcon))
-                {
-                    imgIcon.Image = (icon.Clone() as Icon)?.ToBitmap();
-                }
-
-                lblType1.Text = shellInfo.szTypeName;
-
-                DestroyIcon(shellInfo.hIcon);
-            }*/
-        }
-
         //TODO: Perform filename validation
         private void btnOK_Click(object sender, EventArgs e)
         {
