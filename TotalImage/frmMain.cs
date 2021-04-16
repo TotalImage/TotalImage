@@ -335,6 +335,8 @@ namespace TotalImage
         //TODO: Implement this here and in FS/container.
         private void rename_Click(object sender, EventArgs e)
         {
+            throw new NotImplementedException();
+            /*
             string oldname = "";
             if (lstFiles.Focused)
                 oldname = currentFolderView[lstFiles.SelectedIndices[0]].Text;
@@ -345,6 +347,7 @@ namespace TotalImage
             dlg.ShowDialog();
 
             string newname = dlg.NewName;
+            */
         }
 
         //Changes image format
@@ -515,7 +518,8 @@ namespace TotalImage
         private void extract_Click(object sender, EventArgs e)
         {
             var selectedItems = from int x in lstFiles.SelectedIndices
-                                select currentFolderView[x].Tag as TiFileSystemObject;
+                                where x >= IndexShift
+                                select GetSelectedItemData(x);
 
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
             {
@@ -753,7 +757,7 @@ namespace TotalImage
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (lstFiles.SelectedIndices.Count == 0 || lstFiles.SelectedIndices.Count == 1 && currentFolderView[lstFiles.SelectedIndices[0]].Text == "..")
+            if (lstFiles.SelectedIndices.Count == 0 || lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
             {
                 e.Cancel = true;
                 return;
