@@ -601,13 +601,12 @@ namespace TotalImage
         {
             get
             {
-                switch (lstFiles.SelectedIndices.Count)
+                var selectedItems = lstFiles.SelectedIndices.Count - IndexShift;
+                switch (selectedItems > 0 ? selectedItems : 0)
                 {
                     case 0:
                         return StatusBarStates.NoneSelected;
                     case 1:
-                        if (currentFolderView[lstFiles.SelectedIndices[0]].Text == "..")
-                            return StatusBarStates.NoneSelected;
                         return StatusBarStates.OneSelected;
                     default:
                         return StatusBarStates.MultipleSelected;
