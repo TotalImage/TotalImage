@@ -679,7 +679,7 @@ namespace TotalImage
         {
             if (image != null)
             {
-                if (lstFiles.SelectedIndices.Count == 0 || lstFiles.SelectedIndices.Count == 1 && currentFolderView[lstFiles.SelectedIndices[0]].Text == "..")
+                if (lstFiles.SelectedIndices.Count == 0 || lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
                 {
                     deleteToolStripMenuItem.Enabled = false;
                     deleteToolStripMenuItem2.Enabled = false;
@@ -1894,22 +1894,17 @@ namespace TotalImage
 
         private TiFileSystemObject GetSelectedItemData(int idx)
         {
-            if (upOneFolderListViewItem.Tag == null)
-                return currentFolderView[lstFiles.SelectedIndices[idx]].Tag as TiFileSystemObject;
-            else if (idx > 0)
-                return currentFolderView[lstFiles.SelectedIndices[idx - 1]].Tag as TiFileSystemObject;
-            else
+            if (lstFiles.SelectedIndices[idx] < IndexShift)
                 return upOneFolderListViewItem.Tag as TiFileSystemObject;
+            return currentFolderView[lstFiles.SelectedIndices[idx] - IndexShift].Tag as TiFileSystemObject;
         }
 
         private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
-            if (upOneFolderListViewItem.Tag == null)
-                e.Item = currentFolderView[e.ItemIndex];
-            else if (e.ItemIndex > 0)
-                e.Item = currentFolderView[e.ItemIndex - 1];
-            else
+            if (e.ItemIndex < IndexShift)
                 e.Item = upOneFolderListViewItem;
+            else
+                e.Item = currentFolderView[e.ItemIndex - IndexShift];
         }
 
         private void lstFiles_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
