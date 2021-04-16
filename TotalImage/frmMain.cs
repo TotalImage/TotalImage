@@ -517,22 +517,18 @@ namespace TotalImage
         //TODO: Implement this here, in the extraction dialog and in FS/container.
         private void extract_Click(object sender, EventArgs e)
         {
-            var selectedItems = from int x in lstFiles.SelectedIndices
-                                where x >= IndexShift
-                                select GetSelectedItemData(x);
-
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
             {
                 using dlgExtract dlg = new dlgExtract();
-                dlg.lblPath.Text = $"Extract {selectedItems.Count()} selected {(selectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
+                dlg.lblPath.Text = $"Extract {SelectedItems.Count()} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    ExtractFiles(selectedItems, dlg.TargetPath, dlg.ExtractType, dlg.OpenFolder);
+                    ExtractFiles(SelectedItems, dlg.TargetPath, dlg.ExtractType, dlg.OpenFolder);
                 }
             }
             else
             {
-                ExtractFiles(selectedItems, Settings.CurrentSettings.DefaultExtractPath, Settings.CurrentSettings.DefaultExtractType, Settings.CurrentSettings.OpenFolderAfterExtract);
+                ExtractFiles(SelectedItems, Settings.CurrentSettings.DefaultExtractPath, Settings.CurrentSettings.DefaultExtractType, Settings.CurrentSettings.OpenFolderAfterExtract);
             }
         }
 
