@@ -30,8 +30,8 @@ namespace TotalImage
         public int CurrentPartitionIndex;
         private int sortColumn;
         private SortOrder sortOrder;
-        private string folderTypeName;
         private TiDirectory lastViewedDir;
+        internal static Dictionary<string, (string name, int iconIndex)> fileTypes = new Dictionary<string, (string name, int iconIndex)>(StringComparer.InvariantCultureIgnoreCase);
 
         private ListViewItem upOneFolderListViewItem = new ListViewItem()
         {
@@ -1646,9 +1646,6 @@ namespace TotalImage
                     return "File";
             }
         }
-
-        private static Dictionary<string, (string name, int iconIndex)> fileTypes
-            = new Dictionary<string, (string name, int iconIndex)>(StringComparer.InvariantCultureIgnoreCase);
 
         private int GetFileTypeIconIndex(string filename, FileAttributes attributes)
         {

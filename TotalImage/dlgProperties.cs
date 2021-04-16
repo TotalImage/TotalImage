@@ -65,13 +65,16 @@ namespace TotalImage
             cbxSystem.Checked = entry.Attributes.HasFlag(FileAttributes.System);
             cbxArchive.Checked = entry.Attributes.HasFlag(FileAttributes.Archive);
 
+            frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
             if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
             {
-                SetIconAndType(entry.Name, entry.Attributes);
+                var extension = entry.Attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(entry.Name);
+                string key = frmMain.fileTypes[extension].iconIndex.ToString();
+                imgIcon.Image = mainForm.imgFilesLarge.Images[key];
+                lblType1.Text = frmMain.fileTypes[extension].name;
             }
             else
-            {
-                frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
+            {               
                 string extension = Path.GetExtension(entry.Name);
                 string key = entry.Attributes.HasFlag(FileAttributes.Directory) ? "folder" : "file";
                 imgIcon.Image = mainForm.imgFilesLarge.Images[key];
@@ -100,7 +103,7 @@ namespace TotalImage
 
         public void SetIconAndType(string filename, FileAttributes attributes)
         {
-            var shellInfo = new SHFILEINFO();
+            /*var shellInfo = new SHFILEINFO();
             var flags = SHGFI.ICON | SHGFI.LARGEICON | SHGFI.TYPENAME | SHGFI.USEFILEATTRIBUTES;
             if (SHGetFileInfo(filename, attributes, ref shellInfo, (uint)Marshal.SizeOf(shellInfo), flags) != IntPtr.Zero)
             {
@@ -112,7 +115,7 @@ namespace TotalImage
                 lblType1.Text = shellInfo.szTypeName;
 
                 DestroyIcon(shellInfo.hIcon);
-            }
+            }*/
         }
 
         //TODO: Perform filename validation
