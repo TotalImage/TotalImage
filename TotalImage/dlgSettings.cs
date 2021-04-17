@@ -202,66 +202,19 @@ namespace TotalImage
             Settings.Save();
         }
 
-        private void lstFileTypes_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        private void btnSelectAll_Click(object sender, EventArgs e)
         {
-            if (e.Item.Selected)
+            foreach(ListViewItem lvi in lstFileTypes.Items)
             {
-                e.Item.Checked = !e.Item.Checked;
-
-                if (lstFileTypes.CheckedItems.Count == lstFileTypes.Items.Count)
-                {
-                    cbxSelectAll.CheckState = CheckState.Checked;
-                    cbxSelectAll.Checked = true;
-                }
-                else if (lstFileTypes.CheckedItems.Count == 0)
-                {
-                    cbxSelectAll.CheckState = CheckState.Unchecked;
-                    cbxSelectAll.Checked = false;
-                }
-                else
-                {
-                    cbxSelectAll.CheckState = CheckState.Indeterminate;
-                    cbxSelectAll.Checked = true;
-                }
+                lvi.Checked = true;
             }
         }
 
-        private void lstFileTypes_ItemChecked(object sender, ItemCheckedEventArgs e)
+        private void btnClearAll_Click(object sender, EventArgs e)
         {
-            if (lstFileTypes.CheckedItems.Count == lstFileTypes.Items.Count)
+            foreach (ListViewItem lvi in lstFileTypes.Items)
             {
-                cbxSelectAll.CheckState = CheckState.Checked;
-                cbxSelectAll.Checked = true;
-            }
-            else if (lstFileTypes.CheckedItems.Count == 0)
-            {
-                cbxSelectAll.CheckState = CheckState.Unchecked;
-                cbxSelectAll.Checked = false;
-            }
-            else
-            {
-                cbxSelectAll.CheckState = CheckState.Indeterminate;
-                cbxSelectAll.Checked = true;
-            }
-        }
-
-        private void cbxSelectAll_Click(object sender, System.EventArgs e)
-        {
-            if (cbxSelectAll.Checked)
-            {
-                foreach (ListViewItem lvi in lstFileTypes.Items)
-                {
-                    lvi.Selected = false;
-                    lvi.Checked = true;
-                }
-            }
-            else if (!cbxSelectAll.Checked)
-            {
-                foreach (ListViewItem lvi in lstFileTypes.Items)
-                {
-                    lvi.Selected = false;
-                    lvi.Checked = false;
-                }
+                lvi.Checked = false;
             }
         }
     }

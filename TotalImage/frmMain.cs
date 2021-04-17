@@ -541,8 +541,27 @@ namespace TotalImage
             foreach (var file in files)
             {
                 if(File.Exists(Path.Combine(path, file.Name)) && Settings.CurrentSettings.ConfirmOverwriteExtraction){
+#if NET48
                     if (DialogResult.No == MessageBox.Show($"File {file.Name} already exists in the target directory. Do you want to overwrite it?", "File already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
                         continue;
+#elif NET5_0_OR_GREATER
+                    TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"The file \"{file.Name}\" already exists in the target directory. Do you want to overwrite it?",
+                        Heading = "File already exists",
+                        Caption = "Warning",
+                        Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                        Icon = TaskDialogIcon.Warning,
+                        DefaultButton = TaskDialogButton.Yes
+                    });
+
+                    if (result == TaskDialogButton.No)
+                        continue;
+#endif
                 }
 
                 using (var destStream = new FileStream(Path.Combine(path, file.Name), FileMode.Create))
@@ -1361,7 +1380,7 @@ namespace TotalImage
             }
         }
 
-        #endregion
+#endregion
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
