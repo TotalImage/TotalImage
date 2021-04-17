@@ -34,6 +34,10 @@ namespace TotalImage
             public Point WindowPosition { get; set; } = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
             public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
             public bool QueryShellForFileTypeInfo { get; set; } = true;
+            public bool ConfirmInjection { get; set; } = true;
+            public bool ConfirmDeletion { get; set; } = true;
+            public bool ConfirmOverwriteExtraction { get; set; } = true;
+            public bool AutoIncrementFilename { get; set; } = true;
         }
 
         public static SettingsModel CurrentSettings { get; private set; }
@@ -107,6 +111,10 @@ namespace TotalImage
                     CurrentSettings.RecentImages = settings.RecentImages;
                     CurrentSettings.ExtractPreserveAttributes = settings.ExtractPreserveAttributes;
                     CurrentSettings.ExtractPreserveDates = settings.ExtractPreserveDates;
+                    CurrentSettings.AutoIncrementFilename = settings.AutoIncrementFilename;
+                    CurrentSettings.ConfirmDeletion = settings.ConfirmDeletion;
+                    CurrentSettings.ConfirmInjection = settings.ConfirmInjection;
+                    CurrentSettings.ConfirmOverwriteExtraction = settings.ConfirmOverwriteExtraction;
                 }
             }
             catch (IOException)
@@ -151,6 +159,10 @@ namespace TotalImage
             CurrentSettings.ExtractPreserveDates = true;
             CurrentSettings.ExtractAlwaysAsk = true;
             CurrentSettings.QueryShellForFileTypeInfo = true;
+            CurrentSettings.AutoIncrementFilename = true;
+            CurrentSettings.ConfirmDeletion = true;
+            CurrentSettings.ConfirmInjection = true;
+            CurrentSettings.ConfirmOverwriteExtraction = true;
 
             //This should probably be preserved...
             /*CurrentSettings.SplitterDistance = 280;

@@ -101,6 +101,10 @@ namespace TotalImage
             cbxPreserveAttributes.Checked = Settings.CurrentSettings.ExtractPreserveAttributes;
             cbxPreserveDates.Checked = Settings.CurrentSettings.ExtractPreserveDates;
             cbxShellFileIcons.Checked = Settings.CurrentSettings.QueryShellForFileTypeInfo;
+            cbxAutoincrementFilename.Checked = Settings.CurrentSettings.AutoIncrementFilename;
+            cbxConfirmDeletion.Checked = Settings.CurrentSettings.ConfirmDeletion;
+            cbxConfirmInjection.Checked = Settings.CurrentSettings.ConfirmInjection;
+            cbxConfirmOverwriteExtract.Checked = Settings.CurrentSettings.ConfirmOverwriteExtraction;
 
             switch (Settings.CurrentSettings.FilesView)
             {
@@ -167,6 +171,10 @@ namespace TotalImage
             Settings.CurrentSettings.ExtractPreserveAttributes = cbxPreserveAttributes.Checked;
             Settings.CurrentSettings.ExtractPreserveDates = cbxPreserveDates.Checked;
             Settings.CurrentSettings.QueryShellForFileTypeInfo = cbxShellFileIcons.Checked;
+            Settings.CurrentSettings.AutoIncrementFilename = cbxAutoincrementFilename.Checked;
+            Settings.CurrentSettings.ConfirmDeletion = cbxConfirmDeletion.Checked;
+            Settings.CurrentSettings.ConfirmInjection = cbxConfirmInjection.Checked;
+            Settings.CurrentSettings.ConfirmOverwriteExtraction = cbxConfirmOverwriteExtract.Checked;
 
             switch (lstSizeUnits.SelectedIndex)
             {

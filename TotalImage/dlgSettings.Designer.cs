@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Raw sector images (.IMG, .IMA, .VFD, .FLP)");
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("WinImage compressed image (.IMZ)");
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Anex86 disk images (.FDI, .FDM, .HDI, .HDM)");
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("IBM SafeDskF image (.DSK)");
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("DiskDupe image (.DDI)");
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Raw sector images (.IMG, .IMA, .VFD, .FLP)");
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("WinImage compressed image (.IMZ)");
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Anex86 disk images (.FDI, .FDM, .HDI, .HDM)");
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("IBM SafeDskF image (.DSK)");
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("DiskDupe image (.DDI)");
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.pnlBottom = new System.Windows.Forms.Panel();
@@ -73,10 +73,15 @@
             this.lstFileTypes = new System.Windows.Forms.ListView();
             this.columnType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lblFileAssociations = new System.Windows.Forms.Label();
+            this.cbxConfirmInjection = new System.Windows.Forms.CheckBox();
+            this.cbxConfirmDeletion = new System.Windows.Forms.CheckBox();
+            this.cbxConfirmOverwriteExtract = new System.Windows.Forms.CheckBox();
+            this.cbxAutoincrementFilename = new System.Windows.Forms.CheckBox();
             this.pnlBottom.SuspendLayout();
             this.tabs.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.gbxMisc.SuspendLayout();
+            this.gbxBehavior.SuspendLayout();
             this.tabView.SuspendLayout();
             this.tabExtraction.SuspendLayout();
             this.tabIntegration.SuspendLayout();
@@ -180,6 +185,10 @@
             // 
             // gbxBehavior
             // 
+            this.gbxBehavior.Controls.Add(this.cbxAutoincrementFilename);
+            this.gbxBehavior.Controls.Add(this.cbxConfirmOverwriteExtract);
+            this.gbxBehavior.Controls.Add(this.cbxConfirmDeletion);
+            this.gbxBehavior.Controls.Add(this.cbxConfirmInjection);
             this.gbxBehavior.Location = new System.Drawing.Point(6, 6);
             this.gbxBehavior.Name = "gbxBehavior";
             this.gbxBehavior.Size = new System.Drawing.Size(441, 187);
@@ -238,9 +247,9 @@
             this.cbxShowDeletedItems.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cbxShowDeletedItems.Location = new System.Drawing.Point(214, 150);
             this.cbxShowDeletedItems.Name = "cbxShowDeletedItems";
-            this.cbxShowDeletedItems.Size = new System.Drawing.Size(135, 20);
+            this.cbxShowDeletedItems.Size = new System.Drawing.Size(144, 20);
             this.cbxShowDeletedItems.TabIndex = 17;
-            this.cbxShowDeletedItems.Text = "Show deleted items";
+            this.cbxShowDeletedItems.Text = "Show deleted objects";
             this.cbxShowDeletedItems.UseVisualStyleBackColor = true;
             // 
             // cbxShowStatusBar
@@ -271,9 +280,9 @@
             this.cbxShowHiddenItems.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cbxShowHiddenItems.Location = new System.Drawing.Point(18, 176);
             this.cbxShowHiddenItems.Name = "cbxShowHiddenItems";
-            this.cbxShowHiddenItems.Size = new System.Drawing.Size(133, 20);
+            this.cbxShowHiddenItems.Size = new System.Drawing.Size(142, 20);
             this.cbxShowHiddenItems.TabIndex = 14;
-            this.cbxShowHiddenItems.Text = "Show hidden items";
+            this.cbxShowHiddenItems.Text = "Show hidden objects";
             this.cbxShowHiddenItems.UseVisualStyleBackColor = true;
             // 
             // cbxShowCommandBar
@@ -514,6 +523,7 @@
             // cbxSelectAll
             // 
             this.cbxSelectAll.AutoSize = true;
+            this.cbxSelectAll.Enabled = false;
             this.cbxSelectAll.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cbxSelectAll.Location = new System.Drawing.Point(18, 149);
             this.cbxSelectAll.Name = "cbxSelectAll";
@@ -529,19 +539,20 @@
             this.lstFileTypes.CheckBoxes = true;
             this.lstFileTypes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnType});
+            this.lstFileTypes.Enabled = false;
             this.lstFileTypes.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.lstFileTypes.HideSelection = false;
-            listViewItem1.StateImageIndex = 0;
-            listViewItem2.StateImageIndex = 0;
-            listViewItem3.StateImageIndex = 0;
-            listViewItem4.StateImageIndex = 0;
-            listViewItem5.StateImageIndex = 0;
+            listViewItem6.StateImageIndex = 0;
+            listViewItem7.StateImageIndex = 0;
+            listViewItem8.StateImageIndex = 0;
+            listViewItem9.StateImageIndex = 0;
+            listViewItem10.StateImageIndex = 0;
             this.lstFileTypes.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5});
+            listViewItem6,
+            listViewItem7,
+            listViewItem8,
+            listViewItem9,
+            listViewItem10});
             this.lstFileTypes.Location = new System.Drawing.Point(18, 33);
             this.lstFileTypes.MultiSelect = false;
             this.lstFileTypes.Name = "lstFileTypes";
@@ -567,6 +578,50 @@
             this.lblFileAssociations.TabIndex = 0;
             this.lblFileAssociations.Text = "Associate the following file types with TotalImage:";
             // 
+            // cbxConfirmInjection
+            // 
+            this.cbxConfirmInjection.AutoSize = true;
+            this.cbxConfirmInjection.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxConfirmInjection.Location = new System.Drawing.Point(6, 74);
+            this.cbxConfirmInjection.Name = "cbxConfirmInjection";
+            this.cbxConfirmInjection.Size = new System.Drawing.Size(144, 20);
+            this.cbxConfirmInjection.TabIndex = 15;
+            this.cbxConfirmInjection.Text = "Confirm file injection";
+            this.cbxConfirmInjection.UseVisualStyleBackColor = true;
+            // 
+            // cbxConfirmDeletion
+            // 
+            this.cbxConfirmDeletion.AutoSize = true;
+            this.cbxConfirmDeletion.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxConfirmDeletion.Location = new System.Drawing.Point(6, 48);
+            this.cbxConfirmDeletion.Name = "cbxConfirmDeletion";
+            this.cbxConfirmDeletion.Size = new System.Drawing.Size(141, 20);
+            this.cbxConfirmDeletion.TabIndex = 16;
+            this.cbxConfirmDeletion.Text = "Confirm file deletion";
+            this.cbxConfirmDeletion.UseVisualStyleBackColor = true;
+            // 
+            // cbxConfirmOverwriteExtract
+            // 
+            this.cbxConfirmOverwriteExtract.AutoSize = true;
+            this.cbxConfirmOverwriteExtract.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxConfirmOverwriteExtract.Location = new System.Drawing.Point(6, 22);
+            this.cbxConfirmOverwriteExtract.Name = "cbxConfirmOverwriteExtract";
+            this.cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(241, 20);
+            this.cbxConfirmOverwriteExtract.TabIndex = 17;
+            this.cbxConfirmOverwriteExtract.Text = "Confirm overwrite during file extraction";
+            this.cbxConfirmOverwriteExtract.UseVisualStyleBackColor = true;
+            // 
+            // cbxAutoincrementFilename
+            // 
+            this.cbxAutoincrementFilename.AutoSize = true;
+            this.cbxAutoincrementFilename.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxAutoincrementFilename.Location = new System.Drawing.Point(6, 100);
+            this.cbxAutoincrementFilename.Name = "cbxAutoincrementFilename";
+            this.cbxAutoincrementFilename.Size = new System.Drawing.Size(265, 20);
+            this.cbxAutoincrementFilename.TabIndex = 18;
+            this.cbxAutoincrementFilename.Text = "Auto-increment last filename when possible";
+            this.cbxAutoincrementFilename.UseVisualStyleBackColor = true;
+            // 
             // dlgSettings
             // 
             this.AcceptButton = this.btnOK;
@@ -591,6 +646,8 @@
             this.tabs.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
             this.gbxMisc.ResumeLayout(false);
+            this.gbxBehavior.ResumeLayout(false);
+            this.gbxBehavior.PerformLayout();
             this.tabView.ResumeLayout(false);
             this.tabView.PerformLayout();
             this.tabExtraction.ResumeLayout(false);
@@ -643,5 +700,9 @@
         private System.Windows.Forms.CheckBox cbxPreserveAttributes;
         private System.Windows.Forms.CheckBox cbxPreserveDates;
         private System.Windows.Forms.CheckBox cbxShellFileIcons;
+        private System.Windows.Forms.CheckBox cbxConfirmInjection;
+        private System.Windows.Forms.CheckBox cbxConfirmDeletion;
+        private System.Windows.Forms.CheckBox cbxConfirmOverwriteExtract;
+        private System.Windows.Forms.CheckBox cbxAutoincrementFilename;
     }
 }
