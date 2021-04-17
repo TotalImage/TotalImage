@@ -32,6 +32,7 @@ namespace TotalImage
         private SortOrder sortOrder;
         private TiDirectory lastViewedDir;
         internal static Dictionary<string, (string name, int iconIndex)> fileTypes = new Dictionary<string, (string name, int iconIndex)>(StringComparer.InvariantCultureIgnoreCase);
+        private string? lastSavedFilename;
 
         private ListViewItem upOneFolderListViewItem = new ListViewItem()
         {
@@ -417,6 +418,20 @@ namespace TotalImage
                 "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "All files (*.*)|*.*";
 
+            if (lastSavedFilename != null)
+            {
+                string nameNoExt = Path.GetFileNameWithoutExtension(lastSavedFilename);
+                string number = System.Text.RegularExpressions.Regex.Match(nameNoExt, @"\d+$").Value;
+                string prefix = nameNoExt.Substring(0, nameNoExt.LastIndexOf(number));
+                int i = int.Parse(number) + 1;
+                string newFilename = prefix + i.ToString(new string('0', number.Length));
+                sfd.FileName = newFilename;
+            }
+            else
+            {
+                Debug.WriteLine("lastSavedFilename is null");
+            }
+
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 if (sfd.FilterIndex == 0 ||
@@ -428,16 +443,30 @@ namespace TotalImage
                     sfd.FileName.EndsWith(".hdm", StringComparison.OrdinalIgnoreCase))
                 {
                     image.SaveImage(sfd.FileName);
+
+                    if(System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(sfd.FileName), @"\d+$").Success && Settings.CurrentSettings.AutoIncrementFilename)
+                    {
+                        Debug.WriteLine("Regex matched and autoincrement enabled");
+                        lastSavedFilename = Path.GetFileName(sfd.FileName);
+                        Debug.WriteLine($"lastSavedFilename is now \"{lastSavedFilename}\"");
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Regex didn't match or autoincrement disabled");
+                        lastSavedFilename = null;
+                        Debug.WriteLine("lastSavedFilename is now null");
+                    }
+
+                    filepath = sfd.FileName;
+                    filename = Path.GetFileName(filepath);
+                    Text = $"{filename} - TotalImage";
+
+                    Settings.AddRecentImage(filepath);
+                    PopulateRecentList();
+                    unsavedChanges = false;
+                    saveToolStripButton.Enabled = false;
                 }
 
-                filepath = sfd.FileName;
-                filename = Path.GetFileName(filepath);
-                Text = $"{filename} - TotalImage";
-
-                Settings.AddRecentImage(filepath);
-                PopulateRecentList();
-                unsavedChanges = false;
-                saveToolStripButton.Enabled = false;
             }
         }
 
@@ -798,6 +827,8 @@ namespace TotalImage
                 SyncUIWithSettings();
                 ResetView();
                 UpdateStatusBar();
+                if (!Settings.CurrentSettings.AutoIncrementFilename)
+                    lastSavedFilename = null;
             }
         }
 
