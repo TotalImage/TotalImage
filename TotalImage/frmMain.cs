@@ -540,6 +540,11 @@ namespace TotalImage
 
             foreach (var file in files)
             {
+                if(File.Exists(Path.Combine(path, file.Name)) && Settings.CurrentSettings.ConfirmOverwriteExtraction){
+                    if (DialogResult.No == MessageBox.Show($"File {file.Name} already exists in the target directory. Do you want to overwrite it?", "File already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
+                        continue;
+                }
+
                 using (var destStream = new FileStream(Path.Combine(path, file.Name), FileMode.Create))
                     file.GetStream().CopyTo(destStream);
 
