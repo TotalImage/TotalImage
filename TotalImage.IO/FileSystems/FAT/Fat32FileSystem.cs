@@ -34,8 +34,7 @@ namespace TotalImage.FileSystems.FAT
             => _fsInfo.IsValid && _fsInfo.freeCount <= ClusterCount ? _fsInfo.freeCount : base.TotalFreeClusters;
 
         /// <inheritdoc />
-        public override uint? GetNextCluster(uint index, int fat = 0)
-            => index > 1 && ClusterMaps[fat][index] < 0xFFFFFEF ? (uint?)ClusterMaps[fat][index] : null;
+        protected override uint ClusterMask => 0xFFFFFFF; // The most significant 4 bits are reserved
 
         /// <inheritdoc />
         public override FatFileSystem.ClusterMap[] ClusterMaps { get; }
@@ -59,7 +58,7 @@ namespace TotalImage.FileSystems.FAT
             {
                 get
                 {
-                    index &= 0x0FFFFFFF; // The most significant 4 bits are reserved
+                    index &= _fat32.ClusterMask;
 
                     if (index >= Length) throw new ArgumentOutOfRangeException();
 
@@ -78,7 +77,7 @@ namespace TotalImage.FileSystems.FAT
 
                     // 32-bit cluster map values. Nothing to see here
                     reader.BaseStream.Seek(index * 4, SeekOrigin.Current);
-                    return reader.ReadUInt32() & 0x0FFFFFFF;
+                    return reader.ReadUInt32() & _fat32.ClusterMask;
                 }
 
                 set

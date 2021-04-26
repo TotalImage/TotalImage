@@ -357,6 +357,12 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
+        /// <inheritdoc />
+        protected override uint ClusterMask => 0xFFF;
+
+        /// <inheritdoc />
+        public override FatFileSystem.ClusterMap[] ClusterMaps { get; }
+
         private new class ClusterMap : FatFileSystem.ClusterMap
         {
             Fat12FileSystem _fat12;
@@ -416,11 +422,5 @@ namespace TotalImage.FileSystems.FAT
                 }
             }
         }
-
-        public override FatFileSystem.ClusterMap[] ClusterMaps { get; }
-
-        /// <inheritdoc/>
-        public override uint? GetNextCluster(uint index, int fat = 0)
-            => index > 1 && ClusterMaps[fat][index] < 0xFEF ? (uint?)ClusterMaps[fat][index] : null;
     }
 }

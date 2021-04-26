@@ -21,8 +21,7 @@ namespace TotalImage.FileSystems.FAT
         public override string DisplayName => "FAT16";
 
         /// <inheritdoc />
-        public override uint? GetNextCluster(uint index, int fat = 0)
-            => index > 1 && ClusterMaps[fat][index] < 0xFFEF ? (uint?)ClusterMaps[fat][index] : null;
+        protected override uint ClusterMask => 0xFFFF;
 
         /// <inheritdoc />
         public override FatFileSystem.ClusterMap[] ClusterMaps { get; }

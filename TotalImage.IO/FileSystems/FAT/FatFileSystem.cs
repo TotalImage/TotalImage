@@ -76,15 +76,51 @@ namespace TotalImage.FileSystems.FAT
 
         public uint ClusterCount
             => DataAreaSectors / _bpb.LogicalSectorsPerCluster;
-        
+
+        /// <summary>
+        /// Cluster number bit mask. This is also the maximum cluster map value.
+        /// </summary>
+        protected abstract uint ClusterMask { get; }
+
+        /// <summary>
+        /// Determines the type of a cluster map value.
+        /// </summary>
+        public ClusterTypes GetClusterType(uint cluster)
+        {
+            if (cluster > ClusterMask - 0x10)
+            {
+                if ((cluster & 0xF) == 7)
+                    return ClusterTypes.Bad;
+                if ((cluster & 0xF) > 7)
+                    return ClusterTypes.EndOfChain;
+                
+                return ClusterTypes.Reserved;
+            }
+            else if (cluster < 2)
+            {
+                if (cluster == 0)
+                    return ClusterTypes.Free;
+                if (cluster == 1)
+                    return ClusterTypes.NonFree;
+            }
+
+            return ClusterTypes.Data;
+        }
+
+        /// <summary>
+        /// Determines whether the cluster map value is an end-of-chain marker or a valid pointer to another data cluster.
+        /// </summary>
+        public bool IsEndOfChainMarker(uint cluster)
+            => GetClusterType(cluster) != ClusterTypes.Data;
 
         /// <summary>
         /// Retrieves the number of the next cluster in a cluster chain.
         /// </summary>
         /// <param name="index">Current cluster</param>
         /// <param name="fat">Specifies which copy of the FAT should be used</param>
-        /// <returns>The next cluster number if any, otherwise <c>null</c>.</returns>
-        public abstract uint? GetNextCluster(uint index, int fat = 0);
+        /// <returns>The next cluster number if any, otherwise <see langword="null"/>.</returns>
+        public uint? GetNextCluster(uint index, int fat = 0)
+            => IsEndOfChainMarker(index) ? null : (uint?)ClusterMaps[fat][index];
 
         public uint[] GetClusterChain(uint firstCluster)
         {
