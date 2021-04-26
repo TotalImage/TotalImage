@@ -27,16 +27,14 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override long TotalFreeSpace => TotalFreeClusters * BytesPerCluster;
 
-        public int TotalFreeClusters
+        public virtual uint TotalFreeClusters
         {
             get
             {
-                var clusters = 0;
-                var idk = 0;
+                var clusters = 0u;
 
-                for (var i = 0; i < ClusterCount; i++)
+                for (var i = 0u; i < ClusterCount; i++)
                 {
-                    idk++;
                     if (MainClusterMap[i + 2] == 0) clusters++;
                 }
 

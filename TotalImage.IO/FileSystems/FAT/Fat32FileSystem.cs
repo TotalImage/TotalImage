@@ -30,6 +30,10 @@ namespace TotalImage.FileSystems.FAT
         public override string DisplayName => "FAT32";
 
         /// <inheritdoc />
+        public override uint TotalFreeClusters
+            => _fsInfo.IsValid && _fsInfo.freeCount <= ClusterCount ? _fsInfo.freeCount : base.TotalFreeClusters;
+
+        /// <inheritdoc />
         public override uint? GetNextCluster(uint index, int fat = 0)
             => index > 1 && ClusterMaps[fat][index] < 0xFFFFFEF ? (uint?)ClusterMaps[fat][index] : null;
 
