@@ -13,15 +13,6 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override string DisplayName => "FAT12";
 
-        /// <inheritdoc />
-        public override long AvailableFreeSpace => throw new NotImplementedException();
-
-        /// <inheritdoc />
-        public override long TotalFreeSpace => throw new NotImplementedException();
-
-        /// <inheritdoc />
-        public override long TotalSize => throw new NotImplementedException();
-
         //TODO: Should the detection code be moved elsewhere, e.g. to the container or main form?
         public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {

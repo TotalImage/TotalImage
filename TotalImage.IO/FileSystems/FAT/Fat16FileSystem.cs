@@ -21,15 +21,6 @@ namespace TotalImage.FileSystems.FAT
         public override string DisplayName => "FAT16";
 
         /// <inheritdoc />
-        public override long AvailableFreeSpace => throw new NotImplementedException();
-
-        /// <inheritdoc />
-        public override long TotalFreeSpace => throw new NotImplementedException();
-
-        /// <inheritdoc />
-        public override long TotalSize => throw new NotImplementedException();
-
-        /// <inheritdoc />
         public override uint? GetNextCluster(uint index, int fat = 0)
             => index > 1 && ClusterMaps[fat][index] < 0xFFEF ? (uint?)ClusterMaps[fat][index] : null;
 

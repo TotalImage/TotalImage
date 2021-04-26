@@ -70,11 +70,6 @@ namespace TotalImage.FileSystems
         public abstract Directory RootDirectory { get; }
 
         /// <summary>
-        /// The available free space within the file system
-        /// </summary>
-        public abstract long AvailableFreeSpace { get; }
-
-        /// <summary>
         /// The total free space within the file system
         /// </summary>
         public abstract long TotalFreeSpace { get; }

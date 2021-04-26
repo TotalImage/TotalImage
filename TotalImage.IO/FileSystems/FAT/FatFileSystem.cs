@@ -21,6 +21,29 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override Directory RootDirectory { get; }
 
+        /// <inheritdoc />
+        public override long TotalSize => TotalSectors * _bpb.BytesPerLogicalSector;
+
+        /// <inheritdoc />
+        public override long TotalFreeSpace => TotalFreeClusters * BytesPerCluster;
+
+        public int TotalFreeClusters
+        {
+            get
+            {
+                var clusters = 0;
+                var idk = 0;
+
+                for (var i = 0; i < ClusterCount; i++)
+                {
+                    idk++;
+                    if (MainClusterMap[i + 2] == 0) clusters++;
+                }
+
+                return clusters;
+            }
+        }
+
         public uint DataAreaFirstSector
         {
             get
@@ -33,10 +56,10 @@ namespace TotalImage.FileSystems.FAT
         }
 
         public uint TotalSectors
-            => (uint)_bpb.TotalLogicalSectors;
+            => _bpb.TotalLogicalSectors;
 
         public uint ReservedSectors
-            => (uint)_bpb.ReservedLogicalSectors;
+            => _bpb.ReservedLogicalSectors;
 
         public uint ClusterMapsSectors
             => (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
@@ -54,7 +77,7 @@ namespace TotalImage.FileSystems.FAT
             => (uint)_bpb.LogicalSectorsPerFAT * _bpb.BytesPerLogicalSector;
 
         public uint ClusterCount
-            => (uint)DataAreaSectors / _bpb.LogicalSectorsPerCluster;
+            => DataAreaSectors / _bpb.LogicalSectorsPerCluster;
         
 
         /// <summary>
@@ -85,6 +108,12 @@ namespace TotalImage.FileSystems.FAT
         public abstract class ClusterMap : IEnumerable<uint>
         {
             public abstract uint this[uint index] { get; set; }
+
+            public uint this[int index]
+            {
+                get => this[(uint)index];
+                set => this[(uint)index] = value;
+            }
 
             public abstract uint Length { get; }
 
@@ -121,7 +150,11 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
-        public override string VolumeLabel { get => RootDirectoryVolumeLabel ?? BpbVolumeLabel ?? "NO NAME"; set => throw new NotImplementedException(); }
+        public override string VolumeLabel
+        {
+            get => RootDirectoryVolumeLabel ?? BpbVolumeLabel ?? "NO NAME";
+            set => throw new NotImplementedException();
+        }
 
         public string? BpbVolumeLabel
         {
