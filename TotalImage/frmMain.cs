@@ -21,6 +21,13 @@ using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
 namespace TotalImage
 {
+    enum StatusBarState
+    {
+        NoneSelected,
+        OneSelected,
+        MultipleSelected
+    }
+
     public partial class frmMain : Form
     {
         public string filename = "";
@@ -635,31 +642,15 @@ namespace TotalImage
             }
         }
 
-        enum StatusBarStates
-        {
-            NoneSelected,
-            OneSelected,
-            MultipleSelected
-        }
-
-        StatusBarStates StatusBarState
-        {
-            get
+        StatusBarState StatusBarState
+            => lstFiles.SelectedIndices.Cast<int>().Where(x => x >= IndexShift).Count() switch
             {
-                var selectedItems = lstFiles.SelectedIndices.Count - IndexShift;
-                switch (selectedItems > 0 ? selectedItems : 0)
-                {
-                    case 0:
-                        return StatusBarStates.NoneSelected;
-                    case 1:
-                        return StatusBarStates.OneSelected;
-                    default:
-                        return StatusBarStates.MultipleSelected;
-                }
-            }
-        }
+                0 => StatusBarState.NoneSelected,
+                1 => StatusBarState.OneSelected,
+                _ => StatusBarState.MultipleSelected
+            };
 
-        private void UpdateStatusBar(bool UpdateFreeSpace)
+        private void UpdateStatusBar(bool updateFreeSpace)
         {
             if (image == null)
             {
@@ -671,41 +662,41 @@ namespace TotalImage
             else
             {
                 //Makes no sense to do this every time selection changes, etc. Only when operations that affect the free space are performed
-                if (UpdateFreeSpace)
+                if (updateFreeSpace)
                 {
                     lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
-                    double FreeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
-                    lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({FreeSpacePercentage / 100:p2})";
-                    if ((int)FreeSpacePercentage <= 10)
+                    double freeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
+                    lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({freeSpacePercentage / 100:p2})";
+                    if ((int)freeSpacePercentage <= 10)
                         SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(2), IntPtr.Zero); // Set the progress bar colour to red.
-                    else if ((int)FreeSpacePercentage <= 20)
+                    else if ((int)freeSpacePercentage <= 20)
                         SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(3), IntPtr.Zero); // Set the progress bar colour to yellow.
                     else
                         SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(1), IntPtr.Zero); // Set the progress bar colour to green.
 
                     // Set progress bar value with a bit of a hack to disable the glow.
-                    lblStatusProgressBar.Minimum = 100 - (int)FreeSpacePercentage;
-                    lblStatusProgressBar.Value = 100 - (int)FreeSpacePercentage;
+                    lblStatusProgressBar.Minimum = 100 - (int)freeSpacePercentage;
+                    lblStatusProgressBar.Value = 100 - (int)freeSpacePercentage;
                     lblStatusProgressBar.Minimum = 0;
                 }
 
                 switch (StatusBarState)
                 {
-                    case StatusBarStates.NoneSelected:
+                    case StatusBarState.NoneSelected:
                         {
                             var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
                             lbStatusPath.Text = dir.FullName;
                             lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(CalculateDirSize())} in {GetFileCount()} item(s)";
                             break;
                         }
-                    case StatusBarStates.OneSelected:
+                    case StatusBarState.OneSelected:
                         {
                             var item = GetSelectedItemData(0);
                             lbStatusPath.Text = item.FullName;
                             lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
                             break;
                         }
-                    case StatusBarStates.MultipleSelected:
+                    case StatusBarState.MultipleSelected:
                         {
                             var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
                             var selectedSize = 0ul;
