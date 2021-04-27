@@ -13,12 +13,11 @@ namespace TotalImage
         private void dlgImageInfo_Load(object sender, System.EventArgs e)
         {
             //Make the groups collapsible for .NET 5.0 or later
-#if NET5_0_OR_GREATER
             lstProperties.Groups[0].CollapsedState = ListViewGroupCollapsedState.Expanded;
             lstProperties.Groups[1].CollapsedState = ListViewGroupCollapsedState.Expanded;
             lstProperties.Groups[2].CollapsedState = ListViewGroupCollapsedState.Expanded;
             lstProperties.Groups[3].CollapsedState = ListViewGroupCollapsedState.Expanded;
-#endif
+
             frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
 
             lstProperties.FindItemWithText("Filename").SubItems[1].Text = mainForm.filename;

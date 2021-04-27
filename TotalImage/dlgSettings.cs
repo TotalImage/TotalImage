@@ -14,7 +14,6 @@ namespace TotalImage
         {
             Settings.ClearRecentImages();
 
-#if NET5_0_OR_GREATER
             TaskDialog.ShowDialog(this, new TaskDialogPage()
             {
                 Text = "List of recently opened images has been successfully cleared.",
@@ -27,12 +26,10 @@ namespace TotalImage
                 Icon = TaskDialogIcon.Information,
                 DefaultButton = TaskDialogButton.OK
             });
-#endif
         }
 
         private void btnReset_Click(object sender, System.EventArgs e)
         {
-#if NET5_0_OR_GREATER
             TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
             {
                 Text = "All settings will be reset to their default values.",
@@ -65,17 +62,6 @@ namespace TotalImage
                     DefaultButton = TaskDialogButton.OK
                 });
             }
-#elif NET48
-            DialogResult result = MessageBox.Show("All settings will be reset to their default values. Are you sure you want to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if(result == DialogResult.Yes)
-            {
-                Settings.LoadDefaults();
-                Settings.Save();
-
-                MessageBox.Show("All settings were successfully reset to their default values.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            }
-#endif
 
             SyncUIWithSettings();
         }
@@ -142,12 +128,6 @@ namespace TotalImage
         {
             using FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.ShowNewFolderButton = true;
-
-#if NET48
-            //We only do this for .NET Framework because it has the old FBD and there's a notable empty space at the top without the description.
-            //Meanwhile, .NET 5 has the new Vista+ FBD which doesn't handle the description well visually, especially if dark Explorer theme is used.
-            fbd.Description = "Select a folder where extracted files will be saved.";
-#endif
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {

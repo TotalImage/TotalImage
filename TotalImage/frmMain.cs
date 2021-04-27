@@ -91,7 +91,6 @@ namespace TotalImage
                 }
                 else
                 {
-#if NET5_0_OR_GREATER
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
                         Text = $"The file \"{Path.GetFileName(argPath)}\" could not be opened because it's inaccessible or does not exist.",
@@ -104,9 +103,6 @@ namespace TotalImage
                         Icon = TaskDialogIcon.Error,
                         DefaultButton = TaskDialogButton.OK
                     });
-#elif NET48
-                    MessageBox.Show($"The file \"{Path.GetFileName(argPath)}\" could not be opened because it's inaccessible or does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-#endif
                 }
             }
 
@@ -135,12 +131,6 @@ namespace TotalImage
         {
             using FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.ShowNewFolderButton = true;
-
-#if NET48
-            //We only do this for .NET Framework because it has the old FBD and there's a notable empty space at the top without the description.
-            //Meanwhile, .NET 5 has the new Vista+ FBD which doesn't handle the description well visually, especially if dark Explorer theme is used.
-            fbd.Description = "Select a folder to inject into the image.";
-#endif
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {
@@ -195,9 +185,6 @@ namespace TotalImage
             }
             catch (IOException)
             {
-#if NET48
-                MessageBox.Show("Selected file could not be opened because it's inaccessible or no longer exists.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-#elif NET5_0_OR_GREATER
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
                     Text = $"Selected file could not be opened because it's inaccessible or no longer exists.",
@@ -210,7 +197,7 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Error,
                     DefaultButton = TaskDialogButton.OK
                 });
-#endif
+
                 //Remove the non-working entry
                 Settings.RemoveRecentImage(imagePath);
                 PopulateRecentList();
@@ -564,10 +551,6 @@ namespace TotalImage
             foreach (var file in files)
             {
                 if(File.Exists(Path.Combine(path, file.Name)) && Settings.CurrentSettings.ConfirmOverwriteExtraction){
-#if NET48
-                    if (DialogResult.No == MessageBox.Show($"File {file.Name} already exists in the target directory. Do you want to overwrite it?", "File already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
-                        continue;
-#elif NET5_0_OR_GREATER
                     TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
                         Text = $"The file \"{file.Name}\" already exists in the target directory. Do you want to overwrite it?",
@@ -584,7 +567,6 @@ namespace TotalImage
 
                     if (result == TaskDialogButton.No)
                         continue;
-#endif
                 }
 
                 using (var destStream = new FileStream(Path.Combine(path, file.Name), FileMode.Create))
