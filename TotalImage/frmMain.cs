@@ -427,10 +427,6 @@ namespace TotalImage
                 string newFilename = prefix + i.ToString(new string('0', number.Length));
                 sfd.FileName = newFilename;
             }
-            else
-            {
-                Debug.WriteLine("lastSavedFilename is null");
-            }
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
@@ -446,15 +442,11 @@ namespace TotalImage
 
                     if(System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(sfd.FileName), @"\d+$").Success && Settings.CurrentSettings.AutoIncrementFilename)
                     {
-                        Debug.WriteLine("Regex matched and autoincrement enabled");
                         lastSavedFilename = Path.GetFileName(sfd.FileName);
-                        Debug.WriteLine($"lastSavedFilename is now \"{lastSavedFilename}\"");
                     }
                     else
                     {
-                        Debug.WriteLine("Regex didn't match or autoincrement disabled");
                         lastSavedFilename = null;
-                        Debug.WriteLine("lastSavedFilename is now null");
                     }
 
                     filepath = sfd.FileName;
@@ -1411,7 +1403,31 @@ namespace TotalImage
             }
         }
 
-#endregion
+        private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            if (e.ItemIndex < IndexShift)
+                e.Item = upOneFolderListViewItem;
+            else
+                e.Item = currentFolderView[e.ItemIndex - IndexShift];
+        }
+
+        private void lstFiles_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
+        {
+
+        }
+
+        private void lstFiles_SearchForVirtualItem(object sender, SearchForVirtualItemEventArgs e)
+        {
+
+        }
+
+        private void lblNotifications_ButtonClick(object sender, EventArgs e)
+        {
+            using dlgNotifications dlg = new dlgNotifications();
+            dlg.ShowDialog();
+        }
+
+        #endregion
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
@@ -1952,30 +1968,6 @@ namespace TotalImage
             if (lstFiles.SelectedIndices[idx] < IndexShift)
                 return (TiFileSystemObject)upOneFolderListViewItem.Tag;
             return (TiFileSystemObject)currentFolderView[lstFiles.SelectedIndices[idx] - IndexShift].Tag;
-        }
-
-        private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
-        {
-            if (e.ItemIndex < IndexShift)
-                e.Item = upOneFolderListViewItem;
-            else
-                e.Item = currentFolderView[e.ItemIndex - IndexShift];
-        }
-
-        private void lstFiles_CacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
-        {
-
-        }
-
-        private void lstFiles_SearchForVirtualItem(object sender, SearchForVirtualItemEventArgs e)
-        {
-
-        }
-
-        private void lblNotifications_ButtonClick(object sender, EventArgs e)
-        {
-            using dlgNotifications dlg = new dlgNotifications();
-            dlg.ShowDialog();
         }
     }
 }
