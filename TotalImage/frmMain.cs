@@ -1861,7 +1861,7 @@ namespace TotalImage
 
             // Change border sides for status bar children to add seperator-like looks.
             lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.Right;
-            lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.Left;
+            lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
 
             //New image was created, enable the Save button to act as Save as
             if (unsavedChanges && string.IsNullOrEmpty(filename))
