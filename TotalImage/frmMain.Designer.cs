@@ -148,11 +148,11 @@
             this.lstDirectories = new TotalImage.TreeViewEx();
             this.imgFilesSmall = new System.Windows.Forms.ImageList(this.components);
             this.lstFiles = new TotalImage.ListViewEx();
-            this.clmName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmModified = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmAttributes = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.clmName = new System.Windows.Forms.ColumnHeader();
+            this.clmType = new System.Windows.Forms.ColumnHeader();
+            this.clmSize = new System.Windows.Forms.ColumnHeader();
+            this.clmModified = new System.Windows.Forms.ColumnHeader();
+            this.clmAttributes = new System.Windows.Forms.ColumnHeader();
             this.cmsFileList = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.extractToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.newFolderToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
@@ -294,7 +294,7 @@
             this.commandBarToolStripMenuItem1.CheckOnClick = true;
             this.commandBarToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.commandBarToolStripMenuItem1.Name = "commandBarToolStripMenuItem1";
-            this.commandBarToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.commandBarToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
             this.commandBarToolStripMenuItem1.Text = "Command bar";
             this.commandBarToolStripMenuItem1.Click += new System.EventHandler(this.toggleCommandBar_Click);
             // 
@@ -304,7 +304,7 @@
             this.directoryTreeToolStripMenuItem1.CheckOnClick = true;
             this.directoryTreeToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.directoryTreeToolStripMenuItem1.Name = "directoryTreeToolStripMenuItem1";
-            this.directoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.directoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
             this.directoryTreeToolStripMenuItem1.Text = "Directory tree";
             this.directoryTreeToolStripMenuItem1.Click += new System.EventHandler(this.toggleDirectoryTree_Click);
             // 
@@ -314,7 +314,7 @@
             this.statusBarToolStripMenuItem1.CheckOnClick = true;
             this.statusBarToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.statusBarToolStripMenuItem1.Name = "statusBarToolStripMenuItem1";
-            this.statusBarToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.statusBarToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
             this.statusBarToolStripMenuItem1.Text = "Status bar";
             this.statusBarToolStripMenuItem1.Click += new System.EventHandler(this.toggleStatusBar_Click);
             // 
@@ -1107,26 +1107,26 @@
             // toolStripSeparator14
             // 
             this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(174, 6);
+            this.toolStripSeparator14.Size = new System.Drawing.Size(183, 6);
             // 
             // largeIconsToolStripMenuItem1
             // 
             this.largeIconsToolStripMenuItem1.Name = "largeIconsToolStripMenuItem1";
-            this.largeIconsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
+            this.largeIconsToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
             this.largeIconsToolStripMenuItem1.Text = "Large icons";
             this.largeIconsToolStripMenuItem1.Click += new System.EventHandler(this.viewLargeIcons_Click);
             // 
             // smallIconsToolStripMenuItem1
             // 
             this.smallIconsToolStripMenuItem1.Name = "smallIconsToolStripMenuItem1";
-            this.smallIconsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
+            this.smallIconsToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
             this.smallIconsToolStripMenuItem1.Text = "Small icons";
             this.smallIconsToolStripMenuItem1.Click += new System.EventHandler(this.viewSmallIcons_Click);
             // 
             // listToolStripMenuItem1
             // 
             this.listToolStripMenuItem1.Name = "listToolStripMenuItem1";
-            this.listToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
+            this.listToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
             this.listToolStripMenuItem1.Text = "List";
             this.listToolStripMenuItem1.Click += new System.EventHandler(this.viewList_Click);
             // 
@@ -1135,7 +1135,7 @@
             this.detailsToolStripMenuItem1.Checked = true;
             this.detailsToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.detailsToolStripMenuItem1.Name = "detailsToolStripMenuItem1";
-            this.detailsToolStripMenuItem1.Size = new System.Drawing.Size(177, 22);
+            this.detailsToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
             this.detailsToolStripMenuItem1.Text = "Details";
             this.detailsToolStripMenuItem1.Click += new System.EventHandler(this.viewDetails_Click);
             // 
@@ -1242,6 +1242,7 @@
             // 
             // imgFilesSmall
             // 
+            this.imgFilesSmall.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
             this.imgFilesSmall.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgFilesSmall.ImageStream")));
             this.imgFilesSmall.TransparentColor = System.Drawing.Color.Transparent;
             this.imgFilesSmall.Images.SetKeyName(0, "up_folder_16.png");
@@ -1391,6 +1392,7 @@
             // 
             // imgFilesLarge
             // 
+            this.imgFilesLarge.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
             this.imgFilesLarge.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgFilesLarge.ImageStream")));
             this.imgFilesLarge.TransparentColor = System.Drawing.Color.Transparent;
             this.imgFilesLarge.Images.SetKeyName(0, "up_folder_16.png");
@@ -1404,7 +1406,7 @@
             this.Controls.Add(this.commandBar);
             this.Controls.Add(this.statusBar);
             this.Controls.Add(this.menuBar);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuBar;
             this.MinimumSize = new System.Drawing.Size(650, 400);
