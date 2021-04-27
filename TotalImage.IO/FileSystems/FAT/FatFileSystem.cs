@@ -85,33 +85,33 @@ namespace TotalImage.FileSystems.FAT
         /// <summary>
         /// Determines the type of a cluster map value.
         /// </summary>
-        public ClusterTypes GetClusterType(uint cluster)
+        public ClusterType GetClusterType(uint cluster)
         {
             if (cluster > ClusterMask - 0x10)
             {
                 if ((cluster & 0xF) == 7)
-                    return ClusterTypes.Bad;
+                    return ClusterType.Bad;
                 if ((cluster & 0xF) > 7)
-                    return ClusterTypes.EndOfChain;
+                    return ClusterType.EndOfChain;
                 
-                return ClusterTypes.Reserved;
+                return ClusterType.Reserved;
             }
             else if (cluster < 2)
             {
                 if (cluster == 0)
-                    return ClusterTypes.Free;
+                    return ClusterType.Free;
                 if (cluster == 1)
-                    return ClusterTypes.NonFree;
+                    return ClusterType.NonFree;
             }
 
-            return ClusterTypes.Data;
+            return ClusterType.Data;
         }
 
         /// <summary>
         /// Determines whether the cluster map value is an end-of-chain marker or a valid pointer to another data cluster.
         /// </summary>
         public bool IsEndOfChainMarker(uint cluster)
-            => GetClusterType(cluster) != ClusterTypes.Data;
+            => GetClusterType(cluster) != ClusterType.Data;
 
         /// <summary>
         /// Retrieves the number of the next cluster in a cluster chain.

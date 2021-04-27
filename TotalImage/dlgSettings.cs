@@ -117,9 +117,9 @@ namespace TotalImage
 
             switch (Settings.CurrentSettings.SizeUnit)
             {
-                case SizeUnits.Bytes: lstSizeUnits.SelectedIndex = 0; break;
-                case SizeUnits.Decimal: lstSizeUnits.SelectedIndex = 1; break;
-                case SizeUnits.Binary: lstSizeUnits.SelectedIndex = 2; break;
+                case SizeUnit.Bytes: lstSizeUnits.SelectedIndex = 0; break;
+                case SizeUnit.Decimal: lstSizeUnits.SelectedIndex = 1; break;
+                case SizeUnit.Binary: lstSizeUnits.SelectedIndex = 2; break;
             }
 
             switch (Settings.CurrentSettings.DefaultExtractType)
@@ -178,9 +178,9 @@ namespace TotalImage
 
             switch (lstSizeUnits.SelectedIndex)
             {
-                case 0: Settings.CurrentSettings.SizeUnit = SizeUnits.Bytes; break;
-                case 1: Settings.CurrentSettings.SizeUnit = SizeUnits.Decimal; break;
-                case 2: Settings.CurrentSettings.SizeUnit = SizeUnits.Binary; break;
+                case 0: Settings.CurrentSettings.SizeUnit = SizeUnit.Bytes; break;
+                case 1: Settings.CurrentSettings.SizeUnit = SizeUnit.Decimal; break;
+                case 2: Settings.CurrentSettings.SizeUnit = SizeUnit.Binary; break;
             }
 
             switch (lstViewType.SelectedIndex)

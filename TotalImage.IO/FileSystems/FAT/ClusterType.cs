@@ -3,7 +3,7 @@ namespace TotalImage.FileSystems.FAT
     /// <summary>
     /// Enumeration of possible FAT cluster value types.
     /// </summary>
-    public enum ClusterTypes
+    public enum ClusterType
     {
         /// <summary>
         /// Free cluster. Treated as an end-of-chain marker.
