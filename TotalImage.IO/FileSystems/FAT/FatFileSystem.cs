@@ -120,7 +120,7 @@ namespace TotalImage.FileSystems.FAT
         /// <param name="fat">Specifies which copy of the FAT should be used</param>
         /// <returns>The next cluster number if any, otherwise <see langword="null"/>.</returns>
         public uint? GetNextCluster(uint index, int fat = 0)
-            => IsEndOfChainMarker(index) ? null : (uint?)ClusterMaps[fat][index];
+            => IsEndOfChainMarker(ClusterMaps[fat][index]) ? null : (uint?)ClusterMaps[fat][index];
 
         public uint[] GetClusterChain(uint firstCluster)
         {
