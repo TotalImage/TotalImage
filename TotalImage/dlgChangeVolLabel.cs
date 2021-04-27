@@ -15,22 +15,26 @@ namespace TotalImage
         public dlgChangeVolLabel(string rdLabel, string bpbLabel)
         {
             InitializeComponent();
-            oldRDLabel = rdLabel;
-            oldBPBLabel = bpbLabel;
+            oldRDLabel = rdLabel.TrimEnd(' ');
+            oldBPBLabel = bpbLabel.TrimEnd(' ');
         }
 
         private void btnOK_Click(object sender, EventArgs e)
         {
             NewRDLabel = txtRootDirLabel.Text.ToUpper().PadRight(11, ' ');
             WriteBPBLabel = cbxBPBLabel.Checked;
-            NewBPBLabel = txtBPBLabel.Text;
+            NewBPBLabel = txtBPBLabel.Text.ToUpper().PadRight(11, ' ');
         }
 
         private void cbxBPBLabel_CheckedChanged(object sender, EventArgs e)
         {
             txtBPBLabel.Enabled = cbxBPBLabel.Checked;
             cbxSync.Enabled = cbxBPBLabel.Checked;
-            txtBPBLabel.Text = txtRootDirLabel.Text;
+            if (!cbxBPBLabel.Checked)
+            {
+                txtBPBLabel.Text = "";
+                cbxSync.Checked = false;
+            }
         }
 
         private void txtRootDirLabel_TextChanged(object sender, EventArgs e)
@@ -47,14 +51,15 @@ namespace TotalImage
 
         private void cbxSync_CheckedChanged(object sender, EventArgs e)
         {
-            if(cbxSync.Checked)
+            if (cbxSync.Checked)
+            {
                 txtBPBLabel.Text = txtRootDirLabel.Text;
-        }
-
-        private void txtBPBLabel_TextChanged(object sender, EventArgs e)
-        {
-            if (cbxBPBLabel.Checked && cbxSync.Checked)
-                txtRootDirLabel.Text = txtBPBLabel.Text;
+                txtBPBLabel.ReadOnly = true;
+            }
+            else
+            {
+                txtBPBLabel.ReadOnly = false;
+            }
         }
     }
 }

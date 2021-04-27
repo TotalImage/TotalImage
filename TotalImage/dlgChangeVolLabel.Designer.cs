@@ -87,9 +87,9 @@
             this.txtBPBLabel.Location = new System.Drawing.Point(12, 139);
             this.txtBPBLabel.MaxLength = 11;
             this.txtBPBLabel.Name = "txtBPBLabel";
+            this.txtBPBLabel.ReadOnly = true;
             this.txtBPBLabel.Size = new System.Drawing.Size(250, 23);
             this.txtBPBLabel.TabIndex = 2;
-            this.txtBPBLabel.TextChanged += new System.EventHandler(this.txtBPBLabel_TextChanged);
             // 
             // cbxBPBLabel
             // 
