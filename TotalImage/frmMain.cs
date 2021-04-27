@@ -667,7 +667,7 @@ namespace TotalImage
             }
         }
 
-        private void UpdateStatusBar()
+        private void UpdateStatusBar(bool UpdateFreeSpace)
         {
             if (image == null)
             {
@@ -678,52 +678,55 @@ namespace TotalImage
             }
             else
             {
-                lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
-                double FreeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
-                lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({FreeSpacePercentage / 100:p2})";
-                if ((int)FreeSpacePercentage <= 10)
-                    SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(2), IntPtr.Zero); // Set the progress bar colour to red.
-                else if ((int)FreeSpacePercentage <= 20)
-                    SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(3), IntPtr.Zero); // Set the progress bar colour to yellow.
-                else
-                    SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(1), IntPtr.Zero); // Set the progress bar colour to green.
+                //Makes no sense to do this every time selection changes, etc. Only when operations that affect the free space are performed
+                if (UpdateFreeSpace)
+                {
+                    lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
+                    double FreeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
+                    lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({FreeSpacePercentage / 100:p2})";
+                    if ((int)FreeSpacePercentage <= 10)
+                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(2), IntPtr.Zero); // Set the progress bar colour to red.
+                    else if ((int)FreeSpacePercentage <= 20)
+                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(3), IntPtr.Zero); // Set the progress bar colour to yellow.
+                    else
+                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(1), IntPtr.Zero); // Set the progress bar colour to green.
 
-                // Set progress bar value with a bit of a hack to disable the glow.
-                lblStatusProgressBar.Minimum = 100 - (int)FreeSpacePercentage;
-                lblStatusProgressBar.Value = 100 - (int)FreeSpacePercentage;
-                lblStatusProgressBar.Minimum = 0;
+                    // Set progress bar value with a bit of a hack to disable the glow.
+                    lblStatusProgressBar.Minimum = 100 - (int)FreeSpacePercentage;
+                    lblStatusProgressBar.Value = 100 - (int)FreeSpacePercentage;
+                    lblStatusProgressBar.Minimum = 0;
+                }
 
                 switch (StatusBarState)
                 {
                     case StatusBarStates.NoneSelected:
-                    {
-                        var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
-                        lbStatusPath.Text = dir.FullName;
-                        lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(CalculateDirSize())} in {GetFileCount()} item(s)";
-                        break;
-                    }
+                        {
+                            var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
+                            lbStatusPath.Text = dir.FullName;
+                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(CalculateDirSize())} in {GetFileCount()} item(s)";
+                            break;
+                        }
                     case StatusBarStates.OneSelected:
-                    {
-                        var item = GetSelectedItemData(0);
-                        lbStatusPath.Text = item.FullName;
-                        lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
-                        break;
-                    }
+                        {
+                            var item = GetSelectedItemData(0);
+                            lbStatusPath.Text = item.FullName;
+                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
+                            break;
+                        }
                     case StatusBarStates.MultipleSelected:
-                    {
-                        var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
-                        var selectedSize = 0ul;
-                        foreach (var entry in SelectedItems) selectedSize += entry.Length; 
+                        {
+                            var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
+                            var selectedSize = 0ul;
+                            foreach (var entry in SelectedItems) selectedSize += entry.Length;
 
-                        lbStatusPath.Text = dir.FullName;
-                        lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
-                        break;
-                    }
+                            lbStatusPath.Text = dir.FullName;
+                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
+                            break;
+                        }
                 }
             }
         }
 
-        //TODO: Implement status bar stuff based on the selected item in the listview. This includes proper path, size, etc.
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e) // This method will be used more than once, thus it is separated from the main event.
         {
             if (image != null)
@@ -747,7 +750,7 @@ namespace TotalImage
                     extractToolStripButton.Enabled = false;
                     propertiesToolStripButton.Enabled = false;
 
-                    UpdateStatusBar();
+                    UpdateStatusBar(false);
                 }
                 else if (lstFiles.SelectedIndices.Count == 1)
                 {
@@ -771,7 +774,7 @@ namespace TotalImage
                     extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
                     propertiesToolStripButton.Enabled = true;
 
-                    UpdateStatusBar();
+                    UpdateStatusBar(false);
                 }
                 else
                 {
@@ -796,7 +799,7 @@ namespace TotalImage
                     if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
                         path += lstDirectories.PathSeparator;
 
-                    UpdateStatusBar();
+                    UpdateStatusBar(false);
                 }
             }
         }
@@ -823,7 +826,7 @@ namespace TotalImage
             {
                 SyncUIWithSettings();
                 ResetView();
-                UpdateStatusBar();
+                UpdateStatusBar(true);
                 if (!Settings.CurrentSettings.AutoIncrementFilename)
                     lastSavedFilename = null;
             }
@@ -987,7 +990,7 @@ namespace TotalImage
                 }
             }
             
-            UpdateStatusBar();
+            UpdateStatusBar(false);
 
             if (lstDirectories.SelectedNode == null)
             {
@@ -1635,6 +1638,7 @@ namespace TotalImage
             PopulateListView(image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
 
             EnableUI();
+            UpdateStatusBar(true);
 
             Settings.AddRecentImage(filepath);
             PopulateRecentList();
@@ -1940,7 +1944,7 @@ namespace TotalImage
             lstFiles.VirtualListSize = 0;
             selectPartitionToolStripComboBox.Items.Clear();
             DisableUI();
-            UpdateStatusBar();
+            UpdateStatusBar(false);
         }
 
         private TiFileSystemObject GetSelectedItemData(int idx)
