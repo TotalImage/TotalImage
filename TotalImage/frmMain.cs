@@ -679,9 +679,8 @@ namespace TotalImage
             else
             {
                 lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
-                /*
-                double FreeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.AvailableFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
-                lblStatusFreeCapacity.Text = $"Free space left: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.AvailableFreeSpace)} ({FreeSpacePercentage / 100:p2})";
+                double FreeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
+                lblStatusFreeCapacity.Text = $"Free space left: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({FreeSpacePercentage / 100:p2})";
                 if ((int)FreeSpacePercentage <= 10)
                     SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(2), IntPtr.Zero); // Set the progress bar colour to red.
                 else if ((int)FreeSpacePercentage <= 20)
@@ -693,8 +692,6 @@ namespace TotalImage
                 lblStatusProgressBar.Minimum = 100 - (int)FreeSpacePercentage;
                 lblStatusProgressBar.Value = 100 - (int)FreeSpacePercentage;
                 lblStatusProgressBar.Minimum = 0;
-                */
-                // Uncomment code using AvailableFreeSpace when method is implemented.
 
                 switch (StatusBarState)
                 {
