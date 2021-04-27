@@ -13,13 +13,11 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override string DisplayName => "FAT12";
 
-        //TODO: Should the detection code be moved elsewhere, e.g. to the container or main form?
         public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
             ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
             for(int i = 0; i < bpb.NumberOfFATs; i++)
                 ClusterMaps[i] = new ClusterMap(this, i);
-
         }
 
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
@@ -221,64 +219,6 @@ namespace TotalImage.FileSystems.FAT
                     throw new Exception("Root directory is full, volume label cannot be written");
                 }
             }
-        }
-
-        //Returns the current volume label in the root directory, if it exists
-        public string? GetRDVolLabel()
-        {
-            uint rootDirOffset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors + (_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT * 2));
-
-            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
-            {
-                _stream.Seek(rootDirOffset, SeekOrigin.Begin);
-
-                for (int i = 0; i < _bpb.RootDirectoryEntries; i++)
-                {
-                    _stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
-                    byte firstChar = reader.ReadByte();
-
-                    /* 0x00      = no more entries after this one, stop
-                     * 0xE5/0x05 = deleted entry, skip for now */
-                    if (firstChar == 0x00) break;
-                    else if (firstChar == 0xE5 || firstChar == 0x05) continue;
-
-                    //Root directory is not empty, we need to find the volume label, as it may not be the first entry or it may not exist at all
-                    _stream.Seek(-0x01, SeekOrigin.Current);
-                    DirectoryEntry entry = new DirectoryEntry
-                    {
-                        name = reader.ReadBytes(11),
-                        attr = (FatAttributes)reader.ReadByte(),
-                        ntRes = reader.ReadByte(),
-                        crtTimeTenth = reader.ReadByte(),
-                        crtTime = reader.ReadUInt16(),
-                        crtDate = reader.ReadUInt16(),
-                        lstAccDate = reader.ReadUInt16(),
-                        fstClusHI = reader.ReadUInt16(),
-                        wrtTime = reader.ReadUInt16(),
-                        wrtDate = reader.ReadUInt16(),
-                        fstClusLO = reader.ReadUInt16(),
-                        fileSize = reader.ReadUInt32()
-                    };
-
-                    if (entry.attr == FatAttributes.VolumeId)
-                    {
-                        return Encoding.ASCII.GetString(entry.name);
-                    }
-                }
-
-                return null;
-            }
-        }
-
-        //Returns the current volume label in the BPB, if BPB is for DOS 4.0+
-        public string? GetBPBVolLabel()
-        {
-            if (_bpb is ExtendedBiosParameterBlock && _bpb.Version == BiosParameterBlockVersion.Dos40)
-            {
-                return ((ExtendedBiosParameterBlock)_bpb).VolumeLabel;
-            }
-
-            return null;
         }
 
         //Reads the specified cluster in the data area and returns its bytes

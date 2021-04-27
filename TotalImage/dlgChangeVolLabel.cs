@@ -15,8 +15,8 @@ namespace TotalImage
         public dlgChangeVolLabel(string rdLabel, string bpbLabel)
         {
             InitializeComponent();
-            oldRDLabel = rdLabel.TrimEnd(' ');
-            oldBPBLabel = bpbLabel.TrimEnd(' ');
+            oldRDLabel = rdLabel;
+            oldBPBLabel = bpbLabel;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -34,6 +34,10 @@ namespace TotalImage
             {
                 txtBPBLabel.Text = "";
                 cbxSync.Checked = false;
+            }
+            else
+            {
+                txtBPBLabel.Text = txtRootDirLabel.Text;
             }
         }
 

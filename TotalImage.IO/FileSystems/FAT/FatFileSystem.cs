@@ -211,7 +211,7 @@ namespace TotalImage.FileSystems.FAT
                 {
                     if (entry.attr.HasFlag(FatAttributes.VolumeId) && !entry.attr.HasFlag(FatAttributes.LongName))
                     {
-                        return Helper.TrimFileName(Encoding.ASCII.GetString(entry.name));
+                        return Encoding.ASCII.GetString(entry.name).TrimEnd();
                     }
                 }
                 return null;

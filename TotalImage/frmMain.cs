@@ -160,19 +160,14 @@ namespace TotalImage
         //TODO: Actually change the volume labels
         private void changeVolumeLabel_Click(object sender, EventArgs e)
         {
-            if (!(image?.PartitionTable.Partitions[0].FileSystem is Fat12FileSystem fs))
+            if (!(image?.PartitionTable.Partitions[0].FileSystem is FatFileSystem fs))
             {
-                MessageBox.Show("This only works for FAT12 images");
+                MessageBox.Show("This only works for FAT partitions!");
                 return;
             }
 
-            using dlgChangeVolLabel dlg = new dlgChangeVolLabel(fs.GetRDVolLabel(), fs.GetBPBVolLabel());
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                unsavedChanges = true;
-                saveToolStripButton.Enabled = true;
-                saveToolStripMenuItem.Enabled = true;
-            }
+            using dlgChangeVolLabel dlg = new dlgChangeVolLabel(fs.RootDirectoryVolumeLabel, fs.BpbVolumeLabel);
+            dlg.ShowDialog();
         }
 
         //Allows viewing and editing bootsector properties
