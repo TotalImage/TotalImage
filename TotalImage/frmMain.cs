@@ -287,8 +287,8 @@ namespace TotalImage
 
         private IEnumerable<TiFileSystemObject> SelectedItems
             => from x in lstFiles.SelectedIndices.Cast<int>()
-                where x >= IndexShift && currentFolderView[x - IndexShift].Tag is TiFileSystemObject 
-                select (TiFileSystemObject)currentFolderView[x - IndexShift].Tag;
+               where x >= IndexShift && currentFolderView[x - IndexShift].Tag is TiFileSystemObject
+               select (TiFileSystemObject)currentFolderView[x - IndexShift].Tag;
 
         //Deletes a file or folder
         //TODO: Implement deletion here and in the FS/container
@@ -429,7 +429,7 @@ namespace TotalImage
                 {
                     image.SaveImage(sfd.FileName);
 
-                    if(System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(sfd.FileName), @"\d+$").Success && Settings.CurrentSettings.AutoIncrementFilename)
+                    if (System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(sfd.FileName), @"\d+$").Success && Settings.CurrentSettings.AutoIncrementFilename)
                     {
                         lastSavedFilename = Path.GetFileName(sfd.FileName);
                     }
@@ -550,7 +550,8 @@ namespace TotalImage
 
             foreach (var file in files)
             {
-                if(File.Exists(Path.Combine(path, file.Name)) && Settings.CurrentSettings.ConfirmOverwriteExtraction){
+                if (File.Exists(Path.Combine(path, file.Name)) && Settings.CurrentSettings.ConfirmOverwriteExtraction)
+                {
                     TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
                         Text = $"The file \"{file.Name}\" already exists in the target directory. Do you want to overwrite it?",
@@ -949,7 +950,7 @@ namespace TotalImage
                     dirSize += entry.Length;
                 }
             }
-            
+
             UpdateStatusBar(false);
 
             if (lstDirectories.SelectedNode == null)
@@ -1559,38 +1560,38 @@ namespace TotalImage
                 MessageBox.Show("There are no partitions in the selected image", "Error loading HDD image", MessageBoxButtons.OK);
                 return;
             }
-            else if (image.PartitionTable.Partitions.Count > 1)
+            else if (image.PartitionTable.Partitions.Count >= 1)
             {
-                dlgSelectPartition selectFrm = new dlgSelectPartition()
-                {
-                    PartitionTable = image.PartitionTable
-                };
-
-                if (selectFrm.ShowDialog() == DialogResult.Cancel)
-                {
-                    CloseImage();
-                    return;
-                }
-
-                CurrentPartitionIndex = selectFrm.SelectedEntry;
-                selectPartitionToolStripComboBox.Items.Clear();
-
                 if (image.PartitionTable.Partitions.Count > 1)
                 {
-                    for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
+                    dlgSelectPartition selectFrm = new dlgSelectPartition()
                     {
-                        try
-                        {
-                            selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
-                        }
-                        catch (InvalidDataException)
-                        {
-                        }
+                        PartitionTable = image.PartitionTable
+                    };
 
-                        if (i == CurrentPartitionIndex)
-                        {
-                            selectPartitionToolStripComboBox.SelectedIndex = i;
-                        }
+                    if (selectFrm.ShowDialog() == DialogResult.Cancel)
+                    {
+                        CloseImage();
+                        return;
+                    }
+
+                    CurrentPartitionIndex = selectFrm.SelectedEntry;
+                }
+                selectPartitionToolStripComboBox.Items.Clear();
+
+                for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
+                {
+                    try
+                    {
+                        selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
+                    }
+                    catch (InvalidDataException)
+                    {
+                    }
+
+                    if (i == CurrentPartitionIndex)
+                    {
+                        selectPartitionToolStripComboBox.SelectedIndex = i;
                     }
                 }
             }
@@ -1758,7 +1759,7 @@ namespace TotalImage
                 ("file", 0)
             };
 
-            foreach(var (key, attributes) in types)
+            foreach (var (key, attributes) in types)
             {
                 var (_, index) = GetShellFileTypeInfo(key, attributes);
 
@@ -1847,20 +1848,10 @@ namespace TotalImage
             }
 
             //Enabling this now since we have rudimentary HDD support.
-            if (image.PartitionTable.Partitions.Count > 1)
-            {
-                managePartitionsToolStripMenuItem.Enabled = true;
-                selectPartitionToolStripMenuItem.Enabled = true;
-                managePartitionsToolStripButton.Enabled = true;
-                selectPartitionToolStripComboBox.Enabled = true;
-            }
-            else
-            {
-                managePartitionsToolStripMenuItem.Enabled = true;
-                selectPartitionToolStripMenuItem.Enabled = false;
-                managePartitionsToolStripButton.Enabled = true;
-                selectPartitionToolStripComboBox.Enabled = false;
-            }
+            managePartitionsToolStripMenuItem.Enabled = true;
+            selectPartitionToolStripMenuItem.Enabled = true;
+            managePartitionsToolStripButton.Enabled = true;
+            selectPartitionToolStripComboBox.Enabled = true;
         }
 
         //Disables various UI elements after an image is loaded

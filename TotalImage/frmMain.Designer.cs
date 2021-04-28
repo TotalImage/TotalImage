@@ -1007,12 +1007,13 @@
             // 
             // selectPartitionToolStripComboBox
             // 
+            this.selectPartitionToolStripComboBox.AutoSize = false;
             this.selectPartitionToolStripComboBox.DropDownHeight = 200;
             this.selectPartitionToolStripComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.selectPartitionToolStripComboBox.DropDownWidth = 300;
+            this.selectPartitionToolStripComboBox.DropDownWidth = 250;
             this.selectPartitionToolStripComboBox.IntegralHeight = false;
             this.selectPartitionToolStripComboBox.Name = "selectPartitionToolStripComboBox";
-            this.selectPartitionToolStripComboBox.Size = new System.Drawing.Size(200, 25);
+            this.selectPartitionToolStripComboBox.Size = new System.Drawing.Size(250, 23);
             this.selectPartitionToolStripComboBox.ToolTipText = "Select partition";
             this.selectPartitionToolStripComboBox.SelectedIndexChanged += new System.EventHandler(this.selectPartitionToolStripComboBox_SelectedIndexChanged);
             // 
