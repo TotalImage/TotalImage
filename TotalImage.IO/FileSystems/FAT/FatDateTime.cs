@@ -26,6 +26,7 @@ namespace TotalImage.FileSystems.FAT
 
         static bool IsDateValid(int year, int month, int day)
         {
+            if (month < 1 || day < 1) return false;
             if (month > 12) return false;
             if (day <= dayCounts[month]) return true;
             if (month == 2 && day == dayCounts[month] + 1 && DateTime.IsLeapYear(year)) return true;
