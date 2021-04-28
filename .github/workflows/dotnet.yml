@@ -23,3 +23,8 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      run: dotnet publish --no-build
+    - uses: actions/upload-artifact@2
+      with:
+        path: TotalImage/bin/**/publish/
