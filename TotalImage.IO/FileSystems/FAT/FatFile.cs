@@ -51,21 +51,21 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override DateTime? LastAccessTime
         {
-            get => Helper.FatToDateTime(entry.lstAccDate);
+            get => FatDateTime.ToDateTime(entry.lstAccDate);
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? LastWriteTime
         {
-            get => Helper.FatToDateTime(entry.wrtDate, entry.wrtTime);
+            get => FatDateTime.ToDateTime(entry.wrtDate, entry.wrtTime);
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? CreationTime
         {
-            get => Helper.FatToDateTime(entry.crtDate, entry.crtTime, entry.crtTimeTenth);
+            get => FatDateTime.ToDateTime(entry.crtDate, entry.crtTime, entry.crtTimeTenth);
             set => throw new NotImplementedException();
         }
 

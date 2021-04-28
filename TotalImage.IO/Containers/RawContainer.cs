@@ -50,40 +50,5 @@ namespace TotalImage.Containers
 
             return new RawContainer(stream);
         }
-
-        /* Extracts the file system object from the image to the specified path
-         * This is a very basic solution for now. Needs to be decided if attributes and other DateTime values should be preserved
-         * in the extracted file as well. */
-        /// <summary>
-        /// Extract a file system object to the specified path
-        /// </summary>
-        /// <param name="entry">The directory entry to extract</param>
-        /// <param name="path">The path to extract the entry to</param>
-        public void ExtractFile(DirectoryEntry entry, string path)
-        {
-            if (entry.attr.HasFlag(FatAttributes.Subdirectory)) return;
-
-            var name = Encoding.ASCII.GetString(entry.name);
-            var cluster = ((uint?)entry.fstClusHI << 16) | entry.fstClusLO;
-
-            using (var fs = new FileStream(path + Path.DirectorySeparatorChar + name, FileMode.Append, FileAccess.Write))
-            {
-                do
-                {
-                    byte[] clusterBytes = ((Fat12FileSystem)PartitionTable.Partitions[0].FileSystem).ReadCluster(cluster.Value);
-                    fs.Write(clusterBytes, 0, clusterBytes.Length);
-                    cluster = ((Fat12FileSystem)PartitionTable.Partitions[0].FileSystem).GetNextCluster(cluster.Value);
-                }
-                while (cluster.HasValue);
-
-                fs.SetLength(entry.fileSize); //Remove the trailing unused bytes from the last cluster
-            }
-
-            var date = Helper.FatToDateTime(entry.wrtDate, entry.wrtTime);
-            if (date.HasValue)
-            {
-                File.SetLastWriteTime(Path.Combine(path, name), date.Value);
-            }
-        }
     }
 }
