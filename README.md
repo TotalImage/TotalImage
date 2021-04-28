@@ -50,12 +50,12 @@ Please note that this list is not exhaustive nor definitive. We're open to addin
 
 ## System requirements
 * Windows 7 Service Pack 1 or later
-* [.NET Framework 4.8](https://dotnet.microsoft.com/download/dotnet-framework/net48) or [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) runtime
+* [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) runtime
 
 Support for other operating systems will be considered within the limitations of .NET.
 
 ## Development
-To develop TotalImage, we recommend you install Microsoft Visual Studio 2019 (free Community Edition can be downloaded [here](https://visualstudio.microsoft.com/vs/)) and at least one of the target .NET runtimes (see above).
+To develop TotalImage, we recommend you install Microsoft Visual Studio 2019 (free Community Edition can be downloaded [here](https://visualstudio.microsoft.com/vs/)).
 
 ## Support
 Please open an issue on this repo for any bug reports and suggestions you may have. If you wish to talk to us directly, visit the official TotalImage Discord server:
