@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The TotalImage Team")]
 [assembly: AssemblyProduct("TotalImage")]
-[assembly: AssemblyCopyright("Copyright © 2020 The TotalImage Team")]
+[assembly: AssemblyCopyright("Copyright © 2020-2021 The TotalImage Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

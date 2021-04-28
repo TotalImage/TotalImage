@@ -56,7 +56,7 @@
             // lblTitle
             // 
             this.lblTitle.AutoSize = true;
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lblTitle.Location = new System.Drawing.Point(66, 12);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(96, 21);
@@ -77,18 +77,18 @@
             this.lblVer.AutoSize = true;
             this.lblVer.Location = new System.Drawing.Point(9, 73);
             this.lblVer.Name = "lblVer";
-            this.lblVer.Size = new System.Drawing.Size(84, 15);
+            this.lblVer.Size = new System.Drawing.Size(118, 15);
             this.lblVer.TabIndex = 3;
-            this.lblVer.Text = "Version: 1.0.0.0";
+            this.lblVer.Text = "Version: 1.0.0.0 Alpha";
             // 
             // lblCopyright
             // 
             this.lblCopyright.AutoSize = true;
             this.lblCopyright.Location = new System.Drawing.Point(9, 97);
             this.lblCopyright.Name = "lblCopyright";
-            this.lblCopyright.Size = new System.Drawing.Size(215, 15);
+            this.lblCopyright.Size = new System.Drawing.Size(244, 15);
             this.lblCopyright.TabIndex = 4;
-            this.lblCopyright.Text = "Copyright © 2020 The TotalImage Team";
+            this.lblCopyright.Text = "Copyright © 2020-2021 The TotalImage Team";
             // 
             // pnlBottom
             // 
@@ -147,7 +147,7 @@
             this.Controls.Add(this.lblVer);
             this.Controls.Add(this.lblDesc);
             this.Controls.Add(this.lblTitle);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
