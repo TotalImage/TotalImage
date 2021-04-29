@@ -1,4 +1,6 @@
-﻿namespace TotalImage
+﻿using System;
+
+namespace TotalImage
 {
     partial class frmMain
     {
@@ -37,7 +39,6 @@
             this.extractToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.newFolderToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.undeleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuBar = new System.Windows.Forms.MenuStrip();
@@ -183,12 +184,11 @@
             this.extractToolStripMenuItem1,
             this.newFolderToolStripMenuItem1,
             this.deleteToolStripMenuItem1,
-            this.undeleteToolStripMenuItem1,
             this.renameToolStripMenuItem1,
             this.propertiesToolStripMenuItem1});
             this.cmsDirTree.Name = "cmsDirTree";
             this.cmsDirTree.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.cmsDirTree.Size = new System.Drawing.Size(217, 186);
+            this.cmsDirTree.Size = new System.Drawing.Size(217, 164);
             this.cmsDirTree.Opening += new System.ComponentModel.CancelEventHandler(this.cmsDirTree_Opening);
             // 
             // expandDirectoryTreeToolStripMenuItem1
@@ -238,13 +238,6 @@
             this.deleteToolStripMenuItem1.Text = "Delete";
             this.deleteToolStripMenuItem1.Click += new System.EventHandler(this.delete_Click);
             // 
-            // undeleteToolStripMenuItem1
-            // 
-            this.undeleteToolStripMenuItem1.Name = "undeleteToolStripMenuItem1";
-            this.undeleteToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
-            this.undeleteToolStripMenuItem1.Text = "Undelete...";
-            this.undeleteToolStripMenuItem1.Click += new System.EventHandler(this.undelete_Click);
-            // 
             // renameToolStripMenuItem1
             // 
             this.renameToolStripMenuItem1.Name = "renameToolStripMenuItem1";
@@ -257,10 +250,10 @@
             // 
             this.propertiesToolStripMenuItem1.Image = global::TotalImage.Properties.Resources.properties_16;
             this.propertiesToolStripMenuItem1.Name = "propertiesToolStripMenuItem1";
+            this.propertiesToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return)));
             this.propertiesToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             this.propertiesToolStripMenuItem1.Text = "Properties...";
             this.propertiesToolStripMenuItem1.Click += new System.EventHandler(this.properties_Click);
-            this.propertiesToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)(System.Windows.Forms.Keys.Enter | System.Windows.Forms.Keys.Alt));
             // 
             // menuBar
             // 
@@ -335,6 +328,7 @@
             this.fileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F)));
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
+            this.fileToolStripMenuItem.DropDownOpening += new System.EventHandler(this.fileToolStripMenuItem_DropDownOpening);
             // 
             // newToolStripMenuItem
             // 
@@ -429,6 +423,7 @@
             this.editToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.E)));
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
+            this.editToolStripMenuItem.DropDownOpening += new System.EventHandler(this.editToolStripMenuItem_DropDownOpening);
             // 
             // injectFilesToolStripMenuItem
             // 
@@ -494,10 +489,10 @@
             // 
             this.propertiesToolStripMenuItem.Image = global::TotalImage.Properties.Resources.properties_16;
             this.propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
+            this.propertiesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return)));
             this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.propertiesToolStripMenuItem.Text = "Properties...";
             this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.properties_Click);
-            this.propertiesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(System.Windows.Forms.Keys.Enter | System.Windows.Forms.Keys.Alt));
             // 
             // selectAllToolStripMenuItem
             // 
@@ -766,6 +761,7 @@
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
+            this.toolsToolStripMenuItem.DropDownOpening += new System.EventHandler(this.toolsToolStripMenuItem_DropDownOpening);
             // 
             // hexViewToolStripMenuItem
             // 
@@ -1241,6 +1237,7 @@
             this.lstDirectories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstDirectories_AfterSelect);
             this.lstDirectories.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstDirectories_DragDrop);
             this.lstDirectories.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstDirectories_DragEnter);
+            this.lstDirectories.Enter += new System.EventHandler(this.lstDirectories_Enter);
             this.lstDirectories.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstDirectories_MouseUp);
             // 
             // imgFilesSmall
@@ -1285,44 +1282,45 @@
             this.lstFiles.SelectedIndexChanged += new System.EventHandler(this.lstFiles_SelectedIndexChanged);
             this.lstFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragDrop);
             this.lstFiles.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragEnter);
+            this.lstFiles.Enter += new System.EventHandler(this.lstFiles_Enter);
             this.lstFiles.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lstFiles_KeyUp);
             this.lstFiles.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstFiles_MouseDoubleClick);
             // 
             // clmName
             // 
+            this.clmName.Name = "clmName";
             this.clmName.Tag = "Name";
             this.clmName.Text = "Name";
             this.clmName.Width = 128;
-            this.clmName.Name = "clmName";
             // 
             // clmType
             // 
+            this.clmType.Name = "clmType";
             this.clmType.Tag = "Type";
             this.clmType.Text = "Type";
             this.clmType.Width = 127;
-            this.clmType.Name = "clmType";
             // 
             // clmSize
             // 
+            this.clmSize.Name = "clmSize";
             this.clmSize.Tag = "Size";
             this.clmSize.Text = "Size";
             this.clmSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.clmSize.Width = 118;
-            this.clmSize.Name = "clmSize";
             // 
             // clmModified
             // 
+            this.clmModified.Name = "clmModified";
             this.clmModified.Tag = "Modified";
             this.clmModified.Text = "Modified";
             this.clmModified.Width = 148;
-            this.clmModified.Name = "clmModified";
             // 
             // clmAttributes
             // 
+            this.clmAttributes.Name = "clmAttributes";
             this.clmAttributes.Tag = "Attributes";
             this.clmAttributes.Text = "Attributes";
             this.clmAttributes.Width = 86;
-            this.clmAttributes.Name = "clmAttributes";
             // 
             // cmsFileList
             // 
@@ -1386,10 +1384,10 @@
             // 
             this.propertiesToolStripMenuItem2.Image = global::TotalImage.Properties.Resources.properties_16;
             this.propertiesToolStripMenuItem2.Name = "propertiesToolStripMenuItem2";
+            this.propertiesToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return)));
             this.propertiesToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             this.propertiesToolStripMenuItem2.Text = "Properties...";
             this.propertiesToolStripMenuItem2.Click += new System.EventHandler(this.properties_Click);
-            this.propertiesToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)(System.Windows.Forms.Keys.Enter | System.Windows.Forms.Keys.Alt));
             // 
             // selectAllToolStripMenuItem1
             // 
@@ -1554,7 +1552,6 @@
         private System.Windows.Forms.ToolStripStatusLabel lblStatusSize;
         private System.Windows.Forms.ToolStripStatusLabel lbStatusPath;
         private System.Windows.Forms.ToolStripMenuItem showDeletedItemsToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem undeleteToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem undeleteToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem1;

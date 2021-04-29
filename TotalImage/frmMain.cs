@@ -62,9 +62,8 @@ namespace TotalImage
             Size = Settings.CurrentSettings.WindowSize;
             SyncUIWithSettings();
 
-#if !DEBUG
-            DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
-#endif
+            DisableUI();
+
             GetDefaultIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
 
@@ -96,22 +95,6 @@ namespace TotalImage
 
             for (var i = 1; i < lstFiles.Columns.Count; i++)
                 upOneFolderListViewItem.SubItems.Add(string.Empty);
-        }
-
-        //Syncs the main form UI with the current settings
-        private void SyncUIWithSettings()
-        {
-            lstFiles.View = Settings.CurrentSettings.FilesView;
-            splitContainer.Panel1Collapsed = !Settings.CurrentSettings.ShowDirectoryTree;
-            statusBar.Visible = Settings.CurrentSettings.ShowStatusBar;
-            commandBar.Visible = Settings.CurrentSettings.ShowCommandBar;
-            sortOrder = Settings.CurrentSettings.FilesSortOrder;
-            sortColumn = Settings.CurrentSettings.FilesSortingColumn;
-            splitContainer.SplitterDistance = Settings.CurrentSettings.SplitterDistance;
-
-            lstFiles.SetSortIcon(sortColumn, sortOrder);
-
-            PopulateRecentList();
         }
 
         //Injects a folder into the image
@@ -271,13 +254,6 @@ namespace TotalImage
             Settings.CurrentSettings.FilesView = View.Details;
         }
 
-        private int IndexShift => lstFiles.VirtualListSize - currentFolderView.Count;
-
-        private IEnumerable<TiFileSystemObject> SelectedItems
-            => from x in lstFiles.SelectedIndices.Cast<int>()
-               where x >= IndexShift && currentFolderView[x - IndexShift].Tag is TiFileSystemObject
-               select (TiFileSystemObject)currentFolderView[x - IndexShift].Tag;
-
         //Deletes a file or folder
         //TODO: Implement deletion here and in the FS/container
         private void delete_Click(object sender, EventArgs e)
@@ -347,10 +323,8 @@ namespace TotalImage
         //TODO: Implement this here and in FS/container.
         private void format_Click(object sender, EventArgs e)
         {
-#if DEBUG
             using dlgFormat dlg = new dlgFormat();
             dlg.ShowDialog();
-#endif
 
             if (MessageBox.Show("Are you sure you want to format this image? This will erase all data inside!", "Warning",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
@@ -530,171 +504,20 @@ namespace TotalImage
             }
         }
 
-        private void ExtractFiles(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder)
-        {
-            var files = from x in items where x is TiFile select x as TiFile;
-
-            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-
-            foreach (var file in files)
-            {
-                if (File.Exists(Path.Combine(path, file.Name)) && Settings.CurrentSettings.ConfirmOverwriteExtraction)
-                {
-                    TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"The file \"{file.Name}\" already exists in the target directory. Do you want to overwrite it?",
-                        Heading = "File already exists",
-                        Caption = "Warning",
-                        Buttons =
-                        {
-                            TaskDialogButton.Yes,
-                            TaskDialogButton.No
-                        },
-                        Icon = TaskDialogIcon.Warning,
-                        DefaultButton = TaskDialogButton.Yes
-                    });
-
-                    if (result == TaskDialogButton.No)
-                        continue;
-                }
-
-                using (var destStream = new FileStream(Path.Combine(path, file.Name), FileMode.Create))
-                    file.GetStream().CopyTo(destStream);
-
-                if (Settings.CurrentSettings.ExtractPreserveDates)
-                {
-                    if (file.CreationTime.HasValue)
-                        File.SetCreationTime(Path.Combine(path, file.Name), file.CreationTime.Value);
-
-                    if (file.LastAccessTime.HasValue)
-                        File.SetLastAccessTime(Path.Combine(path, file.Name), file.LastAccessTime.Value);
-
-                    if (file.LastWriteTime.HasValue)
-                        File.SetLastWriteTime(Path.Combine(path, file.Name), file.LastWriteTime.Value);
-                }
-
-                if (Settings.CurrentSettings.ExtractPreserveAttributes)
-                {
-                    /* NOTE: Windows automatically sets the Archive attribute on all newly created files, so even if the attribute is cleared in the
-                     * image, Windows will still automatically set it anyway. Should we perhaps try to work around this by manually clearing it after? */
-                    File.SetAttributes(Path.Combine(path, file.Name), file.Attributes);
-                }
-            }
-
-            if (extractType != Settings.FolderExtract.Ignore)
-            {
-                var dirs = from x in items where x is TiDirectory select x as TiDirectory;
-
-                foreach (var dir in dirs)
-                {
-                    ExtractFiles(
-                        dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems),
-                        extractType switch
-                        {
-                            Settings.FolderExtract.Merge => path,
-                            Settings.FolderExtract.Preserve => Path.Combine(path, dir.Name),
-                            _ => throw new ArgumentException()
-                        }, extractType, false);
-                }
-            }
-
-            if (openFolder)
-            {
-                Process.Start(new ProcessStartInfo()
-                {
-                    FileName = path,
-                    UseShellExecute = true
-                });
-            }
-        }
-
-        StatusBarState StatusBarState
-            => lstFiles.SelectedIndices.Cast<int>().Where(x => x >= IndexShift).Count() switch
-            {
-                0 => StatusBarState.NoneSelected,
-                1 => StatusBarState.OneSelected,
-                _ => StatusBarState.MultipleSelected
-            };
-
-        private void UpdateStatusBar(bool updateFreeSpace)
-        {
-            if (image == null)
-            {
-                lblStatusCapacity.Text = string.Empty;
-                lblStatusFreeCapacity.Text = string.Empty;
-                lbStatusPath.Text = string.Empty;
-                lblStatusSize.Text = string.Empty;
-            }
-            else
-            {
-                //Makes no sense to do this every time selection changes, etc. Only when operations that affect the free space are performed
-                if (updateFreeSpace)
-                {
-                    lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
-                    double freeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
-                    lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({freeSpacePercentage / 100:p2})";
-                    if ((int)freeSpacePercentage <= 10)
-                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(2), IntPtr.Zero); // Set the progress bar colour to red.
-                    else if ((int)freeSpacePercentage <= 20)
-                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(3), IntPtr.Zero); // Set the progress bar colour to yellow.
-                    else
-                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(1), IntPtr.Zero); // Set the progress bar colour to green.
-
-                    // Set progress bar value with a bit of a hack to disable the glow.
-                    lblStatusProgressBar.Minimum = 100 - (int)freeSpacePercentage;
-                    lblStatusProgressBar.Value = 100 - (int)freeSpacePercentage;
-                    lblStatusProgressBar.Minimum = 0;
-                }
-
-                switch (StatusBarState)
-                {
-                    case StatusBarState.NoneSelected:
-                        {
-                            var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
-                            lbStatusPath.Text = dir.FullName;
-                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(CalculateDirSize())} in {GetFileCount()} item(s)";
-                            break;
-                        }
-                    case StatusBarState.OneSelected:
-                        {
-                            var item = GetSelectedItemData(0);
-                            lbStatusPath.Text = item.FullName;
-                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
-                            break;
-                        }
-                    case StatusBarState.MultipleSelected:
-                        {
-                            var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
-                            var selectedSize = 0ul;
-                            foreach (var entry in SelectedItems) selectedSize += entry.Length;
-
-                            lbStatusPath.Text = dir.FullName;
-                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
-                            break;
-                        }
-                }
-            }
-        }
-
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e) // This method will be used more than once, thus it is separated from the main event.
         {
             if (image != null)
             {
-                if (lstFiles.SelectedIndices.Count == 0 || lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
+                if (lstFiles.SelectedIndices.Count == 0)
                 {
-                    deleteToolStripMenuItem.Enabled = false;
-                    deleteToolStripMenuItem2.Enabled = false;
-                    extractToolStripMenuItem.Enabled = false;
-                    extractToolStripMenuItem2.Enabled = false;
-                    propertiesToolStripMenuItem.Enabled = false;
-                    propertiesToolStripMenuItem2.Enabled = false;
-                    renameToolStripMenuItem2.Enabled = false;
-                    renameToolStripMenuItem.Enabled = false;
-                    undeleteToolStripMenuItem.Enabled = false;
-                    undeleteToolStripMenuItem2.Enabled = false;
-                    newFolderToolStripMenuItem.Enabled = false;
-                    newFolderToolStripMenuItem2.Enabled = false;
+                    deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    extractToolStripButton.Enabled = true;
+                    propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
 
+                    UpdateStatusBar(false);
+                }
+                else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
+                {
                     deleteToolStripButton.Enabled = false;
                     extractToolStripButton.Enabled = false;
                     propertiesToolStripButton.Enabled = false;
@@ -703,22 +526,8 @@ namespace TotalImage
                 }
                 else if (lstFiles.SelectedIndices.Count == 1)
                 {
-                    propertiesToolStripMenuItem.Enabled = true;
-                    propertiesToolStripMenuItem2.Enabled = true;
-
                     //Check if selected item is a deleted entry and enable the UI accordingly
                     TiFileSystemObject entry = GetSelectedItemData(0);
-                    undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
-                    undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
-                    deleteToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                    deleteToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-                    extractToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                    extractToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-                    renameToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                    renameToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-                    newFolderToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                    newFolderToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-
                     deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
                     extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
                     propertiesToolStripButton.Enabled = true;
@@ -727,22 +536,9 @@ namespace TotalImage
                 }
                 else
                 {
-                    deleteToolStripMenuItem.Enabled = true;
-                    deleteToolStripMenuItem2.Enabled = true;
-                    extractToolStripMenuItem.Enabled = true;
-                    extractToolStripMenuItem2.Enabled = true;
-                    propertiesToolStripMenuItem.Enabled = true;
-                    propertiesToolStripMenuItem2.Enabled = true;
-                    renameToolStripMenuItem2.Enabled = false;
-                    renameToolStripMenuItem.Enabled = false;
-                    undeleteToolStripMenuItem.Enabled = false;
-                    undeleteToolStripMenuItem2.Enabled = false;
-                    newFolderToolStripMenuItem.Enabled = false;
-                    newFolderToolStripMenuItem2.Enabled = false;
-
                     deleteToolStripButton.Enabled = true;
                     extractToolStripButton.Enabled = true;
-                    propertiesToolStripButton.Enabled = false;
+                    propertiesToolStripButton.Enabled = true;
 
                     var path = lstDirectories.SelectedNode.FullPath;
                     if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
@@ -755,10 +551,39 @@ namespace TotalImage
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (lstFiles.SelectedIndices.Count == 0 || lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
+            newFolderToolStripMenuItem2.Enabled = true;
+            extractToolStripMenuItem2.Enabled = true;
+
+            if (lstFiles.SelectedIndices.Count == 0)
+            {
+                deleteToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                propertiesToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                renameToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                undeleteToolStripMenuItem2.Enabled = false;
+            }
+            else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
             {
                 e.Cancel = true;
                 return;
+            }
+            else if (lstFiles.SelectedIndices.Count == 1)
+            {
+                TiFileSystemObject entry = GetSelectedItemData(0);
+                deleteToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                extractToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                propertiesToolStripMenuItem2.Enabled = true;
+                renameToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
+            }
+            else
+            {
+                deleteToolStripMenuItem2.Enabled = true;
+                extractToolStripMenuItem2.Enabled = true;
+                propertiesToolStripMenuItem2.Enabled = true;
+                renameToolStripMenuItem2.Enabled = false;
+
+                //Should be determined if there are any deleted entries in the selection and possibly enable this?
+                undeleteToolStripMenuItem2.Enabled = false;
             }
         }
 
@@ -784,28 +609,22 @@ namespace TotalImage
         //TODO: Implement the Properties dialog for multiple selected objects like Windows does it
         private void properties_Click(object sender, EventArgs e)
         {
-            var itemParent = (sender as ToolStripItem)?.GetCurrentParent();
-
-            if (itemParent == cmsFileList || itemParent == commandBar)
+            if (lstDirectories.Focused)
             {
-                // Show properties for the selected file list view items
+                using dlgProperties dlg = new dlgProperties((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
+                dlg.ShowDialog();
+            }
+            else if (lstFiles.Focused)
+            {
                 if (lstFiles.SelectedIndices.Count == 1)
                 {
-                    // Single selected item
                     using dlgProperties dlg = new dlgProperties(GetSelectedItemData(0));
                     dlg.ShowDialog();
                 }
                 else if (lstFiles.SelectedIndices.Count > 1)
                 {
-                    // More selected items
                     throw new NotImplementedException("This feature is not implemented yet.");
                 }
-            }
-            else if (itemParent == cmsDirTree)
-            {
-                // Show properties for the selected directory in the tree view
-                using dlgProperties dlg = new dlgProperties((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
-                dlg.ShowDialog();
             }
         }
 
@@ -836,56 +655,6 @@ namespace TotalImage
             CloseImage();
         }
 
-        private static IComparer<ListViewItem> GetListViewItemSorter(int sortColumn, SortOrder sortOrder)
-        {
-            // Get the sorter for the selected column
-            var sorter = FileListViewItemComparer.GetColumnSorter(sortColumn);
-
-            if (sortOrder == SortOrder.Descending)
-                sorter = new InvertedComparer<ListViewItem>(sorter);
-
-            return sorter;
-        }
-
-
-        private void SortListView()
-        {
-            IComparer<ListViewItem> sort = GetListViewItemSorter(sortColumn, sortOrder);
-            currentFolderView.Sort(sort);
-
-            lstFiles.Refresh();
-            lstFiles.SetSortIcon(sortColumn, sortOrder);
-        }
-
-        private void SortListViewBy(int column)
-        {
-            if (column == sortColumn)
-            {
-                // Reverse the current sort direction for this column.
-                if (sortOrder == SortOrder.Ascending)
-                {
-                    sortOrder = SortOrder.Descending;
-                }
-                else
-                {
-                    sortOrder = SortOrder.Ascending;
-                }
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                sortColumn = column;
-                sortOrder = SortOrder.Ascending;
-            }
-
-
-            // Perform the sort with these new sort options.
-            SortListView();
-
-            Settings.CurrentSettings.FilesSortingColumn = column;
-            Settings.CurrentSettings.FilesSortOrder = sortOrder;
-        }
-
         private void lstFiles_ColumnClick(object sender, ColumnClickEventArgs e)
             => SortListViewBy(e.Column);
 
@@ -901,9 +670,9 @@ namespace TotalImage
         private void sortBySize_Click(object sender, EventArgs e)
             => SortListViewBy(lstFiles.Columns.IndexOfKey("clmSize"));
 
-        //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
         private void lstDirectories_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
+            //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
             TiDirectory dir = (TiDirectory)e.Node.Tag;
             if (dir.Name.StartsWith("?"))
             {
@@ -916,7 +685,7 @@ namespace TotalImage
         private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
         {
             //This makes sure the selected image doesn't change when a hidden folder is selected
-            if (((TiFileSystemObject)lstDirectories.SelectedNode.Tag).Attributes.HasFlag(FileAttributes.Hidden))
+            if (((TiFileSystemObject)e.Node.Tag).Attributes.HasFlag(FileAttributes.Hidden))
             {
                 lstDirectories.SelectedImageKey = "folder (Hidden)";
             }
@@ -925,52 +694,22 @@ namespace TotalImage
                 lstDirectories.SelectedImageKey = "folder";
             }
 
-            var fileCount = 0ul;
-            var dirSize = 0ul;
             PopulateListView((TiDirectory)e.Node.Tag);
-
-            foreach (ListViewItem lvi in currentFolderView)
-            {
-                var entry = (TiFileSystemObject)lvi.Tag;
-                if (!(entry is TiDirectory))
-                {
-                    fileCount++;
-                    dirSize += entry.Length;
-                }
-            }
-
             UpdateStatusBar(false);
 
             if (lstDirectories.SelectedNode == null)
             {
-                extractToolStripMenuItem1.Enabled = false;
-                newFolderToolStripMenuItem1.Enabled = false;
-                renameToolStripMenuItem1.Enabled = false;
-                propertiesToolStripMenuItem1.Enabled = false;
-                undeleteToolStripMenuItem1.Enabled = false;
-                deleteToolStripMenuItem1.Enabled = false;
+                extractToolStripButton.Enabled = false;
+                newFolderToolStripButton.Enabled = false;
+                propertiesToolStripButton.Enabled = false;
+                deleteToolStripButton.Enabled = false;
             }
             else
             {
-                if (lstDirectories.SelectedNode == lstDirectories.Nodes[0])
-                {
-                    deleteToolStripMenuItem1.Enabled = false;
-                    renameToolStripMenuItem1.Enabled = false;
-                    propertiesToolStripMenuItem1.Enabled = false;
-                    undeleteToolStripMenuItem1.Enabled = false;
-                    newFolderToolStripMenuItem1.Enabled = true;
-                    extractToolStripMenuItem1.Enabled = true;
-                }
-                else
-                {
-                    TiFileSystemObject entry = (TiFileSystemObject)lstDirectories.SelectedNode.Tag;
-                    extractToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
-                    newFolderToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
-                    renameToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
-                    propertiesToolStripMenuItem1.Enabled = true;
-                    deleteToolStripMenuItem1.Enabled = !entry.Name.StartsWith("?");
-                    undeleteToolStripMenuItem1.Enabled = entry.Name.StartsWith("?");
-                }
+                extractToolStripButton.Enabled = true;
+                newFolderToolStripButton.Enabled = true;
+                deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
             }
         }
 
@@ -999,11 +738,19 @@ namespace TotalImage
 
         private void cmsDirTree_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (lstDirectories.Nodes.Count == 0)
+            if (lstDirectories.Nodes.Count == 0 || lstDirectories.SelectedNode == null)
             {
                 e.Cancel = true;
                 return;
             }
+
+            deleteToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+            renameToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+            extractToolStripMenuItem1.Enabled = true;
+            propertiesToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+
+            expandDirectoryTreeToolStripMenuItem1.Enabled = lstDirectories.Nodes[0].Nodes.Count > 0;
+            collapseDirectoryTreeToolStripMenuItem1.Enabled = lstDirectories.Nodes[0].Nodes.Count > 0;
         }
 
         private void selectAll_Click(object sender, EventArgs e)
@@ -1116,51 +863,35 @@ namespace TotalImage
         private void collapseDirectoryTree_Click(object sender, EventArgs e)
         {
             lstDirectories.CollapseAll();
+
+            //CollapseAll() clears SelectedNode, but merely setting that again won't trigger the selection events for some reason
+            //(.NET/WinForms bug?). Hence we also reset the view to make sure TreeView and ListView don't fall out of sync.
+            lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+            ResetView();
         }
 
         private void lstDirectories_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
-                lstDirectories.SelectedNode = lstDirectories.GetNodeAt(e.X, e.Y);
-                cmsDirTree.Show(lstDirectories, e.Location);
-            }
-        }
+                TreeNode newNode = lstDirectories.GetNodeAt(e.X, e.Y);
 
-        // Used for the following two events.
-        private void ResetView()
-        {
-            if (image != null)
-            {
-                lastViewedDir = (TiDirectory)lstDirectories.SelectedNode.Tag;
-
-                var root = new TreeNode(@"\");
-                root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                root.Tag = image.PartitionTable.Partitions[0].FileSystem.RootDirectory;
-
-                lstDirectories.BeginUpdate();
-                PopulateTreeView(root, image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
-
-                lstDirectories.Nodes.Clear();
-                lstDirectories.Nodes.Add(root);
-                lstDirectories.Sort();
-                lstDirectories.EndUpdate();
-
-                if (lastViewedDir != null)
+                //This prevents opening the menu on empty area of the TreeView, as well as on any deleted folders
+                if (newNode != null)
                 {
-                    TreeNode? node = FindNode(lstDirectories.Nodes[0], lastViewedDir);
-                    if (node == null)
-                        lstDirectories.SelectedNode = lstDirectories.Nodes[0];
-                    else
-                        lstDirectories.SelectedNode = node;
+                    TiFileSystemObject entry = (TiFileSystemObject)newNode.Tag;
+                    if (entry.Name.StartsWith("?"))
+                    {
+                        return;
+                    }
+
+                    lstDirectories.SelectedNode = newNode;
+                    cmsDirTree.Show(lstDirectories, e.Location);
                 }
                 else
                 {
-                    lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                    return;
                 }
-
-                PopulateListView((TiDirectory)lstDirectories.SelectedNode.Tag);
             }
         }
 
@@ -1240,6 +971,9 @@ namespace TotalImage
 
             showHiddenItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
             showDeletedItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowDeletedItems;
+
+            expandDirectoryTreeToolStripMenuItem.Enabled = image != null && lstDirectories.Nodes[0].Nodes.Count > 0;
+            collapseDirectoryTreeToolStripMenuItem.Enabled = image != null && lstDirectories.Nodes[0].Nodes.Count > 0;
         }
 
         private void cmsToolbars_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1297,7 +1031,7 @@ namespace TotalImage
 
         private void frmMain_Move(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Normal)
+            if (WindowState == FormWindowState.Normal)
             {
                 Settings.CurrentSettings.WindowPosition = this.Location;
             }
@@ -1384,7 +1118,204 @@ namespace TotalImage
             dlg.ShowDialog();
         }
 
+        private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            closeImageToolStripMenuItem.Enabled = image != null;
+            saveToolStripMenuItem.Enabled = image != null;
+            saveAsToolStripMenuItem.Enabled = image != null;
+        }
+
+        private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            if (image == null)
+            {
+                injectAFolderToolStripMenuItem.Enabled = false;
+                injectFilesToolStripMenuItem.Enabled = false;
+                extractToolStripMenuItem.Enabled = false;
+                renameToolStripMenuItem.Enabled = false;
+                deleteToolStripMenuItem.Enabled = false;
+                undeleteToolStripMenuItem.Enabled = false;
+                propertiesToolStripMenuItem.Enabled = false;
+                selectAllToolStripMenuItem.Enabled = false;
+                newFolderToolStripMenuItem.Enabled = false;
+                changeFormatToolStripMenuItem.Enabled = false;
+                selectPartitionToolStripMenuItem.Enabled = false;
+                managePartitionsToolStripMenuItem.Enabled = false;
+                bootSectorPropertiesToolStripMenuItem.Enabled = false;
+                formatToolStripMenuItem.Enabled = false;
+                defragmentToolStripMenuItem.Enabled = false;
+                changeVolumeLabelToolStripMenuItem.Enabled = false;
+
+                return;
+            }
+
+            changeFormatToolStripMenuItem.Enabled = true;
+            selectPartitionToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable; ;
+            managePartitionsToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable; ;
+            bootSectorPropertiesToolStripMenuItem.Enabled = true;
+            changeVolumeLabelToolStripMenuItem.Enabled = true;
+            formatToolStripMenuItem.Enabled = true;
+            defragmentToolStripMenuItem.Enabled = true;
+            injectAFolderToolStripMenuItem.Enabled = true;
+            injectFilesToolStripMenuItem.Enabled = true;
+            extractToolStripMenuItem.Enabled = true;
+            selectAllToolStripMenuItem.Enabled = true;
+            newFolderToolStripMenuItem.Enabled = true;
+
+            if (lstDirectories.Focused)
+            {
+                undeleteToolStripMenuItem.Enabled = false;
+                renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                propertiesToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+            }
+            else if (lstFiles.Focused)
+            {
+                if (lstFiles.SelectedIndices.Count == 0)
+                {
+                    deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    propertiesToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    undeleteToolStripMenuItem.Enabled = false;
+                }
+                else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
+                {
+                    renameToolStripMenuItem.Enabled = false;
+                    deleteToolStripMenuItem.Enabled = false;
+                    undeleteToolStripMenuItem.Enabled = false;
+                    propertiesToolStripMenuItem.Enabled = false;
+                }
+                else if (lstFiles.SelectedIndices.Count == 1)
+                {
+                    TiFileSystemObject entry = GetSelectedItemData(0);
+                    deleteToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                    extractToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                    propertiesToolStripMenuItem.Enabled = true;
+                    renameToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                    undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
+                }
+                else
+                {
+                    deleteToolStripMenuItem.Enabled = true;
+                    propertiesToolStripMenuItem.Enabled = true;
+                    renameToolStripMenuItem.Enabled = false;
+                    undeleteToolStripMenuItem.Enabled = false;
+                }
+            }
+        }
+
+        private void toolsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            imageInformationToolStripMenuItem.Enabled = image != null;
+            hexViewToolStripMenuItem.Enabled = image != null;
+        }
+
+        private void lstFiles_Enter(object sender, EventArgs e)
+        {
+            if (image != null)
+            {
+                if (lstFiles.SelectedIndices.Count == 0)
+                {
+                    deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    extractToolStripButton.Enabled = true;
+                    propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                }
+                else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
+                {
+                    deleteToolStripButton.Enabled = false;
+                    extractToolStripButton.Enabled = false;
+                    propertiesToolStripButton.Enabled = false;
+                }
+                else if (lstFiles.SelectedIndices.Count == 1)
+                {
+                    //Check if selected item is a deleted entry and enable the UI accordingly
+                    TiFileSystemObject entry = GetSelectedItemData(0);
+                    deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
+                    extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
+                    propertiesToolStripButton.Enabled = true;
+                }
+                else
+                {
+                    deleteToolStripButton.Enabled = true;
+                    extractToolStripButton.Enabled = true;
+                    propertiesToolStripButton.Enabled = true;
+                }
+            }
+        }
+
+        private void lstDirectories_Enter(object sender, EventArgs e)
+        {
+            if (image != null)
+            {
+                if (lstDirectories.SelectedNode == null)
+                {
+                    extractToolStripButton.Enabled = false;
+                    newFolderToolStripButton.Enabled = false;
+                    propertiesToolStripButton.Enabled = false;
+                    deleteToolStripButton.Enabled = false;
+                }
+                else
+                {
+                    extractToolStripButton.Enabled = true;
+                    newFolderToolStripButton.Enabled = true;
+                    deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                }
+            }
+        }
         #endregion
+
+        private int IndexShift => lstFiles.VirtualListSize - currentFolderView.Count;
+
+        private IEnumerable<TiFileSystemObject> SelectedItems
+            => from x in lstFiles.SelectedIndices.Cast<int>()
+               where x >= IndexShift && currentFolderView[x - IndexShift].Tag is TiFileSystemObject
+               select (TiFileSystemObject)currentFolderView[x - IndexShift].Tag;
+
+        StatusBarState StatusBarState
+            => lstFiles.SelectedIndices.Cast<int>().Where(x => x >= IndexShift).Count() switch
+            {
+                0 => StatusBarState.NoneSelected,
+                1 => StatusBarState.OneSelected,
+                _ => StatusBarState.MultipleSelected
+            };
+
+        // Used for events that require the current folder view to be updated (e.g. show hidden/deleted items toggled, etc.)
+        private void ResetView()
+        {
+            if (image != null)
+            {
+                lastViewedDir = (TiDirectory)lstDirectories.SelectedNode.Tag;
+
+                var root = new TreeNode(@"\");
+                root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                root.Tag = image.PartitionTable.Partitions[0].FileSystem.RootDirectory;
+
+                lstDirectories.BeginUpdate();
+                PopulateTreeView(root, image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+
+                lstDirectories.Nodes.Clear();
+                lstDirectories.Nodes.Add(root);
+                lstDirectories.Sort();
+                lstDirectories.EndUpdate();
+
+                if (lastViewedDir != null)
+                {
+                    TreeNode? node = FindNode(lstDirectories.Nodes[0], lastViewedDir);
+                    if (node == null)
+                        lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                    else
+                        lstDirectories.SelectedNode = node;
+                }
+                else
+                {
+                    lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+                }
+
+                PopulateListView((TiDirectory)lstDirectories.SelectedNode.Tag);
+            }
+        }
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
@@ -1567,21 +1498,25 @@ namespace TotalImage
 
                     CurrentPartitionIndex = selectFrm.SelectedEntry;
                 }
+
                 selectPartitionToolStripComboBox.Items.Clear();
 
-                for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
+                if (image.PartitionTable is not Partitions.NoPartitionTable)
                 {
-                    try
+                    for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
                     {
-                        selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
-                    }
-                    catch (InvalidDataException)
-                    {
-                    }
+                        try
+                        {
+                            selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
+                        }
+                        catch (InvalidDataException)
+                        {
+                        }
 
-                    if (i == CurrentPartitionIndex)
-                    {
-                        selectPartitionToolStripComboBox.SelectedIndex = i;
+                        if (i == CurrentPartitionIndex)
+                        {
+                            selectPartitionToolStripComboBox.SelectedIndex = i;
+                        }
                     }
                 }
             }
@@ -1814,34 +1749,19 @@ namespace TotalImage
             labelToolStripMenuButton.Enabled = true;
             bootsectToolStripButton.Enabled = true;
             infoToolStripButton.Enabled = true;
-            saveAsToolStripMenuItem.Enabled = true;
-            closeImageToolStripMenuItem.Enabled = true;
             lblStatusProgressBar.Visible = true;
 
             // Change border sides for status bar children to add seperator-like looks.
             lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.Right;
             lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
 
-            //New image was created, enable the Save button to act as Save as
+            //New image was created, enable the Save button to act as "Save as"
             if (unsavedChanges && string.IsNullOrEmpty(filename))
                 saveToolStripButton.Enabled = true;
 
-            imageInformationToolStripMenuItem.Enabled = true;
-            hexViewToolStripMenuItem.Enabled = true;
-
-            foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
-            {
-                if (item.CanSelect)
-                {
-                    item.Enabled = true;
-                }
-            }
-
             //Enabling this now since we have rudimentary HDD support.
-            managePartitionsToolStripMenuItem.Enabled = true;
-            selectPartitionToolStripMenuItem.Enabled = true;
-            managePartitionsToolStripButton.Enabled = true;
-            selectPartitionToolStripComboBox.Enabled = true;
+            managePartitionsToolStripButton.Enabled = image.PartitionTable is not Partitions.NoPartitionTable;
+            selectPartitionToolStripComboBox.Enabled = image.PartitionTable is not Partitions.NoPartitionTable;
         }
 
         //Disables various UI elements after an image is loaded
@@ -1859,26 +1779,11 @@ namespace TotalImage
             saveToolStripButton.Enabled = false;
             managePartitionsToolStripButton.Enabled = false;
             selectPartitionToolStripComboBox.Enabled = false;
-            managePartitionsToolStripMenuItem.Enabled = false;
-            selectPartitionToolStripMenuItem.Enabled = false;
-            saveAsToolStripMenuItem.Enabled = false;
-            saveToolStripMenuItem.Enabled = false;
-            closeImageToolStripMenuItem.Enabled = false;
-            imageInformationToolStripMenuItem.Enabled = false;
-            hexViewToolStripMenuItem.Enabled = false;
             lblStatusProgressBar.Visible = false;
 
             // Change border sides for status bar children to remove seperator-like looks.
             lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.None;
             lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.None;
-
-            foreach (ToolStripItem item in editToolStripMenuItem.DropDownItems)
-            {
-                if (item.CanSelect)
-                {
-                    item.Enabled = false;
-                }
-            }
         }
 
         private void PopulateRecentList()
@@ -1917,6 +1822,209 @@ namespace TotalImage
             if (lstFiles.SelectedIndices[idx] < IndexShift)
                 return (TiFileSystemObject)upOneFolderListViewItem.Tag;
             return (TiFileSystemObject)currentFolderView[lstFiles.SelectedIndices[idx] - IndexShift].Tag;
+        }
+
+        private static IComparer<ListViewItem> GetListViewItemSorter(int sortColumn, SortOrder sortOrder)
+        {
+            // Get the sorter for the selected column
+            var sorter = FileListViewItemComparer.GetColumnSorter(sortColumn);
+
+            if (sortOrder == SortOrder.Descending)
+                sorter = new InvertedComparer<ListViewItem>(sorter);
+
+            return sorter;
+        }
+
+        private void SortListView()
+        {
+            IComparer<ListViewItem> sort = GetListViewItemSorter(sortColumn, sortOrder);
+            currentFolderView.Sort(sort);
+
+            lstFiles.Refresh();
+            lstFiles.SetSortIcon(sortColumn, sortOrder);
+        }
+
+        private void SortListViewBy(int column)
+        {
+            if (column == sortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (sortOrder == SortOrder.Ascending)
+                {
+                    sortOrder = SortOrder.Descending;
+                }
+                else
+                {
+                    sortOrder = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                sortColumn = column;
+                sortOrder = SortOrder.Ascending;
+            }
+
+
+            // Perform the sort with these new sort options.
+            SortListView();
+
+            Settings.CurrentSettings.FilesSortingColumn = column;
+            Settings.CurrentSettings.FilesSortOrder = sortOrder;
+        }
+
+        //Syncs the main form UI with the current settings
+        private void SyncUIWithSettings()
+        {
+            lstFiles.View = Settings.CurrentSettings.FilesView;
+            splitContainer.Panel1Collapsed = !Settings.CurrentSettings.ShowDirectoryTree;
+            statusBar.Visible = Settings.CurrentSettings.ShowStatusBar;
+            commandBar.Visible = Settings.CurrentSettings.ShowCommandBar;
+            sortOrder = Settings.CurrentSettings.FilesSortOrder;
+            sortColumn = Settings.CurrentSettings.FilesSortingColumn;
+            splitContainer.SplitterDistance = Settings.CurrentSettings.SplitterDistance;
+
+            lstFiles.SetSortIcon(sortColumn, sortOrder);
+
+            PopulateRecentList();
+        }
+
+        private void ExtractFiles(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder)
+        {
+            var files = from x in items where x is TiFile select x as TiFile;
+
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+            foreach (var file in files)
+            {
+                if (File.Exists(Path.Combine(path, file.Name)) && Settings.CurrentSettings.ConfirmOverwriteExtraction)
+                {
+                    TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"The file \"{file.Name}\" already exists in the target directory. Do you want to overwrite it?",
+                        Heading = "File already exists",
+                        Caption = "Warning",
+                        Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                        Icon = TaskDialogIcon.Warning,
+                        DefaultButton = TaskDialogButton.Yes
+                    });
+
+                    if (result == TaskDialogButton.No)
+                        continue;
+                }
+
+                using (var destStream = new FileStream(Path.Combine(path, file.Name), FileMode.Create))
+                    file.GetStream().CopyTo(destStream);
+
+                if (Settings.CurrentSettings.ExtractPreserveDates)
+                {
+                    if (file.CreationTime.HasValue)
+                        File.SetCreationTime(Path.Combine(path, file.Name), file.CreationTime.Value);
+
+                    if (file.LastAccessTime.HasValue)
+                        File.SetLastAccessTime(Path.Combine(path, file.Name), file.LastAccessTime.Value);
+
+                    if (file.LastWriteTime.HasValue)
+                        File.SetLastWriteTime(Path.Combine(path, file.Name), file.LastWriteTime.Value);
+                }
+
+                if (Settings.CurrentSettings.ExtractPreserveAttributes)
+                {
+                    /* NOTE: Windows automatically sets the Archive attribute on all newly created files, so even if the attribute is cleared in the
+                     * image, Windows will still automatically set it anyway. Should we perhaps try to work around this by manually clearing it after? */
+                    File.SetAttributes(Path.Combine(path, file.Name), file.Attributes);
+                }
+            }
+
+            if (extractType != Settings.FolderExtract.Ignore)
+            {
+                var dirs = from x in items where x is TiDirectory select x as TiDirectory;
+
+                foreach (var dir in dirs)
+                {
+                    ExtractFiles(
+                        dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems),
+                        extractType switch
+                        {
+                            Settings.FolderExtract.Merge => path,
+                            Settings.FolderExtract.Preserve => Path.Combine(path, dir.Name),
+                            _ => throw new ArgumentException()
+                        }, extractType, false);
+                }
+            }
+
+            if (openFolder)
+            {
+                Process.Start(new ProcessStartInfo()
+                {
+                    FileName = path,
+                    UseShellExecute = true
+                });
+            }
+        }
+
+        private void UpdateStatusBar(bool updateFreeSpace)
+        {
+            if (image == null)
+            {
+                lblStatusCapacity.Text = string.Empty;
+                lblStatusFreeCapacity.Text = string.Empty;
+                lbStatusPath.Text = string.Empty;
+                lblStatusSize.Text = string.Empty;
+            }
+            else
+            {
+                //Makes no sense to do this every time selection changes, etc. Only when operations that affect the free space are performed
+                if (updateFreeSpace)
+                {
+                    lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
+                    double freeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
+                    lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({freeSpacePercentage / 100:p2})";
+                    if ((int)freeSpacePercentage <= 10)
+                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(2), IntPtr.Zero); // Set the progress bar colour to red.
+                    else if ((int)freeSpacePercentage <= 20)
+                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(3), IntPtr.Zero); // Set the progress bar colour to yellow.
+                    else
+                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(1), IntPtr.Zero); // Set the progress bar colour to green.
+
+                    // Set progress bar value with a bit of a hack to disable the glow.
+                    lblStatusProgressBar.Minimum = 100 - (int)freeSpacePercentage;
+                    lblStatusProgressBar.Value = 100 - (int)freeSpacePercentage;
+                    lblStatusProgressBar.Minimum = 0;
+                }
+
+                switch (StatusBarState)
+                {
+                    case StatusBarState.NoneSelected:
+                        {
+                            var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
+                            lbStatusPath.Text = dir.FullName;
+                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(CalculateDirSize())} in {GetFileCount()} item(s)";
+                            break;
+                        }
+                    case StatusBarState.OneSelected:
+                        {
+                            var item = GetSelectedItemData(0);
+                            lbStatusPath.Text = item.FullName;
+                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
+                            break;
+                        }
+                    case StatusBarState.MultipleSelected:
+                        {
+                            var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
+                            var selectedSize = 0ul;
+                            foreach (var entry in SelectedItems) selectedSize += entry.Length;
+
+                            lbStatusPath.Text = dir.FullName;
+                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
+                            break;
+                        }
+                }
+            }
         }
     }
 }
