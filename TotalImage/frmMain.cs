@@ -62,23 +62,11 @@ namespace TotalImage
             Size = Settings.CurrentSettings.WindowSize;
             SyncUIWithSettings();
 
-            //Because designer doesn't have the Enter key in the list for some reason...
-            propertiesToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.Enter;
-            propertiesToolStripMenuItem1.ShortcutKeys = Keys.Alt | Keys.Enter;
-            propertiesToolStripMenuItem2.ShortcutKeys = Keys.Alt | Keys.Enter;
-
 #if !DEBUG
             DisableUI(); //Once support for command line arguments is added, those will need to be checked before this is done...
 #endif
             GetDefaultIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-
-            //This is a workaround because the designer is apparently not setting the ColumnHeader.Name attributes...
-            lstFiles.Columns[0].Name = "clmName";
-            lstFiles.Columns[1].Name = "clmType";
-            lstFiles.Columns[2].Name = "clmSize";
-            lstFiles.Columns[3].Name = "clmModified";
-            lstFiles.Columns[4].Name = "clmAttributes";
 
             //Open the file that was dragged onto the exe/shortcut or passed as a command line argument
             string[] args = Environment.GetCommandLineArgs();

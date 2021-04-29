@@ -260,6 +260,7 @@
             this.propertiesToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             this.propertiesToolStripMenuItem1.Text = "Properties...";
             this.propertiesToolStripMenuItem1.Click += new System.EventHandler(this.properties_Click);
+            this.propertiesToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)(System.Windows.Forms.Keys.Enter | System.Windows.Forms.Keys.Alt));
             // 
             // menuBar
             // 
@@ -496,6 +497,7 @@
             this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.propertiesToolStripMenuItem.Text = "Properties...";
             this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.properties_Click);
+            this.propertiesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(System.Windows.Forms.Keys.Enter | System.Windows.Forms.Keys.Alt));
             // 
             // selectAllToolStripMenuItem
             // 
@@ -1291,12 +1293,14 @@
             this.clmName.Tag = "Name";
             this.clmName.Text = "Name";
             this.clmName.Width = 128;
+            this.clmName.Name = "clmName";
             // 
             // clmType
             // 
             this.clmType.Tag = "Type";
             this.clmType.Text = "Type";
             this.clmType.Width = 127;
+            this.clmType.Name = "clmType";
             // 
             // clmSize
             // 
@@ -1304,18 +1308,21 @@
             this.clmSize.Text = "Size";
             this.clmSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.clmSize.Width = 118;
+            this.clmSize.Name = "clmSize";
             // 
             // clmModified
             // 
             this.clmModified.Tag = "Modified";
             this.clmModified.Text = "Modified";
             this.clmModified.Width = 148;
+            this.clmModified.Name = "clmModified";
             // 
             // clmAttributes
             // 
             this.clmAttributes.Tag = "Attributes";
             this.clmAttributes.Text = "Attributes";
             this.clmAttributes.Width = 86;
+            this.clmAttributes.Name = "clmAttributes";
             // 
             // cmsFileList
             // 
@@ -1382,6 +1389,7 @@
             this.propertiesToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             this.propertiesToolStripMenuItem2.Text = "Properties...";
             this.propertiesToolStripMenuItem2.Click += new System.EventHandler(this.properties_Click);
+            this.propertiesToolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)(System.Windows.Forms.Keys.Enter | System.Windows.Forms.Keys.Alt));
             // 
             // selectAllToolStripMenuItem1
             // 
