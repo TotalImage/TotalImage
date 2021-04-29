@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -89,6 +89,17 @@ namespace TotalImage.FileSystems.FAT
                 fstClusLO = reader.ReadUInt16(),
                 fileSize = reader.ReadUInt32()
             };
+
+        public string BaseName => Encoding.ASCII.GetString(name, 0, 8).Trim();
+        public string Extension => Encoding.ASCII.GetString(name, 8, 3).Trim();
+
+        public string Name => $"{BaseName}{(!string.IsNullOrWhiteSpace(Extension) ? "." : "")}{Extension}";
+
+        public DateTime? CreationTime => FatDateTime.ToDateTime(crtDate, crtTime, crtTimeTenth);
+        public DateTime? LastAccessTime => FatDateTime.ToDateTime(lstAccDate);
+        public DateTime? LastWriteTime => FatDateTime.ToDateTime(wrtDate, wrtTime);
+
+        public FileAttributes Attributes => (FileAttributes)attr;
 
         public static IEnumerable<DirectoryEntry> ReadRootDirectory(FatFileSystem fat, bool includeDeleted = false)
         {

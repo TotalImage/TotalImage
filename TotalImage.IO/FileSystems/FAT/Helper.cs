@@ -32,8 +32,5 @@ namespace TotalImage.FileSystems.FAT
 
             return new string(chars);
         }
-
-        public static string TrimFileName(string filename)
-            => filename.Substring(0, 8).Trim() + (string.IsNullOrWhiteSpace(filename.Substring(8, 3)) ? "" : $".{filename.Substring(8, 3).TrimEnd()}");
     }
 }

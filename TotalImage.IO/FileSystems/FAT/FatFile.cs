@@ -23,7 +23,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string ShortName
         {
-            get => Helper.TrimFileName(Encoding.ASCII.GetString(entry.name));
+            get => entry.Name;
             set => throw new NotImplementedException();
         }
 
@@ -44,28 +44,28 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override FileAttributes Attributes
         {
-            get => (FileAttributes)entry.attr;
+            get => entry.Attributes;
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? LastAccessTime
         {
-            get => FatDateTime.ToDateTime(entry.lstAccDate);
+            get => entry.LastAccessTime;
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? LastWriteTime
         {
-            get => FatDateTime.ToDateTime(entry.wrtDate, entry.wrtTime);
+            get => entry.LastWriteTime;
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? CreationTime
         {
-            get => FatDateTime.ToDateTime(entry.crtDate, entry.crtTime, entry.crtTimeTenth);
+            get => entry.CreationTime;
             set => throw new NotImplementedException();
         }
 
@@ -77,7 +77,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override string Extension => Encoding.ASCII.GetString(entry.name).Substring(8).Trim();
+        public override string Extension => entry.Extension;
 
         /// <inheritdoc />
         public override void Delete()

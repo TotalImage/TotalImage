@@ -29,7 +29,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string ShortName
         {
-            get => entry.HasValue ? Helper.TrimFileName(Encoding.ASCII.GetString(entry.Value.name)) : string.Empty;
+            get => entry?.Name ?? string.Empty;
             set => throw new NotImplementedException();
         }
 
@@ -50,28 +50,28 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override FileAttributes Attributes
         {
-            get => entry.HasValue ? (FileAttributes)entry.Value.attr : FileAttributes.Directory;
+            get => entry?.Attributes ?? FileAttributes.Directory;
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? LastAccessTime
         {
-            get => entry.HasValue ? FatDateTime.ToDateTime(entry.Value.lstAccDate) : null;
+            get => entry?.LastAccessTime ?? null;
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? LastWriteTime
         {
-            get => entry.HasValue ? FatDateTime.ToDateTime(entry.Value.wrtDate, entry.Value.wrtTime) : null;
+            get => entry?.LastWriteTime ?? null;
             set => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override DateTime? CreationTime
         {
-            get => entry.HasValue ? FatDateTime.ToDateTime(entry.Value.crtDate, entry.Value.crtTime, entry.Value.crtTimeTenth) : null;
+            get => entry?.CreationTime ?? null;
             set => throw new NotImplementedException();
         }
 
