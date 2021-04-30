@@ -1947,7 +1947,7 @@ namespace TotalImage
                 foreach (var dir in dirs)
                 {
                     ExtractFiles(
-                        dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems),
+                        dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false),
                         extractType switch
                         {
                             Settings.FolderExtract.Merge => path,
