@@ -54,10 +54,8 @@ Only FAT12, FAT16 and FAT32 primary partitions are currently supported (see belo
 ## File systems and extensions
 | Name | Read | Write | Create |
 | --- | --- | --- | --- |
-| FAT12 | ⚠ Partial | ❌ No | ✔ Yes |
-| FAT16 | ⚠ Partial | ❌ No | ❌ No |
-| FAT32 | ⚠ Partial | ❌ No | ❌ No |
-
-Read functionality is currently limited to listing directories, displaying attributes and rudimentary file extraction.
+| FAT12 | ✔ Yes | ❌ No | ✔ Yes |
+| FAT16 | ✔ Yes | ❌ No | ❌ No |
+| FAT32 | ✔ Yes | ❌ No | ❌ No |
 
 Long file names (LFN) are supported on all supported FAT variants.
