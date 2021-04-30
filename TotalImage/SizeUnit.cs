@@ -9,7 +9,7 @@ namespace TotalImage
         Binary = 1024
     }
 
-    public static class SizeUnitsExtensions
+    public static class SizeUnitExtensions
     {
         static readonly char[] prefixes = { '☢', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' };
 
