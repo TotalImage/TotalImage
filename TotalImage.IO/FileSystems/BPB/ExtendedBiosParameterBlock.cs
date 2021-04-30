@@ -91,14 +91,14 @@ namespace TotalImage.FileSystems.BPB
                 Flags = 0,
             };
 
-            if (bpb.Version == BiosParameterBlockVersion.Dos40)
+            if (version == BiosParameterBlockVersion.Dos40)
             {
                 bpb.ExtendedBootSignature = ExtendedBootSignature.Dos40;
                 bpb.VolumeSerialNumber = uint.Parse(serialNumber, NumberStyles.HexNumber);
                 bpb.FileSystemType = Helper.UseAsLabel(fileSystemType);
                 bpb.VolumeLabel = Helper.UseAsLabel(volumeLabel, 11);
             }
-            else if (bpb.Version == BiosParameterBlockVersion.Dos34)
+            else if (version == BiosParameterBlockVersion.Dos34)
             {
                 bpb.ExtendedBootSignature = ExtendedBootSignature.Dos34;
             }
