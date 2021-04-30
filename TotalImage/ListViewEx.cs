@@ -9,38 +9,29 @@ namespace TotalImage
 {
     internal static class ListViewExtensions
     {
-        private static void SetItemState(ListView list, int itemIndex, uint state, uint mask)
-        {
-            ListViewItemMessageParam lvItem = new ListViewItemMessageParam
-            {
-                state = state,
-                stateMask = mask
-            };
-
-            SendMessageListViewItem(list.Handle, (uint)LVM.SETITEMSTATE, new IntPtr(itemIndex), ref lvItem);
-        }
-
         public static void SelectAllItems(this ListView listView)
         {
-            SetItemState(listView, -1, 2, 2);
+            var lvItem = new LVITEM()
+            {
+                state = LVIS.SELECTED,
+                stateMask = LVIS.SELECTED
+            };
+
+            SendMessage(listView.Handle, (uint)LVM.SETITEMSTATE, (nint)(-1), ref lvItem);
         }
 
         public static void SetSortIcon(this ListView listView, int columnIndex, SortOrder order)
         {
-            IntPtr columnHeader = SendMessage(listView.Handle, (uint)LVM.GETHEADER, IntPtr.Zero, IntPtr.Zero);
+            var headerHwnd = SendMessage(listView.Handle, (uint)LVM.GETHEADER, (nint)0, (nint)0);
 
             for (int columnNumber = 0; columnNumber <= listView.Columns.Count - 1; columnNumber++)
             {
-                IntPtr columnPtr = new IntPtr(columnNumber);
-                HDITEM hdItem = new HDITEM();
-                hdItem.mask = HDI.FORMAT;
+                var hdItem = new HDITEM()
+                {
+                    mask = HDI.FORMAT
+                };
 
-                var phdItem = Marshal.AllocHGlobal(Marshal.SizeOf(hdItem));
-                Marshal.StructureToPtr(hdItem, phdItem, false);
-
-                SendMessage(columnHeader, (uint)HDM.GETITEMW, columnPtr, phdItem);
-
-                hdItem = (HDITEM)Marshal.PtrToStructure(phdItem, typeof(HDITEM));
+                SendMessage(headerHwnd, (uint)HDM.GETITEMW, (nint)columnNumber, ref hdItem);
 
                 if (!(order == SortOrder.None) && columnNumber == columnIndex)
                 {
@@ -62,11 +53,7 @@ namespace TotalImage
                     hdItem.fmt &= ~HDF.SORTDOWN & ~HDF.SORTUP & ~HDF.BITMAP_ON_RIGHT;
                 }
 
-                Marshal.StructureToPtr(hdItem, phdItem, true);
-
-                SendMessage(columnHeader, (uint)HDM.SETITEMW, columnPtr, phdItem);
-
-                Marshal.FreeHGlobal(phdItem);
+                SendMessage(headerHwnd, (uint)HDM.SETITEMW, (nint)columnNumber, ref hdItem);
             }
         }
     }
@@ -76,8 +63,8 @@ namespace TotalImage
         protected override void CreateHandle()
         {
             base.CreateHandle();
-            _ = SetWindowTheme(Handle, "explorer", null); //Enables Explorer-like appearance
-            SendMessage(Handle, (uint)LVM.SETEXTENDEDLISTVIEWSTYLE, (IntPtr)LVS_EX.DOUBLEBUFFER, (IntPtr)LVS_EX.DOUBLEBUFFER); //Enables semi-transparent selection rectangle
+            SetWindowTheme(Handle, "explorer", null); //Enables Explorer-like appearance
+            SendMessage(Handle, (uint)LVM.SETEXTENDEDLISTVIEWSTYLE, (nint)LVS_EX.DOUBLEBUFFER, (nint)LVS_EX.DOUBLEBUFFER); //Enables semi-transparent selection rectangle
         }
     }
 }
