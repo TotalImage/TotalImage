@@ -28,7 +28,7 @@ namespace TotalImage.FileSystems.BPB
             {
                 ExtendedBootSignature.Dos34 => BiosParameterBlockVersion.Dos34,
                 ExtendedBootSignature.Dos40 => BiosParameterBlockVersion.Dos40,
-                _ => throw new InvalidDataException()
+                _ => BiosParameterBlockVersion.Dos20,
             };
 
         public byte PhysicalDriveNumber { get => drvNum; private set => drvNum = value; }
