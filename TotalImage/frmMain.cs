@@ -1984,12 +1984,12 @@ namespace TotalImage
                     lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
                     double freeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
                     lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({freeSpacePercentage / 100:p2})";
-                    if ((int)freeSpacePercentage <= 10)
-                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(2), IntPtr.Zero); // Set the progress bar colour to red.
-                    else if ((int)freeSpacePercentage <= 20)
-                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(3), IntPtr.Zero); // Set the progress bar colour to yellow.
+                    if (freeSpacePercentage <= 10)
+                        lblStatusProgressBar.ProgressBar.SetState(ProgressBarState.Error); // Set the progress bar colour to red.
+                    else if (freeSpacePercentage <= 20)
+                        lblStatusProgressBar.ProgressBar.SetState(ProgressBarState.Paused); // Set the progress bar colour to yellow.
                     else
-                        SendMessage(lblStatusProgressBar.ProgressBar.Handle, 1040, new IntPtr(1), IntPtr.Zero); // Set the progress bar colour to green.
+                        lblStatusProgressBar.ProgressBar.SetState(ProgressBarState.Normal); // Set the progress bar colour to green.
 
                     // Set progress bar value with a bit of a hack to disable the glow.
                     lblStatusProgressBar.Minimum = 100 - (int)freeSpacePercentage;
