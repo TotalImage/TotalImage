@@ -59,11 +59,22 @@ namespace TotalImage
         {
             if (!cbxFloppyBPB.Checked)
             {
-                DialogResult noBpb = MessageBox.Show("You chose not to write a DOS BIOS parameter block (BPB) to the boot sector of the image." +
-                    " Many programs and operating systems may not recognize the disk because of this." +
-                    "\n\nAre you sure you want to create an image without the BPB?", "No BPB", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (noBpb == DialogResult.No)
+                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
+                    Text = "Some programs and operating systems may not recognize the disk because of this. Are you sure you want to continue?",
+                    Heading = "You chose not to write a DOS BIOS Parameter Block (BPB)",
+                    Caption = "Warning",
+                    Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                    Icon = TaskDialogIcon.Warning,
+                });
+
+                if (result == TaskDialogButton.No)
+                {
+                    DialogResult = DialogResult.None; //This is needed so the dialog doesn't close anyway
                     return;
                 }
             }

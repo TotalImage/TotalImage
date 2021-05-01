@@ -123,7 +123,19 @@ namespace TotalImage
         {
             if (!(image?.PartitionTable.Partitions[0].FileSystem is FatFileSystem fs))
             {
-                MessageBox.Show("This only works for FAT partitions!");
+                TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = "This feature is currently only available for FAT partitions.",
+                    Heading = "Feature not available",
+                    Caption = "Information",
+                    Buttons =
+                    {
+                        TaskDialogButton.OK
+                    },
+                    Icon = TaskDialogIcon.Information,
+                    DefaultButton = TaskDialogButton.OK
+                });
+
                 return;
             }
 
@@ -184,9 +196,22 @@ namespace TotalImage
             {
                 if (unsavedChanges)
                 {
-                    DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before creating a new image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                    if (DialogResult == DialogResult.Yes) /*save_Click(sender, e);*/;
-                    else if (DialogResult == DialogResult.Cancel) return;
+                    TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"Would you like to save them before creating a new image?",
+                        Heading = "You have unsaved changes",
+                        Caption = "Warning",
+                        Buttons =
+                        {
+                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
+                            new TaskDialogCommandLinkButton("&Discard"),
+                            TaskDialogButton.Cancel
+                        },
+                        Icon = TaskDialogIcon.Warning,
+                    });
+
+                    if (result.Tag != null) /* Save changes first... */ ;
+                    else if (result == TaskDialogButton.Cancel) return;
                 }
 
                 if (image != null)
@@ -324,14 +349,11 @@ namespace TotalImage
         private void format_Click(object sender, EventArgs e)
         {
             using dlgFormat dlg = new dlgFormat();
-            dlg.ShowDialog();
-
-            if (MessageBox.Show("Are you sure you want to format this image? This will erase all data inside!", "Warning",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if (dlg.ShowDialog() == DialogResult.Yes)
             {
-                //Need to figure out how to actually do this, because right now it's unclear...
+                throw new NotImplementedException();
+                // Need to figure out how to actually do this, because right now it's unclear...
                 // DoSomeFormatThing();
-                // MessageBox.Show("The image was successfully formatted!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -418,12 +440,22 @@ namespace TotalImage
         {
             if (unsavedChanges)
             {
-                DialogResult result = MessageBox.Show("You have unsaved changed. Would you like to save them before closing TotalImage?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (result == DialogResult.Yes)
+                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
-                    save_Click(sender, e);
-                }
-                else if (DialogResult == DialogResult.Cancel) return;
+                    Text = $"Would you like to save them before closing TotalImage?",
+                    Heading = "You have unsaved changes",
+                    Caption = "Warning",
+                    Buttons =
+                        {
+                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
+                            new TaskDialogCommandLinkButton("&Discard"),
+                            TaskDialogButton.Cancel
+                        },
+                    Icon = TaskDialogIcon.Warning,
+                });
+
+                if (result.Tag != null) /* Save changes... */ ;
+                else if (result == TaskDialogButton.Cancel) return;
             }
             Application.Exit();
         }
@@ -451,12 +483,22 @@ namespace TotalImage
         {
             if (unsavedChanges)
             {
-                DialogResult = MessageBox.Show("You have unsaved changes. Would you like to save the current image first before opening another one?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                switch (DialogResult)
+                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
-                    case DialogResult.Cancel: return;
-                    case DialogResult.Yes: /*SaveChanges()*/ break;
-                }
+                    Text = $"Would you like to save them before opening another image?",
+                    Heading = "You have unsaved changes",
+                    Caption = "Warning",
+                    Buttons =
+                        {
+                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
+                            new TaskDialogCommandLinkButton("&Discard"),
+                            TaskDialogButton.Cancel
+                        },
+                    Icon = TaskDialogIcon.Warning,
+                });
+
+                if (result.Tag != null) /* Save changes... */ ;
+                else if (result == TaskDialogButton.Cancel) return;
             }
 
             using OpenFileDialog ofd = new OpenFileDialog();
@@ -648,9 +690,22 @@ namespace TotalImage
         {
             if (unsavedChanges)
             {
-                DialogResult = MessageBox.Show("You have unsaved changes in the current image. Would you like to save them before closing the image?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question); ;
-                if (DialogResult == DialogResult.Yes) /*SaveChanges();*/;
-                else if (DialogResult == DialogResult.Cancel) return;
+                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = $"Would you like to save them before closing the current image?",
+                    Heading = "You have unsaved changes",
+                    Caption = "Warning",
+                    Buttons =
+                        {
+                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
+                            new TaskDialogCommandLinkButton("&Discard"),
+                            TaskDialogButton.Cancel
+                        },
+                    Icon = TaskDialogIcon.Warning,
+                });
+
+                if (result.Tag != null) /* Save changes... */ ;
+                else if (result == TaskDialogButton.Cancel) return;
             }
             CloseImage();
         }
@@ -929,12 +984,22 @@ namespace TotalImage
         {
             if (unsavedChanges)
             {
-                DialogResult = MessageBox.Show("You have unsaved changes in the current image. Do you want to save them before closing TotalImage?", "Unsaved changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (DialogResult == DialogResult.Yes)
+                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
-                    /* Save changes */
-                }
-                else if (DialogResult == DialogResult.Cancel)
+                    Text = $"Would you like to save them before closing TotalImage?",
+                    Heading = "You have unsaved changes",
+                    Caption = "Warning",
+                    Buttons =
+                        {
+                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
+                            new TaskDialogCommandLinkButton("&Discard"),
+                            TaskDialogButton.Cancel
+                        },
+                    Icon = TaskDialogIcon.Warning,
+                });
+
+                if (result.Tag != null) /* Save changes... */ ;
+                else if (result == TaskDialogButton.Cancel) 
                 {
                     e.Cancel = true;
                     return;
@@ -1478,7 +1543,19 @@ namespace TotalImage
             CurrentPartitionIndex = 0;
             if (image.PartitionTable.Partitions.Count == 0)
             {
-                MessageBox.Show("There are no partitions in the selected image", "Error loading HDD image", MessageBoxButtons.OK);
+                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = $"We couldn't find any partitions in your image. If this is a hard disk image, verify that it's partitioned with either MBR or GPT partitioning scheme and contains at least one partition.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                    Heading = "No partitions detected",
+                    Caption = "Error",
+                    Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                    Icon = TaskDialogIcon.Error,
+                });
+
                 return;
             }
             else if (image.PartitionTable.Partitions.Count >= 1)
