@@ -1177,7 +1177,7 @@ namespace TotalImage
 
         }
 
-        private void lblNotifications_ButtonClick(object sender, EventArgs e)
+        private void lblNotifications_Click(object sender, EventArgs e)
         {
             using dlgNotifications dlg = new dlgNotifications();
             dlg.ShowDialog();

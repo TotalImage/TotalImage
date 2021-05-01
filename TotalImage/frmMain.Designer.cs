@@ -110,7 +110,7 @@ namespace TotalImage
             this.lblStatusProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.lblStatusSize = new System.Windows.Forms.ToolStripStatusLabel();
             this.lbStatusPath = new System.Windows.Forms.ToolStripStatusLabel();
-            this.lblNotifications = new System.Windows.Forms.ToolStripSplitButton();
+            this.lblNotifications = new System.Windows.Forms.ToolStripButton();
             this.commandBar = new System.Windows.Forms.ToolStrip();
             this.newToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -854,14 +854,14 @@ namespace TotalImage
             // lblNotifications
             // 
             this.lblNotifications.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.lblNotifications.DropDownButtonWidth = 0;
+            //this.lblNotifications.DropDownButtonWidth = 0;
             this.lblNotifications.Image = ((System.Drawing.Image)(resources.GetObject("lblNotifications.Image")));
             this.lblNotifications.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.lblNotifications.Name = "lblNotifications";
             this.lblNotifications.Size = new System.Drawing.Size(96, 20);
             this.lblNotifications.Text = "Notifications";
             this.lblNotifications.Visible = false;
-            this.lblNotifications.ButtonClick += new System.EventHandler(this.lblNotifications_ButtonClick);
+            this.lblNotifications.Click += new System.EventHandler(this.lblNotifications_Click);
             // 
             // commandBar
             // 
@@ -1572,7 +1572,7 @@ namespace TotalImage
         private System.Windows.Forms.ColumnHeader clmAttributes;
         private System.Windows.Forms.ToolStripStatusLabel lblStatusFreeCapacity;
         private System.Windows.Forms.ToolStripProgressBar lblStatusProgressBar;
-        private System.Windows.Forms.ToolStripSplitButton lblNotifications;
+        private System.Windows.Forms.ToolStripButton lblNotifications;
         internal System.Windows.Forms.ImageList imgFilesSmall;
         internal System.Windows.Forms.ImageList imgFilesLarge;
     }
