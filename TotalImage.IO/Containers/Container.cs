@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Text;
 using TotalImage.Partitions;
 
@@ -10,6 +11,11 @@ namespace TotalImage.Containers
     /// </summary>
     public abstract class Container : IDisposable
     {
+        /// <summary>
+        /// The backing file containing the image, opened as a memory-mapped file
+        /// </summary>
+        protected readonly MemoryMappedFile? backingFile;
+        
         /// <summary>
         /// The underlying stream containing the image
         /// </summary>
@@ -51,7 +57,8 @@ namespace TotalImage.Containers
         /// <param name="path">The location of the image file</param>
         protected Container(string path)
         {
-            containerStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            backingFile = MemoryMappedFile.CreateFromFile(path, FileMode.Open);
+            containerStream = backingFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
         }
 
         /// <summary>
@@ -132,6 +139,7 @@ namespace TotalImage.Containers
             if (disposing)
             {
                 containerStream.Dispose();
+                backingFile?.Dispose();
             }
         }
 
