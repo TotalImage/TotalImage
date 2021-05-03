@@ -55,10 +55,18 @@ namespace TotalImage.Containers
         /// Create a container file from an existing file
         /// </summary>
         /// <param name="path">The location of the image file</param>
-        protected Container(string path)
+        /// <param name="memoryMapping">Should the file be mapped into memory</param>
+        protected Container(string path, bool memoryMapping)
         {
-            backingFile = MemoryMappedFile.CreateFromFile(path, FileMode.Open);
-            containerStream = backingFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
+            if(memoryMapping)
+            {
+                backingFile = MemoryMappedFile.CreateFromFile(path, FileMode.Open);
+                containerStream = backingFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
+            }
+            else
+            {
+                containerStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
         }
 
         /// <summary>

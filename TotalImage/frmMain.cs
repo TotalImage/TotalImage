@@ -1529,14 +1529,16 @@ namespace TotalImage
             filename = Path.GetFileName(path);
             Text = $"{filename} - TotalImage";
 
+            bool memoryMapping = new FileInfo(path).Length > Settings.CurrentSettings.MemoryMappingThreshold;
+
             var ext = Path.GetExtension(filename).ToLowerInvariant();
             switch (ext)
             {
                 case ".vhd":
-                    image = new VhdContainer(path);
+                    image = new VhdContainer(path, memoryMapping);
                     break;
                 default:
-                    image = new RawContainer(path);
+                    image = new RawContainer(path, memoryMapping);
                     break;
             }
 

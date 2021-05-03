@@ -10,7 +10,7 @@ namespace TotalImage.Containers
         private readonly Stream _contentStream;
 
         /// <inheritdoc />
-        public VhdContainer(string path) : base(path)
+        public VhdContainer(string path, bool memoryMapping) : base(path, memoryMapping)
         {
             _contentStream = new PartialStream(containerStream, 0, containerStream.Length - 512);
         }

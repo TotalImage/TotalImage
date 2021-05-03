@@ -38,6 +38,7 @@ namespace TotalImage
             public bool ConfirmDeletion { get; set; } = true;
             public bool ConfirmOverwriteExtraction { get; set; } = true;
             public bool AutoIncrementFilename { get; set; } = true;
+            public long MemoryMappingThreshold { get; set; } = 104857600; //100 MiB
         }
 
         public static SettingsModel CurrentSettings { get; private set; }
@@ -115,6 +116,7 @@ namespace TotalImage
                     CurrentSettings.ConfirmDeletion = settings.ConfirmDeletion;
                     CurrentSettings.ConfirmInjection = settings.ConfirmInjection;
                     CurrentSettings.ConfirmOverwriteExtraction = settings.ConfirmOverwriteExtraction;
+                    CurrentSettings.MemoryMappingThreshold = 1048576;
                 }
             }
             catch (IOException)
@@ -163,6 +165,7 @@ namespace TotalImage
             CurrentSettings.ConfirmDeletion = true;
             CurrentSettings.ConfirmInjection = true;
             CurrentSettings.ConfirmOverwriteExtraction = true;
+            CurrentSettings.MemoryMappingThreshold = 1048576;
 
             //This should probably be preserved...
             /*CurrentSettings.SplitterDistance = 280;

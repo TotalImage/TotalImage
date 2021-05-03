@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Raw sector images (.IMG, .IMA, .VFD, .FLP)");
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("WinImage compressed image (.IMZ)");
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Anex86 disk images (.FDI, .FDM, .HDI, .HDM)");
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("IBM SafeDskF image (.DSK)");
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("DiskDupe image (.DDI)");
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Raw sector images (.IMG, .IMA, .VFD, .FLP)");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("WinImage compressed image (.IMZ)");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Anex86 disk images (.FDI, .FDM, .HDI, .HDM)");
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("IBM SafeDskF image (.DSK)");
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("DiskDupe image (.DDI)");
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.pnlBottom = new System.Windows.Forms.Panel();
@@ -42,6 +42,9 @@
             this.btnClearRecent = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
             this.gbxBehavior = new System.Windows.Forms.GroupBox();
+            this.lblMemoryMapping1 = new System.Windows.Forms.Label();
+            this.txtMemoryMapping = new System.Windows.Forms.NumericUpDown();
+            this.lblMemoryMapping = new System.Windows.Forms.Label();
             this.cbxAutoincrementFilename = new System.Windows.Forms.CheckBox();
             this.cbxConfirmOverwriteExtract = new System.Windows.Forms.CheckBox();
             this.cbxConfirmDeletion = new System.Windows.Forms.CheckBox();
@@ -76,13 +79,14 @@
             this.btnSelectAll = new System.Windows.Forms.Button();
             this.cbxShellFileIcons = new System.Windows.Forms.CheckBox();
             this.lstFileTypes = new System.Windows.Forms.ListView();
-            this.columnType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnType = new System.Windows.Forms.ColumnHeader();
             this.lblFileAssociations = new System.Windows.Forms.Label();
             this.pnlBottom.SuspendLayout();
             this.tabs.SuspendLayout();
             this.tabGeneral.SuspendLayout();
             this.gbxMisc.SuspendLayout();
             this.gbxBehavior.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtMemoryMapping)).BeginInit();
             this.tabView.SuspendLayout();
             this.tabExtraction.SuspendLayout();
             this.tabIntegration.SuspendLayout();
@@ -186,6 +190,9 @@
             // 
             // gbxBehavior
             // 
+            this.gbxBehavior.Controls.Add(this.lblMemoryMapping1);
+            this.gbxBehavior.Controls.Add(this.txtMemoryMapping);
+            this.gbxBehavior.Controls.Add(this.lblMemoryMapping);
             this.gbxBehavior.Controls.Add(this.cbxAutoincrementFilename);
             this.gbxBehavior.Controls.Add(this.cbxConfirmOverwriteExtract);
             this.gbxBehavior.Controls.Add(this.cbxConfirmDeletion);
@@ -197,15 +204,47 @@
             this.gbxBehavior.TabStop = false;
             this.gbxBehavior.Text = "Behavior";
             // 
+            // lblMemoryMapping1
+            // 
+            this.lblMemoryMapping1.AutoSize = true;
+            this.lblMemoryMapping1.Location = new System.Drawing.Point(345, 139);
+            this.lblMemoryMapping1.Name = "lblMemoryMapping1";
+            this.lblMemoryMapping1.Size = new System.Drawing.Size(28, 15);
+            this.lblMemoryMapping1.TabIndex = 21;
+            this.lblMemoryMapping1.Text = "MiB";
+            // 
+            // txtMemoryMapping
+            // 
+            this.txtMemoryMapping.Location = new System.Drawing.Point(239, 135);
+            this.txtMemoryMapping.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.txtMemoryMapping.Name = "txtMemoryMapping";
+            this.txtMemoryMapping.Size = new System.Drawing.Size(100, 23);
+            this.txtMemoryMapping.TabIndex = 20;
+            this.txtMemoryMapping.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            ((System.Windows.Forms.TextBox)txtMemoryMapping.Controls[1]).MaxLength = 6;
+            // 
+            // lblMemoryMapping
+            // 
+            this.lblMemoryMapping.AutoSize = true;
+            this.lblMemoryMapping.Location = new System.Drawing.Point(6, 139);
+            this.lblMemoryMapping.Name = "lblMemoryMapping";
+            this.lblMemoryMapping.Size = new System.Drawing.Size(227, 15);
+            this.lblMemoryMapping.TabIndex = 19;
+            this.lblMemoryMapping.Text = "Threshold for mapping files into memory:";
+            // 
             // cbxAutoincrementFilename
             // 
             this.cbxAutoincrementFilename.AutoSize = true;
             this.cbxAutoincrementFilename.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cbxAutoincrementFilename.Location = new System.Drawing.Point(6, 100);
             this.cbxAutoincrementFilename.Name = "cbxAutoincrementFilename";
-            this.cbxAutoincrementFilename.Size = new System.Drawing.Size(265, 20);
+            this.cbxAutoincrementFilename.Size = new System.Drawing.Size(337, 20);
             this.cbxAutoincrementFilename.TabIndex = 18;
-            this.cbxAutoincrementFilename.Text = "Auto-increment last filename when possible";
+            this.cbxAutoincrementFilename.Text = "When saving, auto-increment last filename when possible";
             this.cbxAutoincrementFilename.UseVisualStyleBackColor = true;
             // 
             // cbxConfirmOverwriteExtract
@@ -598,17 +637,17 @@
             this.lstFileTypes.Enabled = false;
             this.lstFileTypes.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.lstFileTypes.HideSelection = false;
-            listViewItem16.StateImageIndex = 0;
-            listViewItem17.StateImageIndex = 0;
-            listViewItem18.StateImageIndex = 0;
-            listViewItem19.StateImageIndex = 0;
-            listViewItem20.StateImageIndex = 0;
+            listViewItem1.StateImageIndex = 0;
+            listViewItem2.StateImageIndex = 0;
+            listViewItem3.StateImageIndex = 0;
+            listViewItem4.StateImageIndex = 0;
+            listViewItem5.StateImageIndex = 0;
             this.lstFileTypes.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem16,
-            listViewItem17,
-            listViewItem18,
-            listViewItem19,
-            listViewItem20});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4,
+            listViewItem5});
             this.lstFileTypes.Location = new System.Drawing.Point(18, 33);
             this.lstFileTypes.MultiSelect = false;
             this.lstFileTypes.Name = "lstFileTypes";
@@ -642,7 +681,7 @@
             this.ClientSize = new System.Drawing.Size(485, 550);
             this.Controls.Add(this.tabs);
             this.Controls.Add(this.pnlBottom);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -658,6 +697,7 @@
             this.gbxMisc.ResumeLayout(false);
             this.gbxBehavior.ResumeLayout(false);
             this.gbxBehavior.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtMemoryMapping)).EndInit();
             this.tabView.ResumeLayout(false);
             this.tabView.PerformLayout();
             this.tabExtraction.ResumeLayout(false);
@@ -715,5 +755,8 @@
         private System.Windows.Forms.CheckBox cbxAutoincrementFilename;
         private System.Windows.Forms.Button btnSelectAll;
         private System.Windows.Forms.Button btnClearAll;
+        private System.Windows.Forms.Label lblMemoryMapping1;
+        private System.Windows.Forms.Label lblMemoryMapping;
+        private System.Windows.Forms.NumericUpDown txtMemoryMapping;
     }
 }
