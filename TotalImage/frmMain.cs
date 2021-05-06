@@ -230,21 +230,18 @@ namespace TotalImage
             }
         }
 
-        /* The Save button on the command bar acts as either:
+        /* The Save button/menu item acts as either:
          * -"Save" when the file is already saved and there are unsaved changes
          * -"Save as" when the file has not been saved yet */
-        private void saveToolStripButton_Click(object sender, EventArgs e)
+        private void save_Click(object sender, EventArgs e)
         {
-            if (unsavedChanges)
+            if (string.IsNullOrEmpty(filename) || (ToolStripMenuItem)sender == saveAsToolStripMenuItem) //File hasn't been saved yet
             {
-                if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
-                {
-                    saveAs_Click(sender, e);
-                }
-                else
-                {
-                    save_Click(sender, e);
-                }
+                saveFileAs();
+            }
+            else
+            {
+                saveFile();
             }
         }
 
@@ -359,7 +356,7 @@ namespace TotalImage
 
         //Save the changes made to the current image since the last save or since it was opened
         //TODO: Perhaps this needs some rethinking too, depending on recent changes to the container?
-        private void save_Click(object sender, EventArgs e)
+        private void saveFile()
         {
             if (image == null)
             {
@@ -375,7 +372,7 @@ namespace TotalImage
         }
 
         //Saves the current image as a new file, along with any changes made to it since the last save
-        private void saveAs_Click(object sender, EventArgs e)
+        private bool saveFileAs()
         {
             if (image == null)
             {
@@ -401,7 +398,9 @@ namespace TotalImage
                 sfd.FileName = newFilename;
             }
 
-            if (sfd.ShowDialog() == DialogResult.OK)
+            DialogResult result = sfd.ShowDialog();
+
+            if (result == DialogResult.OK)
             {
                 if (sfd.FilterIndex == 0 ||
                     sfd.FileName.EndsWith(".img", StringComparison.OrdinalIgnoreCase) ||
@@ -432,7 +431,14 @@ namespace TotalImage
                     saveToolStripButton.Enabled = false;
                 }
 
+                return true;
             }
+            else if(result == DialogResult.Cancel)
+            {
+                return false;
+            }
+
+            return false;
         }
 
         //Closes the application
@@ -454,9 +460,23 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Warning,
                 });
 
-                if (result.Tag != null) /* Save changes... */ ;
+                if (result.Tag != null)
+                {
+                    if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
+                    {
+                        if(!saveFileAs())
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        saveFile();
+                    }
+                }
                 else if (result == TaskDialogButton.Cancel) return;
             }
+
             Application.Exit();
         }
 
@@ -497,7 +517,7 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Warning,
                 });
 
-                if (result.Tag != null) /* Save changes... */ ;
+                if (result.Tag != null) save_Click(result, e);
                 else if (result == TaskDialogButton.Cancel) return;
             }
 
@@ -999,7 +1019,7 @@ namespace TotalImage
                 });
 
                 if (result.Tag != null) /* Save changes... */ ;
-                else if (result == TaskDialogButton.Cancel) 
+                else if (result == TaskDialogButton.Cancel)
                 {
                     e.Cancel = true;
                     return;
@@ -1186,7 +1206,7 @@ namespace TotalImage
         private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
             closeImageToolStripMenuItem.Enabled = image != null;
-            saveToolStripMenuItem.Enabled = image != null;
+            saveToolStripMenuItem.Enabled = image != null && unsavedChanges;
             saveAsToolStripMenuItem.Enabled = image != null;
         }
 

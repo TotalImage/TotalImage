@@ -364,7 +364,7 @@ namespace TotalImage
             | System.Windows.Forms.Keys.S)));
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.saveAsToolStripMenuItem.Text = "Save as...";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAs_Click);
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.save_Click);
             // 
             // closeImageToolStripMenuItem
             // 
@@ -854,11 +854,10 @@ namespace TotalImage
             // lblNotifications
             // 
             this.lblNotifications.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            //this.lblNotifications.DropDownButtonWidth = 0;
             this.lblNotifications.Image = ((System.Drawing.Image)(resources.GetObject("lblNotifications.Image")));
             this.lblNotifications.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.lblNotifications.Name = "lblNotifications";
-            this.lblNotifications.Size = new System.Drawing.Size(96, 20);
+            this.lblNotifications.Size = new System.Drawing.Size(95, 20);
             this.lblNotifications.Text = "Notifications";
             this.lblNotifications.Visible = false;
             this.lblNotifications.Click += new System.EventHandler(this.lblNotifications_Click);
@@ -927,7 +926,7 @@ namespace TotalImage
             this.saveToolStripButton.Name = "saveToolStripButton";
             this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.saveToolStripButton.Text = "&Save";
-            this.saveToolStripButton.Click += new System.EventHandler(this.saveToolStripButton_Click);
+            this.saveToolStripButton.Click += new System.EventHandler(this.save_Click);
             // 
             // closeToolStripButton
             // 
