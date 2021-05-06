@@ -39,7 +39,7 @@ Only fixed-size VHDs are currently supported.
 | Apricot 315k/720k | ✔ Yes | ❌ No | ❌ No |
 | Hard disks with 512-byte sectors | ✔ Yes | ❌ No | ❌ No |
 
-These disk formats are only supported when formatted with FAT12 or FAT16 and contained in a supported container (see above).
+These disk formats are only supported when formatted with a supported file system (depends on media type) and contained in a supported container.
 
 Acorn 800k Create functionality currently incorrectly writes a broken bootsector.
 
