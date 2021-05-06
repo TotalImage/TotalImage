@@ -64,7 +64,7 @@ namespace TotalImage.FileSystems.FAT
                 writer.Write(bpb.RootDirectoryEntries);
                 writer.Write(bpb.TotalLogicalSectors <= ushort.MaxValue ? (ushort)bpb.TotalLogicalSectors : (ushort)0);
                 writer.Write(bpb.MediaDescriptor);
-                writer.Write(bpb.LogicalSectorsPerFAT);
+                writer.Write(bpb.Version != BiosParameterBlockVersion.Fat32 ? (ushort)bpb.LogicalSectorsPerFAT : (ushort)0);
                 writer.Write(bpb.PhysicalSectorsPerTrack);
                 writer.Write(bpb.NumberOfHeads);
                 writer.Write(bpb.HiddenSectors);
