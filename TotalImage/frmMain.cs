@@ -366,12 +366,21 @@ namespace TotalImage
                 throw new Exception("No image is currently loaded");
             }
 
+            /*
             image.SaveImage(filepath);
-
-            saveToolStripButton.Enabled = false;
-            saveToolStripMenuItem.Enabled = false;
-            Text = $"{filename} - TotalImage";
-            unsavedChanges = false;
+            */
+            if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
+            {
+                saveAs_Click(sender, e);
+            }
+            else
+            {
+                image.SaveImage(filepath);
+                saveToolStripButton.Enabled = false;
+                saveToolStripMenuItem.Enabled = false;
+                Text = $"{filename} - TotalImage";
+                unsavedChanges = false;
+            }
         }
 
         //Saves the current image as a new file, along with any changes made to it since the last save
