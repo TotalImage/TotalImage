@@ -364,11 +364,12 @@ namespace TotalImage
             }
 
             image.SaveImage(filepath);
+            OpenImage(filepath); //Reload the image
 
-            saveToolStripButton.Enabled = false;
+            /*saveToolStripButton.Enabled = false;
             saveToolStripMenuItem.Enabled = false;
             Text = $"{filename} - TotalImage";
-            unsavedChanges = false;
+            unsavedChanges = false;*/
         }
 
         //Saves the current image as a new file, along with any changes made to it since the last save
@@ -1565,7 +1566,7 @@ namespace TotalImage
             CurrentPartitionIndex = 0;
             if (image.PartitionTable.Partitions.Count == 0)
             {
-                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
+                TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
                     Text = $"We couldn't find any partitions in your image. If this is a hard disk image, verify that it's partitioned with either MBR or GPT partitioning scheme and contains at least one partition.{Environment.NewLine}{Environment.NewLine}" +
                     $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
@@ -1578,6 +1579,7 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Error,
                 });
 
+                CloseImage();
                 return;
             }
             else if (image.PartitionTable.Partitions.Count >= 1)
