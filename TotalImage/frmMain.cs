@@ -312,6 +312,12 @@ namespace TotalImage
         private void rename_Click(object sender, EventArgs e)
         {
             throw new NotImplementedException();
+
+            /* Below is old code that used the Rename dialog. However, I now think it's more intuitive if we use the ListView LabelEdit events 
+             * instead. Example:
+             * currentFolderView[lstFiles.SelectedIndices[0]].BeginEdit(); */
+
+
             /*
             string oldname = "";
             if (lstFiles.Focused)
@@ -1348,6 +1354,34 @@ namespace TotalImage
                     propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 }
             }
+        }
+
+        //After an item's label (=Text property) is changed - for renaming objects
+        //From here the name change should propagate to the associated FileSystemObject and to the stream
+        private void lstFiles_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+
+        }
+
+        //Before an item's label (=Text property) will be changed - for renaming objects.
+        //Here we should probably perform some sanity checks (ie. make sure the user's not trying to rename a deleted object and such)
+        private void lstFiles_BeforeLabelEdit(object sender, LabelEditEventArgs e)
+        {
+
+        }
+
+        //After a node's label (=Text property) is changed - for renaming objects
+        //From here the name change should propagate to the associated FileSystemObject and to the stream
+        private void lstDirectories_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+
+        }
+
+        //Before a node's label (=Text property) will be changed - for renaming objects.
+        //Here we should probably perform some sanity checks (ie. make sure the user's not trying to rename a deleted object and such)
+        private void lstDirectories_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+
         }
         #endregion
 
