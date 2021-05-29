@@ -71,7 +71,7 @@ namespace TotalImage.FileSystems.ISO
         /// <summary>
         /// The root directory record of the file system
         /// </summary>
-        public IsoDirectoryRecord RootDirectory { get; }
+        public IsoFileSystemObject RootDirectory { get; }
 
         /// <summary>
         /// The identifier for the volume set
@@ -170,7 +170,7 @@ namespace TotalImage.FileSystems.ISO
             MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[148..152]);
             MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[152..156]);
 
-            RootDirectory = new IsoDirectoryRecord(record[156..190]);
+            RootDirectory = new IsoFileSystemObject(record[156..190]);
 
             textBuffer = new char[128];
 

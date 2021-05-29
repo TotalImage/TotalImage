@@ -69,7 +69,7 @@ namespace TotalImage.FileSystems.ISO
             }
 
             TimeSpan offset = TimeSpan.FromMinutes((sbyte)date[6] * 15);
-            return new DateTimeOffset(date[0], date[1], date[2], date[3], date[4], date[5], offset);
+            return new DateTimeOffset(1900 + date[0], date[1], date[2], date[3], date[4], date[5], offset);
         }
 
         /// <summary>

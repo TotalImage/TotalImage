@@ -56,8 +56,9 @@ namespace TotalImage.FileSystems.ISO
         /// Read a volume descriptor
         /// </summary>
         /// <param name="record">A span containing the volume descriptor record</param>
+        /// <param name="fileSystem">The file system containing the volume descriptor</param>
         /// <returns>The volume descriptor record</returns>
-        public static IsoVolumeDescriptor ReadVolumeDescriptor(in ReadOnlySpan<byte> record)
+        public static IsoVolumeDescriptor ReadVolumeDescriptor(in ReadOnlySpan<byte> record, Iso9660FileSystem fileSystem)
         {
             IsoVolumeDescriptorType type = (IsoVolumeDescriptorType)record[0];
             ImmutableArray<byte> identifier = record[1..6].ToArray().ToImmutableArray();

@@ -23,10 +23,10 @@ namespace TotalImage.FileSystems.ISO
         /// <summary>
         /// The first primary volume descriptor
         /// </summary>
-        public IsoPrimaryVolumeDescriptor? PrimaryVolumeDescriptor
+        public IsoPrimaryVolumeDescriptor PrimaryVolumeDescriptor
             => VolumeDescriptors
                 .OfType<IsoPrimaryVolumeDescriptor>()
-                .FirstOrDefault();
+                .First();
 
         /// <summary>
         /// Create an ISO 9660 file system
@@ -43,7 +43,7 @@ namespace TotalImage.FileSystems.ISO
             {
                 containerStream.Read(recordBytes);
 
-                var record = IsoVolumeDescriptor.ReadVolumeDescriptor(recordBytes);
+                var record = IsoVolumeDescriptor.ReadVolumeDescriptor(recordBytes, this);
                 if (!record.IsValid())
                 {
                     throw new InvalidDataException();
@@ -55,14 +55,16 @@ namespace TotalImage.FileSystems.ISO
 
             VolumeDescriptors = volumeDescriptors.ToImmutable();
 
-            IsoPrimaryVolumeDescriptor? primaryDescriptor = PrimaryVolumeDescriptor;
+            IsoPrimaryVolumeDescriptor? primaryDescriptor = VolumeDescriptors
+                .OfType<IsoPrimaryVolumeDescriptor>()
+                .FirstOrDefault();
             if (primaryDescriptor == null)
             {
                 throw new InvalidDataException("No primary volume descriptor");
             }
 
             VolumeLabel = primaryDescriptor.VolumeSetIdentifier;
-            RootDirectory = primaryDescriptor.RootDirectory;
+            RootDirectory = new IsoDirectory(primaryDescriptor.RootDirectory, this);
             TotalSize = primaryDescriptor.LogicalBlockSize * primaryDescriptor.VolumeSpace;
         }
 
