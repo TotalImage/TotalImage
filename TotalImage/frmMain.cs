@@ -732,7 +732,7 @@ namespace TotalImage
 
         private void managePartitions_Click(object sender, EventArgs e)
         {
-            using dlgManagePart dlg = new dlgManagePart();
+            using dlgManagePartitions dlg = new dlgManagePartitions();
             dlg.ShowDialog();
         }
 
