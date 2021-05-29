@@ -364,7 +364,7 @@ namespace TotalImage
             | System.Windows.Forms.Keys.S)));
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.saveAsToolStripMenuItem.Text = "Save as...";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAs_Click);
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.save_Click);
             // 
             // closeImageToolStripMenuItem
             // 
@@ -854,11 +854,10 @@ namespace TotalImage
             // lblNotifications
             // 
             this.lblNotifications.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            //this.lblNotifications.DropDownButtonWidth = 0;
             this.lblNotifications.Image = ((System.Drawing.Image)(resources.GetObject("lblNotifications.Image")));
             this.lblNotifications.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.lblNotifications.Name = "lblNotifications";
-            this.lblNotifications.Size = new System.Drawing.Size(96, 20);
+            this.lblNotifications.Size = new System.Drawing.Size(95, 20);
             this.lblNotifications.Text = "Notifications";
             this.lblNotifications.Visible = false;
             this.lblNotifications.Click += new System.EventHandler(this.lblNotifications_Click);
@@ -927,7 +926,7 @@ namespace TotalImage
             this.saveToolStripButton.Name = "saveToolStripButton";
             this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.saveToolStripButton.Text = "&Save";
-            this.saveToolStripButton.Click += new System.EventHandler(this.saveToolStripButton_Click);
+            this.saveToolStripButton.Click += new System.EventHandler(this.save_Click);
             // 
             // closeToolStripButton
             // 
@@ -1226,12 +1225,15 @@ namespace TotalImage
             this.lstDirectories.HideSelection = false;
             this.lstDirectories.ImageKey = "folder_closed_16.png";
             this.lstDirectories.ImageList = this.imgFilesSmall;
+            this.lstDirectories.LabelEdit = true;
             this.lstDirectories.Location = new System.Drawing.Point(0, 0);
             this.lstDirectories.Name = "lstDirectories";
             this.lstDirectories.SelectedImageIndex = 0;
             this.lstDirectories.ShowLines = false;
             this.lstDirectories.Size = new System.Drawing.Size(280, 590);
             this.lstDirectories.TabIndex = 0;
+            this.lstDirectories.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.lstDirectories_BeforeLabelEdit);
+            this.lstDirectories.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.lstDirectories_AfterLabelEdit);
             this.lstDirectories.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstDirectories_ItemDrag);
             this.lstDirectories.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.lstDirectories_BeforeSelect);
             this.lstDirectories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstDirectories_AfterSelect);
@@ -1262,6 +1264,7 @@ namespace TotalImage
             this.lstFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstFiles.FullRowSelect = true;
             this.lstFiles.HideSelection = false;
+            this.lstFiles.LabelEdit = true;
             this.lstFiles.LargeImageList = this.imgFilesLarge;
             this.lstFiles.Location = new System.Drawing.Point(0, 0);
             this.lstFiles.Name = "lstFiles";
@@ -1274,6 +1277,8 @@ namespace TotalImage
             this.lstFiles.UseCompatibleStateImageBehavior = false;
             this.lstFiles.View = System.Windows.Forms.View.Details;
             this.lstFiles.VirtualMode = true;
+            this.lstFiles.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lstFiles_AfterLabelEdit);
+            this.lstFiles.BeforeLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lstFiles_BeforeLabelEdit);
             this.lstFiles.CacheVirtualItems += new System.Windows.Forms.CacheVirtualItemsEventHandler(this.lstFiles_CacheVirtualItems);
             this.lstFiles.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstFiles_ColumnClick);
             this.lstFiles.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstFiles_ItemDrag);

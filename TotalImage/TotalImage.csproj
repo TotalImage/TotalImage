@@ -13,7 +13,7 @@
     <RootNamespace>TotalImage</RootNamespace>
     <AssemblyName>TotalImage</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <ApplicationIcon>totalimage.ico</ApplicationIcon>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
     <StartupObject>TotalImage.Program</StartupObject>
     <Authors>The TotalImage Team</Authors>
     <ApplicationManifest>app.manifest</ApplicationManifest>

@@ -19,7 +19,7 @@ namespace TotalImage.Containers
         /// <summary>
         /// The underlying stream containing the image
         /// </summary>
-        protected readonly Stream containerStream;
+        protected  Stream containerStream;
 
         private PartitionTable? _partitionTable;
 
@@ -132,10 +132,14 @@ namespace TotalImage.Containers
         /// <param name="path">The path to save out the image to</param>
         public void SaveImage(string path)
         {
-            using var outStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
+            string tempPath = Path.ChangeExtension(path, ".tmp");
+            using var outStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
             containerStream.Position = 0;
             containerStream.CopyTo(outStream);
             outStream.Flush();
+            outStream.Dispose();
+            Dispose();
+            File.Move(tempPath, path, true);
         }
 
         /// <summary>

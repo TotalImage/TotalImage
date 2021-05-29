@@ -230,21 +230,18 @@ namespace TotalImage
             }
         }
 
-        /* The Save button on the command bar acts as either:
+        /* The Save button/menu item acts as either:
          * -"Save" when the file is already saved and there are unsaved changes
          * -"Save as" when the file has not been saved yet */
-        private void saveToolStripButton_Click(object sender, EventArgs e)
+        private void save_Click(object sender, EventArgs e)
         {
-            if (unsavedChanges)
+            if (string.IsNullOrEmpty(filename) || (ToolStripMenuItem)sender == saveAsToolStripMenuItem) //File hasn't been saved yet
             {
-                if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
-                {
-                    saveAs_Click(sender, e);
-                }
-                else
-                {
-                    save_Click(sender, e);
-                }
+                saveFileAs();
+            }
+            else
+            {
+                saveFile();
             }
         }
 
@@ -315,6 +312,12 @@ namespace TotalImage
         private void rename_Click(object sender, EventArgs e)
         {
             throw new NotImplementedException();
+
+            /* Below is old code that used the Rename dialog. However, I now think it's more intuitive if we use the ListView LabelEdit events 
+             * instead. Example:
+             * currentFolderView[lstFiles.SelectedIndices[0]].BeginEdit(); */
+
+
             /*
             string oldname = "";
             if (lstFiles.Focused)
@@ -359,32 +362,24 @@ namespace TotalImage
 
         //Save the changes made to the current image since the last save or since it was opened
         //TODO: Perhaps this needs some rethinking too, depending on recent changes to the container?
-        private void save_Click(object sender, EventArgs e)
+        private void saveFile()
         {
             if (image == null)
             {
                 throw new Exception("No image is currently loaded");
             }
 
-            /*
             image.SaveImage(filepath);
-            */
-            if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
-            {
-                saveAs_Click(sender, e);
-            }
-            else
-            {
-                image.SaveImage(filepath);
-                saveToolStripButton.Enabled = false;
-                saveToolStripMenuItem.Enabled = false;
-                Text = $"{filename} - TotalImage";
-                unsavedChanges = false;
-            }
+            OpenImage(filepath); //Reload the image
+
+            /*saveToolStripButton.Enabled = false;
+            saveToolStripMenuItem.Enabled = false;
+            Text = $"{filename} - TotalImage";
+            unsavedChanges = false;*/
         }
 
         //Saves the current image as a new file, along with any changes made to it since the last save
-        private void saveAs_Click(object sender, EventArgs e)
+        private bool saveFileAs()
         {
             if (image == null)
             {
@@ -410,7 +405,9 @@ namespace TotalImage
                 sfd.FileName = newFilename;
             }
 
-            if (sfd.ShowDialog() == DialogResult.OK)
+            DialogResult result = sfd.ShowDialog();
+
+            if (result == DialogResult.OK)
             {
                 if (sfd.FilterIndex == 0 ||
                     sfd.FileName.EndsWith(".img", StringComparison.OrdinalIgnoreCase) ||
@@ -441,7 +438,14 @@ namespace TotalImage
                     saveToolStripButton.Enabled = false;
                 }
 
+                return true;
             }
+            else if(result == DialogResult.Cancel)
+            {
+                return false;
+            }
+
+            return false;
         }
 
         //Closes the application
@@ -463,9 +467,23 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Warning,
                 });
 
-                if (result.Tag != null) /* Save changes... */ ;
+                if (result.Tag != null)
+                {
+                    if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
+                    {
+                        if(!saveFileAs())
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        saveFile();
+                    }
+                }
                 else if (result == TaskDialogButton.Cancel) return;
             }
+
             Application.Exit();
         }
 
@@ -506,7 +524,7 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Warning,
                 });
 
-                if (result.Tag != null) /* Save changes... */ ;
+                if (result.Tag != null) save_Click(result, e);
                 else if (result == TaskDialogButton.Cancel) return;
             }
 
@@ -1008,7 +1026,7 @@ namespace TotalImage
                 });
 
                 if (result.Tag != null) /* Save changes... */ ;
-                else if (result == TaskDialogButton.Cancel) 
+                else if (result == TaskDialogButton.Cancel)
                 {
                     e.Cancel = true;
                     return;
@@ -1195,7 +1213,7 @@ namespace TotalImage
         private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
             closeImageToolStripMenuItem.Enabled = image != null;
-            saveToolStripMenuItem.Enabled = image != null;
+            saveToolStripMenuItem.Enabled = image != null && unsavedChanges;
             saveAsToolStripMenuItem.Enabled = image != null;
         }
 
@@ -1336,6 +1354,34 @@ namespace TotalImage
                     propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 }
             }
+        }
+
+        //After an item's label (=Text property) is changed - for renaming objects
+        //From here the name change should propagate to the associated FileSystemObject and to the stream
+        private void lstFiles_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+
+        }
+
+        //Before an item's label (=Text property) will be changed - for renaming objects.
+        //Here we should probably perform some sanity checks (ie. make sure the user's not trying to rename a deleted object and such)
+        private void lstFiles_BeforeLabelEdit(object sender, LabelEditEventArgs e)
+        {
+
+        }
+
+        //After a node's label (=Text property) is changed - for renaming objects
+        //From here the name change should propagate to the associated FileSystemObject and to the stream
+        private void lstDirectories_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+
+        }
+
+        //Before a node's label (=Text property) will be changed - for renaming objects.
+        //Here we should probably perform some sanity checks (ie. make sure the user's not trying to rename a deleted object and such)
+        private void lstDirectories_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+
         }
         #endregion
 
@@ -1554,7 +1600,7 @@ namespace TotalImage
             CurrentPartitionIndex = 0;
             if (image.PartitionTable.Partitions.Count == 0)
             {
-                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
+                TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
                     Text = $"We couldn't find any partitions in your image. If this is a hard disk image, verify that it's partitioned with either MBR or GPT partitioning scheme and contains at least one partition.{Environment.NewLine}{Environment.NewLine}" +
                     $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
@@ -1567,6 +1613,7 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Error,
                 });
 
+                CloseImage();
                 return;
             }
             else if (image.PartitionTable.Partitions.Count >= 1)
