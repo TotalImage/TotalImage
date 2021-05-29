@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.IO;
 using TotalImage.FileSystems.FAT;
+using TotalImage.FileSystems.ISO;
 
 namespace TotalImage.FileSystems
 {
@@ -10,7 +11,8 @@ namespace TotalImage.FileSystems
     public abstract class FileSystem
     {
         private readonly static ImmutableArray<IFileSystemFactory> _knownFactories = ImmutableArray.Create<IFileSystemFactory>(
-            new FatFactory()
+            new FatFactory(),
+            new IsoFactory()
         );
 
         /// <summary>

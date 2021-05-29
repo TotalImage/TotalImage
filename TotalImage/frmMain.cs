@@ -313,7 +313,7 @@ namespace TotalImage
         {
             throw new NotImplementedException();
 
-            /* Below is old code that used the Rename dialog. However, I now think it's more intuitive if we use the ListView LabelEdit events 
+            /* Below is old code that used the Rename dialog. However, I now think it's more intuitive if we use the ListView LabelEdit events
              * instead. Example:
              * currentFolderView[lstFiles.SelectedIndices[0]].BeginEdit(); */
 
@@ -537,7 +537,7 @@ namespace TotalImage
             //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
             //ofd.ShowReadOnly = true;
             ofd.Filter =
-                "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
+                "Raw sector image (*.img, *.iso, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.iso;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "Microsoft VHD (*.vhd)|*.vhd|" +
                 "All files (*.*)|*.*";
 
