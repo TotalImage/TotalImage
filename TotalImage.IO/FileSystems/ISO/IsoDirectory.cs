@@ -46,12 +46,12 @@ namespace TotalImage.FileSystems.ISO
 
         /// <inheritdoc />
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
-        {   
+        {
             var fileSystem = (Iso9660FileSystem)FileSystem;
             var stream = FileSystem.GetStream();
 
             stream.Seek(fileSystem.PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset, SeekOrigin.Begin);
-            
+
             byte[] records = new byte[Record.DataLength];
             stream.Read(records);
 
@@ -59,6 +59,13 @@ namespace TotalImage.FileSystems.ISO
             while (nextRecord < Record.DataLength)
             {
                 byte recordLength = records[nextRecord];
+                if (recordLength == 0)
+                {
+                    // records can not cross sector boundaries, we probably just need to jump up to the next sector
+                    nextRecord = ((nextRecord / 2048) + 1) * 2048;
+                    continue;
+                }
+
                 var record = new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)]);
                 if (record.FileIdentifier != "" && record.FileIdentifier[0] != (char)1)
                 {
