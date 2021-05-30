@@ -70,7 +70,9 @@ namespace TotalImage.FileSystems.ISO
         /// <inheritdoc />
         public override Stream GetStream()
         {
-            throw new NotImplementedException();
+            long offset = ((Iso9660FileSystem)FileSystem).PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset;
+            var fileStream = new PartialStream(FileSystem.GetStream(), offset, Record.DataLength);
+            return fileStream;
         }
 
         /// <summary>

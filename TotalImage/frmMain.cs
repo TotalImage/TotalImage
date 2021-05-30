@@ -2053,7 +2053,11 @@ namespace TotalImage
                 }
 
                 using (var destStream = new FileStream(Path.Combine(path, file.Name), FileMode.Create))
+                using (var fileStream = file.GetStream())
+                {
+                    fileStream.Position = 0; // reset position to zero because CopyTo will only go from current position
                     file.GetStream().CopyTo(destStream);
+                }
 
                 if (Settings.CurrentSettings.ExtractPreserveDates)
                 {
