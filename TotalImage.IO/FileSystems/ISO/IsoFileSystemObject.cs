@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Text;
 
 namespace TotalImage.FileSystems.ISO
@@ -106,7 +104,7 @@ namespace TotalImage.FileSystems.ISO
 
             char[] textBuffer = new char[FileIdentifierLength];
             Encoding.ASCII.GetChars(record[33..(33 + FileIdentifierLength)], textBuffer);
-            FileIdentifier = textBuffer.AsSpan().Trim('\0').ToString();
+            FileIdentifier = new string(textBuffer);
 
             int systemUseStart = 33 + FileIdentifierLength;
             if (systemUseStart % 2 == 1) systemUseStart++; // account for padding field

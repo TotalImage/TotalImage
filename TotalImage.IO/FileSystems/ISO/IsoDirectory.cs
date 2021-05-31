@@ -67,7 +67,10 @@ namespace TotalImage.FileSystems.ISO
                 }
 
                 var record = new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)]);
-                if (record.FileIdentifier != "" && record.FileIdentifier[0] != (char)1)
+
+                // A record whose identifier is a single zero byte is the current directory
+                // A record whose identifier is a single one byte is either the parent directory or the root directory if it is the root directory
+                if (record.FileIdentifier != "\u0000" && record.FileIdentifier != "\u0001")
                 {
                     if (record.FileFlags.HasFlag(IsoFileFlags.Directory))
                     {
@@ -78,6 +81,7 @@ namespace TotalImage.FileSystems.ISO
                         yield return new IsoFile(record, fileSystem, this);
                     }
                 }
+
                 nextRecord += recordLength;
             }
         }
