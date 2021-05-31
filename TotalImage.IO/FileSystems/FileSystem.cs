@@ -80,5 +80,10 @@ namespace TotalImage.FileSystems
         /// The total size of the file system
         /// </summary>
         public abstract long TotalSize { get; }
+
+        /// <summary>
+        /// The minimum allocatable unit size on the file system
+        /// </summary>
+        public abstract uint AllocationUnitSize { get; }
     }
 }

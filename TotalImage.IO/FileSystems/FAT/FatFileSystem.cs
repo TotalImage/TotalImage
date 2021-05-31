@@ -27,6 +27,9 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override long TotalFreeSpace => TotalFreeClusters * BytesPerCluster;
 
+        /// <inheritdoc />
+        public override uint AllocationUnitSize => BytesPerCluster;
+
         public virtual uint TotalFreeClusters
         {
             get
