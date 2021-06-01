@@ -98,5 +98,22 @@ namespace TotalImage
         {
             VolumeLabel = txtFloppyLabel.Text;
         }
+
+        private void btnAdvanced_Click(object sender, EventArgs e)
+        {
+            using dlgNewImageAdvanced dlgAdvanced = new dlgNewImageAdvanced();
+            dlgAdvanced.ShowDialog();
+        }
+
+        private void rbnFloppyDisk_CheckedChanged(object sender, EventArgs e)
+        {
+            lblFloppyGeometry.Visible = rbnFloppyDisk.Checked;
+            lstFloppyGeometries.Visible = rbnFloppyDisk.Checked;
+            lblFloppyLabel.Visible = rbnFloppyDisk.Checked;
+            btnAdvanced.Visible = rbnFloppyDisk.Checked;
+            cbxFloppyBPB.Visible = rbnFloppyDisk.Checked;
+            txtFloppyLabel.Visible = rbnFloppyDisk.Checked;
+            lstFloppyBPB.Visible = rbnFloppyDisk.Checked;
+        }
     }
 }
