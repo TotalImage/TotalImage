@@ -169,8 +169,8 @@ namespace TotalImage.DiskGeometries
             /// <summary>
             /// This value signals the use of custom parameters not included in KnownGeometries.
             /// </summary>
-            [Display(Name = "Custom...")]
-            Custom
+            /*[Display(Name = "Custom...")]
+            Custom*/
         }
 
         /// <summary>
