@@ -46,7 +46,7 @@ namespace TotalImage.Containers
 
             //TODO: At this point we need to consider writeBPB value...
             var stream = new MemoryStream(imageBytes, true);
-            Fat12FileSystem.Create(stream, bpb);
+            Fat12FileSystem.Create(stream, bpb, writeBPB);
 
             return new RawContainer(stream);
         }

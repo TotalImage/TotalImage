@@ -21,7 +21,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
-        public static Fat12FileSystem Create(Stream stream, BiosParameterBlock bpb)
+        public static Fat12FileSystem Create(Stream stream, BiosParameterBlock bpb, bool writeBPB)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream), "stream cannot be null!");
@@ -57,37 +57,41 @@ namespace TotalImage.FileSystems.FAT
                 stream.Seek(0, SeekOrigin.Begin);
                 writer.Write(bpb.BootJump, 0, 3);
                 writer.Write(bpb.OemId.PadRight(8, ' ').ToCharArray());
-                writer.Write(bpb.BytesPerLogicalSector);
-                writer.Write(bpb.LogicalSectorsPerCluster);
-                writer.Write(bpb.ReservedLogicalSectors);
-                writer.Write(bpb.NumberOfFATs);
-                writer.Write(bpb.RootDirectoryEntries);
-                writer.Write(bpb.TotalLogicalSectors <= ushort.MaxValue ? (ushort)bpb.TotalLogicalSectors : (ushort)0);
-                writer.Write(bpb.MediaDescriptor);
-                writer.Write(bpb.Version != BiosParameterBlockVersion.Fat32 ? (ushort)bpb.LogicalSectorsPerFAT : (ushort)0);
-                writer.Write(bpb.PhysicalSectorsPerTrack);
-                writer.Write(bpb.NumberOfHeads);
-                writer.Write(bpb.HiddenSectors);
-                writer.Write(bpb.TotalLogicalSectors > ushort.MaxValue ? bpb.TotalLogicalSectors : 0);
 
-                //DOS 3.4+ specific values
+                if (writeBPB)
                 {
-                    if (bpb.Version == BiosParameterBlockVersion.Dos40)
-                    {
-                        var ebpb = (ExtendedBiosParameterBlock)bpb;
-                        writer.Write(ebpb.PhysicalDriveNumber);
-                        writer.Write(ebpb.Flags);
-                        writer.Write((byte)ebpb.ExtendedBootSignature);
+                    writer.Write(bpb.BytesPerLogicalSector);
+                    writer.Write(bpb.LogicalSectorsPerCluster);
+                    writer.Write(bpb.ReservedLogicalSectors);
+                    writer.Write(bpb.NumberOfFATs);
+                    writer.Write(bpb.RootDirectoryEntries);
+                    writer.Write(bpb.TotalLogicalSectors <= ushort.MaxValue ? (ushort)bpb.TotalLogicalSectors : (ushort)0);
+                    writer.Write(bpb.MediaDescriptor);
+                    writer.Write(bpb.Version != BiosParameterBlockVersion.Fat32 ? (ushort)bpb.LogicalSectorsPerFAT : (ushort)0);
+                    writer.Write(bpb.PhysicalSectorsPerTrack);
+                    writer.Write(bpb.NumberOfHeads);
+                    writer.Write(bpb.HiddenSectors);
+                    writer.Write(bpb.TotalLogicalSectors > ushort.MaxValue ? bpb.TotalLogicalSectors : 0);
 
-                        //DOS 4.0 adds volume label and FS type as well
-                        if (ebpb.ExtendedBootSignature == ExtendedBootSignature.Dos40)
+                    //DOS 3.4+ specific values
+                    {
+                        if (bpb.Version == BiosParameterBlockVersion.Dos40)
                         {
-                            writer.Write(ebpb.VolumeSerialNumber.Value);
-                            if (string.IsNullOrEmpty(ebpb.VolumeLabel))
-                                writer.Write("NO NAME    ".ToCharArray());
-                            else
-                                writer.Write(ebpb.VolumeLabel.PadRight(11, ' ').ToCharArray());
-                            writer.Write(ebpb.FileSystemType.PadRight(8, ' ').ToCharArray());
+                            var ebpb = (ExtendedBiosParameterBlock)bpb;
+                            writer.Write(ebpb.PhysicalDriveNumber);
+                            writer.Write(ebpb.Flags);
+                            writer.Write((byte)ebpb.ExtendedBootSignature);
+
+                            //DOS 4.0 adds volume label and FS type as well
+                            if (ebpb.ExtendedBootSignature == ExtendedBootSignature.Dos40)
+                            {
+                                writer.Write(ebpb.VolumeSerialNumber.Value);
+                                if (string.IsNullOrEmpty(ebpb.VolumeLabel))
+                                    writer.Write("NO NAME    ".ToCharArray());
+                                else
+                                    writer.Write(ebpb.VolumeLabel.PadRight(11, ' ').ToCharArray());
+                                writer.Write(ebpb.FileSystemType.PadRight(8, ' ').ToCharArray());
+                            }
                         }
                     }
                 }
@@ -122,179 +126,6 @@ namespace TotalImage.FileSystems.FAT
             }
 
             return fat;
-        }
-
-
-        /* Changes the volume label
-         * TODO: Rewrite this so the two labels can be changed separately
-         *
-         * If BPB version <= 3.31, only the root dir label is changed
-         * If BPB version >= 3.40, both the root dir and BPB label are changed
-         */
-        public void ChangeVolLabel(string label)
-        {
-            if (string.IsNullOrEmpty(label))
-                throw new ArgumentNullException(nameof(label), "label cannot be null!");
-
-            uint rootDirOffset = (uint)(_bpb.BytesPerLogicalSector + (_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT * 2));
-            bool rootDirFull = false;
-
-            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
-            using (var writer = new BinaryWriter(_stream, Encoding.ASCII, true))
-            {
-                _stream.Seek(rootDirOffset, SeekOrigin.Begin);
-
-                for (int i = 0; i < _bpb.RootDirectoryEntries; i++)
-                {
-                    _stream.Seek(rootDirOffset + i * 0x20, SeekOrigin.Begin);
-                    byte firstChar = reader.ReadByte();
-
-                    /* 0x00      = no more entries after this one, write the volume label
-                     * 0xE5/0x05 = deleted entry, only overwrite it if the directory is full */
-                    if (firstChar == 0x00)
-                    {
-                        //Root dir is empty, so let's add the first entry
-                        _stream.Seek(-0x01, SeekOrigin.Current);
-                        writer.Write(label.ToCharArray());
-                        writer.Write((byte)0x08); //Volume label attribute
-                        break;
-                    }
-                    else if (firstChar == 0xE5 || firstChar == 0x05)
-                    {
-                        if (rootDirFull)
-                        {
-                            _stream.Seek(-0x01, SeekOrigin.Current);
-                            writer.Write(label.ToCharArray());
-                            writer.Write((byte)0x08); //Volume label attribute
-                            rootDirFull = false;
-                            break;
-                        }
-                        else continue;
-                    }
-
-                    /* Root directory is not empty, we need to find the volume label, as it may not be the first entry or it may not exist at all */
-                    _stream.Seek(-0x01, SeekOrigin.Current);
-                    DirectoryEntry entry = new DirectoryEntry
-                    {
-                        name = reader.ReadBytes(11),
-                        attr = (FatAttributes)reader.ReadByte(),
-                        ntRes = reader.ReadByte(),
-                        crtTimeTenth = reader.ReadByte(),
-                        crtTime = reader.ReadUInt16(),
-                        crtDate = reader.ReadUInt16(),
-                        lstAccDate = reader.ReadUInt16(),
-                        fstClusHI = reader.ReadUInt16(),
-                        wrtTime = reader.ReadUInt16(),
-                        wrtDate = reader.ReadUInt16(),
-                        fstClusLO = reader.ReadUInt16(),
-                        fileSize = reader.ReadUInt32()
-                    };
-
-                    if (entry.attr == FatAttributes.VolumeId)
-                    {
-                        _stream.Seek(-0x20, SeekOrigin.Current);
-                        writer.Write(label.ToCharArray());
-                        writer.Write((byte)0x08);
-                        break;
-                    }
-
-                    /* All entries have been checked and there are no free ones left
-                     * Time to check again, this time overwriting the first deleted entry that's found */
-                    if (i == _bpb.RootDirectoryEntries - 1 && !rootDirFull)
-                    {
-                        rootDirFull = true;
-                        i = 0;
-                    }
-                }
-
-                //Writes the volume label to the BPB as well if BPBP is for DOS 4.0+
-                if (_bpb is ExtendedBiosParameterBlock && _bpb.Version == BiosParameterBlockVersion.Dos40)
-                {
-                    _stream.Seek(0x2B, SeekOrigin.Begin);
-                    writer.Write(label.ToCharArray());
-                }
-
-                if (rootDirFull)
-                {
-                    throw new Exception("Root directory is full, volume label cannot be written");
-                }
-            }
-        }
-
-        //Reads the specified cluster in the data area and returns its bytes
-        public byte[] ReadCluster(uint cluster)
-        {
-            if (cluster < 2 || cluster > 0xFEF)
-                return Array.Empty<byte>();
-
-            uint fat1Offset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors);
-            uint fatSize = (uint)_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT;
-            uint dataAreaOffset = (uint)(fat1Offset + fatSize * 2 + (_bpb.RootDirectoryEntries << 5));
-
-            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
-            {
-                uint clusterOffset = (cluster - 2) * _bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
-                _stream.Seek(dataAreaOffset + clusterOffset, SeekOrigin.Begin);
-                byte[] bytes = reader.ReadBytes(_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerCluster);
-
-                return bytes;
-            }
-        }
-
-        //Writes data to the specified cluster in the data area
-        public void WriteCluster(uint cluster, byte[] data)
-        {
-            if (cluster < 2 || cluster > 0xFEF)
-                return;
-
-            uint fat1Offset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors);
-            uint fatSize = (uint)_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT;
-            uint dataAreaOffset = (uint)(fat1Offset + fatSize * 2 + (_bpb.RootDirectoryEntries << 5));
-
-            using (var writer = new BinaryWriter(_stream, Encoding.ASCII, true))
-            {
-                uint clusterOffset = (cluster - 2) * _bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
-                _stream.Seek(dataAreaOffset + clusterOffset, SeekOrigin.Begin);
-                writer.Write(data);
-            }
-        }
-
-        //Marks a cluster in the FATs as free (0x00)
-        public void FatFreeCluster(uint cluster)
-        {
-            uint fat1Offset = (uint)(_bpb.BytesPerLogicalSector * _bpb.ReservedLogicalSectors);
-            uint fatSize = (uint)_bpb.BytesPerLogicalSector * _bpb.LogicalSectorsPerFAT;
-            uint fat2Offset = fat1Offset + fatSize;
-
-            using (var writer = new BinaryWriter(_stream, Encoding.ASCII, true))
-            using (var reader = new BinaryReader(_stream, Encoding.ASCII, true))
-            {
-                if (cluster % 2 == 0)
-                {
-                    _stream.Seek(fat1Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
-                    writer.Write((byte)0x00);
-                    byte upper4 = (byte)(reader.ReadByte() & 0xF0); //Zero out the bottom 4 bits only - the upper 4 are for the next cluster!
-                    _stream.Seek(-8, SeekOrigin.Current);
-                    writer.Write(upper4);
-
-                    //Repeat the process for the backup FAT
-                    _stream.Seek(fat2Offset + (uint)(cluster * 1.5), SeekOrigin.Begin);
-                    writer.Write((byte)0x00);
-                    writer.Write(upper4);
-                }
-                else
-                {
-                    _stream.Seek(fat1Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
-                    byte lower4 = (byte)(reader.ReadByte() & 0x0F); //Zero out the top 4 bits only - the bottom 4 are for the previous cluster!
-                    _stream.Seek(-8, SeekOrigin.Current);
-                    writer.Write(lower4);
-                    writer.Write(0x00);
-
-                    _stream.Seek(fat2Offset + (uint)Math.Floor(cluster * 1.5), SeekOrigin.Begin);
-                    writer.Write(lower4);
-                    writer.Write(0x00);
-                }
-            }
         }
 
         /// <inheritdoc />
