@@ -170,7 +170,7 @@ namespace TotalImage
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
-                    Text = $"Selected file could not be opened because it's inaccessible or no longer exists.",
+                    Text = $"File \"{Path.GetFileName(imagePath)}\" could not be opened because it's inaccessible or no longer exists and will be removed from the recent list.",
                     Heading = "Could not open file",
                     Caption = "Error",
                     Buttons =
@@ -184,6 +184,8 @@ namespace TotalImage
                 //Remove the non-working entry
                 Settings.RemoveRecentImage(imagePath);
                 PopulateRecentList();
+
+                Text = "TotalImage";               
             }
         }
 
@@ -1932,6 +1934,13 @@ namespace TotalImage
 
             for (int i = Settings.CurrentSettings.RecentImages.Count - 1; i >= 0; i--)
             {
+                //Remove any bogus entries
+                if (string.IsNullOrWhiteSpace(Settings.CurrentSettings.RecentImages[i]))
+                {
+                    Settings.RemoveRecentImage(Settings.CurrentSettings.RecentImages[i]);
+                    continue;
+                }
+
                 ToolStripMenuItem newItem = new ToolStripMenuItem();
                 newItem.Text = $"{(Settings.CurrentSettings.RecentImages.Count - i)}: {Settings.CurrentSettings.RecentImages[i]}";
                 newItem.Click += recentImage_Click;
