@@ -10,14 +10,14 @@ namespace TotalImage
 {
     public partial class dlgNewImage : Form
     {
-        private FloppyGeometry.FriendlyName selectedItem;
-        public FloppyGeometry Geometry { get; private set; }
-        public string VolumeLabel { get; private set; } = "";
-        public string OEMID { get; private set; } = "";
-        public string SerialNumber { get; private set; } = "";
-        public string FileSystemType { get; private set; } = "";
-        public bool WriteBPB { get; private set; }
-        public BiosParameterBlockVersion BPBVersion { get; private set; }
+        internal FloppyGeometry.FriendlyName selectedItem;
+        internal FloppyGeometry Geometry { get; private set; }
+        internal string VolumeLabel { get; private set; } = "";
+        internal string OEMID { get; private set; } = "";
+        internal string SerialNumber { get; private set; } = "";
+        internal string FileSystemType { get; private set; } = "";
+        internal bool WriteBPB { get; private set; }
+        internal BiosParameterBlockVersion BPBVersion { get; private set; }
 
         public dlgNewImage()
         {
@@ -30,7 +30,7 @@ namespace TotalImage
             pnlFloppy.Visible = true;
             pnlHardDisk.Visible = false;
             WriteBPB = true;
-            lstFloppyBPB.SelectedIndex = 3;
+            lstFloppyBPB.SelectedIndex = 2;
             BPBVersion = BiosParameterBlockVersion.Dos40;
 
             lstFloppyGeometries.DisplayMember = "Name";
@@ -47,7 +47,17 @@ namespace TotalImage
                 .ToList();
 
             lstFloppyGeometries.SelectedValue = FloppyGeometry.FriendlyName.HighDensity1440k;
-            VolumeLabel = txtFloppyLabel.Text;
+            SerialNumber = GenerateVolumeID().ToString("X8");
+            OEMID = "MSDOS5.0";
+            FileSystemType = "FAT12";
+        }
+
+        /* Generates a random volume ID/serial number for DOS 3.4+ BPB
+         * TODO: Should this be moved elsewhere? */
+        private static int GenerateVolumeID()
+        {
+            Random rnd = new Random();
+            return rnd.Next();
         }
 
         private void cbxFloppyBPB_CheckedChanged(object sender, EventArgs e)
@@ -58,15 +68,15 @@ namespace TotalImage
 
         private void lstFloppyBPB_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lstFloppyBPB.SelectedIndex == 3) //DOS 4.0+ BPB
+            if (lstFloppyBPB.SelectedIndex == 2) //DOS 4.0+ BPB
             {
                 BPBVersion = BiosParameterBlockVersion.Dos40;
             }
-            else if (lstFloppyBPB.SelectedIndex == 2) //DOS 3.4 BPB
+            else if (lstFloppyBPB.SelectedIndex == 1) //DOS 3.4 BPB
             {
                 BPBVersion = BiosParameterBlockVersion.Dos34;
             }
-            else if (lstFloppyBPB.SelectedIndex <= 1) //DOS 2.0-3.31 BPB
+            else if (lstFloppyBPB.SelectedIndex == 0) //DOS 2.0-3.31 BPB
             {
                 BPBVersion = BiosParameterBlockVersion.Dos20;
             }
@@ -76,11 +86,12 @@ namespace TotalImage
         {
             _ = Enum.TryParse(lstFloppyGeometries.SelectedValue.ToString(), out selectedItem);
 
-            /*if (selectedItem != FloppyGeometry.FriendlyName.Custom)
-            {*/
+            if (selectedItem != FloppyGeometry.FriendlyName.Custom)
+            {
                 Geometry = FloppyGeometry.KnownGeometries[selectedItem];
-            //}
+            }
 
+            //Acorn 800k format does not have a boot sector at all
             if (selectedItem == FloppyGeometry.FriendlyName.Acorn800k)
             {
                 cbxFloppyBPB.Checked = false;
@@ -94,6 +105,15 @@ namespace TotalImage
                 cbxFloppyBPB.Enabled = true;
                 lstFloppyBPB.Enabled = true;
             }
+
+            if(selectedItem == FloppyGeometry.FriendlyName.DMF1024 || selectedItem == FloppyGeometry.FriendlyName.DMF2048)
+            {
+                OEMID = "MSDMF3.2";
+            }
+            else
+            {
+                OEMID = "MSDOS5.0";
+            }
         }
 
         private void txtFloppyLabel_TextChanged(object sender, EventArgs e)
@@ -105,12 +125,52 @@ namespace TotalImage
         {
             using dlgNewImageAdvanced dlgAdvanced = new dlgNewImageAdvanced();
             dlgAdvanced.ShowDialog();
+
+            FloppyGeometry newGeometry = new FloppyGeometry((byte)(dlgAdvanced.lstFloppySides.SelectedIndex + 1), (byte)dlgAdvanced.txtFloppyTracks.Value,
+                (byte)dlgAdvanced.txtFloppySPT.Value, (byte)(Math.Log((double)dlgAdvanced.txtFloppyBPS.Value, 2) - 7), (byte)dlgAdvanced.txtFloppyMediaDesc.Value, 
+                (byte)dlgAdvanced.txtFloppySPC.Value, (byte)dlgAdvanced.txtFloppyNumFATs.Value, (byte)dlgAdvanced.txtFloppySPF.Value, (ushort)dlgAdvanced.txtFloppyRootDir.Value, 
+                (byte)dlgAdvanced.txtFloppyReservedSect.Value);
+
+            if(selectedItem != FloppyGeometry.FriendlyName.Custom && !newGeometry.Equals(Geometry))
+            {
+                lstFloppyGeometries.SelectedValue = FloppyGeometry.FriendlyName.Custom;
+                Geometry = newGeometry;
+            }
+
+            SerialNumber = dlgAdvanced.txtFloppySerial.Text;
+            FileSystemType = dlgAdvanced.txtFloppyFSType.Text;
+            OEMID = dlgAdvanced.txtFloppyOEMID.Text;
         }
 
         private void rbnFloppyDisk_CheckedChanged(object sender, EventArgs e)
         {
             pnlFloppy.Visible = rbnFloppyDisk.Checked;
             pnlHardDisk.Visible = rbnHardDisk.Checked;
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            if (!cbxFloppyBPB.Checked)
+            {
+                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = "You chose not to create a BIOS Parameter Block (BPB) for this image. Some programs and operating systems may not recognize the disk because of this.\n\nAre you sure you want to continue?",
+                    Heading = "No BIOS Parameter Block selected",
+                    Caption = "Warning",
+                    Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                    Icon = TaskDialogIcon.Warning,
+                });
+
+                if (result == TaskDialogButton.No)
+                {
+                    DialogResult = DialogResult.None; //This is needed so the dialog doesn't close anyway
+                    return;
+                }
+            }
         }
     }
 }

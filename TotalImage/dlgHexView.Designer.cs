@@ -1,6 +1,6 @@
 ﻿namespace TotalImage
 {
-    partial class frmHexView
+    partial class dlgHexView
     {
         /// <summary>
         /// Required designer variable.

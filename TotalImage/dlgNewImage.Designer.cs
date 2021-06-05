@@ -74,6 +74,7 @@ namespace TotalImage
             this.btnOK.TabIndex = 9;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // btnCancel
             // 
@@ -100,6 +101,7 @@ namespace TotalImage
             // rbnHardDisk
             // 
             this.rbnHardDisk.AutoSize = true;
+            this.rbnHardDisk.Enabled = false;
             this.rbnHardDisk.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.rbnHardDisk.Location = new System.Drawing.Point(135, 22);
             this.rbnHardDisk.Name = "rbnHardDisk";
@@ -124,8 +126,8 @@ namespace TotalImage
             // 
             // gbxOptions
             // 
-            this.gbxOptions.Controls.Add(this.pnlHardDisk);
             this.gbxOptions.Controls.Add(this.pnlFloppy);
+            this.gbxOptions.Controls.Add(this.pnlHardDisk);
             this.gbxOptions.Location = new System.Drawing.Point(12, 72);
             this.gbxOptions.Name = "gbxOptions";
             this.gbxOptions.Size = new System.Drawing.Size(375, 166);
@@ -155,7 +157,6 @@ namespace TotalImage
             this.lstFloppyBPB.FormattingEnabled = true;
             this.lstFloppyBPB.Items.AddRange(new object[] {
             "DOS 2.0",
-            "DOS 3.31",
             "DOS 3.4",
             "DOS 4.0+"});
             this.lstFloppyBPB.Location = new System.Drawing.Point(222, 88);
@@ -284,14 +285,14 @@ namespace TotalImage
         private System.Windows.Forms.RadioButton rbnHardDisk;
         private System.Windows.Forms.GroupBox gbxOptions;
         private System.Windows.Forms.Label lblFloppyGeometry;
-        private System.Windows.Forms.ComboBox lstFloppyGeometries;
         private System.Windows.Forms.Button btnAdvanced;
         private System.Windows.Forms.Label lblFloppyLabel;
         private System.Windows.Forms.TextBox txtFloppyLabel;
-        private System.Windows.Forms.ComboBox lstFloppyBPB;
-        private System.Windows.Forms.CheckBox cbxFloppyBPB;
         private System.Windows.Forms.Panel pnlFloppy;
         private System.Windows.Forms.Panel pnlHardDisk;
         private System.Windows.Forms.Label lblTest;
+        private System.Windows.Forms.ComboBox lstFloppyGeometries;
+        internal System.Windows.Forms.CheckBox cbxFloppyBPB;
+        internal System.Windows.Forms.ComboBox lstFloppyBPB;
     }
 }

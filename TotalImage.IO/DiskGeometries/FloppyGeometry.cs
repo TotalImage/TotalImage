@@ -9,26 +9,10 @@ namespace TotalImage.DiskGeometries
     /// </summary>
     public class FloppyGeometry
     {
-        /// <summary>
-        /// Number of density holes.
-        /// </summary>
-        public byte Hole { get; }
-        /// <summary>
+        /// /// <summary>
         /// Number of sides, either one or two.
         /// </summary>
         public byte Sides { get; }
-        /// <summary>
-        /// The data rate.
-        /// </summary>
-        public byte DataRate { get; }
-        /// <summary>
-        /// Encoding type, either FM or MFM.
-        /// </summary>
-        public byte Encoding { get; }
-        /// <summary>
-        /// Revolutions per minute.
-        /// </summary>
-        public byte RPM { get; }
         /// <summary>
         /// Number of tracks per side.
         /// </summary>
@@ -65,10 +49,10 @@ namespace TotalImage.DiskGeometries
         /// Number of reserved sectors, usually one.
         /// </summary>
         public byte ReservedSectors { get; }
+
         /// <summary>
         /// Friendly names for known floppy disk geometries.
         /// </summary>
-
         public enum FriendlyName
         {
             /// <summary>
@@ -169,18 +153,14 @@ namespace TotalImage.DiskGeometries
             /// <summary>
             /// This value signals the use of custom parameters not included in KnownGeometries.
             /// </summary>
-            /*[Display(Name = "Custom...")]
-            Custom*/
+            [Display(Name = "Custom...")]
+            Custom
         }
 
         /// <summary>
         /// Creates a new floppy geometry with provided parameters.
         /// </summary>
-        /// <param name="hole">Number of density holes, either 0, 1 or 2.</param>
         /// <param name="sides">Number of sides, either 1 or 2.</param>
-        /// <param name="datarate">Data rate.</param>
-        /// <param name="encoding">Encoding type, either FM or MFM.</param>
-        /// <param name="rpm">Revolution per minute.</param>
         /// <param name="tracks">Number of tracks per side.</param>
         /// <param name="spt">Number of sectors per track.</param>
         /// <param name="bps">Number of bytes per sector.</param>
@@ -190,14 +170,10 @@ namespace TotalImage.DiskGeometries
         /// <param name="spf">Number of sectors per FAT.</param>
         /// <param name="rootdirentries">Maximum number of root directory entries.</param>
         /// <param name="reservedsectors">Number of reserved sectors.</param>
-        public FloppyGeometry(byte hole, byte sides, byte datarate, byte encoding, byte rpm, byte tracks, byte spt, byte bps,
-            byte mediadesc, byte spc, byte noofFATs, byte spf, ushort rootdirentries, byte reservedsectors)
+        public FloppyGeometry(byte sides, byte tracks, byte spt, byte bps, byte mediadesc, byte spc, byte noofFATs, byte spf, 
+            ushort rootdirentries, byte reservedsectors)
         {
-            Hole = hole;
             Sides = sides;
-            DataRate = datarate;
-            Encoding = encoding;
-            RPM = rpm;
             Tracks = tracks;
             SPT = spt;
             BPS = bps;
@@ -214,25 +190,41 @@ namespace TotalImage.DiskGeometries
         /// </summary>
         public static readonly IReadOnlyDictionary<FriendlyName, FloppyGeometry> KnownGeometries = ImmutableDictionary.CreateRange(new Dictionary<FriendlyName, FloppyGeometry>()
         {
-            { FriendlyName.DoubleDensity160k, new FloppyGeometry(0, 1, 2, 1, 0, 40,  8, 2, 0xFE, 2, 2,  1,  64, 1) },
-            { FriendlyName.DoubleDensity180k, new FloppyGeometry(0, 1, 2, 1, 0, 40,  9, 2, 0xFC, 2, 2,  1,  64, 1) },
-            { FriendlyName.SingleDensity,     new FloppyGeometry(0, 1, 2, 1, 0, 77, 26, 0, 0xFE, 4, 2,  6,  68, 1) },
-            { FriendlyName.DoubleDensity320k, new FloppyGeometry(0, 2, 2, 1, 0, 40,  8, 2, 0xFF, 2, 2,  1, 112, 1) },
-            { FriendlyName.DoubleDensity360k, new FloppyGeometry(0, 2, 2, 1, 0, 40,  9, 2, 0xFD, 2, 2,  2, 112, 1) },
-            { FriendlyName.AlphatronicPC16,   new FloppyGeometry(0, 2, 2, 1, 0, 40,  5, 3, 0xFF, 2, 2,  1, 128, 1) },
-            { FriendlyName.QuadDensity,       new FloppyGeometry(0, 2, 2, 1, 0, 80,  8, 2, 0xFB, 2, 2,  2, 112, 1) },
-            { FriendlyName.Tandy2000,         new FloppyGeometry(0, 2, 2, 1, 0, 80,  9, 2, 0xFD, 4, 2,  2, 112, 1) },
-            { FriendlyName.SiemensPCD,        new FloppyGeometry(0, 2, 2, 1, 0, 80,  9, 2, 0xF9, 4, 2,  2, 144, 1) },
-            { FriendlyName.DoubleDensity720k, new FloppyGeometry(0, 2, 2, 1, 0, 80,  9, 2, 0xF9, 2, 2,  3, 112, 1) },
-            { FriendlyName.Eagle1600,         new FloppyGeometry(0, 2, 2, 1, 0, 80,  5, 3, 0xFD, 1, 2,  2, 320, 1) },
-            { FriendlyName.Acorn800k,         new FloppyGeometry(0, 2, 2, 1, 0, 80,  5, 3, 0xFD, 1, 1,  2, 192, 0) },
-            { FriendlyName.HighDensity1200k,  new FloppyGeometry(1, 2, 0, 1, 1, 80, 15, 2, 0xF9, 1, 2,  7, 224, 1) },
-            { FriendlyName.HighDensity1232k,  new FloppyGeometry(1, 2, 0, 1, 1, 77,  8, 3, 0xFE, 1, 2,  2, 192, 1) },
-            { FriendlyName.HighDensity1440k,  new FloppyGeometry(1, 2, 0, 1, 0, 80, 18, 2, 0xF0, 1, 2,  9, 224, 1) },
-            { FriendlyName.DMF1024,           new FloppyGeometry(1, 2, 0, 1, 0, 80, 21, 2, 0xF0, 2, 2,  5,  16, 1) },
-            { FriendlyName.DMF2048,           new FloppyGeometry(1, 2, 0, 1, 0, 80, 21, 2, 0xF0, 4, 2,  3,  16, 1) },
-            { FriendlyName.HighDensity1722k,  new FloppyGeometry(1, 2, 0, 1, 0, 82, 21, 2, 0xF0, 1, 2, 10, 224, 1) },
-            { FriendlyName.ExtendedDensity,   new FloppyGeometry(2, 2, 3, 1, 0, 80, 36, 2, 0xF0, 2, 2,  9, 240, 1) },
+            { FriendlyName.DoubleDensity160k, new FloppyGeometry(1, 40,  8, 2, 0xFE, 2, 2,  1,  64, 1) },
+            { FriendlyName.DoubleDensity180k, new FloppyGeometry(1, 40,  9, 2, 0xFC, 2, 2,  1,  64, 1) },
+            { FriendlyName.SingleDensity,     new FloppyGeometry(1, 77, 26, 0, 0xFE, 4, 2,  6,  68, 1) },
+            { FriendlyName.DoubleDensity320k, new FloppyGeometry(2, 40,  8, 2, 0xFF, 2, 2,  1, 112, 1) },
+            { FriendlyName.DoubleDensity360k, new FloppyGeometry(2, 40,  9, 2, 0xFD, 2, 2,  2, 112, 1) },
+            { FriendlyName.AlphatronicPC16,   new FloppyGeometry(2, 40,  5, 3, 0xFF, 2, 2,  1, 128, 1) },
+            { FriendlyName.QuadDensity,       new FloppyGeometry(2, 80,  8, 2, 0xFB, 2, 2,  2, 112, 1) },
+            { FriendlyName.Tandy2000,         new FloppyGeometry(2, 80,  9, 2, 0xFD, 4, 2,  2, 112, 1) },
+            { FriendlyName.SiemensPCD,        new FloppyGeometry(2, 80,  9, 2, 0xF9, 4, 2,  2, 144, 1) },
+            { FriendlyName.DoubleDensity720k, new FloppyGeometry(2, 80,  9, 2, 0xF9, 2, 2,  3, 112, 1) },
+            { FriendlyName.Eagle1600,         new FloppyGeometry(2, 80,  5, 3, 0xFD, 1, 2,  2, 320, 1) },
+            { FriendlyName.Acorn800k,         new FloppyGeometry(2, 80,  5, 3, 0xFD, 1, 1,  2, 192, 0) },
+            { FriendlyName.HighDensity1200k,  new FloppyGeometry(2, 80, 15, 2, 0xF9, 1, 2,  7, 224, 1) },
+            { FriendlyName.HighDensity1232k,  new FloppyGeometry(2, 77,  8, 3, 0xFE, 1, 2,  2, 192, 1) },
+            { FriendlyName.HighDensity1440k,  new FloppyGeometry(2, 80, 18, 2, 0xF0, 1, 2,  9, 224, 1) },
+            { FriendlyName.DMF1024,           new FloppyGeometry(2, 80, 21, 2, 0xF0, 2, 2,  5,  16, 1) },
+            { FriendlyName.DMF2048,           new FloppyGeometry(2, 80, 21, 2, 0xF0, 4, 2,  3,  16, 1) },
+            { FriendlyName.HighDensity1722k,  new FloppyGeometry(2, 82, 21, 2, 0xF0, 1, 2, 10, 224, 1) },
+            { FriendlyName.ExtendedDensity,   new FloppyGeometry(2, 80, 36, 2, 0xF0, 2, 2,  9, 240, 1) },
         });
+
+        /// <inheritdoc/>
+        public override bool Equals(object? obj)
+        {
+            if ((obj == null) || !GetType().Equals(obj.GetType()))
+            {
+                return false;
+            }
+            else
+            {
+                FloppyGeometry fg = (FloppyGeometry)obj;
+                return fg.BPS == BPS && fg.MediaDescriptor == MediaDescriptor && fg.NoOfFATs == NoOfFATs && fg.ReservedSectors == ReservedSectors
+                    && fg.RootDirectoryEntries == RootDirectoryEntries && fg.Sides == Sides && fg.SPC == SPC && fg.SPF == SPF && fg.SPT == SPT
+                    && fg.Tracks == Tracks;
+            }
+        }
     }
 }

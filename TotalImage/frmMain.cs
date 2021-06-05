@@ -113,7 +113,7 @@ namespace TotalImage
         //Shows a hex view of the current image
         private void hexView_Click(object sender, EventArgs e)
         {
-            using frmHexView frm = new frmHexView();
+            using dlgHexView frm = new dlgHexView();
             frm.ShowDialog();
         }
 

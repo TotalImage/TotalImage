@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(dlgNewImageAdvanced));
-            this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.txtFloppyTracks = new System.Windows.Forms.NumericUpDown();
@@ -75,24 +74,12 @@
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
-            // btnCancel
-            // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(422, 12);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(80, 26);
-            this.btnCancel.TabIndex = 17;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(336, 12);
+            this.btnOK.Location = new System.Drawing.Point(422, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
             this.btnOK.TabIndex = 16;
@@ -556,7 +543,6 @@
             // pnlBottom
             // 
             this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
-            this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlBottom.Location = new System.Drawing.Point(0, 226);
@@ -570,7 +556,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
-            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(514, 276);
             this.Controls.Add(this.txtFloppyTracks);
             this.Controls.Add(this.lblFloppyTracks);
@@ -628,37 +613,36 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Panel pnlBottom;
-        private System.Windows.Forms.NumericUpDown txtFloppyTracks;
         private System.Windows.Forms.Label lblFloppyTracks;
-        private System.Windows.Forms.NumericUpDown txtFloppyReservedSect;
-        private System.Windows.Forms.NumericUpDown txtFloppyNumFATs;
-        private System.Windows.Forms.TextBox txtFloppyFSType;
         private System.Windows.Forms.Label lblFloppyFSType;
-        private System.Windows.Forms.TextBox txtFloppySerial;
         private System.Windows.Forms.Label lblFloppySerial;
-        private System.Windows.Forms.ComboBox lstFloppySides;
         private System.Windows.Forms.Label lblFloppySides;
-        private System.Windows.Forms.NumericUpDown txtFloppySPT;
         private System.Windows.Forms.Label lblFloppySPT;
-        private System.Windows.Forms.NumericUpDown txtFloppySPF;
         private System.Windows.Forms.Label lblFloppySPF;
-        private System.Windows.Forms.NumericUpDown txtFloppyMediaDesc;
         private System.Windows.Forms.Label lblFloppyMediaDesc;
-        private System.Windows.Forms.NumericUpDown txtFloppyTotalSect;
         private System.Windows.Forms.Label lblFloppyTotalSect;
-        private System.Windows.Forms.NumericUpDown txtFloppyRootDir;
         private System.Windows.Forms.Label lblFloppyRootDir;
         private System.Windows.Forms.Label lblFloppyNumFATs;
         private System.Windows.Forms.Label lblFloppyReservedSect;
-        private System.Windows.Forms.NumericUpDown txtFloppySPC;
         private System.Windows.Forms.Label lblFloppySPC;
-        private System.Windows.Forms.NumericUpDown txtFloppyBPS;
         private System.Windows.Forms.Label lblFloppyBPS;
-        private System.Windows.Forms.TextBox txtFloppyOEMID;
         private System.Windows.Forms.Label lblFloppyOEMID;
+        internal System.Windows.Forms.NumericUpDown txtFloppyTracks;
+        internal System.Windows.Forms.NumericUpDown txtFloppyReservedSect;
+        internal System.Windows.Forms.ComboBox lstFloppySides;
+        internal System.Windows.Forms.NumericUpDown txtFloppySPF;
+        internal System.Windows.Forms.NumericUpDown txtFloppyMediaDesc;
+        internal System.Windows.Forms.NumericUpDown txtFloppyTotalSect;
+        internal System.Windows.Forms.NumericUpDown txtFloppyRootDir;
+        internal System.Windows.Forms.NumericUpDown txtFloppyNumFATs;
+        internal System.Windows.Forms.TextBox txtFloppyFSType;
+        internal System.Windows.Forms.TextBox txtFloppySerial;
+        internal System.Windows.Forms.NumericUpDown txtFloppySPT;
+        internal System.Windows.Forms.NumericUpDown txtFloppySPC;
+        internal System.Windows.Forms.NumericUpDown txtFloppyBPS;
+        internal System.Windows.Forms.TextBox txtFloppyOEMID;
     }
 }
