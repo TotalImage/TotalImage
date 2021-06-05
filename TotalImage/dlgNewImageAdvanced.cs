@@ -42,8 +42,8 @@ namespace TotalImage
             else
             {
                 txtFloppyOEMID.Enabled = true;
-                txtFloppySerial.Enabled = baseDialog.cbxFloppyBPB.Checked && (baseDialog.lstFloppyBPB.SelectedIndex >= 2);
-                txtFloppyFSType.Enabled = baseDialog.cbxFloppyBPB.Checked && (baseDialog.lstFloppyBPB.SelectedIndex == 3);
+                txtFloppySerial.Enabled = baseDialog.cbxFloppyBPB.Checked && (baseDialog.lstFloppyBPB.SelectedIndex >= 1);
+                txtFloppyFSType.Enabled = baseDialog.cbxFloppyBPB.Checked && (baseDialog.lstFloppyBPB.SelectedIndex == 2);
 
                 txtFloppyOEMID.Text = baseDialog.OEMID;
                 txtFloppySerial.Text = baseDialog.SerialNumber;

@@ -82,7 +82,7 @@
             this.btnOK.Location = new System.Drawing.Point(422, 12);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 26);
-            this.btnOK.TabIndex = 16;
+            this.btnOK.TabIndex = 14;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -110,7 +110,7 @@
             0});
             this.txtFloppyTracks.Name = "txtFloppyTracks";
             this.txtFloppyTracks.Size = new System.Drawing.Size(84, 23);
-            this.txtFloppyTracks.TabIndex = 61;
+            this.txtFloppyTracks.TabIndex = 9;
             this.txtFloppyTracks.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyTracks, "The number of tracks on one side of the disk.");
             this.txtFloppyTracks.Value = new decimal(new int[] {
@@ -139,7 +139,7 @@
             0});
             this.txtFloppyReservedSect.Name = "txtFloppyReservedSect";
             this.txtFloppyReservedSect.Size = new System.Drawing.Size(84, 23);
-            this.txtFloppyReservedSect.TabIndex = 59;
+            this.txtFloppyReservedSect.TabIndex = 3;
             this.txtFloppyReservedSect.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyReservedSect, "The number of sectors before the first file allocation table (FAT).\r\nFor most FAT" +
         "12-formatted floppies, there is only one reserved\r\nsector - the boot sector.\r\n");
@@ -164,7 +164,7 @@
             0});
             this.txtFloppyNumFATs.Name = "txtFloppyNumFATs";
             this.txtFloppyNumFATs.Size = new System.Drawing.Size(113, 23);
-            this.txtFloppyNumFATs.TabIndex = 58;
+            this.txtFloppyNumFATs.TabIndex = 6;
             this.txtFloppyNumFATs.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyNumFATs, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, thi" +
         "s value is basically always 2.\r\n");
@@ -180,7 +180,7 @@
             this.txtFloppyFSType.MaxLength = 8;
             this.txtFloppyFSType.Name = "txtFloppyFSType";
             this.txtFloppyFSType.Size = new System.Drawing.Size(113, 23);
-            this.txtFloppyFSType.TabIndex = 48;
+            this.txtFloppyFSType.TabIndex = 4;
             this.txtFloppyFSType.Text = "FAT12";
             this.toolTip.SetToolTip(this.txtFloppyFSType, resources.GetString("txtFloppyFSType.ToolTip"));
             // 
@@ -200,7 +200,7 @@
             this.txtFloppySerial.MaxLength = 8;
             this.txtFloppySerial.Name = "txtFloppySerial";
             this.txtFloppySerial.Size = new System.Drawing.Size(113, 23);
-            this.txtFloppySerial.TabIndex = 42;
+            this.txtFloppySerial.TabIndex = 2;
             this.toolTip.SetToolTip(this.txtFloppySerial, "This field can be used to detect when the disk was ejected\r\nand a different disk " +
         "was inserted.");
             // 
@@ -226,7 +226,7 @@
             this.lstFloppySides.Location = new System.Drawing.Point(411, 189);
             this.lstFloppySides.Name = "lstFloppySides";
             this.lstFloppySides.Size = new System.Drawing.Size(84, 23);
-            this.lstFloppySides.TabIndex = 51;
+            this.lstFloppySides.TabIndex = 13;
             this.toolTip.SetToolTip(this.lstFloppySides, "Determines whether a disk is single-sided (SS) or double-sided (DS).");
             // 
             // lblFloppySides
@@ -254,7 +254,7 @@
             0});
             this.txtFloppySPT.Name = "txtFloppySPT";
             this.txtFloppySPT.Size = new System.Drawing.Size(113, 23);
-            this.txtFloppySPT.TabIndex = 44;
+            this.txtFloppySPT.TabIndex = 12;
             this.txtFloppySPT.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppySPT, "The number of sectors in one track.");
             this.txtFloppySPT.Value = new decimal(new int[] {
@@ -288,7 +288,7 @@
             0});
             this.txtFloppySPF.Name = "txtFloppySPF";
             this.txtFloppySPF.Size = new System.Drawing.Size(84, 23);
-            this.txtFloppySPF.TabIndex = 50;
+            this.txtFloppySPF.TabIndex = 1;
             this.txtFloppySPF.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppySPF, "Defines the number of sectors occupied by each file\r\nallocation table (FAT).");
             this.txtFloppySPF.Value = new decimal(new int[] {
@@ -323,7 +323,7 @@
             0});
             this.txtFloppyMediaDesc.Name = "txtFloppyMediaDesc";
             this.txtFloppyMediaDesc.Size = new System.Drawing.Size(84, 23);
-            this.txtFloppyMediaDesc.TabIndex = 47;
+            this.txtFloppyMediaDesc.TabIndex = 11;
             this.txtFloppyMediaDesc.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyMediaDesc, resources.GetString("txtFloppyMediaDesc.ToolTip"));
             this.txtFloppyMediaDesc.Value = new decimal(new int[] {
@@ -357,7 +357,7 @@
             0});
             this.txtFloppyTotalSect.Name = "txtFloppyTotalSect";
             this.txtFloppyTotalSect.Size = new System.Drawing.Size(84, 23);
-            this.txtFloppyTotalSect.TabIndex = 38;
+            this.txtFloppyTotalSect.TabIndex = 5;
             this.txtFloppyTotalSect.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyTotalSect, "This field specifies the total number of sectors on a disk. The number\r\nis calcul" +
         "ated by multiplying the number of tracks, sectors per track and\r\nnumber of sides" +
@@ -400,7 +400,7 @@
             0});
             this.txtFloppyRootDir.Name = "txtFloppyRootDir";
             this.txtFloppyRootDir.Size = new System.Drawing.Size(84, 23);
-            this.txtFloppyRootDir.TabIndex = 41;
+            this.txtFloppyRootDir.TabIndex = 7;
             this.txtFloppyRootDir.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyRootDir, "This is the maximum number of files that can be located in the\r\nroot directory of" +
         " the disk. ");
@@ -458,7 +458,7 @@
             0});
             this.txtFloppySPC.Name = "txtFloppySPC";
             this.txtFloppySPC.Size = new System.Drawing.Size(113, 23);
-            this.txtFloppySPC.TabIndex = 40;
+            this.txtFloppySPC.TabIndex = 10;
             this.txtFloppySPC.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppySPC, "This field determines the number of sectors that make up one cluster.\r\n");
             this.txtFloppySPC.Value = new decimal(new int[] {
@@ -497,7 +497,7 @@
             0});
             this.txtFloppyBPS.Name = "txtFloppyBPS";
             this.txtFloppyBPS.Size = new System.Drawing.Size(113, 23);
-            this.txtFloppyBPS.TabIndex = 36;
+            this.txtFloppyBPS.TabIndex = 8;
             this.txtFloppyBPS.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip.SetToolTip(this.txtFloppyBPS, "This field determines the size of a sector in bytes.");
             this.txtFloppyBPS.Value = new decimal(new int[] {
@@ -522,7 +522,7 @@
             this.txtFloppyOEMID.MaxLength = 8;
             this.txtFloppyOEMID.Name = "txtFloppyOEMID";
             this.txtFloppyOEMID.Size = new System.Drawing.Size(113, 23);
-            this.txtFloppyOEMID.TabIndex = 35;
+            this.txtFloppyOEMID.TabIndex = 0;
             this.txtFloppyOEMID.Text = "MSDOS5.0";
             this.toolTip.SetToolTip(this.txtFloppyOEMID, "The OEM ID field is often used to identify the system that formatted\r\nthe disk. U" +
         "sing non-standard values could result in the operating\r\nsystem or program not re" +
