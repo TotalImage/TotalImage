@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using TotalImage.DiskGeometries;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using TotalImage.FileSystems.BPB;
 
 namespace TotalImage
 {

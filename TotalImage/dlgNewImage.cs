@@ -27,6 +27,8 @@ namespace TotalImage
         private void dlgNewImage_Load(object sender, EventArgs e)
         {
             cbxFloppyBPB.Checked = true;
+            pnlFloppy.Visible = true;
+            pnlHardDisk.Visible = false;
             WriteBPB = true;
             lstFloppyBPB.SelectedIndex = 3;
             BPBVersion = BiosParameterBlockVersion.Dos40;
@@ -107,13 +109,8 @@ namespace TotalImage
 
         private void rbnFloppyDisk_CheckedChanged(object sender, EventArgs e)
         {
-            lblFloppyGeometry.Visible = rbnFloppyDisk.Checked;
-            lstFloppyGeometries.Visible = rbnFloppyDisk.Checked;
-            lblFloppyLabel.Visible = rbnFloppyDisk.Checked;
-            btnAdvanced.Visible = rbnFloppyDisk.Checked;
-            cbxFloppyBPB.Visible = rbnFloppyDisk.Checked;
-            txtFloppyLabel.Visible = rbnFloppyDisk.Checked;
-            lstFloppyBPB.Visible = rbnFloppyDisk.Checked;
+            pnlFloppy.Visible = rbnFloppyDisk.Checked;
+            pnlHardDisk.Visible = rbnHardDisk.Checked;
         }
     }
 }

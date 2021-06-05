@@ -29,35 +29,40 @@ namespace TotalImage
         /// </summary>
         private void InitializeComponent()
         {
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.pnlBottom = new System.Windows.Forms.Panel();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.gbxMediaType = new System.Windows.Forms.GroupBox();
             this.rbnHardDisk = new System.Windows.Forms.RadioButton();
             this.rbnFloppyDisk = new System.Windows.Forms.RadioButton();
             this.gbxOptions = new System.Windows.Forms.GroupBox();
+            this.pnlFloppy = new System.Windows.Forms.Panel();
             this.lstFloppyBPB = new System.Windows.Forms.ComboBox();
             this.cbxFloppyBPB = new System.Windows.Forms.CheckBox();
             this.txtFloppyLabel = new System.Windows.Forms.TextBox();
+            this.lblFloppyGeometry = new System.Windows.Forms.Label();
             this.lblFloppyLabel = new System.Windows.Forms.Label();
             this.btnAdvanced = new System.Windows.Forms.Button();
             this.lstFloppyGeometries = new System.Windows.Forms.ComboBox();
-            this.lblFloppyGeometry = new System.Windows.Forms.Label();
-            this.panel1.SuspendLayout();
+            this.pnlHardDisk = new System.Windows.Forms.Panel();
+            this.lblTest = new System.Windows.Forms.Label();
+            this.pnlBottom.SuspendLayout();
             this.gbxMediaType.SuspendLayout();
             this.gbxOptions.SuspendLayout();
+            this.pnlFloppy.SuspendLayout();
+            this.pnlHardDisk.SuspendLayout();
             this.SuspendLayout();
             // 
-            // panel1
+            // pnlBottom
             // 
-            this.panel1.BackColor = System.Drawing.SystemColors.Control;
-            this.panel1.Controls.Add(this.btnOK);
-            this.panel1.Controls.Add(this.btnCancel);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 251);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(399, 50);
-            this.panel1.TabIndex = 0;
+            this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlBottom.Controls.Add(this.btnOK);
+            this.pnlBottom.Controls.Add(this.btnCancel);
+            this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnlBottom.Location = new System.Drawing.Point(0, 251);
+            this.pnlBottom.Name = "pnlBottom";
+            this.pnlBottom.Size = new System.Drawing.Size(399, 50);
+            this.pnlBottom.TabIndex = 0;
             // 
             // btnOK
             // 
@@ -116,23 +121,31 @@ namespace TotalImage
             this.rbnFloppyDisk.Text = "Floppy disk";
             this.rbnFloppyDisk.UseVisualStyleBackColor = true;
             this.rbnFloppyDisk.CheckedChanged += new System.EventHandler(this.rbnFloppyDisk_CheckedChanged);
-
             // 
             // gbxOptions
             // 
-            this.gbxOptions.Controls.Add(this.lstFloppyBPB);
-            this.gbxOptions.Controls.Add(this.cbxFloppyBPB);
-            this.gbxOptions.Controls.Add(this.txtFloppyLabel);
-            this.gbxOptions.Controls.Add(this.lblFloppyLabel);
-            this.gbxOptions.Controls.Add(this.btnAdvanced);
-            this.gbxOptions.Controls.Add(this.lstFloppyGeometries);
-            this.gbxOptions.Controls.Add(this.lblFloppyGeometry);
+            this.gbxOptions.Controls.Add(this.pnlHardDisk);
+            this.gbxOptions.Controls.Add(this.pnlFloppy);
             this.gbxOptions.Location = new System.Drawing.Point(12, 72);
             this.gbxOptions.Name = "gbxOptions";
             this.gbxOptions.Size = new System.Drawing.Size(375, 166);
             this.gbxOptions.TabIndex = 3;
             this.gbxOptions.TabStop = false;
             this.gbxOptions.Text = "Options";
+            // 
+            // pnlFloppy
+            // 
+            this.pnlFloppy.Controls.Add(this.lstFloppyBPB);
+            this.pnlFloppy.Controls.Add(this.cbxFloppyBPB);
+            this.pnlFloppy.Controls.Add(this.txtFloppyLabel);
+            this.pnlFloppy.Controls.Add(this.lblFloppyGeometry);
+            this.pnlFloppy.Controls.Add(this.lblFloppyLabel);
+            this.pnlFloppy.Controls.Add(this.btnAdvanced);
+            this.pnlFloppy.Controls.Add(this.lstFloppyGeometries);
+            this.pnlFloppy.Location = new System.Drawing.Point(2, 17);
+            this.pnlFloppy.Name = "pnlFloppy";
+            this.pnlFloppy.Size = new System.Drawing.Size(371, 140);
+            this.pnlFloppy.TabIndex = 9;
             // 
             // lstFloppyBPB
             // 
@@ -145,7 +158,7 @@ namespace TotalImage
             "DOS 3.31",
             "DOS 3.4",
             "DOS 4.0+"});
-            this.lstFloppyBPB.Location = new System.Drawing.Point(226, 102);
+            this.lstFloppyBPB.Location = new System.Drawing.Point(222, 88);
             this.lstFloppyBPB.Name = "lstFloppyBPB";
             this.lstFloppyBPB.Size = new System.Drawing.Size(143, 23);
             this.lstFloppyBPB.TabIndex = 8;
@@ -155,7 +168,7 @@ namespace TotalImage
             // 
             this.cbxFloppyBPB.AutoSize = true;
             this.cbxFloppyBPB.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxFloppyBPB.Location = new System.Drawing.Point(10, 104);
+            this.cbxFloppyBPB.Location = new System.Drawing.Point(8, 89);
             this.cbxFloppyBPB.Name = "cbxFloppyBPB";
             this.cbxFloppyBPB.Size = new System.Drawing.Size(219, 20);
             this.cbxFloppyBPB.TabIndex = 7;
@@ -166,17 +179,26 @@ namespace TotalImage
             // txtFloppyLabel
             // 
             this.txtFloppyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFloppyLabel.Location = new System.Drawing.Point(92, 71);
+            this.txtFloppyLabel.Location = new System.Drawing.Point(90, 59);
             this.txtFloppyLabel.MaxLength = 11;
             this.txtFloppyLabel.Name = "txtFloppyLabel";
-            this.txtFloppyLabel.Size = new System.Drawing.Size(277, 23);
+            this.txtFloppyLabel.Size = new System.Drawing.Size(275, 23);
             this.txtFloppyLabel.TabIndex = 6;
             this.txtFloppyLabel.TextChanged += new System.EventHandler(this.txtFloppyLabel_TextChanged);
+            // 
+            // lblFloppyGeometry
+            // 
+            this.lblFloppyGeometry.AutoSize = true;
+            this.lblFloppyGeometry.Location = new System.Drawing.Point(6, 10);
+            this.lblFloppyGeometry.Name = "lblFloppyGeometry";
+            this.lblFloppyGeometry.Size = new System.Drawing.Size(62, 15);
+            this.lblFloppyGeometry.TabIndex = 0;
+            this.lblFloppyGeometry.Text = "Geometry:";
             // 
             // lblFloppyLabel
             // 
             this.lblFloppyLabel.AutoSize = true;
-            this.lblFloppyLabel.Location = new System.Drawing.Point(8, 75);
+            this.lblFloppyLabel.Location = new System.Drawing.Point(6, 62);
             this.lblFloppyLabel.Name = "lblFloppyLabel";
             this.lblFloppyLabel.Size = new System.Drawing.Size(78, 15);
             this.lblFloppyLabel.TabIndex = 3;
@@ -186,7 +208,7 @@ namespace TotalImage
             // 
             this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAdvanced.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnAdvanced.Location = new System.Drawing.Point(286, 38);
+            this.btnAdvanced.Location = new System.Drawing.Point(282, 27);
             this.btnAdvanced.Name = "btnAdvanced";
             this.btnAdvanced.Size = new System.Drawing.Size(83, 26);
             this.btnAdvanced.TabIndex = 5;
@@ -199,20 +221,28 @@ namespace TotalImage
             this.lstFloppyGeometries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.lstFloppyGeometries.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstFloppyGeometries.FormattingEnabled = true;
-            this.lstFloppyGeometries.Location = new System.Drawing.Point(10, 40);
+            this.lstFloppyGeometries.Location = new System.Drawing.Point(8, 28);
             this.lstFloppyGeometries.Name = "lstFloppyGeometries";
-            this.lstFloppyGeometries.Size = new System.Drawing.Size(268, 23);
+            this.lstFloppyGeometries.Size = new System.Drawing.Size(270, 23);
             this.lstFloppyGeometries.TabIndex = 4;
             this.lstFloppyGeometries.SelectedIndexChanged += new System.EventHandler(this.lstFloppyGeometries_SelectedIndexChanged);
             // 
-            // lblFloppyGeometry
+            // pnlHardDisk
             // 
-            this.lblFloppyGeometry.AutoSize = true;
-            this.lblFloppyGeometry.Location = new System.Drawing.Point(8, 22);
-            this.lblFloppyGeometry.Name = "lblFloppyGeometry";
-            this.lblFloppyGeometry.Size = new System.Drawing.Size(62, 15);
-            this.lblFloppyGeometry.TabIndex = 0;
-            this.lblFloppyGeometry.Text = "Geometry:";
+            this.pnlHardDisk.Controls.Add(this.lblTest);
+            this.pnlHardDisk.Location = new System.Drawing.Point(2, 17);
+            this.pnlHardDisk.Name = "pnlHardDisk";
+            this.pnlHardDisk.Size = new System.Drawing.Size(371, 140);
+            this.pnlHardDisk.TabIndex = 10;
+            // 
+            // lblTest
+            // 
+            this.lblTest.AutoSize = true;
+            this.lblTest.Location = new System.Drawing.Point(64, 59);
+            this.lblTest.Name = "lblTest";
+            this.lblTest.Size = new System.Drawing.Size(243, 15);
+            this.lblTest.TabIndex = 0;
+            this.lblTest.Text = "This is a super secret hard disk options panel!";
             // 
             // dlgNewImage
             // 
@@ -222,7 +252,7 @@ namespace TotalImage
             this.ClientSize = new System.Drawing.Size(399, 301);
             this.Controls.Add(this.gbxOptions);
             this.Controls.Add(this.gbxMediaType);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.pnlBottom);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -232,18 +262,21 @@ namespace TotalImage
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "New image";
             this.Load += new System.EventHandler(this.dlgNewImage_Load);
-            this.panel1.ResumeLayout(false);
+            this.pnlBottom.ResumeLayout(false);
             this.gbxMediaType.ResumeLayout(false);
             this.gbxMediaType.PerformLayout();
             this.gbxOptions.ResumeLayout(false);
-            this.gbxOptions.PerformLayout();
+            this.pnlFloppy.ResumeLayout(false);
+            this.pnlFloppy.PerformLayout();
+            this.pnlHardDisk.ResumeLayout(false);
+            this.pnlHardDisk.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel pnlBottom;
         private System.Windows.Forms.GroupBox gbxMediaType;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
@@ -257,5 +290,8 @@ namespace TotalImage
         private System.Windows.Forms.TextBox txtFloppyLabel;
         private System.Windows.Forms.ComboBox lstFloppyBPB;
         private System.Windows.Forms.CheckBox cbxFloppyBPB;
+        private System.Windows.Forms.Panel pnlFloppy;
+        private System.Windows.Forms.Panel pnlHardDisk;
+        private System.Windows.Forms.Label lblTest;
     }
 }
