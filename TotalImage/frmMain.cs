@@ -225,10 +225,9 @@ namespace TotalImage
                     ? ExtendedBiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID, dlg.SerialNumber, dlg.FileSystemType, dlg.VolumeLabel)
                     : BiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID);
 
-                /* TODO: This needs some rethinking - we want to basically do everything the same as if opening an existing image from disk, 
-                 * except it's all in memory in this case. Right now, we don't do that and we're left in a pretty weird state... */
+                //Create a new image and immediately open it
                 image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
-                EnableUI();
+                OpenImage();
             }
         }
 
@@ -1577,6 +1576,71 @@ namespace TotalImage
                 sb.Append('-');
 
             return sb.ToString();
+        }
+
+        //For opening a newly created image that's not yet saved to disk
+        private void OpenImage()
+        {
+            CurrentPartitionIndex = 0;
+            if (image.PartitionTable.Partitions.Count == 0)
+            {
+                TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = $"We couldn't find any partitions in your image. If this is a hard disk image, verify that it's partitioned with either MBR or GPT partitioning scheme and contains at least one partition.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                    Heading = "No partitions detected",
+                    Caption = "Error",
+                    Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                    Icon = TaskDialogIcon.Error,
+                });
+
+                CloseImage();
+                return;
+            }
+            else if (image.PartitionTable.Partitions.Count >= 1)
+            {
+                if (image.PartitionTable.Partitions.Count > 1)
+                {
+                    dlgSelectPartition selectFrm = new dlgSelectPartition()
+                    {
+                        PartitionTable = image.PartitionTable
+                    };
+
+                    if (selectFrm.ShowDialog() == DialogResult.Cancel)
+                    {
+                        CloseImage();
+                        return;
+                    }
+
+                    CurrentPartitionIndex = selectFrm.SelectedEntry;
+                }
+
+                selectPartitionToolStripComboBox.Items.Clear();
+
+                if (image.PartitionTable is not Partitions.NoPartitionTable)
+                {
+                    for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
+                    {
+                        try
+                        {
+                            selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
+                        }
+                        catch (InvalidDataException)
+                        {
+                        }
+
+                        if (i == CurrentPartitionIndex)
+                        {
+                            selectPartitionToolStripComboBox.SelectedIndex = i;
+                        }
+                    }
+                }
+            }
+
+            LoadPartitionInCurrentImage(CurrentPartitionIndex);
         }
 
         //TODO: This needs some serious rethinking and probably restructuring.

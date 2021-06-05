@@ -212,17 +212,5 @@ namespace TotalImage.FileSystems.FAT
         {
             throw new NotImplementedException();
         }
-
-        //Checks if an entry with the specified name already exists in this directory
-        public bool EntryExists(string fullname)
-        {
-            if (string.IsNullOrEmpty(fullname))
-                throw new ArgumentNullException(nameof(fullname), "fullname cannot be null!");
-
-            string name = fullname.Substring(0, fullname.IndexOf('.')).PadRight(8, ' ');
-            string ext = fullname.Substring(fullname.IndexOf('.'), fullname.Length - 1).PadRight(3, ' ');
-
-            return false; //Bogus, needs to actually check all the entries which aren't in this class yet...
-        }
     }
 }
