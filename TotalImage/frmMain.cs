@@ -225,6 +225,8 @@ namespace TotalImage
                     ? ExtendedBiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID, dlg.SerialNumber, dlg.FileSystemType, dlg.VolumeLabel)
                     : BiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID);
 
+                /* TODO: This needs some rethinking - we want to basically do everything the same as if opening an existing image from disk, 
+                 * except it's all in memory in this case. Right now, we don't do that and we're left in a pretty weird state... */
                 image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
                 EnableUI();
             }

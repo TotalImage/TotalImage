@@ -16,7 +16,7 @@ namespace TotalImage.FileSystems.FAT
         public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
             ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
-            for(int i = 0; i < bpb.NumberOfFATs; i++)
+            for (int i = 0; i < bpb.NumberOfFATs; i++)
                 ClusterMaps[i] = new ClusterMap(this, i);
         }
 
@@ -74,24 +74,22 @@ namespace TotalImage.FileSystems.FAT
                     writer.Write(bpb.TotalLogicalSectors > ushort.MaxValue ? bpb.TotalLogicalSectors : 0);
 
                     //DOS 3.4+ specific values
+                    if (bpb.Version == BiosParameterBlockVersion.Dos34 || bpb.Version == BiosParameterBlockVersion.Dos40)
                     {
+                        var ebpb = (ExtendedBiosParameterBlock)bpb;
+                        writer.Write(ebpb.PhysicalDriveNumber);
+                        writer.Write(ebpb.Flags);
+                        writer.Write((byte)ebpb.ExtendedBootSignature);
+                        writer.Write(ebpb.VolumeSerialNumber.Value);
+
+                        //DOS 4.0 adds volume label and FS type as well
                         if (bpb.Version == BiosParameterBlockVersion.Dos40)
                         {
-                            var ebpb = (ExtendedBiosParameterBlock)bpb;
-                            writer.Write(ebpb.PhysicalDriveNumber);
-                            writer.Write(ebpb.Flags);
-                            writer.Write((byte)ebpb.ExtendedBootSignature);
-
-                            //DOS 4.0 adds volume label and FS type as well
-                            if (ebpb.ExtendedBootSignature == ExtendedBootSignature.Dos40)
-                            {
-                                writer.Write(ebpb.VolumeSerialNumber.Value);
-                                if (string.IsNullOrEmpty(ebpb.VolumeLabel))
-                                    writer.Write("NO NAME    ".ToCharArray());
-                                else
-                                    writer.Write(ebpb.VolumeLabel.PadRight(11, ' ').ToCharArray());
-                                writer.Write(ebpb.FileSystemType.PadRight(8, ' ').ToCharArray());
-                            }
+                            if (string.IsNullOrWhiteSpace(ebpb.VolumeLabel))
+                                writer.Write("NO NAME    ".ToCharArray());
+                            else
+                                writer.Write(ebpb.VolumeLabel.PadRight(11, ' ').ToCharArray());
+                            writer.Write(ebpb.FileSystemType.PadRight(8, ' ').ToCharArray());
                         }
                     }
                 }
@@ -171,7 +169,7 @@ namespace TotalImage.FileSystems.FAT
                     // FAT12 uses 12-bit cluster indices, therefore it's time for some
                     // crazy maths! Let's first seek further to the nearest even index.
                     reader.BaseStream.Seek(index / 2 * 3, SeekOrigin.Current);
-        
+
                     // Now we want to read two values. Considering there is no 24-bit
                     // integer type, we have to read 32 bits, which means we're going
                     // to read more than we need, so we have to discard the most
