@@ -266,7 +266,7 @@ namespace TotalImage
                 var selectedSize = 0ul;
                 foreach (var entry in SelectedItems) selectedSize += entry.Length;
 
-                //DialogResult = MessageBox.Show($"Are you sure that you want to delete {lstFiles.SelectedIndices.Count} item(s) occupying {Settings.CurrentSettings.SizeUnits.FormatSize(selectedSize)}?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                //DialogResult = MessageBox.Show($"Are you sure that you want to delete {lstFiles.SelectedIndices.Count} item(s) occupying {Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)}?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 //if (DialogResult == DialogResult.Yes)
                 {
@@ -292,6 +292,7 @@ namespace TotalImage
         //TODO: Implement this here and in FS/container.
         private void rename_Click(object sender, EventArgs e)
         {
+            /*
             throw new NotImplementedException();
 
             /* Below is old code that used the Rename dialog. However, I now think it's more intuitive if we use the ListView LabelEdit events
@@ -311,6 +312,12 @@ namespace TotalImage
 
             string newname = dlg.NewName;
             */
+
+            // Let's see what I can do then. -- Quevidia
+            if (lstFiles.Focused)
+                GetSelectedItem(0).BeginEdit();
+            else if (lstDirectories.Focused)
+                lstDirectories.SelectedNode.BeginEdit();
         }
 
         //Changes image format
@@ -1343,7 +1350,29 @@ namespace TotalImage
         //From here the name change should propagate to the associated FileSystemObject and to the stream
         private void lstFiles_AfterLabelEdit(object sender, LabelEditEventArgs e)
         {
+            string newName;
+            TiFileSystemObject fileSystemObject;
 
+            if (lstFiles.Focused)
+            {
+                ListViewItem item = GetSelectedItem(0);
+                fileSystemObject = (TiFileSystemObject)item.Tag;
+                newName = item.Text;
+            }
+            else
+            {
+                TreeNode item = lstDirectories.SelectedNode;
+                fileSystemObject = (TiFileSystemObject)item.Tag;
+                newName = item.Text;
+            }
+
+            if (fileSystemObject.Name != newName)
+            {
+                // Do checks, blah blah blah
+
+
+                fileSystemObject.Rename(newName);
+            }
         }
 
         //Before an item's label (=Text property) will be changed - for renaming objects.
@@ -2001,6 +2030,14 @@ namespace TotalImage
             if (lstFiles.SelectedIndices[idx] < IndexShift)
                 return (TiFileSystemObject)upOneFolderListViewItem.Tag;
             return (TiFileSystemObject)currentFolderView[lstFiles.SelectedIndices[idx] - IndexShift].Tag;
+        }
+
+        //Same as GetSelectedItemData, except it returns the ListViewItem, rather than its Tag value casted to TiFileSystemObject.
+        private ListViewItem GetSelectedItem(int idx)
+        {
+            if (lstFiles.SelectedIndices[idx] < IndexShift)
+                return upOneFolderListViewItem;
+            return currentFolderView[lstFiles.SelectedIndices[idx] - IndexShift];
         }
 
         private static IComparer<ListViewItem> GetListViewItemSorter(int sortColumn, SortOrder sortOrder)
