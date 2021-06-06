@@ -205,9 +205,8 @@ namespace TotalImage
 
                 //Create a new image and immediately open it
                 image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
-                OpenImage(null);
-
                 unsavedChanges = true;
+                OpenImage(null);
             }
         }
 
@@ -1927,8 +1926,7 @@ namespace TotalImage
             lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.Right;
             lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
 
-            //New image was created, enable the Save button to act as "Save as"
-            if (unsavedChanges && string.IsNullOrEmpty(filename))
+            if (unsavedChanges)
                 saveToolStripButton.Enabled = true;
 
             //Enabling this now since we have rudimentary HDD support.
