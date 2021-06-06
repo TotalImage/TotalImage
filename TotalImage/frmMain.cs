@@ -1350,27 +1350,15 @@ namespace TotalImage
         //From here the name change should propagate to the associated FileSystemObject and to the stream
         private void lstFiles_AfterLabelEdit(object sender, LabelEditEventArgs e)
         {
-            string newName;
-            TiFileSystemObject fileSystemObject;
-
-            if (lstFiles.Focused)
-            {
-                ListViewItem item = GetSelectedItem(0);
-                fileSystemObject = (TiFileSystemObject)item.Tag;
-                newName = item.Text;
-            }
-            else
-            {
-                TreeNode item = lstDirectories.SelectedNode;
-                fileSystemObject = (TiFileSystemObject)item.Tag;
-                newName = item.Text;
-            }
+            ListViewItem item = GetSelectedItem(0);
+            TiFileSystemObject fileSystemObject = (TiFileSystemObject)item.Tag;
+            string newName = item.Text;
 
             if (fileSystemObject.Name != newName)
             {
                 // Do checks, blah blah blah
 
-
+                lstDirectories.Chi
                 fileSystemObject.Rename(newName);
             }
         }
