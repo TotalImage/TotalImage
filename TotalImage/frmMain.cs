@@ -199,9 +199,6 @@ namespace TotalImage
                     CloseImage();
                 image = null;
 
-                Text = "(Untitled) - TotalImage";
-                unsavedChanges = true;
-
                 BiosParameterBlock bpb = dlg.BPBVersion == BiosParameterBlockVersion.Dos34 || dlg.BPBVersion == BiosParameterBlockVersion.Dos40
                     ? ExtendedBiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID, dlg.SerialNumber, dlg.FileSystemType, dlg.VolumeLabel)
                     : BiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID);
@@ -209,6 +206,8 @@ namespace TotalImage
                 //Create a new image and immediately open it
                 image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
                 OpenImage(null);
+
+                unsavedChanges = true;
             }
         }
 
@@ -1687,7 +1686,14 @@ namespace TotalImage
 
             LoadPartitionInCurrentImage(CurrentPartitionIndex);
 
-            Text = $"{filename} - TotalImage";
+            if (filename != "")
+            {
+                Text = $"{filename} - TotalImage";
+            }
+            else
+            {
+                Text = "(Untitled) - TotalImage";
+            }
         }
 
         private void LoadPartitionInCurrentImage(int index)
