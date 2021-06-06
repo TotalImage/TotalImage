@@ -72,25 +72,7 @@ namespace TotalImage
             if (args.Length > 1)
             {
                 string argPath = args[1];
-                if (File.Exists(argPath))
-                {
-                    OpenImage(argPath);
-                }
-                else
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"The file \"{Path.GetFileName(argPath)}\" could not be opened because it's inaccessible or does not exist.",
-                        Heading = "Could not open file",
-                        Caption = "Error",
-                        Buttons =
-                    {
-                        TaskDialogButton.OK
-                    },
-                        Icon = TaskDialogIcon.Error,
-                        DefaultButton = TaskDialogButton.OK
-                    });
-                }
+                OpenImage(argPath);
             }
 
             for (var i = 1; i < lstFiles.Columns.Count; i++)
@@ -161,32 +143,29 @@ namespace TotalImage
         private void recentImage_Click(object sender, EventArgs e)
         {
             string imagePath = ((ToolStripMenuItem)sender).Text.Substring(3, ((ToolStripMenuItem)sender).Text.Length - 3).Trim(' ');
-            try
-            {
-                CloseImage();
-                OpenImage(imagePath);
-            }
-            catch (IOException)
+            if (!File.Exists(imagePath))
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
-                    Text = $"File \"{Path.GetFileName(imagePath)}\" could not be opened because it's inaccessible or no longer exists and will be removed from the recent list.",
-                    Heading = "Could not open file",
+                    Text = $"File \"{Path.GetFileName(imagePath)}\" could not be opened because it no longer exists and will be removed from your recent images list.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                    Heading = "File not found",
                     Caption = "Error",
                     Buttons =
-                    {
-                        TaskDialogButton.OK
-                    },
+                        {
+                            TaskDialogButton.OK
+                        },
                     Icon = TaskDialogIcon.Error,
-                    DefaultButton = TaskDialogButton.OK
                 });
 
                 //Remove the non-working entry
                 Settings.RemoveRecentImage(imagePath);
                 PopulateRecentList();
-
-                Text = "TotalImage";               
+                return;
             }
+
+            CloseImage();
+            OpenImage(imagePath);
         }
 
         //Creates a new disk image
@@ -1595,19 +1574,55 @@ namespace TotalImage
             {
                 filepath = path;
                 filename = Path.GetFileName(path);
-                Text = $"{filename} - TotalImage";
 
-                bool memoryMapping = new FileInfo(path).Length > Settings.CurrentSettings.MemoryMappingThreshold;
-
-                var ext = Path.GetExtension(filename).ToLowerInvariant();
-                switch (ext)
+                try
                 {
-                    case ".vhd":
-                        image = new VhdContainer(path, memoryMapping);
-                        break;
-                    default:
-                        image = new RawContainer(path, memoryMapping);
-                        break;
+                    bool memoryMapping = new FileInfo(path).Length > Settings.CurrentSettings.MemoryMappingThreshold;
+
+                    var ext = Path.GetExtension(filename).ToLowerInvariant();
+                    switch (ext)
+                    {
+                        case ".vhd":
+                            image = new VhdContainer(path, memoryMapping);
+                            break;
+                        default:
+                            image = new RawContainer(path, memoryMapping);
+                            break;
+                    }
+                }
+                catch (FileNotFoundException)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"File \"{filename}\" could not be opened because it no longer exists.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "File not found",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                    });
+                    CloseImage();
+                    return;
+                }
+                catch (IOException)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"File \"{filename}\" could not be opened because it's in use by another process. Close all processes using this file and try again.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "File in use by another process",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                    });
+                    CloseImage();
+                    return;
                 }
             }
 
@@ -1671,6 +1686,8 @@ namespace TotalImage
             }
 
             LoadPartitionInCurrentImage(CurrentPartitionIndex);
+
+            Text = $"{filename} - TotalImage";
         }
 
         private void LoadPartitionInCurrentImage(int index)
