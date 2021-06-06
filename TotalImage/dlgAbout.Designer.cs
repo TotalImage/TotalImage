@@ -137,7 +137,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
-            this.CancelButton = this.btnOK;
             this.ClientSize = new System.Drawing.Size(301, 241);
             this.Controls.Add(this.lnkGitHub);
             this.Controls.Add(this.lblLicense);
