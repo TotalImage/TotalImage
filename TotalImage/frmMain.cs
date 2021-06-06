@@ -1358,7 +1358,6 @@ namespace TotalImage
             {
                 // Do checks, blah blah blah
 
-                lstDirectories.Chi
                 fileSystemObject.Rename(newName);
             }
         }
