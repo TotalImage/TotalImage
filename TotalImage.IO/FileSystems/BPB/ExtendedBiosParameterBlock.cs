@@ -37,10 +37,10 @@ namespace TotalImage.FileSystems.BPB
 
         public uint? VolumeSerialNumber
         {
-            get => ExtendedBootSignature == ExtendedBootSignature.Dos40 ? (uint?)volId : null;
+            get => ExtendedBootSignature == ExtendedBootSignature.Dos40 || ExtendedBootSignature == ExtendedBootSignature.Dos34 ? (uint?)volId : null;
             private set
             {
-                if (ExtendedBootSignature == ExtendedBootSignature.Dos40 && value.HasValue)
+                if ((ExtendedBootSignature == ExtendedBootSignature.Dos40 || ExtendedBootSignature == ExtendedBootSignature.Dos34) && value.HasValue)
                     volId = value.Value;
                 else throw new InvalidOperationException();
             }
@@ -101,6 +101,7 @@ namespace TotalImage.FileSystems.BPB
             else if (version == BiosParameterBlockVersion.Dos34)
             {
                 bpb.ExtendedBootSignature = ExtendedBootSignature.Dos34;
+                bpb.VolumeSerialNumber = uint.Parse(serialNumber, NumberStyles.HexNumber);
             }
 
             return bpb;
@@ -125,10 +126,11 @@ namespace TotalImage.FileSystems.BPB
                 filSysType = reader.ReadBytes(8);
                 return true;
             }
-            else if (ExtendedBootSignature == ExtendedBootSignature.Dos34)
+            else if (bootSig == ExtendedBootSignature.Dos34)
             {
                 // This is a shorter EBPB format used by PC-DOS 3.4 and
                 // some early OS/2 versions.
+                volId = reader.ReadUInt32();
                 return true;
             }
             else

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.IO;
 using TotalImage.FileSystems.FAT;
+using TotalImage.FileSystems.ISO;
 
 namespace TotalImage.FileSystems
 {
@@ -10,7 +11,8 @@ namespace TotalImage.FileSystems
     public abstract class FileSystem
     {
         private readonly static ImmutableArray<IFileSystemFactory> _knownFactories = ImmutableArray.Create<IFileSystemFactory>(
-            new FatFactory()
+            new FatFactory(),
+            new IsoFactory()
         );
 
         /// <summary>
@@ -78,5 +80,10 @@ namespace TotalImage.FileSystems
         /// The total size of the file system
         /// </summary>
         public abstract long TotalSize { get; }
+
+        /// <summary>
+        /// The minimum allocatable unit size on the file system
+        /// </summary>
+        public abstract uint AllocationUnitSize { get; }
     }
 }

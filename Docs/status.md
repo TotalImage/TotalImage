@@ -10,6 +10,7 @@ This is the list of all currently supported media types, image containers, parti
 | Name | Read | Write | Create |
 | --- | --- | --- | --- |
 | Floppy disks | ✔ Yes | ❌ No | ✔ Yes |
+| CD-ROM images |  ✔ Yes | ❌ No | ❌ No |
 | Hard disks | ✔ Yes | ❌ No | ❌ No |
 
 Read and Create functionality is limited to supported features below.
@@ -17,7 +18,7 @@ Read and Create functionality is limited to supported features below.
 ## Image containers
 | Name | Common file extensions | Read | Write | Create |
 | --- | --- | --- | --- | --- |
-| Raw sector image | IMG, IMA, FLP, VFD, DSK | ✔ Yes | ❌ No | ✔ Yes |
+| Raw sector image | IMG, ISO, IMA, FLP, VFD, DSK | ✔ Yes | ❌ No | ✔ Yes |
 | Microsoft VHD | VHD | ⚠ Partial | ❌ No | ❌ No |
 
 Read and Create functionality is limited to supported features below.
@@ -57,5 +58,6 @@ Only FAT12, FAT16 and FAT32 primary partitions are currently supported (see belo
 | FAT12 | ✔ Yes | ❌ No | ✔ Yes |
 | FAT16 | ✔ Yes | ❌ No | ❌ No |
 | FAT32 | ✔ Yes | ❌ No | ❌ No |
+| ISO-9660 | ⚠ Partial | ❌ No | ❌ No |
 
 Long file names (LFN) are supported on all supported FAT variants.

@@ -2,9 +2,9 @@
 
 namespace TotalImage
 {
-    public partial class frmHexView : Form
+    public partial class dlgHexView : Form
     {
-        public frmHexView()
+        public dlgHexView()
         {
             InitializeComponent();
         }

@@ -57,4 +57,33 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="txtFloppyFSType.ToolTip" xml:space="preserve">
+    <value>Despite its name, the value of this field is completely arbitrary
+and does not reliably determine the file system type. Still, some
+programs and operating systems expect certain values, such as
+FAT12, FAT16 or FAT.
+</value>
+  </data>
+  <data name="lblFloppyFSType.ToolTip" xml:space="preserve">
+    <value>Despite its name, the value of this field is completely arbitrary
+and does not reliably determine the file system type. Still, some
+programs and operating systems expect certain values, such as
+FAT12, FAT16 or FAT.
+</value>
+  </data>
+  <data name="txtFloppyMediaDesc.ToolTip" xml:space="preserve">
+    <value>The media descriptor value can be used to perform preliminary
+detection of disk geometry, but other parameters must be checked
+for a definitive answer. The meaning of this value can differ between
+different OEMs.</value>
+  </data>
+  <data name="lblFloppyMediaDesc.ToolTip" xml:space="preserve">
+    <value>The media descriptor value can be used to perform rudimentary
+assesment of disk geometry, but other parameters must be checked
+for a definitive answer. The meaning of this value can differ between
+different OEMs.</value>
+  </data>
 </root>

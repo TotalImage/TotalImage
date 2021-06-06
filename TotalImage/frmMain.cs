@@ -72,25 +72,7 @@ namespace TotalImage
             if (args.Length > 1)
             {
                 string argPath = args[1];
-                if (File.Exists(argPath))
-                {
-                    OpenImage(argPath);
-                }
-                else
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"The file \"{Path.GetFileName(argPath)}\" could not be opened because it's inaccessible or does not exist.",
-                        Heading = "Could not open file",
-                        Caption = "Error",
-                        Buttons =
-                    {
-                        TaskDialogButton.OK
-                    },
-                        Icon = TaskDialogIcon.Error,
-                        DefaultButton = TaskDialogButton.OK
-                    });
-                }
+                OpenImage(argPath);
             }
 
             for (var i = 1; i < lstFiles.Columns.Count; i++)
@@ -113,7 +95,7 @@ namespace TotalImage
         //Shows a hex view of the current image
         private void hexView_Click(object sender, EventArgs e)
         {
-            using frmHexView frm = new frmHexView();
+            using dlgHexView frm = new dlgHexView();
             frm.ShowDialog();
         }
 
@@ -161,30 +143,29 @@ namespace TotalImage
         private void recentImage_Click(object sender, EventArgs e)
         {
             string imagePath = ((ToolStripMenuItem)sender).Text.Substring(3, ((ToolStripMenuItem)sender).Text.Length - 3).Trim(' ');
-            try
-            {
-                CloseImage();
-                OpenImage(imagePath);
-            }
-            catch (IOException)
+            if (!File.Exists(imagePath))
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
-                    Text = $"Selected file could not be opened because it's inaccessible or no longer exists.",
-                    Heading = "Could not open file",
+                    Text = $"File \"{Path.GetFileName(imagePath)}\" could not be opened because it no longer exists and will be removed from your recent images list.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                    Heading = "File not found",
                     Caption = "Error",
                     Buttons =
-                    {
-                        TaskDialogButton.OK
-                    },
+                        {
+                            TaskDialogButton.OK
+                        },
                     Icon = TaskDialogIcon.Error,
-                    DefaultButton = TaskDialogButton.OK
                 });
 
                 //Remove the non-working entry
                 Settings.RemoveRecentImage(imagePath);
                 PopulateRecentList();
+                return;
             }
+
+            CloseImage();
+            OpenImage(imagePath);
         }
 
         //Creates a new disk image
@@ -218,15 +199,15 @@ namespace TotalImage
                     CloseImage();
                 image = null;
 
-                Text = "(Untitled) - TotalImage";
-                unsavedChanges = true;
-
                 BiosParameterBlock bpb = dlg.BPBVersion == BiosParameterBlockVersion.Dos34 || dlg.BPBVersion == BiosParameterBlockVersion.Dos40
                     ? ExtendedBiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID, dlg.SerialNumber, dlg.FileSystemType, dlg.VolumeLabel)
                     : BiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID);
 
+                //Create a new image and immediately open it
                 image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
-                EnableUI();
+                OpenImage(null);
+
+                unsavedChanges = true;
             }
         }
 
@@ -313,7 +294,7 @@ namespace TotalImage
         {
             throw new NotImplementedException();
 
-            /* Below is old code that used the Rename dialog. However, I now think it's more intuitive if we use the ListView LabelEdit events 
+            /* Below is old code that used the Rename dialog. However, I now think it's more intuitive if we use the ListView LabelEdit events
              * instead. Example:
              * currentFolderView[lstFiles.SelectedIndices[0]].BeginEdit(); */
 
@@ -537,7 +518,7 @@ namespace TotalImage
             //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
             //ofd.ShowReadOnly = true;
             ofd.Filter =
-                "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
+                "Raw sector image (*.img, *.iso, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.iso;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "Microsoft VHD (*.vhd)|*.vhd|" +
                 "All files (*.*)|*.*";
 
@@ -876,7 +857,8 @@ namespace TotalImage
                 {
                     if (items.Length == 1)
                     {
-                        filepath = items[0];
+                        CloseImage();
+                        filepath = items[0];                      
                         OpenImage(filepath);
                     }
                     else //We don't support this yet - I suppose we should offer to create a new image first?
@@ -926,6 +908,7 @@ namespace TotalImage
                 {
                     if (items.Length == 1)
                     {
+                        CloseImage();
                         filepath = items[0];
                         OpenImage(filepath);
                     }
@@ -1577,24 +1560,69 @@ namespace TotalImage
             return sb.ToString();
         }
 
-        //TODO: This needs some serious rethinking and probably restructuring.
-        private void OpenImage(string path)
+        //Opens an image
+        private void OpenImage(string? path)
         {
-            filepath = path;
-            filename = Path.GetFileName(path);
-            Text = $"{filename} - TotalImage";
-
-            bool memoryMapping = new FileInfo(path).Length > Settings.CurrentSettings.MemoryMappingThreshold;
-
-            var ext = Path.GetExtension(filename).ToLowerInvariant();
-            switch (ext)
+            if (path is not null && (path == "" || path.Trim() == ""))
             {
-                case ".vhd":
-                    image = new VhdContainer(path, memoryMapping);
-                    break;
-                default:
-                    image = new RawContainer(path, memoryMapping);
-                    break;
+                throw new ArgumentException("path must be either a valid path for existing files, or null when opening newly created files!");
+            }
+
+            //Opening an existing file, otherwise it's a newly created image
+            if (path is not null)
+            {
+                filepath = path;
+                filename = Path.GetFileName(path);
+
+                try
+                {
+                    bool memoryMapping = new FileInfo(path).Length > Settings.CurrentSettings.MemoryMappingThreshold;
+
+                    var ext = Path.GetExtension(filename).ToLowerInvariant();
+                    switch (ext)
+                    {
+                        case ".vhd":
+                            image = new VhdContainer(path, memoryMapping);
+                            break;
+                        default:
+                            image = new RawContainer(path, memoryMapping);
+                            break;
+                    }
+                }
+                catch (FileNotFoundException)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"File \"{filename}\" could not be opened because it no longer exists.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "File not found",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                    });
+                    CloseImage();
+                    return;
+                }
+                catch (IOException e) when ((e.HResult & 0x0000FFFF) == 32)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"File \"{filename}\" could not be opened because it's in use by another process. Close all processes using this file and try again.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "File in use by another process",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                    });
+                    CloseImage();
+                    return;
+                }
             }
 
             CurrentPartitionIndex = 0;
@@ -1657,6 +1685,15 @@ namespace TotalImage
             }
 
             LoadPartitionInCurrentImage(CurrentPartitionIndex);
+
+            if (filename != "")
+            {
+                Text = $"{filename} - TotalImage";
+            }
+            else
+            {
+                Text = "(Untitled) - TotalImage";
+            }
         }
 
         private void LoadPartitionInCurrentImage(int index)
@@ -1927,6 +1964,13 @@ namespace TotalImage
 
             for (int i = Settings.CurrentSettings.RecentImages.Count - 1; i >= 0; i--)
             {
+                //Remove any bogus entries
+                if (string.IsNullOrWhiteSpace(Settings.CurrentSettings.RecentImages[i]))
+                {
+                    Settings.RemoveRecentImage(Settings.CurrentSettings.RecentImages[i]);
+                    continue;
+                }
+
                 ToolStripMenuItem newItem = new ToolStripMenuItem();
                 newItem.Text = $"{(Settings.CurrentSettings.RecentImages.Count - i)}: {Settings.CurrentSettings.RecentImages[i]}";
                 newItem.Click += recentImage_Click;
@@ -2053,7 +2097,11 @@ namespace TotalImage
                 }
 
                 using (var destStream = new FileStream(Path.Combine(path, file.Name), FileMode.Create))
+                using (var fileStream = file.GetStream())
+                {
+                    fileStream.Position = 0; // reset position to zero because CopyTo will only go from current position
                     file.GetStream().CopyTo(destStream);
+                }
 
                 if (Settings.CurrentSettings.ExtractPreserveDates)
                 {
