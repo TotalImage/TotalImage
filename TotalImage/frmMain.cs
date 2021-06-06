@@ -879,7 +879,8 @@ namespace TotalImage
                 {
                     if (items.Length == 1)
                     {
-                        filepath = items[0];
+                        CloseImage();
+                        filepath = items[0];                      
                         OpenImage(filepath);
                     }
                     else //We don't support this yet - I suppose we should offer to create a new image first?
@@ -929,6 +930,7 @@ namespace TotalImage
                 {
                     if (items.Length == 1)
                     {
+                        CloseImage();
                         filepath = items[0];
                         OpenImage(filepath);
                     }
@@ -1583,8 +1585,13 @@ namespace TotalImage
         //Opens an image
         private void OpenImage(string? path)
         {
+            if (path is not null && (path == "" || path.Trim() == ""))
+            {
+                throw new ArgumentException("path must be either a valid path for existing files, or null when opening newly created files!");
+            }
+
             //Opening an existing file, otherwise it's a newly created image
-            if (path != null)
+            if (path is not null)
             {
                 filepath = path;
                 filename = Path.GetFileName(path);
