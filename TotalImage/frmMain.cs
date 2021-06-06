@@ -1607,7 +1607,7 @@ namespace TotalImage
                     CloseImage();
                     return;
                 }
-                catch (IOException)
+                catch (IOException e) when ((e.HResult & 0x0000FFFF) == 32)
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
