@@ -66,7 +66,7 @@ namespace TotalImage.FileSystems.ISO
                     continue;
                 }
 
-                var record = new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)]);
+                var record = new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor);
 
                 // A record whose identifier is a single zero byte is the current directory
                 // A record whose identifier is a single one byte is either the parent directory or the root directory if it is the root directory

@@ -68,7 +68,7 @@ namespace TotalImage.FileSystems.ISO
             {
                 IsoVolumeDescriptorType.PrimaryVolumeDescriptor => new IsoPrimaryVolumeDescriptor(record, type, identifier, version),
                 IsoVolumeDescriptorType.BootRecord => new IsoBootVolumeDescriptor(record, type, identifier, version),
-                IsoVolumeDescriptorType.SupplementaryVolumeDescriptor => new IsoUnknownVolumeDescriptor(record, type, identifier, version),
+                IsoVolumeDescriptorType.SupplementaryVolumeDescriptor => new IsoSecondaryVolumeDescriptor(record, type, identifier, version),
                 IsoVolumeDescriptorType.VolumePartitionDescriptor => new IsoPartitionVolumeDescriptor(record, type, identifier, version),
                 IsoVolumeDescriptorType.VolumeDescriptorSetTerminator => new IsoSetTerminatorVolumeDescriptor(type, identifier, version),
                 _ => new IsoUnknownVolumeDescriptor(record, type, identifier, version),

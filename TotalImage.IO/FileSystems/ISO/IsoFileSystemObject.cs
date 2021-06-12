@@ -83,8 +83,9 @@ namespace TotalImage.FileSystems.ISO
         /// Create an ISO 9660 directory record
         /// </summary>
         /// <param name="record">A span containing the directory record</param>
+        /// <param name="isUnicode">Indicating whether the record should be treated as unicode</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the span provided does not cover the entire record</exception>
-        public IsoFileSystemObject(in ReadOnlySpan<byte> record)
+        public IsoFileSystemObject(in ReadOnlySpan<byte> record, bool isUnicode)
         {
             if (record[0] > record.Length)
             {
@@ -102,9 +103,22 @@ namespace TotalImage.FileSystems.ISO
             VolumeSequenceNumber = IsoUtilities.ReadUInt16MultiEndian(record[28..32]);
             FileIdentifierLength = record[32];
 
-            char[] textBuffer = new char[FileIdentifierLength];
-            Encoding.ASCII.GetChars(record[33..(33 + FileIdentifierLength)], textBuffer);
-            FileIdentifier = new string(textBuffer);
+            var nameBytes = record[33..(33 + FileIdentifierLength)];
+            if (nameBytes.Length == 1 && nameBytes[0] == 0)
+            {
+                FileIdentifier = "\u0000";
+            }
+            else if (nameBytes.Length == 1 && nameBytes[0] == 1)
+            {
+                FileIdentifier = "\u0001";
+            }
+            else
+            {
+                Encoding encoding = isUnicode ? Encoding.BigEndianUnicode : Encoding.ASCII;
+                char[] textBuffer = new char[encoding.GetCharCount(nameBytes)];
+                encoding.GetChars(nameBytes, textBuffer);
+                FileIdentifier = new string(textBuffer);
+            }
 
             int systemUseStart = 33 + FileIdentifierLength;
             if (systemUseStart % 2 == 1) systemUseStart++; // account for padding field

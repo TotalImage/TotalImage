@@ -2,6 +2,7 @@
 using System.Buffers.Binary;
 using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace TotalImage.FileSystems.ISO
@@ -12,6 +13,13 @@ namespace TotalImage.FileSystems.ISO
     public class IsoPrimaryVolumeDescriptor : IsoVolumeDescriptor
     {
         private static readonly char[] trimCharacters = new char[] { '\0', ' ' };
+
+        private static readonly byte[][] jolietEscapeSequences = new byte[][]
+        {
+            new byte[] { 0x25, 0x2f, 0x40 }, // Level 1
+            new byte[] { 0x25, 0x2f, 0x43 }, // Level 2
+            new byte[] { 0x25, 0x2f, 0x45 } // Level 3
+        };
 
         /// <summary>
         /// The system that can read the first 16 sectors of the image
@@ -139,6 +147,11 @@ namespace TotalImage.FileSystems.ISO
         public ImmutableArray<byte> ApplicationContent { get; }
 
         /// <summary>
+        /// Indicates whether the volume descriptor is a Joliet secondary volume descriptor
+        /// </summary>
+        public bool IsJolietVolumeDescriptor { get; }
+
+        /// <summary>
         /// Create an ISO 9660 primary volume descriptor
         /// </summary>
         /// <param name="record">A span containing the volume descriptor record</param>
@@ -148,12 +161,31 @@ namespace TotalImage.FileSystems.ISO
         public IsoPrimaryVolumeDescriptor(in ReadOnlySpan<byte> record, in IsoVolumeDescriptorType type, in ImmutableArray<byte> identifier, in byte version)
             : base(type, identifier, version)
         {
+            bool isUnicode = false;
+            if (type == IsoVolumeDescriptorType.SupplementaryVolumeDescriptor)
+            {
+                for (int i = 0; i < jolietEscapeSequences.Length; i++)
+                {
+                    isUnicode = record[88..91].SequenceEqual(jolietEscapeSequences[i].AsSpan());
+                    if (isUnicode)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            IsJolietVolumeDescriptor = isUnicode;
+
+            Encoding encoding = isUnicode
+                ? Encoding.BigEndianUnicode
+                : Encoding.ASCII;
+
             char[] textBuffer = new char[32];
 
-            Encoding.ASCII.GetChars(record[8..40], textBuffer);
+            encoding.GetChars(record[8..40], textBuffer);
             SystemIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            Encoding.ASCII.GetChars(record[40..72], textBuffer);
+            encoding.GetChars(record[40..72], textBuffer);
             VolumeIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
             VolumeSpace = IsoUtilities.ReadUInt32MultiEndian(record[80..88]);
@@ -170,31 +202,31 @@ namespace TotalImage.FileSystems.ISO
             MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[148..152]);
             MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[152..156]);
 
-            RootDirectory = new IsoFileSystemObject(record[156..190]);
+            RootDirectory = new IsoFileSystemObject(record[156..190], isUnicode);
 
             textBuffer = new char[128];
 
-            Encoding.ASCII.GetChars(record[190..318], textBuffer);
+            encoding.GetChars(record[190..318], textBuffer);
             VolumeSetIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            Encoding.ASCII.GetChars(record[318..446], textBuffer);
+            encoding.GetChars(record[318..446], textBuffer);
             PublisherIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            Encoding.ASCII.GetChars(record[446..574], textBuffer);
+            encoding.GetChars(record[446..574], textBuffer);
             DataPreparerIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            Encoding.ASCII.GetChars(record[574..702], textBuffer);
+            encoding.GetChars(record[574..702], textBuffer);
             ApplicationIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
             textBuffer = new char[37];
 
-            Encoding.ASCII.GetChars(record[702..739], textBuffer);
+            encoding.GetChars(record[702..739], textBuffer);
             CopyrightFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            Encoding.ASCII.GetChars(record[739..776], textBuffer);
+            encoding.GetChars(record[739..776], textBuffer);
             AbstractFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            Encoding.ASCII.GetChars(record[776..813], textBuffer);
+            encoding.GetChars(record[776..813], textBuffer);
             BibliographicFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
             textBuffer = new char[17];

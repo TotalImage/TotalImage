@@ -80,8 +80,8 @@ namespace TotalImage.FileSystems.ISO
         /// </summary>
         /// <param name="fso">The file system record</param>
         /// <param name="fileSystem">The file system containing the file</param>
-        /// <param name="parent">The parent directory, if any</param>
-        public IsoFile(IsoFileSystemObject fso, FileSystem fileSystem, Directory? parent = null) : base(fileSystem, parent)
+        /// <param name="parent">The parent directory</param>
+        public IsoFile(IsoFileSystemObject fso, FileSystem fileSystem, Directory parent) : base(fileSystem, parent)
         {
             Record = fso;
         }

@@ -21,13 +21,18 @@ namespace TotalImage.FileSystems.ISO
                 throw new ArgumentOutOfRangeException(nameof(date));
             }
 
+            if (date[0] == '\u0000')
+            {
+                return null;
+            }
+
             bool success = int.TryParse(date[0..4], out int year);
             success &= int.TryParse(date[4..6], out int month);
             success &= int.TryParse(date[6..8], out int day);
             success &= int.TryParse(date[8..10], out int hour);
             success &= int.TryParse(date[10..12], out int minute);
             success &= int.TryParse(date[12..14], out int second);
-            success &= int.TryParse(date[14..16], out int hundredths);
+            int.TryParse(date[14..16], out int hundredths); // not required for successful parsing
 
             if (!success)
             {

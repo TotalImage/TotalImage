@@ -26,6 +26,8 @@ namespace TotalImage.FileSystems.ISO
         public IsoPrimaryVolumeDescriptor PrimaryVolumeDescriptor
             => VolumeDescriptors
                 .OfType<IsoPrimaryVolumeDescriptor>()
+                .OrderByDescending(e => e.IsJolietVolumeDescriptor)
+                .ThenByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
                 .First();
 
         /// <summary>
@@ -57,6 +59,8 @@ namespace TotalImage.FileSystems.ISO
 
             IsoPrimaryVolumeDescriptor? primaryDescriptor = VolumeDescriptors
                 .OfType<IsoPrimaryVolumeDescriptor>()
+                .OrderByDescending(e => e.IsJolietVolumeDescriptor)
+                .ThenByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
                 .FirstOrDefault();
             if (primaryDescriptor == null)
             {
