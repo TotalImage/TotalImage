@@ -169,6 +169,11 @@ namespace TotalImage.FileSystems.ISO
                         FileIdentifierVersion = 1;
                     }
                 }
+                else
+                {
+                    FileIdentifierExtension = "";
+                    FileIdentifierVersion = 1;
+                }
 
             }
 

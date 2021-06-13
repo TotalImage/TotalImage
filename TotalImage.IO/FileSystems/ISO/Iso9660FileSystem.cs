@@ -46,6 +46,11 @@ namespace TotalImage.FileSystems.ISO
                 containerStream.Read(recordBytes);
 
                 var record = IsoVolumeDescriptor.ReadVolumeDescriptor(recordBytes, this);
+                if (record == null)
+                {
+                    break;
+                }
+
                 if (!record.IsValid())
                 {
                     throw new InvalidDataException();

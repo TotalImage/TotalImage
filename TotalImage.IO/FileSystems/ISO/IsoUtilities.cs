@@ -9,6 +9,12 @@ namespace TotalImage.FileSystems.ISO
     /// </summary>
     public static class IsoUtilities
     {
+        private static readonly char[][] _blacklistedDates = new char[][]
+        {
+            "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000".ToCharArray(),
+            "00000000000000000".ToCharArray()
+        };
+
         /// <summary>
         /// Converts an ISO-9660 date format to a DateTimeOffset
         /// </summary>
@@ -21,9 +27,12 @@ namespace TotalImage.FileSystems.ISO
                 throw new ArgumentOutOfRangeException(nameof(date));
             }
 
-            if (date[0] == '\u0000')
+            foreach (var badDate in _blacklistedDates)
             {
-                return null;
+                if (date.SequenceEqual(badDate))
+                {
+                    return null;
+                }
             }
 
             bool success = int.TryParse(date[0..4], out int year);
@@ -47,7 +56,20 @@ namespace TotalImage.FileSystems.ISO
             }
 
             TimeSpan offset = TimeSpan.FromMinutes((sbyte)date[6] * 15);
-            return new DateTimeOffset(year, month, day, hour, minute, second, hundredths * 10, offset);
+
+            try
+            {
+                return new DateTimeOffset(year, month, day, hour, minute, second, hundredths * 10, offset);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                /*
+                 * This does not make any sense as a date.
+                 * For safety's sake, we're just going to pretend it's not a date at all
+                 */
+
+                return null;
+            }
         }
 
         /// <summary>
@@ -57,7 +79,7 @@ namespace TotalImage.FileSystems.ISO
         /// <returns>a DateTimeOffset containing the time</returns>
         public static DateTimeOffset? FromIsoRecordingDateTime(ReadOnlySpan<byte> date)
         {
-            if(date.Length != 7)
+            if (date.Length != 7)
             {
                 throw new ArgumentOutOfRangeException(nameof(date));
             }
