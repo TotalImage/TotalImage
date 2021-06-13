@@ -202,7 +202,7 @@ namespace TotalImage.FileSystems.ISO
             MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[148..152]);
             MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[152..156]);
 
-            RootDirectory = new IsoFileSystemObject(record[156..190], isUnicode);
+            RootDirectory = new IsoFileSystemObject(record[156..190], isUnicode, true);
 
             textBuffer = new char[128];
 

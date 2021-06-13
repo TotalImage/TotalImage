@@ -16,7 +16,9 @@ namespace TotalImage.FileSystems.ISO
         /// <inheritdoc />
         public override string Name
         {
-            get => Record.FileIdentifier;
+            get => string.IsNullOrEmpty(Record.FileIdentifierExtension)
+                ? Record.FileIdentifierName
+                : $"{Record.FileIdentifierName}.{Record.FileIdentifierExtension}";
             set => throw new NotImplementedException();
         }
 

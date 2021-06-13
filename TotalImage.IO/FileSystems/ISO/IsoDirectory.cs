@@ -12,10 +12,16 @@ namespace TotalImage.FileSystems.ISO
         /// <summary>
         /// The internal file system record for the directory
         /// </summary>
-        protected  IsoFileSystemObject Record { get; }
+        protected IsoFileSystemObject Record { get; }
 
         /// <inheritdoc />
-        public override string Name { get => Record.FileIdentifier; set => throw new NotImplementedException(); }
+        public override string Name
+        {
+            get => string.IsNullOrEmpty(Record.FileIdentifierExtension)
+                ? Record.FileIdentifierName
+                : $"{Record.FileIdentifierName}.{Record.FileIdentifierExtension}";
+            set => throw new NotImplementedException();
+        }
 
         /// <inheritdoc />
         public override FileAttributes Attributes { get => FileAttributes.Directory; set => throw new NotImplementedException(); }
@@ -70,7 +76,7 @@ namespace TotalImage.FileSystems.ISO
 
                 // A record whose identifier is a single zero byte is the current directory
                 // A record whose identifier is a single one byte is either the parent directory or the root directory if it is the root directory
-                if (record.FileIdentifier != "\u0000" && record.FileIdentifier != "\u0001")
+                if (record.FileIdentifierName != "\u0000" && record.FileIdentifierName != "\u0001")
                 {
                     if (record.FileFlags.HasFlag(IsoFileFlags.Directory))
                     {
