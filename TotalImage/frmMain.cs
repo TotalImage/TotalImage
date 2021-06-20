@@ -907,14 +907,66 @@ namespace TotalImage
             ResetView();
         }
 
+        /* Fires when the user starts dragging a ListViewItem around. String array is needed for Explorer to perform the move operation once
+         * the drop is performed.
+         * TODO: Build an array of selected ListViewItems and path strings to perform the drag and drop with */
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            //DoDragDrop(e.Item, DragDropEffects.Move);
+            if (e.Button == MouseButtons.Left)
+            {
+                string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage");
+                if (!Directory.Exists(tempdir))
+                {
+                    Directory.CreateDirectory(tempdir);
+                }
+
+                List<string> files = new List<string>();
+                foreach (TiFileSystemObject fso in SelectedItems)
+                {
+                    string item = Path.Combine(tempdir, filename, fso.Name);
+                    if (fso.Attributes.HasFlag(FileAttributes.Directory))
+                        item += @"\";
+                    
+                    files.Add(item);
+                    Debug.WriteLine(item);
+                }
+                string[] draggedItems = files.ToArray();
+
+                DataObject data = new DataObject();
+                data.SetData(DataFormats.FileDrop, draggedItems); //Needed for Explorer
+                lstFiles.DoDragDrop(data, DragDropEffects.Copy | DragDropEffects.Move);
+            }
         }
 
+        /* Fires when the user starts dragging a TreeNode around. String array is needed for Explorer to perform the move operation once
+         * the drop is performed.
+         * TODO: Build an array of selected TreeNodes and path strings to perform the drag and drop with */
         private void lstDirectories_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            //DoDragDrop(e.Item, DragDropEffects.Move);
+            if (e.Button == MouseButtons.Left)
+            {
+                string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage");
+                if (!Directory.Exists(tempdir))
+                {
+                    Directory.CreateDirectory(tempdir);
+                }
+
+                //This array is needed for Explorer to perform the file copy/move operation later on.
+                string[] dirs = new string[1];
+                if (lstDirectories.SelectedNode == lstDirectories.Nodes[0])
+                {
+                    dirs[0] = Path.Combine(tempdir, filename) + @"\";
+                }
+                else
+                {
+                    dirs[0] = Path.Combine(tempdir, filename, lstDirectories.SelectedNode.Text) + @"\";
+                }
+
+                Debug.WriteLine(dirs[0]);
+                DataObject data = new DataObject();
+                data.SetData(DataFormats.FileDrop, dirs); //FileDrop is needed for Explorer
+                lstDirectories.DoDragDrop(data, DragDropEffects.Copy | DragDropEffects.Move);
+            }
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
