@@ -247,9 +247,11 @@ namespace TotalImage
             // 
             // dlgNewImage
             // 
+            this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(399, 301);
             this.Controls.Add(this.gbxOptions);
             this.Controls.Add(this.gbxMediaType);

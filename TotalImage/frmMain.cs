@@ -40,6 +40,7 @@ namespace TotalImage
         private TiDirectory lastViewedDir;
         internal static Dictionary<string, (string name, int iconIndex)> fileTypes = new Dictionary<string, (string name, int iconIndex)>(StringComparer.InvariantCultureIgnoreCase);
         private string? lastSavedFilename;
+        private TiDirectory draggedDir;
 
         private ListViewItem upOneFolderListViewItem = new ListViewItem()
         {
@@ -205,9 +206,8 @@ namespace TotalImage
 
                 //Create a new image and immediately open it
                 image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
-                OpenImage(null);
-
                 unsavedChanges = true;
+                OpenImage(null);
             }
         }
 
@@ -428,7 +428,7 @@ namespace TotalImage
 
                 return true;
             }
-            else if(result == DialogResult.Cancel)
+            else if (result == DialogResult.Cancel)
             {
                 return false;
             }
@@ -459,7 +459,7 @@ namespace TotalImage
                 {
                     if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
                     {
-                        if(!saveFileAs())
+                        if (!saveFileAs())
                         {
                             return;
                         }
@@ -829,100 +829,28 @@ namespace TotalImage
             lstFiles.SelectAllItems();
         }
 
-        private void lstFiles_DragEnter(object sender, DragEventArgs e)
+        private void list_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && image == null)
                 e.Effect = DragDropEffects.Copy;
-            /*else if (e.Data.GetDataPresent(typeof(ListViewItem)) || e.Data.GetDataPresent(typeof(TreeNode)))
-                e.Effect = DragDropEffects.Move;*/
             else
                 e.Effect = DragDropEffects.None;
         }
 
-        //Opens an image that's been dragged and dropped onto the file list
-        //TODO: Implement item movement for ListViewItem and TreeNode drag-n-drop
-        private void lstFiles_DragDrop(object sender, DragEventArgs e)
+        /* Drag and drop was performed on the ListView - a file was dragged into the ListView/TreeView from Explorer => try to open it
+         * Right now, we only handle case a for opening a single file that was dragged into the window.
+         * TODO: Implement other drag and drop scenarios (moving files within the image, etc.). */
+        private void list_DragDrop(object sender, DragEventArgs e)
         {
-            /*if (e.Data.GetDataPresent(typeof(ListViewItem)))
-            {
-                //A file or folder is being moved within the listview
-                throw new NotImplementedException("This feature is not implemented yet");
-            }
-            else if (e.Data.GetDataPresent(typeof(TreeNode)))
-            {
-                //A folder is being moved from the treeview to the listview. First needs to check if such a move is even legal;
-                 //as this could potentially allow the user to move a parent folder into its own subfolder...
-                throw new NotImplementedException("This feature is not implemented yet");
-            }
-            else */
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && image == null)
             {
                 //Files are being dragged into the listview from outside the form
                 string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
-                if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
+                if (items.Length == 1)
                 {
-                    if (items.Length == 1)
-                    {
-                        CloseImage();
-                        filepath = items[0];                      
-                        OpenImage(filepath);
-                    }
-                    else //We don't support this yet - I suppose we should offer to create a new image first?
-                    {
-                        throw new NotImplementedException("This feature is not implemented yet");
-                    }
-                }
-                else if (!string.IsNullOrWhiteSpace(filename) || unsavedChanges) //An image is open (either saved or new)
-                {
-                    //Inject files/folder instead
-                    throw new NotImplementedException("This feature is not implemented yet");
-                }
-            }
-        }
-
-        private void lstDirectories_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.Copy;
-            /*else if (e.Data.GetDataPresent(typeof(ListViewItem)) || e.Data.GetDataPresent(typeof(TreeNode)))
-                e.Effect = DragDropEffects.Move;*/
-            else
-                e.Effect = DragDropEffects.None;
-        }
-
-        //Opens an image that's been dragged and dropped onto the dir tree
-        //TODO: Implement item movement for ListViewItem and TreeNode drag-n-drop
-        private void lstDirectories_DragDrop(object sender, DragEventArgs e)
-        {
-            /*if (e.Data.GetDataPresent(typeof(ListViewItem)))
-            {
-                //A file or folder is being moved from the listview to the treeview
-                throw new NotImplementedException("This feature is not implemented yet");
-            }
-            else if (e.Data.GetDataPresent(typeof(TreeNode)))
-            {
-                //A folder is being moved within the treeview. First needs to check if such a move is even legal;
-                //as this could potentially allow the user to move a parent folder into its own subfolder...
-                throw new NotImplementedException("This feature is not implemented yet");
-            }
-            else */
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
-                if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
-                {
-                    if (items.Length == 1)
-                    {
-                        CloseImage();
-                        filepath = items[0];
-                        OpenImage(filepath);
-                    }
-                    else //We don't support this yet - I suppose we should offer to create a new image first?
-                    {
-                        throw new NotImplementedException("This feature is not implemented yet");
-                    }
+                    CloseImage();
+                    filepath = items[0];
+                    OpenImage(filepath);
                 }
             }
         }
@@ -987,14 +915,73 @@ namespace TotalImage
             ResetView();
         }
 
+        /* Fires when the user starts dragging a ListViewItem around. String array is needed for Explorer to perform the move operation once
+         * the drop is performed.
+         * TODO: Build an array of selected ListViewItems and path strings to perform the drag and drop with */
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            //DoDragDrop(e.Item, DragDropEffects.Move);
+            if (e.Button == MouseButtons.Left)
+            {
+                string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
+                if (!Directory.Exists(tempdir))
+                {
+                    Directory.CreateDirectory(tempdir);
+                }
+
+                if(((ListViewItem)e.Item).Text == "..")
+                {
+                    return;
+                }
+
+                List<string> items = new List<string>();
+                foreach (TiFileSystemObject fso in SelectedItems)
+                {
+                    string item = Path.Combine(tempdir, fso.Name);                    
+                    items.Add(item);
+                }
+                string[] draggedItems = items.ToArray();
+
+                DataObject data = new DataObject();
+                data.SetData(DataFormats.FileDrop, draggedItems); //Needed for Explorer
+                lstFiles.DoDragDrop(data, DragDropEffects.Move);
+            }
         }
 
+        /* Fires when the user starts dragging a TreeNode around. String array is needed for Explorer to perform the move operation once
+         * the drop is performed.
+         * TODO: Build an array of selected TreeNodes and path strings to perform the drag and drop with */
         private void lstDirectories_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            //DoDragDrop(e.Item, DragDropEffects.Move);
+            if (e.Button == MouseButtons.Left)
+            {
+                string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
+                if (!Directory.Exists(tempdir))
+                {
+                    Directory.CreateDirectory(tempdir);
+                }
+
+                //This array is needed for Explorer to perform the file copy/move operation later on.
+                List<string> items = new List<string>();
+                draggedDir = (TiDirectory)((TreeNode)e.Item).Tag;
+                if (draggedDir.Parent == null)
+                {
+                    /* Add the root dir contents (non-recursively) to the list instead of the tempdir itself, so Explorer doesn't end up moving it
+                     * instead of the contents. */
+                    foreach (var fso in draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false))
+                    {
+                        items.Add(Path.Combine(tempdir, fso.Name));
+                    }
+                }
+                else
+                {
+                    items.Add(Path.Combine(tempdir, draggedDir.Name));
+                }
+                string[] itemsArray = items.ToArray();
+
+                DataObject data = new DataObject();
+                data.SetData(DataFormats.FileDrop, itemsArray); //FileDrop is needed for Explorer
+                lstDirectories.DoDragDrop(data, DragDropEffects.Move);
+            }
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -1381,6 +1368,60 @@ namespace TotalImage
         private void lstDirectories_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
 
+        }
+
+        private void list_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        {
+            //ESC cancels the drag and drop action
+            if (e.EscapePressed)
+            {
+                e.Action = DragAction.Cancel;
+                Directory.Delete(Path.Combine(Path.GetTempPath(), "TotalImage", filename), true);
+                return;
+            }
+
+            /* If the left mouse button was released, complete the drag and drop operation. In our case, this means that any files or folders 
+             * that may have been dragged out of the window have to be extracted into a temporary folder first, then the drop is performed so 
+             * Explorer will move these items to the actual drag and drop destination. Dropping inside the window is not supported yet. */
+            if ((e.KeyState & 1) == 0)
+            {
+                if (!ClientRectangle.Contains(PointToClient(MousePosition)))
+                {
+                    //Here is where the actual extraction to the temp dir happens
+                    if(sender is ListView)
+                    {
+                        ExtractFiles(SelectedItems, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
+                    }
+                    else if(sender is TreeView)
+                    {
+                        if (draggedDir.Parent == null) //Root dir needs to be treated separately
+                        {
+                            ExtractFiles(draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
+                        }
+                        else
+                        {
+                            List<TiFileSystemObject> dir = new List<TiFileSystemObject>();
+                            dir.Add(draggedDir);
+                            ExtractFiles(dir, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
+                        }
+                    }
+
+                    e.Action = DragAction.Drop;
+                    return;
+                }
+                else
+                {
+                    e.Action = DragAction.Cancel;
+                    Directory.Delete(Path.Combine(Path.GetTempPath(), "TotalImage", filename), true);
+                    return;
+                }
+            }
+            //Left mouse button wasn't released yes, continue the drag
+            else
+            {
+                e.Action = DragAction.Continue;
+                return;
+            }
         }
         #endregion
 
@@ -1943,8 +1984,7 @@ namespace TotalImage
             lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.Right;
             lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
 
-            //New image was created, enable the Save button to act as "Save as"
-            if (unsavedChanges && string.IsNullOrEmpty(filename))
+            if (unsavedChanges)
                 saveToolStripButton.Enabled = true;
 
             //Enabling this now since we have rudimentary HDD support.
