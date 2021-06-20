@@ -821,12 +821,10 @@ namespace TotalImage
             lstFiles.SelectAllItems();
         }
 
-        private void lstFiles_DragEnter(object sender, DragEventArgs e)
+        private void list_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && image == null)
                 e.Effect = DragDropEffects.Copy;
-            /*else if (e.Data.GetDataPresent(typeof(ListViewItem)) || e.Data.GetDataPresent(typeof(TreeNode)))
-                e.Effect = DragDropEffects.Move;*/
             else
                 e.Effect = DragDropEffects.None;
         }
@@ -871,16 +869,6 @@ namespace TotalImage
                     throw new NotImplementedException("This feature is not implemented yet");
                 }
             }
-        }
-
-        private void lstDirectories_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.Copy;
-            /*else if (e.Data.GetDataPresent(typeof(ListViewItem)) || e.Data.GetDataPresent(typeof(TreeNode)))
-                e.Effect = DragDropEffects.Move;*/
-            else
-                e.Effect = DragDropEffects.None;
         }
 
         //Opens an image that's been dragged and dropped onto the dir tree
