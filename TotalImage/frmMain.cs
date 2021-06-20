@@ -1378,7 +1378,7 @@ namespace TotalImage
                     }
                     else if(sender is TreeView)
                     {
-                        if (draggedDir.Name == @"\") //Root dir needs to be treated separately
+                        if (draggedDir.Parent == null) //Root dir needs to be treated separately
                         {
                             ExtractFiles(draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
                         }
