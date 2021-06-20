@@ -1237,7 +1237,7 @@ namespace TotalImage
             this.lstDirectories.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.lstDirectories_ItemDrag);
             this.lstDirectories.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.lstDirectories_BeforeSelect);
             this.lstDirectories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstDirectories_AfterSelect);
-            this.lstDirectories.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstDirectories_DragDrop);
+            this.lstDirectories.DragDrop += new System.Windows.Forms.DragEventHandler(this.list_DragDrop);
             this.lstDirectories.DragEnter += new System.Windows.Forms.DragEventHandler(this.list_DragEnter);
             this.lstDirectories.Enter += new System.EventHandler(this.lstDirectories_Enter);
             this.lstDirectories.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstDirectories_MouseUp);
@@ -1285,7 +1285,7 @@ namespace TotalImage
             this.lstFiles.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.lstFiles_RetrieveVirtualItem);
             this.lstFiles.SearchForVirtualItem += new System.Windows.Forms.SearchForVirtualItemEventHandler(this.lstFiles_SearchForVirtualItem);
             this.lstFiles.SelectedIndexChanged += new System.EventHandler(this.lstFiles_SelectedIndexChanged);
-            this.lstFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFiles_DragDrop);
+            this.lstFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.list_DragDrop);
             this.lstFiles.DragEnter += new System.Windows.Forms.DragEventHandler(this.list_DragEnter);
             this.lstFiles.Enter += new System.EventHandler(this.lstFiles_Enter);
             this.lstFiles.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lstFiles_KeyUp);

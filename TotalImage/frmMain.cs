@@ -420,7 +420,7 @@ namespace TotalImage
 
                 return true;
             }
-            else if(result == DialogResult.Cancel)
+            else if (result == DialogResult.Cancel)
             {
                 return false;
             }
@@ -451,7 +451,7 @@ namespace TotalImage
                 {
                     if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
                     {
-                        if(!saveFileAs())
+                        if (!saveFileAs())
                         {
                             return;
                         }
@@ -829,80 +829,20 @@ namespace TotalImage
                 e.Effect = DragDropEffects.None;
         }
 
-        //Opens an image that's been dragged and dropped onto the file list
-        //TODO: Implement item movement for ListViewItem and TreeNode drag-n-drop
-        private void lstFiles_DragDrop(object sender, DragEventArgs e)
+        /* Drag and drop was performed on the ListView - a file was dragged into the ListView/TreeView from Explorer => try to open it
+         * Right now, we only handle case a for opening a single file that was dragged into the window.
+         * TODO: Implement other drag and drop scenarios (moving files within the image, etc.). */
+        private void list_DragDrop(object sender, DragEventArgs e)
         {
-            /*if (e.Data.GetDataPresent(typeof(ListViewItem)))
-            {
-                //A file or folder is being moved within the listview
-                throw new NotImplementedException("This feature is not implemented yet");
-            }
-            else if (e.Data.GetDataPresent(typeof(TreeNode)))
-            {
-                //A folder is being moved from the treeview to the listview. First needs to check if such a move is even legal;
-                 //as this could potentially allow the user to move a parent folder into its own subfolder...
-                throw new NotImplementedException("This feature is not implemented yet");
-            }
-            else */
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && image == null)
             {
                 //Files are being dragged into the listview from outside the form
                 string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
-                if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
+                if (items.Length == 1)
                 {
-                    if (items.Length == 1)
-                    {
-                        CloseImage();
-                        filepath = items[0];                      
-                        OpenImage(filepath);
-                    }
-                    else //We don't support this yet - I suppose we should offer to create a new image first?
-                    {
-                        throw new NotImplementedException("This feature is not implemented yet");
-                    }
-                }
-                else if (!string.IsNullOrWhiteSpace(filename) || unsavedChanges) //An image is open (either saved or new)
-                {
-                    //Inject files/folder instead
-                    throw new NotImplementedException("This feature is not implemented yet");
-                }
-            }
-        }
-
-        //Opens an image that's been dragged and dropped onto the dir tree
-        //TODO: Implement item movement for ListViewItem and TreeNode drag-n-drop
-        private void lstDirectories_DragDrop(object sender, DragEventArgs e)
-        {
-            /*if (e.Data.GetDataPresent(typeof(ListViewItem)))
-            {
-                //A file or folder is being moved from the listview to the treeview
-                throw new NotImplementedException("This feature is not implemented yet");
-            }
-            else if (e.Data.GetDataPresent(typeof(TreeNode)))
-            {
-                //A folder is being moved within the treeview. First needs to check if such a move is even legal;
-                //as this could potentially allow the user to move a parent folder into its own subfolder...
-                throw new NotImplementedException("This feature is not implemented yet");
-            }
-            else */
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
-                if (string.IsNullOrWhiteSpace(filename) && unsavedChanges == false) //No image is loaded
-                {
-                    if (items.Length == 1)
-                    {
-                        CloseImage();
-                        filepath = items[0];
-                        OpenImage(filepath);
-                    }
-                    else //We don't support this yet - I suppose we should offer to create a new image first?
-                    {
-                        throw new NotImplementedException("This feature is not implemented yet");
-                    }
+                    CloseImage();
+                    filepath = items[0];
+                    OpenImage(filepath);
                 }
             }
         }
