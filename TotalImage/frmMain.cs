@@ -40,6 +40,7 @@ namespace TotalImage
         private TiDirectory lastViewedDir;
         internal static Dictionary<string, (string name, int iconIndex)> fileTypes = new Dictionary<string, (string name, int iconIndex)>(StringComparer.InvariantCultureIgnoreCase);
         private string? lastSavedFilename;
+        private TiDirectory draggedDir;
 
         private ListViewItem upOneFolderListViewItem = new ListViewItem()
         {
@@ -914,27 +915,28 @@ namespace TotalImage
         {
             if (e.Button == MouseButtons.Left)
             {
-                string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage");
+                string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
                 if (!Directory.Exists(tempdir))
                 {
                     Directory.CreateDirectory(tempdir);
                 }
 
-                List<string> files = new List<string>();
+                if(((ListViewItem)e.Item).Text == "..")
+                {
+                    return;
+                }
+
+                List<string> items = new List<string>();
                 foreach (TiFileSystemObject fso in SelectedItems)
                 {
-                    string item = Path.Combine(tempdir, filename, fso.Name);
-                    if (fso.Attributes.HasFlag(FileAttributes.Directory))
-                        item += @"\";
-                    
-                    files.Add(item);
-                    Debug.WriteLine(item);
+                    string item = Path.Combine(tempdir, fso.Name);                    
+                    items.Add(item);
                 }
-                string[] draggedItems = files.ToArray();
+                string[] draggedItems = items.ToArray();
 
                 DataObject data = new DataObject();
                 data.SetData(DataFormats.FileDrop, draggedItems); //Needed for Explorer
-                lstFiles.DoDragDrop(data, DragDropEffects.Copy | DragDropEffects.Move);
+                lstFiles.DoDragDrop(data, DragDropEffects.Move);
             }
         }
 
@@ -945,27 +947,33 @@ namespace TotalImage
         {
             if (e.Button == MouseButtons.Left)
             {
-                string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage");
+                string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
                 if (!Directory.Exists(tempdir))
                 {
                     Directory.CreateDirectory(tempdir);
                 }
 
                 //This array is needed for Explorer to perform the file copy/move operation later on.
-                string[] dirs = new string[1];
-                if (lstDirectories.SelectedNode == lstDirectories.Nodes[0])
+                List<string> items = new List<string>();
+                draggedDir = (TiDirectory)((TreeNode)e.Item).Tag;
+                if (draggedDir.Parent == null)
                 {
-                    dirs[0] = Path.Combine(tempdir, filename) + @"\";
+                    /* Add the root dir contents (non-recursively) to the list instead of the tempdir itself, so Explorer doesn't end up moving it
+                     * instead of the contents. */
+                    foreach (var fso in draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false))
+                    {
+                        items.Add(Path.Combine(tempdir, fso.Name));
+                    }
                 }
                 else
                 {
-                    dirs[0] = Path.Combine(tempdir, filename, lstDirectories.SelectedNode.Text) + @"\";
+                    items.Add(Path.Combine(tempdir, draggedDir.Name));
                 }
+                string[] itemsArray = items.ToArray();
 
-                Debug.WriteLine(dirs[0]);
                 DataObject data = new DataObject();
-                data.SetData(DataFormats.FileDrop, dirs); //FileDrop is needed for Explorer
-                lstDirectories.DoDragDrop(data, DragDropEffects.Copy | DragDropEffects.Move);
+                data.SetData(DataFormats.FileDrop, itemsArray); //FileDrop is needed for Explorer
+                lstDirectories.DoDragDrop(data, DragDropEffects.Move);
             }
         }
 
@@ -1344,6 +1352,60 @@ namespace TotalImage
         private void lstDirectories_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
 
+        }
+
+        private void list_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        {
+            //ESC cancels the drag and drop action
+            if (e.EscapePressed)
+            {
+                e.Action = DragAction.Cancel;
+                Directory.Delete(Path.Combine(Path.GetTempPath(), "TotalImage", filename), true);
+                return;
+            }
+
+            /* If the left mouse button was released, complete the drag and drop operation. In our case, this means that any files or folders 
+             * that may have been dragged out of the window have to be extracted into a temporary folder first, then the drop is performed so 
+             * Explorer will move these items to the actual drag and drop destination. Dropping inside the window is not supported yet. */
+            if ((e.KeyState & 1) == 0)
+            {
+                if (!ClientRectangle.Contains(PointToClient(MousePosition)))
+                {
+                    //Here is where the actual extraction to the temp dir happens
+                    if(sender is ListView)
+                    {
+                        ExtractFiles(SelectedItems, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
+                    }
+                    else if(sender is TreeView)
+                    {
+                        if (draggedDir.Name == @"\") //Root dir needs to be treated separately
+                        {
+                            ExtractFiles(draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
+                        }
+                        else
+                        {
+                            List<TiFileSystemObject> dir = new List<TiFileSystemObject>();
+                            dir.Add(draggedDir);
+                            ExtractFiles(dir, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
+                        }
+                    }
+
+                    e.Action = DragAction.Drop;
+                    return;
+                }
+                else
+                {
+                    e.Action = DragAction.Cancel;
+                    Directory.Delete(Path.Combine(Path.GetTempPath(), "TotalImage", filename), true);
+                    return;
+                }
+            }
+            //Left mouse button wasn't released yes, continue the drag
+            else
+            {
+                e.Action = DragAction.Continue;
+                return;
+            }
         }
         #endregion
 
