@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace TotalImage
 {
@@ -45,7 +46,7 @@ namespace TotalImage
                 DefaultButton = TaskDialogButton.No
             });
 
-            if(result == TaskDialogButton.Yes)
+            if (result == TaskDialogButton.Yes)
             {
                 Settings.LoadDefaults();
                 Settings.Save();
@@ -120,10 +121,113 @@ namespace TotalImage
             //CheckFileAssociations();
         }
 
-        //TODO: This method should check the registry for current file associations and update the UI accordingly
+        //TODO: This method should check the registry for current file associations and mark relevant listviewitems in the listview as checked
         private void CheckFileAssociations()
         {
             throw new NotImplementedException();
+        }
+
+
+        /* TODO: This is the gist of it. It bypasses Microsoft's silly attempt at preventing programs from claiming extensions programatically
+         * like they always used to - no prompt for the user will show up after opening the file after association changed in this case. 
+         * Currently only .img is associated for the raw images type, other related extensions need to be associated too. */
+        private void SetFileAssociations()
+        {
+            //First create all the ProgIDs if neccessary
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Classes\TotalImage.Raw");
+            if (key != null)
+            {
+                key.SetValue("", "Raw sector image");
+                key = key.CreateSubKey(@"shell\open\command");
+                if (key != null)
+                {
+                    key.SetValue("", $"\"{Path.Combine(Application.StartupPath, "TotalImage.exe")}\" \"%1\"");
+                }
+            }
+
+            key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Classes\TotalImage.Iso");
+            if (key != null)
+            {
+                key.SetValue("", "ISO image");
+                key = key.CreateSubKey(@"shell\open\command");
+                if (key != null)
+                {
+                    key.SetValue("", $"\"{Path.Combine(Application.StartupPath, "TotalImage.exe")}\" \"%1\"");
+                }
+            }
+
+            /* Then associate selected file extensions:
+             * 1. Associate the extension with the relevant ProgID
+             * 2. Add TotalImage to the MRUList for the extension
+             * 3. Add our ProgID to the ProgID list for the extension
+             * 4. Delete the UserChoice key (if it exists) for the extension
+             * 5. All your extension are belong to us! :-) */
+            if (lstFileTypes.CheckedItems.ContainsKey("TotalImage.Raw"))
+            {
+                key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Classes\.img");
+                if (key != null)
+                {
+                    key.SetValue("", "TotalImage.Raw");
+                }
+
+                key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.img");
+                if (key != null)
+                {
+                    //Lazy approach: just default to the last possible letter as the value name (which is j), rather than bother finding the next free letter...
+                    key = key.CreateSubKey("OpenWithList");
+                    key.SetValue("j", "TotalImage.exe", RegistryValueKind.String);
+                    string mrulist = key.GetValue("MRUList").ToString();
+                    mrulist = mrulist.Insert(0, "j");
+                    key.SetValue("MRUList", mrulist, RegistryValueKind.String);
+                }
+
+                key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.img");
+                if (key != null)
+                {
+                    key = key.CreateSubKey("OpenWithProgids");
+                    key.SetValue("TotalImage.Raw", new byte[0], RegistryValueKind.None);
+                }
+
+                key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.img", true);
+                if (key != null)
+                {
+                    key.DeleteSubKey("UserChoice", false);
+                }
+            }
+
+            if (lstFileTypes.CheckedItems.ContainsKey("TotalImage.Iso"))
+            {
+                key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Classes\.iso");
+                if (key != null)
+                {
+                    key.SetValue("", "TotalImage.Iso");
+                }
+
+                key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.iso");
+                if (key != null)
+                {
+                    key = key.CreateSubKey("OpenWithList");
+                    key.SetValue("j", "TotalImage.exe", RegistryValueKind.String);
+                    string mrulist = key.GetValue("MRUList").ToString();
+                    mrulist = mrulist.Insert(0, "j");
+                    key.SetValue("MRUList", mrulist, RegistryValueKind.String);
+                }
+
+                key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.iso");
+                if (key != null)
+                {
+                    key = key.CreateSubKey("OpenWithProgids");
+                    key.SetValue("TotalImage.Iso", new byte[0], RegistryValueKind.None);
+                }
+
+                key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.iso", true);
+                if (key != null)
+                {
+                    key.DeleteSubKey("UserChoice", false);
+                }
+            }
+
+            key.Close();
         }
 
         private void btnBrowse_Click(object sender, System.EventArgs e)
@@ -183,11 +287,13 @@ namespace TotalImage
                 Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.Ignore;
 
             Settings.Save();
+
+            SetFileAssociations();
         }
 
         private void btnSelectAll_Click(object sender, EventArgs e)
         {
-            foreach(ListViewItem lvi in lstFileTypes.Items)
+            foreach (ListViewItem lvi in lstFileTypes.Items)
             {
                 lvi.Checked = true;
             }
