@@ -1246,9 +1246,8 @@ namespace TotalImage
             // imgFilesSmall
             // 
             this.imgFilesSmall.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.imgFilesSmall.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgFilesSmall.ImageStream")));
+            this.imgFilesSmall.ImageSize = new System.Drawing.Size(16, 16);
             this.imgFilesSmall.TransparentColor = System.Drawing.Color.Transparent;
-            this.imgFilesSmall.Images.SetKeyName(0, "up_folder_16.png");
             // 
             // lstFiles
             // 
@@ -1407,9 +1406,8 @@ namespace TotalImage
             // imgFilesLarge
             // 
             this.imgFilesLarge.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this.imgFilesLarge.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgFilesLarge.ImageStream")));
+            this.imgFilesLarge.ImageSize = new System.Drawing.Size(32, 32);
             this.imgFilesLarge.TransparentColor = System.Drawing.Color.Transparent;
-            this.imgFilesLarge.Images.SetKeyName(0, "up_folder_16.png");
             // 
             // frmMain
             // 

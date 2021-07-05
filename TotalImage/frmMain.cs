@@ -52,6 +52,11 @@ namespace TotalImage
         public frmMain()
         {
             InitializeComponent();
+
+            //Scale the ImageList images according to current Dpi scale
+            Graphics g = CreateGraphics();
+            imgFilesSmall.ImageSize = new SizeF(16 * (g.DpiX / 96f), 16 * (g.DpiY / 96f)).ToSize();
+            imgFilesLarge.ImageSize = new SizeF(32 * (g.DpiX / 96f), 32 * (g.DpiY / 96f)).ToSize();
         }
 
         #region Event Handlers
