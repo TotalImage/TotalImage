@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
-using TotalImage.FileSystems.FAT;
-using System.Diagnostics;
-using static Interop.Shell32;
-using static Interop.User32;
 
 namespace TotalImage
 {
@@ -35,24 +29,24 @@ namespace TotalImage
             txtFilename.Text = entry.Name;
 
             if (entry is IFatFileSystemObject fatObj)
-                lblShortFilename1.Text = fatObj.ShortName;
+                txtShortFilename1.Text = fatObj.ShortName;
 
-            lblSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.Length, true);
-            lblSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.LengthOnDisk, true);
+            txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.Length, true);
+            txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.LengthOnDisk, true);
 
             if (entry is FileSystems.File file)
-                lblLocation1.Text = file.DirectoryName;
+                txtLocation1.Text = file.DirectoryName;
             else if (entry is FileSystems.Directory dir)
-                lblLocation1.Text = dir.Parent?.FullName;
+                txtLocation1.Text = dir.Parent?.FullName;
 
             // These are indeed supposed to be assignments in the conditions.
-            if (dateAccessed.Checked = entry.LastAccessTime.HasValue)
+            if (cbxDateAccessed.Checked = dateAccessed.Enabled = entry.LastAccessTime.HasValue)
                 dateAccessed.Value = entry.LastAccessTime!.Value;
 
-            if (dateModified.Checked = entry.LastWriteTime.HasValue)
+            if (cbxDateModified.Checked = dateModified.Enabled = entry.LastWriteTime.HasValue)
                 dateModified.Value = entry.LastWriteTime!.Value;
 
-            if (dateCreated.Checked = entry.CreationTime.HasValue)
+            if (cbxDateCreated.Checked = dateCreated.Enabled = entry.CreationTime.HasValue)
                 dateCreated.Value = entry.CreationTime!.Value;
 
             cbxReadOnly.Checked = entry.Attributes.HasFlag(FileAttributes.ReadOnly);
@@ -66,7 +60,7 @@ namespace TotalImage
                 var extension = entry.Attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(entry.Name);
                 string key = frmMain.fileTypes[extension].iconIndex.ToString();
                 imgIcon.Image = mainForm.imgFilesLarge.Images[key];
-                lblType1.Text = frmMain.fileTypes[extension].name;
+                txtType1.Text = frmMain.fileTypes[extension].name;
             }
             else
             {               
@@ -75,11 +69,11 @@ namespace TotalImage
                 imgIcon.Image = mainForm.imgFilesLarge.Images[key];
 
                 if (entry.Attributes.HasFlag(FileAttributes.Directory))
-                    lblType1.Text = "File folder";
+                    txtType1.Text = "File folder";
                 else if (extension.Length > 0)
-                    lblType1.Text = $"{extension.Substring(1).ToUpper()} File";
+                    txtType1.Text = $"{extension.Substring(1).ToUpper()} File";
                 else
-                    lblType1.Text = "File";
+                    txtType1.Text = "File";
             }
 
             //Prevent any changes to deleted items
@@ -90,6 +84,9 @@ namespace TotalImage
                 cbxHidden.Enabled = false;
                 cbxReadOnly.Enabled = false;
                 cbxSystem.Enabled = false;
+                cbxDateCreated.Enabled = false;
+                cbxDateAccessed.Enabled = false;
+                cbxDateModified.Enabled = false;
                 dateAccessed.Enabled = false;
                 dateCreated.Enabled = false;
                 dateModified.Enabled = false;
@@ -101,11 +98,11 @@ namespace TotalImage
         {
             NewName = txtFilename.Text;
 
-            if (dateModified.Checked)
+            if (cbxDateModified.Checked)
                 DateModified = dateModified.Value;
-            if (dateCreated.Checked)
+            if (cbxDateCreated.Checked)
                 DateCreated = dateCreated.Value;
-            if (dateAccessed.Checked)
+            if (cbxDateAccessed.Checked)
                 DateAccessed = dateAccessed.Value;
 
             AttrArchive = cbxArchive.Checked;
@@ -128,6 +125,21 @@ namespace TotalImage
             dateCreated.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             dateModified.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             dateAccessed.CustomFormat = "yyyy-MM-dd";
+        }
+
+        private void cbxDateCreated_CheckedChanged(object sender, EventArgs e)
+        {
+            dateCreated.Enabled = cbxDateCreated.Checked;
+        }
+
+        private void cbxDateModified_CheckedChanged(object sender, EventArgs e)
+        {
+            dateModified.Enabled = cbxDateModified.Checked;
+        }
+
+        private void cbxDateAccessed_CheckedChanged(object sender, EventArgs e)
+        {
+            dateAccessed.Enabled = cbxDateAccessed.Checked;
         }
     }
 }
