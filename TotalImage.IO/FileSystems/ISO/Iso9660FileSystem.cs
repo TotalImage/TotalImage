@@ -72,7 +72,10 @@ namespace TotalImage.FileSystems.ISO
                 throw new InvalidDataException("No primary volume descriptor");
             }
 
-            VolumeLabel = primaryDescriptor.VolumeSetIdentifier;
+            VolumeLabel = !string.IsNullOrEmpty(primaryDescriptor.VolumeSetIdentifier)
+                ? primaryDescriptor.VolumeSetIdentifier
+                : primaryDescriptor.VolumeIdentifier;
+
             RootDirectory = new IsoDirectory(primaryDescriptor.RootDirectory, this);
             TotalSize = primaryDescriptor.LogicalBlockSize * primaryDescriptor.VolumeSpace;
         }
