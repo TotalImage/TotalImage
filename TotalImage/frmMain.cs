@@ -799,7 +799,34 @@ namespace TotalImage
                 }
                 else //A file was double-clicked
                 {
-                    throw new NotImplementedException("This feature is not implemented yet");
+                    string targetFile = Path.Combine(Settings.CurrentSettings.DefaultExtractPath, SelectedItems.First().Name);
+                    Debug.WriteLine(targetFile);
+                    if (Settings.CurrentSettings.ExtractAlwaysAsk)
+                    {
+                        using dlgExtract dlg = new dlgExtract();
+                        dlg.lblPath.Text = $"Extract {SelectedItems.Count()} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
+                        if (dlg.ShowDialog() == DialogResult.OK)
+                        {
+                            targetFile = Path.Combine(dlg.TargetPath, SelectedItems.First().Name);
+                            ExtractFiles(SelectedItems, dlg.TargetPath, dlg.ExtractType, dlg.OpenFolder);
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        ExtractFiles(SelectedItems, Settings.CurrentSettings.DefaultExtractPath, Settings.CurrentSettings.DefaultExtractType, Settings.CurrentSettings.OpenFolderAfterExtract);
+                    }
+
+                    //Tell the shell to open the file after extraction
+                    ProcessStartInfo psi = new ProcessStartInfo
+                    {
+                        FileName = targetFile,
+                        UseShellExecute = true
+                    };
+                    Process.Start(psi);
                 }
             }
         }
