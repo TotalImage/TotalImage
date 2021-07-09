@@ -2017,7 +2017,7 @@ namespace TotalImage
 
             //Enabling this now since we have rudimentary HDD support.
             managePartitionsToolStripButton.Enabled = image.PartitionTable is not Partitions.NoPartitionTable;
-            selectPartitionToolStripComboBox.Enabled = image.PartitionTable is not Partitions.NoPartitionTable;
+            selectPartitionToolStripComboBox.Enabled = true;
         }
 
         //Disables various UI elements after an image is loaded
