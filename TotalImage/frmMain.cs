@@ -1755,6 +1755,18 @@ namespace TotalImage
                         }
                     }
                 }
+                else
+                {
+                    try
+                    {
+                        selectPartitionToolStripComboBox.Items.Add($"{0}: {image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[0].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length)})");
+                    }
+                    catch (InvalidDataException)
+                    {
+                    }
+
+                    selectPartitionToolStripComboBox.SelectedIndex = 0;
+                }
             }
 
             LoadPartitionInCurrentImage(CurrentPartitionIndex);
