@@ -953,7 +953,7 @@ namespace TotalImage
                     Directory.CreateDirectory(tempdir);
                 }
 
-                if(((ListViewItem)e.Item).Text == "..")
+                if (((ListViewItem)e.Item).Text == "..")
                 {
                     return;
                 }
@@ -961,7 +961,7 @@ namespace TotalImage
                 List<string> items = new List<string>();
                 foreach (TiFileSystemObject fso in SelectedItems)
                 {
-                    string item = Path.Combine(tempdir, fso.Name);                    
+                    string item = Path.Combine(tempdir, fso.Name);
                     items.Add(item);
                 }
                 string[] draggedItems = items.ToArray();
@@ -1404,11 +1404,11 @@ namespace TotalImage
                 if (!ClientRectangle.Contains(PointToClient(MousePosition)))
                 {
                     //Here is where the actual extraction to the temp dir happens
-                    if(sender is ListView)
+                    if (sender is ListView)
                     {
                         ExtractFiles(SelectedItems, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
                     }
-                    else if(sender is TreeView)
+                    else if (sender is TreeView)
                     {
                         if (draggedDir.Parent == null) //Root dir needs to be treated separately
                         {
@@ -1760,12 +1760,11 @@ namespace TotalImage
                     try
                     {
                         selectPartitionToolStripComboBox.Items.Add($"{0}: {image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[0].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length)})");
+                        selectPartitionToolStripComboBox.SelectedIndex = 0;
                     }
                     catch (InvalidDataException)
                     {
                     }
-
-                    selectPartitionToolStripComboBox.SelectedIndex = 0;
                 }
             }
 
