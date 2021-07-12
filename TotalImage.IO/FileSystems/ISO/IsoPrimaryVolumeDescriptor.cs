@@ -197,10 +197,10 @@ namespace TotalImage.FileSystems.ISO
             PathTableSize = IsoUtilities.ReadUInt32MultiEndian(record[132..140]);
 
             LPathTableOffset = BinaryPrimitives.ReadUInt32LittleEndian(record[140..144]);
-            LPathTableOffsetOptional = BinaryPrimitives.ReadUInt32LittleEndian(record[140..148]);
+            LPathTableOffsetOptional = BinaryPrimitives.ReadUInt32LittleEndian(record[144..148]);
 
             MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[148..152]);
-            MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[152..156]);
+            MPathTableOffsetOptional = BinaryPrimitives.ReadUInt32BigEndian(record[152..156]);
 
             RootDirectory = new IsoFileSystemObject(record[156..190], isUnicode, true);
 
