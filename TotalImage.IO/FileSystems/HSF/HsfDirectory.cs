@@ -5,7 +5,7 @@ using System.IO;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Represents a directory on an ISO 9660 file system
+    /// Represents a directory on a High Sierra file system
     /// </summary>
     public class HsfDirectory : Directory
     {
@@ -99,7 +99,7 @@ namespace TotalImage.FileSystems.HSF
         }
 
         /// <summary>
-        /// Create a directory on an ISO 9660 file system from a file record
+        /// Create a directory on a High Sierra file system from a file record
         /// </summary>
         /// <param name="fso">The file system record</param>
         /// <param name="fileSystem">The file system containing the directory</param>

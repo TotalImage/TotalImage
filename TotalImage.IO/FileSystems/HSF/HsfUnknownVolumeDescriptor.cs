@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Represents an unknown type of ISO 9660 volume descriptor
+    /// Represents an unknown type of High Sierra volume descriptor
     /// </summary>
     public class HsfUnknownVolumeDescriptor : HsfVolumeDescriptor
     {
@@ -14,7 +14,7 @@ namespace TotalImage.FileSystems.HSF
         public ImmutableArray<byte> Content { get; }
 
         /// <summary>
-        /// Create an ISO 9660 volume descriptor of an unknown type
+        /// Create a High Sierra volume descriptor of an unknown type
         /// </summary>
         /// <param name="record">A span containing the volume descriptor record</param>
         /// <param name="type">The type of the volume descriptor</param>

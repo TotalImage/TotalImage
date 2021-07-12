@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Represents an ISO 9660 secondary volume descriptor
+    /// Represents a High Sierra secondary volume descriptor
     /// </summary>
     public class HsfSecondaryVolumeDescriptor : HsfPrimaryVolumeDescriptor
     {
@@ -19,7 +19,7 @@ namespace TotalImage.FileSystems.HSF
         public ImmutableArray<byte> EscapeSequences { get; }
 
         /// <summary>
-        /// Create an ISO 9660 secondary volume descriptor
+        /// Create a High Sierra secondary volume descriptor
         /// </summary>
         /// <param name="record">A span containing the volume descriptor record</param>
         /// <param name="type">The type of the volume descriptor</param>

@@ -5,7 +5,7 @@ using System.Text;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Represents an ISO 9660 Boot Record
+    /// Represents a High Sierra Boot Record
     /// </summary>
     public class HsfBootVolumeDescriptor : HsfVolumeDescriptor
     {
@@ -25,7 +25,7 @@ namespace TotalImage.FileSystems.HSF
         public ImmutableArray<byte> BootSystemContent { get; }
 
         /// <summary>
-        /// Create an ISO 9660 Boot Record
+        /// Create a High Sierra Boot Record
         /// </summary>
         /// <param name="record">A span containing the volume descriptor record</param>
         /// <param name="type">The type of the volume descriptor</param>

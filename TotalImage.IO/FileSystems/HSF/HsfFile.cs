@@ -4,7 +4,7 @@ using System.IO;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Represents a file on an ISO 9660 file system
+    /// Represents a file on a High Sierra file system
     /// </summary>
     public class HsfFile : File
     {
@@ -78,7 +78,7 @@ namespace TotalImage.FileSystems.HSF
         }
 
         /// <summary>
-        /// Create a file on an ISO 9660 file system from a file record
+        /// Create a file on a High Sierra file system from a file record
         /// </summary>
         /// <param name="fso">The file system record</param>
         /// <param name="fileSystem">The file system containing the file</param>

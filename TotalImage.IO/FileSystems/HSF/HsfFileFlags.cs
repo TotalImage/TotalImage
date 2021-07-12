@@ -3,7 +3,7 @@
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Flags set for a file on the ISO 9660 file system
+    /// Flags set for a file on the High Sierra file system
     /// </summary>
     [Flags]
     public enum HsfFileFlags : byte

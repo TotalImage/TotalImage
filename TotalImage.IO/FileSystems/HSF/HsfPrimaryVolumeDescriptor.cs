@@ -8,7 +8,7 @@ using System.Text;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Represents an ISO 9660 primary volume descriptor
+    /// Represents a High Sierra primary volume descriptor
     /// </summary>
     public class HsfPrimaryVolumeDescriptor : HsfVolumeDescriptor
     {
@@ -155,7 +155,7 @@ namespace TotalImage.FileSystems.HSF
         public ImmutableArray<byte> ApplicationContent { get; }
 
         /// <summary>
-        /// Create an ISO 9660 primary volume descriptor
+        /// Create a High Sierra primary volume descriptor
         /// </summary>
         /// <param name="record">A span containing the volume descriptor record</param>
         /// <param name="type">The type of the volume descriptor</param>

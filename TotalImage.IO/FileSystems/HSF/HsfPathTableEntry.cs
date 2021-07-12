@@ -4,7 +4,7 @@ using System.Buffers.Binary;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Represents an entry in the path table of an ISO 9660 file system
+    /// Represents an entry in the path table of a High Sierra file system
     /// </summary>
     public class HsfPathTableEntry
     {

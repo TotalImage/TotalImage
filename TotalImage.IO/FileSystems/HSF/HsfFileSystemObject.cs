@@ -5,7 +5,7 @@ using System.Text;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Represents a file system object within an ISO 9660 file system
+    /// Represents a file system object within a High Sierra file system
     /// </summary>
     public class HsfFileSystemObject
     {
@@ -90,7 +90,7 @@ namespace TotalImage.FileSystems.HSF
         public ImmutableArray<byte> SystemUseContent { get; }
 
         /// <summary>
-        /// Create an ISO 9660 directory record
+        /// Create a High Sierra directory record
         /// </summary>
         /// <param name="record">A span containing the directory record</param>
         /// <param name="isRoot">Indicating whether the record should be treated as a root directory element</param>
@@ -110,8 +110,8 @@ namespace TotalImage.FileSystems.HSF
             ExtendedAttributeLength = record[1];
             ExtentOffset = HsfUtilities.ReadUInt32MultiEndian(record[2..10]);
             DataLength = HsfUtilities.ReadUInt32MultiEndian(record[10..18]);
-            RecordingDate = HsfUtilities.FromHsfRecordingDateTime(record[18..25]);
-            FileFlags = (HsfFileFlags)record[25];
+            RecordingDate = HsfUtilities.FromHsfRecordingDateTime(record[18..24]);
+            FileFlags = (HsfFileFlags)record[24];
             FileUnitSize = record[26];
             InterleaveGapSize = record[27];
             VolumeSequenceNumber = HsfUtilities.ReadUInt16MultiEndian(record[28..32]);

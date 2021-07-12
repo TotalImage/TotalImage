@@ -5,7 +5,7 @@ using System.Text;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Represents an ISO 9660 Partition Volume Descriptor
+    /// Represents a High Sierra Partition Volume Descriptor
     /// </summary>
     public class HsfPartitionVolumeDescriptor : HsfVolumeDescriptor
     {
@@ -35,7 +35,7 @@ namespace TotalImage.FileSystems.HSF
         public ImmutableArray<byte> SystemUseContent { get; set; }
 
         /// <summary>
-        /// Create an ISO 9660 Partition Volume Descriptor
+        /// Create a High Sierra Partition Volume Descriptor
         /// </summary>
         /// <param name="record">A span containing the volume descriptor record</param>
         /// <param name="type">The type of the volume descriptor</param>

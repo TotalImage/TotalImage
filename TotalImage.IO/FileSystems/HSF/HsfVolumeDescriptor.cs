@@ -5,12 +5,12 @@ using System.Linq;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Represents an ISO 9660 Volume Descriptor structure
+    /// Represents an High Sierra Volume Descriptor structure
     /// </summary>
     public abstract class HsfVolumeDescriptor
     {
         /// <summary>
-        /// The standard ISO 9660 identifier for a volume (CDROM)
+        /// The standard High Sierra identifier for a volume (CDROM)
         /// </summary>
         public static ImmutableArray<byte> StandardIdentifier { get; } = (new byte[] { 0x43, 0x44, 0x52, 0x4F, 0x4D }).ToImmutableArray();
 

@@ -5,7 +5,7 @@ using System.Linq;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// A factory class that can create an ISO 9660 file system
+    /// A factory class that can create a High Sierra file system
     /// </summary>
     public class HsfFactory : IFileSystemFactory
     {

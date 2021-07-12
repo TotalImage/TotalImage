@@ -12,12 +12,12 @@ namespace TotalImage.FileSystems.HSF
      */
 
     /// <summary>
-    /// Representation of an ISO 9660 file system
+    /// Representation of a High Sierra file system
     /// </summary>
     public class HighSierraFileSystem : FileSystem
     {
         /// <summary>
-        /// The volume descriptors for the ISO 9660 file system
+        /// The volume descriptors for the High Sierra file system
         /// </summary>
         public ImmutableArray<HsfVolumeDescriptor> VolumeDescriptors { get; }
 

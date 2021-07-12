@@ -5,7 +5,7 @@ using System.IO;
 namespace TotalImage.FileSystems.HSF
 {
     /// <summary>
-    /// Utilities used in reading the ISO 9660 file system
+    /// Utilities used in reading the High Sierra file system
     /// </summary>
     public static class HsfUtilities
     {
@@ -16,9 +16,9 @@ namespace TotalImage.FileSystems.HSF
         };
 
         /// <summary>
-        /// Converts an ISO-9660 date format to a DateTimeOffset
+        /// Converts a High Sierra date format to a DateTimeOffset
         /// </summary>
-        /// <param name="date">the ISO-9660 date format</param>
+        /// <param name="date">the High Sieera date format</param>
         /// <returns>a DateTimeOffset containing the time</returns>
         public static DateTimeOffset? FromHsfDateTime(ReadOnlySpan<char> date)
         {
@@ -71,13 +71,13 @@ namespace TotalImage.FileSystems.HSF
         }
 
         /// <summary>
-        /// Converts an ISO-9660 recording date format to a DateTimeOffset
+        /// Converts a High Sierra recording date format to a DateTimeOffset
         /// </summary>
-        /// <param name="date">the ISO-9660 recording date format</param>
+        /// <param name="date">the High Sierra recording date format</param>
         /// <returns>a DateTimeOffset containing the time</returns>
         public static DateTimeOffset? FromHsfRecordingDateTime(ReadOnlySpan<byte> date)
         {
-            if (date.Length != 7)
+            if (date.Length != 6)
             {
                 throw new ArgumentOutOfRangeException(nameof(date));
             }
@@ -93,7 +93,7 @@ namespace TotalImage.FileSystems.HSF
                 return null;
             }
 
-            TimeSpan offset = TimeSpan.FromMinutes((sbyte)date[6] * 15);
+            TimeSpan offset = TimeSpan.FromMinutes(0);
             return new DateTimeOffset(1900 + date[0], date[1], date[2], date[3], date[4], date[5], offset);
         }
 
