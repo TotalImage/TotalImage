@@ -94,9 +94,10 @@ namespace TotalImage.FileSystems.ISO
         /// </summary>
         /// <param name="record">A span containing the directory record</param>
         /// <param name="isUnicode">Indicating whether the record should be treated as unicode</param>
+        /// <param name="isHsf">Indicating whether the file system containing this record is High Sierra rather than ISO 9660</param>
         /// <param name="isRoot">Indicating whether the record should be treated as a root directory element</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if the span provided does not cover the entire record</exception>
-        public IsoFileSystemObject(in ReadOnlySpan<byte> record, bool isUnicode, bool isRoot = false)
+        public IsoFileSystemObject(in ReadOnlySpan<byte> record, bool isUnicode, bool isHsf, bool isRoot = false)
         {
             /*
              * Root directories may specify the length of the in-disc record
@@ -111,8 +112,8 @@ namespace TotalImage.FileSystems.ISO
             ExtendedAttributeLength = record[1];
             ExtentOffset = IsoUtilities.ReadUInt32MultiEndian(record[2..10]);
             DataLength = IsoUtilities.ReadUInt32MultiEndian(record[10..18]);
-            RecordingDate = IsoUtilities.FromIsoRecordingDateTime(record[18..25]);
-            FileFlags = (IsoFileFlags)record[25];
+            RecordingDate = isHsf ? IsoUtilities.FromIsoRecordingDateTime(record[18..24]) : IsoUtilities.FromIsoRecordingDateTime(record[18..25]);
+            FileFlags = isHsf ? (IsoFileFlags)record[24] : (IsoFileFlags)record[25];
             FileUnitSize = record[26];
             InterleaveGapSize = record[27];
             VolumeSequenceNumber = IsoUtilities.ReadUInt16MultiEndian(record[28..32]);

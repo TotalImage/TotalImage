@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using System.IO;
 using TotalImage.FileSystems.FAT;
 using TotalImage.FileSystems.ISO;
-using TotalImage.FileSystems.HSF;
 
 namespace TotalImage.FileSystems
 {
@@ -13,8 +12,7 @@ namespace TotalImage.FileSystems
     {
         private readonly static ImmutableArray<IFileSystemFactory> _knownFactories = ImmutableArray.Create<IFileSystemFactory>(
             new FatFactory(),
-            new IsoFactory(),
-            new HsfFactory()
+            new IsoFactory()
         );
 
         /// <summary>

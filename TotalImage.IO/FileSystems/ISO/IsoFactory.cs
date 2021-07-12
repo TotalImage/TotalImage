@@ -20,7 +20,8 @@ namespace TotalImage.FileSystems.ISO
                 stream.Seek(nextOffset, SeekOrigin.Begin);
                 stream.Read(identifier);
 
-                if (identifier.SequenceEqual(IsoVolumeDescriptor.StandardIdentifier))
+                //First check if this might be ISO 9660
+                if (identifier.SequenceEqual(IsoVolumeDescriptor.IsoStandardIdentifier))
                 {
                     // trim off any leading blocks in this image
 
@@ -28,6 +29,25 @@ namespace TotalImage.FileSystems.ISO
                     return partialStreamStart == 0
                         ? new Iso9660FileSystem(stream)
                         : new Iso9660FileSystem(new PartialStream(stream, partialStreamStart, stream.Length - partialStreamStart));
+                }
+                else
+                {
+                    //If not, check for High Sierra instead
+                    nextOffset += 8;
+                    stream.Seek(nextOffset, SeekOrigin.Begin);
+                    stream.Read(identifier);
+
+                    if (identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier))
+                    {
+                        var partialStreamStart = nextOffset - 0x8009;
+                        return partialStreamStart == 0
+                            ? new Iso9660FileSystem(stream)
+                            : new Iso9660FileSystem(new PartialStream(stream, partialStreamStart, stream.Length - partialStreamStart));
+                    }
+                    else
+                    {
+                        nextOffset -= 8;
+                    }
                 }
 
                 nextOffset += 0x800;

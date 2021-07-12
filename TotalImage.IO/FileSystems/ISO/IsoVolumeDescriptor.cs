@@ -12,7 +12,12 @@ namespace TotalImage.FileSystems.ISO
         /// <summary>
         /// The standard ISO 9660 identifier for a volume (CD001)
         /// </summary>
-        public static ImmutableArray<byte> StandardIdentifier { get; } = (new byte[] { 0x43, 0x44, 0x30, 0x30, 0x31 }).ToImmutableArray();
+        public static ImmutableArray<byte> IsoStandardIdentifier { get; } = (new byte[] { 0x43, 0x44, 0x30, 0x30, 0x31 }).ToImmutableArray();
+
+        /// <summary>
+        /// The standard High Sierra identifier for a volume (CDROM)
+        /// </summary>
+        public static ImmutableArray<byte> HsfStandardIdentifier { get; } = (new byte[] { 0x43, 0x44, 0x52, 0x4F, 0x4D }).ToImmutableArray();
 
         /// <summary>
         /// This indicates the type of volume descriptor
@@ -36,7 +41,7 @@ namespace TotalImage.FileSystems.ISO
         public virtual bool IsValid()
         {
             return (Type <= IsoVolumeDescriptorType.VolumePartitionDescriptor || Type == IsoVolumeDescriptorType.VolumeDescriptorSetTerminator)
-                && Identifier.SequenceEqual(StandardIdentifier);
+                && (Identifier.SequenceEqual(IsoStandardIdentifier) || Identifier.SequenceEqual(HsfStandardIdentifier));
         }
 
         /// <summary>
@@ -62,13 +67,20 @@ namespace TotalImage.FileSystems.ISO
         {
             IsoVolumeDescriptorType type = (IsoVolumeDescriptorType)record[0];
             ImmutableArray<byte> identifier = record[1..6].ToArray().ToImmutableArray();
+            byte version = 0;
 
-            if (!identifier.SequenceEqual(StandardIdentifier))
+            if (identifier.SequenceEqual(IsoStandardIdentifier))
             {
-                return null;
+                version = record[6];             
             }
-
-            byte version = record[6];
+            else
+            {
+                type = (IsoVolumeDescriptorType)record[8];
+                identifier = record[9..14].ToArray().ToImmutableArray();
+                if (!identifier.SequenceEqual(HsfStandardIdentifier))
+                    return null;
+                version = record[14];
+            }
 
             return type switch
             {

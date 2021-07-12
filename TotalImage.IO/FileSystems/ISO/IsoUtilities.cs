@@ -5,7 +5,7 @@ using System.IO;
 namespace TotalImage.FileSystems.ISO
 {
     /// <summary>
-    /// Utilities used in reading the ISO 9660 file system
+    /// Utilities used in reading the ISO 9660 or High Sierra file system
     /// </summary>
     public static class IsoUtilities
     {
@@ -16,13 +16,13 @@ namespace TotalImage.FileSystems.ISO
         };
 
         /// <summary>
-        /// Converts an ISO-9660 date format to a DateTimeOffset
+        /// Converts an ISO-9660 or High Sierra date format to a DateTimeOffset
         /// </summary>
-        /// <param name="date">the ISO-9660 date format</param>
+        /// <param name="date">the ISO-9660 or High Sierra date format</param>
         /// <returns>a DateTimeOffset containing the time</returns>
         public static DateTimeOffset? FromIsoDateTime(ReadOnlySpan<char> date)
         {
-            if (date.Length != 17)
+            if (date.Length < 16 || date.Length > 17)
             {
                 throw new ArgumentOutOfRangeException(nameof(date));
             }
@@ -48,14 +48,22 @@ namespace TotalImage.FileSystems.ISO
                 throw new ArgumentOutOfRangeException(nameof(date));
             }
 
-            sbyte offsetByte = (sbyte)date[16];
-
-            if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0 && second == 0 && hundredths == 0 && offsetByte == 0)
+            if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0 && second == 0 && hundredths == 0)
             {
                 return null;
             }
 
-            TimeSpan offset = TimeSpan.FromMinutes(offsetByte * 15);
+			sbyte offsetByte = 0;
+            if (date.Length == 17)
+            {
+                offsetByte = (sbyte)date[16];
+                if(offsetByte == 0)
+                {
+                    return null;
+                }
+            }
+
+            TimeSpan offset = date.Length == 16 ? TimeSpan.FromMinutes(0) : TimeSpan.FromMinutes(offsetByte * 15);
 
             try
             {
@@ -73,13 +81,13 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <summary>
-        /// Converts an ISO-9660 recording date format to a DateTimeOffset
+        /// Converts an ISO-9660 or High Sierra recording date format to a DateTimeOffset
         /// </summary>
-        /// <param name="date">the ISO-9660 recording date format</param>
+        /// <param name="date">the ISO-9660 or High Sierra recording date format</param>
         /// <returns>a DateTimeOffset containing the time</returns>
         public static DateTimeOffset? FromIsoRecordingDateTime(ReadOnlySpan<byte> date)
         {
-            if (date.Length != 7)
+            if (date.Length < 6 || date.Length > 7)
             {
                 throw new ArgumentOutOfRangeException(nameof(date));
             }
@@ -95,7 +103,7 @@ namespace TotalImage.FileSystems.ISO
                 return null;
             }
 
-            TimeSpan offset = TimeSpan.FromMinutes((sbyte)date[6] * 15);
+            TimeSpan offset = date.Length == 6 ? TimeSpan.FromMinutes(0) : TimeSpan.FromMinutes((sbyte)date[6] * 15);
             return new DateTimeOffset(1900 + date[0], date[1], date[2], date[3], date[4], date[5], offset);
         }
 

@@ -7,16 +7,21 @@ namespace TotalImage.FileSystems.ISO
     /*
      * The ISO 9660 implementation here is based on the ECMA-119 specification, 4th edition
      * https://www.ecma-international.org/wp-content/uploads/ECMA-119_4th_edition_june_2019.pdf
-     * A copy has also been included in the TotalImage repository, under the docs folder
+     * A copy has also been included in the TotalImage repository, under the docs folder.
+     * 
+     * High Sierra implementation is based on the differences mentioned here:
+     * http://preserve.mactech.com/articles/develop/issue_03/high_sierra.html
+     * and the structures described here:
+     * https://386bsd.org/releases/inside-the-iso9660-filesystem-format-untangling-cdrom-standards-article
      */
 
     /// <summary>
-    /// Representation of an ISO 9660 file system
+    /// Representation of an ISO 9660 or High Sierra file system
     /// </summary>
     public class Iso9660FileSystem : FileSystem
     {
         /// <summary>
-        /// The volume descriptors for the ISO 9660 file system
+        /// The volume descriptors for the ISO 9660 or High Sierra file system
         /// </summary>
         public ImmutableArray<IsoVolumeDescriptor> VolumeDescriptors { get; }
 
@@ -31,7 +36,7 @@ namespace TotalImage.FileSystems.ISO
                 .First();
 
         /// <summary>
-        /// Create an ISO 9660 file system
+        /// Create an ISO 9660 or High Sierra file system
         /// </summary>
         /// <param name="containerStream">The underlying stream</param>
         public Iso9660FileSystem(Stream containerStream) : base(containerStream)
@@ -48,7 +53,7 @@ namespace TotalImage.FileSystems.ISO
                 var record = IsoVolumeDescriptor.ReadVolumeDescriptor(recordBytes, this);
                 if (record == null)
                 {
-                    break;
+                        break;
                 }
 
                 if (!record.IsValid())
@@ -81,7 +86,7 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc />
-        public override string DisplayName => "ISO 9660";
+        public override string DisplayName => PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier) ? "High Sierra" : PrimaryVolumeDescriptor.IsJolietVolumeDescriptor ? "ISO 9660 + Joliet" : "ISO 9660";
 
         /// <inheritdoc />
         public override string VolumeLabel { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace TotalImage.FileSystems.ISO
 {
@@ -23,7 +24,10 @@ namespace TotalImage.FileSystems.ISO
         public IsoUnknownVolumeDescriptor(in ReadOnlySpan<byte> record, in IsoVolumeDescriptorType type, in ImmutableArray<byte> identifier, in byte version)
             : base(type, identifier, version)
         {
-            Content = record[7..].ToArray().ToImmutableArray();
+            if (identifier.SequenceEqual(HsfStandardIdentifier))
+                Content = record[15..].ToArray().ToImmutableArray();
+            else if (identifier.SequenceEqual(IsoStandardIdentifier))
+                Content = record[7..].ToArray().ToImmutableArray();
         }
     }
 }
