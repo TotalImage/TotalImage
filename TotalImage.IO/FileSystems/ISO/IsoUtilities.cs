@@ -55,7 +55,7 @@ namespace TotalImage.FileSystems.ISO
                 return null;
             }
 
-            TimeSpan offset = TimeSpan.FromMinutes((sbyte)date[6] * 15);
+            TimeSpan offset = TimeSpan.FromMinutes(offsetByte * 15);
 
             try
             {
