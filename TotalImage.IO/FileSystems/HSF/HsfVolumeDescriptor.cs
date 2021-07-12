@@ -10,9 +10,9 @@ namespace TotalImage.FileSystems.HSF
     public abstract class HsfVolumeDescriptor
     {
         /// <summary>
-        /// The standard ISO 9660 identifier for a volume (CD001)
+        /// The standard ISO 9660 identifier for a volume (CDROM)
         /// </summary>
-        public static ImmutableArray<byte> StandardIdentifier { get; } = (new byte[] { 0x43, 0x44, 0x52, 0x4f, 0x4d }).ToImmutableArray();
+        public static ImmutableArray<byte> StandardIdentifier { get; } = (new byte[] { 0x43, 0x44, 0x52, 0x4F, 0x4D }).ToImmutableArray();
 
         /// <summary>
         /// This indicates the type of volume descriptor
@@ -60,15 +60,15 @@ namespace TotalImage.FileSystems.HSF
         /// <returns>The volume descriptor record</returns>
         public static HsfVolumeDescriptor? ReadVolumeDescriptor(in ReadOnlySpan<byte> record, HighSierraFileSystem fileSystem)
         {
-            HsfVolumeDescriptorType type = (HsfVolumeDescriptorType)record[0];
-            ImmutableArray<byte> identifier = record[1..6].ToArray().ToImmutableArray();
+            HsfVolumeDescriptorType type = (HsfVolumeDescriptorType)record[8];
+            ImmutableArray<byte> identifier = record[9..14].ToArray().ToImmutableArray();
 
             if (!identifier.SequenceEqual(StandardIdentifier))
             {
                 return null;
             }
 
-            byte version = record[6];
+            byte version = record[14];
 
             return type switch
             {

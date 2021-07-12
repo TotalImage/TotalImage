@@ -7,6 +7,8 @@ namespace TotalImage.FileSystems.HSF
     /*
      * Prototype High Sierra implementation, based on our existing ISO 9600 implementation, as per the differences from ISO 9660 described here:
      * http://preserve.mactech.com/articles/develop/issue_03/high_sierra.html
+     * and the structures described here:
+     * https://386bsd.org/releases/inside-the-iso9660-filesystem-format-untangling-cdrom-standards-article
      */
 
     /// <summary>
@@ -29,12 +31,12 @@ namespace TotalImage.FileSystems.HSF
                 .First();
 
         /// <summary>
-        /// Create an ISO 9660 file system
+        /// Create a High Sierra file system
         /// </summary>
         /// <param name="containerStream">The underlying stream</param>
         public HighSierraFileSystem(Stream containerStream) : base(containerStream)
         {
-            containerStream.Seek(0x8008, SeekOrigin.Begin);
+            containerStream.Seek(0x8000, SeekOrigin.Begin);
 
             var volumeDescriptors = ImmutableArray.CreateBuilder<HsfVolumeDescriptor>();
 
@@ -69,9 +71,9 @@ namespace TotalImage.FileSystems.HSF
                 throw new InvalidDataException("No primary volume descriptor");
             }
 
-            VolumeLabel = !string.IsNullOrEmpty(primaryDescriptor.VolumeSetIdentifier)
-                ? primaryDescriptor.VolumeSetIdentifier
-                : primaryDescriptor.VolumeIdentifier;
+            VolumeLabel = !string.IsNullOrEmpty(primaryDescriptor.VolumeIdentifier)
+                ? primaryDescriptor.VolumeIdentifier
+                : primaryDescriptor.VolumeSetIdentifier;
 
             RootDirectory = new HsfDirectory(primaryDescriptor.RootDirectory, this);
             TotalSize = primaryDescriptor.LogicalBlockSize * primaryDescriptor.VolumeSpace;

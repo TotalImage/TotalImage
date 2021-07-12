@@ -12,13 +12,27 @@ namespace TotalImage.FileSystems.HSF
         /// <inheritdoc />
         public FileSystem? TryLoadFileSystem(Stream stream)
         {
-            stream.Seek(0x8009, SeekOrigin.Begin);
+            long nextOffset = 0x8009;
             byte[] identifier = new byte[5];
-            stream.Read(identifier);
-            if (identifier.SequenceEqual(HsfVolumeDescriptor.StandardIdentifier))
+
+            do
             {
-                return new HighSierraFileSystem(stream);
+                stream.Seek(nextOffset, SeekOrigin.Begin);
+                stream.Read(identifier);
+
+                if (identifier.SequenceEqual(HsfVolumeDescriptor.StandardIdentifier))
+                {
+                    // trim off any leading blocks in this image
+
+                    var partialStreamStart = nextOffset - 0x8009;
+                    return partialStreamStart == 0
+                        ? new HighSierraFileSystem(stream)
+                        : new HighSierraFileSystem(new PartialStream(stream, partialStreamStart, stream.Length - partialStreamStart));
+                }
+
+                nextOffset += 0x800;
             }
+            while (stream.Length > nextOffset);
 
             return null;
         }

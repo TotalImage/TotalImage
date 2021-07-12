@@ -47,16 +47,14 @@ namespace TotalImage.FileSystems.HSF
             {
                 throw new ArgumentOutOfRangeException(nameof(date));
             }
-
-            sbyte offsetByte = (sbyte)date[16];
-
-            if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0 && second == 0 && hundredths == 0 && offsetByte == 0)
+ 
+            if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0 && second == 0 && hundredths == 0)
             {
                 return null;
             }
 
-            TimeSpan offset = TimeSpan.FromMinutes((sbyte)date[6] * 15);
-
+            TimeSpan offset = TimeSpan.FromMinutes(0);
+            
             try
             {
                 return new DateTimeOffset(year, month, day, hour, minute, second, hundredths * 10, offset);

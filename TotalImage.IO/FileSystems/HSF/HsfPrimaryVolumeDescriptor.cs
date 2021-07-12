@@ -55,9 +55,19 @@ namespace TotalImage.FileSystems.HSF
         public uint LPathTableOffset { get; }
 
         /// <summary>
-        /// Offset of an optional occurrence of the L Path Table
+        /// Offset of an optional 2nd occurrence of the L Path Table
         /// </summary>
-        public uint LPathTableOffsetOptional { get; }
+        public uint LPathTableOffsetOptional1 { get; }
+
+        /// <summary>
+        /// Offset of an optional 3rd occurrence of the L Path Table
+        /// </summary>
+        public uint LPathTableOffsetOptional2 { get; }
+
+        /// <summary>
+        /// Offset of an optional 4th occurrence of the L Path Table
+        /// </summary>
+        public uint LPathTableOffsetOptional3 { get; }
 
         /// <summary>
         /// Offset of the M Path Table
@@ -65,9 +75,19 @@ namespace TotalImage.FileSystems.HSF
         public uint MPathTableOffset { get; }
 
         /// <summary>
-        /// Offset of an optional occurrence of the M Path Table
+        /// Offset of an optional 2nd occurrence of the M Path Table
         /// </summary>
-        public uint MPathTableOffsetOptional { get; }
+        public uint MPathTableOffsetOptional1 { get; }
+
+        /// <summary>
+        /// Offset of an optional 3rd occurrence of the M Path Table
+        /// </summary>
+        public uint MPathTableOffsetOptional2 { get; }
+
+        /// <summary>
+        /// Offset of an optional 4th occurrence of the M Path Table
+        /// </summary>
+        public uint MPathTableOffsetOptional3 { get; }
 
         /// <summary>
         /// The root directory record of the file system
@@ -148,67 +168,71 @@ namespace TotalImage.FileSystems.HSF
 
             char[] textBuffer = new char[32];
 
-            encoding.GetChars(record[8..40], textBuffer);
+            encoding.GetChars(record[16..48], textBuffer);
             SystemIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            encoding.GetChars(record[40..72], textBuffer);
+            encoding.GetChars(record[48..80], textBuffer);
             VolumeIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            VolumeSpace = HsfUtilities.ReadUInt32MultiEndian(record[80..88]);
+            VolumeSpace = HsfUtilities.ReadUInt32MultiEndian(record[88..96]);
 
-            VolumeSetSize = HsfUtilities.ReadUInt16MultiEndian(record[120..124]);
-            VolumeSequenceNumber = HsfUtilities.ReadUInt16MultiEndian(record[124..128]);
+            VolumeSetSize = HsfUtilities.ReadUInt16MultiEndian(record[128..132]);
+            VolumeSequenceNumber = HsfUtilities.ReadUInt16MultiEndian(record[132..136]);
 
-            LogicalBlockSize = HsfUtilities.ReadUInt16MultiEndian(record[128..132]);
-            PathTableSize = HsfUtilities.ReadUInt32MultiEndian(record[132..140]);
+            LogicalBlockSize = HsfUtilities.ReadUInt16MultiEndian(record[136..140]);
+            PathTableSize = HsfUtilities.ReadUInt32MultiEndian(record[140..148]);
 
-            LPathTableOffset = BinaryPrimitives.ReadUInt32LittleEndian(record[140..144]);
-            LPathTableOffsetOptional = BinaryPrimitives.ReadUInt32LittleEndian(record[140..148]);
+            LPathTableOffset = BinaryPrimitives.ReadUInt32LittleEndian(record[148..152]);
+            LPathTableOffsetOptional1 = BinaryPrimitives.ReadUInt32LittleEndian(record[152..156]);
+            LPathTableOffsetOptional2 = BinaryPrimitives.ReadUInt32LittleEndian(record[156..160]);
+            LPathTableOffsetOptional3 = BinaryPrimitives.ReadUInt32LittleEndian(record[160..164]);
 
-            MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[148..152]);
-            MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[152..156]);
+            MPathTableOffset = BinaryPrimitives.ReadUInt32BigEndian(record[164..168]);
+            MPathTableOffsetOptional1 = BinaryPrimitives.ReadUInt32BigEndian(record[168..172]);
+            MPathTableOffsetOptional2 = BinaryPrimitives.ReadUInt32BigEndian(record[172..180]);
+            MPathTableOffsetOptional3 = BinaryPrimitives.ReadUInt32BigEndian(record[180..188]);
 
-            RootDirectory = new HsfFileSystemObject(record[156..190], true);
+            RootDirectory = new HsfFileSystemObject(record[180..214], true);
 
             textBuffer = new char[128];
 
-            encoding.GetChars(record[190..318], textBuffer);
+            encoding.GetChars(record[214..342], textBuffer);
             VolumeSetIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            encoding.GetChars(record[318..446], textBuffer);
+            encoding.GetChars(record[342..470], textBuffer);
             PublisherIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            encoding.GetChars(record[446..574], textBuffer);
+            encoding.GetChars(record[470..598], textBuffer);
             DataPreparerIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            encoding.GetChars(record[574..702], textBuffer);
+            encoding.GetChars(record[598..726], textBuffer);
             ApplicationIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
             textBuffer = new char[37];
 
-            encoding.GetChars(record[702..739], textBuffer);
+            encoding.GetChars(record[726..760], textBuffer);
             CopyrightFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
-            encoding.GetChars(record[739..776], textBuffer);
+            encoding.GetChars(record[760..790], textBuffer);
             AbstractFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
             textBuffer = new char[16];
 
-            Encoding.ASCII.GetChars(record[813..829], textBuffer);
+            Encoding.ASCII.GetChars(record[790..806], textBuffer);
             VolumeCreationTime = HsfUtilities.FromHsfDateTime(textBuffer);
 
-            Encoding.ASCII.GetChars(record[829..845], textBuffer);
+            Encoding.ASCII.GetChars(record[806..822], textBuffer);
             VolumeModificationTime = HsfUtilities.FromHsfDateTime(textBuffer);
 
-            Encoding.ASCII.GetChars(record[845..861], textBuffer);
+            Encoding.ASCII.GetChars(record[822..838], textBuffer);
             VolumeExpirationTime = HsfUtilities.FromHsfDateTime(textBuffer);
 
-            Encoding.ASCII.GetChars(record[861..877], textBuffer);
+            Encoding.ASCII.GetChars(record[838..854], textBuffer);
             VolumeEffectiveTime = HsfUtilities.FromHsfDateTime(textBuffer);
 
-            FileStructureVersion = record[877];
+            FileStructureVersion = record[854];
 
-            ApplicationContent = record[879..1395].ToArray().ToImmutableArray();
+            ApplicationContent = record[856..1368].ToArray().ToImmutableArray();
         }
     }
 }

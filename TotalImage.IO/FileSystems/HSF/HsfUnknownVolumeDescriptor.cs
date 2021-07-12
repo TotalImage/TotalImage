@@ -23,7 +23,7 @@ namespace TotalImage.FileSystems.HSF
         public HsfUnknownVolumeDescriptor(in ReadOnlySpan<byte> record, in HsfVolumeDescriptorType type, in ImmutableArray<byte> identifier, in byte version)
             : base(type, identifier, version)
         {
-            Content = record[7..].ToArray().ToImmutableArray();
+            Content = record[15..].ToArray().ToImmutableArray();
         }
     }
 }
