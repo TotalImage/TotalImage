@@ -85,7 +85,7 @@ namespace TotalImage.FileSystems.ISO
             }
 
             bool zero = true;
-            foreach (var t in date)
+            foreach (var t in date[..^1])
             {
                 zero &= (t == 0);
             }
