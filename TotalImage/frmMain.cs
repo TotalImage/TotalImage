@@ -1646,10 +1646,11 @@ namespace TotalImage
             {
                 filepath = path;
                 filename = Path.GetFileName(path);
+                FileInfo fileinfo = new FileInfo(path);
 
                 try
                 {
-                    bool memoryMapping = new FileInfo(path).Length > Settings.CurrentSettings.MemoryMappingThreshold;
+                    bool memoryMapping = fileinfo.Length > Settings.CurrentSettings.MemoryMappingThreshold;
 
                     var ext = Path.GetExtension(filename).ToLowerInvariant();
                     switch (ext)
@@ -1693,6 +1694,25 @@ namespace TotalImage
                         },
                         Icon = TaskDialogIcon.Error,
                     });
+                    CloseImage();
+                    return;
+                }
+
+                if (fileinfo.Length == 0)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"File \"{filename}\" appears to be empty (zero bytes in size). If you downloaded or copied this file from elsewhere, make sure the source file is not damaged and the transfer completed successfully.{Environment.NewLine}{Environment.NewLine}" +
+                        $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "File is empty",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                    });
+
                     CloseImage();
                     return;
                 }
