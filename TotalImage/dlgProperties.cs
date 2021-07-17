@@ -35,9 +35,23 @@ namespace TotalImage
             txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.LengthOnDisk, true);
 
             if (entry is FileSystems.File file)
+            {
                 txtLocation1.Text = file.DirectoryName;
+                txtContains1.Enabled = false;
+                txtContains1.Text = "N/A";
+                txtContains.Enabled = false;
+                txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.Length, true);
+                txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.LengthOnDisk, true);
+            }
             else if (entry is FileSystems.Directory dir)
+            {
                 txtLocation1.Text = dir.Parent?.FullName;
+                txtContains1.Enabled = true;
+                txtContains1.Text = $"Files: {dir.FileCount(true)}, subdirectories: {dir.SubdirectoryCount(true)}";
+                txtContains.Enabled = true;
+                txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, false), true);
+                txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, true), true);
+            }
 
             // These are indeed supposed to be assignments in the conditions.
             if (cbxDateAccessed.Checked = dateAccessed.Enabled = entry.LastAccessTime.HasValue)

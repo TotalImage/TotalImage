@@ -108,5 +108,157 @@ namespace TotalImage.FileSystems.ISO
         {
             Record = fso;
         }
+
+        /// <inheritdoc/>
+        public override ulong FileCount(bool recursive)
+        {
+            ulong count = 0;
+            var fileSystem = (Iso9660FileSystem)FileSystem;
+            var stream = FileSystem.GetStream();
+
+            stream.Seek(fileSystem.PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset, SeekOrigin.Begin);
+
+            byte[] records = new byte[Record.DataLength];
+            stream.Read(records);
+
+            int nextRecord = 0;
+            while (nextRecord < Record.DataLength)
+            {
+                byte recordLength = records[nextRecord];
+                if (recordLength == 0)
+                {
+                    // records can not cross sector boundaries, we probably just need to jump up to the next sector
+                    nextRecord = ((nextRecord / 2048) + 1) * 2048;
+                    continue;
+                }
+
+                var record = new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor);
+
+                // A record whose identifier is a single zero byte is the current directory
+                // A record whose identifier is a single one byte is either the parent directory or the root directory if it is the root directory
+                if (record.FileIdentifierName != "\u0000" && record.FileIdentifierName != "\u0001")
+                {
+                    if (record.FileFlags.HasFlag(IsoFileFlags.Directory))
+                    {
+                        if (recursive)
+                        {
+                            count += new IsoDirectory(record, fileSystem, this).FileCount(recursive);
+                        }
+                        else
+                            continue;
+                    }
+                    else
+                    {
+                        count++;
+                    }
+                }
+
+                nextRecord += recordLength;
+            }
+
+            return count;
+        }
+
+        /// <inheritdoc/>
+        public override ulong Size(bool recursive, bool sizeOnDisk)
+        {
+            ulong size = 0;
+            var fileSystem = (Iso9660FileSystem)FileSystem;
+            var stream = FileSystem.GetStream();
+
+            stream.Seek(fileSystem.PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset, SeekOrigin.Begin);
+
+            byte[] records = new byte[Record.DataLength];
+            stream.Read(records);
+
+            int nextRecord = 0;
+            while (nextRecord < Record.DataLength)
+            {
+                byte recordLength = records[nextRecord];
+                if (recordLength == 0)
+                {
+                    // records can not cross sector boundaries, we probably just need to jump up to the next sector
+                    nextRecord = ((nextRecord / 2048) + 1) * 2048;
+                    continue;
+                }
+
+                var record = new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor);
+
+                // A record whose identifier is a single zero byte is the current directory
+                // A record whose identifier is a single one byte is either the parent directory or the root directory if it is the root directory
+                if (record.FileIdentifierName != "\u0000" && record.FileIdentifierName != "\u0001")
+                {
+                    if (record.FileFlags.HasFlag(IsoFileFlags.Directory))
+                    {
+                        if (recursive)
+                        {
+                            size += new IsoDirectory(record, fileSystem, this).Size(recursive, sizeOnDisk);
+                        }
+                        else
+                            continue;
+                    }
+                    else
+                    {
+                        if (sizeOnDisk)
+                        {
+                            size += new IsoFile(record, fileSystem, this).LengthOnDisk;
+                        }
+                        else
+                        {
+                            size += new IsoFile(record, fileSystem, this).Length;
+                        }
+                    }
+                }
+
+                nextRecord += recordLength;
+            }
+
+            return size;
+        }
+
+        /// <inheritdoc/>
+        public override ulong SubdirectoryCount(bool recursive)
+        {
+            ulong count = 0;
+            var fileSystem = (Iso9660FileSystem)FileSystem;
+            var stream = FileSystem.GetStream();
+
+            stream.Seek(fileSystem.PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset, SeekOrigin.Begin);
+
+            byte[] records = new byte[Record.DataLength];
+            stream.Read(records);
+
+            int nextRecord = 0;
+            while (nextRecord < Record.DataLength)
+            {
+                byte recordLength = records[nextRecord];
+                if (recordLength == 0)
+                {
+                    // records can not cross sector boundaries, we probably just need to jump up to the next sector
+                    nextRecord = ((nextRecord / 2048) + 1) * 2048;
+                    continue;
+                }
+
+                var record = new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor);
+
+                // A record whose identifier is a single zero byte is the current directory
+                // A record whose identifier is a single one byte is either the parent directory or the root directory if it is the root directory
+                if (record.FileIdentifierName != "\u0000" && record.FileIdentifierName != "\u0001")
+                {
+                    if (record.FileFlags.HasFlag(IsoFileFlags.Directory))
+                    {
+                        count++;
+                        if (recursive)
+                        {
+                            count += new IsoDirectory(record, fileSystem, this).SubdirectoryCount(recursive);
+                        }
+                    }
+                }
+
+                nextRecord += recordLength;
+            }
+
+            return count;
+        }
     }
 }

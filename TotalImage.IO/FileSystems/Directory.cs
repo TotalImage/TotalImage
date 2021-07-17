@@ -86,5 +86,27 @@ namespace TotalImage.FileSystems
         /// <param name="path">Name of the subdirectory to create</param>
         /// <returns>The created directory</returns>
         public abstract Directory CreateSubdirectory(string path);
+
+        /// <summary>
+        /// Get the file count in a directory.
+        /// </summary>
+        /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
+        /// <returns>File count in a directory excluding subdirectories if recursive is false, otherwise file count in a directory including subdirectories.</returns>
+        public abstract ulong FileCount(bool recursive);
+
+        /// <summary>
+        /// Get the subdirectory count in a directory.
+        /// </summary>
+        /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
+        /// <returns>Subdirectory count in a directory excluding subdirectory contents if recursive is false, otherwise subdirectory count in a directory including subdirectory contents.</returns>
+        public abstract ulong SubdirectoryCount(bool recursive);
+
+        /// <summary>
+        /// Get the combined size of files in a directory.
+        /// </summary>
+        /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
+        /// <param name="sizeOnDisk">Whether to report actual file size or size on disk.</param>
+        /// <returns>Combined size of files in a directory excluding subdirectories if recursive is false, otherwise combined size of files in a directory including subdirectories.</returns>
+        public abstract ulong Size(bool recursive, bool sizeOnDisk);
     }
 }

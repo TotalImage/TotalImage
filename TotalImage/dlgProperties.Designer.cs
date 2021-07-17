@@ -60,23 +60,27 @@
             this.cbxDateAccessed = new System.Windows.Forms.CheckBox();
             this.txtType1 = new System.Windows.Forms.TextBox();
             this.txtLocation1 = new System.Windows.Forms.TextBox();
+            this.txtContains1 = new System.Windows.Forms.TextBox();
+            this.txtContains = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imgIcon)).BeginInit();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // imgIcon
             // 
-            this.imgIcon.Location = new System.Drawing.Point(12, 12);
+            this.imgIcon.Location = new System.Drawing.Point(15, 15);
+            this.imgIcon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.imgIcon.Name = "imgIcon";
-            this.imgIcon.Size = new System.Drawing.Size(32, 32);
+            this.imgIcon.Size = new System.Drawing.Size(40, 40);
             this.imgIcon.TabIndex = 6;
             this.imgIcon.TabStop = false;
             // 
             // txtFilename
             // 
-            this.txtFilename.Location = new System.Drawing.Point(50, 16);
+            this.txtFilename.Location = new System.Drawing.Point(62, 20);
+            this.txtFilename.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtFilename.Name = "txtFilename";
-            this.txtFilename.Size = new System.Drawing.Size(322, 23);
+            this.txtFilename.Size = new System.Drawing.Size(402, 27);
             this.txtFilename.TabIndex = 0;
             this.txtFilename.Text = "<filename>";
             this.toolTip.SetToolTip(this.txtFilename, resources.GetString("txtFilename.ToolTip"));
@@ -85,27 +89,30 @@
             // lblType
             // 
             this.lblType.AutoSize = true;
-            this.lblType.Location = new System.Drawing.Point(12, 62);
+            this.lblType.Location = new System.Drawing.Point(15, 78);
+            this.lblType.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(34, 15);
+            this.lblType.Size = new System.Drawing.Size(43, 20);
             this.lblType.TabIndex = 8;
             this.lblType.Text = "Type:";
             // 
             // lblLocation
             // 
             this.lblLocation.AutoSize = true;
-            this.lblLocation.Location = new System.Drawing.Point(12, 86);
+            this.lblLocation.Location = new System.Drawing.Point(15, 108);
+            this.lblLocation.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblLocation.Name = "lblLocation";
-            this.lblLocation.Size = new System.Drawing.Size(56, 15);
+            this.lblLocation.Size = new System.Drawing.Size(69, 20);
             this.lblLocation.TabIndex = 10;
             this.lblLocation.Text = "Location:";
             // 
             // lblSize
             // 
             this.lblSize.AutoSize = true;
-            this.lblSize.Location = new System.Drawing.Point(12, 110);
+            this.lblSize.Location = new System.Drawing.Point(15, 138);
+            this.lblSize.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSize.Name = "lblSize";
-            this.lblSize.Size = new System.Drawing.Size(30, 15);
+            this.lblSize.Size = new System.Drawing.Size(39, 20);
             this.lblSize.TabIndex = 12;
             this.lblSize.Text = "Size:";
             this.toolTip.SetToolTip(this.lblSize, "This is the actual size of the file or directory.");
@@ -113,11 +120,12 @@
             // lblSizeOnDisk
             // 
             this.lblSizeOnDisk.AutoSize = true;
-            this.lblSizeOnDisk.Location = new System.Drawing.Point(12, 134);
+            this.lblSizeOnDisk.Location = new System.Drawing.Point(15, 168);
+            this.lblSizeOnDisk.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSizeOnDisk.Name = "lblSizeOnDisk";
-            this.lblSizeOnDisk.Size = new System.Drawing.Size(93, 15);
+            this.lblSizeOnDisk.Size = new System.Drawing.Size(90, 20);
             this.lblSizeOnDisk.TabIndex = 14;
-            this.lblSizeOnDisk.Text = "Space occupied:";
+            this.lblSizeOnDisk.Text = "Size on disk:";
             this.toolTip.SetToolTip(this.lblSizeOnDisk, "This is the space occupied by the file or directory on the disk\r\ndue to cluster s" +
         "ize.");
             // 
@@ -132,9 +140,10 @@
             // lblShortFilename
             // 
             this.lblShortFilename.AutoSize = true;
-            this.lblShortFilename.Location = new System.Drawing.Point(12, 158);
+            this.lblShortFilename.Location = new System.Drawing.Point(15, 198);
+            this.lblShortFilename.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblShortFilename.Name = "lblShortFilename";
-            this.lblShortFilename.Size = new System.Drawing.Size(97, 15);
+            this.lblShortFilename.Size = new System.Drawing.Size(121, 20);
             this.lblShortFilename.TabIndex = 16;
             this.lblShortFilename.Text = "Short name (8.3):";
             this.toolTip.SetToolTip(this.lblShortFilename, "Short names are used for backwards compatibility with systems that \r\ndon\'t suppor" +
@@ -145,9 +154,10 @@
             // 
             this.cbxReadOnly.AutoSize = true;
             this.cbxReadOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxReadOnly.Location = new System.Drawing.Point(80, 298);
+            this.cbxReadOnly.Location = new System.Drawing.Point(100, 407);
+            this.cbxReadOnly.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cbxReadOnly.Name = "cbxReadOnly";
-            this.cbxReadOnly.Size = new System.Drawing.Size(86, 20);
+            this.cbxReadOnly.Size = new System.Drawing.Size(108, 25);
             this.cbxReadOnly.TabIndex = 4;
             this.cbxReadOnly.Text = "Read-only";
             this.toolTip.SetToolTip(this.cbxReadOnly, "Read-only files cannot be written to until this attribute\r\nis cleared.");
@@ -157,9 +167,10 @@
             // 
             this.cbxHidden.AutoSize = true;
             this.cbxHidden.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxHidden.Location = new System.Drawing.Point(166, 298);
+            this.cbxHidden.Location = new System.Drawing.Point(208, 407);
+            this.cbxHidden.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cbxHidden.Name = "cbxHidden";
-            this.cbxHidden.Size = new System.Drawing.Size(71, 20);
+            this.cbxHidden.Size = new System.Drawing.Size(89, 25);
             this.cbxHidden.TabIndex = 5;
             this.cbxHidden.Text = "Hidden";
             this.toolTip.SetToolTip(this.cbxHidden, "Hidden files do not show up in regular directory listings and\r\ncannot be moved, d" +
@@ -170,9 +181,10 @@
             // 
             this.cbxSystem.AutoSize = true;
             this.cbxSystem.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxSystem.Location = new System.Drawing.Point(240, 298);
+            this.cbxSystem.Location = new System.Drawing.Point(300, 407);
+            this.cbxSystem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cbxSystem.Name = "cbxSystem";
-            this.cbxSystem.Size = new System.Drawing.Size(70, 20);
+            this.cbxSystem.Size = new System.Drawing.Size(87, 25);
             this.cbxSystem.TabIndex = 6;
             this.cbxSystem.Text = "System";
             this.toolTip.SetToolTip(this.cbxSystem, "System files will not be physically relocated, for example\r\nduring disk defragmen" +
@@ -183,9 +195,10 @@
             // 
             this.cbxArchive.AutoSize = true;
             this.cbxArchive.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxArchive.Location = new System.Drawing.Point(312, 298);
+            this.cbxArchive.Location = new System.Drawing.Point(390, 407);
+            this.cbxArchive.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cbxArchive.Name = "cbxArchive";
-            this.cbxArchive.Size = new System.Drawing.Size(72, 20);
+            this.cbxArchive.Size = new System.Drawing.Size(89, 25);
             this.cbxArchive.TabIndex = 7;
             this.cbxArchive.Text = "Archive";
             this.toolTip.SetToolTip(this.cbxArchive, "Archive files are marked as ready to be backed up by a backup\r\nutility. In practi" +
@@ -195,11 +208,12 @@
             // dateAccessed
             // 
             this.dateAccessed.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateAccessed.Location = new System.Drawing.Point(94, 254);
+            this.dateAccessed.Location = new System.Drawing.Point(118, 353);
+            this.dateAccessed.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dateAccessed.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             this.dateAccessed.Name = "dateAccessed";
             this.dateAccessed.ShowUpDown = true;
-            this.dateAccessed.Size = new System.Drawing.Size(278, 23);
+            this.dateAccessed.Size = new System.Drawing.Size(346, 27);
             this.dateAccessed.TabIndex = 3;
             this.toolTip.SetToolTip(this.dateAccessed, "This is the date when the file or directory was last accessed. The definition \r\no" +
         "f this can vary significantly from system to system. Only systems \r\nsupporting t" +
@@ -208,11 +222,12 @@
             // dateCreated
             // 
             this.dateCreated.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateCreated.Location = new System.Drawing.Point(94, 196);
+            this.dateCreated.Location = new System.Drawing.Point(118, 280);
+            this.dateCreated.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dateCreated.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             this.dateCreated.Name = "dateCreated";
             this.dateCreated.ShowUpDown = true;
-            this.dateCreated.Size = new System.Drawing.Size(278, 23);
+            this.dateCreated.Size = new System.Drawing.Size(346, 27);
             this.dateCreated.TabIndex = 1;
             this.toolTip.SetToolTip(this.dateCreated, "This is the date and time when the file or directory was originally\r\ncreated. Onl" +
         "y systems supporting the VFAT extensions use this value.");
@@ -220,11 +235,12 @@
             // dateModified
             // 
             this.dateModified.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateModified.Location = new System.Drawing.Point(94, 225);
+            this.dateModified.Location = new System.Drawing.Point(118, 316);
+            this.dateModified.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dateModified.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             this.dateModified.Name = "dateModified";
             this.dateModified.ShowUpDown = true;
-            this.dateModified.Size = new System.Drawing.Size(278, 23);
+            this.dateModified.Size = new System.Drawing.Size(346, 27);
             this.dateModified.TabIndex = 2;
             this.toolTip.SetToolTip(this.dateModified, "This is the date and time when the file or directory was last\r\nwritten to.");
             // 
@@ -232,10 +248,11 @@
             // 
             this.txtSize1.BackColor = System.Drawing.Color.White;
             this.txtSize1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtSize1.Location = new System.Drawing.Point(115, 110);
+            this.txtSize1.Location = new System.Drawing.Point(144, 138);
+            this.txtSize1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtSize1.Name = "txtSize1";
             this.txtSize1.ReadOnly = true;
-            this.txtSize1.Size = new System.Drawing.Size(255, 16);
+            this.txtSize1.Size = new System.Drawing.Size(319, 20);
             this.txtSize1.TabIndex = 29;
             this.txtSize1.TabStop = false;
             this.txtSize1.Text = "<size>";
@@ -245,13 +262,14 @@
             // 
             this.txtSizeOnDisk1.BackColor = System.Drawing.Color.White;
             this.txtSizeOnDisk1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtSizeOnDisk1.Location = new System.Drawing.Point(115, 134);
+            this.txtSizeOnDisk1.Location = new System.Drawing.Point(144, 168);
+            this.txtSizeOnDisk1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtSizeOnDisk1.Name = "txtSizeOnDisk1";
             this.txtSizeOnDisk1.ReadOnly = true;
-            this.txtSizeOnDisk1.Size = new System.Drawing.Size(255, 16);
+            this.txtSizeOnDisk1.Size = new System.Drawing.Size(319, 20);
             this.txtSizeOnDisk1.TabIndex = 30;
             this.txtSizeOnDisk1.TabStop = false;
-            this.txtSizeOnDisk1.Text = "<spaceoccupied>";
+            this.txtSizeOnDisk1.Text = "<sizeondisk>";
             this.toolTip.SetToolTip(this.txtSizeOnDisk1, "This is the space occupied by the file or directory on the disk\r\ndue to cluster s" +
         "ize.");
             // 
@@ -259,10 +277,11 @@
             // 
             this.txtShortFilename1.BackColor = System.Drawing.Color.White;
             this.txtShortFilename1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtShortFilename1.Location = new System.Drawing.Point(115, 158);
+            this.txtShortFilename1.Location = new System.Drawing.Point(144, 198);
+            this.txtShortFilename1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtShortFilename1.Name = "txtShortFilename1";
             this.txtShortFilename1.ReadOnly = true;
-            this.txtShortFilename1.Size = new System.Drawing.Size(255, 16);
+            this.txtShortFilename1.Size = new System.Drawing.Size(319, 20);
             this.txtShortFilename1.TabIndex = 31;
             this.txtShortFilename1.TabStop = false;
             this.txtShortFilename1.Text = "<shortname>";
@@ -275,9 +294,10 @@
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(292, 12);
+            this.btnCancel.Location = new System.Drawing.Point(365, 15);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(80, 26);
+            this.btnCancel.Size = new System.Drawing.Size(100, 32);
             this.btnCancel.TabIndex = 9;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -287,9 +307,10 @@
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(206, 12);
+            this.btnOK.Location = new System.Drawing.Point(258, 15);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(80, 26);
+            this.btnOK.Size = new System.Drawing.Size(100, 32);
             this.btnOK.TabIndex = 8;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -301,9 +322,10 @@
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 331);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 460);
+            this.pnlBottom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pnlBottom.Name = "pnlBottom";
-            this.pnlBottom.Size = new System.Drawing.Size(384, 50);
+            this.pnlBottom.Size = new System.Drawing.Size(480, 62);
             this.pnlBottom.TabIndex = 10;
             // 
             // lblSeparator1
@@ -312,9 +334,10 @@
             this.lblSeparator1.Enabled = false;
             this.lblSeparator1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lblSeparator1.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblSeparator1.Location = new System.Drawing.Point(12, 53);
+            this.lblSeparator1.Location = new System.Drawing.Point(15, 66);
+            this.lblSeparator1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSeparator1.Name = "lblSeparator1";
-            this.lblSeparator1.Size = new System.Drawing.Size(360, 1);
+            this.lblSeparator1.Size = new System.Drawing.Size(450, 1);
             this.lblSeparator1.TabIndex = 11;
             // 
             // lblSeparator2
@@ -323,9 +346,10 @@
             this.lblSeparator2.Enabled = false;
             this.lblSeparator2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lblSeparator2.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblSeparator2.Location = new System.Drawing.Point(12, 183);
+            this.lblSeparator2.Location = new System.Drawing.Point(15, 264);
+            this.lblSeparator2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSeparator2.Name = "lblSeparator2";
-            this.lblSeparator2.Size = new System.Drawing.Size(360, 1);
+            this.lblSeparator2.Size = new System.Drawing.Size(450, 1);
             this.lblSeparator2.TabIndex = 18;
             // 
             // lblSeparator3
@@ -334,17 +358,19 @@
             this.lblSeparator3.Enabled = false;
             this.lblSeparator3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lblSeparator3.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblSeparator3.Location = new System.Drawing.Point(12, 288);
+            this.lblSeparator3.Location = new System.Drawing.Point(15, 395);
+            this.lblSeparator3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSeparator3.Name = "lblSeparator3";
-            this.lblSeparator3.Size = new System.Drawing.Size(360, 1);
+            this.lblSeparator3.Size = new System.Drawing.Size(450, 1);
             this.lblSeparator3.TabIndex = 19;
             // 
             // lblAttributes
             // 
             this.lblAttributes.AutoSize = true;
-            this.lblAttributes.Location = new System.Drawing.Point(12, 300);
+            this.lblAttributes.Location = new System.Drawing.Point(15, 410);
+            this.lblAttributes.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAttributes.Name = "lblAttributes";
-            this.lblAttributes.Size = new System.Drawing.Size(62, 15);
+            this.lblAttributes.Size = new System.Drawing.Size(77, 20);
             this.lblAttributes.TabIndex = 23;
             this.lblAttributes.Text = "Attributes:";
             // 
@@ -352,9 +378,10 @@
             // 
             this.cbxDateCreated.AutoSize = true;
             this.cbxDateCreated.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxDateCreated.Location = new System.Drawing.Point(12, 198);
+            this.cbxDateCreated.Location = new System.Drawing.Point(15, 283);
+            this.cbxDateCreated.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cbxDateCreated.Name = "cbxDateCreated";
-            this.cbxDateCreated.Size = new System.Drawing.Size(76, 20);
+            this.cbxDateCreated.Size = new System.Drawing.Size(95, 25);
             this.cbxDateCreated.TabIndex = 24;
             this.cbxDateCreated.Text = "Created:";
             this.cbxDateCreated.UseVisualStyleBackColor = true;
@@ -364,9 +391,10 @@
             // 
             this.cbxDateModified.AutoSize = true;
             this.cbxDateModified.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxDateModified.Location = new System.Drawing.Point(12, 227);
+            this.cbxDateModified.Location = new System.Drawing.Point(15, 319);
+            this.cbxDateModified.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cbxDateModified.Name = "cbxDateModified";
-            this.cbxDateModified.Size = new System.Drawing.Size(80, 20);
+            this.cbxDateModified.Size = new System.Drawing.Size(101, 25);
             this.cbxDateModified.TabIndex = 25;
             this.cbxDateModified.Text = "Modified";
             this.cbxDateModified.UseVisualStyleBackColor = true;
@@ -376,9 +404,10 @@
             // 
             this.cbxDateAccessed.AutoSize = true;
             this.cbxDateAccessed.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxDateAccessed.Location = new System.Drawing.Point(12, 256);
+            this.cbxDateAccessed.Location = new System.Drawing.Point(15, 355);
+            this.cbxDateAccessed.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cbxDateAccessed.Name = "cbxDateAccessed";
-            this.cbxDateAccessed.Size = new System.Drawing.Size(84, 20);
+            this.cbxDateAccessed.Size = new System.Drawing.Size(104, 25);
             this.cbxDateAccessed.TabIndex = 26;
             this.cbxDateAccessed.Text = "Accessed:";
             this.cbxDateAccessed.UseVisualStyleBackColor = true;
@@ -388,10 +417,11 @@
             // 
             this.txtType1.BackColor = System.Drawing.Color.White;
             this.txtType1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtType1.Location = new System.Drawing.Point(115, 62);
+            this.txtType1.Location = new System.Drawing.Point(144, 78);
+            this.txtType1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtType1.Name = "txtType1";
             this.txtType1.ReadOnly = true;
-            this.txtType1.Size = new System.Drawing.Size(255, 16);
+            this.txtType1.Size = new System.Drawing.Size(319, 20);
             this.txtType1.TabIndex = 27;
             this.txtType1.TabStop = false;
             this.txtType1.Text = "<type>";
@@ -400,22 +430,50 @@
             // 
             this.txtLocation1.BackColor = System.Drawing.Color.White;
             this.txtLocation1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.txtLocation1.Location = new System.Drawing.Point(115, 85);
+            this.txtLocation1.Location = new System.Drawing.Point(144, 106);
+            this.txtLocation1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtLocation1.Name = "txtLocation1";
             this.txtLocation1.ReadOnly = true;
-            this.txtLocation1.Size = new System.Drawing.Size(255, 16);
+            this.txtLocation1.Size = new System.Drawing.Size(319, 20);
             this.txtLocation1.TabIndex = 28;
             this.txtLocation1.TabStop = false;
             this.txtLocation1.Text = "<location>";
             // 
+            // txtContains1
+            // 
+            this.txtContains1.BackColor = System.Drawing.Color.White;
+            this.txtContains1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtContains1.Location = new System.Drawing.Point(144, 228);
+            this.txtContains1.Margin = new System.Windows.Forms.Padding(4);
+            this.txtContains1.Name = "txtContains1";
+            this.txtContains1.ReadOnly = true;
+            this.txtContains1.Size = new System.Drawing.Size(319, 20);
+            this.txtContains1.TabIndex = 33;
+            this.txtContains1.TabStop = false;
+            this.txtContains1.Text = "<contains>";
+            this.toolTip.SetToolTip(this.txtContains1, "The number of files and subdirectories contained in this directory.\r\n");
+            // 
+            // txtContains
+            // 
+            this.txtContains.AutoSize = true;
+            this.txtContains.Location = new System.Drawing.Point(15, 228);
+            this.txtContains.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.txtContains.Name = "txtContains";
+            this.txtContains.Size = new System.Drawing.Size(69, 20);
+            this.txtContains.TabIndex = 32;
+            this.txtContains.Text = "Contains:";
+            this.toolTip.SetToolTip(this.txtContains, "The number of files and subdirectories contained in this directory.\r\n");
+            // 
             // dlgProperties
             // 
             this.AcceptButton = this.btnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(384, 381);
+            this.ClientSize = new System.Drawing.Size(480, 522);
+            this.Controls.Add(this.txtContains1);
+            this.Controls.Add(this.txtContains);
             this.Controls.Add(this.txtShortFilename1);
             this.Controls.Add(this.txtSizeOnDisk1);
             this.Controls.Add(this.txtSize1);
@@ -445,6 +503,7 @@
             this.Controls.Add(this.lblSize);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "dlgProperties";
@@ -491,5 +550,7 @@
         private System.Windows.Forms.TextBox txtSize1;
         private System.Windows.Forms.TextBox txtSizeOnDisk1;
         private System.Windows.Forms.TextBox txtShortFilename1;
+        private System.Windows.Forms.TextBox txtContains1;
+        private System.Windows.Forms.Label txtContains;
     }
 }
