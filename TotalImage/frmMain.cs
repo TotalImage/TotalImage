@@ -1757,33 +1757,19 @@ namespace TotalImage
 
                 selectPartitionToolStripComboBox.Items.Clear();
 
-                if (image.PartitionTable is not Partitions.NoPartitionTable)
-                {
-                    for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
-                    {
-                        try
-                        {
-                            selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
-                        }
-                        catch (InvalidDataException)
-                        {
-                        }
-
-                        if (i == CurrentPartitionIndex)
-                        {
-                            selectPartitionToolStripComboBox.SelectedIndex = i;
-                        }
-                    }
-                }
-                else
+                for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
                 {
                     try
                     {
-                        selectPartitionToolStripComboBox.Items.Add($"{0}: {image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[0].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length)})");
-                        selectPartitionToolStripComboBox.SelectedIndex = 0;
+                        selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
                     }
                     catch (InvalidDataException)
                     {
+                    }
+
+                    if (i == CurrentPartitionIndex)
+                    {
+                        selectPartitionToolStripComboBox.SelectedIndex = i;
                     }
                 }
             }
