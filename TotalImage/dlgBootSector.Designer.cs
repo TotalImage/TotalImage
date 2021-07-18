@@ -40,7 +40,6 @@
             this.txtJumpCode = new System.Windows.Forms.TextBox();
             this.lblOEMID = new System.Windows.Forms.Label();
             this.txtOEMID = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -91,6 +90,7 @@
             this.btnLoad.TabIndex = 11;
             this.btnLoad.Text = "Load...";
             this.btnLoad.UseVisualStyleBackColor = true;
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
             // 
             // btnExport
             // 
@@ -101,6 +101,7 @@
             this.btnExport.TabIndex = 12;
             this.btnExport.Text = "Export...";
             this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
             // 
             // lblPreset
             // 
@@ -163,15 +164,6 @@
             this.txtOEMID.Size = new System.Drawing.Size(180, 27);
             this.txtOEMID.TabIndex = 19;
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Location = new System.Drawing.Point(12, 111);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(684, 260);
-            this.groupBox1.TabIndex = 20;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "groupBox1";
-            // 
             // dlgBootSector
             // 
             this.AcceptButton = this.btnOK;
@@ -183,7 +175,6 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ClientSize = new System.Drawing.Size(708, 547);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.txtOEMID);
             this.Controls.Add(this.lblOEMID);
             this.Controls.Add(this.txtJumpCode);
@@ -222,6 +213,5 @@
         private System.Windows.Forms.TextBox txtJumpCode;
         private System.Windows.Forms.Label lblOEMID;
         private System.Windows.Forms.TextBox txtOEMID;
-        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
