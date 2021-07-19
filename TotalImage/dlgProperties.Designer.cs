@@ -50,6 +50,9 @@
             this.txtShortFilename1 = new System.Windows.Forms.TextBox();
             this.txtContains1 = new System.Windows.Forms.TextBox();
             this.lblContains = new System.Windows.Forms.Label();
+            this.cbxDateCreated = new System.Windows.Forms.CheckBox();
+            this.cbxDateModified = new System.Windows.Forms.CheckBox();
+            this.cbxDateAccessed = new System.Windows.Forms.CheckBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.pnlBottom = new System.Windows.Forms.Panel();
@@ -57,9 +60,6 @@
             this.lblSeparator2 = new System.Windows.Forms.Label();
             this.lblSeparator3 = new System.Windows.Forms.Label();
             this.lblAttributes = new System.Windows.Forms.Label();
-            this.cbxDateCreated = new System.Windows.Forms.CheckBox();
-            this.cbxDateModified = new System.Windows.Forms.CheckBox();
-            this.cbxDateAccessed = new System.Windows.Forms.CheckBox();
             this.txtType1 = new System.Windows.Forms.TextBox();
             this.txtLocation1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.imgIcon)).BeginInit();
@@ -146,9 +146,7 @@
             this.lblShortFilename.Size = new System.Drawing.Size(121, 20);
             this.lblShortFilename.TabIndex = 16;
             this.lblShortFilename.Text = "Short name (8.3):";
-            this.toolTip.SetToolTip(this.lblShortFilename, "Short names are used for backwards compatibility with systems that \r\ndon\'t suppor" +
-        "t the VFAT/LFN extensions. It is automatically generated\r\nbased on the long name" +
-        " (see above).\r\n");
+            this.toolTip.SetToolTip(this.lblShortFilename, resources.GetString("lblShortFilename.ToolTip"));
             // 
             // cbxReadOnly
             // 
@@ -216,9 +214,7 @@
             this.dtpAccessed.ShowUpDown = true;
             this.dtpAccessed.Size = new System.Drawing.Size(346, 27);
             this.dtpAccessed.TabIndex = 3;
-            this.toolTip.SetToolTip(this.dtpAccessed, "This is the date when the file or directory was last accessed. The definition \r\no" +
-        "f this can vary significantly from system to system. Only systems \r\nsupporting t" +
-        "he VFAT extensions use this value.");
+            this.toolTip.SetToolTip(this.dtpAccessed, resources.GetString("dtpAccessed.ToolTip"));
             // 
             // dtpCreated
             // 
@@ -231,8 +227,9 @@
             this.dtpCreated.ShowUpDown = true;
             this.dtpCreated.Size = new System.Drawing.Size(346, 27);
             this.dtpCreated.TabIndex = 1;
-            this.toolTip.SetToolTip(this.dtpCreated, "This is the date and time when the file or directory was originally\r\ncreated. Onl" +
-        "y systems supporting the VFAT extensions use this value.");
+            this.toolTip.SetToolTip(this.dtpCreated, "This is the date and time when the file or directory was originally\r\ncreated. For" +
+        " FAT file systems, only software supporting the VFAT\r\nextensions uses this value" +
+        ".");
             // 
             // dtpModified
             // 
@@ -288,9 +285,7 @@
             this.txtShortFilename1.TabIndex = 31;
             this.txtShortFilename1.TabStop = false;
             this.txtShortFilename1.Text = "<shortname>";
-            this.toolTip.SetToolTip(this.txtShortFilename1, "Short names are used for backwards compatibility with systems that \r\ndon\'t suppor" +
-        "t the VFAT/LFN extensions. It is automatically generated\r\nbased on the long name" +
-        " (see above).");
+            this.toolTip.SetToolTip(this.txtShortFilename1, resources.GetString("txtShortFilename1.ToolTip"));
             // 
             // txtContains1
             // 
@@ -316,6 +311,50 @@
             this.lblContains.TabIndex = 32;
             this.lblContains.Text = "Contains:";
             this.toolTip.SetToolTip(this.lblContains, "The number of files and subdirectories contained in this directory.\r\n");
+            // 
+            // cbxDateCreated
+            // 
+            this.cbxDateCreated.AutoSize = true;
+            this.cbxDateCreated.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxDateCreated.Location = new System.Drawing.Point(15, 283);
+            this.cbxDateCreated.Margin = new System.Windows.Forms.Padding(4);
+            this.cbxDateCreated.Name = "cbxDateCreated";
+            this.cbxDateCreated.Size = new System.Drawing.Size(95, 25);
+            this.cbxDateCreated.TabIndex = 24;
+            this.cbxDateCreated.Text = "Created:";
+            this.toolTip.SetToolTip(this.cbxDateCreated, "This is the date and time when the file or directory was originally\r\ncreated. For" +
+        " FAT file systems, only software supporting the VFAT\r\nextensions uses this value" +
+        ".");
+            this.cbxDateCreated.UseVisualStyleBackColor = true;
+            this.cbxDateCreated.CheckedChanged += new System.EventHandler(this.cbxDateCreated_CheckedChanged);
+            // 
+            // cbxDateModified
+            // 
+            this.cbxDateModified.AutoSize = true;
+            this.cbxDateModified.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxDateModified.Location = new System.Drawing.Point(15, 319);
+            this.cbxDateModified.Margin = new System.Windows.Forms.Padding(4);
+            this.cbxDateModified.Name = "cbxDateModified";
+            this.cbxDateModified.Size = new System.Drawing.Size(101, 25);
+            this.cbxDateModified.TabIndex = 25;
+            this.cbxDateModified.Text = "Modified";
+            this.toolTip.SetToolTip(this.cbxDateModified, "This is the date and time when the file or directory was last\r\nwritten to.");
+            this.cbxDateModified.UseVisualStyleBackColor = true;
+            this.cbxDateModified.CheckedChanged += new System.EventHandler(this.cbxDateModified_CheckedChanged);
+            // 
+            // cbxDateAccessed
+            // 
+            this.cbxDateAccessed.AutoSize = true;
+            this.cbxDateAccessed.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxDateAccessed.Location = new System.Drawing.Point(15, 355);
+            this.cbxDateAccessed.Margin = new System.Windows.Forms.Padding(4);
+            this.cbxDateAccessed.Name = "cbxDateAccessed";
+            this.cbxDateAccessed.Size = new System.Drawing.Size(104, 25);
+            this.cbxDateAccessed.TabIndex = 26;
+            this.cbxDateAccessed.Text = "Accessed:";
+            this.toolTip.SetToolTip(this.cbxDateAccessed, resources.GetString("cbxDateAccessed.ToolTip"));
+            this.cbxDateAccessed.UseVisualStyleBackColor = true;
+            this.cbxDateAccessed.CheckedChanged += new System.EventHandler(this.cbxDateAccessed_CheckedChanged);
             // 
             // btnCancel
             // 
@@ -401,45 +440,6 @@
             this.lblAttributes.Size = new System.Drawing.Size(77, 20);
             this.lblAttributes.TabIndex = 23;
             this.lblAttributes.Text = "Attributes:";
-            // 
-            // cbxDateCreated
-            // 
-            this.cbxDateCreated.AutoSize = true;
-            this.cbxDateCreated.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxDateCreated.Location = new System.Drawing.Point(15, 283);
-            this.cbxDateCreated.Margin = new System.Windows.Forms.Padding(4);
-            this.cbxDateCreated.Name = "cbxDateCreated";
-            this.cbxDateCreated.Size = new System.Drawing.Size(95, 25);
-            this.cbxDateCreated.TabIndex = 24;
-            this.cbxDateCreated.Text = "Created:";
-            this.cbxDateCreated.UseVisualStyleBackColor = true;
-            this.cbxDateCreated.CheckedChanged += new System.EventHandler(this.cbxDateCreated_CheckedChanged);
-            // 
-            // cbxDateModified
-            // 
-            this.cbxDateModified.AutoSize = true;
-            this.cbxDateModified.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxDateModified.Location = new System.Drawing.Point(15, 319);
-            this.cbxDateModified.Margin = new System.Windows.Forms.Padding(4);
-            this.cbxDateModified.Name = "cbxDateModified";
-            this.cbxDateModified.Size = new System.Drawing.Size(101, 25);
-            this.cbxDateModified.TabIndex = 25;
-            this.cbxDateModified.Text = "Modified";
-            this.cbxDateModified.UseVisualStyleBackColor = true;
-            this.cbxDateModified.CheckedChanged += new System.EventHandler(this.cbxDateModified_CheckedChanged);
-            // 
-            // cbxDateAccessed
-            // 
-            this.cbxDateAccessed.AutoSize = true;
-            this.cbxDateAccessed.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxDateAccessed.Location = new System.Drawing.Point(15, 355);
-            this.cbxDateAccessed.Margin = new System.Windows.Forms.Padding(4);
-            this.cbxDateAccessed.Name = "cbxDateAccessed";
-            this.cbxDateAccessed.Size = new System.Drawing.Size(104, 25);
-            this.cbxDateAccessed.TabIndex = 26;
-            this.cbxDateAccessed.Text = "Accessed:";
-            this.cbxDateAccessed.UseVisualStyleBackColor = true;
-            this.cbxDateAccessed.CheckedChanged += new System.EventHandler(this.cbxDateAccessed_CheckedChanged);
             // 
             // txtType1
             // 

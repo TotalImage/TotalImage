@@ -67,13 +67,10 @@ namespace TotalImage
             }
             else
             {
-                txtShortFilename1.Text = "N/A";
+                txtShortFilename1.Text = "N/A"; //For now. We might want to always generate this anyway even for other file systems?
                 txtShortFilename1.Enabled = false;
                 lblShortFilename.Enabled = false;
             }
-
-            txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.Length, true);
-            txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.LengthOnDisk, true);
 
             if (entry is FileSystems.File file)
             {
@@ -81,8 +78,8 @@ namespace TotalImage
                 txtContains1.Enabled = false;
                 txtContains1.Text = "N/A";
                 lblContains.Enabled = false;
-                txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.Length, true);
-                txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.LengthOnDisk, true);
+                txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.LengthOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             }
             else if (entry is FileSystems.Directory dir)
             {
@@ -90,8 +87,8 @@ namespace TotalImage
                 txtContains1.Enabled = true;
                 txtContains1.Text = $"Files: {dir.FileCount(true)}, subdirectories: {dir.SubdirectoryCount(true)}";
                 lblContains.Enabled = true;
-                txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, false), true);
-                txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, true), true);
+                txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, false), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, true), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             }
 
             // These are indeed supposed to be assignments in the conditions.

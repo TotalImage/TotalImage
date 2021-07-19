@@ -61,9 +61,35 @@
     <value>17, 17</value>
   </metadata>
   <data name="txtFilename.ToolTip" xml:space="preserve">
-    <value>This is the long name that will be displayed by systems supporting
-the VFAT/LFN extensions. Other systems will display the short (8.3)
-name instead (see below), which is automatically generated based
-on the long name.</value>
+    <value>This is the long name of the file or directory. For FAT file systems, only
+software supporting the VFAT/LFN extension will display this name.
+Other software will display the short (8.3) name instead (see below), 
+which is automatically generated based on the long name.</value>
+  </data>
+  <data name="lblShortFilename.ToolTip" xml:space="preserve">
+    <value>Short names are used for backwards compatibility with systems that 
+don't support longer file names. It is automatically generated
+based on the long name (see above). For FAT file systems, software
+not supporting the VFAT/LFN extension will display this name.
+</value>
+  </data>
+  <data name="dtpAccessed.ToolTip" xml:space="preserve">
+    <value>This is the date when the file or directory was last accessed. The definition 
+of this can vary significantly from system to system. For FAT file systems,
+only software supporting the VFAT extensions uses this value.
+</value>
+  </data>
+  <data name="txtShortFilename1.ToolTip" xml:space="preserve">
+    <value>Short names are used for backwards compatibility with systems that 
+don't support longer file names. It is automatically generated
+based on the long name (see above). For FAT file systems, software
+not supporting the VFAT/LFN extension will display this name.
+</value>
+  </data>
+  <data name="cbxDateAccessed.ToolTip" xml:space="preserve">
+    <value>This is the date when the file or directory was last accessed. The definition 
+of this can vary significantly from system to system. For FAT file systems,
+only software supporting the VFAT extensions uses this value.
+</value>
   </data>
 </root>
