@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Security.Cryptography;
 using System.Text;
 using TotalImage.Partitions;
 
@@ -166,5 +167,33 @@ namespace TotalImage.Containers
         /// The display name of the container.
         /// </summary>
         public abstract string DisplayName { get; }
+
+        /// <summary>
+        /// Calculates the MD5 hash of this file
+        /// </summary>
+        /// <returns></returns>
+        public string CalculateMd5Hash()
+        {
+            using (var md5 = MD5.Create())
+            {
+                containerStream.Seek(0, SeekOrigin.Begin);
+                var hash = md5.ComputeHash(containerStream);
+                return BitConverter.ToString(hash).Replace("-", "").ToLower();
+            }
+        }
+
+        /// <summary>
+        /// Calculates the SHA-1 hash of this file
+        /// </summary>
+        /// <returns></returns>
+        public string CalculateSha1Hash()
+        {
+            using (var sha1 = SHA1.Create())
+            {
+                containerStream.Seek(0, SeekOrigin.Begin);
+                var hash = sha1.ComputeHash(containerStream);
+                return BitConverter.ToString(hash).Replace("-", "").ToLower();
+            }
+        }
     }
 }
