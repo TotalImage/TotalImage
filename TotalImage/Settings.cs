@@ -195,7 +195,14 @@ namespace TotalImage
                 settingsWatcher.EnableRaisingEvents = false;
             }
 
-            File.WriteAllText(SettingsFile, json);
+            try
+            {
+                File.WriteAllText(SettingsFile, json);
+            }
+            catch (IOException)
+            {
+                //We can't write to the file, probably because it's opened by another instance, so let's just silently give up
+            }
 
             if (settingsWatcher != null)
             {
