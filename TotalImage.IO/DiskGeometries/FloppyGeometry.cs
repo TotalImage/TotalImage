@@ -190,8 +190,8 @@ namespace TotalImage.DiskGeometries
         /// </summary>
         public static readonly IReadOnlyDictionary<FriendlyName, FloppyGeometry> KnownGeometries = ImmutableDictionary.CreateRange(new Dictionary<FriendlyName, FloppyGeometry>()
         {
-            { FriendlyName.DoubleDensity160k, new FloppyGeometry(1, 40,  8, 2, 0xFE, 2, 2,  1,  64, 1) },
-            { FriendlyName.DoubleDensity180k, new FloppyGeometry(1, 40,  9, 2, 0xFC, 2, 2,  1,  64, 1) },
+            { FriendlyName.DoubleDensity160k, new FloppyGeometry(1, 40,  8, 2, 0xFE, 1, 2,  1,  64, 1) },
+            { FriendlyName.DoubleDensity180k, new FloppyGeometry(1, 40,  9, 2, 0xFC, 1, 2,  1,  64, 1) },
             { FriendlyName.SingleDensity,     new FloppyGeometry(1, 77, 26, 0, 0xFE, 4, 2,  6,  68, 1) },
             { FriendlyName.DoubleDensity320k, new FloppyGeometry(2, 40,  8, 2, 0xFF, 2, 2,  1, 112, 1) },
             { FriendlyName.DoubleDensity360k, new FloppyGeometry(2, 40,  9, 2, 0xFD, 2, 2,  2, 112, 1) },

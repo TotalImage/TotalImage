@@ -286,7 +286,7 @@ namespace TotalImage.FileSystems.BPB
                     new BiosParameterBlock
                     {
                         BytesPerLogicalSector = 512,
-                        LogicalSectorsPerCluster = 2,
+                        LogicalSectorsPerCluster = 1,
                         ReservedLogicalSectors = 1,
                         NumberOfFATs = 2,
                         LogicalSectorsPerFAT = 1,
@@ -303,7 +303,7 @@ namespace TotalImage.FileSystems.BPB
                     new BiosParameterBlock
                     {
                         BytesPerLogicalSector = 512,
-                        LogicalSectorsPerCluster = 2,
+                        LogicalSectorsPerCluster = 1,
                         ReservedLogicalSectors = 1,
                         NumberOfFATs = 2,
                         LogicalSectorsPerFAT = 1,
