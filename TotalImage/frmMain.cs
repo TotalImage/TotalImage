@@ -62,6 +62,9 @@ namespace TotalImage
         #region Event Handlers
         private void frmMain_Load(object sender, EventArgs e)
         {
+            //This fixes the problem of certain settings values not being returned correctly when using high DPI. Go figure...
+            Settings.Reload();
+
             //These three are outside Sync because otherwise they'd be applied whenever settings are saved...
             WindowState = Settings.CurrentSettings.WindowState;
             Location = Settings.CurrentSettings.WindowPosition;
