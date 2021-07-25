@@ -1,16 +1,20 @@
 ﻿using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace TotalImage
 {
     public partial class dlgImageInfo : Form
     {
+        private BackgroundWorker md5Worker;
+        private BackgroundWorker sha1Worker;
+
         //TODO: Obtain actual data from the main form/relevant classes and display it
         public dlgImageInfo()
         {
             InitializeComponent();
         }
 
-        private async void dlgImageInfo_Load(object sender, System.EventArgs e)
+        private void dlgImageInfo_Load(object sender, System.EventArgs e)
         {
             //Make the groups collapsible for .NET 5.0 or later
             lstProperties.Groups[0].CollapsedState = ListViewGroupCollapsedState.Expanded;
@@ -41,48 +45,82 @@ namespace TotalImage
             lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             lstProperties.FindItemWithText("Free space").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.TotalFreeSpace, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             lstProperties.FindItemWithText("Volume serial number").SubItems[1].Text = "N/A"; //Obtain this from the BPB if it exists
-            lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = "Calculating...";
-            lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = "Calculating...";
+            lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = "Please wait...";
+            lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = "Please wait...";
 
             /* Do this in the background so we don't hang the UI thread. Because both methods use the same stream, they must absolutely NOT run at 
              * the same time!!! That's why this quasi mutex is here. The second worker will sleep until the first one is done and then do its own 
              * calculation. This seems to guarantee proper results. */
             bool md5Done = false;
-            System.ComponentModel.BackgroundWorker md5Worker = new System.ComponentModel.BackgroundWorker();
-            md5Worker.WorkerSupportsCancellation = false;
+            md5Worker = new BackgroundWorker();
+            md5Worker.WorkerSupportsCancellation = true;
             md5Worker.WorkerReportsProgress = false;
             md5Worker.DoWork += (sender, e) =>
             {
+                BackgroundWorker worker = (BackgroundWorker)sender;
                 e.Result = mainForm.image.CalculateMd5Hash();
+                if (worker.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
             };
             md5Worker.RunWorkerCompleted += (sender, e) =>
             {
-                md5Done = true;
-                lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = (string)e.Result;
+                if (e.Cancelled) { }
+                else if (e.Error != null) { }
+                else
+                {
+                    md5Done = true;
+                    lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = (string)e.Result;
+                }
             };
             md5Worker.RunWorkerAsync();
 
-            System.ComponentModel.BackgroundWorker sha1Worker = new System.ComponentModel.BackgroundWorker();
-            sha1Worker.WorkerSupportsCancellation = false;
+            sha1Worker = new BackgroundWorker();
+            sha1Worker.WorkerSupportsCancellation = true;
             sha1Worker.WorkerReportsProgress = false;
             sha1Worker.DoWork += (sender, e) =>
             {
-                while(!md5Done)
+                BackgroundWorker worker = (BackgroundWorker)sender;
+                while (!md5Done)
                 {
+                    if (worker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                    }
                     System.Threading.Thread.Sleep(100); //So we don't waste processor time
                 }
                 e.Result = mainForm.image.CalculateSha1Hash();
             };
             sha1Worker.RunWorkerCompleted += (sender, e) =>
             {
-                lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = (string)e.Result;
+                if (e.Cancelled) { }
+                else if (e.Error != null) { }
+                else
+                {
+                    lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = (string)e.Result;
+                }               
             };
             sha1Worker.RunWorkerAsync();
 
-            //Obtain this from the container metadata if it exists
+            //Obtain this from the container metadata if it exists and display it
             txtComment.Text = "This container type does not support comments.";
             txtComment.Enabled = false;
             lblComment.Enabled = false;
+        }
+
+        private void dlgImageInfo_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //Cancel the background work if it's still in progress
+            if (md5Worker.IsBusy)
+            {
+                md5Worker.CancelAsync();
+            }
+
+            if (sha1Worker.IsBusy)
+            {
+                sha1Worker.CancelAsync();
+            }
         }
     }
 }
