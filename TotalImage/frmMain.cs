@@ -1764,15 +1764,16 @@ namespace TotalImage
                 {
                     try
                     {
-                        selectPartitionToolStripComboBox.Items.Add($"{i}: {image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
+                        selectPartitionToolStripComboBox.Items.Add($"{(image.PartitionTable.Partitions.Count > 1 ? i + ": " : string.Empty)}{image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
+
+                        if (i == CurrentPartitionIndex)
+                        {
+                            selectPartitionToolStripComboBox.SelectedIndex = i;
+                        }
                     }
                     catch (InvalidDataException)
                     {
-                    }
 
-                    if (i == CurrentPartitionIndex)
-                    {
-                        selectPartitionToolStripComboBox.SelectedIndex = i;
                     }
                 }
             }
