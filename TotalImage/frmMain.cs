@@ -800,30 +800,13 @@ namespace TotalImage
                         throw new Exception("Associated treeview node was not found");
                     }
                 }
-                else //A file was double-clicked
+                else //A file was double-clicked - extract to temp dir then open it
                 {
-                    string targetFile = Path.Combine(Settings.CurrentSettings.DefaultExtractPath, SelectedItems.First().Name);
-                    Debug.WriteLine(targetFile);
-                    if (Settings.CurrentSettings.ExtractAlwaysAsk)
-                    {
-                        using dlgExtract dlg = new dlgExtract();
-                        dlg.lblPath.Text = $"Extract {SelectedItems.Count()} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
-                        if (dlg.ShowDialog() == DialogResult.OK)
-                        {
-                            targetFile = Path.Combine(dlg.TargetPath, SelectedItems.First().Name);
-                            ExtractFiles(SelectedItems, dlg.TargetPath, dlg.ExtractType, dlg.OpenFolder);
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        ExtractFiles(SelectedItems, Settings.CurrentSettings.DefaultExtractPath, Settings.CurrentSettings.DefaultExtractType, Settings.CurrentSettings.OpenFolderAfterExtract);
-                    }
+                    string targetDir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
+                    string targetFile = Path.Combine(targetDir, SelectedItems.First().Name);
 
-                    //Tell the shell to open the file after extraction
+                    ExtractFiles(SelectedItems, targetDir, Settings.FolderExtract.Ignore, false);
+
                     ProcessStartInfo psi = new ProcessStartInfo
                     {
                         FileName = targetFile,
