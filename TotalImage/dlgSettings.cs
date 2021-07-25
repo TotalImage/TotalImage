@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace TotalImage
@@ -198,6 +199,30 @@ namespace TotalImage
             {
                 lvi.Checked = false;
             }
+        }
+
+        private void btnClearTemp_Click(object sender, EventArgs e)
+        {
+            string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage");
+            if (Directory.Exists(tempdir))
+            {
+                Directory.Delete(tempdir, true);
+            }
+
+            Directory.CreateDirectory(tempdir);
+
+            TaskDialog.ShowDialog(this, new TaskDialogPage()
+            {
+                Text = "Temporary folder has been successfully cleared.",
+                Heading = "Temporary folder cleared",
+                Caption = "Success",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Information,
+                DefaultButton = TaskDialogButton.OK
+            });
         }
     }
 }
