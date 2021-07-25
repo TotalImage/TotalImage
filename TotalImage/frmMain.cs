@@ -1150,9 +1150,9 @@ namespace TotalImage
                 if (lstFiles.SelectedIndices.Count == 1)
                 {
                     TiFileSystemObject fso = GetSelectedItemData(0);
-                    if (fso is TiDirectory)
+                    if (fso is TiDirectory dir)
                     {
-                        var node = FindNode(lstDirectories.Nodes[0], (TiDirectory)fso);
+                        var node = FindNode(lstDirectories.Nodes[0], dir);
                         if (node != null)
                         {
                             lstDirectories.SelectedNode = node;
@@ -1164,12 +1164,18 @@ namespace TotalImage
                     }
                     else
                     {
-                        //Extract the selected file (and open it?)
+                        string targetDir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
+                        string targetFile = Path.Combine(targetDir, SelectedItems.First().Name);
+
+                        ExtractFiles(SelectedItems, targetDir, Settings.FolderExtract.Ignore, false);
+
+                        ProcessStartInfo psi = new ProcessStartInfo
+                        {
+                            FileName = targetFile,
+                            UseShellExecute = true
+                        };
+                        Process.Start(psi);
                     }
-                }
-                else if (lstFiles.SelectedIndices.Count > 1)
-                {
-                    //Extract all selected objects
                 }
             }
         }
