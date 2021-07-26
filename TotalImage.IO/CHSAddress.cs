@@ -1,4 +1,6 @@
-﻿namespace TotalImage
+﻿using System;
+
+namespace TotalImage
 {
     /// <summary>
     /// A structure representing a CHS address
@@ -24,7 +26,7 @@
         /// Creates a CHS address from its three byte binary representation
         /// </summary>
         /// <param name="address">A three byte array containing the address</param>
-        public CHSAddress(byte[] address)
+        public CHSAddress(in Span<byte> address)
         {
             if (address.Length != 3)
             {

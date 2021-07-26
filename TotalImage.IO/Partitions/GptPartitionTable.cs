@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
@@ -33,36 +34,34 @@ namespace TotalImage.Partitions
         /// <inheritdoc />
         protected override IEnumerable<PartitionEntry> LoadPartitions()
         {
-            using BinaryReader br = new BinaryReader(_container.Content, Encoding.ASCII, true);
-            br.BaseStream.Seek(_sectorSize, SeekOrigin.Begin);
+            _container.Content.Seek(_sectorSize, SeekOrigin.Begin);
 
-            _header = new GptHeader(br);
+            byte[] buffer = new byte[92];
+            _container.Content.Read(buffer);
+            _header = new GptHeader(buffer);
 
             if (_header.Signature != "EFI PART")
             {
                 throw new InvalidDataException("Not a GPT Protective Partition");
             }
 
-            br.BaseStream.Seek((long)(_sectorSize * _header.TableLBA), SeekOrigin.Begin);
+            _container.Content.Seek((long)(_sectorSize * _header.TableLBA), SeekOrigin.Begin);
 
             var entries = ImmutableList.CreateBuilder<PartitionEntry>();
+            buffer = new byte[_header.SizeOfPartitionEntry];
+
             for (int i = 0; i < _header.PartitionEntries; i++)
             {
-                Guid typeId = new Guid(br.ReadBytes(16));
-                Guid entryId = new Guid(br.ReadBytes(16));
-                ulong firstLba = br.ReadUInt64();
-                ulong lastLba = br.ReadUInt64();
-                GptPartitionFlags flags = (GptPartitionFlags)br.ReadUInt64();
-                string name = Encoding.Unicode.GetString(br.ReadBytes(72));
+                _container.Content.Read(buffer);
+                Guid typeId = new Guid(buffer[0..16]);
+                Guid entryId = new Guid(buffer[16..32]);
+                ulong firstLba = BinaryPrimitives.ReadUInt64LittleEndian(buffer[32..40]);
+                ulong lastLba = BinaryPrimitives.ReadUInt64LittleEndian(buffer[40..48]);
+                GptPartitionFlags flags = (GptPartitionFlags)BinaryPrimitives.ReadUInt64LittleEndian(buffer[48..56]);
+                string name = Encoding.Unicode.GetString(buffer[56..128]);
 
                 long offset = (long)(firstLba * _sectorSize);
                 long length = (long)((lastLba - firstLba + 1) * _sectorSize);
-
-                long additionalBytes = _header.SizeOfPartitionEntry - 0x80;
-                if (additionalBytes > 0)
-                {
-                    br.BaseStream.Seek(additionalBytes, SeekOrigin.Current);
-                }
 
                 if (typeId != Guid.Empty)
                 {
@@ -150,25 +149,24 @@ namespace TotalImage.Partitions
             /// <summary>
             /// Read a GUID Partition Table header from a stream
             /// </summary>
-            /// <param name="reader">The binary reader for the stream</param>
-            public GptHeader(BinaryReader reader)
+            /// <param name="bytes">The bytes containing the header</param>
+            public GptHeader(in Span<byte> bytes)
             {
-                Signature = new string(reader.ReadChars(8));
-                uint version = reader.ReadUInt32();
+                Signature = Encoding.ASCII.GetString(bytes[0..8]);
+                uint version = BinaryPrimitives.ReadUInt32LittleEndian(bytes[8..12]);
                 VersionMajor = (ushort)(version >> 16);
                 VersionMinor = (ushort)(version & 0xFFFF);
-                HeaderSize = reader.ReadUInt32();
-                HeaderHash = reader.ReadUInt32();
-                reader.BaseStream.Seek(4, SeekOrigin.Current); // skip past reserved field
-                CurrentLBA = reader.ReadUInt64();
-                BackupLBA = reader.ReadUInt64();
-                FirstPartitionLBA = reader.ReadUInt64();
-                LastPartitionLBA = reader.ReadUInt64();
-                DiskGuid = new Guid(reader.ReadBytes(16));
-                TableLBA = reader.ReadUInt64();
-                PartitionEntries = reader.ReadUInt32();
-                SizeOfPartitionEntry = reader.ReadUInt32();
-                TableHash = reader.ReadUInt32();
+                HeaderSize = BinaryPrimitives.ReadUInt32LittleEndian(bytes[12..16]);
+                HeaderHash = BinaryPrimitives.ReadUInt32LittleEndian(bytes[16..20]);
+                CurrentLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[24..32]);
+                BackupLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[32..40]);
+                FirstPartitionLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[40..48]);
+                LastPartitionLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[48..56]);
+                DiskGuid = new Guid(bytes[56..72]);
+                TableLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[72..80]);
+                PartitionEntries = BinaryPrimitives.ReadUInt32LittleEndian(bytes[80..84]);
+                SizeOfPartitionEntry = BinaryPrimitives.ReadUInt32LittleEndian(bytes[84..88]);
+                TableHash = BinaryPrimitives.ReadUInt32LittleEndian(bytes[88..92]);
             }
         }
 
