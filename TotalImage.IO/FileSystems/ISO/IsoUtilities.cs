@@ -53,7 +53,7 @@ namespace TotalImage.FileSystems.ISO
                 return null;
             }
 
-			sbyte offsetByte = 0;
+            sbyte offsetByte = 0;
             if (date.Length == 17)
             {
                 offsetByte = (sbyte)date[16];

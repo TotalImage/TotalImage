@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers.Binary;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -318,6 +319,9 @@ namespace TotalImage.FileSystems.ISO
                 encoding.GetChars(record[760..790], textBuffer);
                 AbstractFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
 
+                // Field not supported in HSF, leave blank
+                BibliographicFileIdentifier = "";
+
                 textBuffer = new char[16];
 
                 Encoding.ASCII.GetChars(record[790..806], textBuffer);
@@ -335,6 +339,10 @@ namespace TotalImage.FileSystems.ISO
                 FileStructureVersion = record[854];
 
                 ApplicationContent = record[856..1368].ToArray().ToImmutableArray();
+            }
+            else
+            {
+                throw new InvalidDataException();
             }
         }
     }
