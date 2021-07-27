@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Buffers.Binary;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -26,26 +27,31 @@ namespace TotalImage.Partitions
         /// <inheritdoc />
         protected override IEnumerable<PartitionEntry> LoadPartitions()
         {
-            using BinaryReader br = new BinaryReader(_container.Content, Encoding.ASCII, true);
-            br.BaseStream.Seek(0x1FE, SeekOrigin.Begin);
+            _container.Content.Seek(0x1FE, SeekOrigin.Begin);
 
-            var signature = br.ReadUInt16();
+            byte[] buffer = new byte[2];
+            _container.Content.Read(buffer);
+            var signature = BinaryPrimitives.ReadUInt16LittleEndian(buffer);
             if (signature != 0xaa55)
             {
                 throw new InvalidDataException();
             }
 
-            br.BaseStream.Seek(0x1BE, SeekOrigin.Begin);
+            _container.Content.Seek(0x1BE, SeekOrigin.Begin);
+
+            buffer = new byte[64];
+            _container.Content.Read(buffer);
 
             var entries = ImmutableList.CreateBuilder<PartitionEntry>();
             for (int i = 0; i < 4; i++)
             {
-                byte status = br.ReadByte();
-                CHSAddress chsStart = new CHSAddress(br.ReadBytes(3));
-                MbrPartitionType type = (MbrPartitionType)br.ReadByte();
-                CHSAddress chsEnd = new CHSAddress(br.ReadBytes(3));
-                uint lbaStart = br.ReadUInt32();
-                uint lbaLength = br.ReadUInt32();
+                var record = buffer[(i * 16)..((i + 1) * 16)];
+                byte status = record[0];
+                CHSAddress chsStart = new CHSAddress(record[1..4]);
+                MbrPartitionType type = (MbrPartitionType)record[4];
+                CHSAddress chsEnd = new CHSAddress(record[5..8]);
+                uint lbaStart = BinaryPrimitives.ReadUInt32LittleEndian(record[8..12]);
+                uint lbaLength = BinaryPrimitives.ReadUInt32LittleEndian(record[12..16]);
 
                 if (type == MbrPartitionType.Empty)
                 {
