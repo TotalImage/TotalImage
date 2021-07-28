@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using TotalImage.Containers;
 
 namespace TotalImage.Partitions
@@ -34,10 +33,6 @@ namespace TotalImage.Partitions
             get
             {
                 _partitions ??= LoadPartitions().ToImmutableArray();
-                if (_partitions == null)
-                {
-                    throw new InvalidDataException();
-                }
                 return _partitions;
             }
         }

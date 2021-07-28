@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.IO;
 using TotalImage.FileSystems.FAT;
 using TotalImage.FileSystems.ISO;
+using TotalImage.FileSystems.RAW;
 
 namespace TotalImage.FileSystems
 {
@@ -20,7 +21,7 @@ namespace TotalImage.FileSystems
         /// </summary>
         /// <param name="stream">The stream containing a file system</param>
         /// <returns>A file system if detection was successful, null if not.</returns>
-        public static FileSystem? AttemptDetection(Stream stream)
+        public static FileSystem AttemptDetection(Stream stream)
         {
             foreach (var factory in _knownFactories)
             {
@@ -31,7 +32,7 @@ namespace TotalImage.FileSystems
                 }
             }
 
-            return null;
+            return new RawFileSystem(stream);
         }
 
         /// <summary>
