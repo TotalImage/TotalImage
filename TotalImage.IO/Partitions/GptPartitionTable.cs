@@ -36,7 +36,7 @@ namespace TotalImage.Partitions
         {
             _container.Content.Seek(_sectorSize, SeekOrigin.Begin);
 
-            byte[] buffer = new byte[92];
+            Span<byte> buffer = new byte[92];
             _container.Content.Read(buffer);
             _header = new GptHeader(buffer);
 

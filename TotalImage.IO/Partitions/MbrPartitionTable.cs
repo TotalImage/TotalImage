@@ -1,4 +1,5 @@
-﻿using System.Buffers.Binary;
+﻿using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
@@ -29,7 +30,7 @@ namespace TotalImage.Partitions
         {
             _container.Content.Seek(0x1FE, SeekOrigin.Begin);
 
-            byte[] buffer = new byte[2];
+            Span<byte> buffer = new byte[2];
             _container.Content.Read(buffer);
             var signature = BinaryPrimitives.ReadUInt16LittleEndian(buffer);
             if (signature != 0xaa55)

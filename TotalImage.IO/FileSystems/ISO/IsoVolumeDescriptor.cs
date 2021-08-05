@@ -71,7 +71,7 @@ namespace TotalImage.FileSystems.ISO
 
             if (identifier.SequenceEqual(IsoStandardIdentifier))
             {
-                version = record[6];             
+                version = record[6];
             }
             else
             {

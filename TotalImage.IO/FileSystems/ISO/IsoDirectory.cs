@@ -227,7 +227,7 @@ namespace TotalImage.FileSystems.ISO
 
             stream.Seek(fileSystem.PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset, SeekOrigin.Begin);
 
-            byte[] records = new byte[Record.DataLength];
+            Span<byte> records = new byte[Record.DataLength];
             stream.Read(records);
 
             int nextRecord = 0;

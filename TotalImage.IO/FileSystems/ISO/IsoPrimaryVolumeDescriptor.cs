@@ -200,15 +200,15 @@ namespace TotalImage.FileSystems.ISO
                 ? Encoding.BigEndianUnicode
                 : Encoding.ASCII;
 
-            char[] textBuffer = new char[32];
+            Span<char> textBuffer = new char[32];
 
             if (identifier.SequenceEqual(IsoStandardIdentifier))
             {
                 encoding.GetChars(record[8..40], textBuffer);
-                SystemIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                SystemIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[40..72], textBuffer);
-                VolumeIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                VolumeIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 VolumeSpace = IsoUtilities.ReadUInt32MultiEndian(record[80..88]);
 
@@ -229,27 +229,27 @@ namespace TotalImage.FileSystems.ISO
                 textBuffer = new char[128];
 
                 encoding.GetChars(record[190..318], textBuffer);
-                VolumeSetIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                VolumeSetIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[318..446], textBuffer);
-                PublisherIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                PublisherIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[446..574], textBuffer);
-                DataPreparerIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                DataPreparerIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[574..702], textBuffer);
-                ApplicationIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                ApplicationIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 textBuffer = new char[37];
 
                 encoding.GetChars(record[702..739], textBuffer);
-                CopyrightFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                CopyrightFileIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[739..776], textBuffer);
-                AbstractFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                AbstractFileIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[776..813], textBuffer);
-                BibliographicFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                BibliographicFileIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 textBuffer = new char[17];
 
@@ -272,10 +272,10 @@ namespace TotalImage.FileSystems.ISO
             else if (identifier.SequenceEqual(HsfStandardIdentifier))
             {
                 encoding.GetChars(record[16..48], textBuffer);
-                SystemIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                SystemIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[48..80], textBuffer);
-                VolumeIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                VolumeIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 VolumeSpace = IsoUtilities.ReadUInt32MultiEndian(record[88..96]);
 
@@ -300,24 +300,24 @@ namespace TotalImage.FileSystems.ISO
                 textBuffer = new char[128];
 
                 encoding.GetChars(record[214..342], textBuffer);
-                VolumeSetIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                VolumeSetIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[342..470], textBuffer);
-                PublisherIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                PublisherIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[470..598], textBuffer);
-                DataPreparerIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                DataPreparerIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[598..726], textBuffer);
-                ApplicationIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                ApplicationIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 textBuffer = new char[37];
 
                 encoding.GetChars(record[726..760], textBuffer);
-                CopyrightFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                CopyrightFileIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 encoding.GetChars(record[760..790], textBuffer);
-                AbstractFileIdentifier = textBuffer.AsSpan().TrimEnd(trimCharacters).ToString();
+                AbstractFileIdentifier = textBuffer.TrimEnd(trimCharacters).ToString();
 
                 // Field not supported in HSF, leave blank
                 BibliographicFileIdentifier = "";

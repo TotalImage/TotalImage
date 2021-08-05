@@ -44,13 +44,13 @@ namespace TotalImage.FileSystems.ISO
         public IsoPartitionVolumeDescriptor(in ReadOnlySpan<byte> record, in IsoVolumeDescriptorType type, in ImmutableArray<byte> identifier, in byte version)
             : base(type, identifier, version)
         {
-            char[] textBuffer = new char[32];
+            Span<char> textBuffer = new char[32];
 
             Encoding.ASCII.GetChars(record[8..40], textBuffer);
-            SystemIdentifier = textBuffer.AsSpan().Trim('\0').ToString();
+            SystemIdentifier = textBuffer.Trim('\0').ToString();
 
             Encoding.ASCII.GetChars(record[40..72], textBuffer);
-            PartitionIdentifier = textBuffer.AsSpan().Trim('\0').ToString();
+            PartitionIdentifier = textBuffer.Trim('\0').ToString();
 
             PartitionOffset = IsoUtilities.ReadUInt32MultiEndian(record[72..80]);
             PartitionLength = IsoUtilities.ReadUInt32MultiEndian(record[80..88]);

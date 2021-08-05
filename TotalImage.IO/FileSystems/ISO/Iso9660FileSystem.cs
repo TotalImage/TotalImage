@@ -8,7 +8,7 @@ namespace TotalImage.FileSystems.ISO
      * The ISO 9660 implementation here is based on the ECMA-119 specification, 4th edition
      * https://www.ecma-international.org/wp-content/uploads/ECMA-119_4th_edition_june_2019.pdf
      * A copy has also been included in the TotalImage repository, under the docs folder.
-     * 
+     *
      * High Sierra implementation is based on the differences mentioned here:
      * http://preserve.mactech.com/articles/develop/issue_03/high_sierra.html
      * and the structures described here:
