@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Text;
 using TotalImage.Containers;
 
 namespace TotalImage.Partitions
@@ -32,7 +31,7 @@ namespace TotalImage.Partitions
 
             Span<byte> buffer = new byte[2];
             _container.Content.Read(buffer);
-            var signature = BinaryPrimitives.ReadUInt16LittleEndian(buffer);
+            ushort signature = BinaryPrimitives.ReadUInt16LittleEndian(buffer);
             if (signature != 0xaa55)
             {
                 throw new InvalidDataException();
@@ -61,7 +60,7 @@ namespace TotalImage.Partitions
 
                 uint offset = lbaStart * _sectorSize;
                 uint length = lbaLength * _sectorSize;
-                var entry = new MbrPartitionEntry((status & 0x80) != 0, type, offset, length, new PartialStream(_container.Content, offset, length));
+                MbrPartitionEntry entry = new MbrPartitionEntry((status & 0x80) != 0, type, offset, length, new PartialStream(_container.Content, offset, length));
                 entries.Add(entry);
             }
 

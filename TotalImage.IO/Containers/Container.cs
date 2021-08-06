@@ -1,8 +1,8 @@
-﻿using System;
+using System;
+using System.Buffers.Binary;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Security.Cryptography;
-using System.Text;
 using TotalImage.Partitions;
 
 namespace TotalImage.Containers
@@ -88,16 +88,18 @@ namespace TotalImage.Containers
         {
             // TODO: introduce a factory system that tries and then fails as required, like file systems have
 
-            using BinaryReader br = new BinaryReader(Content, Encoding.ASCII, true);
-            br.BaseStream.Seek(0x1FE, SeekOrigin.Begin);
-            var signature = br.ReadUInt16();
+            Content.Seek(0x1FE, SeekOrigin.Begin);
+
+            byte[] signatureBytes = new byte[2];
+            Content.Read(signatureBytes);
+            ushort signature = BinaryPrimitives.ReadUInt16LittleEndian(signatureBytes);
 
             if (signature != 0xaa55)
             {
                 return new NoPartitionTable(this);
             }
 
-            var mbrPartition = new MbrPartitionTable(this);
+            MbrPartitionTable mbrPartition = new MbrPartitionTable(this);
             if (mbrPartition.Partitions.Count >= 1)
             {
                 if (mbrPartition.Partitions[0] is MbrPartitionTable.MbrPartitionEntry entry
@@ -115,7 +117,7 @@ namespace TotalImage.Containers
                     sanity &= (partition.Offset >= lastOffset);
                     sanity &= (partition.Length > 0);
                     lastOffset = partition.Offset + partition.Length;
-                    sanity &= (lastOffset <= br.BaseStream.Length);
+                    sanity &= (lastOffset <= Content.Length);
                 }
 
                 if (sanity)
@@ -133,8 +135,8 @@ namespace TotalImage.Containers
         /// <param name="path">The path to save out the image to</param>
         public void SaveImage(string path)
         {
-            string tempPath = Path.ChangeExtension(path, ".tmp");
-            using var outStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
+            string? tempPath = Path.ChangeExtension(path, ".tmp");
+            using FileStream outStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
             containerStream.Position = 0;
             containerStream.CopyTo(outStream);
             outStream.Flush();
@@ -171,29 +173,25 @@ namespace TotalImage.Containers
         /// <summary>
         /// Calculates the MD5 hash of this file
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string containing the hexadecimal representation of the MD5 hash</returns>
         public string CalculateMd5Hash()
         {
-            using (var md5 = MD5.Create())
-            {
-                containerStream.Seek(0, SeekOrigin.Begin);
-                var hash = md5.ComputeHash(containerStream);
-                return BitConverter.ToString(hash).Replace("-", "").ToLower();
-            }
+            using MD5 md5 = MD5.Create();
+            containerStream.Seek(0, SeekOrigin.Begin);
+            byte[]? hash = md5.ComputeHash(containerStream);
+            return BitConverter.ToString(hash).Replace("-", "").ToLower();
         }
 
         /// <summary>
         /// Calculates the SHA-1 hash of this file
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A string containing the hexadecimal representation of the SHA-1 hash</returns>
         public string CalculateSha1Hash()
         {
-            using (var sha1 = SHA1.Create())
-            {
-                containerStream.Seek(0, SeekOrigin.Begin);
-                var hash = sha1.ComputeHash(containerStream);
-                return BitConverter.ToString(hash).Replace("-", "").ToLower();
-            }
+            using SHA1 sha1 = SHA1.Create();
+            containerStream.Seek(0, SeekOrigin.Begin);
+            byte[]? hash = sha1.ComputeHash(containerStream);
+            return BitConverter.ToString(hash).Replace("-", "").ToLower();
         }
     }
 }

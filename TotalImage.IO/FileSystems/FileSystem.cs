@@ -11,7 +11,7 @@ namespace TotalImage.FileSystems
     /// </summary>
     public abstract class FileSystem
     {
-        private readonly static ImmutableArray<IFileSystemFactory> _knownFactories = ImmutableArray.Create<IFileSystemFactory>(
+        private static readonly ImmutableArray<IFileSystemFactory> _knownFactories = ImmutableArray.Create<IFileSystemFactory>(
             new FatFactory(),
             new IsoFactory()
         );

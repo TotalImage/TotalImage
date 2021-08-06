@@ -1,4 +1,4 @@
-﻿namespace TotalImage.FileSystems.ISO
+namespace TotalImage.FileSystems.ISO
 {
     /// <summary>
     /// The type of volume descriptor record

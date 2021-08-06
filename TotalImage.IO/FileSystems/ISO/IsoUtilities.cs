@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers.Binary;
 using System.IO;
 
@@ -27,7 +27,7 @@ namespace TotalImage.FileSystems.ISO
                 throw new ArgumentOutOfRangeException(nameof(date));
             }
 
-            foreach (var badDate in _blacklistedDates)
+            foreach (char[] badDate in _blacklistedDates)
             {
                 if (date.SequenceEqual(badDate))
                 {
@@ -57,13 +57,13 @@ namespace TotalImage.FileSystems.ISO
             if (date.Length == 17)
             {
                 offsetByte = (sbyte)date[16];
-                if(offsetByte == 0)
+                if (offsetByte == 0)
                 {
                     return null;
                 }
             }
 
-            TimeSpan offset = date.Length == 16 ? TimeSpan.FromMinutes(0) : TimeSpan.FromMinutes(offsetByte * 15);
+            var offset = date.Length == 16 ? TimeSpan.FromMinutes(0) : TimeSpan.FromMinutes(offsetByte * 15);
 
             try
             {
@@ -93,7 +93,7 @@ namespace TotalImage.FileSystems.ISO
             }
 
             bool zero = true;
-            foreach (var t in date[..^1])
+            foreach (byte t in date[..^1])
             {
                 zero &= (t == 0);
             }
@@ -103,7 +103,7 @@ namespace TotalImage.FileSystems.ISO
                 return null;
             }
 
-            TimeSpan offset = date.Length == 6 ? TimeSpan.FromMinutes(0) : TimeSpan.FromMinutes((sbyte)date[6] * 15);
+            var offset = date.Length == 6 ? TimeSpan.FromMinutes(0) : TimeSpan.FromMinutes((sbyte)date[6] * 15);
             return new DateTimeOffset(1900 + date[0], date[1], date[2], date[3], date[4], date[5], offset);
         }
 

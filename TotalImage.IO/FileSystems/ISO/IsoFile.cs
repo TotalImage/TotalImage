@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace TotalImage.FileSystems.ISO
@@ -11,7 +11,7 @@ namespace TotalImage.FileSystems.ISO
         /// <summary>
         /// The internal file system record for the file
         /// </summary>
-        protected  IsoFileSystemObject Record { get; }
+        protected IsoFileSystemObject Record { get; }
 
         /// <inheritdoc />
         public override string Name
@@ -73,7 +73,7 @@ namespace TotalImage.FileSystems.ISO
         public override Stream GetStream()
         {
             long offset = ((Iso9660FileSystem)FileSystem).PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset;
-            var fileStream = new PartialStream(FileSystem.GetStream(), offset, Record.DataLength);
+            PartialStream fileStream = new PartialStream(FileSystem.GetStream(), offset, Record.DataLength);
             return fileStream;
         }
 

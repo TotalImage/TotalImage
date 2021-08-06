@@ -17,7 +17,7 @@ namespace TotalImage.FileSystems
         /// <param name="parent">The parent directory, if it exists</param>
         protected Directory(FileSystem fileSystem, Directory? parent) : base(fileSystem)
         {
-            this._parent = parent;
+            _parent = parent;
         }
 
         /// <summary>

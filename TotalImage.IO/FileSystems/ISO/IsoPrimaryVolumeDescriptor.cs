@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers.Binary;
 using System.Collections.Immutable;
 using System.IO;
@@ -196,7 +196,7 @@ namespace TotalImage.FileSystems.ISO
 
             IsJolietVolumeDescriptor = isUnicode;
 
-            Encoding encoding = isUnicode
+            var encoding = isUnicode
                 ? Encoding.BigEndianUnicode
                 : Encoding.ASCII;
 

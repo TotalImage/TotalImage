@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -25,7 +25,7 @@ namespace TotalImage.FileSystems.ISO
                 {
                     // trim off any leading blocks in this image
 
-                    var partialStreamStart = nextOffset - 0x8001;
+                    long partialStreamStart = nextOffset - 0x8001;
                     return partialStreamStart == 0
                         ? new Iso9660FileSystem(stream)
                         : new Iso9660FileSystem(new PartialStream(stream, partialStreamStart, stream.Length - partialStreamStart));
@@ -39,7 +39,7 @@ namespace TotalImage.FileSystems.ISO
 
                     if (identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier))
                     {
-                        var partialStreamStart = nextOffset - 0x8009;
+                        long partialStreamStart = nextOffset - 0x8009;
                         return partialStreamStart == 0
                             ? new Iso9660FileSystem(stream)
                             : new Iso9660FileSystem(new PartialStream(stream, partialStreamStart, stream.Length - partialStreamStart));

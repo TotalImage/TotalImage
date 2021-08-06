@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using TotalImage.Containers;
 
@@ -43,7 +43,7 @@ namespace TotalImage.Partitions
         /// <param name="container">The container that contains the partition table</param>
         protected PartitionTable(Container container)
         {
-            this._container = container;
+            _container = container;
         }
 
         /// <summary>

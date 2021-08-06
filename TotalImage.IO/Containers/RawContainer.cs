@@ -1,10 +1,7 @@
-﻿using System;
+using System;
 using System.IO;
-using System.Text;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
-using TotalImage.Partitions;
-using File = System.IO.File;
 
 namespace TotalImage.Containers
 {
@@ -42,10 +39,10 @@ namespace TotalImage.Containers
                 throw new ArgumentNullException(nameof(bpb), "BPB cannot be null!");
 
             uint imageSize = (uint)(bpb.BytesPerLogicalSector * bpb.PhysicalSectorsPerTrack * bpb.NumberOfHeads * tracks);
-            var imageBytes = new byte[imageSize];
+            byte[] imageBytes = new byte[imageSize];
 
             //TODO: At this point we need to consider writeBPB value...
-            var stream = new MemoryStream(imageBytes, true);
+            MemoryStream stream = new MemoryStream(imageBytes, true);
             Fat12FileSystem.Create(stream, bpb, writeBPB);
 
             return new RawContainer(stream);

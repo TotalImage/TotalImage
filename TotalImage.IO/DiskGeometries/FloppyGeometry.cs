@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 
@@ -170,7 +171,7 @@ namespace TotalImage.DiskGeometries
         /// <param name="spf">Number of sectors per FAT.</param>
         /// <param name="rootdirentries">Maximum number of root directory entries.</param>
         /// <param name="reservedsectors">Number of reserved sectors.</param>
-        public FloppyGeometry(byte sides, byte tracks, byte spt, byte bps, byte mediadesc, byte spc, byte noofFATs, byte spf, 
+        public FloppyGeometry(byte sides, byte tracks, byte spt, byte bps, byte mediadesc, byte spc, byte noofFATs, byte spf,
             ushort rootdirentries, byte reservedsectors)
         {
             Sides = sides;
@@ -211,7 +212,26 @@ namespace TotalImage.DiskGeometries
             { FriendlyName.ExtendedDensity,   new FloppyGeometry(2, 80, 36, 2, 0xF0, 2, 2,  9, 240, 1) },
         });
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+
+            hash.Add(BPS);
+            hash.Add(MediaDescriptor);
+            hash.Add(NoOfFATs);
+            hash.Add(ReservedSectors);
+            hash.Add(RootDirectoryEntries);
+            hash.Add(Sides);
+            hash.Add(SPC);
+            hash.Add(SPF);
+            hash.Add(SPT);
+            hash.Add(Tracks);
+
+            return hash.ToHashCode();
+        }
+
+        /// <inheritdoc />
         public override bool Equals(object? obj)
         {
             if ((obj == null) || !GetType().Equals(obj.GetType()))

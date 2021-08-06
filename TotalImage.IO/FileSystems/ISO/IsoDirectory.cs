@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -54,7 +54,7 @@ namespace TotalImage.FileSystems.ISO
         /// <inheritdoc />
         public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
         {
-            var fileSystem = (Iso9660FileSystem)FileSystem;
+            Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
             var stream = FileSystem.GetStream();
 
             stream.Seek(fileSystem.PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset, SeekOrigin.Begin);
@@ -73,7 +73,7 @@ namespace TotalImage.FileSystems.ISO
                     continue;
                 }
 
-                var record = new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor, fileSystem.PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier));
+                IsoFileSystemObject record = new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor, fileSystem.PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier));
 
                 // A record whose identifier is a single zero byte is the current directory
                 // A record whose identifier is a single one byte is either the parent directory or the root directory if it is the root directory
@@ -114,7 +114,7 @@ namespace TotalImage.FileSystems.ISO
         public override ulong FileCount(bool recursive)
         {
             ulong count = 0;
-            var fileSystem = (Iso9660FileSystem)FileSystem;
+            Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
             var stream = FileSystem.GetStream();
 
             stream.Seek(fileSystem.PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset, SeekOrigin.Begin);
@@ -133,7 +133,9 @@ namespace TotalImage.FileSystems.ISO
                     continue;
                 }
 
-                var record = fileSystem.PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier) ? new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor, true) : new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor, false);
+                var record = fileSystem.PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier)
+                    ? new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor, true)
+                    : new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor, false);
 
                 // A record whose identifier is a single zero byte is the current directory
                 // A record whose identifier is a single one byte is either the parent directory or the root directory if it is the root directory
@@ -164,7 +166,7 @@ namespace TotalImage.FileSystems.ISO
         public override ulong Size(bool recursive, bool sizeOnDisk)
         {
             ulong size = 0;
-            var fileSystem = (Iso9660FileSystem)FileSystem;
+            Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
             var stream = FileSystem.GetStream();
 
             stream.Seek(fileSystem.PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset, SeekOrigin.Begin);
@@ -222,7 +224,7 @@ namespace TotalImage.FileSystems.ISO
         public override ulong SubdirectoryCount(bool recursive)
         {
             ulong count = 0;
-            var fileSystem = (Iso9660FileSystem)FileSystem;
+            Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
             var stream = FileSystem.GetStream();
 
             stream.Seek(fileSystem.PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset, SeekOrigin.Begin);
@@ -242,7 +244,9 @@ namespace TotalImage.FileSystems.ISO
                 }
 
                 //var record = new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor);
-                var record = fileSystem.PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier) ? new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor, true) : new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor, false);
+                var record = fileSystem.PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier)
+                    ? new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor, true)
+                    : new IsoFileSystemObject(records[nextRecord..(nextRecord + recordLength)], fileSystem.PrimaryVolumeDescriptor.IsJolietVolumeDescriptor, false);
 
                 // A record whose identifier is a single zero byte is the current directory
                 // A record whose identifier is a single one byte is either the parent directory or the root directory if it is the root directory

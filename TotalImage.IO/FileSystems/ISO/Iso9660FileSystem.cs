@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 
@@ -50,10 +50,10 @@ namespace TotalImage.FileSystems.ISO
             {
                 containerStream.Read(recordBytes);
 
-                var record = IsoVolumeDescriptor.ReadVolumeDescriptor(recordBytes, this);
+                IsoVolumeDescriptor record = IsoVolumeDescriptor.ReadVolumeDescriptor(recordBytes, this);
                 if (record == null)
                 {
-                        break;
+                    break;
                 }
 
                 if (!record.IsValid())
@@ -67,7 +67,7 @@ namespace TotalImage.FileSystems.ISO
 
             VolumeDescriptors = volumeDescriptors.ToImmutable();
 
-            IsoPrimaryVolumeDescriptor? primaryDescriptor = VolumeDescriptors
+            var primaryDescriptor = VolumeDescriptors
                 .OfType<IsoPrimaryVolumeDescriptor>()
                 .OrderByDescending(e => e.IsJolietVolumeDescriptor)
                 .ThenByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)

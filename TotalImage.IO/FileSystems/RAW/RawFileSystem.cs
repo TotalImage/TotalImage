@@ -1,4 +1,3 @@
-﻿using System;
 using System.IO;
 
 namespace TotalImage.FileSystems.RAW
@@ -20,7 +19,8 @@ namespace TotalImage.FileSystems.RAW
         public override string DisplayName => "RAW";
 
         /// <inheritdoc />
-        public override string VolumeLabel {
+        public override string VolumeLabel
+        {
             get => "";
             set { return; }
         }

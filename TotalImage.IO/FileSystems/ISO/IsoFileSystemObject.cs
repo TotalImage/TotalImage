@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Immutable;
 using System.Text;
 
@@ -134,7 +134,7 @@ namespace TotalImage.FileSystems.ISO
             }
             else
             {
-                Encoding encoding = isUnicode ? Encoding.BigEndianUnicode : Encoding.ASCII;
+                var encoding = isUnicode ? Encoding.BigEndianUnicode : Encoding.ASCII;
                 Span<char> textBuffer = new char[encoding.GetCharCount(nameBytes)];
                 encoding.GetChars(nameBytes, textBuffer);
 
