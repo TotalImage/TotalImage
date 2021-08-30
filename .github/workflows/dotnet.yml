@@ -27,4 +27,4 @@ jobs:
       run: dotnet publish --no-build
     - uses: actions/upload-artifact@v2
       with:
-        path: TotalImage/bin/**/publish/
+        path: TotalImage/bin/Debug/net5.0-windows/publish/
