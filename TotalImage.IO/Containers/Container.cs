@@ -16,11 +16,11 @@ namespace TotalImage.Containers
         /// The backing file containing the image, opened as a memory-mapped file
         /// </summary>
         protected readonly MemoryMappedFile? backingFile;
-        
+
         /// <summary>
         /// The underlying stream containing the image
         /// </summary>
-        protected  Stream containerStream;
+        protected Stream containerStream;
 
         private PartitionTable? _partitionTable;
 
@@ -59,7 +59,7 @@ namespace TotalImage.Containers
         /// <param name="memoryMapping">Should the file be mapped into memory</param>
         protected Container(string path, bool memoryMapping)
         {
-            if(memoryMapping)
+            if (memoryMapping)
             {
                 backingFile = MemoryMappedFile.CreateFromFile(path, FileMode.Open);
                 containerStream = backingFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
