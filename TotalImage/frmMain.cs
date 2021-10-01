@@ -812,7 +812,39 @@ namespace TotalImage
                         FileName = targetFile,
                         UseShellExecute = true
                     };
-                    Process.Start(psi);
+
+                    try
+                    {
+                        Process.Start(psi);
+                    }
+                    catch (System.ComponentModel.Win32Exception ex)
+                    {
+                        if (ex.NativeErrorCode == 0x000004C7)
+                        {
+                            //User cancelled at the UAC prompt, so just ignore this exception
+                        }
+                        else if (ex.NativeErrorCode == 0x000000C1)
+                        {
+                            //The EXE format is bad (not a Win32 program), so let's error out
+
+                            string targetFileShort = Path.GetFileName(targetFile);
+                            TaskDialog.ShowDialog(this, new TaskDialogPage()
+                            {
+                                Text = $"The file \"{targetFileShort}\" is not a valid Win32 program.",
+                                Heading = "Cannot start program",
+                                Caption = "Error",
+                                Buttons =
+                                {
+                                    TaskDialogButton.OK
+                                },
+                                Icon = TaskDialogIcon.Error,
+                            });
+                        }
+                        else
+                        {
+                            throw; //Rethrow everything else
+                        }
+                    }
                 }
             }
         }
