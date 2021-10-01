@@ -42,7 +42,7 @@ namespace TotalImage
                 case SortCriterion.Name:
                     return string.Compare(x.Name, y.Name, true);
                 case SortCriterion.Length:
-                    return (int)(y.Length - x.Length);
+                    return (int)(x.Length - y.Length);
                 case SortCriterion.LastWriteDate:
                     return DateTime.Compare(
                         x.LastWriteTime.GetValueOrDefault(),
