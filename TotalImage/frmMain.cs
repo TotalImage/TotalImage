@@ -96,7 +96,33 @@ namespace TotalImage
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {
-                /* Inject the entire selected folder into the image */
+                if (Settings.CurrentSettings.ConfirmInjection)
+                {
+                    TaskDialogPage page = new TaskDialogPage()
+                    {
+                        Text = $"Are you sure you want to inject this folder into the image?",
+                        Heading = $"A folder will be injected",
+                        Caption = "Injection",
+                        Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                        Icon = new TaskDialogIcon(SystemIcons.Question), //This is still the old pre-Win8 question icon for some reason...
+                        Verification = new TaskDialogVerificationCheckBox()
+                        {
+                            Text = "Do not ask for confirmation again"
+                        }
+                    };
+                    TaskDialogButton result = TaskDialog.ShowDialog(this, page);
+
+                    if (page.Verification.Checked)
+                        Settings.CurrentSettings.ConfirmInjection = false;
+
+                    if (result == TaskDialogButton.No)
+                        return;
+                }
+
                 throw new NotImplementedException("This feature is not implemented yet");
             }
         }
