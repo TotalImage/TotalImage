@@ -281,7 +281,7 @@ namespace TotalImage
                         Text = $"Are you sure you want to delete {SelectedItems.Count()} item(s) occupying {Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)}?{Environment.NewLine}" +
                         $"You might still be able to undo this operation later.",
                         Heading = $"{SelectedItems.Count()} item(s) will be deleted",
-                        Caption = "Warning",
+                        Caption = "Deletion",
                         Buttons =
                         {
                             TaskDialogButton.Yes,
@@ -747,8 +747,36 @@ namespace TotalImage
             ofd.Multiselect = true;
             ofd.Filter = "All files (*.*)|*.*";
 
+            //TODO: Get the count and total size of seleted items to inject before showing the dialog
             if (ofd.ShowDialog() == DialogResult.OK)
             {
+                if (Settings.CurrentSettings.ConfirmInjection)
+                {
+                    TaskDialogPage page = new TaskDialogPage()
+                    {
+                        Text = $"Are you sure you want to inject {SelectedItems.Count()} item(s) occupying {Settings.CurrentSettings.SizeUnit.FormatSize(0)} into the image?",
+                        Heading = $"{SelectedItems.Count()} item(s) will be injected",
+                        Caption = "Injection",
+                        Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                        Icon = new TaskDialogIcon(SystemIcons.Question), //This is still the old pre-Win8 question icon for some reason...
+                        Verification = new TaskDialogVerificationCheckBox()
+                        {
+                            Text = "Do not ask for confirmation again"
+                        }
+                    };
+                    TaskDialogButton result = TaskDialog.ShowDialog(this, page);
+
+                    if (page.Verification.Checked)
+                        Settings.CurrentSettings.ConfirmInjection = false;
+
+                    if (result == TaskDialogButton.No)
+                        return;
+                }
+
                 throw new NotImplementedException("This feature is not implemented yet");
             }
         }
