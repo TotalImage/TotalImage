@@ -830,7 +830,7 @@ namespace TotalImage
                             string targetFileShort = Path.GetFileName(targetFile);
                             TaskDialog.ShowDialog(this, new TaskDialogPage()
                             {
-                                Text = $"The file \"{targetFileShort}\" is not a valid Win32 program.",
+                                Text = $"The file \"{targetFileShort}\" is either not a valid program or not designed to run on this operating system.",
                                 Heading = "Cannot start program",
                                 Caption = "Error",
                                 Buttons =
