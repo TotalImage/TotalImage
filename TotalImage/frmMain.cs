@@ -274,15 +274,66 @@ namespace TotalImage
                 var selectedSize = 0ul;
                 foreach (var entry in SelectedItems) selectedSize += entry.Length;
 
-                //DialogResult = MessageBox.Show($"Are you sure that you want to delete {lstFiles.SelectedIndices.Count} item(s) occupying {Settings.CurrentSettings.SizeUnits.FormatSize(selectedSize)}?", "Delete items", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                //if (DialogResult == DialogResult.Yes)
+                if (Settings.CurrentSettings.ConfirmDeletion)
                 {
-                    throw new NotImplementedException("This feature is not implemented yet");
+                    TaskDialogPage page = new TaskDialogPage()
+                    {
+                        Text = $"Are you sure you want to delete {SelectedItems.Count()} item(s) occupying {Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)}?{Environment.NewLine}" +
+                        $"You might still be able to undo this operation later.",
+                        Heading = $"{SelectedItems.Count()} item(s) will be deleted",
+                        Caption = "Warning",
+                        Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                        Icon = TaskDialogIcon.Warning,
+                        Verification = new TaskDialogVerificationCheckBox()
+                        {
+                            Text = "Do not ask for confirmation again"
+                        }
+                    };
+                    TaskDialogButton result = TaskDialog.ShowDialog(this, page);
+
+                    if (page.Verification.Checked)
+                        Settings.CurrentSettings.ConfirmDeletion = false;
+
+                    if (result == TaskDialogButton.No)
+                        return;
                 }
+
+                throw new NotImplementedException("This feature is not implemented yet");
             }
             else if (lstDirectories.Focused)
             {
+                if (Settings.CurrentSettings.ConfirmDeletion)
+                {
+                    TaskDialogPage page = new TaskDialogPage()
+                    {
+                        Text = $"Are you sure you want to delete this directory and all its contents?{Environment.NewLine}" +
+                        $"You might still be able to undo this operation later.",
+                        Heading = $"Directory will be deleted",
+                        Caption = "Warning",
+                        Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                        Icon = TaskDialogIcon.Warning,
+                        Verification = new TaskDialogVerificationCheckBox()
+                        {
+                            Text = "Do not ask for confirmation again"
+                        }
+                    };
+                    TaskDialogButton result = TaskDialog.ShowDialog(this, page);
+
+                    if (page.Verification.Checked)
+                        Settings.CurrentSettings.ConfirmDeletion = false;
+
+                    if (result == TaskDialogButton.No)
+                        return;
+                }
+
                 throw new NotImplementedException("This feature is not implemented yet");
             }
         }
