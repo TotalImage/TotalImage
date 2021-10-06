@@ -58,6 +58,7 @@ Only FAT12, FAT16 and FAT32 primary partitions are currently supported (see belo
 | FAT12 | ✔ Yes | ❌ No | ✔ Yes |
 | FAT16 | ✔ Yes | ❌ No | ❌ No |
 | FAT32 | ✔ Yes | ❌ No | ❌ No |
-| ISO-9660 | ⚠ Partial | ❌ No | ❌ No |
-
-Long file names (LFN) are supported on all supported FAT variants.
+| FAT Long File Names | ✔ Yes | ❌ No | ❌ No |
+| ISO-9660 | ✔ Yes | ❌ No | ❌ No |
+| High Sierra Format | ✔ Yes | ❌ No | ❌ No |
+| Joliet | ✔ Yes | ❌ No | ❌ No |
