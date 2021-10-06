@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
@@ -155,8 +155,8 @@ namespace TotalImage
                     txtType1.Text = "File";
             }
 
-            //Prevent any changes to deleted items
-            if (entry.Name.StartsWith("?"))
+            //Prevent any changes to deleted items as well as ISO file system objects
+            if (entry.Name.StartsWith("?") || entry is FileSystems.ISO.IsoFile || entry is FileSystems.ISO.IsoDirectory)
             {
                 txtFilename.Enabled = false;
                 cbxArchive.Enabled = false;
