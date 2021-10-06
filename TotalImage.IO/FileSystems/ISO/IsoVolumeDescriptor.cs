@@ -51,25 +51,23 @@ namespace TotalImage.FileSystems.ISO
         /// Read a volume descriptor
         /// </summary>
         /// <param name="record">A span containing the volume descriptor record</param>
-        /// <param name="fileSystem">The file system containing the volume descriptor</param>
         /// <returns>The volume descriptor record</returns>
-        public static IsoVolumeDescriptor? ReadVolumeDescriptor(in ReadOnlySpan<byte> record, Iso9660FileSystem fileSystem)
+        public static IsoVolumeDescriptor? ReadVolumeDescriptor(in ReadOnlySpan<byte> record)
         {
             IsoVolumeDescriptorType type = (IsoVolumeDescriptorType)record[0];
             ImmutableArray<byte> identifier = record[1..6].ToArray().ToImmutableArray();
-            byte version = 0;
+            byte version = record[6];
 
-            if (identifier.SequenceEqual(IsoStandardIdentifier))
-            {
-                version = record[6];
-            }
-            else
+            if (!identifier.SequenceEqual(IsoStandardIdentifier))
             {
                 type = (IsoVolumeDescriptorType)record[8];
                 identifier = record[9..14].ToArray().ToImmutableArray();
-                if (!identifier.SequenceEqual(HsfStandardIdentifier))
-                    return null;
                 version = record[14];
+
+                if (!identifier.SequenceEqual(HsfStandardIdentifier))
+                {
+                    return null;
+                }
             }
 
             return type switch

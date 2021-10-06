@@ -1,9 +1,11 @@
 using System;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using TotalImage.FileSystems.ISO;
 using TotalImage.Partitions;
 
 namespace TotalImage.Containers
@@ -96,7 +98,68 @@ namespace TotalImage.Containers
         /// <returns>The partition table found in the image</returns>
         protected virtual PartitionTable LoadPartitionTable()
         {
-            return PartitionTable.AttemptDetection(this);
+            // TODO: introduce a factory system that tries and then fails as required, like file systems have
+
+            Content.Seek(0x1FE, SeekOrigin.Begin);
+
+            byte[] signatureBytes = new byte[2];
+            Content.Read(signatureBytes);
+            ushort signature = BinaryPrimitives.ReadUInt16LittleEndian(signatureBytes);
+
+            if (signature != 0xaa55)
+            {
+                if (Content.Length >= 0x8800)
+                {
+                    Content.Seek(0x8001, SeekOrigin.Begin);
+
+                    byte[] identifier = new byte[5];
+                    Content.Read(identifier);
+
+                    if (OpticalPartitionTable.Identifiers.Any(e => e.SequenceEqual(identifier)))
+                    {
+                        return new OpticalPartitionTable(this);
+                    }
+
+                    Content.Seek(0x8009, SeekOrigin.Begin);
+                    Content.Read(identifier);
+
+                    if (identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier))
+                    {
+                        return new OpticalPartitionTable(this);
+                    }
+                }
+
+                return new NoPartitionTable(this);
+            }
+
+            MbrPartitionTable mbrPartition = new MbrPartitionTable(this);
+            if (mbrPartition.Partitions.Count >= 1)
+            {
+                if (mbrPartition.Partitions[0] is MbrPartitionTable.MbrPartitionEntry entry
+                    && (entry.Offset + entry.Length) > uint.MaxValue
+                    && entry.Type == MbrPartitionTable.MbrPartitionType.GptProtectivePartition)
+                {
+                    return new GptPartitionTable(this);
+                }
+
+                // check partitions seem fine (ie, no overlapping)
+                bool sanity = true;
+                long lastOffset = 512;
+                foreach (var partition in mbrPartition.Partitions)
+                {
+                    sanity &= (partition.Offset >= lastOffset);
+                    sanity &= (partition.Length > 0);
+                    lastOffset = partition.Offset + partition.Length;
+                    sanity &= (lastOffset <= Content.Length);
+                }
+
+                if (sanity)
+                {
+                    return mbrPartition;
+                }
+            }
+
+            return new NoPartitionTable(this);
         }
 
         /// <summary>
