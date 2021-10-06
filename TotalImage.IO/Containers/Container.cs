@@ -2,7 +2,9 @@ using System;
 using System.Buffers.Binary;
 using System.IO;
 using System.IO.MemoryMappedFiles;
+using System.Linq;
 using System.Security.Cryptography;
+using TotalImage.FileSystems.ISO;
 using TotalImage.Partitions;
 
 namespace TotalImage.Containers
@@ -96,6 +98,27 @@ namespace TotalImage.Containers
 
             if (signature != 0xaa55)
             {
+                if (Content.Length >= 0x8800)
+                {
+                    Content.Seek(0x8001, SeekOrigin.Begin);
+
+                    byte[] identifier = new byte[5];
+                    Content.Read(identifier);
+
+                    if (OpticalPartitionTable.Identifiers.Any(e => e.SequenceEqual(identifier)))
+                    {
+                        return new OpticalPartitionTable(this);
+                    }
+
+                    Content.Seek(0x8009, SeekOrigin.Begin);
+                    Content.Read(identifier);
+
+                    if (identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier))
+                    {
+                        return new OpticalPartitionTable(this);
+                    }
+                }
+
                 return new NoPartitionTable(this);
             }
 

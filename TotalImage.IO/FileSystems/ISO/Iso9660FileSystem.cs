@@ -28,18 +28,14 @@ namespace TotalImage.FileSystems.ISO
         /// <summary>
         /// The first primary volume descriptor
         /// </summary>
-        public IsoPrimaryVolumeDescriptor PrimaryVolumeDescriptor
-            => VolumeDescriptors
-                .OfType<IsoPrimaryVolumeDescriptor>()
-                .OrderByDescending(e => e.IsJolietVolumeDescriptor)
-                .ThenByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
-                .First();
+        public IsoPrimaryVolumeDescriptor PrimaryVolumeDescriptor { get; }
 
         /// <summary>
         /// Create an ISO 9660 or High Sierra file system
         /// </summary>
         /// <param name="containerStream">The underlying stream</param>
-        public Iso9660FileSystem(Stream containerStream) : base(containerStream)
+        /// <param name="isJoliet">Specifies whether to force detection of Joliet or ISO 9660 - should be left null for auto-detection</param>
+        public Iso9660FileSystem(Stream containerStream, bool? isJoliet = null) : base(containerStream)
         {
             containerStream.Seek(0x8000, SeekOrigin.Begin);
 
@@ -50,7 +46,7 @@ namespace TotalImage.FileSystems.ISO
             {
                 containerStream.Read(recordBytes);
 
-                IsoVolumeDescriptor record = IsoVolumeDescriptor.ReadVolumeDescriptor(recordBytes, this);
+                IsoVolumeDescriptor? record = IsoVolumeDescriptor.ReadVolumeDescriptor(recordBytes);
                 if (record == null)
                 {
                     break;
@@ -67,15 +63,31 @@ namespace TotalImage.FileSystems.ISO
 
             VolumeDescriptors = volumeDescriptors.ToImmutable();
 
-            var primaryDescriptor = VolumeDescriptors
-                .OfType<IsoPrimaryVolumeDescriptor>()
-                .OrderByDescending(e => e.IsJolietVolumeDescriptor)
-                .ThenByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
-                .FirstOrDefault();
+            IsoPrimaryVolumeDescriptor? primaryDescriptor;
+
+            if (isJoliet.HasValue)
+            {
+                primaryDescriptor = VolumeDescriptors
+                    .OfType<IsoPrimaryVolumeDescriptor>()
+                    .Where(e => e.IsJolietVolumeDescriptor == isJoliet)
+                    .OrderByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
+                    .FirstOrDefault();
+            }
+            else
+            {
+                primaryDescriptor = VolumeDescriptors
+                    .OfType<IsoPrimaryVolumeDescriptor>()
+                    .OrderByDescending(e => e.IsJolietVolumeDescriptor)
+                    .ThenByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
+                    .FirstOrDefault();
+            }
+
             if (primaryDescriptor == null)
             {
                 throw new InvalidDataException("No primary volume descriptor");
             }
+
+            PrimaryVolumeDescriptor = primaryDescriptor;
 
             VolumeLabel = !string.IsNullOrEmpty(primaryDescriptor.VolumeIdentifier)
                 ? primaryDescriptor.VolumeIdentifier
@@ -86,7 +98,12 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc />
-        public override string DisplayName => PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier) ? "High Sierra" : PrimaryVolumeDescriptor.IsJolietVolumeDescriptor ? "ISO 9660 + Joliet" : "ISO 9660";
+        public override string DisplayName
+            => PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier)
+            ? "High Sierra"
+            : PrimaryVolumeDescriptor.IsJolietVolumeDescriptor
+                ? "ISO 9660 + Joliet"
+                : "ISO 9660";
 
         /// <inheritdoc />
         public override string VolumeLabel { get; set; }
