@@ -35,22 +35,23 @@ namespace TotalImage
             this.btnOK = new System.Windows.Forms.Button();
             this.cbxReadOnly = new System.Windows.Forms.CheckBox();
             this.lstPartitions = new System.Windows.Forms.ListView();
-            this.clmNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmLabel = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmStart = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmEnd = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.clmActive = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.clmNumber = new System.Windows.Forms.ColumnHeader();
+            this.clmLabel = new System.Windows.Forms.ColumnHeader();
+            this.clmType = new System.Windows.Forms.ColumnHeader();
+            this.clmStart = new System.Windows.Forms.ColumnHeader();
+            this.clmEnd = new System.Windows.Forms.ColumnHeader();
+            this.clmSize = new System.Windows.Forms.ColumnHeader();
+            this.clmActive = new System.Windows.Forms.ColumnHeader();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblDesc
             // 
             this.lblDesc.AutoSize = true;
-            this.lblDesc.Location = new System.Drawing.Point(12, 11);
+            this.lblDesc.Location = new System.Drawing.Point(15, 14);
+            this.lblDesc.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDesc.Name = "lblDesc";
-            this.lblDesc.Size = new System.Drawing.Size(138, 15);
+            this.lblDesc.Size = new System.Drawing.Size(177, 20);
             this.lblDesc.TabIndex = 0;
             this.lblDesc.Text = "Select a partition to load:";
             // 
@@ -61,9 +62,10 @@ namespace TotalImage
             this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
-            this.pnlBottom.Location = new System.Drawing.Point(0, 211);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 264);
+            this.pnlBottom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pnlBottom.Name = "pnlBottom";
-            this.pnlBottom.Size = new System.Drawing.Size(584, 50);
+            this.pnlBottom.Size = new System.Drawing.Size(730, 62);
             this.pnlBottom.TabIndex = 3;
             // 
             // btnCancel
@@ -71,9 +73,10 @@ namespace TotalImage
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(492, 12);
+            this.btnCancel.Location = new System.Drawing.Point(615, 15);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(80, 26);
+            this.btnCancel.Size = new System.Drawing.Size(100, 32);
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -84,9 +87,10 @@ namespace TotalImage
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.Enabled = false;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(406, 12);
+            this.btnOK.Location = new System.Drawing.Point(508, 15);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(80, 26);
+            this.btnOK.Size = new System.Drawing.Size(100, 32);
             this.btnOK.TabIndex = 0;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -98,9 +102,10 @@ namespace TotalImage
             this.cbxReadOnly.AutoSize = true;
             this.cbxReadOnly.Enabled = false;
             this.cbxReadOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxReadOnly.Location = new System.Drawing.Point(15, 185);
+            this.cbxReadOnly.Location = new System.Drawing.Point(19, 231);
+            this.cbxReadOnly.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cbxReadOnly.Name = "cbxReadOnly";
-            this.cbxReadOnly.Size = new System.Drawing.Size(86, 20);
+            this.cbxReadOnly.Size = new System.Drawing.Size(108, 25);
             this.cbxReadOnly.TabIndex = 5;
             this.cbxReadOnly.Text = "Read-only";
             this.cbxReadOnly.UseVisualStyleBackColor = true;
@@ -122,11 +127,12 @@ namespace TotalImage
             this.lstPartitions.GridLines = true;
             this.lstPartitions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lstPartitions.HideSelection = false;
-            this.lstPartitions.Location = new System.Drawing.Point(15, 29);
+            this.lstPartitions.Location = new System.Drawing.Point(19, 36);
+            this.lstPartitions.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.lstPartitions.MultiSelect = false;
             this.lstPartitions.Name = "lstPartitions";
             this.lstPartitions.ShowGroups = false;
-            this.lstPartitions.Size = new System.Drawing.Size(557, 150);
+            this.lstPartitions.Size = new System.Drawing.Size(695, 186);
             this.lstPartitions.TabIndex = 6;
             this.lstPartitions.UseCompatibleStateImageBehavior = false;
             this.lstPartitions.View = System.Windows.Forms.View.Details;
@@ -136,58 +142,59 @@ namespace TotalImage
             // clmNumber
             // 
             this.clmNumber.Text = "No.";
-            this.clmNumber.Width = 31;
+            this.clmNumber.Width = 45;
             // 
             // clmLabel
             // 
             this.clmLabel.Text = "Volume label";
-            this.clmLabel.Width = 88;
+            this.clmLabel.Width = 100;
             // 
             // clmType
             // 
             this.clmType.Text = "Type";
-            this.clmType.Width = 79;
+            this.clmType.Width = 120;
             // 
             // clmStart
             // 
             this.clmStart.Text = "Start";
-            this.clmStart.Width = 78;
+            this.clmStart.Width = 120;
             // 
             // clmEnd
             // 
             this.clmEnd.Text = "End";
-            this.clmEnd.Width = 92;
+            this.clmEnd.Width = 120;
             // 
             // clmSize
             // 
             this.clmSize.Text = "Size";
-            this.clmSize.Width = 87;
+            this.clmSize.Width = 120;
             // 
             // clmActive
             // 
             this.clmActive.Text = "Active";
-            this.clmActive.Width = 49;
+            this.clmActive.Width = 65;
             // 
             // dlgSelectPartition
             // 
             this.AcceptButton = this.btnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(584, 261);
+            this.ClientSize = new System.Drawing.Size(730, 326);
             this.Controls.Add(this.lstPartitions);
             this.Controls.Add(this.cbxReadOnly);
             this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.lblDesc);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "dlgSelectPartition";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select partition";
             this.Load += new System.EventHandler(this.dlgSelectPartition_Load);
             this.pnlBottom.ResumeLayout(false);

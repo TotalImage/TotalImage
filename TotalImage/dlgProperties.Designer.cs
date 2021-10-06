@@ -512,7 +512,7 @@
             this.Name = "dlgProperties";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Properties";
             this.Load += new System.EventHandler(this.dlgProperties_Load);
             ((System.ComponentModel.ISupportInitialize)(this.imgIcon)).EndInit();

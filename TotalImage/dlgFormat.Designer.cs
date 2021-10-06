@@ -47,9 +47,10 @@
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 211);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 264);
+            this.pnlBottom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pnlBottom.Name = "pnlBottom";
-            this.pnlBottom.Size = new System.Drawing.Size(284, 50);
+            this.pnlBottom.Size = new System.Drawing.Size(355, 62);
             this.pnlBottom.TabIndex = 99;
             // 
             // btnCancel
@@ -57,9 +58,10 @@
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnCancel.Location = new System.Drawing.Point(192, 12);
+            this.btnCancel.Location = new System.Drawing.Point(240, 15);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(80, 26);
+            this.btnCancel.Size = new System.Drawing.Size(100, 32);
             this.btnCancel.TabIndex = 6;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -69,9 +71,10 @@
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnOK.Location = new System.Drawing.Point(106, 12);
+            this.btnOK.Location = new System.Drawing.Point(132, 15);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(80, 26);
+            this.btnOK.Size = new System.Drawing.Size(100, 32);
             this.btnOK.TabIndex = 5;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -80,9 +83,10 @@
             // lblFileSystem
             // 
             this.lblFileSystem.AutoSize = true;
-            this.lblFileSystem.Location = new System.Drawing.Point(12, 9);
+            this.lblFileSystem.Location = new System.Drawing.Point(15, 11);
+            this.lblFileSystem.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblFileSystem.Name = "lblFileSystem";
-            this.lblFileSystem.Size = new System.Drawing.Size(68, 15);
+            this.lblFileSystem.Size = new System.Drawing.Size(84, 20);
             this.lblFileSystem.TabIndex = 100;
             this.lblFileSystem.Text = "File system:";
             // 
@@ -91,9 +95,10 @@
             this.lstFileSystem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.lstFileSystem.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstFileSystem.FormattingEnabled = true;
-            this.lstFileSystem.Location = new System.Drawing.Point(15, 27);
+            this.lstFileSystem.Location = new System.Drawing.Point(19, 34);
+            this.lstFileSystem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.lstFileSystem.Name = "lstFileSystem";
-            this.lstFileSystem.Size = new System.Drawing.Size(257, 23);
+            this.lstFileSystem.Size = new System.Drawing.Size(320, 28);
             this.lstFileSystem.TabIndex = 1;
             // 
             // lstClusterSize
@@ -101,35 +106,39 @@
             this.lstClusterSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.lstClusterSize.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstClusterSize.FormattingEnabled = true;
-            this.lstClusterSize.Location = new System.Drawing.Point(15, 80);
+            this.lstClusterSize.Location = new System.Drawing.Point(19, 100);
+            this.lstClusterSize.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.lstClusterSize.Name = "lstClusterSize";
-            this.lstClusterSize.Size = new System.Drawing.Size(257, 23);
+            this.lstClusterSize.Size = new System.Drawing.Size(320, 28);
             this.lstClusterSize.TabIndex = 2;
             // 
             // lblClusterSize
             // 
             this.lblClusterSize.AutoSize = true;
-            this.lblClusterSize.Location = new System.Drawing.Point(12, 62);
+            this.lblClusterSize.Location = new System.Drawing.Point(15, 78);
+            this.lblClusterSize.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblClusterSize.Name = "lblClusterSize";
-            this.lblClusterSize.Size = new System.Drawing.Size(69, 15);
+            this.lblClusterSize.Size = new System.Drawing.Size(86, 20);
             this.lblClusterSize.TabIndex = 102;
             this.lblClusterSize.Text = "Cluster size:";
             // 
             // lblVolumeLabel
             // 
             this.lblVolumeLabel.AutoSize = true;
-            this.lblVolumeLabel.Location = new System.Drawing.Point(12, 115);
+            this.lblVolumeLabel.Location = new System.Drawing.Point(15, 144);
+            this.lblVolumeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblVolumeLabel.Name = "lblVolumeLabel";
-            this.lblVolumeLabel.Size = new System.Drawing.Size(78, 15);
+            this.lblVolumeLabel.Size = new System.Drawing.Size(99, 20);
             this.lblVolumeLabel.TabIndex = 104;
             this.lblVolumeLabel.Text = "Volume label:";
             // 
             // txtVolumeLabel
             // 
-            this.txtVolumeLabel.Location = new System.Drawing.Point(15, 133);
+            this.txtVolumeLabel.Location = new System.Drawing.Point(19, 166);
+            this.txtVolumeLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtVolumeLabel.MaxLength = 11;
             this.txtVolumeLabel.Name = "txtVolumeLabel";
-            this.txtVolumeLabel.Size = new System.Drawing.Size(257, 23);
+            this.txtVolumeLabel.Size = new System.Drawing.Size(320, 27);
             this.txtVolumeLabel.TabIndex = 3;
             // 
             // cbxQuickFormat
@@ -138,9 +147,10 @@
             this.cbxQuickFormat.Checked = true;
             this.cbxQuickFormat.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbxQuickFormat.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxQuickFormat.Location = new System.Drawing.Point(15, 171);
+            this.cbxQuickFormat.Location = new System.Drawing.Point(19, 214);
+            this.cbxQuickFormat.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.cbxQuickFormat.Name = "cbxQuickFormat";
-            this.cbxQuickFormat.Size = new System.Drawing.Size(102, 20);
+            this.cbxQuickFormat.Size = new System.Drawing.Size(126, 25);
             this.cbxQuickFormat.TabIndex = 4;
             this.cbxQuickFormat.Text = "Quick format";
             this.cbxQuickFormat.UseVisualStyleBackColor = true;
@@ -148,11 +158,11 @@
             // dlgFormat
             // 
             this.AcceptButton = this.btnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(355, 326);
             this.Controls.Add(this.cbxQuickFormat);
             this.Controls.Add(this.txtVolumeLabel);
             this.Controls.Add(this.lblVolumeLabel);
@@ -163,12 +173,13 @@
             this.Controls.Add(this.pnlBottom);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "dlgFormat";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Format";
             this.Load += new System.EventHandler(this.dlgFormat_Load);
             this.pnlBottom.ResumeLayout(false);
