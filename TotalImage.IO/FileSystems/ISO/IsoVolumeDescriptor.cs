@@ -22,7 +22,7 @@ namespace TotalImage.FileSystems.ISO
         /// <summary>
         /// This indicates the type of volume descriptor
         /// </summary>
-        public IsoVolumeDescriptorType Type { get; }
+        public byte Type { get; }
 
         /// <summary>
         /// The record identifier - should always be CD001
@@ -35,12 +35,22 @@ namespace TotalImage.FileSystems.ISO
         public byte Version { get; }
 
         /// <summary>
+        /// Check whether the specified record is valid
+        /// </summary>
+        /// <returns>Whether the record is valid</returns>
+        public virtual bool IsValid()
+        {
+            return (Type <= (byte)IsoVolumeDescriptorType.VolumePartitionDescriptor || Type == (byte)IsoVolumeDescriptorType.VolumeDescriptorSetTerminator)
+                && (Identifier.SequenceEqual(IsoStandardIdentifier) || Identifier.SequenceEqual(HsfStandardIdentifier));
+        }
+
+        /// <summary>
         /// Create a volume descriptor record - this should be used by inheriting types to construct the base object.
         /// </summary>
         /// <param name="type">The type of the volume descriptor</param>
         /// <param name="identifier">The volume descriptor identifier</param>
         /// <param name="version">The version of the volume descriptor</param>
-        protected IsoVolumeDescriptor(in IsoVolumeDescriptorType type, in ImmutableArray<byte> identifier, in byte version)
+        protected IsoVolumeDescriptor(in byte type, in ImmutableArray<byte> identifier, in byte version)
         {
             Type = type;
             Identifier = identifier;
@@ -48,7 +58,7 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <summary>
-        /// Read a volume descriptor
+        /// Read an ISO 9660 volume descriptor
         /// </summary>
         /// <param name="record">A span containing the volume descriptor record</param>
         /// <returns>The volume descriptor record</returns>

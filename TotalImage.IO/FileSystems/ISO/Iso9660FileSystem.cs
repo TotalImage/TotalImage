@@ -59,8 +59,8 @@ namespace TotalImage.FileSystems.ISO
         /// Create an ISO 9660 or High Sierra file system
         /// </summary>
         /// <param name="containerStream">The underlying stream</param>
-        /// <param name="isJoliet">Specifies whether to force detection of Joliet or ISO 9660 - should be left null for auto-detection</param>
-        public Iso9660FileSystem(Stream containerStream, bool? isJoliet = null) : base(containerStream)
+        /// <param name="pvd">Forces a specific primary volume descriptor to be used</param>
+        public Iso9660FileSystem(Stream containerStream, IsoPrimaryVolumeDescriptor? pvd = null) : base(containerStream)
         {
             containerStream.Seek(0x8000, SeekOrigin.Begin);
 
@@ -84,28 +84,15 @@ namespace TotalImage.FileSystems.ISO
 
                 volumeDescriptors.Add(record);
             }
-            while (volumeDescriptors[^1].Type != IsoVolumeDescriptorType.VolumeDescriptorSetTerminator);
+            while (volumeDescriptors[^1].Type != (byte)IsoVolumeDescriptorType.VolumeDescriptorSetTerminator);
 
             VolumeDescriptors = volumeDescriptors.ToImmutable();
 
-            IsoPrimaryVolumeDescriptor? primaryDescriptor;
-
-            if (isJoliet.HasValue)
-            {
-                primaryDescriptor = VolumeDescriptors
-                    .OfType<IsoPrimaryVolumeDescriptor>()
-                    .Where(e => e.IsJolietVolumeDescriptor == isJoliet)
-                    .OrderByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
-                    .FirstOrDefault();
-            }
-            else
-            {
-                primaryDescriptor = VolumeDescriptors
+            IsoPrimaryVolumeDescriptor? primaryDescriptor = pvd ?? VolumeDescriptors
                     .OfType<IsoPrimaryVolumeDescriptor>()
                     .OrderByDescending(e => e.IsJolietVolumeDescriptor)
-                    .ThenByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
+                    .ThenByDescending(e => e.Type == (byte)IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
                     .FirstOrDefault();
-            }
 
             if (primaryDescriptor == null)
             {

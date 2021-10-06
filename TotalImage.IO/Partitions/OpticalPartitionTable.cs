@@ -51,7 +51,7 @@ namespace TotalImage.Partitions
                 {
                     if (record is IsoPrimaryVolumeDescriptor pvd && (pvd.IsJolietVolumeDescriptor || record is not IsoSecondaryVolumeDescriptor))
                     {
-                        builder.Add(new OpticalFileSystemLayer(new Iso9660FileSystem(_container.Content, pvd.IsJolietVolumeDescriptor), _container.Content));
+                        builder.Add(new OpticalFileSystemLayer(new Iso9660FileSystem(_container.Content, pvd), _container.Content));
                     }
 
                     nextOffset += 0x800;
