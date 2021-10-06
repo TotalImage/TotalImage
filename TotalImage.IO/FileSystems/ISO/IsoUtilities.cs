@@ -16,11 +16,11 @@ namespace TotalImage.FileSystems.ISO
         ];
 
         /// <summary>
-        /// Converts an ISO-9660 or High Sierra date format to a DateTimeOffset
+        /// Converts an ISO 9660 or High Sierra date format to a DateTimeOffset
         /// </summary>
-        /// <param name="date">the ISO-9660 or High Sierra date format</param>
+        /// <param name="date">the ISO 9660 or High Sierra date format</param>
         /// <returns>a DateTimeOffset containing the time if the date is valid, otherwise null</returns>
-        public static DateTimeOffset? FromIsoDateTime(ReadOnlySpan<char> date)
+        public static DateTimeOffset? FromIsoDateTime(in ReadOnlySpan<char> date)
         {
             if (date.Length < 16 || date.Length > 17)
             {
@@ -81,11 +81,11 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <summary>
-        /// Converts an ISO-9660 or High Sierra recording date format to a DateTimeOffset
+        /// Converts an ISO 9660 or High Sierra recording date format to a DateTimeOffset
         /// </summary>
-        /// <param name="date">the ISO-9660 or High Sierra recording date format</param>
+        /// <param name="date">the ISO 9660 or High Sierra recording date format</param>
         /// <returns>a DateTimeOffset containing the time</returns>
-        public static DateTimeOffset? FromIsoRecordingDateTime(ReadOnlySpan<byte> date)
+        public static DateTimeOffset? FromIsoRecordingDateTime(in ReadOnlySpan<byte> date)
         {
             if (date.Length < 6 || date.Length > 7)
             {
@@ -105,6 +105,32 @@ namespace TotalImage.FileSystems.ISO
 
             var offset = date.Length == 6 ? TimeSpan.FromMinutes(0) : TimeSpan.FromMinutes((sbyte)date[6] * 15);
             return new DateTimeOffset(1900 + date[0], date[1], date[2], date[3], date[4], date[5], offset);
+        }
+
+        /// <summary>
+        /// Converts an ISO 13490 timestamp to a DateTimeOffset
+        /// </summary>
+        /// <param name="date">the ISO 13490 timestamp</param>
+        /// <returns>a DateTimeOffset containing the time</returns>
+        public static DateTimeOffset? FromIsoExTimestamp(in ReadOnlySpan<byte> date)
+        {
+            if (date.Length != 12)
+            {
+                throw new ArgumentOutOfRangeException(nameof(date));
+            }
+
+            ushort zoneInfo = BinaryPrimitives.ReadUInt16LittleEndian(date[0..2]);
+            byte type = (byte)(zoneInfo >> 12);
+            ushort offset = (ushort)(zoneInfo & 0xfff);
+
+            TimeSpan offsetSpan = type == 0
+                ? TimeSpan.Zero
+                : TimeSpan.FromMinutes(Convert.ToDouble(offset));
+
+            ushort year = BinaryPrimitives.ReadUInt16LittleEndian(date[2..4]);
+            int milli = (date[9] * 10) + (date[10] / 10);
+
+            return new DateTimeOffset(year, date[4], date[5], date[6], date[7], date[8], milli, offsetSpan);
         }
 
         /// <summary>

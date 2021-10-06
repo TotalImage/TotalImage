@@ -42,7 +42,7 @@ namespace TotalImage.FileSystems.ISO
         /// <param name="identifier">The volume descriptor identifier</param>
         /// <param name="version">The version of the volume descriptor</param>
         public IsoPartitionVolumeDescriptor(in ReadOnlySpan<byte> record, in IsoVolumeDescriptorType type, in ImmutableArray<byte> identifier, in byte version)
-            : base(type, identifier, version)
+            : base((byte)type, identifier, version)
         {
             Span<char> textBuffer = new char[32];
 
