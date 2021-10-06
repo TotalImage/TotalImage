@@ -32,7 +32,7 @@ namespace TotalImage.Partitions
         /// <summary>
         /// The filesystem contained by the partition
         /// </summary>
-        public FileSystem FileSystem
+        public virtual FileSystem FileSystem
         {
             get
             {
