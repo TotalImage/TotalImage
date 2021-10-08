@@ -64,13 +64,9 @@ namespace TotalImage
         {
             //This fixes the problem of certain settings values not being returned correctly when using high DPI. Go figure...
             Settings.Reload();
+            Settings.ReloadUIState();
 
-            //These three are outside Sync because otherwise they'd be applied whenever settings are saved...
-            WindowState = Settings.CurrentSettings.WindowState;
-            Location = Settings.CurrentSettings.WindowPosition;
-            Size = Settings.CurrentSettings.WindowSize;
-            SyncUIWithSettings();
-
+            SyncUI();
             DisableUI();
 
             GetDefaultIcons();
@@ -733,7 +729,7 @@ namespace TotalImage
             using dlgSettings dlg = new dlgSettings();
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                SyncUIWithSettings();
+                SyncUI();
                 ResetView();
                 UpdateStatusBar(true);
                 if (!Settings.CurrentSettings.AutoIncrementFilename)
@@ -1159,6 +1155,27 @@ namespace TotalImage
             }
 
             Settings.Save();
+            SetUIState();
+            Settings.SaveUIState();
+        }
+
+        //Sets the CurrentUIState to what the current state of UI is
+        private void SetUIState()
+        {
+            Settings.CurrentUIState.SplitterDistance = splitContainer.SplitterDistance;
+
+            if (WindowState != FormWindowState.Minimized)
+            {
+                Settings.CurrentUIState.WindowPosition = Location;
+                Settings.CurrentUIState.WindowState = WindowState;
+                Settings.CurrentUIState.WindowSize = Size;
+            }
+
+            foreach (ColumnHeader col in lstFiles.Columns)
+            {
+                Settings.CurrentUIState.MWColumnOrder[col.Index] = col.DisplayIndex;
+                Settings.CurrentUIState.MWColumnWidth[col.Index] = col.Width;
+            }
         }
 
         private void viewMenu_DropDownOpening(object sender, EventArgs e)
@@ -1225,32 +1242,6 @@ namespace TotalImage
                 case 1: typeToolStripMenuItem1.Checked = true; break;
                 case 2: sizeToolStripMenuItem1.Checked = true; break;
                 case 3: modifiedToolStripMenuItem1.Checked = true; break;
-            }
-        }
-
-        private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-            Settings.CurrentSettings.SplitterDistance = splitContainer.SplitterDistance;
-        }
-
-        private void frmMain_Resize(object sender, EventArgs e)
-        {
-            if (WindowState == FormWindowState.Maximized)
-            {
-                Settings.CurrentSettings.WindowState = FormWindowState.Maximized;
-            }
-            else if (WindowState == FormWindowState.Normal)
-            {
-                Settings.CurrentSettings.WindowState = FormWindowState.Normal;
-                Settings.CurrentSettings.WindowSize = this.Size;
-            }
-        }
-
-        private void frmMain_Move(object sender, EventArgs e)
-        {
-            if (WindowState == FormWindowState.Normal)
-            {
-                Settings.CurrentSettings.WindowPosition = this.Location;
             }
         }
 
@@ -2271,16 +2262,26 @@ namespace TotalImage
             Settings.CurrentSettings.FilesSortOrder = sortOrder;
         }
 
-        //Syncs the main form UI with the current settings
-        private void SyncUIWithSettings()
+        //Syncs the main form UI with the current settings and loaded UI state
+        private void SyncUI()
         {
+            WindowState = Settings.CurrentUIState.WindowState;
+            Location = Settings.CurrentUIState.WindowPosition;
+            Size = Settings.CurrentUIState.WindowSize;
+            splitContainer.SplitterDistance = Settings.CurrentUIState.SplitterDistance;
+
+            foreach (ColumnHeader col in lstFiles.Columns)
+            {
+                col.DisplayIndex = Settings.CurrentUIState.MWColumnOrder[col.Index];
+                col.Width = Settings.CurrentUIState.MWColumnWidth[col.Index];
+            }
+
             lstFiles.View = Settings.CurrentSettings.FilesView;
             splitContainer.Panel1Collapsed = !Settings.CurrentSettings.ShowDirectoryTree;
             statusBar.Visible = Settings.CurrentSettings.ShowStatusBar;
             commandBar.Visible = Settings.CurrentSettings.ShowCommandBar;
             sortOrder = Settings.CurrentSettings.FilesSortOrder;
             sortColumn = Settings.CurrentSettings.FilesSortingColumn;
-            splitContainer.SplitterDistance = Settings.CurrentSettings.SplitterDistance;
 
             lstFiles.SetSortIcon(sortColumn, sortOrder);
 

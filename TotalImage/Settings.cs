@@ -1,16 +1,25 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
 using System.Drawing;
-using System.ComponentModel.DataAnnotations;
 
 namespace TotalImage
 {
     //This class is a singleton, thread-safe with a double check lock
     public static class Settings
     {
+        public class UIStateModel
+        {
+            public int SplitterDistance { get; set; } = 280;
+            public Size WindowSize { get; set; } = new Size(1000, 700);
+            public Point WindowPosition { get; set; } = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
+            public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
+            public List<int> MWColumnOrder { get; set; } = new List<int>(new[] { 0, 1, 2, 3, 4 });
+            public List<int> MWColumnWidth { get; set; } = new List<int>(new[] { 150, 150, 150, 150, 85 });
+        }
+
         public class SettingsModel
         {
             public View FilesView { get; set; } = View.Details;
@@ -29,10 +38,6 @@ namespace TotalImage
             public bool OpenFolderAfterExtract { get; set; } = true;
             public bool ExtractPreserveDates { get; set; } = true;
             public bool ExtractPreserveAttributes { get; set; } = false;
-            public int SplitterDistance { get; set; } = 280;
-            public Size WindowSize { get; set; } = new Size(1000, 700);
-            public Point WindowPosition { get; set; } = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
-            public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
             public bool QueryShellForFileTypeInfo { get; set; } = true;
             public bool ConfirmInjection { get; set; } = true;
             public bool ConfirmDeletion { get; set; } = true;
@@ -42,9 +47,11 @@ namespace TotalImage
         }
 
         public static SettingsModel CurrentSettings { get; private set; }
+        public static UIStateModel CurrentUIState { get; private set; }
 
         private static readonly string SettingsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotalImage");
         private static readonly string SettingsFile = Path.Combine(SettingsDir, "settings.json");
+        private static readonly string UIStateFile = Path.Combine(SettingsDir, "uistate.json");
 
         private static FileSystemWatcher settingsWatcher;
 
@@ -89,6 +96,25 @@ namespace TotalImage
             settingsWatcher.EnableRaisingEvents = true;
             settingsWatcher.NotifyFilter = NotifyFilters.LastWrite;
             settingsWatcher.Changed += settingsWatcher_Changed;
+
+            if (!File.Exists(UIStateFile))
+            {
+                CurrentUIState = new UIStateModel();
+                SaveUIState();
+            }
+            else
+            {
+                var json = File.ReadAllText(UIStateFile);
+                var state = JsonSerializer.Deserialize<UIStateModel>(json);
+
+                if (state != null)
+                    CurrentUIState = state;
+                else
+                {
+                    CurrentUIState = new UIStateModel();
+                    SaveUIState();
+                }
+            }
         }
 
         // Handles the settings file being changed behind our back
@@ -141,6 +167,20 @@ namespace TotalImage
             }
         }
 
+        public static void ReloadUIState()
+        {
+            var json = File.ReadAllText(UIStateFile);
+            var state = JsonSerializer.Deserialize<UIStateModel>(json);
+
+            if (state != null)
+                CurrentUIState = state;
+            else
+            {
+                CurrentUIState = new UIStateModel();
+                SaveUIState();
+            }
+        }
+
         //Sets all settings to their default values
         public static void LoadDefaults()
         {
@@ -166,12 +206,6 @@ namespace TotalImage
             CurrentSettings.ConfirmInjection = true;
             CurrentSettings.ConfirmOverwriteExtraction = true;
             CurrentSettings.MemoryMappingThreshold = 1048576;
-
-            //This should probably be preserved...
-            /*CurrentSettings.SplitterDistance = 280;
-            CurrentSettings.WindowPosition = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
-            CurrentSettings.WindowSize = new Size(800, 600);
-            CurrentSettings.WindowState = FormWindowState.Normal;*/
         }
 
         //Saves all settings to permanent storage (settings.json)
@@ -207,6 +241,30 @@ namespace TotalImage
             if (settingsWatcher != null)
             {
                 settingsWatcher.EnableRaisingEvents = true;
+            }
+        }
+
+        //Saves the current UI state to permanent storage (uistate.json)
+        public static void SaveUIState()
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            var json = JsonSerializer.Serialize(CurrentUIState, options);
+
+            if (!Directory.Exists(SettingsDir))
+            {
+                Directory.CreateDirectory(SettingsDir);
+            }
+
+            try
+            {
+                File.WriteAllText(UIStateFile, json);
+            }
+            catch (IOException)
+            {
+                //We can't write to the file, probably because it's opened by another instance, so let's just silently give up
             }
         }
 
