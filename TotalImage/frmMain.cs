@@ -682,6 +682,12 @@ namespace TotalImage
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (image == null)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             newFolderToolStripMenuItem2.Enabled = true;
             extractToolStripMenuItem2.Enabled = true;
 
