@@ -1,18 +1,20 @@
 # TotalImage
 **TotalImage** is a free and open source disk image editor licensed under the MIT license. For more information, see the `LICENSE` file. It is written in C# and uses Windows Forms for the UI.
 
-Our goal is to create a tool that:
-* is completely free and open-source
-* is updated and improved regularly, as much as personal circumstances of the developers permit
-* supports a wide range of disk image containers, physical disk formats, file systems and partitioning schemes
-* handles and reports exceptions properly
-* offers other related advanced features that might come in handy
-
 ## Current status
 See the [Status page](https://github.com/TotalImage/TotalImage/blob/master/Docs/status.md) for details about currently implemented features.
 
+### Downloads
+Currently the project is still in early stages of development (alpha-level), and as such is not quite ready for everyday use yet. We will provide official builds once we reach that stage, in the mean time you can build it yourself or ask us to provide binaries for you (see the *Development* and *Support* sections below).
+
+### System requirements
+* [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) Desktop Runtime
+* Windows 8.1/10/11
+
+Support for other operating systems will be considered within the limitations of .NET.
+
 ## Planned features
-Here is a list of things we plan to support:
+Below is a list of things we plan to support. Please note that this list is not exhaustive nor definitive, and may change over time. We're open to adding support for more stuff in the future, but we have to start with the basics.
 
 ### Media types
 * Floppy disks
@@ -44,18 +46,10 @@ Here is a list of things we plan to support:
 * Various MBR variants
 * GPT
 
-Please note that this list is not exhaustive nor definitive. We're open to adding support for more stuff in the future, but we have to start with the basics.
-
-
-
-## System requirements
-* Windows 7 Service Pack 1 or later
-* [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) runtime
-
-Support for other operating systems will be considered within the limitations of .NET.
-
 ## Development
-To develop TotalImage, we recommend you install Microsoft Visual Studio 2019 (free Community Edition can be downloaded [here](https://visualstudio.microsoft.com/vs/)).
+To develop TotalImage, we recommend you install [Microsoft Visual Studio 2019](https://visualstudio.microsoft.com/vs/). This will give you the designer for Windows Forms, which makes it easier to work with the frontend.
+
+Alternatively, you can also just build the solution with [.NET CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/), which is included in the [.NET SDK](https://dotnet.microsoft.com/download/dotnet/5.0).
 
 ## Support
 Please open an issue on this repo for any bug reports and suggestions you may have. If you wish to talk to us directly, visit the official TotalImage Discord server:
