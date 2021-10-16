@@ -1881,6 +1881,25 @@ namespace TotalImage
                     CurrentPartitionIndex = selectFrm.SelectedEntry;
                 }
 
+                if(image.PartitionTable.Partitions.Count == 1 && image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"We found one partition in your image, but the file system it contains is not supported yet, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "Unsupported file system",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                    });
+
+                    CloseImage();
+                    return;
+                }
+
                 selectPartitionToolStripComboBox.Items.Clear();
 
                 for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
