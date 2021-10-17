@@ -599,7 +599,8 @@ namespace TotalImage
             //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
             //ofd.ShowReadOnly = true;
             ofd.Filter =
-                "Raw sector image (*.img, *.iso, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.iso;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
+                "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
+                "ISO image (*.iso)|*.iso|" + 
                 "Microsoft VHD (*.vhd)|*.vhd|" +
                 "All files (*.*)|*.*";
 
