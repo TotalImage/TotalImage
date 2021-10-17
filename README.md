@@ -9,7 +9,7 @@ Currently the project is still in early stages of development (alpha-level), and
 
 ### System requirements
 * [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) Desktop Runtime
-* Windows 8.1/10/11
+* Windows 7 SP1/8.1/10/11
 
 Support for other operating systems will be considered within the limitations of .NET.
 
