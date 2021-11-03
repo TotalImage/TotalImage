@@ -4,6 +4,7 @@ using System.IO;
 using TotalImage.Containers;
 using TotalImage.FileSystems;
 using TotalImage.FileSystems.ISO;
+using TotalImage.FileSystems.UDF;
 
 namespace TotalImage.Partitions
 {
@@ -53,6 +54,42 @@ namespace TotalImage.Partitions
                     {
                         builder.Add(new OpticalFileSystemLayer(new Iso9660FileSystem(_container.Content, pvd), _container.Content));
                     }
+
+                    nextOffset += 0x800;
+                    continue;
+                }
+
+                // if neither the last block nor this block was valid, then stop searching
+                if (noValidIdentifier)
+                {
+                    break;
+                }
+
+                noValidIdentifier = true;
+                nextOffset += 0x800;
+            }
+            while (_container.Content.Length > nextOffset);
+
+            if (_container.Content.Length < 0x81000)
+            {
+                return builder.ToImmutable();
+            }
+
+            nextOffset = 0x80000;
+            noValidIdentifier = false;
+
+            do
+            {
+                _container.Content.Seek(nextOffset, SeekOrigin.Begin);
+                _container.Content.Read(recordBytes);
+
+                UdfVolumeDescriptor? record = UdfVolumeDescriptor.ReadVolumeDescriptor(recordBytes);
+                if (record != null)
+                {
+                    //if (record is IsoPrimaryVolumeDescriptor pvd)
+                    //{
+                    //    builder.Add(new OpticalFileSystemLayer(new UdfFileSystem(_container.Content, pvd), _container.Content));
+                    //}
 
                     nextOffset += 0x800;
                     continue;

@@ -50,7 +50,7 @@ namespace TotalImage.FileSystems.UDF
         /// <returns>Whether the tag is valid</returns>
         public bool IsValid()
         {
-            return Identifier >= UdfDescriptorTagIdentifier.LogicalVolumeIntegrityDescriptor
+            return Identifier <= UdfDescriptorTagIdentifier.LogicalVolumeIntegrityDescriptor
                 && (DescriptorVersion == 2 || DescriptorVersion == 3);
         }
 
