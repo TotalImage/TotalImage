@@ -160,9 +160,30 @@ namespace TotalImage
             dlg.ShowDialog();
         }
 
-        //Allows viewing and editing bootsector properties
+        /* Allows viewing and editing bootsector properties
+         * 
+         * TODO: Enable this for other file systems/partition types/media too.
+         */
         private void bootSectorProperties_Click(object sender, EventArgs e)
         {
+            if(image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FileSystems.FAT.FatFileSystem)
+            {
+                TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = "This feature is currently only available for FAT partitions.",
+                    Heading = "Feature not available",
+                    Caption = "Information",
+                    Buttons =
+                    {
+                        TaskDialogButton.OK
+                    },
+                    Icon = TaskDialogIcon.Information,
+                    DefaultButton = TaskDialogButton.OK
+                });
+
+                return;
+            }
+
             using dlgBootSector dlg = new dlgBootSector();
             dlg.ShowDialog();
         }

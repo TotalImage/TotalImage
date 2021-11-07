@@ -49,7 +49,7 @@
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnOK.Location = new System.Drawing.Point(485, 15);
-            this.btnOK.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(4);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(100, 32);
             this.btnOK.TabIndex = 0;
@@ -62,7 +62,7 @@
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnCancel.Location = new System.Drawing.Point(592, 15);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(100, 32);
             this.btnCancel.TabIndex = 1;
@@ -75,8 +75,8 @@
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pnlBottom.Location = new System.Drawing.Point(0, 485);
+            this.pnlBottom.Margin = new System.Windows.Forms.Padding(4);
             this.pnlBottom.Name = "pnlBottom";
             this.pnlBottom.Size = new System.Drawing.Size(708, 62);
             this.pnlBottom.TabIndex = 10;
@@ -106,6 +106,7 @@
             // lblPreset
             // 
             this.lblPreset.AutoSize = true;
+            this.lblPreset.Enabled = false;
             this.lblPreset.Location = new System.Drawing.Point(224, 18);
             this.lblPreset.Name = "lblPreset";
             this.lblPreset.Size = new System.Drawing.Size(58, 20);
@@ -115,6 +116,7 @@
             // lstPresets
             // 
             this.lstPresets.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstPresets.Enabled = false;
             this.lstPresets.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstPresets.FormattingEnabled = true;
             this.lstPresets.Location = new System.Drawing.Point(288, 14);
@@ -124,6 +126,7 @@
             // 
             // btnApply
             // 
+            this.btnApply.Enabled = false;
             this.btnApply.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnApply.Location = new System.Drawing.Point(596, 12);
             this.btnApply.Name = "btnApply";
@@ -171,9 +174,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.Controls.Add(this.pnlBottom);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.ClientSize = new System.Drawing.Size(708, 547);
             this.Controls.Add(this.txtOEMID);
             this.Controls.Add(this.lblOEMID);
@@ -185,6 +185,9 @@
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.pnlBottom);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "dlgBootSector";
