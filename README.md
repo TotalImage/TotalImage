@@ -8,7 +8,7 @@ See the [Status page](https://github.com/TotalImage/TotalImage/blob/master/Docs/
 Currently the project is still in early stages of development (alpha-level), and as such is not quite ready for everyday use yet. We will provide official builds once we reach that stage, in the mean time you can build it yourself or ask us to provide binaries for you (see the *Development* and *Support* sections below).
 
 ### System requirements
-* [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) Desktop Runtime
+* [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) Desktop Runtime
 * Windows 7 SP1/8.1/10/11
 
 Support for other operating systems will be considered within the limitations of .NET.
