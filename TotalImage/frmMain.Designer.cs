@@ -177,7 +177,6 @@ namespace TotalImage
             // 
             // cmsDirTree
             // 
-            this.cmsDirTree.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsDirTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.expandDirectoryTreeToolStripMenuItem1,
             this.collapseDirectoryTreeToolStripMenuItem1,
@@ -259,7 +258,6 @@ namespace TotalImage
             // menuBar
             // 
             this.menuBar.ContextMenuStrip = this.cmsToolbars;
-            this.menuBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
@@ -276,7 +274,6 @@ namespace TotalImage
             // 
             // cmsToolbars
             // 
-            this.cmsToolbars.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsToolbars.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.commandBarToolStripMenuItem1,
             this.directoryTreeToolStripMenuItem1,
@@ -814,7 +811,6 @@ namespace TotalImage
             // statusBar
             // 
             this.statusBar.ContextMenuStrip = this.cmsToolbars;
-            this.statusBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatusCapacity,
             this.lblStatusFreeCapacity,
@@ -872,7 +868,6 @@ namespace TotalImage
             // 
             this.commandBar.ContextMenuStrip = this.cmsToolbars;
             this.commandBar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.commandBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.commandBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripButton,
             this.openToolStripButton,
@@ -1338,7 +1333,6 @@ namespace TotalImage
             // 
             // cmsFileList
             // 
-            this.cmsFileList.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsFileList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.extractToolStripMenuItem2,
             this.newFolderToolStripMenuItem2,
@@ -1427,7 +1421,6 @@ namespace TotalImage
             this.Controls.Add(this.commandBar);
             this.Controls.Add(this.statusBar);
             this.Controls.Add(this.menuBar);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuBar;
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
