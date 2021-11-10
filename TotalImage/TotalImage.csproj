@@ -16,7 +16,6 @@
     <ApplicationIcon>logo.ico</ApplicationIcon>
     <StartupObject>TotalImage.Program</StartupObject>
     <Authors>The TotalImage Team</Authors>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
   </PropertyGroup>
 
