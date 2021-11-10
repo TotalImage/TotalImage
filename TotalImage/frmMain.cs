@@ -734,13 +734,19 @@ namespace TotalImage
         private void settings_Click(object sender, EventArgs e)
         {
             using dlgSettings dlg = new dlgSettings();
-            if (dlg.ShowDialog() == DialogResult.OK)
+            DialogResult result = dlg.ShowDialog();
+            if (result == DialogResult.OK)
             {
                 SyncUI();
                 ResetView();
                 UpdateStatusBar(true);
                 if (!Settings.CurrentSettings.AutoIncrementFilename)
                     lastSavedFilename = null;
+            }
+            else if (result == DialogResult.Cancel)
+            {
+                //If the user cleared the recent images list in the dialog, we still want to update the menu in the main form
+                PopulateRecentList();
             }
         }
 
