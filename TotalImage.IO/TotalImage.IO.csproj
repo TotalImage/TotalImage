@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <RootNamespace>TotalImage</RootNamespace>
-        <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+      <TargetFramework>net6.0</TargetFramework>
+      <RootNamespace>TotalImage</RootNamespace>
+      <Nullable>enable</Nullable>
+      <LangVersion>latest</LangVersion>
+      <GenerateDocumentationFile>true</GenerateDocumentationFile>
+      <Version>1.0.0.0-alpha</Version>
     </PropertyGroup>
 
     <ItemGroup>
