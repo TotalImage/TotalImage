@@ -12,10 +12,20 @@
   <PropertyGroup>
     <RootNamespace>TotalImage</RootNamespace>
     <AssemblyName>TotalImage</AssemblyName>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ApplicationIcon>logo.ico</ApplicationIcon>
     <StartupObject>TotalImage.Program</StartupObject>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Product>TotalImage</Product>
+    <Description>A better disk image editor</Description>
     <Authors>The TotalImage Team</Authors>
+    <Copyright>Copyright © 2020-2021 The TotalImage Team</Copyright>
+    <Version>1.0.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
   </PropertyGroup>
 
