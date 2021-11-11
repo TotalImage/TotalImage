@@ -10,17 +10,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RootNamespace>TotalImage</RootNamespace>
-    <AssemblyName>TotalImage</AssemblyName>
-    <ApplicationIcon>logo.ico</ApplicationIcon>
-    <StartupObject>TotalImage.Program</StartupObject>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <Product>TotalImage</Product>
     <Description>A better disk image editor</Description>
     <Authors>The TotalImage Team</Authors>
     <Copyright>Copyright © 2020-2021 The TotalImage Team</Copyright>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
     <Version>1.0.0.0</Version>
     <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
@@ -44,11 +38,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -56,13 +45,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
 </Project>
