@@ -1,15 +1,14 @@
-﻿using System.Windows.Forms;
+﻿using System;
 using System.ComponentModel;
-using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace TotalImage
 {
     public partial class dlgImageInfo : Form
     {
-        private BackgroundWorker md5Worker;
-        private BackgroundWorker sha1Worker;
-
         //TODO: Obtain actual data from the main form/relevant classes and display it
         public dlgImageInfo()
         {
@@ -50,79 +49,10 @@ namespace TotalImage
             lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = "Please wait...";
             lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = "Please wait...";
 
-            /* Do this in the background so we don't hang the UI thread. Because both methods use the same stream, they must absolutely NOT run at 
-             * the same time!!! That's why this quasi mutex is here. The second worker will sleep until the first one is done and then do its own 
-             * calculation. This seems to guarantee proper results. */
-            bool md5Done = false;
-            md5Worker = new BackgroundWorker();
-            md5Worker.WorkerSupportsCancellation = true;
-            md5Worker.WorkerReportsProgress = false;
-            md5Worker.DoWork += (sender, e) =>
-            {
-                BackgroundWorker worker = (BackgroundWorker)sender;
-                e.Result = mainForm.image.CalculateMd5Hash();
-                if (worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                }
-            };
-            md5Worker.RunWorkerCompleted += (sender, e) =>
-            {
-                if (e.Cancelled) { }
-                else if (e.Error != null) { }
-                else
-                {
-                    md5Done = true;
-                    lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = (string)e.Result;
-                }
-            };
-            md5Worker.RunWorkerAsync();
-
-            sha1Worker = new BackgroundWorker();
-            sha1Worker.WorkerSupportsCancellation = true;
-            sha1Worker.WorkerReportsProgress = false;
-            sha1Worker.DoWork += (sender, e) =>
-            {
-                BackgroundWorker worker = (BackgroundWorker)sender;
-                while (!md5Done)
-                {
-                    if (worker.CancellationPending)
-                    {
-                        e.Cancel = true;
-                    }
-                    System.Threading.Thread.Sleep(100); //So we don't waste processor time
-                }
-                e.Result = mainForm.image.CalculateSha1Hash();
-            };
-            sha1Worker.RunWorkerCompleted += (sender, e) =>
-            {
-                if (e.Cancelled) { }
-                else if (e.Error != null) { }
-                else
-                {
-                    lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = (string)e.Result;
-                }               
-            };
-            sha1Worker.RunWorkerAsync();
-
             //Obtain this from the container metadata if it exists and display it
             txtComment.Text = "This container type does not support comments.";
             txtComment.Enabled = false;
             lblComment.Enabled = false;
-        }
-
-        private void dlgImageInfo_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            //Cancel the background work if it's still in progress
-            if (md5Worker.IsBusy)
-            {
-                md5Worker.CancelAsync();
-            }
-
-            if (sha1Worker.IsBusy)
-            {
-                sha1Worker.CancelAsync();
-            }
         }
 
         private void btnSave_Click(object sender, System.EventArgs e)
@@ -178,5 +108,29 @@ namespace TotalImage
                 sw.Close();
             }
         }
+
+        CancellationTokenSource cts = new CancellationTokenSource();
+
+        private async void dlgImageInfo_Shown(object sender, EventArgs e)
+        {
+            if (Application.OpenForms["frmMain"] is frmMain mainForm && mainForm.image is not null)
+            {
+                var md5 = Task.Run<string>(async () => await mainForm.image.CalculateMd5HashAsync(cts.Token));
+                var sha1 = Task.Run<string>(async () => await mainForm.image.CalculateSha1HashAsync(cts.Token));
+
+                try
+                {
+                    lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = await md5;
+                    lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = await sha1;
+                }
+                catch(TaskCanceledException)
+                {
+                    // Hash calculation was canceled, carry on
+                }
+            }
+        }
+
+        private void dlgImageInfo_FormClosing(object sender, FormClosingEventArgs e)
+            => cts.Cancel(); // Cancel the background work if it's still in progress
     }
 }

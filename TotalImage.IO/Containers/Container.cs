@@ -3,6 +3,8 @@ using System.Buffers.Binary;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Security.Cryptography;
+using System.Threading;
+using System.Threading.Tasks;
 using TotalImage.Partitions;
 
 namespace TotalImage.Containers
@@ -170,6 +172,26 @@ namespace TotalImage.Containers
         /// </summary>
         public abstract string DisplayName { get; }
 
+        SemaphoreSlim hashMutex = new SemaphoreSlim(1, 1);
+
+        async Task<string> CalculateHashAsyncCore(HashAlgorithm algorithm, CancellationToken cancellationToken)
+        {
+            await hashMutex.WaitAsync();
+            byte[] hash;
+
+            try
+            {
+                containerStream.Position = 0;
+                hash = await algorithm.ComputeHashAsync(containerStream, cancellationToken);
+            }
+            finally
+            {
+                hashMutex.Release();
+            }
+
+            return BitConverter.ToString(hash).Replace("-", "").ToLower();
+        }
+
         /// <summary>
         /// Calculates the MD5 hash of this file
         /// </summary>
@@ -183,6 +205,13 @@ namespace TotalImage.Containers
         }
 
         /// <summary>
+        /// Asynchronously calculates the MD5 hash of this file
+        /// </summary>
+        /// <returns>A task that represents the asynchronous hash calculation operation and wraps the string containing the hexadecimal representation of the MD5 hash</returns>
+        public async Task<string> CalculateMd5HashAsync(CancellationToken cancellationToken = default)
+            => await CalculateHashAsyncCore(MD5.Create(), cancellationToken);
+
+        /// <summary>
         /// Calculates the SHA-1 hash of this file
         /// </summary>
         /// <returns>A string containing the hexadecimal representation of the SHA-1 hash</returns>
@@ -193,5 +222,12 @@ namespace TotalImage.Containers
             byte[]? hash = sha1.ComputeHash(containerStream);
             return BitConverter.ToString(hash).Replace("-", "").ToLower();
         }
+
+        /// <summary>
+        /// Asynchronously calculates the SHA-1 hash of this file
+        /// </summary>
+        /// <returns>A task that represents the asynchronous hash calculation operation and wraps the string containing the hexadecimal representation of the SHA-1 hash</returns>
+        public async Task<string> CalculateSha1HashAsync(CancellationToken cancellationToken = default)
+            => await CalculateHashAsyncCore(SHA1.Create(), cancellationToken);
     }
 }
