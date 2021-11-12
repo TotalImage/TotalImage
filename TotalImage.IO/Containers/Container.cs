@@ -176,7 +176,7 @@ namespace TotalImage.Containers
 
         async Task<string> CalculateHashAsyncCore(HashAlgorithm algorithm, CancellationToken cancellationToken)
         {
-            await hashMutex.WaitAsync();
+            await hashMutex.WaitAsync(cancellationToken);
             byte[] hash;
 
             try
