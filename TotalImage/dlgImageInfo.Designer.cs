@@ -166,12 +166,16 @@ namespace TotalImage
             this.clmValue});
             this.lstProperties.ContextMenuStrip = this.cmsCopy;
             this.lstProperties.FullRowSelect = true;
+            listViewGroup1.CollapsedState = System.Windows.Forms.ListViewGroupCollapsedState.Expanded;
             listViewGroup1.Header = "Container information";
             listViewGroup1.Name = "grpContainerInfo";
+            listViewGroup2.CollapsedState = System.Windows.Forms.ListViewGroupCollapsedState.Expanded;
             listViewGroup2.Header = "Partition information";
             listViewGroup2.Name = "grpPartitionInfo";
+            listViewGroup3.CollapsedState = System.Windows.Forms.ListViewGroupCollapsedState.Expanded;
             listViewGroup3.Header = "File system information";
             listViewGroup3.Name = "grpFsInfo";
+            listViewGroup4.CollapsedState = System.Windows.Forms.ListViewGroupCollapsedState.Expanded;
             listViewGroup4.Header = "Miscellaneous";
             listViewGroup4.Name = "grpMiscInfo";
             this.lstProperties.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
@@ -270,13 +274,14 @@ namespace TotalImage
             this.copyValueToolStripMenuItem});
             this.cmsCopy.Name = "cmsCopy";
             this.cmsCopy.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.cmsCopy.Size = new System.Drawing.Size(215, 58);
+            this.cmsCopy.Size = new System.Drawing.Size(156, 30);
+            this.cmsCopy.Opening += new System.ComponentModel.CancelEventHandler(this.cmsCopy_Opening);
             // 
             // copyValueToolStripMenuItem
             // 
             this.copyValueToolStripMenuItem.Image = global::TotalImage.Properties.Resources.copy_16;
             this.copyValueToolStripMenuItem.Name = "copyValueToolStripMenuItem";
-            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(155, 26);
             this.copyValueToolStripMenuItem.Text = "Copy value";
             this.copyValueToolStripMenuItem.Click += new System.EventHandler(this.copyValueToolStripMenuItem_Click);
             // 

@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +8,8 @@ namespace TotalImage
 {
     public partial class dlgImageInfo : Form
     {
+        private bool hashesDone = false;
+
         //TODO: Obtain actual data from the main form/relevant classes and display it
         public dlgImageInfo()
         {
@@ -17,16 +18,10 @@ namespace TotalImage
 
         private void dlgImageInfo_Load(object sender, System.EventArgs e)
         {
-            //Make the groups collapsible for .NET 5.0 or later
-            lstProperties.Groups[0].CollapsedState = ListViewGroupCollapsedState.Expanded;
-            lstProperties.Groups[1].CollapsedState = ListViewGroupCollapsedState.Expanded;
-            lstProperties.Groups[2].CollapsedState = ListViewGroupCollapsedState.Expanded;
-            lstProperties.Groups[3].CollapsedState = ListViewGroupCollapsedState.Expanded;
+            frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
 
             //Fixes the column width on high DPI screens
-            lstProperties.Columns[1].Width = lstProperties.ClientRectangle.Width - lstProperties.Columns[0].Width;
-
-            frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
+            this.lstProperties.Columns[1].Width = lstProperties.ClientRectangle.Width - lstProperties.Columns[0].Width;
 
             lstProperties.FindItemWithText("File name").SubItems[1].Text = mainForm.filename;
             lstProperties.FindItemWithText("File size").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
@@ -34,7 +29,6 @@ namespace TotalImage
             lstProperties.FindItemWithText("Container subtype").SubItems[1].Text = "N/A"; //Obtain this from the container metadata if it exists
             lstProperties.FindItemWithText("File system").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.DisplayName;
             var volLabel = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.VolumeLabel;
-            System.Diagnostics.Debug.WriteLine(volLabel);
             _ = string.IsNullOrWhiteSpace(volLabel) ? lstProperties.FindItemWithText("Volume label").SubItems[1].Text = "N/A" : lstProperties.FindItemWithText("Volume label").SubItems[1].Text = volLabel;
             lstProperties.FindItemWithText("Partitioning scheme").SubItems[1].Text = mainForm.image.PartitionTable.DisplayName;
             lstProperties.FindItemWithText("No. of partitions").SubItems[1].Text = mainForm.image.PartitionTable.Partitions.Count.ToString();
@@ -95,11 +89,29 @@ namespace TotalImage
                 sw.WriteLine($"-Files: {lstProperties.FindItemWithText("Files").SubItems[1].Text}");
                 sw.WriteLine($"-Subdirectories: {lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text}");
 
-                //Commeting this out for now since hash calculation could use some improvements...
-                /*sw.WriteLine();
-                sw.WriteLine("Miscellaneous");
-                sw.WriteLine($"-MD5 hash: {lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text}");
-                sw.WriteLine($"-SHA-1 hash: {lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text}");*/
+                //Skip the hashes if they're not done yet
+                if (!hashesDone)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = "File hashes are still being calculated and won't be included in the exported file.",
+                        Heading = "Hash calculation in progress",
+                        Caption = "Warning",
+                        Buttons =
+                    {
+                        TaskDialogButton.OK
+                    },
+                        Icon = TaskDialogIcon.Warning,
+                        DefaultButton = TaskDialogButton.OK
+                    });
+                }
+                else
+                {
+                    sw.WriteLine();
+                    sw.WriteLine("Miscellaneous");
+                    sw.WriteLine($"-MD5 hash: {lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text}");
+                    sw.WriteLine($"-SHA-1 hash: {lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text}");
+                }
 
                 sw.WriteLine();
                 sw.Write("*** End of file ***");
@@ -122,10 +134,12 @@ namespace TotalImage
                     lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = await md5;
                     lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = await sha1;
                 }
-                catch(TaskCanceledException)
+                catch (TaskCanceledException)
                 {
                     // Hash calculation was canceled, carry on
                 }
+
+                hashesDone = true;
             }
         }
 
@@ -134,7 +148,24 @@ namespace TotalImage
 
         private void copyValueToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(lstProperties.SelectedItems[0].SubItems[1].Text);
+            if(lstProperties.SelectedItems.Count == 1)
+                Clipboard.SetText(lstProperties.SelectedItems[0].SubItems[1].Text);
+        }
+
+        private void cmsCopy_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (lstProperties.SelectedItems.Count == 1)
+            {
+                if (lstProperties.SelectedItems[0].SubItems[1].Text == "N/A" || (
+                    !hashesDone && (lstProperties.SelectedItems[0].Tag == "md5" || lstProperties.SelectedItems[0].Tag == "sha1")))
+                    copyValueToolStripMenuItem.Enabled = false;
+                else
+                    copyValueToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                e.Cancel = true;
+            }
         }
     }
 }
