@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
@@ -52,7 +52,6 @@ namespace TotalImage
             //Obtain this from the container metadata if it exists and display it
             txtComment.Text = "This container type does not support comments.";
             txtComment.Enabled = false;
-            lblComment.Enabled = false;
         }
 
         private void btnSave_Click(object sender, System.EventArgs e)
@@ -132,5 +131,10 @@ namespace TotalImage
 
         private void dlgImageInfo_FormClosing(object sender, FormClosingEventArgs e)
             => cts.Cancel(); // Cancel the background work if it's still in progress
+
+        private void copyValueToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(lstProperties.SelectedItems[0].SubItems[1].Text);
+        }
     }
 }

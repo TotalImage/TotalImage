@@ -1,4 +1,4 @@
-﻿namespace TotalImage
+namespace TotalImage
 {
     partial class dlgImageInfo
     {
@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Container information", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Partition information", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("File system information", System.Windows.Forms.HorizontalAlignment.Left);
@@ -94,7 +95,10 @@
             this.lstProperties = new System.Windows.Forms.ListView();
             this.clmProperty = new System.Windows.Forms.ColumnHeader();
             this.clmValue = new System.Windows.Forms.ColumnHeader();
+            this.cmsCopy = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlBottom.SuspendLayout();
+            this.cmsCopy.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOK
@@ -160,6 +164,7 @@
             this.lstProperties.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.clmProperty,
             this.clmValue});
+            this.lstProperties.ContextMenuStrip = this.cmsCopy;
             this.lstProperties.FullRowSelect = true;
             listViewGroup1.Header = "Container information";
             listViewGroup1.Name = "grpContainerInfo";
@@ -175,7 +180,6 @@
             listViewGroup3,
             listViewGroup4});
             this.lstProperties.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.lstProperties.HideSelection = false;
             listViewItem1.Group = listViewGroup1;
             listViewItem1.StateImageIndex = 0;
             listViewItem1.Tag = "File name";
@@ -259,6 +263,23 @@
             this.clmValue.Text = "Value";
             this.clmValue.Width = 250;
             // 
+            // cmsCopy
+            // 
+            this.cmsCopy.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.cmsCopy.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyValueToolStripMenuItem});
+            this.cmsCopy.Name = "cmsCopy";
+            this.cmsCopy.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.cmsCopy.Size = new System.Drawing.Size(215, 58);
+            // 
+            // copyValueToolStripMenuItem
+            // 
+            this.copyValueToolStripMenuItem.Image = global::TotalImage.Properties.Resources.copy_16;
+            this.copyValueToolStripMenuItem.Name = "copyValueToolStripMenuItem";
+            this.copyValueToolStripMenuItem.Size = new System.Drawing.Size(214, 26);
+            this.copyValueToolStripMenuItem.Text = "Copy value";
+            this.copyValueToolStripMenuItem.Click += new System.EventHandler(this.copyValueToolStripMenuItem_Click);
+            // 
             // dlgImageInfo
             // 
             this.AcceptButton = this.btnOK;
@@ -283,6 +304,7 @@
             this.Load += new System.EventHandler(this.dlgImageInfo_Load);
             this.Shown += new System.EventHandler(this.dlgImageInfo_Shown);
             this.pnlBottom.ResumeLayout(false);
+            this.cmsCopy.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -298,5 +320,7 @@
         private System.Windows.Forms.ColumnHeader clmProperty;
         private System.Windows.Forms.ColumnHeader clmValue;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.ContextMenuStrip cmsCopy;
+        private System.Windows.Forms.ToolStripMenuItem copyValueToolStripMenuItem;
     }
 }
