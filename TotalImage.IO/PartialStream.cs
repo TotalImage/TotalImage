@@ -97,9 +97,9 @@ namespace TotalImage
                     throw new NotImplementedException();
             }
 
-            if (target < _offsetStart || target >= _offsetEnd)
+            if (target < _offsetStart)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentException();
             }
 
             long result = _base.Seek(target, SeekOrigin.Begin);

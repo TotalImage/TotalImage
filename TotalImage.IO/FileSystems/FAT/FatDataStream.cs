@@ -90,8 +90,8 @@ namespace TotalImage.FileSystems.FAT
                 _ => throw new ArgumentException()
             };
 
-            if (target < 0 || target >= _length)
-                throw new ArgumentOutOfRangeException();
+            if (target < 0)
+                throw new ArgumentException();
 
             var cluster = _clusters[target / _fat.BytesPerCluster];
 
