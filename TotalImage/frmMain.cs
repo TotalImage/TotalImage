@@ -923,7 +923,7 @@ namespace TotalImage
                     string targetDir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
                     string targetFile = Path.Combine(targetDir, SelectedItems.First().Name);
 
-                    ExtractFiles(SelectedItems, targetDir, Settings.FolderExtract.Ignore, false);
+                    ExtractFiles(SelectedItems, targetDir, Settings.FolderExtract.Ignore, false, true);
 
                     ProcessStartInfo psi = new ProcessStartInfo
                     {
@@ -1312,7 +1312,7 @@ namespace TotalImage
                         string targetDir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
                         string targetFile = Path.Combine(targetDir, SelectedItems.First().Name);
 
-                        ExtractFiles(SelectedItems, targetDir, Settings.FolderExtract.Ignore, false);
+                        ExtractFiles(SelectedItems, targetDir, Settings.FolderExtract.Ignore, false, true);
 
                         ProcessStartInfo psi = new ProcessStartInfo
                         {
@@ -1543,19 +1543,19 @@ namespace TotalImage
                     //Here is where the actual extraction to the temp dir happens
                     if (sender is ListView)
                     {
-                        ExtractFiles(SelectedItems, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
+                        ExtractFiles(SelectedItems, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
                     }
                     else if (sender is TreeView)
                     {
                         if (draggedDir.Parent == null) //Root dir needs to be treated separately
                         {
-                            ExtractFiles(draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
+                            ExtractFiles(draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
                         }
                         else
                         {
                             List<TiFileSystemObject> dir = new List<TiFileSystemObject>();
                             dir.Add(draggedDir);
-                            ExtractFiles(dir, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false);
+                            ExtractFiles(dir, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
                         }
                     }
 
@@ -2327,7 +2327,7 @@ namespace TotalImage
             PopulateRecentList();
         }
 
-        private void ExtractFiles(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder)
+        private void ExtractFiles(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder, bool overwrite = false)
         {
             var cancellationTokenSource = new CancellationTokenSource();
             var cancelButton = TaskDialogButton.Cancel;
@@ -2365,7 +2365,7 @@ namespace TotalImage
                     page.ProgressBar.Maximum = files.Count;
                     page.ProgressBar.State = TaskDialogProgressBarState.Normal;
 
-                    await ExtractFilesAsync(files, page.BoundDialog!, progress, cancellationTokenSource.Token);
+                    await ExtractFilesAsync(files, overwrite, page.BoundDialog!, progress, cancellationTokenSource.Token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -2422,7 +2422,7 @@ namespace TotalImage
             }
         }
 
-        private async Task ExtractFilesAsync(IEnumerable<(TiFile, string)> items, IWin32Window window, IProgress<(int, string)>? progress, CancellationToken cancellationToken)
+        private async Task ExtractFilesAsync(IEnumerable<(TiFile, string)> items, bool overwrite, IWin32Window window, IProgress<(int, string)>? progress, CancellationToken cancellationToken)
         {
             var i = 0;
 
@@ -2434,7 +2434,7 @@ namespace TotalImage
                 if (!Directory.Exists(Path.GetDirectoryName(path)))
                     Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 
-                if (File.Exists(path) && Settings.CurrentSettings.ConfirmOverwriteExtraction)
+                if (!overwrite && File.Exists(path) && Settings.CurrentSettings.ConfirmOverwriteExtraction)
                 {
                     TaskDialogButton result = TaskDialog.ShowDialog(window, new TaskDialogPage()
                     {
