@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.Containers;
@@ -2326,12 +2328,59 @@ namespace TotalImage
 
         private void ExtractFiles(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder)
         {
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancelButton = TaskDialogButton.Cancel;
+            cancelButton.Click += (_, e) => cancellationTokenSource.Cancel();
+
+            var page = new TaskDialogPage()
+            {
+                Caption = "Extracting",
+                Heading = "Extracting files, please wait...",
+                Text = "This might take a while, so sit back and relax while we do all the work.",
+                Buttons = { cancelButton },
+                ProgressBar = new TaskDialogProgressBar()
+                {
+                    State = TaskDialogProgressBarState.Marquee
+                },
+                Footnote = new TaskDialogFootnote()
+                {
+                    Text = "Preparing..."
+                }
+            };
+
+            page.Created += async (_, _) =>
+            {
+                var progress = new Progress<string>();
+                progress.ProgressChanged += (_, e) => page.Footnote.Text = $"Extracting {e}";
+
+                try
+                {
+                    await ExtractFilesAsync(items, path, extractType, openFolder, progress, cancellationTokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    // task canceled
+                }
+                finally
+                {
+                    page.BoundDialog?.Close();
+                }
+            };
+
+            TaskDialog.ShowDialog(this, page);
+        }
+
+        private async Task ExtractFilesAsync(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder, IProgress<string>? progress = default, CancellationToken cancellationToken = default)
+        {
             var files = from x in items where x is TiFile select x as TiFile;
 
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
             foreach (var file in files)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+                progress?.Report(file.Name);
+
                 if (File.Exists(Path.Combine(path, file.Name)) && Settings.CurrentSettings.ConfirmOverwriteExtraction)
                 {
                     TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
@@ -2356,7 +2405,7 @@ namespace TotalImage
                 using (var fileStream = file.GetStream())
                 {
                     fileStream.Position = 0; // reset position to zero because CopyTo will only go from current position
-                    file.GetStream().CopyTo(destStream);
+                    await fileStream.CopyToAsync(destStream, cancellationToken);
                 }
 
                 if (Settings.CurrentSettings.ExtractPreserveDates)
@@ -2385,14 +2434,14 @@ namespace TotalImage
 
                 foreach (var dir in dirs)
                 {
-                    ExtractFiles(
+                    await ExtractFilesAsync(
                         dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false),
                         extractType switch
                         {
                             Settings.FolderExtract.Merge => path,
                             Settings.FolderExtract.Preserve => Path.Combine(path, dir.Name),
                             _ => throw new ArgumentException()
-                        }, extractType, false);
+                        }, extractType, false, progress, cancellationToken);
                 }
             }
 
