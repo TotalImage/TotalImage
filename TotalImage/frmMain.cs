@@ -2376,7 +2376,7 @@ namespace TotalImage
 
                     await ExtractFilesAsync(files, overwrite, page.BoundDialog!, progress, cancellationTokenSource.Token);
                 }
-                catch (TaskCanceledException)
+                catch (OperationCanceledException)
                 {
                     // task canceled
                 }

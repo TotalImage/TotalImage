@@ -134,6 +134,7 @@ namespace TotalImage
                     lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = await md5;
                     lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = await sha1;
                 }
+
                 catch (Exception ex) when (ex is TaskCanceledException || ex is OperationCanceledException)
                 {
                     // Hash calculation was canceled, carry on
