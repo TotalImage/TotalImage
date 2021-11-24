@@ -2436,16 +2436,22 @@ namespace TotalImage
         private async Task ExtractFilesAsync(IEnumerable<(TiFile, string)> items, bool overwrite, IWin32Window window, IProgress<(int, string)>? progress, CancellationToken cancellationToken)
         {
             var i = 0;
+            var mutex = new SemaphoreSlim(1, 1);
 
             foreach (var (file, path) in items)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 progress?.Report((i++, file.Name));
 
-                if (!Directory.Exists(Path.GetDirectoryName(path)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                var fileExists = await Task.Run<bool>(() =>
+                {
+                    if (!Directory.Exists(Path.GetDirectoryName(path)))
+                        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 
-                if (!overwrite && File.Exists(path) && Settings.CurrentSettings.ConfirmOverwriteExtraction)
+                    return File.Exists(path);
+                });
+
+                if (!overwrite && fileExists && Settings.CurrentSettings.ConfirmOverwriteExtraction)
                 {
                     TaskDialogButton result = TaskDialog.ShowDialog(window, new TaskDialogPage()
                     {
@@ -2465,31 +2471,38 @@ namespace TotalImage
                         continue;
                 }
 
-                using (var destStream = new FileStream(path, FileMode.Create))
-                using (var fileStream = file.GetStream())
+                await Task.Run(async () =>
                 {
-                    fileStream.Position = 0; // reset position to zero because CopyTo will only go from current position
-                    await fileStream.CopyToAsync(destStream, cancellationToken);
-                }
+                    await mutex.WaitAsync();
 
-                if (Settings.CurrentSettings.ExtractPreserveDates)
-                {
-                    if (file.CreationTime.HasValue)
-                        File.SetCreationTime(path, file.CreationTime.Value);
+                    using (var destStream = new FileStream(path, FileMode.Create))
+                    using (var fileStream = file.GetStream())
+                    {
+                        fileStream.Position = 0; // reset position to zero because CopyTo will only go from current position
+                        await fileStream.CopyToAsync(destStream, cancellationToken);
+                    }
 
-                    if (file.LastAccessTime.HasValue)
-                        File.SetLastAccessTime(path, file.LastAccessTime.Value);
+                    mutex.Release();
 
-                    if (file.LastWriteTime.HasValue)
-                        File.SetLastWriteTime(path, file.LastWriteTime.Value);
-                }
+                    if (Settings.CurrentSettings.ExtractPreserveDates)
+                    {
+                        if (file.CreationTime.HasValue)
+                            File.SetCreationTime(path, file.CreationTime.Value);
 
-                if (Settings.CurrentSettings.ExtractPreserveAttributes)
-                {
-                    /* NOTE: Windows automatically sets the Archive attribute on all newly created files, so even if the attribute is cleared in the
-                     * image, Windows will still automatically set it anyway. Should we perhaps try to work around this by manually clearing it after? */
-                    File.SetAttributes(path, file.Attributes);
-                }
+                        if (file.LastAccessTime.HasValue)
+                            File.SetLastAccessTime(path, file.LastAccessTime.Value);
+
+                        if (file.LastWriteTime.HasValue)
+                            File.SetLastWriteTime(path, file.LastWriteTime.Value);
+                    }
+
+                    if (Settings.CurrentSettings.ExtractPreserveAttributes)
+                    {
+                        /* NOTE: Windows automatically sets the Archive attribute on all newly created files, so even if the attribute is cleared in the
+                        * image, Windows will still automatically set it anyway. Should we perhaps try to work around this by manually clearing it after? */
+                        File.SetAttributes(path, file.Attributes);
+                    }
+                });
             }
         }
 
