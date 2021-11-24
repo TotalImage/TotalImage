@@ -604,7 +604,7 @@ namespace TotalImage
             //ofd.ShowReadOnly = true;
             ofd.Filter =
                 "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
-                "ISO image (*.iso)|*.iso|" + 
+                "ISO image (*.iso)|*.iso|" +
                 "Microsoft VHD (*.vhd)|*.vhd|" +
                 "All files (*.*)|*.*";
 
@@ -1540,26 +1540,35 @@ namespace TotalImage
             {
                 if (!ClientRectangle.Contains(PointToClient(MousePosition)))
                 {
+                    Capture = true;
+
+                    var extractionSucceeded = false;
+
                     //Here is where the actual extraction to the temp dir happens
                     if (sender is ListView)
                     {
-                        ExtractFiles(SelectedItems, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
+                        extractionSucceeded = ExtractFiles(SelectedItems, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
                     }
                     else if (sender is TreeView)
                     {
                         if (draggedDir.Parent == null) //Root dir needs to be treated separately
                         {
-                            ExtractFiles(draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
+                            extractionSucceeded = ExtractFiles(draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
                         }
                         else
                         {
                             List<TiFileSystemObject> dir = new List<TiFileSystemObject>();
                             dir.Add(draggedDir);
-                            ExtractFiles(dir, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
+                            extractionSucceeded = ExtractFiles(dir, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
                         }
                     }
 
-                    e.Action = DragAction.Drop;
+                    //User cancelled extraction via the dialog, so the drop needs to be cancelled too or Explorer will try to move items that don't exist
+                    if (extractionSucceeded)
+                        e.Action = DragAction.Drop;
+                    else
+                        e.Action = DragAction.Cancel;
+
                     return;
                 }
                 else
@@ -1892,7 +1901,7 @@ namespace TotalImage
                     CurrentPartitionIndex = selectFrm.SelectedEntry;
                 }
 
-                if(image.PartitionTable.Partitions.Count == 1 && image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)
+                if (image.PartitionTable.Partitions.Count == 1 && image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
@@ -2327,7 +2336,7 @@ namespace TotalImage
             PopulateRecentList();
         }
 
-        private void ExtractFiles(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder, bool overwrite = false)
+        private bool ExtractFiles(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder, bool overwrite = false)
         {
             var cancellationTokenSource = new CancellationTokenSource();
             var cancelButton = TaskDialogButton.Cancel;
@@ -2361,7 +2370,7 @@ namespace TotalImage
                 try
                 {
                     var files = await EnumerateFilesForExtractionAsync(items, path, extractType, cancellationTokenSource.Token).ToListAsync();
-                    
+
                     page.ProgressBar.Maximum = files.Count;
                     page.ProgressBar.State = TaskDialogProgressBarState.Normal;
 
@@ -2387,12 +2396,14 @@ namespace TotalImage
                     UseShellExecute = true
                 });
             }
+
+            return !cancellationTokenSource.IsCancellationRequested;
         }
 
         private async IAsyncEnumerable<(TiFile, string)> EnumerateFilesForExtractionAsync(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var files = from x in items where x is TiFile select x as TiFile;
-    
+
             foreach (var file in files)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -2414,7 +2425,7 @@ namespace TotalImage
                             _ => throw new ArgumentException()
                         }, extractType, cancellationToken);
 
-                    await foreach(var child in children)
+                    await foreach (var child in children)
                     {
                         yield return child;
                     }
@@ -2426,7 +2437,7 @@ namespace TotalImage
         {
             var i = 0;
 
-            foreach(var (file, path) in items)
+            foreach (var (file, path) in items)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 progress?.Report((i++, file.Name));
