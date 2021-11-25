@@ -2336,6 +2336,57 @@ namespace TotalImage
             PopulateRecentList();
         }
 
+        enum ConfirmOverwriteDialogResult
+        {
+            Cancel,
+            Overwrite,
+            OverwriteAll,
+            Skip,
+            SkipAll
+        }
+
+        private ConfirmOverwriteDialogResult ShowConfirmOverwriteDialog(IWin32Window parentDialog, string filename)
+        {
+            var overwriteButton = new TaskDialogButton("&Overwrite");
+            var skipButton = new TaskDialogButton("&Skip");
+            var overwritePage = new TaskDialogPage()
+            {
+                Text = $"The file \"{filename}\" already exists in the target directory. Do you want to overwrite it?",
+                Heading = "File already exists",
+                Caption = "Warning",
+                Buttons =
+                {
+                    overwriteButton,
+                    skipButton,
+                    TaskDialogButton.Cancel
+                },
+                AllowCancel = true,
+                Verification = new TaskDialogVerificationCheckBox()
+                {
+                    Checked = false,
+                    Text = "Do this for all currently extracted files"
+                },
+                Icon = TaskDialogIcon.Warning,
+                DefaultButton = TaskDialogButton.Cancel
+            };
+
+            var result = TaskDialog.ShowDialog(parentDialog, overwritePage);
+
+            if (result == TaskDialogButton.Cancel)
+            {
+                return ConfirmOverwriteDialogResult.Cancel;
+            }
+            else
+            {
+                var overwrite = result == overwriteButton;
+
+                if (overwritePage.Verification.Checked)
+                    return overwrite ? ConfirmOverwriteDialogResult.OverwriteAll : ConfirmOverwriteDialogResult.SkipAll;
+                else
+                    return overwrite ? ConfirmOverwriteDialogResult.Overwrite : ConfirmOverwriteDialogResult.Skip;
+            }
+        }
+
         private bool ExtractFiles(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder, bool overwrite = false)
         {
             var cancellationTokenSource = new CancellationTokenSource();
@@ -2369,12 +2420,37 @@ namespace TotalImage
 
                 try
                 {
-                    var files = await EnumerateFilesForExtractionAsync(items, path, extractType, cancellationTokenSource.Token).ToListAsync();
+                    var files = await EnumerateFilesForExtractionAsync(items, path, extractType, cancellationTokenSource.Token)
+                        .ToListAsync(cancellationTokenSource.Token);
 
                     page.ProgressBar.Maximum = files.Count;
                     page.ProgressBar.State = TaskDialogProgressBarState.Normal;
 
-                    await ExtractFilesAsync(files, overwrite, page.BoundDialog!, progress, cancellationTokenSource.Token);
+                    bool? overwriteAll = overwrite ? true : null;
+
+                    await ExtractFilesAsync(files, progress, cancellationTokenSource.Token, (filename) =>
+                    {
+                        if (overwriteAll is null && Settings.CurrentSettings.ConfirmOverwriteExtraction)
+                            switch (ShowConfirmOverwriteDialog(page.BoundDialog!, filename))
+                            {
+                                case ConfirmOverwriteDialogResult.Overwrite:
+                                    return true;
+                                case ConfirmOverwriteDialogResult.OverwriteAll:
+                                    overwriteAll = true;
+                                    return true;
+                                case ConfirmOverwriteDialogResult.Skip:
+                                    return false;
+                                case ConfirmOverwriteDialogResult.SkipAll:
+                                    overwriteAll = false;
+                                    return false;
+                                case ConfirmOverwriteDialogResult.Cancel:
+                                    cancellationTokenSource.Cancel();
+                                    return false;
+                                default:
+                                    throw new ArgumentException();
+                            }
+                        else return overwriteAll ?? true;
+                    });
                 }
                 catch (OperationCanceledException)
                 {
@@ -2400,7 +2476,7 @@ namespace TotalImage
             return !cancellationTokenSource.IsCancellationRequested;
         }
 
-        private async IAsyncEnumerable<(TiFile, string)> EnumerateFilesForExtractionAsync(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, [EnumeratorCancellation] CancellationToken cancellationToken)
+        private async IAsyncEnumerable<(TiFile, string)> EnumerateFilesForExtractionAsync(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var files = from x in items where x is TiFile select x as TiFile;
 
@@ -2433,7 +2509,7 @@ namespace TotalImage
             }
         }
 
-        private async Task ExtractFilesAsync(IEnumerable<(TiFile, string)> items, bool overwrite, IWin32Window window, IProgress<(int, string)>? progress, CancellationToken cancellationToken)
+        private async Task ExtractFilesAsync(IEnumerable<(TiFile, string)> items, IProgress<(int, string)>? progress = default, CancellationToken cancellationToken = default, Func<string, bool>? confirmOverwriteCallback = default)
         {
             var i = 0;
             var mutex = new SemaphoreSlim(1, 1);
@@ -2451,25 +2527,8 @@ namespace TotalImage
                     return File.Exists(path);
                 });
 
-                if (!overwrite && fileExists && Settings.CurrentSettings.ConfirmOverwriteExtraction)
-                {
-                    TaskDialogButton result = TaskDialog.ShowDialog(window, new TaskDialogPage()
-                    {
-                        Text = $"The file \"{file.Name}\" already exists in the target directory. Do you want to overwrite it?",
-                        Heading = "File already exists",
-                        Caption = "Warning",
-                        Buttons =
-                        {
-                            TaskDialogButton.Yes,
-                            TaskDialogButton.No
-                        },
-                        Icon = TaskDialogIcon.Warning,
-                        DefaultButton = TaskDialogButton.Yes
-                    });
-
-                    if (result == TaskDialogButton.No)
-                        continue;
-                }
+                if (fileExists && confirmOverwriteCallback?.Invoke(file.Name) == false)
+                    continue;
 
                 await Task.Run(async () =>
                 {
