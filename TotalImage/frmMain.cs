@@ -66,7 +66,8 @@ namespace TotalImage
             Settings.Reload();
             Settings.ReloadUIState();
 
-            SyncUI();
+            SyncUIOptions();
+            SyncWindowState();
             DisableUI();
 
             GetDefaultIcons();
@@ -737,7 +738,7 @@ namespace TotalImage
             DialogResult result = dlg.ShowDialog();
             if (result == DialogResult.OK)
             {
-                SyncUI();
+                SyncUIOptions();
                 ResetView();
                 UpdateStatusBar(true);
                 if (!Settings.CurrentSettings.AutoIncrementFilename)
@@ -2294,8 +2295,7 @@ namespace TotalImage
             Settings.CurrentSettings.FilesSortOrder = sortOrder;
         }
 
-        //Syncs the main form UI with the current settings and loaded UI state
-        private void SyncUI()
+        private void SyncWindowState()
         {
             WindowState = Settings.CurrentUIState.WindowState;
             Location = Settings.CurrentUIState.WindowPosition;
@@ -2307,7 +2307,11 @@ namespace TotalImage
                 col.DisplayIndex = Settings.CurrentUIState.MWColumnOrder[col.Index];
                 col.Width = Settings.CurrentUIState.MWColumnWidth[col.Index];
             }
+        }
 
+        //Syncs the main form UI with the current settings and loaded UI state
+        private void SyncUIOptions()
+        {
             lstFiles.View = Settings.CurrentSettings.FilesView;
             splitContainer.Panel1Collapsed = !Settings.CurrentSettings.ShowDirectoryTree;
             statusBar.Visible = Settings.CurrentSettings.ShowStatusBar;
