@@ -15,4 +15,9 @@ public interface IFatFileSystemObject
     /// The VFAT "long" name (LFN) if the object has one, otherwise <c>null</c>.
     /// </value>
     string? LongName { get; set; }
+
+    /// <summary>
+    /// The starting cluster in the cluster chain of this object.
+    /// </summary>
+    uint FirstCluster { get; set; }
 }

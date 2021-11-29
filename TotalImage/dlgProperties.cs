@@ -57,19 +57,24 @@ namespace TotalImage
         //TODO: Maybe we should follow the user's locale for the date format?
         private void dlgProperties_Load(object sender, EventArgs e)
         {
-            txtFilename.Text = entry.Name;
-
+            txtFilename.Text = entry.Name;           
             if (entry is IFatFileSystemObject fatObj)
             {
                 txtShortFilename1.Text = fatObj.ShortName;
                 txtShortFilename1.Enabled = true;
                 lblShortFilename.Enabled = true;
+                txtFirstCluster1.Text = fatObj.FirstCluster.ToString();
+                txtFirstCluster1.Enabled = true;
+                lblFirstCluster.Enabled = true;
             }
             else
             {
                 txtShortFilename1.Text = "N/A"; //For now. We might want to always generate this anyway even for other file systems?
                 txtShortFilename1.Enabled = false;
                 lblShortFilename.Enabled = false;
+                txtFirstCluster1.Text = "N/A";
+                txtFirstCluster1.Enabled = false;
+                lblFirstCluster.Enabled = false;
             }
 
             if (entry is FileSystems.File file)

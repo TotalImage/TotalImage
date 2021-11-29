@@ -53,6 +53,8 @@
             this.cbxDateCreated = new System.Windows.Forms.CheckBox();
             this.cbxDateModified = new System.Windows.Forms.CheckBox();
             this.cbxDateAccessed = new System.Windows.Forms.CheckBox();
+            this.txtFirstCluster1 = new System.Windows.Forms.TextBox();
+            this.lblFirstCluster = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.pnlBottom = new System.Windows.Forms.Panel();
@@ -152,7 +154,7 @@
             // 
             this.cbxReadOnly.AutoSize = true;
             this.cbxReadOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxReadOnly.Location = new System.Drawing.Point(100, 407);
+            this.cbxReadOnly.Location = new System.Drawing.Point(100, 439);
             this.cbxReadOnly.Margin = new System.Windows.Forms.Padding(4);
             this.cbxReadOnly.Name = "cbxReadOnly";
             this.cbxReadOnly.Size = new System.Drawing.Size(108, 25);
@@ -165,7 +167,7 @@
             // 
             this.cbxHidden.AutoSize = true;
             this.cbxHidden.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxHidden.Location = new System.Drawing.Point(208, 407);
+            this.cbxHidden.Location = new System.Drawing.Point(208, 439);
             this.cbxHidden.Margin = new System.Windows.Forms.Padding(4);
             this.cbxHidden.Name = "cbxHidden";
             this.cbxHidden.Size = new System.Drawing.Size(89, 25);
@@ -179,7 +181,7 @@
             // 
             this.cbxSystem.AutoSize = true;
             this.cbxSystem.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxSystem.Location = new System.Drawing.Point(300, 407);
+            this.cbxSystem.Location = new System.Drawing.Point(300, 439);
             this.cbxSystem.Margin = new System.Windows.Forms.Padding(4);
             this.cbxSystem.Name = "cbxSystem";
             this.cbxSystem.Size = new System.Drawing.Size(87, 25);
@@ -193,7 +195,7 @@
             // 
             this.cbxArchive.AutoSize = true;
             this.cbxArchive.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxArchive.Location = new System.Drawing.Point(390, 407);
+            this.cbxArchive.Location = new System.Drawing.Point(390, 439);
             this.cbxArchive.Margin = new System.Windows.Forms.Padding(4);
             this.cbxArchive.Name = "cbxArchive";
             this.cbxArchive.Size = new System.Drawing.Size(89, 25);
@@ -207,7 +209,7 @@
             // 
             this.dtpAccessed.CustomFormat = "yyyy-MM-dd";
             this.dtpAccessed.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpAccessed.Location = new System.Drawing.Point(118, 353);
+            this.dtpAccessed.Location = new System.Drawing.Point(118, 384);
             this.dtpAccessed.Margin = new System.Windows.Forms.Padding(4);
             this.dtpAccessed.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             this.dtpAccessed.Name = "dtpAccessed";
@@ -220,7 +222,7 @@
             // 
             this.dtpCreated.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             this.dtpCreated.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpCreated.Location = new System.Drawing.Point(118, 280);
+            this.dtpCreated.Location = new System.Drawing.Point(118, 311);
             this.dtpCreated.Margin = new System.Windows.Forms.Padding(4);
             this.dtpCreated.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             this.dtpCreated.Name = "dtpCreated";
@@ -235,7 +237,7 @@
             // 
             this.dtpModified.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             this.dtpModified.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpModified.Location = new System.Drawing.Point(118, 316);
+            this.dtpModified.Location = new System.Drawing.Point(118, 347);
             this.dtpModified.Margin = new System.Windows.Forms.Padding(4);
             this.dtpModified.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             this.dtpModified.Name = "dtpModified";
@@ -316,7 +318,7 @@
             // 
             this.cbxDateCreated.AutoSize = true;
             this.cbxDateCreated.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxDateCreated.Location = new System.Drawing.Point(15, 283);
+            this.cbxDateCreated.Location = new System.Drawing.Point(15, 314);
             this.cbxDateCreated.Margin = new System.Windows.Forms.Padding(4);
             this.cbxDateCreated.Name = "cbxDateCreated";
             this.cbxDateCreated.Size = new System.Drawing.Size(95, 25);
@@ -332,7 +334,7 @@
             // 
             this.cbxDateModified.AutoSize = true;
             this.cbxDateModified.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxDateModified.Location = new System.Drawing.Point(15, 319);
+            this.cbxDateModified.Location = new System.Drawing.Point(15, 350);
             this.cbxDateModified.Margin = new System.Windows.Forms.Padding(4);
             this.cbxDateModified.Name = "cbxDateModified";
             this.cbxDateModified.Size = new System.Drawing.Size(101, 25);
@@ -346,7 +348,7 @@
             // 
             this.cbxDateAccessed.AutoSize = true;
             this.cbxDateAccessed.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxDateAccessed.Location = new System.Drawing.Point(15, 355);
+            this.cbxDateAccessed.Location = new System.Drawing.Point(15, 386);
             this.cbxDateAccessed.Margin = new System.Windows.Forms.Padding(4);
             this.cbxDateAccessed.Name = "cbxDateAccessed";
             this.cbxDateAccessed.Size = new System.Drawing.Size(104, 25);
@@ -355,6 +357,31 @@
             this.toolTip.SetToolTip(this.cbxDateAccessed, resources.GetString("cbxDateAccessed.ToolTip"));
             this.cbxDateAccessed.UseVisualStyleBackColor = true;
             this.cbxDateAccessed.CheckedChanged += new System.EventHandler(this.cbxDateAccessed_CheckedChanged);
+            // 
+            // txtFirstCluster1
+            // 
+            this.txtFirstCluster1.BackColor = System.Drawing.Color.White;
+            this.txtFirstCluster1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtFirstCluster1.Location = new System.Drawing.Point(144, 258);
+            this.txtFirstCluster1.Margin = new System.Windows.Forms.Padding(4);
+            this.txtFirstCluster1.Name = "txtFirstCluster1";
+            this.txtFirstCluster1.ReadOnly = true;
+            this.txtFirstCluster1.Size = new System.Drawing.Size(319, 20);
+            this.txtFirstCluster1.TabIndex = 35;
+            this.txtFirstCluster1.TabStop = false;
+            this.txtFirstCluster1.Text = "<firstcluster>";
+            this.toolTip.SetToolTip(this.txtFirstCluster1, "The starting cluster in the cluster chain of this object.\r\n");
+            // 
+            // lblFirstCluster
+            // 
+            this.lblFirstCluster.AutoSize = true;
+            this.lblFirstCluster.Location = new System.Drawing.Point(15, 258);
+            this.lblFirstCluster.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblFirstCluster.Name = "lblFirstCluster";
+            this.lblFirstCluster.Size = new System.Drawing.Size(86, 20);
+            this.lblFirstCluster.TabIndex = 34;
+            this.lblFirstCluster.Text = "First cluster:";
+            this.toolTip.SetToolTip(this.lblFirstCluster, "The starting cluster in the cluster chain of this object.\r\n");
             // 
             // btnCancel
             // 
@@ -389,7 +416,7 @@
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlBottom.Location = new System.Drawing.Point(0, 460);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 476);
             this.pnlBottom.Margin = new System.Windows.Forms.Padding(4);
             this.pnlBottom.Name = "pnlBottom";
             this.pnlBottom.Size = new System.Drawing.Size(480, 62);
@@ -413,7 +440,7 @@
             this.lblSeparator2.Enabled = false;
             this.lblSeparator2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lblSeparator2.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblSeparator2.Location = new System.Drawing.Point(15, 264);
+            this.lblSeparator2.Location = new System.Drawing.Point(15, 295);
             this.lblSeparator2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSeparator2.Name = "lblSeparator2";
             this.lblSeparator2.Size = new System.Drawing.Size(450, 1);
@@ -425,7 +452,7 @@
             this.lblSeparator3.Enabled = false;
             this.lblSeparator3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.lblSeparator3.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblSeparator3.Location = new System.Drawing.Point(15, 395);
+            this.lblSeparator3.Location = new System.Drawing.Point(15, 426);
             this.lblSeparator3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSeparator3.Name = "lblSeparator3";
             this.lblSeparator3.Size = new System.Drawing.Size(450, 1);
@@ -434,7 +461,7 @@
             // lblAttributes
             // 
             this.lblAttributes.AutoSize = true;
-            this.lblAttributes.Location = new System.Drawing.Point(15, 410);
+            this.lblAttributes.Location = new System.Drawing.Point(15, 441);
             this.lblAttributes.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblAttributes.Name = "lblAttributes";
             this.lblAttributes.Size = new System.Drawing.Size(77, 20);
@@ -474,7 +501,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(480, 522);
+            this.ClientSize = new System.Drawing.Size(480, 538);
+            this.Controls.Add(this.txtFirstCluster1);
+            this.Controls.Add(this.lblFirstCluster);
             this.Controls.Add(this.txtContains1);
             this.Controls.Add(this.lblContains);
             this.Controls.Add(this.txtShortFilename1);
@@ -554,5 +583,7 @@
         private System.Windows.Forms.TextBox txtShortFilename1;
         private System.Windows.Forms.TextBox txtContains1;
         private System.Windows.Forms.Label lblContains;
+        private System.Windows.Forms.TextBox txtFirstCluster1;
+        private System.Windows.Forms.Label lblFirstCluster;
     }
 }

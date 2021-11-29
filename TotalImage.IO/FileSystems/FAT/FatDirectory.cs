@@ -81,6 +81,13 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
+        public uint FirstCluster
+        {
+            get => (uint)((entry?.fstClusHI << 16) | entry?.fstClusLO);
+            set => throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
         public override Directory CreateSubdirectory(string path)
         {
             throw new NotImplementedException();

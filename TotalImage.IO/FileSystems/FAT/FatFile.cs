@@ -80,6 +80,13 @@ namespace TotalImage.FileSystems.FAT
         public override string Extension => entry.Extension;
 
         /// <inheritdoc />
+        public uint FirstCluster
+        {
+            get => (uint)((entry.fstClusHI << 16) | entry.fstClusLO);
+            set => throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
         public override void Delete()
         {
             /* When deleting a file, only the first character of the name needs to be changed to 0xE5.
