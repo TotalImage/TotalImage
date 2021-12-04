@@ -1,7 +1,7 @@
-﻿using System;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using Microsoft.Win32;
 
 namespace TotalImage
 {
@@ -117,107 +117,6 @@ namespace TotalImage
                 case Settings.FolderExtract.Merge: rbnExtractFlat.Checked = true; break;
                 case Settings.FolderExtract.Preserve: rbnExtractPreserve.Checked = true; break;
             }
-
-            //CheckFileAssociations();
-        }
-
-        //TODO: This method should check the registry for current file associations and mark relevant listviewitems in the listview as checked
-        private void CheckFileAssociations()
-        {
-            throw new NotImplementedException();
-        }
-
-        /* TODO: This is the gist of it. It bypasses Microsoft's silly attempt at preventing programs from claiming extensions programatically
-         * like they always used to - no prompt for the user will show up after opening the file after association changed in this case. 
-         * Currently only .img is associated for the raw images type, other related extensions need to be associated too. */
-        private void SetFileAssociations()
-        {
-            //First create all the ProgIDs if neccessary
-            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Classes\TotalImage.Raw");
-            if (key != null)
-            {
-                key.SetValue("", "Raw sector image");
-                key = key.CreateSubKey(@"shell\open\command");
-                if (key != null)
-                {
-                    key.SetValue("", $"\"{Path.Combine(Application.StartupPath, "TotalImage.exe")}\" \"%1\"");
-                }
-            }
-
-            key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Classes\TotalImage.Iso");
-            if (key != null)
-            {
-                key.SetValue("", "ISO image");
-                key = key.CreateSubKey(@"shell\open\command");
-                if (key != null)
-                {
-                    key.SetValue("", $"\"{Path.Combine(Application.StartupPath, "TotalImage.exe")}\" \"%1\"");
-                }
-            }
-
-            key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Classes\TotalImage.Vhd");
-            if (key != null)
-            {
-                key.SetValue("", "VHD image");
-                key = key.CreateSubKey(@"shell\open\command");
-                if (key != null)
-                {
-                    key.SetValue("", $"\"{Path.Combine(Application.StartupPath, "TotalImage.exe")}\" \"%1\"");
-                }
-            }
-
-            /* Then associate selected file extensions:
-             * 1. Associate extension with the relevant ProgID
-             * 2. Add TotalImage to the MRUList for extension
-             * 3. Add our ProgID to the ProgID list for extension
-             * 4. Delete the UserChoice key (if it exists) for extension
-             * 5. All your extension are belong to us! :-) */
-            foreach (ListViewItem lvi in lstFileTypes.CheckedItems)
-            {
-                string ext = lvi.Name.ToUpper();
-
-                key = Registry.CurrentUser.CreateSubKey(@$"SOFTWARE\Classes\{ext}");
-                if (key != null)
-                {
-                    switch (ext)
-                    {
-                        case ".VHD": key.SetValue("", "TotalImage.Vhd"); break;
-                        case ".ISO": key.SetValue("", "TotalImage.Iso"); break;
-                        default: key.SetValue("", "TotalImage.Raw"); break;
-                    }
-                }
-
-                key = Registry.CurrentUser.CreateSubKey(@$"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\{ext}");
-                if (key != null)
-                {
-                    //Lazy approach: just default to the last possible letter as the value name (which is j), rather than bother finding the next free letter...
-                    key = key.CreateSubKey("OpenWithList");
-                    key.SetValue("j", "TotalImage.exe", RegistryValueKind.String);
-                    string mrulist = key.GetValue("MRUList", "").ToString();
-                    mrulist = mrulist.Insert(0, "j");
-                    key.SetValue("MRUList", mrulist, RegistryValueKind.String);
-                }
-
-                key = Registry.CurrentUser.CreateSubKey(@$"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\{ext}");
-                if (key != null)
-                {
-                    key = key.CreateSubKey("OpenWithProgids");
-                    switch (ext)
-                    {
-                        case ".VHD": key.SetValue("TotalImage.Vhd", new byte[0], RegistryValueKind.None); break;
-                        case ".ISO": key.SetValue("TotalImage.Iso", new byte[0], RegistryValueKind.None); break;
-                        default: key.SetValue("TotalImage.Raw", new byte[0], RegistryValueKind.None); break;
-                    }
-                }
-
-                key = Registry.CurrentUser.OpenSubKey(@$"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\{ext}", true);
-                if (key != null)
-                {
-                    key.DeleteSubKey("UserChoice", false);
-                }
-            }
-
-            key.Close();
         }
 
         private void btnBrowse_Click(object sender, System.EventArgs e)
@@ -277,24 +176,6 @@ namespace TotalImage
                 Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.Ignore;
 
             Settings.Save();
-
-            SetFileAssociations();
-        }
-
-        private void btnSelectAll_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem lvi in lstFileTypes.Items)
-            {
-                lvi.Checked = true;
-            }
-        }
-
-        private void btnClearAll_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem lvi in lstFileTypes.Items)
-            {
-                lvi.Checked = false;
-            }
         }
 
         private void btnClearTemp_Click(object sender, EventArgs e)
@@ -319,6 +200,20 @@ namespace TotalImage
                 Icon = TaskDialogIcon.Information,
                 DefaultButton = TaskDialogButton.OK
             });
+        }
+
+        private void btnFileAssoc_Click(object sender, EventArgs e)
+        {
+            /* While the old command opens the Default apps page of Win10 Settings just fine, we still do it "the right way" on Win10 just in case
+             * the old one ever stops working. */
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = Environment.OSVersion.Version.Major > 6 ? "ms-settings:defaultapps" : "control",
+                Arguments = Environment.OSVersion.Version.Major == 6 ? "/name Microsoft.DefaultPrograms /page pageDefaultProgram" : "",
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
         }
     }
 }

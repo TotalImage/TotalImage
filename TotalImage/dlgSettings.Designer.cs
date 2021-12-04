@@ -28,14 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(".DSK");
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(".FLP");
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(".HDM");
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(".IMA");
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(".IMG");
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(".ISO");
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(".VFD");
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(".VHD");
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.pnlBottom = new System.Windows.Forms.Panel();
@@ -79,12 +71,9 @@
             this.lblExtractPath = new System.Windows.Forms.Label();
             this.cbxExtractAsk = new System.Windows.Forms.CheckBox();
             this.tabIntegration = new System.Windows.Forms.TabPage();
-            this.btnClearAll = new System.Windows.Forms.Button();
-            this.btnSelectAll = new System.Windows.Forms.Button();
+            this.btnFileAssoc = new System.Windows.Forms.Button();
+            this.lblFileAssoc = new System.Windows.Forms.Label();
             this.cbxShellFileIcons = new System.Windows.Forms.CheckBox();
-            this.lstFileTypes = new System.Windows.Forms.ListView();
-            this.columnType = new System.Windows.Forms.ColumnHeader();
-            this.lblFileAssociations = new System.Windows.Forms.Label();
             this.pnlBottom.SuspendLayout();
             this.tabs.SuspendLayout();
             this.tabGeneral.SuspendLayout();
@@ -181,7 +170,7 @@
             // btnClearTemp
             // 
             this.btnClearTemp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnClearTemp.Location = new System.Drawing.Point(334, 28);
+            this.btnClearTemp.Location = new System.Drawing.Point(344, 28);
             this.btnClearTemp.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearTemp.Name = "btnClearTemp";
             this.btnClearTemp.Size = new System.Drawing.Size(140, 32);
@@ -193,7 +182,7 @@
             // btnClearRecent
             // 
             this.btnClearRecent.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnClearRecent.Location = new System.Drawing.Point(151, 28);
+            this.btnClearRecent.Location = new System.Drawing.Point(152, 28);
             this.btnClearRecent.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearRecent.Name = "btnClearRecent";
             this.btnClearRecent.Size = new System.Drawing.Size(184, 32);
@@ -285,7 +274,7 @@
             this.cbxConfirmOverwriteExtract.Location = new System.Drawing.Point(8, 28);
             this.cbxConfirmOverwriteExtract.Margin = new System.Windows.Forms.Padding(4);
             this.cbxConfirmOverwriteExtract.Name = "cbxConfirmOverwriteExtract";
-            this.cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(301, 25);
+            this.cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(276, 25);
             this.cbxConfirmOverwriteExtract.TabIndex = 17;
             this.cbxConfirmOverwriteExtract.Text = "Confirm overwrite during extraction";
             this.cbxConfirmOverwriteExtract.UseVisualStyleBackColor = true;
@@ -297,7 +286,7 @@
             this.cbxConfirmDeletion.Location = new System.Drawing.Point(8, 60);
             this.cbxConfirmDeletion.Margin = new System.Windows.Forms.Padding(4);
             this.cbxConfirmDeletion.Name = "cbxConfirmDeletion";
-            this.cbxConfirmDeletion.Size = new System.Drawing.Size(177, 25);
+            this.cbxConfirmDeletion.Size = new System.Drawing.Size(152, 25);
             this.cbxConfirmDeletion.TabIndex = 16;
             this.cbxConfirmDeletion.Text = "Confirm deletion";
             this.cbxConfirmDeletion.UseVisualStyleBackColor = true;
@@ -309,7 +298,7 @@
             this.cbxConfirmInjection.Location = new System.Drawing.Point(8, 92);
             this.cbxConfirmInjection.Margin = new System.Windows.Forms.Padding(4);
             this.cbxConfirmInjection.Name = "cbxConfirmInjection";
-            this.cbxConfirmInjection.Size = new System.Drawing.Size(179, 25);
+            this.cbxConfirmInjection.Size = new System.Drawing.Size(154, 25);
             this.cbxConfirmInjection.TabIndex = 15;
             this.cbxConfirmInjection.Text = "Confirm injection";
             this.cbxConfirmInjection.UseVisualStyleBackColor = true;
@@ -528,7 +517,7 @@
             this.cbxPreserveAttributes.Location = new System.Drawing.Point(19, 300);
             this.cbxPreserveAttributes.Margin = new System.Windows.Forms.Padding(4);
             this.cbxPreserveAttributes.Name = "cbxPreserveAttributes";
-            this.cbxPreserveAttributes.Size = new System.Drawing.Size(296, 25);
+            this.cbxPreserveAttributes.Size = new System.Drawing.Size(271, 25);
             this.cbxPreserveAttributes.TabIndex = 9;
             this.cbxPreserveAttributes.Text = "Preserve attributes when extracting";
             this.cbxPreserveAttributes.UseVisualStyleBackColor = true;
@@ -540,7 +529,7 @@
             this.cbxPreserveDates.Location = new System.Drawing.Point(19, 268);
             this.cbxPreserveDates.Margin = new System.Windows.Forms.Padding(4);
             this.cbxPreserveDates.Name = "cbxPreserveDates";
-            this.cbxPreserveDates.Size = new System.Drawing.Size(269, 25);
+            this.cbxPreserveDates.Size = new System.Drawing.Size(244, 25);
             this.cbxPreserveDates.TabIndex = 8;
             this.cbxPreserveDates.Text = "Preserve dates when extracting";
             this.cbxPreserveDates.UseVisualStyleBackColor = true;
@@ -640,11 +629,9 @@
             // 
             // tabIntegration
             // 
-            this.tabIntegration.Controls.Add(this.btnClearAll);
-            this.tabIntegration.Controls.Add(this.btnSelectAll);
+            this.tabIntegration.Controls.Add(this.btnFileAssoc);
+            this.tabIntegration.Controls.Add(this.lblFileAssoc);
             this.tabIntegration.Controls.Add(this.cbxShellFileIcons);
-            this.tabIntegration.Controls.Add(this.lstFileTypes);
-            this.tabIntegration.Controls.Add(this.lblFileAssociations);
             this.tabIntegration.Location = new System.Drawing.Point(4, 29);
             this.tabIntegration.Margin = new System.Windows.Forms.Padding(4);
             this.tabIntegration.Name = "tabIntegration";
@@ -654,99 +641,38 @@
             this.tabIntegration.Text = "Integration";
             this.tabIntegration.UseVisualStyleBackColor = true;
             // 
-            // btnClearAll
+            // btnFileAssoc
             // 
-            this.btnClearAll.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnClearAll.Location = new System.Drawing.Point(130, 186);
-            this.btnClearAll.Margin = new System.Windows.Forms.Padding(4);
-            this.btnClearAll.Name = "btnClearAll";
-            this.btnClearAll.Size = new System.Drawing.Size(100, 32);
-            this.btnClearAll.TabIndex = 4;
-            this.btnClearAll.Text = "Clear all";
-            this.btnClearAll.UseVisualStyleBackColor = true;
-            this.btnClearAll.Click += new System.EventHandler(this.btnClearAll_Click);
+            this.btnFileAssoc.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnFileAssoc.Location = new System.Drawing.Point(467, 70);
+            this.btnFileAssoc.Name = "btnFileAssoc";
+            this.btnFileAssoc.Size = new System.Drawing.Size(94, 31);
+            this.btnFileAssoc.TabIndex = 5;
+            this.btnFileAssoc.Text = "Open";
+            this.btnFileAssoc.UseVisualStyleBackColor = true;
+            this.btnFileAssoc.Click += new System.EventHandler(this.btnFileAssoc_Click);
             // 
-            // btnSelectAll
+            // lblFileAssoc
             // 
-            this.btnSelectAll.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnSelectAll.Location = new System.Drawing.Point(22, 186);
-            this.btnSelectAll.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSelectAll.Name = "btnSelectAll";
-            this.btnSelectAll.Size = new System.Drawing.Size(100, 32);
-            this.btnSelectAll.TabIndex = 2;
-            this.btnSelectAll.Text = "Select all";
-            this.btnSelectAll.UseVisualStyleBackColor = true;
-            this.btnSelectAll.Click += new System.EventHandler(this.btnSelectAll_Click);
+            this.lblFileAssoc.AutoSize = true;
+            this.lblFileAssoc.Location = new System.Drawing.Point(18, 70);
+            this.lblFileAssoc.Name = "lblFileAssoc";
+            this.lblFileAssoc.Size = new System.Drawing.Size(389, 40);
+            this.lblFileAssoc.TabIndex = 4;
+            this.lblFileAssoc.Text = "File associations for TotalImage can be managed through\r\nControl Panel/Windows Se" +
+    "ttings.";
             // 
             // cbxShellFileIcons
             // 
             this.cbxShellFileIcons.AutoSize = true;
             this.cbxShellFileIcons.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShellFileIcons.Location = new System.Drawing.Point(22, 250);
+            this.cbxShellFileIcons.Location = new System.Drawing.Point(18, 20);
             this.cbxShellFileIcons.Margin = new System.Windows.Forms.Padding(4);
             this.cbxShellFileIcons.Name = "cbxShellFileIcons";
             this.cbxShellFileIcons.Size = new System.Drawing.Size(456, 25);
             this.cbxShellFileIcons.TabIndex = 3;
             this.cbxShellFileIcons.Text = "Display system icons and file type names in the file list (slower)";
             this.cbxShellFileIcons.UseVisualStyleBackColor = true;
-            // 
-            // lstFileTypes
-            // 
-            this.lstFileTypes.AutoArrange = false;
-            this.lstFileTypes.CheckBoxes = true;
-            this.lstFileTypes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnType});
-            this.lstFileTypes.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.lstFileTypes.HideSelection = false;
-            listViewItem1.StateImageIndex = 0;
-            listViewItem1.Name = ".DSK";
-            listViewItem2.StateImageIndex = 0;
-            listViewItem2.Name = ".FLP";
-            listViewItem3.StateImageIndex = 0;
-            listViewItem3.Name = ".HDM";
-            listViewItem4.StateImageIndex = 0;
-            listViewItem4.Name = ".IMA";
-            listViewItem5.StateImageIndex = 0;
-            listViewItem5.Name = ".IMG";
-            listViewItem6.StateImageIndex = 0;
-            listViewItem6.Name = ".ISO";
-            listViewItem7.StateImageIndex = 0;
-            listViewItem7.Name = ".VFD";
-            listViewItem8.StateImageIndex = 0;
-            listViewItem8.Name = ".VHD";
-            this.lstFileTypes.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8});
-            this.lstFileTypes.Location = new System.Drawing.Point(22, 41);
-            this.lstFileTypes.Margin = new System.Windows.Forms.Padding(4);
-            this.lstFileTypes.MultiSelect = false;
-            this.lstFileTypes.Name = "lstFileTypes";
-            this.lstFileTypes.ShowGroups = false;
-            this.lstFileTypes.Size = new System.Drawing.Size(519, 136);
-            this.lstFileTypes.TabIndex = 1;
-            this.lstFileTypes.UseCompatibleStateImageBehavior = false;
-            this.lstFileTypes.View = System.Windows.Forms.View.List;
-            // 
-            // columnType
-            // 
-            this.columnType.Text = "";
-            this.columnType.Width = 410;
-            // 
-            // lblFileAssociations
-            // 
-            this.lblFileAssociations.AutoSize = true;
-            this.lblFileAssociations.Location = new System.Drawing.Point(19, 19);
-            this.lblFileAssociations.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblFileAssociations.Name = "lblFileAssociations";
-            this.lblFileAssociations.Size = new System.Drawing.Size(342, 20);
-            this.lblFileAssociations.TabIndex = 0;
-            this.lblFileAssociations.Text = "Associate the following file types with TotalImage:";
             // 
             // dlgSettings
             // 
@@ -817,9 +743,6 @@
         private System.Windows.Forms.Label lblSortOrder;
         private System.Windows.Forms.ComboBox lstSortOrder;
         private System.Windows.Forms.GroupBox gbxBehavior;
-        private System.Windows.Forms.Label lblFileAssociations;
-        private System.Windows.Forms.ListView lstFileTypes;
-        private System.Windows.Forms.ColumnHeader columnType;
         private System.Windows.Forms.GroupBox gbxMisc;
         private System.Windows.Forms.Button btnClearRecent;
         private System.Windows.Forms.Button btnReset;
@@ -830,11 +753,11 @@
         private System.Windows.Forms.CheckBox cbxConfirmDeletion;
         private System.Windows.Forms.CheckBox cbxConfirmOverwriteExtract;
         private System.Windows.Forms.CheckBox cbxAutoincrementFilename;
-        private System.Windows.Forms.Button btnSelectAll;
-        private System.Windows.Forms.Button btnClearAll;
         private System.Windows.Forms.Label lblMemoryMapping1;
         private System.Windows.Forms.Label lblMemoryMapping;
         private System.Windows.Forms.NumericUpDown txtMemoryMapping;
         private System.Windows.Forms.Button btnClearTemp;
+        private System.Windows.Forms.Button btnFileAssoc;
+        private System.Windows.Forms.Label lblFileAssoc;
     }
 }
