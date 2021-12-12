@@ -74,6 +74,9 @@
             this.btnFileAssoc = new System.Windows.Forms.Button();
             this.lblFileAssoc = new System.Windows.Forms.Label();
             this.cbxShellFileIcons = new System.Windows.Forms.CheckBox();
+            this.gbxFileAssoc = new System.Windows.Forms.GroupBox();
+            this.gbxIntegrationMisc = new System.Windows.Forms.GroupBox();
+            this.lblSystemIcons = new System.Windows.Forms.Label();
             this.pnlBottom.SuspendLayout();
             this.tabs.SuspendLayout();
             this.tabGeneral.SuspendLayout();
@@ -83,6 +86,8 @@
             this.tabView.SuspendLayout();
             this.tabExtraction.SuspendLayout();
             this.tabIntegration.SuspendLayout();
+            this.gbxFileAssoc.SuspendLayout();
+            this.gbxIntegrationMisc.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCancel
@@ -629,9 +634,8 @@
             // 
             // tabIntegration
             // 
-            this.tabIntegration.Controls.Add(this.btnFileAssoc);
-            this.tabIntegration.Controls.Add(this.lblFileAssoc);
-            this.tabIntegration.Controls.Add(this.cbxShellFileIcons);
+            this.tabIntegration.Controls.Add(this.gbxIntegrationMisc);
+            this.tabIntegration.Controls.Add(this.gbxFileAssoc);
             this.tabIntegration.Location = new System.Drawing.Point(4, 29);
             this.tabIntegration.Margin = new System.Windows.Forms.Padding(4);
             this.tabIntegration.Name = "tabIntegration";
@@ -644,7 +648,7 @@
             // btnFileAssoc
             // 
             this.btnFileAssoc.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnFileAssoc.Location = new System.Drawing.Point(467, 70);
+            this.btnFileAssoc.Location = new System.Drawing.Point(454, 32);
             this.btnFileAssoc.Name = "btnFileAssoc";
             this.btnFileAssoc.Size = new System.Drawing.Size(94, 31);
             this.btnFileAssoc.TabIndex = 5;
@@ -655,7 +659,7 @@
             // lblFileAssoc
             // 
             this.lblFileAssoc.AutoSize = true;
-            this.lblFileAssoc.Location = new System.Drawing.Point(18, 70);
+            this.lblFileAssoc.Location = new System.Drawing.Point(11, 32);
             this.lblFileAssoc.Name = "lblFileAssoc";
             this.lblFileAssoc.Size = new System.Drawing.Size(389, 40);
             this.lblFileAssoc.TabIndex = 4;
@@ -666,13 +670,46 @@
             // 
             this.cbxShellFileIcons.AutoSize = true;
             this.cbxShellFileIcons.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShellFileIcons.Location = new System.Drawing.Point(18, 20);
+            this.cbxShellFileIcons.Location = new System.Drawing.Point(11, 27);
             this.cbxShellFileIcons.Margin = new System.Windows.Forms.Padding(4);
             this.cbxShellFileIcons.Name = "cbxShellFileIcons";
-            this.cbxShellFileIcons.Size = new System.Drawing.Size(456, 25);
+            this.cbxShellFileIcons.Size = new System.Drawing.Size(399, 25);
             this.cbxShellFileIcons.TabIndex = 3;
-            this.cbxShellFileIcons.Text = "Display system icons and file type names in the file list (slower)";
+            this.cbxShellFileIcons.Text = "Display system icons and file type names in the file list";
             this.cbxShellFileIcons.UseVisualStyleBackColor = true;
+            // 
+            // gbxFileAssoc
+            // 
+            this.gbxFileAssoc.Controls.Add(this.lblFileAssoc);
+            this.gbxFileAssoc.Controls.Add(this.btnFileAssoc);
+            this.gbxFileAssoc.Location = new System.Drawing.Point(7, 7);
+            this.gbxFileAssoc.Name = "gbxFileAssoc";
+            this.gbxFileAssoc.Size = new System.Drawing.Size(554, 86);
+            this.gbxFileAssoc.TabIndex = 6;
+            this.gbxFileAssoc.TabStop = false;
+            this.gbxFileAssoc.Text = "File associations";
+            // 
+            // gbxIntegrationMisc
+            // 
+            this.gbxIntegrationMisc.Controls.Add(this.lblSystemIcons);
+            this.gbxIntegrationMisc.Controls.Add(this.cbxShellFileIcons);
+            this.gbxIntegrationMisc.Location = new System.Drawing.Point(7, 99);
+            this.gbxIntegrationMisc.Name = "gbxIntegrationMisc";
+            this.gbxIntegrationMisc.Size = new System.Drawing.Size(554, 131);
+            this.gbxIntegrationMisc.TabIndex = 7;
+            this.gbxIntegrationMisc.TabStop = false;
+            this.gbxIntegrationMisc.Text = "Other options";
+            // 
+            // lblSystemIcons
+            // 
+            this.lblSystemIcons.AutoSize = true;
+            this.lblSystemIcons.Location = new System.Drawing.Point(11, 56);
+            this.lblSystemIcons.Name = "lblSystemIcons";
+            this.lblSystemIcons.Size = new System.Drawing.Size(517, 60);
+            this.lblSystemIcons.TabIndex = 6;
+            this.lblSystemIcons.Text = "When this option is enabled, TotalImage will obtain icons and names for file\r\ntyp" +
+    "es from Windows, which can be slower in some situations. When disabled,\r\ngeneric" +
+    " icons and names will be used instead.";
             // 
             // dlgSettings
             // 
@@ -706,7 +743,10 @@
             this.tabExtraction.ResumeLayout(false);
             this.tabExtraction.PerformLayout();
             this.tabIntegration.ResumeLayout(false);
-            this.tabIntegration.PerformLayout();
+            this.gbxFileAssoc.ResumeLayout(false);
+            this.gbxFileAssoc.PerformLayout();
+            this.gbxIntegrationMisc.ResumeLayout(false);
+            this.gbxIntegrationMisc.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -759,5 +799,8 @@
         private System.Windows.Forms.Button btnClearTemp;
         private System.Windows.Forms.Button btnFileAssoc;
         private System.Windows.Forms.Label lblFileAssoc;
+        private System.Windows.Forms.GroupBox gbxIntegrationMisc;
+        private System.Windows.Forms.GroupBox gbxFileAssoc;
+        private System.Windows.Forms.Label lblSystemIcons;
     }
 }
