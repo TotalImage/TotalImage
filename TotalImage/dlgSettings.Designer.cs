@@ -36,7 +36,7 @@
             this.gbxMisc = new System.Windows.Forms.GroupBox();
             this.btnClearTemp = new System.Windows.Forms.Button();
             this.btnClearRecent = new System.Windows.Forms.Button();
-            this.btnReset = new System.Windows.Forms.Button();
+            this.btnResetSettings = new System.Windows.Forms.Button();
             this.gbxBehavior = new System.Windows.Forms.GroupBox();
             this.lblMemoryMapping1 = new System.Windows.Forms.Label();
             this.txtMemoryMapping = new System.Windows.Forms.NumericUpDown();
@@ -77,6 +77,9 @@
             this.gbxFileAssoc = new System.Windows.Forms.GroupBox();
             this.gbxIntegrationMisc = new System.Windows.Forms.GroupBox();
             this.lblSystemIcons = new System.Windows.Forms.Label();
+            this.lblResetSettings = new System.Windows.Forms.Label();
+            this.lblClearRecent = new System.Windows.Forms.Label();
+            this.lblClearTemp = new System.Windows.Forms.Label();
             this.pnlBottom.SuspendLayout();
             this.tabs.SuspendLayout();
             this.tabGeneral.SuspendLayout();
@@ -160,53 +163,56 @@
             // 
             // gbxMisc
             // 
+            this.gbxMisc.Controls.Add(this.lblClearTemp);
+            this.gbxMisc.Controls.Add(this.lblClearRecent);
+            this.gbxMisc.Controls.Add(this.lblResetSettings);
             this.gbxMisc.Controls.Add(this.btnClearTemp);
             this.gbxMisc.Controls.Add(this.btnClearRecent);
-            this.gbxMisc.Controls.Add(this.btnReset);
+            this.gbxMisc.Controls.Add(this.btnResetSettings);
             this.gbxMisc.Location = new System.Drawing.Point(8, 249);
             this.gbxMisc.Margin = new System.Windows.Forms.Padding(4);
             this.gbxMisc.Name = "gbxMisc";
             this.gbxMisc.Padding = new System.Windows.Forms.Padding(4);
-            this.gbxMisc.Size = new System.Drawing.Size(551, 74);
+            this.gbxMisc.Size = new System.Drawing.Size(551, 164);
             this.gbxMisc.TabIndex = 1;
             this.gbxMisc.TabStop = false;
-            this.gbxMisc.Text = "Miscellaneous";
+            this.gbxMisc.Text = "Advanced options";
             // 
             // btnClearTemp
             // 
             this.btnClearTemp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnClearTemp.Location = new System.Drawing.Point(344, 28);
+            this.btnClearTemp.Location = new System.Drawing.Point(443, 114);
             this.btnClearTemp.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearTemp.Name = "btnClearTemp";
-            this.btnClearTemp.Size = new System.Drawing.Size(140, 32);
+            this.btnClearTemp.Size = new System.Drawing.Size(100, 32);
             this.btnClearTemp.TabIndex = 6;
-            this.btnClearTemp.Text = "Clear temp folder";
+            this.btnClearTemp.Text = "Clear";
             this.btnClearTemp.UseVisualStyleBackColor = true;
             this.btnClearTemp.Click += new System.EventHandler(this.btnClearTemp_Click);
             // 
             // btnClearRecent
             // 
             this.btnClearRecent.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnClearRecent.Location = new System.Drawing.Point(152, 28);
+            this.btnClearRecent.Location = new System.Drawing.Point(443, 70);
             this.btnClearRecent.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearRecent.Name = "btnClearRecent";
-            this.btnClearRecent.Size = new System.Drawing.Size(184, 32);
+            this.btnClearRecent.Size = new System.Drawing.Size(100, 32);
             this.btnClearRecent.TabIndex = 5;
-            this.btnClearRecent.Text = "Clear recent images list";
+            this.btnClearRecent.Text = "Clear";
             this.btnClearRecent.UseVisualStyleBackColor = true;
             this.btnClearRecent.Click += new System.EventHandler(this.btnClearRecent_Click);
             // 
-            // btnReset
+            // btnResetSettings
             // 
-            this.btnReset.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnReset.Location = new System.Drawing.Point(8, 28);
-            this.btnReset.Margin = new System.Windows.Forms.Padding(4);
-            this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(136, 32);
-            this.btnReset.TabIndex = 4;
-            this.btnReset.Text = "Reset to defaults";
-            this.btnReset.UseVisualStyleBackColor = true;
-            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            this.btnResetSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnResetSettings.Location = new System.Drawing.Point(443, 24);
+            this.btnResetSettings.Margin = new System.Windows.Forms.Padding(4);
+            this.btnResetSettings.Name = "btnResetSettings";
+            this.btnResetSettings.Size = new System.Drawing.Size(100, 32);
+            this.btnResetSettings.TabIndex = 4;
+            this.btnResetSettings.Text = "Reset";
+            this.btnResetSettings.UseVisualStyleBackColor = true;
+            this.btnResetSettings.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // gbxBehavior
             // 
@@ -711,6 +717,33 @@
     "es from Windows, which can be slower in some situations. When disabled,\r\ngeneric" +
     " icons and names will be used instead.";
             // 
+            // lblResetSettings
+            // 
+            this.lblResetSettings.AutoSize = true;
+            this.lblResetSettings.Location = new System.Drawing.Point(8, 30);
+            this.lblResetSettings.Name = "lblResetSettings";
+            this.lblResetSettings.Size = new System.Drawing.Size(350, 20);
+            this.lblResetSettings.TabIndex = 7;
+            this.lblResetSettings.Text = "Reset all TotalImage settings to their default values.";
+            // 
+            // lblClearRecent
+            // 
+            this.lblClearRecent.AutoSize = true;
+            this.lblClearRecent.Location = new System.Drawing.Point(8, 76);
+            this.lblClearRecent.Name = "lblClearRecent";
+            this.lblClearRecent.Size = new System.Drawing.Size(191, 20);
+            this.lblClearRecent.TabIndex = 8;
+            this.lblClearRecent.Text = "Clear the recent images list.";
+            // 
+            // lblClearTemp
+            // 
+            this.lblClearTemp.AutoSize = true;
+            this.lblClearTemp.Location = new System.Drawing.Point(8, 120);
+            this.lblClearTemp.Name = "lblClearTemp";
+            this.lblClearTemp.Size = new System.Drawing.Size(416, 20);
+            this.lblClearTemp.TabIndex = 9;
+            this.lblClearTemp.Text = "Clear TotalImage\'s temporary folder in local application data.";
+            // 
             // dlgSettings
             // 
             this.AcceptButton = this.btnOK;
@@ -735,6 +768,7 @@
             this.tabs.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
             this.gbxMisc.ResumeLayout(false);
+            this.gbxMisc.PerformLayout();
             this.gbxBehavior.ResumeLayout(false);
             this.gbxBehavior.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtMemoryMapping)).EndInit();
@@ -785,7 +819,7 @@
         private System.Windows.Forms.GroupBox gbxBehavior;
         private System.Windows.Forms.GroupBox gbxMisc;
         private System.Windows.Forms.Button btnClearRecent;
-        private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.Button btnResetSettings;
         private System.Windows.Forms.CheckBox cbxPreserveAttributes;
         private System.Windows.Forms.CheckBox cbxPreserveDates;
         private System.Windows.Forms.CheckBox cbxShellFileIcons;
@@ -802,5 +836,8 @@
         private System.Windows.Forms.GroupBox gbxIntegrationMisc;
         private System.Windows.Forms.GroupBox gbxFileAssoc;
         private System.Windows.Forms.Label lblSystemIcons;
+        private System.Windows.Forms.Label lblResetSettings;
+        private System.Windows.Forms.Label lblClearTemp;
+        private System.Windows.Forms.Label lblClearRecent;
     }
 }
