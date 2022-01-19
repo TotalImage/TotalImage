@@ -89,13 +89,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override void Delete()
         {
-            /* When deleting a file, only the first character of the name needs to be changed to 0xE5.
-             * The file's directory entry can then be reused, and its clusters are marked as free until they're
-             * overwritten.
-             * This code is untested until this class is hooked up to the UI... */
-            entry.name[0] = 0xE5;
-
-            //And then mark all clusters in the chain as free...
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc />
