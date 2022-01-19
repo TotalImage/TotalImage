@@ -1,4 +1,5 @@
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -24,7 +25,7 @@ namespace TotalImage.FileSystems.FAT
         /// Characters 1-5 of the long name sub-component.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        public char[] name1;
+        public char[] name1 = new char[5];
 
         /// <summary>
         /// Attributes - must be <c>FatAttributes.LongName</c>
@@ -46,7 +47,7 @@ namespace TotalImage.FileSystems.FAT
         /// Characters 6-11 of the long name sub-component.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-        public char[] name2;
+        public char[] name2 = new char[6];
 
         /// <summary>
         /// Must be zero.
@@ -57,37 +58,35 @@ namespace TotalImage.FileSystems.FAT
         /// Characters 12-13 of the long name sub-component.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public char[] name3;
+        public char[] name3 = new char[2];
 
         public static explicit operator LongDirectoryEntry(DirectoryEntry entry)
         {
-            LongDirectoryEntry lfnEntry;
+            var lfnEntry = new LongDirectoryEntry();
 
-            var name1 = new byte[10];
             var name2 = new byte[12];
             var name3 = new byte[4];
 
             lfnEntry.ord = entry.name[0];
 
-            Buffer.BlockCopy(entry.name, 1, name1, 0, 10);
-            lfnEntry.name1 = Encoding.Unicode.GetChars(name1);
+            Encoding.Unicode.GetChars(entry.name[1..11], lfnEntry.name1);
 
             lfnEntry.attr = entry.attr;
             lfnEntry.type = entry.ntRes;
             lfnEntry.chksum = entry.crtTimeTenth;
 
-            BitConverter.GetBytes(entry.crtTime).CopyTo(name2, 0);
-            BitConverter.GetBytes(entry.crtDate).CopyTo(name2, 2);
-            BitConverter.GetBytes(entry.lstAccDate).CopyTo(name2, 4);
-            BitConverter.GetBytes(entry.fstClusHI).CopyTo(name2, 6);
-            BitConverter.GetBytes(entry.wrtTime).CopyTo(name2, 8);
-            BitConverter.GetBytes(entry.wrtDate).CopyTo(name2, 10);
-            lfnEntry.name2 = Encoding.Unicode.GetChars(name2);
+            BinaryPrimitives.WriteUInt16LittleEndian(name2.AsSpan()[0..2], entry.crtTime);
+            BinaryPrimitives.WriteUInt16LittleEndian(name2.AsSpan()[2..4], entry.crtDate);
+            BinaryPrimitives.WriteUInt16LittleEndian(name2.AsSpan()[4..6], entry.lstAccDate);
+            BinaryPrimitives.WriteUInt16LittleEndian(name2.AsSpan()[6..8], entry.fstClusHI);
+            BinaryPrimitives.WriteUInt16LittleEndian(name2.AsSpan()[8..10], entry.wrtTime);
+            BinaryPrimitives.WriteUInt16LittleEndian(name2.AsSpan()[10..12], entry.wrtDate);
+            Encoding.Unicode.GetChars(name2, lfnEntry.name2);
 
             lfnEntry.fstClusLO = entry.fstClusLO;
 
-            BitConverter.GetBytes(entry.fileSize).CopyTo(name3, 0);
-            lfnEntry.name3 = Encoding.Unicode.GetChars(name3);
+            BinaryPrimitives.WriteUInt32LittleEndian(name3, entry.fileSize);
+            Encoding.Unicode.GetChars(name3, lfnEntry.name3);
 
             return lfnEntry;
         }
@@ -107,7 +106,7 @@ namespace TotalImage.FileSystems.FAT
             return nullIndex > 0 ? name.Substring(0, nullIndex) : name;
         }
 
-        public static byte GetShortNameChecksum(byte[] filename)
+        public static byte GetShortNameChecksum(ReadOnlySpan<byte> filename)
         {
             if (filename.Length != 11) throw new ArgumentException();
 

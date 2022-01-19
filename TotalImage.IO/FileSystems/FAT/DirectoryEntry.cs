@@ -1,4 +1,5 @@
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -73,25 +74,24 @@ namespace TotalImage.FileSystems.FAT
         /// </summary>
         public uint fileSize;
 
-        public static DirectoryEntry Parse(BinaryReader reader)
-            => new DirectoryEntry
-            {
-                name = reader.ReadBytes(11),
-                attr = (FatAttributes)reader.ReadByte(),
-                ntRes = reader.ReadByte(),
-                crtTimeTenth = reader.ReadByte(),
-                crtTime = reader.ReadUInt16(),
-                crtDate = reader.ReadUInt16(),
-                lstAccDate = reader.ReadUInt16(),
-                fstClusHI = reader.ReadUInt16(),
-                wrtTime = reader.ReadUInt16(),
-                wrtDate = reader.ReadUInt16(),
-                fstClusLO = reader.ReadUInt16(),
-                fileSize = reader.ReadUInt32()
-            };
+        public DirectoryEntry(ReadOnlySpan<byte> entry)
+        {
+            name = entry[0..11].ToArray();
+            attr = (FatAttributes)entry[11];
+            ntRes = entry[12];
+            crtTimeTenth = entry[13];
+            crtTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[14..16]);
+            crtDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[16..18]);
+            lstAccDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[18..20]);
+            fstClusHI = BinaryPrimitives.ReadUInt16LittleEndian(entry[20..22]);
+            wrtTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[22..24]);
+            wrtDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[24..26]);
+            fstClusLO = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
+            fileSize = BinaryPrimitives.ReadUInt32LittleEndian(entry[28..32]);
+        }
 
-        public string BaseName => Encoding.ASCII.GetString(name, 0, 8).Trim();
-        public string Extension => Encoding.ASCII.GetString(name, 8, 3).Trim();
+        public string BaseName => Encoding.ASCII.GetString(name[0..8]).Trim();
+        public string Extension => Encoding.ASCII.GetString(name[8..11]).Trim();
 
         public string Name => $"{BaseName}{(!string.IsNullOrWhiteSpace(Extension) ? "." : "")}{Extension}";
 
@@ -120,13 +120,16 @@ namespace TotalImage.FileSystems.FAT
             using var reader = new BinaryReader(stream, Encoding.ASCII, true);
             var position = stream.Position;
 
+            var buffer = new byte[32];
+
             if (entries == int.MaxValue) entries = (int)(stream.Length / 32);
 
             for(var i = 0; i < entries; i++)
             {
                 if (position != stream.Position) stream.Position = position;
 
-                var entry = DirectoryEntry.Parse(reader);
+                reader.Read(buffer);
+                var entry = new DirectoryEntry(buffer);
 
                 position = stream.Position;
 
@@ -139,7 +142,7 @@ namespace TotalImage.FileSystems.FAT
                 {
                     //This check is needed for old DOS 1.x disks that don't mark unused entries with 0x00 and instead use the deleted
                     //marker (0xE5), which can trip the code
-                    if (BitConverter.ToUInt32(entry.name, 1) == 0xF6F6F6F6) break;
+                    if (BinaryPrimitives.ReadUInt32LittleEndian(entry.name) == 0xF6F6F6F6) break;
                     if (!includeDeleted) continue;
                 }
 
