@@ -12,31 +12,30 @@ namespace TotalImage.FileSystems.FAT
     {
         public Fat16FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
+            Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
             for(int i = 0; i < bpb.NumberOfFATs; i++)
-                ClusterMaps[i] = new ClusterMap(this, i);
+                Fats[i] = new FileAllocationTable(this, i);
         }
 
         /// <inheritdoc />
         public override string DisplayName => "FAT16";
 
         /// <inheritdoc />
-        protected override uint ClusterMask => 0xFFFF;
+        public override FAT.FileAllocationTable[] Fats { get; }
 
-        /// <inheritdoc />
-        public override FatFileSystem.ClusterMap[] ClusterMaps { get; }
-
-        private new class ClusterMap : FatFileSystem.ClusterMap
+        private class FileAllocationTable : FAT.FileAllocationTable
         {
             Fat16FileSystem _fat16;
             int _fatIndex;
-            internal ClusterMap(Fat16FileSystem fat16, int fatIndex)
+            internal FileAllocationTable(Fat16FileSystem fat16, int fatIndex)
             {
                 if (fatIndex >= fat16._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();
 
                 _fat16 = fat16;
                 _fatIndex = fatIndex;
             }
+
+            protected override uint Mask => 0xFFFF;
 
             public override uint Length
                 => (uint)(_fat16.BytesPerClusterMap) / 2;

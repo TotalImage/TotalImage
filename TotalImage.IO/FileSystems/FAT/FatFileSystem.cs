@@ -38,7 +38,7 @@ namespace TotalImage.FileSystems.FAT
 
                 for (var i = 0u; i < ClusterCount; i++)
                 {
-                    if (MainClusterMap[i + 2] == 0) clusters++;
+                    if (MainFat[i + 2] == 0) clusters++;
                 }
 
                 return clusters;
@@ -80,112 +80,8 @@ namespace TotalImage.FileSystems.FAT
         public uint ClusterCount
             => DataAreaSectors / _bpb.LogicalSectorsPerCluster;
 
-        /// <summary>
-        /// Cluster number bit mask. This is also the maximum cluster map value.
-        /// </summary>
-        protected abstract uint ClusterMask { get; }
-
-        /// <summary>
-        /// Determines the type of a cluster map value.
-        /// </summary>
-        public ClusterType GetClusterType(uint cluster)
-        {
-            if (cluster > ClusterMask - 0x10)
-            {
-                if ((cluster & 0xF) == 7)
-                    return ClusterType.Bad;
-                if ((cluster & 0xF) > 7)
-                    return ClusterType.EndOfChain;
-                
-                return ClusterType.Reserved;
-            }
-            else if (cluster < 2)
-            {
-                if (cluster == 0)
-                    return ClusterType.Free;
-                if (cluster == 1)
-                    return ClusterType.NonFree;
-            }
-
-            return ClusterType.Data;
-        }
-
-        /// <summary>
-        /// Determines whether the cluster map value is an end-of-chain marker or a valid pointer to another data cluster.
-        /// </summary>
-        public bool IsEndOfChainMarker(uint cluster)
-            => GetClusterType(cluster) != ClusterType.Data;
-
-        /// <summary>
-        /// Retrieves the number of the next cluster in a cluster chain.
-        /// </summary>
-        /// <param name="index">Current cluster</param>
-        /// <param name="fat">Specifies which copy of the FAT should be used</param>
-        /// <returns>The next cluster number if any, otherwise <see langword="null"/>.</returns>
-        public uint? GetNextCluster(uint index, int fat = 0)
-            => IsEndOfChainMarker(ClusterMaps[fat][index]) ? null : (uint?)ClusterMaps[fat][index];
-
-        public uint[] GetClusterChain(uint firstCluster)
-        {
-            var clusters = new List<uint>();
-            var cluster = (uint?)firstCluster;
-
-            while (cluster.HasValue)
-            {
-                clusters.Add(cluster.Value);
-                cluster = GetNextCluster(cluster.Value);
-            }
-
-            return clusters.ToArray();
-        }
-
-        public abstract ClusterMap[] ClusterMaps { get; }
-        public ClusterMap MainClusterMap => ClusterMaps[0];
-
-        public abstract class ClusterMap : IEnumerable<uint>
-        {
-            public abstract uint this[uint index] { get; set; }
-
-            public uint this[int index]
-            {
-                get => this[(uint)index];
-                set => this[(uint)index] = value;
-            }
-
-            public abstract uint Length { get; }
-
-            /// <inheritdoc/>
-            public IEnumerator<uint> GetEnumerator() => new ClusterMapEnumerator(this);
-
-            /// <inheritdoc/>
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-            public class ClusterMapEnumerator : IEnumerator<uint>
-            {
-                uint _currentIndex = 0;
-                ClusterMap _map;
-
-                /// <inheritdoc/>
-                public uint Current => _map[_currentIndex];
-
-                /// <inheritdoc/>
-                object IEnumerator.Current => Current;
-
-                internal ClusterMapEnumerator(ClusterMap map)
-                {
-                    _map = map;
-                }
-
-                /// <inheritdoc/>
-                public void Dispose() { }
-
-                /// <inheritdoc/>
-                public bool MoveNext() => ++_currentIndex < _map.Length ? false : true;
-
-                /// <inheritdoc/>
-                public void Reset() => _currentIndex = 0;
-            }
-        }
+        public abstract FileAllocationTable[] Fats { get; }
+        public FileAllocationTable MainFat => Fats[0];
 
         public override string VolumeLabel
         {

@@ -14,9 +14,9 @@ namespace TotalImage.FileSystems.FAT
 
         public Fat32FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
+            Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
             for(int i = 0; i < bpb.NumberOfFATs; i++)
-                ClusterMaps[i] = new ClusterMap(this, i);
+                Fats[i] = new FileAllocationTable(this, i);
 
             if (bpb is Fat32BiosParameterBlock fat32bpb)
             {
@@ -34,22 +34,21 @@ namespace TotalImage.FileSystems.FAT
             => _fsInfo.IsValid && _fsInfo.freeCount <= ClusterCount ? _fsInfo.freeCount : base.TotalFreeClusters;
 
         /// <inheritdoc />
-        protected override uint ClusterMask => 0xFFFFFFF; // The most significant 4 bits are reserved
+        public override FAT.FileAllocationTable[] Fats { get; }
 
-        /// <inheritdoc />
-        public override FatFileSystem.ClusterMap[] ClusterMaps { get; }
-
-        private new class ClusterMap : FatFileSystem.ClusterMap
+        private class FileAllocationTable : FAT.FileAllocationTable
         {
             Fat32FileSystem _fat32;
             int _fatIndex;
-            internal ClusterMap(Fat32FileSystem fat32, int fatIndex)
+            internal FileAllocationTable(Fat32FileSystem fat32, int fatIndex)
             {
                 if (fatIndex >= fat32._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();
 
                 _fat32 = fat32;
                 _fatIndex = fatIndex;
             }
+
+            protected override uint Mask => 0xFFFFFFF; // The most significant 4 bits are reserved
 
             public override uint Length
                 => (uint)(_fat32.BytesPerClusterMap) / 4;
@@ -58,7 +57,7 @@ namespace TotalImage.FileSystems.FAT
             {
                 get
                 {
-                    index &= _fat32.ClusterMask;
+                    index &= Mask;
 
                     if (index >= Length) throw new ArgumentOutOfRangeException();
 
@@ -77,7 +76,7 @@ namespace TotalImage.FileSystems.FAT
 
                     // 32-bit cluster map values. Nothing to see here
                     reader.BaseStream.Seek(index * 4, SeekOrigin.Current);
-                    return reader.ReadUInt32() & _fat32.ClusterMask;
+                    return reader.ReadUInt32() & Mask;
                 }
 
                 set

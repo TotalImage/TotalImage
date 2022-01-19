@@ -17,7 +17,7 @@ namespace TotalImage.FileSystems.FAT
         {
             _fat = fat;
             _base = fat.GetStream();
-            _clusters = fat.GetClusterChain(firstCluster);
+            _clusters = fat.MainFat.GetClusterChain(firstCluster);
             _length = (uint)_clusters.Length * fat.BytesPerCluster;
         }
 

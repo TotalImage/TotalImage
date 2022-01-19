@@ -15,9 +15,9 @@ namespace TotalImage.FileSystems.FAT
 
         public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            ClusterMaps = new ClusterMap[bpb.NumberOfFATs];
+            Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
             for (int i = 0; i < bpb.NumberOfFATs; i++)
-                ClusterMaps[i] = new ClusterMap(this, i);
+                Fats[i] = new FileAllocationTable(this, i);
         }
 
         //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
@@ -125,22 +125,21 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        protected override uint ClusterMask => 0xFFF;
+        public override FAT.FileAllocationTable[] Fats { get; }
 
-        /// <inheritdoc />
-        public override FatFileSystem.ClusterMap[] ClusterMaps { get; }
-
-        private new class ClusterMap : FatFileSystem.ClusterMap
+        private class FileAllocationTable : FAT.FileAllocationTable
         {
             Fat12FileSystem _fat12;
             int _fatIndex;
-            internal ClusterMap(Fat12FileSystem fat12, int fatIndex)
+            internal FileAllocationTable(Fat12FileSystem fat12, int fatIndex)
             {
                 if (fatIndex >= fat12._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();
 
                 _fat12 = fat12;
                 _fatIndex = fatIndex;
             }
+
+            protected override uint Mask => 0xFFF;
 
             public override uint Length
                 => (uint)(_fat12.BytesPerClusterMap) / 2 * 3;
