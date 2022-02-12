@@ -1,4 +1,4 @@
-﻿
+
 namespace TotalImage
 {
     partial class dlgSelectPartition
@@ -63,7 +63,7 @@ namespace TotalImage
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
             this.pnlBottom.Location = new System.Drawing.Point(0, 264);
-            this.pnlBottom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pnlBottom.Margin = new System.Windows.Forms.Padding(4);
             this.pnlBottom.Name = "pnlBottom";
             this.pnlBottom.Size = new System.Drawing.Size(730, 62);
             this.pnlBottom.TabIndex = 3;
@@ -74,7 +74,7 @@ namespace TotalImage
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnCancel.Location = new System.Drawing.Point(615, 15);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(100, 32);
             this.btnCancel.TabIndex = 1;
@@ -88,7 +88,7 @@ namespace TotalImage
             this.btnOK.Enabled = false;
             this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnOK.Location = new System.Drawing.Point(508, 15);
-            this.btnOK.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(4);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(100, 32);
             this.btnOK.TabIndex = 0;
@@ -103,7 +103,7 @@ namespace TotalImage
             this.cbxReadOnly.Enabled = false;
             this.cbxReadOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cbxReadOnly.Location = new System.Drawing.Point(19, 231);
-            this.cbxReadOnly.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbxReadOnly.Margin = new System.Windows.Forms.Padding(4);
             this.cbxReadOnly.Name = "cbxReadOnly";
             this.cbxReadOnly.Size = new System.Drawing.Size(108, 25);
             this.cbxReadOnly.TabIndex = 5;
@@ -126,9 +126,8 @@ namespace TotalImage
             this.lstPartitions.FullRowSelect = true;
             this.lstPartitions.GridLines = true;
             this.lstPartitions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lstPartitions.HideSelection = false;
             this.lstPartitions.Location = new System.Drawing.Point(19, 36);
-            this.lstPartitions.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstPartitions.Margin = new System.Windows.Forms.Padding(4);
             this.lstPartitions.MultiSelect = false;
             this.lstPartitions.Name = "lstPartitions";
             this.lstPartitions.ShowGroups = false;
@@ -187,7 +186,7 @@ namespace TotalImage
             this.Controls.Add(this.pnlBottom);
             this.Controls.Add(this.lblDesc);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "dlgSelectPartition";

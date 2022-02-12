@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -84,7 +84,7 @@ namespace TotalImage
             ListViewHitTestInfo hitTestInfo = lstPartitions.HitTest(e.X, e.Y);
             ListViewItem lvi = hitTestInfo.Item;
 
-            if (lvi != null)
+            if (lvi != null && lvi.SubItems[2].Text != "RAW")
             {
                 ReadOnly = cbxReadOnly.Checked;
                 SelectedEntry = int.Parse(lvi.Text);
