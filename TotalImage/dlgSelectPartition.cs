@@ -45,6 +45,7 @@ namespace TotalImage
 
         private void dlgSelectPartition_Load(object sender, System.EventArgs e)
         {
+            lblPartitioningScheme1.Text = PartitionTable.DisplayName;
             lstPartitions.Items.Clear();
 
             for (int i = 0; i < PartitionTable.Partitions.Count; i++)

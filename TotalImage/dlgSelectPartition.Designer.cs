@@ -42,6 +42,8 @@ namespace TotalImage
             this.clmEnd = new System.Windows.Forms.ColumnHeader();
             this.clmSize = new System.Windows.Forms.ColumnHeader();
             this.clmActive = new System.Windows.Forms.ColumnHeader();
+            this.lblPartioningScheme = new System.Windows.Forms.Label();
+            this.lblPartitioningScheme1 = new System.Windows.Forms.Label();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,7 +64,7 @@ namespace TotalImage
             this.pnlBottom.BackColor = System.Drawing.SystemColors.Control;
             this.pnlBottom.Controls.Add(this.btnCancel);
             this.pnlBottom.Controls.Add(this.btnOK);
-            this.pnlBottom.Location = new System.Drawing.Point(0, 264);
+            this.pnlBottom.Location = new System.Drawing.Point(0, 299);
             this.pnlBottom.Margin = new System.Windows.Forms.Padding(4);
             this.pnlBottom.Name = "pnlBottom";
             this.pnlBottom.Size = new System.Drawing.Size(730, 62);
@@ -102,12 +104,12 @@ namespace TotalImage
             this.cbxReadOnly.AutoSize = true;
             this.cbxReadOnly.Enabled = false;
             this.cbxReadOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxReadOnly.Location = new System.Drawing.Point(19, 231);
+            this.cbxReadOnly.Location = new System.Drawing.Point(19, 266);
             this.cbxReadOnly.Margin = new System.Windows.Forms.Padding(4);
             this.cbxReadOnly.Name = "cbxReadOnly";
-            this.cbxReadOnly.Size = new System.Drawing.Size(108, 25);
+            this.cbxReadOnly.Size = new System.Drawing.Size(159, 25);
             this.cbxReadOnly.TabIndex = 5;
-            this.cbxReadOnly.Text = "Read-only";
+            this.cbxReadOnly.Text = "Load as read-only";
             this.cbxReadOnly.UseVisualStyleBackColor = true;
             // 
             // lstPartitions
@@ -131,7 +133,7 @@ namespace TotalImage
             this.lstPartitions.MultiSelect = false;
             this.lstPartitions.Name = "lstPartitions";
             this.lstPartitions.ShowGroups = false;
-            this.lstPartitions.Size = new System.Drawing.Size(695, 186);
+            this.lstPartitions.Size = new System.Drawing.Size(695, 187);
             this.lstPartitions.TabIndex = 6;
             this.lstPartitions.UseCompatibleStateImageBehavior = false;
             this.lstPartitions.View = System.Windows.Forms.View.Details;
@@ -173,6 +175,24 @@ namespace TotalImage
             this.clmActive.Text = "Active";
             this.clmActive.Width = 65;
             // 
+            // lblPartioningScheme
+            // 
+            this.lblPartioningScheme.AutoSize = true;
+            this.lblPartioningScheme.Location = new System.Drawing.Point(15, 236);
+            this.lblPartioningScheme.Name = "lblPartioningScheme";
+            this.lblPartioningScheme.Size = new System.Drawing.Size(142, 20);
+            this.lblPartioningScheme.TabIndex = 7;
+            this.lblPartioningScheme.Text = "Partitioning scheme:";
+            // 
+            // lblPartitioningScheme1
+            // 
+            this.lblPartitioningScheme1.AutoSize = true;
+            this.lblPartitioningScheme1.Location = new System.Drawing.Point(163, 236);
+            this.lblPartitioningScheme1.Name = "lblPartitioningScheme1";
+            this.lblPartitioningScheme1.Size = new System.Drawing.Size(161, 20);
+            this.lblPartitioningScheme1.TabIndex = 8;
+            this.lblPartitioningScheme1.Text = "<partitioning scheme>";
+            // 
             // dlgSelectPartition
             // 
             this.AcceptButton = this.btnOK;
@@ -180,7 +200,9 @@ namespace TotalImage
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(730, 326);
+            this.ClientSize = new System.Drawing.Size(730, 361);
+            this.Controls.Add(this.lblPartitioningScheme1);
+            this.Controls.Add(this.lblPartioningScheme);
             this.Controls.Add(this.lstPartitions);
             this.Controls.Add(this.cbxReadOnly);
             this.Controls.Add(this.pnlBottom);
@@ -216,5 +238,7 @@ namespace TotalImage
         private System.Windows.Forms.ColumnHeader clmActive;
         private System.Windows.Forms.ColumnHeader clmSize;
         private System.Windows.Forms.ColumnHeader clmLabel;
+        private System.Windows.Forms.Label lblPartioningScheme;
+        private System.Windows.Forms.Label lblPartitioningScheme1;
     }
 }
