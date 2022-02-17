@@ -60,6 +60,18 @@ namespace TotalImage.FileSystems.FAT
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public char[] name3 = new char[2];
 
+        public LongDirectoryEntry(byte ord, char[] name1, FatAttributes attr, byte type, byte chksum, char[] name2, ushort fstClusLO, char[] name3)
+        {
+            this.ord = ord;
+            this.name1 = name1;
+            this.attr = attr;
+            this.type = type;
+            this.chksum = chksum;
+            this.name2 = name2;
+            this.fstClusLO = fstClusLO;
+            this.name3 = name3;
+        }
+
         public static explicit operator LongDirectoryEntry(DirectoryEntry entry)
         {
             var lfnEntry = new LongDirectoryEntry();
