@@ -19,7 +19,7 @@ namespace TotalImage.FileSystems.FAT
         /// If masked with 0x40, this indicates the entry is the last entry in
         /// the set (physically first).
         /// </summary>
-        public byte ord;
+        public byte ord = default;
 
         /// <summary>
         /// Characters 1-5 of the long name sub-component.
@@ -30,18 +30,18 @@ namespace TotalImage.FileSystems.FAT
         /// <summary>
         /// Attributes - must be <c>FatAttributes.LongName</c>
         /// </summary>
-        public FatAttributes attr;
+        public FatAttributes attr = default;
 
         /// <summary>
         /// If zero, indicates a directory entry that is a sub-component of a
         /// long name. Other values are reserved for future extensions.
         /// </summary>
-        public byte type;
+        public byte type = default;
 
         /// <summary>
         /// Checksum of the short directory entry at the end of the set.
         /// </summary>
-        public byte chksum;
+        public byte chksum = default;
 
         /// <summary>
         /// Characters 6-11 of the long name sub-component.
@@ -52,7 +52,7 @@ namespace TotalImage.FileSystems.FAT
         /// <summary>
         /// Must be zero.
         /// </summary>
-        public ushort fstClusLO;
+        public ushort fstClusLO = default;
 
         /// <summary>
         /// Characters 12-13 of the long name sub-component.
@@ -60,16 +60,9 @@ namespace TotalImage.FileSystems.FAT
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public char[] name3 = new char[2];
 
-        public LongDirectoryEntry(byte ord, char[] name1, FatAttributes attr, byte type, byte chksum, char[] name2, ushort fstClusLO, char[] name3)
+        public LongDirectoryEntry()
         {
-            this.ord = ord;
-            this.name1 = name1;
-            this.attr = attr;
-            this.type = type;
-            this.chksum = chksum;
-            this.name2 = name2;
-            this.fstClusLO = fstClusLO;
-            this.name3 = name3;
+
         }
 
         public static explicit operator LongDirectoryEntry(DirectoryEntry entry)
