@@ -2061,6 +2061,25 @@ namespace TotalImage
             }
             else
             {
+                if(image.PartitionTable.Partitions.Count == 0)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"We found a partition table in this image, but no partitions, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "Unsupported file system",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                    });
+
+                    CloseImage();
+                    return;
+                }
+                
                 if (image.PartitionTable.Partitions.Count > 1)
                 {
                     dlgSelectPartition selectFrm = new dlgSelectPartition()
