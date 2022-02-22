@@ -1880,12 +1880,33 @@ namespace TotalImage
                 filename = Path.GetFileName(path);
                 FileInfo fileinfo = new FileInfo(path);
 
+                //Stop with empty files rightaway
+                if (fileinfo.Length == 0)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"File \"{filename}\" appears to be empty (zero bytes in size). If you downloaded or copied this file from some other location, make sure the source file is not damaged and the transfer completed successfully.{Environment.NewLine}{Environment.NewLine}" +
+                        $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "File is empty",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                    });
+
+                    CloseImage();
+                    return;
+                }
+
                 try
                 {
                     //Disable this for now until it's properly implemented
                     bool memoryMapping = false; //fileinfo.Length > Settings.CurrentSettings.MemoryMappingThreshold;
-
+					
                     var ext = Path.GetExtension(filename).ToLowerInvariant();
+
                     switch (ext)
                     {
                         case ".vhd":
@@ -1917,7 +1938,7 @@ namespace TotalImage
                     CloseImage();
                     return;
                 }
-                catch (IOException e) when ((e.HResult & 0x0000FFFF) == 32)
+                catch (IOException e) when ((e.HResult & 0x0000FFFF) == 32) //File is locked by another process
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
@@ -1971,14 +1992,37 @@ namespace TotalImage
                     CloseImage();
                     return;
                 }
-
-                if (fileinfo.Length == 0)
+                catch (Exception e) //Other errors
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"File \"{filename}\" appears to be empty (zero bytes in size). If you downloaded or copied this file from elsewhere, make sure the source file is not damaged and the transfer completed successfully.{Environment.NewLine}{Environment.NewLine}" +
-                        $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "File is empty",
+                        Text = $"File \"{filename}\" could not be opened due to the following exception: {e.Message}.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "File in use by another process",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                    });
+                    CloseImage();
+                    return;
+                }
+            }
+
+            CurrentPartitionIndex = 0;
+            selectPartitionToolStripComboBox.Items.Clear();
+
+            if (image.PartitionTable is Partitions.NoPartitionTable)
+            {
+                if (image.PartitionTable.Partitions.Count == 0)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"We found no partition table nor any supported partitions in this image. If this is a hard disk image, verify that it's partitioned with a supported partitioning scheme and contains at least one supported partition.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "No partitions detected",
                         Caption = "Error",
                         Buttons =
                         {
@@ -1991,10 +2035,85 @@ namespace TotalImage
                     CloseImage();
                     return;
                 }
-            }
+                else
+                {
+                    if (image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)
+                    {
+                        TaskDialog.ShowDialog(this, new TaskDialogPage()
+                        {
+                            Text = $"We found no partition table in this image, though there appears to be a partition with an unsupported file system. This image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
+                        $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                            Heading = "Unsupported file system",
+                            Caption = "Error",
+                            Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                            Icon = TaskDialogIcon.Error,
+                        });
 
-            CurrentPartitionIndex = 0;
-            if (image.PartitionTable.Partitions.Count == 0)
+                        CloseImage();
+                        return;
+                    }
+
+                    selectPartitionToolStripComboBox.Items.Add($"{image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[0].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length)})");
+                }
+            }
+            else
+            {
+                if (image.PartitionTable.Partitions.Count > 1)
+                {
+                    dlgSelectPartition selectFrm = new dlgSelectPartition()
+                    {
+                        PartitionTable = image.PartitionTable
+                    };
+
+                    if (selectFrm.ShowDialog() == DialogResult.Cancel)
+                    {
+                        CloseImage();
+                        return;
+                    }
+
+                    CurrentPartitionIndex = selectFrm.SelectedEntry;
+                }
+
+                if (image.PartitionTable.Partitions.Count == 1 && image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"We found one partition in this image, but the file system it contains is not supported yet, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "Unsupported file system",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                    });
+
+                    CloseImage();
+                    return;
+                }
+
+                for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
+                {
+                    try
+                    {
+                        selectPartitionToolStripComboBox.Items.Add($"{(image.PartitionTable.Partitions.Count > 1 ? i + ": " : string.Empty)}{image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
+
+                        if (i == CurrentPartitionIndex)
+                        {
+                            selectPartitionToolStripComboBox.SelectedIndex = i;
+                        }
+                    }
+                    catch (InvalidDataException)
+                    {
+
+                    }
+                }
+            }
+            /*if (image.PartitionTable.Partitions.Count == 0)
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
@@ -2070,17 +2189,13 @@ namespace TotalImage
                     }
                 }
             }
-
+            */
             LoadPartitionInCurrentImage(CurrentPartitionIndex);
 
             if (filename != "")
-            {
                 Text = $"{filename} - TotalImage";
-            }
             else
-            {
                 Text = "(Untitled) - TotalImage";
-            }
         }
 
         private void LoadPartitionInCurrentImage(int index)
