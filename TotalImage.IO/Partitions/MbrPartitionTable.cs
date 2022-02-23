@@ -188,7 +188,7 @@ namespace TotalImage.Partitions
             GptProtectivePartition = 0xEE,
 
             /// <summary>
-            /// A EFI System Šartition (ESP).
+            /// An EFI System Partition (ESP).
             /// </summary>
             [Display(Name = "EFI System Partition")]
             EfiSystemPartition = 0xEF,
