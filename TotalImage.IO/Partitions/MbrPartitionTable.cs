@@ -32,7 +32,7 @@ namespace TotalImage.Partitions
             Span<byte> buffer = new byte[2];
             _container.Content.Read(buffer);
             ushort signature = BinaryPrimitives.ReadUInt16LittleEndian(buffer);
-            if (signature != 0xaa55)
+            if (signature != 0xAA55)
             {
                 throw new InvalidDataException();
             }
@@ -115,22 +115,83 @@ namespace TotalImage.Partitions
         public enum MbrPartitionType : byte
         {
             /// <summary>
-            /// An empty partition entry
+            /// An empty (unused) partition entry.
             /// </summary>
             [Display(Name = "Empty")]
             Empty = 0,
 
             /// <summary>
-            /// A FAT-12 partition for use with DOS
+            /// A FAT12 primary partition in first physical 32 MB of the disk or a logical drive anywhere on the disk.
             /// </summary>
-            [Display(Name = "DOS (FAT-12)")]
+            [Display(Name = "FAT12")]
             DosFat12 = 0x01,
 
             /// <summary>
-            /// A protective MBR partition for GPT drives
+            /// A FAT16 primary partition with fewer than 65,536 sectors (32 MB) in first physical 32 MB of the disk, or a logical drive anywhere on the disk.
+            /// </summary>
+            [Display(Name = "FAT16")]
+            DosFat16 = 0x04,
+
+            /// <summary>
+            /// Extended partition with CHS addressing. It must reside within the first physical 8 GB of the disk.
+            /// </summary>
+            [Display(Name = "Extended Partition (CHS)")]
+            ExtendedChs = 0x05,
+
+            /// <summary>
+            /// A FAT16B primary partition with 65,536 or more sectors. It must reside within the first 8 GB of the disk unless used for logical drives in an 0Fh extended partition.
+            /// Also used for FAT12 and FAT16 volumes in primary partitions if they are not residing in first physical 32 MB of the disk.
+            /// </summary>
+            [Display(Name = "FAT16B (CHS)")]
+            DosFat16B = 0x06,
+
+            /// <summary>
+            /// A partition containing HPFS, NTFS or exFAT file system.
+            /// </summary>
+            [Display(Name = "HPFS/NTFS/exFAT")]
+            HpfsNtfsExFat = 0x07,
+
+            /// <summary>
+            /// A partition containing FAT32 with CHS addressing.
+            /// </summary>
+            [Display(Name = "FAT32 (CHS)")]
+            Fat32Chs = 0x0B,
+
+            /// <summary>
+            /// A partition containing FAT32 with Logical Block Addressing.
+            /// </summary>
+            [Display(Name = "FAT32 (LBA)")]
+            Fat32Lba = 0x0C,
+
+            /// <summary>
+            /// A partition containing FAT32 with Logical Block Addressing.
+            /// </summary>
+            [Display(Name = "FAT16B (LBA)")]
+            Fat16BLba = 0x0E,
+
+            /// <summary>
+            /// Extended partition with Logical Block Addressing.
+            /// </summary>
+            [Display(Name = "Extended Partition (LBA)")]
+            ExtendedLba = 0x0F,
+
+            /// <summary>
+            /// Dynamic Disk Volume marker.
+            /// </summary>
+            [Display(Name = "Dynamic Disk Volume")]
+            Dynamic = 0x42,
+
+            /// <summary>
+            /// A protective MBR partition for GPT drives.
             /// </summary>
             [Display(Name = "GPT Protective Partition")]
             GptProtectivePartition = 0xEE,
+
+            /// <summary>
+            /// A EFI System Šartition (ESP).
+            /// </summary>
+            [Display(Name = "EFI System Partition")]
+            EfiSystemPartition = 0xEF,
         }
     }
 }
