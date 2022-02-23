@@ -130,6 +130,10 @@ namespace TotalImage.Containers
                 {
                     return mbrPartition;
                 }
+                else
+                {
+                    throw new InvalidDataException("Found potentially overlapping partitions!");
+                }
             }
 
             return new NoPartitionTable(this);
