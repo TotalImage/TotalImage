@@ -1992,95 +1992,61 @@ namespace TotalImage
                     CloseImage();
                     return;
                 }
-                catch (Exception e) //Other errors
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"File \"{filename}\" could not be opened due to the following exception: {e.Message}.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "File in use by another process",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                    });
-                    CloseImage();
-                    return;
-                }
             }
+
+            Settings.AddRecentImage(filepath);
+            PopulateRecentList();
 
             CurrentPartitionIndex = 0;
             selectPartitionToolStripComboBox.Items.Clear();
 
             if (image.PartitionTable is Partitions.NoPartitionTable)
             {
+                if (image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"We found no partition table in this image, though there appears to be an unsupported file system contained inside. This image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "Unsupported file system",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                        SizeToContent = true
+                    });
+
+                    CloseImage();
+                    return;
+                }
+
+                selectPartitionToolStripComboBox.Items.Add($"{image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[0].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length)})");
+                selectPartitionToolStripComboBox.SelectedIndex = 0;
+            }
+            else
+            {
                 if (image.PartitionTable.Partitions.Count == 0)
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"We found no partition table nor any supported partitions in this image. If this is a hard disk image, verify that it's partitioned with a supported partitioning scheme and contains at least one supported partition.{Environment.NewLine}{Environment.NewLine}" +
+                        Text = $"We found a supported partition table in this image, but no partitions, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
                     $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "No partitions detected",
+                        Heading = "No partitions found",
                         Caption = "Error",
                         Buttons =
                         {
                             TaskDialogButton.OK
                         },
                         Icon = TaskDialogIcon.Error,
-                        SizeToContent = true
+                        SizeToContent = true,
                     });
 
                     CloseImage();
                     return;
                 }
-                else
-                {
-                    if (image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)
-                    {
-                        TaskDialog.ShowDialog(this, new TaskDialogPage()
-                        {
-                            Text = $"We found no partition table in this image, though there appears to be a partition with an unsupported file system. This image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
-                        $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                            Heading = "Unsupported file system",
-                            Caption = "Error",
-                            Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                            Icon = TaskDialogIcon.Error,
-                        });
 
-                        CloseImage();
-                        return;
-                    }
-
-                    selectPartitionToolStripComboBox.Items.Add($"{image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[0].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length)})");
-                    selectPartitionToolStripComboBox.SelectedIndex = 0;
-                }
-            }
-            else
-            {
-                if(image.PartitionTable.Partitions.Count == 0)
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"We found a partition table in this image, but no partitions, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "Unsupported file system",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                    });
-
-                    CloseImage();
-                    return;
-                }
-                
                 if (image.PartitionTable.Partitions.Count > 1)
                 {
                     dlgSelectPartition selectFrm = new dlgSelectPartition()
@@ -2101,7 +2067,7 @@ namespace TotalImage
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"We found one partition in this image, but the file system it contains is not supported yet, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
+                        Text = $"We found one partition in this image, but it contains an unsupported file system, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
                     $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "Unsupported file system",
                         Caption = "Error",
@@ -2110,6 +2076,7 @@ namespace TotalImage
                             TaskDialogButton.OK
                         },
                         Icon = TaskDialogIcon.Error,
+                        SizeToContent = true
                     });
 
                     CloseImage();
@@ -2133,83 +2100,7 @@ namespace TotalImage
                     }
                 }
             }
-            /*if (image.PartitionTable.Partitions.Count == 0)
-            {
-                TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = $"We couldn't find any partitions in your image. If this is a hard disk image, verify that it's partitioned with either MBR or GPT partitioning scheme and contains at least one partition.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                    Heading = "No partitions detected",
-                    Caption = "Error",
-                    Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                    Icon = TaskDialogIcon.Error,
-                    SizeToContent = true
-                });
 
-                CloseImage();
-                return;
-            }
-            else if (image.PartitionTable.Partitions.Count >= 1)
-            {
-                if (image.PartitionTable.Partitions.Count > 1)
-                {
-                    dlgSelectPartition selectFrm = new dlgSelectPartition()
-                    {
-                        PartitionTable = image.PartitionTable
-                    };
-
-                    if (selectFrm.ShowDialog() == DialogResult.Cancel)
-                    {
-                        CloseImage();
-                        return;
-                    }
-
-                    CurrentPartitionIndex = selectFrm.SelectedEntry;
-                }
-
-                if (image.PartitionTable.Partitions.Count == 1 && image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"We found one partition in your image, but the file system it contains is not supported yet, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "Unsupported file system",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                        SizeToContent = true
-                    });
-
-                    CloseImage();
-                    return;
-                }
-
-                selectPartitionToolStripComboBox.Items.Clear();
-
-                for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
-                {
-                    try
-                    {
-                        selectPartitionToolStripComboBox.Items.Add($"{(image.PartitionTable.Partitions.Count > 1 ? i + ": " : string.Empty)}{image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
-
-                        if (i == CurrentPartitionIndex)
-                        {
-                            selectPartitionToolStripComboBox.SelectedIndex = i;
-                        }
-                    }
-                    catch (InvalidDataException)
-                    {
-
-                    }
-                }
-            }
-            */
             LoadPartitionInCurrentImage(CurrentPartitionIndex);
 
             if (filename != "")
@@ -2243,9 +2134,6 @@ namespace TotalImage
 
             EnableUI();
             UpdateStatusBar(true);
-
-            Settings.AddRecentImage(filepath);
-            PopulateRecentList();
         }
 
         /* Returns size of directory

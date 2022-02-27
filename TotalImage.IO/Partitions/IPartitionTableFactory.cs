@@ -1,4 +1,4 @@
-using System.IO;
+using TotalImage.Containers;
 
 namespace TotalImage.Partitions
 {
@@ -8,10 +8,10 @@ namespace TotalImage.Partitions
     public interface IPartitionTableFactory
     {
         /// <summary>
-        /// Attempts to load a partition table from a given steam
+        /// Attempts to load a partition table from a given container
         /// </summary>
-        /// <param name="stream">The stream containing a partition table</param>
+        /// <param name="container">The container containing a partition table</param>
         /// <returns>The partition table if load was successful, null if not.</returns>
-        public PartitionTable? TryLoadPartitionTable(Stream stream);
+        public PartitionTable? TryLoadPartitionTable(Container container);
     }
 }
