@@ -100,7 +100,7 @@ namespace TotalImage.Containers
             Content.Read(signatureBytes);
             ushort signature = BinaryPrimitives.ReadUInt16LittleEndian(signatureBytes);
 
-            if (signature != 0xaa55)
+            if (signature != 0xAA55)
             {
                 return new NoPartitionTable(this);
             }

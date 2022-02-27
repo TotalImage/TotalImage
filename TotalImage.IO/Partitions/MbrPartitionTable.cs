@@ -124,13 +124,13 @@ namespace TotalImage.Partitions
             /// A FAT12 primary partition in first physical 32 MB of the disk or a logical drive anywhere on the disk.
             /// </summary>
             [Display(Name = "FAT12")]
-            DosFat12 = 0x01,
+            Fat12 = 0x01,
 
             /// <summary>
             /// A FAT16 primary partition with fewer than 65,536 sectors (32 MB) in first physical 32 MB of the disk, or a logical drive anywhere on the disk.
             /// </summary>
             [Display(Name = "FAT16")]
-            DosFat16 = 0x04,
+            Fat16 = 0x04,
 
             /// <summary>
             /// Extended partition with CHS addressing. It must reside within the first physical 8 GB of the disk.
@@ -143,7 +143,7 @@ namespace TotalImage.Partitions
             /// Also used for FAT12 and FAT16 volumes in primary partitions if they are not residing in first physical 32 MB of the disk.
             /// </summary>
             [Display(Name = "FAT16B (CHS)")]
-            DosFat16B = 0x06,
+            Fat16B = 0x06,
 
             /// <summary>
             /// A partition containing HPFS, NTFS or exFAT file system.
