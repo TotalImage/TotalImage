@@ -2057,6 +2057,7 @@ namespace TotalImage
                     }
 
                     selectPartitionToolStripComboBox.Items.Add($"{image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[0].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length)})");
+                    selectPartitionToolStripComboBox.SelectedIndex = 0;
                 }
             }
             else
