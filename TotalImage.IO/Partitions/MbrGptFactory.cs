@@ -5,9 +5,9 @@ using TotalImage.Containers;
 namespace TotalImage.Partitions
 {
     /// <summary>
-    /// A factory class that can create an MBR partition table
+    /// A factory class that can create an MBR or GPT partition table
     /// </summary>
-    public class MbrFactory : IPartitionTableFactory
+    public class MbrGptFactory : IPartitionTableFactory
     {
         /// <inheritdoc />
         public PartitionTable? TryLoadPartitionTable(Container container)
@@ -32,7 +32,7 @@ namespace TotalImage.Partitions
                     && (entry.Offset + entry.Length) > uint.MaxValue
                     && entry.Type == MbrPartitionTable.MbrPartitionType.GptProtectivePartition)
                 {
-                    return null;
+                    return new GptPartitionTable(container);
                 }
 
                 // check partitions seem fine (ie, no overlapping)
@@ -46,11 +46,8 @@ namespace TotalImage.Partitions
                     sanity &= (lastOffset <= Content.Length);
                 }
 
-                if (!sanity)
-                {
-                    if (CheckIfUnpartitioned(Content))
-                        return null;
-                }
+                if (!sanity && CheckIfUnpartitioned(Content))
+                    return null;
             }
             else
             {

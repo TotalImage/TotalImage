@@ -11,8 +11,7 @@ namespace TotalImage.Partitions
     public abstract class PartitionTable
     {
         private static readonly ImmutableArray<IPartitionTableFactory> _knownFactories = ImmutableArray.Create<IPartitionTableFactory>(
-            new MbrFactory()//,
-            //new GptFactory()
+            new MbrGptFactory()
         );
 
         /// <summary>
