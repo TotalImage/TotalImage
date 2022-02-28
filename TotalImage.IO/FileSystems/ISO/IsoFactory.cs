@@ -52,7 +52,7 @@ namespace TotalImage.FileSystems.ISO
 
                 nextOffset += 0x800;
             }
-            while (stream.Length > nextOffset);
+            while (nextOffset < stream.Length && nextOffset < 0x100000); //Stop at 1 MiB because it's effectively pointless to look further
 
             return null;
         }
