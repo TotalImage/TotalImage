@@ -93,7 +93,7 @@
             this.lblCopyright.Name = "lblCopyright";
             this.lblCopyright.Size = new System.Drawing.Size(312, 20);
             this.lblCopyright.TabIndex = 4;
-            this.lblCopyright.Text = "Copyright © 2020-2021 The TotalImage Team";
+            this.lblCopyright.Text = "Copyright © 2020-2022 The TotalImage Team";
             // 
             // pnlBottom
             // 
