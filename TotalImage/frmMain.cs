@@ -1822,6 +1822,7 @@ namespace TotalImage
                             TaskDialogButton.OK
                         },
                         Icon = TaskDialogIcon.Error,
+                        SizeToContent = true
                     });
                     CloseImage();
                     return;
@@ -1839,6 +1840,43 @@ namespace TotalImage
                             TaskDialogButton.OK
                         },
                         Icon = TaskDialogIcon.Error,
+                        SizeToContent = true
+                    });
+                    CloseImage();
+                    return;
+                }
+                catch(UnauthorizedAccessException)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"File \"{filename}\" could not be opened because access was denied. Make sure you have the required permissions and that the file is not marked as read-only.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "Access denied",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                        SizeToContent = true
+                    });
+                    CloseImage();
+                    return;
+                }
+                catch(Exception e)
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"File \"{filename}\" could not be opened due to the following exception:{Environment.NewLine}{Environment.NewLine}" +
+                        $"{e.Message}{Environment.NewLine}{Environment.NewLine}If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "Cannot open file",
+                        Caption = "Error",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Error,
+                        SizeToContent = true
                     });
                     CloseImage();
                     return;
