@@ -6,7 +6,7 @@ namespace TotalImage
     {
         public string TargetPath { get; private set; } = Settings.CurrentSettings.DefaultExtractPath;
         public bool OpenFolder { get; private set; } = Settings.CurrentSettings.OpenFolderAfterExtract;
-        public Settings.FolderExtract ExtractType { get; private set; }
+        public DirectoryExtractionMode DirectoryExtractionMode { get; private set; }
 
         public dlgExtract()
         {
@@ -19,15 +19,15 @@ namespace TotalImage
             OpenFolder = cbxOpenFolder.Checked;
             if (rbnExtractSameFolder.Checked)
             {
-                ExtractType = Settings.FolderExtract.Merge;
+                DirectoryExtractionMode = DirectoryExtractionMode.Merge;
             }
             else if (rbnIgnoreFolders.Checked)
             {
-                ExtractType = Settings.FolderExtract.Ignore;
+                DirectoryExtractionMode = DirectoryExtractionMode.Skip;
             }
             else if (rbnPreserveDirs.Checked)
             {
-                ExtractType = Settings.FolderExtract.Preserve;
+                DirectoryExtractionMode = DirectoryExtractionMode.Preserve;
             }
         }
 
@@ -48,11 +48,11 @@ namespace TotalImage
         {
             txtPath.Text = TargetPath;
             cbxOpenFolder.Checked = OpenFolder;
-            switch (Settings.CurrentSettings.DefaultExtractType)
+            switch (Settings.CurrentSettings.DefaultDirectoryExtractionMode)
             {
-                case Settings.FolderExtract.Ignore: rbnIgnoreFolders.Checked = true; break;
-                case Settings.FolderExtract.Merge: rbnExtractSameFolder.Checked = true; break;
-                case Settings.FolderExtract.Preserve: rbnPreserveDirs.Checked = true; break;
+                case DirectoryExtractionMode.Skip: rbnIgnoreFolders.Checked = true; break;
+                case DirectoryExtractionMode.Merge: rbnExtractSameFolder.Checked = true; break;
+                case DirectoryExtractionMode.Preserve: rbnPreserveDirs.Checked = true; break;
             }
         }
     }

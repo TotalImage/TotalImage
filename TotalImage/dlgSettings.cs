@@ -111,11 +111,11 @@ namespace TotalImage
                 case SizeUnit.Binary: lstSizeUnits.SelectedIndex = 2; break;
             }
 
-            switch (Settings.CurrentSettings.DefaultExtractType)
+            switch (Settings.CurrentSettings.DefaultDirectoryExtractionMode)
             {
-                case Settings.FolderExtract.Ignore: rbnIgnoreFolders.Checked = true; break;
-                case Settings.FolderExtract.Merge: rbnExtractFlat.Checked = true; break;
-                case Settings.FolderExtract.Preserve: rbnExtractPreserve.Checked = true; break;
+                case DirectoryExtractionMode.Skip: rbnIgnoreFolders.Checked = true; break;
+                case DirectoryExtractionMode.Merge: rbnExtractFlat.Checked = true; break;
+                case DirectoryExtractionMode.Preserve: rbnExtractPreserve.Checked = true; break;
             }
         }
 
@@ -169,11 +169,11 @@ namespace TotalImage
             }
 
             if (rbnExtractFlat.Checked)
-                Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.Merge;
+                Settings.CurrentSettings.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Merge;
             else if (rbnExtractPreserve.Checked)
-                Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.Preserve;
+                Settings.CurrentSettings.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Preserve;
             else if (rbnIgnoreFolders.Checked)
-                Settings.CurrentSettings.DefaultExtractType = Settings.FolderExtract.Ignore;
+                Settings.CurrentSettings.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Skip;
 
             Settings.Save();
         }

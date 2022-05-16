@@ -631,12 +631,12 @@ namespace TotalImage
                 dlg.lblPath.Text = $"Extract {SelectedItems.Count()} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    ExtractFiles(SelectedItems, dlg.TargetPath, dlg.ExtractType, dlg.OpenFolder);
+                    FileExtraction.ExtractFiles(this, SelectedItems, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
                 }
             }
             else
             {
-                ExtractFiles(SelectedItems, Settings.CurrentSettings.DefaultExtractPath, Settings.CurrentSettings.DefaultExtractType, Settings.CurrentSettings.OpenFolderAfterExtract);
+                FileExtraction.ExtractFiles(this, SelectedItems);
             }
         }
 
@@ -831,7 +831,7 @@ namespace TotalImage
                     Caption = "Warning",
                     Buttons =
                         {
-                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
+                            new TaskDialogCommandLinkButton("&Save") { Tag = 1 },
                             new TaskDialogCommandLinkButton("&Discard"),
                             TaskDialogButton.Cancel
                         },
@@ -923,45 +923,22 @@ namespace TotalImage
                     string targetDir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
                     string targetFile = Path.Combine(targetDir, SelectedItems.First().Name);
 
-                    ExtractFiles(SelectedItems, targetDir, Settings.FolderExtract.Ignore, false, true);
-
-                    ProcessStartInfo psi = new ProcessStartInfo
-                    {
-                        FileName = targetFile,
-                        UseShellExecute = true
-                    };
+                    FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
 
                     try
                     {
-                        Process.Start(psi);
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = targetFile,
+                            UseShellExecute = true,
+                            ErrorDialog = true
+                        });
                     }
                     catch (System.ComponentModel.Win32Exception ex)
                     {
-                        if (ex.NativeErrorCode == 0x000004C7)
-                        {
-                            //User cancelled at the UAC prompt, so just ignore this exception
-                        }
-                        else if (ex.NativeErrorCode == 0x000000C1)
-                        {
-                            //The EXE format is bad (not a Win32 program), so let's error out
-
-                            string targetFileShort = Path.GetFileName(targetFile);
-                            TaskDialog.ShowDialog(this, new TaskDialogPage()
-                            {
-                                Text = $"The file \"{targetFileShort}\" is either not a valid program or not designed to run on this operating system.",
-                                Heading = "Cannot start program",
-                                Caption = "Error",
-                                Buttons =
-                                {
-                                    TaskDialogButton.OK
-                                },
-                                Icon = TaskDialogIcon.Error,
-                            });
-                        }
-                        else
-                        {
-                            throw; //Rethrow everything else
-                        }
+                        // Throw if Process.Start fails with anything other than ERROR_CANCELLED
+                        if (ex.NativeErrorCode != 0x000004C7)
+                            throw;
                     }
                 }
             }
@@ -1312,7 +1289,7 @@ namespace TotalImage
                         string targetDir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
                         string targetFile = Path.Combine(targetDir, SelectedItems.First().Name);
 
-                        ExtractFiles(SelectedItems, targetDir, Settings.FolderExtract.Ignore, false, true);
+                        FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
 
                         ProcessStartInfo psi = new ProcessStartInfo
                         {
@@ -1547,19 +1524,17 @@ namespace TotalImage
                     //Here is where the actual extraction to the temp dir happens
                     if (sender is ListView)
                     {
-                        extractionSucceeded = ExtractFiles(SelectedItems, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
+                        extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Preserve);
                     }
                     else if (sender is TreeView)
                     {
                         if (draggedDir.Parent == null) //Root dir needs to be treated separately
                         {
-                            extractionSucceeded = ExtractFiles(draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
+                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), DirectoryExtractionMode.Preserve);
                         }
                         else
                         {
-                            List<TiFileSystemObject> dir = new List<TiFileSystemObject>();
-                            dir.Add(draggedDir);
-                            extractionSucceeded = ExtractFiles(dir, Path.Combine(Path.GetTempPath(), "TotalImage", filename), Settings.FolderExtract.Preserve, false, true);
+                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, new TiFileSystemObject[] { draggedDir }, DirectoryExtractionMode.Preserve);
                         }
                     }
 
@@ -2372,235 +2347,6 @@ namespace TotalImage
             lstFiles.SetSortIcon(sortColumn, sortOrder);
 
             PopulateRecentList();
-        }
-
-        enum ConfirmOverwriteDialogResult
-        {
-            Cancel,
-            Overwrite,
-            OverwriteAll,
-            Skip,
-            SkipAll
-        }
-
-        private ConfirmOverwriteDialogResult ShowConfirmOverwriteDialog(IWin32Window parentDialog, string filename)
-        {
-            var overwriteButton = new TaskDialogButton("&Overwrite");
-            var skipButton = new TaskDialogButton("&Skip");
-            var overwritePage = new TaskDialogPage()
-            {
-                Text = $"The file \"{filename}\" already exists in the target directory. Do you want to overwrite it?",
-                Heading = "File already exists",
-                Caption = "Warning",
-                Buttons =
-                {
-                    overwriteButton,
-                    skipButton,
-                    TaskDialogButton.Cancel
-                },
-                AllowCancel = true,
-                Verification = new TaskDialogVerificationCheckBox()
-                {
-                    Checked = false,
-                    Text = "Do this for all currently extracted files"
-                },
-                Icon = TaskDialogIcon.Warning,
-                DefaultButton = TaskDialogButton.Cancel
-            };
-
-            var result = TaskDialog.ShowDialog(parentDialog, overwritePage);
-
-            if (result == TaskDialogButton.Cancel)
-            {
-                return ConfirmOverwriteDialogResult.Cancel;
-            }
-            else
-            {
-                var overwrite = result == overwriteButton;
-
-                if (overwritePage.Verification.Checked)
-                    return overwrite ? ConfirmOverwriteDialogResult.OverwriteAll : ConfirmOverwriteDialogResult.SkipAll;
-                else
-                    return overwrite ? ConfirmOverwriteDialogResult.Overwrite : ConfirmOverwriteDialogResult.Skip;
-            }
-        }
-
-        private bool ExtractFiles(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, bool openFolder, bool overwrite = false)
-        {
-            var cancellationTokenSource = new CancellationTokenSource();
-            var cancelButton = TaskDialogButton.Cancel;
-            cancelButton.Click += (_, _) => cancellationTokenSource.Cancel();
-
-            var page = new TaskDialogPage()
-            {
-                Caption = "Extracting",
-                Heading = "Extracting files, please wait...",
-                Text = "This might take a while, so sit back and relax while we do all the work.",
-                Buttons = { cancelButton },
-                ProgressBar = new TaskDialogProgressBar()
-                {
-                    State = TaskDialogProgressBarState.Marquee
-                },
-                Footnote = new TaskDialogFootnote()
-                {
-                    Text = "Enumerating files..."
-                }
-            };
-
-            page.Created += async (_, _) =>
-            {
-                var progress = new Progress<(int, string)>();
-                progress.ProgressChanged += (_, e) =>
-                {
-                    page.ProgressBar.Value = e.Item1;
-                    page.Footnote.Text = $"Extracting {e.Item2}";
-                };
-
-                try
-                {
-                    var files = await EnumerateFilesForExtractionAsync(items, path, extractType, cancellationTokenSource.Token)
-                        .ToListAsync(cancellationTokenSource.Token);
-
-                    page.ProgressBar.Maximum = files.Count;
-                    page.ProgressBar.State = TaskDialogProgressBarState.Normal;
-
-                    bool? overwriteAll = overwrite ? true : null;
-
-                    await ExtractFilesAsync(files, progress, cancellationTokenSource.Token, (filename) =>
-                    {
-                        if (overwriteAll is null && Settings.CurrentSettings.ConfirmOverwriteExtraction)
-                            switch (ShowConfirmOverwriteDialog(page.BoundDialog!, filename))
-                            {
-                                case ConfirmOverwriteDialogResult.Overwrite:
-                                    return true;
-                                case ConfirmOverwriteDialogResult.OverwriteAll:
-                                    overwriteAll = true;
-                                    return true;
-                                case ConfirmOverwriteDialogResult.Skip:
-                                    return false;
-                                case ConfirmOverwriteDialogResult.SkipAll:
-                                    overwriteAll = false;
-                                    return false;
-                                case ConfirmOverwriteDialogResult.Cancel:
-                                    cancellationTokenSource.Cancel();
-                                    return false;
-                                default:
-                                    throw new ArgumentException();
-                            }
-                        else return overwriteAll ?? true;
-                    });
-                }
-                catch (OperationCanceledException)
-                {
-                    // task canceled
-                }
-                finally
-                {
-                    page.BoundDialog?.Close();
-                }
-            };
-
-            TaskDialog.ShowDialog(this, page);
-
-            if (openFolder && !cancellationTokenSource.IsCancellationRequested)
-            {
-                Process.Start(new ProcessStartInfo()
-                {
-                    FileName = path,
-                    UseShellExecute = true
-                });
-            }
-
-            return !cancellationTokenSource.IsCancellationRequested;
-        }
-
-        private async IAsyncEnumerable<(TiFile, string)> EnumerateFilesForExtractionAsync(IEnumerable<TiFileSystemObject> items, string path, Settings.FolderExtract extractType, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            var files = from x in items where x is TiFile select x as TiFile;
-
-            foreach (var file in files)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                yield return (file, Path.Combine(path, file.Name));
-            }
-
-            if (extractType != Settings.FolderExtract.Ignore)
-            {
-                var dirs = from x in items where x is TiDirectory select x as TiDirectory;
-
-                foreach (var dir in dirs)
-                {
-                    var children = EnumerateFilesForExtractionAsync(
-                        dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false),
-                        extractType switch
-                        {
-                            Settings.FolderExtract.Merge => path,
-                            Settings.FolderExtract.Preserve => Path.Combine(path, dir.Name),
-                            _ => throw new ArgumentException()
-                        }, extractType, cancellationToken);
-
-                    await foreach (var child in children)
-                    {
-                        yield return child;
-                    }
-                }
-            }
-        }
-
-        private async Task ExtractFilesAsync(IEnumerable<(TiFile, string)> items, IProgress<(int, string)>? progress = default, CancellationToken cancellationToken = default, Func<string, bool>? confirmOverwriteCallback = default)
-        {
-            var i = 0;
-            var mutex = new SemaphoreSlim(1, 1);
-
-            foreach (var (file, path) in items)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                progress?.Report((i++, file.Name));
-
-                var fileExists = await Task.Run<bool>(() =>
-                {
-                    if (!Directory.Exists(Path.GetDirectoryName(path)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-
-                    return File.Exists(path);
-                });
-
-                if (fileExists && confirmOverwriteCallback?.Invoke(file.Name) == false)
-                    continue;
-
-                await Task.Run(async () =>
-                {
-                    await mutex.WaitAsync();
-
-                    using (var destStream = new FileStream(path, FileMode.Create))
-                    using (var fileStream = file.GetStream())
-                    {
-                        fileStream.Position = 0; // reset position to zero because CopyTo will only go from current position
-                        await fileStream.CopyToAsync(destStream, cancellationToken);
-                    }
-
-                    mutex.Release();
-
-                    if (Settings.CurrentSettings.ExtractPreserveDates)
-                    {
-                        if (file.CreationTime.HasValue)
-                            File.SetCreationTime(path, file.CreationTime.Value);
-
-                        if (file.LastAccessTime.HasValue)
-                            File.SetLastAccessTime(path, file.LastAccessTime.Value);
-
-                        if (file.LastWriteTime.HasValue)
-                            File.SetLastWriteTime(path, file.LastWriteTime.Value);
-                    }
-
-                    if (Settings.CurrentSettings.ExtractPreserveAttributes)
-                    {
-                        /* NOTE: Windows automatically sets the Archive attribute on all newly created files, so even if the attribute is cleared in the
-                        * image, Windows will still automatically set it anyway. Should we perhaps try to work around this by manually clearing it after? */
-                        File.SetAttributes(path, file.Attributes);
-                    }
-                });
-            }
         }
 
         private void UpdateStatusBar(bool updateFreeSpace)

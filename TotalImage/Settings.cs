@@ -33,7 +33,7 @@ namespace TotalImage
             public bool ShowStatusBar { get; set; } = true;
             public SizeUnit SizeUnit { get; set; } = SizeUnit.Bytes;
             public string DefaultExtractPath { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            public FolderExtract DefaultExtractType { get; set; } = FolderExtract.Preserve;
+            public DirectoryExtractionMode DefaultDirectoryExtractionMode { get; set; } = DirectoryExtractionMode.Preserve;
             public bool ExtractAlwaysAsk { get; set; } = true;
             public bool OpenFolderAfterExtract { get; set; } = true;
             public bool ExtractPreserveDates { get; set; } = true;
@@ -55,13 +55,6 @@ namespace TotalImage
 
         private static FileSystemWatcher settingsWatcher;
 
-        //Default folder options for extraction
-        public enum FolderExtract
-        {
-            Ignore,   //Folders will be ignored by default
-            Merge,    //All files will be extracted into the same directory
-            Preserve, //Directory structure will be preserved
-        }
 
         //Loads all settings from permanent storage (settings.json)
         static Settings()
@@ -133,7 +126,7 @@ namespace TotalImage
                     // 3. We are not on the UI thread anyway.
 
                     CurrentSettings.OpenFolderAfterExtract = settings.OpenFolderAfterExtract;
-                    CurrentSettings.DefaultExtractType = settings.DefaultExtractType;
+                    CurrentSettings.DefaultDirectoryExtractionMode = settings.DefaultDirectoryExtractionMode;
                     CurrentSettings.DefaultExtractPath = settings.DefaultExtractPath;
                     CurrentSettings.RecentImages = settings.RecentImages;
                     CurrentSettings.ExtractPreserveAttributes = settings.ExtractPreserveAttributes;
@@ -186,7 +179,7 @@ namespace TotalImage
         {
             //Set all settings to a default value here
             CurrentSettings.OpenFolderAfterExtract = true;
-            CurrentSettings.DefaultExtractType = FolderExtract.Preserve;
+            CurrentSettings.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Preserve;
             CurrentSettings.DefaultExtractPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             CurrentSettings.SizeUnit = SizeUnit.Bytes;
             CurrentSettings.ShowCommandBar = true;
