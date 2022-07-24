@@ -20,7 +20,7 @@ namespace TotalImage
         }
 
         /// <inheritdoc/>
-        public int Compare(T x, T y)
+        public int Compare(T? x, T? y)
         {
             return -Comparer.Compare(x, y);
         }
