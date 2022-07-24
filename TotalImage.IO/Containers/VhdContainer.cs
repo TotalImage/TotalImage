@@ -14,8 +14,8 @@ namespace TotalImage.Containers
         private readonly Stream _contentStream;
         private readonly VhdFooter _footer; //The footer structure at the end of the file
         private readonly VhdFooter _footerCopy; //The backup copy of the footer at the start of the file, sometimes called "header"
-        private readonly VhdDynamicHeader _dynamicHeader; //A separate header structure for dynamic and differencing disks, following the footer copy
-        private readonly VhdBlockAllocationTable _bat; //Block Allocation Table for dynamic and differencing disks
+        private readonly VhdDynamicHeader? _dynamicHeader; //A separate header structure for dynamic and differencing disks, following the footer copy
+        private readonly VhdBlockAllocationTable? _bat; //Block Allocation Table for dynamic and differencing disks
 
         /// <summary>
         /// The footer structure of this VHD
@@ -25,11 +25,11 @@ namespace TotalImage.Containers
             get => _footer;
         }
 
+        const int SectorSize = 512;
+
         /// <inheritdoc />
         public VhdContainer(string path, bool memoryMapping) : base(path, memoryMapping)
         {
-            _contentStream = new PartialStream(containerStream, 0, containerStream.Length - 512);
-
             byte[] footer = new byte[512];
             containerStream.Seek(-512, SeekOrigin.End);
             containerStream.Read(footer, 0, 512);
@@ -37,20 +37,31 @@ namespace TotalImage.Containers
 
             if (!_footer.VerifyChecksum())
                 throw new InvalidDataException("The VHD footer may be corrupted, checksum verification failed");
-        }
 
-        /// <inheritdoc />
-        public VhdContainer(Stream stream) : base(stream)
-        {
-            _contentStream = new PartialStream(containerStream, 0, containerStream.Length - 512);
+            if (_footer.Type is VhdFooter.VhdType.DynamicHardDisk /*or VhdFooter.VhdType.DifferencingHardDisk*/)
+            {
+                var dynamicHeader = new byte[1024];
 
-            byte[] footer = new byte[512];
-            containerStream.Seek(-512, SeekOrigin.End);
-            containerStream.Read(footer, 0, 512);
-            _footer = new VhdFooter(footer);
+                containerStream.Seek((long)_footer.DataOffset, SeekOrigin.Begin);
+                containerStream.Read(dynamicHeader);
+                _dynamicHeader = new VhdDynamicHeader(dynamicHeader);
 
-            if (!_footer.VerifyChecksum())
-                throw new InvalidDataException("The VHD footer may be corrupted, checksum verification failed");
+                if (!_dynamicHeader.VerifyChecksum())
+                    throw new InvalidDataException("The VHD dynamic header may be corrupted, checksum verification failed");
+
+                var bat = new byte[_dynamicHeader.MaxTableEntries * 4];
+
+                containerStream.Seek((long)_dynamicHeader.TableOffset, SeekOrigin.Begin);
+                containerStream.Read(bat);
+
+                _bat = new VhdBlockAllocationTable(bat, _dynamicHeader.BlockSize);
+
+                _contentStream = new VhdStream(this, containerStream);
+            }
+            else
+            {
+                _contentStream = new PartialStream(containerStream, 0, containerStream.Length - 512);
+            }
         }
 
         /// <inheritdoc />
@@ -331,10 +342,6 @@ namespace TotalImage.Containers
                 FormatVersionMajor = BinaryPrimitives.ReadUInt16BigEndian(bytes[12..14]);
                 FormatVersionMinor = BinaryPrimitives.ReadUInt16BigEndian(bytes[14..16]);
                 DataOffset = BinaryPrimitives.ReadUInt64BigEndian(bytes[16..24]);
-                if (DataOffset != ulong.MaxValue)
-                {
-                    throw new NotImplementedException("Dynamic and differencing disks are not currently supported");
-                }
 
                 CreationTime = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero).AddSeconds(BinaryPrimitives.ReadUInt32BigEndian(bytes[24..28]));
                 CreatorApplication = Encoding.ASCII.GetString(bytes[28..32]);
@@ -347,9 +354,9 @@ namespace TotalImage.Containers
                 DiskHeads = bytes[58];
                 DiskSectorsPerCylinder = bytes[59];
                 Type = (VhdType)BinaryPrimitives.ReadUInt32BigEndian(bytes[60..64]);
-                if (Type != VhdType.FixedHardDisk)
+                if (Type == VhdType.DifferencingHardDisk)
                 {
-                    throw new NotImplementedException("Dynamic and differencing disks are not currently supported");
+                    throw new NotImplementedException("Differencing disks are not currently supported");
                 }
 
                 Checksum = BinaryPrimitives.ReadUInt32BigEndian(bytes[64..68]);
@@ -577,42 +584,42 @@ namespace TotalImage.Containers
                 BinaryPrimitives.WriteUInt32BigEndian(span[576..580], (uint)ParentLocatorEntry1.PlatformCode);
                 BinaryPrimitives.WriteUInt32BigEndian(span[580..584], ParentLocatorEntry1.PlatformDataSpace);
                 BinaryPrimitives.WriteUInt32BigEndian(span[584..588], ParentLocatorEntry1.PlatformDataLength);
-                BinaryPrimitives.WriteUInt64BigEndian(span[596..600], ParentLocatorEntry1.PlatformDataOffset);
+                BinaryPrimitives.WriteUInt64BigEndian(span[588..596], ParentLocatorEntry1.PlatformDataOffset);
 
-                BinaryPrimitives.WriteUInt32BigEndian(span[600..604], (uint)ParentLocatorEntry2.PlatformCode);
-                BinaryPrimitives.WriteUInt32BigEndian(span[604..608], ParentLocatorEntry2.PlatformDataSpace);
-                BinaryPrimitives.WriteUInt32BigEndian(span[608..612], ParentLocatorEntry2.PlatformDataLength);
-                BinaryPrimitives.WriteUInt64BigEndian(span[616..620], ParentLocatorEntry2.PlatformDataOffset);
+                BinaryPrimitives.WriteUInt32BigEndian(span[596..600], (uint)ParentLocatorEntry2.PlatformCode);
+                BinaryPrimitives.WriteUInt32BigEndian(span[600..604], ParentLocatorEntry2.PlatformDataSpace);
+                BinaryPrimitives.WriteUInt32BigEndian(span[604..608], ParentLocatorEntry2.PlatformDataLength);
+                BinaryPrimitives.WriteUInt64BigEndian(span[608..616], ParentLocatorEntry2.PlatformDataOffset);
 
-                BinaryPrimitives.WriteUInt32BigEndian(span[620..624], (uint)ParentLocatorEntry3.PlatformCode);
-                BinaryPrimitives.WriteUInt32BigEndian(span[624..628], ParentLocatorEntry3.PlatformDataSpace);
-                BinaryPrimitives.WriteUInt32BigEndian(span[628..632], ParentLocatorEntry3.PlatformDataLength);
-                BinaryPrimitives.WriteUInt64BigEndian(span[636..640], ParentLocatorEntry3.PlatformDataOffset);
+                BinaryPrimitives.WriteUInt32BigEndian(span[616..620], (uint)ParentLocatorEntry3.PlatformCode);
+                BinaryPrimitives.WriteUInt32BigEndian(span[620..624], ParentLocatorEntry3.PlatformDataSpace);
+                BinaryPrimitives.WriteUInt32BigEndian(span[624..628], ParentLocatorEntry3.PlatformDataLength);
+                BinaryPrimitives.WriteUInt64BigEndian(span[628..636], ParentLocatorEntry3.PlatformDataOffset);
 
-                BinaryPrimitives.WriteUInt32BigEndian(span[640..644], (uint)ParentLocatorEntry4.PlatformCode);
-                BinaryPrimitives.WriteUInt32BigEndian(span[644..648], ParentLocatorEntry4.PlatformDataSpace);
-                BinaryPrimitives.WriteUInt32BigEndian(span[648..652], ParentLocatorEntry4.PlatformDataLength);
-                BinaryPrimitives.WriteUInt64BigEndian(span[656..660], ParentLocatorEntry4.PlatformDataOffset);
+                BinaryPrimitives.WriteUInt32BigEndian(span[636..640], (uint)ParentLocatorEntry4.PlatformCode);
+                BinaryPrimitives.WriteUInt32BigEndian(span[640..644], ParentLocatorEntry4.PlatformDataSpace);
+                BinaryPrimitives.WriteUInt32BigEndian(span[644..648], ParentLocatorEntry4.PlatformDataLength);
+                BinaryPrimitives.WriteUInt64BigEndian(span[648..656], ParentLocatorEntry4.PlatformDataOffset);
 
-                BinaryPrimitives.WriteUInt32BigEndian(span[660..664], (uint)ParentLocatorEntry5.PlatformCode);
-                BinaryPrimitives.WriteUInt32BigEndian(span[664..668], ParentLocatorEntry5.PlatformDataSpace);
-                BinaryPrimitives.WriteUInt32BigEndian(span[668..672], ParentLocatorEntry5.PlatformDataLength);
-                BinaryPrimitives.WriteUInt64BigEndian(span[676..680], ParentLocatorEntry5.PlatformDataOffset);
+                BinaryPrimitives.WriteUInt32BigEndian(span[656..660], (uint)ParentLocatorEntry5.PlatformCode);
+                BinaryPrimitives.WriteUInt32BigEndian(span[660..664], ParentLocatorEntry5.PlatformDataSpace);
+                BinaryPrimitives.WriteUInt32BigEndian(span[664..668], ParentLocatorEntry5.PlatformDataLength);
+                BinaryPrimitives.WriteUInt64BigEndian(span[668..676], ParentLocatorEntry5.PlatformDataOffset);
 
-                BinaryPrimitives.WriteUInt32BigEndian(span[680..684], (uint)ParentLocatorEntry6.PlatformCode);
-                BinaryPrimitives.WriteUInt32BigEndian(span[684..688], ParentLocatorEntry6.PlatformDataSpace);
-                BinaryPrimitives.WriteUInt32BigEndian(span[688..692], ParentLocatorEntry6.PlatformDataLength);
-                BinaryPrimitives.WriteUInt64BigEndian(span[696..700], ParentLocatorEntry6.PlatformDataOffset);
+                BinaryPrimitives.WriteUInt32BigEndian(span[676..680], (uint)ParentLocatorEntry6.PlatformCode);
+                BinaryPrimitives.WriteUInt32BigEndian(span[680..684], ParentLocatorEntry6.PlatformDataSpace);
+                BinaryPrimitives.WriteUInt32BigEndian(span[684..688], ParentLocatorEntry6.PlatformDataLength);
+                BinaryPrimitives.WriteUInt64BigEndian(span[688..696], ParentLocatorEntry6.PlatformDataOffset);
 
-                BinaryPrimitives.WriteUInt32BigEndian(span[700..704], (uint)ParentLocatorEntry7.PlatformCode);
-                BinaryPrimitives.WriteUInt32BigEndian(span[704..708], ParentLocatorEntry7.PlatformDataSpace);
-                BinaryPrimitives.WriteUInt32BigEndian(span[708..712], ParentLocatorEntry7.PlatformDataLength);
-                BinaryPrimitives.WriteUInt64BigEndian(span[716..720], ParentLocatorEntry7.PlatformDataOffset);
+                BinaryPrimitives.WriteUInt32BigEndian(span[696..700], (uint)ParentLocatorEntry7.PlatformCode);
+                BinaryPrimitives.WriteUInt32BigEndian(span[700..704], ParentLocatorEntry7.PlatformDataSpace);
+                BinaryPrimitives.WriteUInt32BigEndian(span[704..708], ParentLocatorEntry7.PlatformDataLength);
+                BinaryPrimitives.WriteUInt64BigEndian(span[708..716], ParentLocatorEntry7.PlatformDataOffset);
 
-                BinaryPrimitives.WriteUInt32BigEndian(span[720..724], (uint)ParentLocatorEntry8.PlatformCode);
-                BinaryPrimitives.WriteUInt32BigEndian(span[724..728], ParentLocatorEntry8.PlatformDataSpace);
-                BinaryPrimitives.WriteUInt32BigEndian(span[728..732], ParentLocatorEntry8.PlatformDataLength);
-                BinaryPrimitives.WriteUInt64BigEndian(span[736..740], ParentLocatorEntry8.PlatformDataOffset);
+                BinaryPrimitives.WriteUInt32BigEndian(span[716..720], (uint)ParentLocatorEntry8.PlatformCode);
+                BinaryPrimitives.WriteUInt32BigEndian(span[720..724], ParentLocatorEntry8.PlatformDataSpace);
+                BinaryPrimitives.WriteUInt32BigEndian(span[724..728], ParentLocatorEntry8.PlatformDataLength);
+                BinaryPrimitives.WriteUInt64BigEndian(span[728..736], ParentLocatorEntry8.PlatformDataOffset);
 
                 return span;
             }
@@ -746,7 +753,163 @@ namespace TotalImage.Containers
         /// </summary>
         public class VhdBlockAllocationTable
         {
+            readonly uint[] _table;
+            readonly int _length;
+            readonly uint _blockSize;
 
+            public VhdBlockAllocationTable(ReadOnlySpan<byte> bytes, uint blockSize)
+            {
+                _length = bytes.Length / 4;
+                _table = new uint[_length];
+                _blockSize = blockSize;
+
+                for (var i = 0; i < _length; i++)
+                {
+                    _table[i] = BinaryPrimitives.ReadUInt32BigEndian(bytes[(i*4)..]);
+                }
+            }
+
+            public uint this[int i] => _table[i];
+            public uint this[long i] => _table[i];
+
+            public int GetBitmapSizeInBytes()
+                => (int)(_blockSize / VhdContainer.SectorSize / 8);
+
+            public int GetSectorPaddedBitmapSizeInBytes()
+                => (int)Math.Ceiling(GetBitmapSizeInBytes() / (double)VhdContainer.SectorSize) * VhdContainer.SectorSize;
+
+            public long GetBitmapAddress(uint blockIndex)
+                => this[blockIndex] * VhdContainer.SectorSize;
+
+            public long GetBlockDataAddress(uint blockIndex)
+                => GetBitmapAddress(blockIndex) + GetSectorPaddedBitmapSizeInBytes();
+
+            public bool HasData(long i) => this[i] != uint.MaxValue;
+        }
+
+        internal class VhdStream : Stream
+        {
+            private readonly VhdContainer _vhd;
+            private readonly Stream _base;
+
+            private long _position = 0;
+
+            public VhdStream(VhdContainer vhd, Stream baseStream)
+            {
+                _vhd = vhd;
+                _base = baseStream;
+            }
+
+            public override bool CanRead => _base.CanRead;
+
+            public override bool CanSeek => _base.CanSeek;
+
+            public override bool CanWrite => _base.CanWrite;
+
+            public override long Length => (long)_vhd.Footer.CurrentSize;
+
+            public override long Position
+            {
+                get => _position;
+                set => Seek(value, SeekOrigin.Begin);
+            }
+
+            public override void Flush()
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                count = (int)Math.Min(count, Length - Position);
+
+                if (count <= 0) return 0;
+
+                if (_vhd._dynamicHeader != null && _vhd._bat != null)
+                {
+                    var firstBlock = Position / _vhd._dynamicHeader.BlockSize;
+                    var lastBlock = (Position + count - 1) / _vhd._dynamicHeader.BlockSize;
+                    var blockRemaining = _vhd._dynamicHeader.BlockSize - (Position % _vhd._dynamicHeader.BlockSize);
+
+                    Seek(0, SeekOrigin.Current);
+
+                    var totalRead = _vhd._bat.HasData(firstBlock) ?
+                        _base.Read(buffer, offset, (int)Math.Min(count, blockRemaining)) :
+                        ReadZeros(buffer, offset, (int)Math.Min(count, blockRemaining));
+
+                    _position += totalRead;
+
+                    for (var i = firstBlock; i < lastBlock; i++)
+                    {
+                        Seek(0, SeekOrigin.Current);
+
+                        var readBytes = _vhd._bat.HasData(i) ?
+                            _base.Read(buffer, offset + totalRead, Math.Min(count - totalRead, VhdContainer.SectorSize)) :
+                            ReadZeros(buffer, offset + totalRead, Math.Min(count - totalRead, VhdContainer.SectorSize));
+
+                        _position += (uint)readBytes;
+                        totalRead += readBytes;
+                    }
+
+                    return totalRead;
+                }
+                else
+                {
+                    Seek(0, SeekOrigin.Current);
+                    return _base.Read(buffer, offset, count);
+                }
+            }
+
+            private int ReadZeros(byte[] buffer, int offset, int count)
+            {
+                var result = 0;
+                for(var i = offset; i < count; i++)
+                {
+                    buffer[0] = 0;
+                    result++;
+                }
+                return result;
+            }
+
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                var target = origin switch
+                {
+                    SeekOrigin.Begin => offset,
+                    SeekOrigin.Current => Position + offset,
+                    SeekOrigin.End => Length + offset,
+                    _ => throw new ArgumentException()
+                };
+
+                if (target < 0)
+                    throw new ArgumentException();
+
+                if (_vhd._dynamicHeader != null && _vhd._bat != null)
+                {
+                    var block = (uint)target / _vhd._dynamicHeader.BlockSize;
+                    var blockOffset = target % _vhd._dynamicHeader.BlockSize;
+
+                    if (_vhd._bat.HasData(block))
+                        _base.Seek(_vhd._bat.GetBlockDataAddress(block) + blockOffset, SeekOrigin.Begin);
+                }
+                else
+                {
+                    _base.Seek(target, SeekOrigin.Begin);
+                }
+
+                _position = target;
+                return target;
+            }
+
+            public override void SetLength(long value)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                throw new System.NotImplementedException();
+            }
         }
     }
 }

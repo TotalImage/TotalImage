@@ -52,7 +52,7 @@ namespace TotalImage.Containers
         /// <summary>
         /// The length of the container file
         /// </summary>
-        public long Length => Content.Length;
+        public long Length => containerStream.Length;
 
         /// <summary>
         /// Create a container file from an existing file
