@@ -170,6 +170,9 @@ namespace TotalImage.Containers
                 BinaryPrimitives.WriteUInt16BigEndian(bytes[14..16], FormatVersionMinor);
                 BinaryPrimitives.WriteUInt64BigEndian(bytes[16..24], DataOffset);
                 BinaryPrimitives.WriteUInt32BigEndian(bytes[24..28], Convert.ToUInt32((CreationTime - new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds));
+                Array.Copy(Encoding.ASCII.GetBytes(CreatorApplication), 0, bytes, 28, 4);
+                BinaryPrimitives.WriteUInt32BigEndian(bytes[32..34], CreatorVersionMajor);
+                BinaryPrimitives.WriteUInt32BigEndian(bytes[34..36], CreatorVersionMinor);
                 Array.Copy(Encoding.ASCII.GetBytes(CreatorHost), 0, bytes, 36, 4);
                 BinaryPrimitives.WriteUInt64BigEndian(bytes[40..48], OriginalSize);
                 BinaryPrimitives.WriteUInt64BigEndian(bytes[48..56], CurrentSize);
