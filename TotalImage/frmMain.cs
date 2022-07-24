@@ -1870,6 +1870,7 @@ namespace TotalImage
                             TaskDialogButton.OK
                         },
                         Icon = TaskDialogIcon.Error,
+                        SizeToContent = true
                     });
 
                     CloseImage();
@@ -1891,6 +1892,7 @@ namespace TotalImage
                             TaskDialogButton.OK
                         },
                     Icon = TaskDialogIcon.Error,
+                    SizeToContent = true
                 });
 
                 CloseImage();
@@ -1927,6 +1929,7 @@ namespace TotalImage
                             TaskDialogButton.OK
                         },
                         Icon = TaskDialogIcon.Error,
+                        SizeToContent = true
                     });
 
                     CloseImage();
