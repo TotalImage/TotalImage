@@ -161,36 +161,38 @@ namespace TotalImage.Containers
             /// <summary>
             /// Get the bytes of the VHD footer record for writing
             /// </summary>
-            public byte[] GetBytes()
+            public Span<byte> GetByteSpan()
             {
+                //Mixing byte array and Span<byte> usage here because binary primitives just wouldn't work directly with the byte array...
                 byte[] bytes = new byte[512];
+                var span = new Span<byte>(bytes);
+
                 Array.Copy(Encoding.ASCII.GetBytes(COOKIE_VALUE), 0, bytes, 0, 8);
-                BinaryPrimitives.WriteUInt32BigEndian(bytes[8..12], (uint)Features);
-                BinaryPrimitives.WriteUInt16BigEndian(bytes[12..14], FormatVersionMajor);
-                BinaryPrimitives.WriteUInt16BigEndian(bytes[14..16], FormatVersionMinor);
-                BinaryPrimitives.WriteUInt64BigEndian(bytes[16..24], DataOffset);
-                BinaryPrimitives.WriteUInt32BigEndian(bytes[24..28], Convert.ToUInt32((CreationTime - new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds));
+                BinaryPrimitives.WriteUInt32BigEndian(span[8..12], (uint)Features);
+                BinaryPrimitives.WriteUInt16BigEndian(span[12..14], FormatVersionMajor);
+                BinaryPrimitives.WriteUInt16BigEndian(span[14..16], FormatVersionMinor);
+                BinaryPrimitives.WriteUInt64BigEndian(span[16..24], DataOffset);
+                BinaryPrimitives.WriteUInt32BigEndian(span[24..28], Convert.ToUInt32((CreationTime - new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds));
                 Array.Copy(Encoding.ASCII.GetBytes(CreatorApplication), 0, bytes, 28, 4);
-                BinaryPrimitives.WriteUInt16BigEndian(bytes[32..34], CreatorVersionMajor);
-                BinaryPrimitives.WriteUInt16BigEndian(bytes[34..36], CreatorVersionMinor);
+                BinaryPrimitives.WriteUInt16BigEndian(span[32..34], CreatorVersionMajor);
+                BinaryPrimitives.WriteUInt16BigEndian(span[34..36], CreatorVersionMinor);
                 Array.Copy(Encoding.ASCII.GetBytes(CreatorHost), 0, bytes, 36, 4);
-                BinaryPrimitives.WriteUInt64BigEndian(bytes[40..48], OriginalSize);
-                BinaryPrimitives.WriteUInt64BigEndian(bytes[48..56], CurrentSize);
-                BinaryPrimitives.WriteUInt16BigEndian(bytes[56..58], DiskCylinders);
-                bytes[58] = DiskHeads;
-                bytes[59] = DiskSectorsPerCylinder;
-                BinaryPrimitives.WriteUInt32BigEndian(bytes[60..64], (uint)Type);
+                BinaryPrimitives.WriteUInt64BigEndian(span[40..48], OriginalSize);
+                BinaryPrimitives.WriteUInt64BigEndian(span[48..56], CurrentSize);
+                BinaryPrimitives.WriteUInt16BigEndian(span[56..58], DiskCylinders);
+                span[58] = DiskHeads;
+                span[59] = DiskSectorsPerCylinder;
+                BinaryPrimitives.WriteUInt32BigEndian(span[60..64], (uint)Type);
                 byte[] guid = UniqueId.ToByteArray();
                 Array.Reverse(guid, 0, 4);
                 Array.Reverse(guid, 4, 2);
                 Array.Reverse(guid, 6, 2);
                 Array.Copy(guid, 0, bytes, 68, 16);
-                bytes[84] = (byte)(SavedState ? 1 : 0);
+                span[84] = (byte)(SavedState ? 1 : 0);
 
-                //uint checksum = CalculateChecksum(bytes);
-                BinaryPrimitives.WriteUInt32BigEndian(bytes[64..68], Checksum);
+                BinaryPrimitives.WriteUInt32BigEndian(span[64..68], Checksum);
 
-                return bytes;
+                return span;
             }
 
             /// <summary>
@@ -224,7 +226,7 @@ namespace TotalImage.Containers
             /// <returns>True when the values match, otherwise false</returns>
             public bool VerifyChecksum()
             {
-                return Checksum == CalculateChecksum(GetBytes());
+                return Checksum == CalculateChecksum(GetByteSpan());
             }
 
             /// <summary>
