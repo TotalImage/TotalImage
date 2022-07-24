@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace TotalImage.Containers
+namespace TotalImage.Containers.VHD
 {
     /// <summary>
     /// Represents a Microsoft Virtual Hard Disk (VHD) container file

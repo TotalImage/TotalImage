@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.Containers;
+using TotalImage.Containers.VHD;
 using static Interop.ComCtl32;
 using static Interop.Shell32;
 using static Interop.User32;
