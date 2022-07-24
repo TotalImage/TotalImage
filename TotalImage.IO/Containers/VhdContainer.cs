@@ -266,9 +266,9 @@ namespace TotalImage.Containers
                 DataOffset = ulong.MaxValue;
                 CreationTime = DateTimeOffset.UtcNow;
                 CreatorApplication = "timg";
-                CreatorVersionMajor = 0;
-                CreatorVersionMinor = 1;
-                CreatorHost = "wi2k";
+                CreatorVersionMajor = 1;
+                CreatorVersionMinor = 0;
+                CreatorHost = "Wi2k";
                 OriginalSize = size;
                 CurrentSize = size;
                 (DiskCylinders, DiskHeads, DiskSectorsPerCylinder) = GetGeometryFromSize(size);
