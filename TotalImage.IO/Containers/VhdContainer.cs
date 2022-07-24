@@ -184,8 +184,8 @@ namespace TotalImage.Containers
                 Array.Copy(guid, 0, bytes, 68, 16);
                 bytes[84] = (byte)(SavedState ? 1 : 0);
 
-                uint checksum = CalculateChecksum(bytes);
-                BinaryPrimitives.WriteUInt32BigEndian(bytes[64..68], checksum);
+                //uint checksum = CalculateChecksum(bytes);
+                BinaryPrimitives.WriteUInt32BigEndian(bytes[64..68], Checksum);
 
                 return bytes;
             }
@@ -197,7 +197,6 @@ namespace TotalImage.Containers
             private static uint CalculateChecksum(ReadOnlySpan<byte> record)
             {
                 // Taken from Checksum Calculation in VHD Spec, App. A
-
                 uint checksum = 0;
                 for (int i = 0; i < record.Length; i++)
                 {
@@ -331,8 +330,8 @@ namespace TotalImage.Containers
 
                 CreationTime = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero).AddSeconds(BinaryPrimitives.ReadUInt32BigEndian(bytes[24..28]));
                 CreatorApplication = Encoding.ASCII.GetString(bytes[28..32]);
-                FormatVersionMajor = BinaryPrimitives.ReadUInt16BigEndian(bytes[32..34]);
-                FormatVersionMinor = BinaryPrimitives.ReadUInt16BigEndian(bytes[34..36]);
+                CreatorVersionMajor = BinaryPrimitives.ReadUInt16BigEndian(bytes[32..34]);
+                CreatorVersionMinor = BinaryPrimitives.ReadUInt16BigEndian(bytes[34..36]);
                 CreatorHost = Encoding.ASCII.GetString(bytes[36..40]);
                 OriginalSize = BinaryPrimitives.ReadUInt64BigEndian(bytes[40..48]);
                 CurrentSize = BinaryPrimitives.ReadUInt64BigEndian(bytes[48..56]);
