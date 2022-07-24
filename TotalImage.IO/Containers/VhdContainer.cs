@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -13,6 +14,14 @@ namespace TotalImage.Containers
         private readonly Stream _contentStream;
         private readonly VhdFooter _footer;
 
+        /// <summary>
+        /// The footer structure of this VHD
+        /// </summary>
+        public VhdFooter Footer
+        {
+            get => _footer;
+        }
+
         /// <inheritdoc />
         public VhdContainer(string path, bool memoryMapping) : base(path, memoryMapping)
         {
@@ -22,6 +31,9 @@ namespace TotalImage.Containers
             containerStream.Seek(-512, SeekOrigin.End);
             containerStream.Read(footer, 0, 512);
             _footer = new VhdFooter(footer);
+
+            if (!_footer.VerifyChecksum())
+                throw new InvalidDataException("The VHD footer may be corrupted, checksum verification failed");
         }
 
         /// <inheritdoc />
@@ -33,6 +45,9 @@ namespace TotalImage.Containers
             containerStream.Seek(-512, SeekOrigin.End);
             containerStream.Read(footer, 0, 512);
             _footer = new VhdFooter(footer);
+
+            if (!_footer.VerifyChecksum())
+                throw new InvalidDataException("The VHD footer may be corrupted, checksum verification failed");
         }
 
         /// <inheritdoc />
@@ -181,7 +196,7 @@ namespace TotalImage.Containers
             /// <param name="record">The bytes containing the VHD footer record</param>
             private static uint CalculateChecksum(ReadOnlySpan<byte> record)
             {
-                // Taken from CHS Calculation in VHD Spec, App. A
+                // Taken from Checksum Calculation in VHD Spec, App. A
 
                 uint checksum = 0;
                 for (int i = 0; i < record.Length; i++)
@@ -199,6 +214,15 @@ namespace TotalImage.Containers
                 }
 
                 return ~checksum;
+            }
+
+            /// <summary>
+            /// Verifies that the stored checksum value in the footer of this VHD matches a freshly calculated value
+            /// </summary>
+            /// <returns>True when the values match, otherwise false</returns>
+            public bool VerifyChecksum()
+            {
+                return Checksum == CalculateChecksum(GetBytes());
             }
 
             /// <summary>
