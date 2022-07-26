@@ -34,6 +34,9 @@
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
             this.gbxMisc = new System.Windows.Forms.GroupBox();
+            this.lblClearTemp = new System.Windows.Forms.Label();
+            this.lblClearRecent = new System.Windows.Forms.Label();
+            this.lblResetSettings = new System.Windows.Forms.Label();
             this.btnClearTemp = new System.Windows.Forms.Button();
             this.btnClearRecent = new System.Windows.Forms.Button();
             this.btnResetSettings = new System.Windows.Forms.Button();
@@ -71,15 +74,12 @@
             this.lblExtractPath = new System.Windows.Forms.Label();
             this.cbxExtractAsk = new System.Windows.Forms.CheckBox();
             this.tabIntegration = new System.Windows.Forms.TabPage();
-            this.btnFileAssoc = new System.Windows.Forms.Button();
-            this.lblFileAssoc = new System.Windows.Forms.Label();
-            this.cbxShellFileIcons = new System.Windows.Forms.CheckBox();
-            this.gbxFileAssoc = new System.Windows.Forms.GroupBox();
             this.gbxIntegrationMisc = new System.Windows.Forms.GroupBox();
             this.lblSystemIcons = new System.Windows.Forms.Label();
-            this.lblResetSettings = new System.Windows.Forms.Label();
-            this.lblClearRecent = new System.Windows.Forms.Label();
-            this.lblClearTemp = new System.Windows.Forms.Label();
+            this.cbxShellFileIcons = new System.Windows.Forms.CheckBox();
+            this.gbxFileAssoc = new System.Windows.Forms.GroupBox();
+            this.lblFileAssoc = new System.Windows.Forms.Label();
+            this.btnFileAssoc = new System.Windows.Forms.Button();
             this.pnlBottom.SuspendLayout();
             this.tabs.SuspendLayout();
             this.tabGeneral.SuspendLayout();
@@ -89,8 +89,8 @@
             this.tabView.SuspendLayout();
             this.tabExtraction.SuspendLayout();
             this.tabIntegration.SuspendLayout();
-            this.gbxFileAssoc.SuspendLayout();
             this.gbxIntegrationMisc.SuspendLayout();
+            this.gbxFileAssoc.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCancel
@@ -169,14 +169,41 @@
             this.gbxMisc.Controls.Add(this.btnClearTemp);
             this.gbxMisc.Controls.Add(this.btnClearRecent);
             this.gbxMisc.Controls.Add(this.btnResetSettings);
-            this.gbxMisc.Location = new System.Drawing.Point(8, 249);
+            this.gbxMisc.Location = new System.Drawing.Point(8, 250);
             this.gbxMisc.Margin = new System.Windows.Forms.Padding(4);
             this.gbxMisc.Name = "gbxMisc";
             this.gbxMisc.Padding = new System.Windows.Forms.Padding(4);
-            this.gbxMisc.Size = new System.Drawing.Size(551, 164);
+            this.gbxMisc.Size = new System.Drawing.Size(552, 163);
             this.gbxMisc.TabIndex = 1;
             this.gbxMisc.TabStop = false;
             this.gbxMisc.Text = "Advanced options";
+            // 
+            // lblClearTemp
+            // 
+            this.lblClearTemp.AutoSize = true;
+            this.lblClearTemp.Location = new System.Drawing.Point(8, 120);
+            this.lblClearTemp.Name = "lblClearTemp";
+            this.lblClearTemp.Size = new System.Drawing.Size(416, 20);
+            this.lblClearTemp.TabIndex = 9;
+            this.lblClearTemp.Text = "Clear TotalImage\'s temporary folder in local application data.";
+            // 
+            // lblClearRecent
+            // 
+            this.lblClearRecent.AutoSize = true;
+            this.lblClearRecent.Location = new System.Drawing.Point(8, 76);
+            this.lblClearRecent.Name = "lblClearRecent";
+            this.lblClearRecent.Size = new System.Drawing.Size(191, 20);
+            this.lblClearRecent.TabIndex = 8;
+            this.lblClearRecent.Text = "Clear the recent images list.";
+            // 
+            // lblResetSettings
+            // 
+            this.lblResetSettings.AutoSize = true;
+            this.lblResetSettings.Location = new System.Drawing.Point(8, 30);
+            this.lblResetSettings.Name = "lblResetSettings";
+            this.lblResetSettings.Size = new System.Drawing.Size(350, 20);
+            this.lblResetSettings.TabIndex = 7;
+            this.lblResetSettings.Text = "Reset all TotalImage settings to their default values.";
             // 
             // btnClearTemp
             // 
@@ -227,7 +254,7 @@
             this.gbxBehavior.Margin = new System.Windows.Forms.Padding(4);
             this.gbxBehavior.Name = "gbxBehavior";
             this.gbxBehavior.Padding = new System.Windows.Forms.Padding(4);
-            this.gbxBehavior.Size = new System.Drawing.Size(551, 234);
+            this.gbxBehavior.Size = new System.Drawing.Size(552, 234);
             this.gbxBehavior.TabIndex = 0;
             this.gbxBehavior.TabStop = false;
             this.gbxBehavior.Text = "Behavior";
@@ -235,7 +262,7 @@
             // lblMemoryMapping1
             // 
             this.lblMemoryMapping1.AutoSize = true;
-            this.lblMemoryMapping1.Location = new System.Drawing.Point(431, 174);
+            this.lblMemoryMapping1.Location = new System.Drawing.Point(437, 171);
             this.lblMemoryMapping1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblMemoryMapping1.Name = "lblMemoryMapping1";
             this.lblMemoryMapping1.Size = new System.Drawing.Size(35, 20);
@@ -244,7 +271,7 @@
             // 
             // txtMemoryMapping
             // 
-            this.txtMemoryMapping.Location = new System.Drawing.Point(299, 169);
+            this.txtMemoryMapping.Location = new System.Drawing.Point(304, 168);
             this.txtMemoryMapping.Margin = new System.Windows.Forms.Padding(4);
             this.txtMemoryMapping.Maximum = new decimal(new int[] {
             999999,
@@ -259,7 +286,7 @@
             // lblMemoryMapping
             // 
             this.lblMemoryMapping.AutoSize = true;
-            this.lblMemoryMapping.Location = new System.Drawing.Point(8, 174);
+            this.lblMemoryMapping.Location = new System.Drawing.Point(12, 171);
             this.lblMemoryMapping.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblMemoryMapping.Name = "lblMemoryMapping";
             this.lblMemoryMapping.Size = new System.Drawing.Size(284, 20);
@@ -270,7 +297,7 @@
             // 
             this.cbxAutoincrementFilename.AutoSize = true;
             this.cbxAutoincrementFilename.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxAutoincrementFilename.Location = new System.Drawing.Point(8, 125);
+            this.cbxAutoincrementFilename.Location = new System.Drawing.Point(12, 125);
             this.cbxAutoincrementFilename.Margin = new System.Windows.Forms.Padding(4);
             this.cbxAutoincrementFilename.Name = "cbxAutoincrementFilename";
             this.cbxAutoincrementFilename.Size = new System.Drawing.Size(420, 25);
@@ -282,7 +309,7 @@
             // 
             this.cbxConfirmOverwriteExtract.AutoSize = true;
             this.cbxConfirmOverwriteExtract.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxConfirmOverwriteExtract.Location = new System.Drawing.Point(8, 28);
+            this.cbxConfirmOverwriteExtract.Location = new System.Drawing.Point(12, 28);
             this.cbxConfirmOverwriteExtract.Margin = new System.Windows.Forms.Padding(4);
             this.cbxConfirmOverwriteExtract.Name = "cbxConfirmOverwriteExtract";
             this.cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(276, 25);
@@ -293,8 +320,9 @@
             // cbxConfirmDeletion
             // 
             this.cbxConfirmDeletion.AutoSize = true;
+            this.cbxConfirmDeletion.Enabled = false;
             this.cbxConfirmDeletion.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxConfirmDeletion.Location = new System.Drawing.Point(8, 60);
+            this.cbxConfirmDeletion.Location = new System.Drawing.Point(12, 59);
             this.cbxConfirmDeletion.Margin = new System.Windows.Forms.Padding(4);
             this.cbxConfirmDeletion.Name = "cbxConfirmDeletion";
             this.cbxConfirmDeletion.Size = new System.Drawing.Size(152, 25);
@@ -305,8 +333,9 @@
             // cbxConfirmInjection
             // 
             this.cbxConfirmInjection.AutoSize = true;
+            this.cbxConfirmInjection.Enabled = false;
             this.cbxConfirmInjection.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxConfirmInjection.Location = new System.Drawing.Point(8, 92);
+            this.cbxConfirmInjection.Location = new System.Drawing.Point(12, 92);
             this.cbxConfirmInjection.Margin = new System.Windows.Forms.Padding(4);
             this.cbxConfirmInjection.Name = "cbxConfirmInjection";
             this.cbxConfirmInjection.Size = new System.Drawing.Size(154, 25);
@@ -482,8 +511,7 @@
             "Large icons",
             "Small icons",
             "List",
-            "Details",
-            "Tiles"});
+            "Details"});
             this.lstViewType.Location = new System.Drawing.Point(22, 41);
             this.lstViewType.Margin = new System.Windows.Forms.Padding(4);
             this.lstViewType.Name = "lstViewType";
@@ -651,32 +679,33 @@
             this.tabIntegration.Text = "Integration";
             this.tabIntegration.UseVisualStyleBackColor = true;
             // 
-            // btnFileAssoc
+            // gbxIntegrationMisc
             // 
-            this.btnFileAssoc.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnFileAssoc.Location = new System.Drawing.Point(454, 32);
-            this.btnFileAssoc.Name = "btnFileAssoc";
-            this.btnFileAssoc.Size = new System.Drawing.Size(94, 31);
-            this.btnFileAssoc.TabIndex = 5;
-            this.btnFileAssoc.Text = "Open";
-            this.btnFileAssoc.UseVisualStyleBackColor = true;
-            this.btnFileAssoc.Click += new System.EventHandler(this.btnFileAssoc_Click);
+            this.gbxIntegrationMisc.Controls.Add(this.lblSystemIcons);
+            this.gbxIntegrationMisc.Controls.Add(this.cbxShellFileIcons);
+            this.gbxIntegrationMisc.Location = new System.Drawing.Point(7, 99);
+            this.gbxIntegrationMisc.Name = "gbxIntegrationMisc";
+            this.gbxIntegrationMisc.Size = new System.Drawing.Size(554, 152);
+            this.gbxIntegrationMisc.TabIndex = 7;
+            this.gbxIntegrationMisc.TabStop = false;
+            this.gbxIntegrationMisc.Text = "Other options";
             // 
-            // lblFileAssoc
+            // lblSystemIcons
             // 
-            this.lblFileAssoc.AutoSize = true;
-            this.lblFileAssoc.Location = new System.Drawing.Point(11, 32);
-            this.lblFileAssoc.Name = "lblFileAssoc";
-            this.lblFileAssoc.Size = new System.Drawing.Size(389, 40);
-            this.lblFileAssoc.TabIndex = 4;
-            this.lblFileAssoc.Text = "File associations for TotalImage can be managed through\r\nControl Panel/Windows Se" +
-    "ttings.";
+            this.lblSystemIcons.AutoSize = true;
+            this.lblSystemIcons.Location = new System.Drawing.Point(11, 80);
+            this.lblSystemIcons.Name = "lblSystemIcons";
+            this.lblSystemIcons.Size = new System.Drawing.Size(517, 60);
+            this.lblSystemIcons.TabIndex = 6;
+            this.lblSystemIcons.Text = "When this option is enabled, TotalImage will obtain icons and names for file\r\ntyp" +
+    "es from Windows, which can be slower in some situations. When disabled,\r\ngeneric" +
+    " icons and names will be used instead.";
             // 
             // cbxShellFileIcons
             // 
             this.cbxShellFileIcons.AutoSize = true;
             this.cbxShellFileIcons.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxShellFileIcons.Location = new System.Drawing.Point(11, 27);
+            this.cbxShellFileIcons.Location = new System.Drawing.Point(15, 37);
             this.cbxShellFileIcons.Margin = new System.Windows.Forms.Padding(4);
             this.cbxShellFileIcons.Name = "cbxShellFileIcons";
             this.cbxShellFileIcons.Size = new System.Drawing.Size(399, 25);
@@ -695,54 +724,26 @@
             this.gbxFileAssoc.TabStop = false;
             this.gbxFileAssoc.Text = "File associations";
             // 
-            // gbxIntegrationMisc
+            // lblFileAssoc
             // 
-            this.gbxIntegrationMisc.Controls.Add(this.lblSystemIcons);
-            this.gbxIntegrationMisc.Controls.Add(this.cbxShellFileIcons);
-            this.gbxIntegrationMisc.Location = new System.Drawing.Point(7, 99);
-            this.gbxIntegrationMisc.Name = "gbxIntegrationMisc";
-            this.gbxIntegrationMisc.Size = new System.Drawing.Size(554, 131);
-            this.gbxIntegrationMisc.TabIndex = 7;
-            this.gbxIntegrationMisc.TabStop = false;
-            this.gbxIntegrationMisc.Text = "Other options";
+            this.lblFileAssoc.AutoSize = true;
+            this.lblFileAssoc.Location = new System.Drawing.Point(11, 32);
+            this.lblFileAssoc.Name = "lblFileAssoc";
+            this.lblFileAssoc.Size = new System.Drawing.Size(389, 40);
+            this.lblFileAssoc.TabIndex = 4;
+            this.lblFileAssoc.Text = "File associations for TotalImage can be managed through\r\nControl Panel/Windows Se" +
+    "ttings.";
             // 
-            // lblSystemIcons
+            // btnFileAssoc
             // 
-            this.lblSystemIcons.AutoSize = true;
-            this.lblSystemIcons.Location = new System.Drawing.Point(11, 56);
-            this.lblSystemIcons.Name = "lblSystemIcons";
-            this.lblSystemIcons.Size = new System.Drawing.Size(517, 60);
-            this.lblSystemIcons.TabIndex = 6;
-            this.lblSystemIcons.Text = "When this option is enabled, TotalImage will obtain icons and names for file\r\ntyp" +
-    "es from Windows, which can be slower in some situations. When disabled,\r\ngeneric" +
-    " icons and names will be used instead.";
-            // 
-            // lblResetSettings
-            // 
-            this.lblResetSettings.AutoSize = true;
-            this.lblResetSettings.Location = new System.Drawing.Point(8, 30);
-            this.lblResetSettings.Name = "lblResetSettings";
-            this.lblResetSettings.Size = new System.Drawing.Size(350, 20);
-            this.lblResetSettings.TabIndex = 7;
-            this.lblResetSettings.Text = "Reset all TotalImage settings to their default values.";
-            // 
-            // lblClearRecent
-            // 
-            this.lblClearRecent.AutoSize = true;
-            this.lblClearRecent.Location = new System.Drawing.Point(8, 76);
-            this.lblClearRecent.Name = "lblClearRecent";
-            this.lblClearRecent.Size = new System.Drawing.Size(191, 20);
-            this.lblClearRecent.TabIndex = 8;
-            this.lblClearRecent.Text = "Clear the recent images list.";
-            // 
-            // lblClearTemp
-            // 
-            this.lblClearTemp.AutoSize = true;
-            this.lblClearTemp.Location = new System.Drawing.Point(8, 120);
-            this.lblClearTemp.Name = "lblClearTemp";
-            this.lblClearTemp.Size = new System.Drawing.Size(416, 20);
-            this.lblClearTemp.TabIndex = 9;
-            this.lblClearTemp.Text = "Clear TotalImage\'s temporary folder in local application data.";
+            this.btnFileAssoc.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnFileAssoc.Location = new System.Drawing.Point(454, 32);
+            this.btnFileAssoc.Name = "btnFileAssoc";
+            this.btnFileAssoc.Size = new System.Drawing.Size(94, 31);
+            this.btnFileAssoc.TabIndex = 5;
+            this.btnFileAssoc.Text = "Open";
+            this.btnFileAssoc.UseVisualStyleBackColor = true;
+            this.btnFileAssoc.Click += new System.EventHandler(this.btnFileAssoc_Click);
             // 
             // dlgSettings
             // 
@@ -777,10 +778,10 @@
             this.tabExtraction.ResumeLayout(false);
             this.tabExtraction.PerformLayout();
             this.tabIntegration.ResumeLayout(false);
-            this.gbxFileAssoc.ResumeLayout(false);
-            this.gbxFileAssoc.PerformLayout();
             this.gbxIntegrationMisc.ResumeLayout(false);
             this.gbxIntegrationMisc.PerformLayout();
+            this.gbxFileAssoc.ResumeLayout(false);
+            this.gbxFileAssoc.PerformLayout();
             this.ResumeLayout(false);
 
         }
