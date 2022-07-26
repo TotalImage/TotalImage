@@ -1,0 +1,25 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TotalImage.UI.AboutWindow"
+        Title="About TotalImage" Width="440" Height="240" Icon="/Assets/logo_48.png">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4">
+        <StackPanel.Styles>
+            <Style Selector="WrapPanel">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+            </Style>
+        </StackPanel.Styles>
+        <WrapPanel>
+            <Image Source="/Assets/logo_48.png" Height="48" Margin="0,4,16,0" VerticalAlignment="Top" />
+            <StackPanel VerticalAlignment="Top" Spacing="8">
+                <TextBlock FontWeight="Light" FontSize="32">TotalImage</TextBlock>
+                <TextBlock FontWeight="Light" FontSize="12">A better disk image editor</TextBlock>
+                <TextBlock FontWeight="Light" FontSize="12">Version 1.0.0 Alpha</TextBlock>
+                <TextBlock FontWeight="Light" FontSize="12">Copyright © 2020-2023 The TotalImage Team</TextBlock>
+                <TextBlock FontWeight="Light" FontSize="8" Margin="0,8, 0, 0">TotalImage is licensed under the MIT license. See the LICENSE file for more information.</TextBlock>
+            </StackPanel>
+        </WrapPanel>
+    </StackPanel>
+</Window>

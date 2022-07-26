@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="320"
+        x:Class="TotalImage.UI.MainWindow"
+        Title="TotalImage" Width="480" Height="320" Icon="/Assets/logo_48.png">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4">
+        <StackPanel.Styles>
+            <Style Selector="WrapPanel">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+            </Style>
+            <Style Selector="Button">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="Padding" Value="32,12" />
+            </Style>
+        </StackPanel.Styles>
+        <WrapPanel>
+            <Image Source="/Assets/logo_48.png" Height="32" Margin="0,0,12,0" VerticalAlignment="Center" />
+            <TextBlock FontSize="32" FontWeight="Light" VerticalAlignment="Center">TotalImage</TextBlock>
+        </WrapPanel>
+        <TextBlock Margin="0,0,0,16" FontWeight="Light" FontSize="12" HorizontalAlignment="Center">Version 1.0.0 Alpha</TextBlock>
+        <Button Click="OpenButton_OnClick">
+            _Open...
+        </Button>
+        <Button Click="QuitButton_OnClick">
+            _Quit
+        </Button>
+    </StackPanel>
+</Window>

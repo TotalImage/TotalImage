@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TotalImage.UI.Controls.PropertyRow">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="120" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <TextBlock Name="LabelText" Grid.Column="0" TextAlignment="Left" VerticalAlignment="Center" Margin="2, 4, 4, 4" Text="{Binding $parent[UserControl].Label}" />
+    <TextBlock Name="ValueText" Grid.Column="1" TextAlignment="Left" VerticalAlignment="Center" Margin="4" Text="{Binding $parent[UserControl].Value}" />
+  </Grid>
+</UserControl>
