@@ -1,0 +1,78 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:conv="clr-namespace:TotalImage.UI.Converters"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TotalImage.UI.BrowserWindow" Icon="/Assets/logo_48.png"
+        Title="{Binding WindowTitle}">
+    <Window.Resources>
+        <conv:SizeConverter x:Key="SizeConverter" />
+    </Window.Resources>
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="File">
+                <NativeMenu>
+                    <NativeMenuItem Header="New..." IsEnabled="False" />
+                    <NativeMenuItem Header="Open..." Click="MenuOpen_OnClick" />
+                    <NativeMenuItem Header="Save..." IsEnabled="False" />
+                    <NativeMenuItem Header="Save As..." IsEnabled="False" />
+                    <NativeMenuItem Header="Close" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="Recent files">
+                        <NativeMenu>
+                            <NativeMenuItem Header="No files..." IsEnabled="False" />
+                        </NativeMenu>
+                    </NativeMenuItem>
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="Quit" Click="MenuQuit_OnClick" />
+                </NativeMenu>
+            </NativeMenuItem>
+        </NativeMenu>
+    </NativeMenu.Menu>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MaxWidth="200" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <NativeMenuBar Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
+        <TreeView Name="DirectoryTree" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Directories}" SelectedItem="{Binding SelectedDirectory}" SelectionMode="Single">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate ItemsSource="{Binding Directories}">
+                    <TextBlock Text="{Binding Name}" />
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+        <DataGrid Name="FolderItems"
+                  Grid.Row="1"
+                  Grid.Column="1"
+                  ItemsSource="{Binding SelectedDirectory.Objects}"
+                  IsReadOnly="True"
+                  SelectionMode="Extended"
+                  DoubleTapped="FolderItems_OnDoubleTapped">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Size" Binding="{Binding Length, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
+                <DataGridTextColumn Header="Last Modified" Binding="{Binding LastWriteTime, Mode=OneWay}" />
+                <DataGridTextColumn Header="Attributes" Binding="{Binding Attributes}" FontFamily="Consolas,Monospace,Courier" />
+            </DataGrid.Columns>
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Extract" Click="Extract_OnClick" />
+                    <MenuItem Header="Properties..." Click="Properties_OnClick" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
+        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Orientation="Horizontal" Spacing="16" Margin="16,0">
+            <TextBlock Text="{Binding PartitionSize, Converter={StaticResource SizeConverter}, Mode=OneWay, StringFormat='Partition size: {0}'}" />
+            <TextBlock Text="{Binding PartitionFree, Converter={StaticResource SizeConverter}, Mode=OneWay, StringFormat='Free space: {0}'}" />
+            <TextBlock Text="{Binding SelectedDirectory.FooterLabel}" />
+            <TextBlock Text="{Binding SelectedDirectory.FullName}" />
+        </StackPanel>
+    </Grid>
+</Window>

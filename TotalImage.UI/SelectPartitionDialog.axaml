@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:conv="clr-namespace:TotalImage.UI.Converters"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="320" d:DataContext="SelectPartitionViewModel"
+        x:Class="TotalImage.UI.SelectPartitionDialog"
+        Title="Select partition" Width="600" Height="320" WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <conv:SizeConverter x:Key="SizeConverter" />
+    </Window.Resources>
+    <Grid Margin="16,16,16,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="32" />
+            <RowDefinition Height="64" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Select a partition to load:" />
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Entries}" SelectedItem="{Binding SelectedPartition}" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Volume Label" Binding="{Binding FileSystem.VolumeLabel, Mode=OneWay}" />
+                <DataGridTextColumn Header="Type" Binding="{Binding FileSystem.DisplayName, Mode=OneWay}" />
+                <DataGridTextColumn Header="Start" Binding="{Binding Offset, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
+                <DataGridTextColumn Header="Size" Binding="{Binding Length, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <TextBlock Grid.Row="2" Text="{Binding SchemeLabel, Mode=OneWay, StringFormat='Partitioning scheme: {0}'}" />
+        <StackPanel Grid.Row="3" Spacing="16" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Button IsDefault="True" IsEnabled="{Binding IsPartitionSelected, Mode=OneWay}" Click="OkButton_Click">
+                OK
+            </Button>
+            <Button IsCancel="True" Click="CancelButton_Click">
+                Cancel
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,79 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:uic="clr-namespace:TotalImage.UI.Controls"
+        xmlns:conv="clr-namespace:TotalImage.UI.Converters"
+        mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="580"
+        x:Class="TotalImage.UI.FilePropertiesWindow"
+        Icon="/Assets/logo_48.png"
+        Title="{Binding Name, StringFormat='{}{0} - Properties'}"
+        Width="480" Height="580">
+  <Window.Resources>
+    <conv:SizeConverter x:Key="SizeConverter" />
+  </Window.Resources>
+  <Window.Styles>
+    <!-- Group-like style for HeaderedContentControl -->
+    <Style Selector="HeaderedContentControl">
+      <Setter Property="Padding" Value="8" />
+      <Setter Property="Template">
+        <ControlTemplate TargetType="HeaderedContentControl">
+          <Border BorderThickness="1"
+                  CornerRadius="6"
+                  Padding="{TemplateBinding Padding}"
+                  BorderBrush="{DynamicResource ThemeBorderBrush}"
+                  Background="{DynamicResource ThemeBackgroundBrush}">
+            <StackPanel Spacing="8">
+              <TextBlock Text="{TemplateBinding Header}"
+                         FontSize="16"
+                         FontWeight="Bold"
+                         Margin="2,0,2,2" />
+              <ContentPresenter Content="{TemplateBinding Content}" />
+            </StackPanel>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+      <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+  </Window.Styles>
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Orientation="Vertical" Margin="8" Spacing="8">
+
+      <!-- General -->
+      <HeaderedContentControl Header="General">
+        <StackPanel Orientation="Vertical" Spacing="6">
+          <uic:PropertyRow Label="Name:" Value="{Binding Name, Mode=OneWay}" />
+          <uic:PropertyRow Label="Type:" Value="{Binding TypeDescription, Mode=OneWay}" />
+          <uic:PropertyRow Label="Location:" Value="{Binding DirectoryName, Mode=OneWay}" />
+          <uic:PropertyRow Label="Path:" Value="{Binding FullName, Mode=OneWay}" />
+          <uic:PropertyRow Label="Size:" Value="{Binding Length, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
+          <uic:PropertyRow Label="Size on disk:" Value="{Binding LengthOnDisk, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
+        </StackPanel>
+      </HeaderedContentControl>
+
+      <!-- Timestamps -->
+      <HeaderedContentControl Header="Timestamps">
+        <StackPanel Orientation="Vertical" Spacing="6">
+          <uic:PropertyRow Label="Created:" Value="{Binding CreationTime, Mode=OneWay, StringFormat='{}{0:G}'}" />
+          <uic:PropertyRow Label="Accessed:" Value="{Binding LastAccessTime, Mode=OneWay, StringFormat='{}{0:G}'}" />
+          <uic:PropertyRow Label="Modified:" Value="{Binding LastWriteTime, Mode=OneWay, StringFormat='{}{0:G}'}" />
+        </StackPanel>
+      </HeaderedContentControl>
+
+      <!-- Attributes -->
+      <HeaderedContentControl Header="Attributes">
+        <StackPanel Orientation="Vertical" Spacing="6">
+          <uic:PropertyRow Label="Flags:" Value="{Binding Attributes, Mode=OneWay}" />
+          <WrapPanel ItemSpacing="32" Margin="4, 0">
+            <CheckBox Content="Read-only" IsChecked="{Binding IsReadOnly}" IsEnabled="False" />
+            <CheckBox Content="Hidden" IsChecked="{Binding IsHidden}" IsEnabled="False" />
+            <CheckBox Content="System" IsChecked="{Binding IsSystem}" IsEnabled="False" />
+            <CheckBox Content="Archive" IsChecked="{Binding IsArchive}" IsEnabled="False" />
+          </WrapPanel>
+        </StackPanel>
+      </HeaderedContentControl>
+
+    </StackPanel>
+  </ScrollViewer>
+</Window>
