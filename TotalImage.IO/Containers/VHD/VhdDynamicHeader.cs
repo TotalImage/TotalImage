@@ -168,45 +168,14 @@ public class VhdDynamicHeader
         Array.Copy(Encoding.Unicode.GetBytes(ParentUnicodeName), 0, bytes, 64, 512);
 
         //Now for this bunch of Platform Locator entries...
-        BinaryPrimitives.WriteUInt32BigEndian(span[576..580], (uint)ParentLocatorEntry1.PlatformCode);
-        BinaryPrimitives.WriteUInt32BigEndian(span[580..584], ParentLocatorEntry1.PlatformDataSpace);
-        BinaryPrimitives.WriteUInt32BigEndian(span[584..588], ParentLocatorEntry1.PlatformDataLength);
-        BinaryPrimitives.WriteUInt64BigEndian(span[588..596], ParentLocatorEntry1.PlatformDataOffset);
-
-        BinaryPrimitives.WriteUInt32BigEndian(span[596..600], (uint)ParentLocatorEntry2.PlatformCode);
-        BinaryPrimitives.WriteUInt32BigEndian(span[600..604], ParentLocatorEntry2.PlatformDataSpace);
-        BinaryPrimitives.WriteUInt32BigEndian(span[604..608], ParentLocatorEntry2.PlatformDataLength);
-        BinaryPrimitives.WriteUInt64BigEndian(span[608..616], ParentLocatorEntry2.PlatformDataOffset);
-
-        BinaryPrimitives.WriteUInt32BigEndian(span[616..620], (uint)ParentLocatorEntry3.PlatformCode);
-        BinaryPrimitives.WriteUInt32BigEndian(span[620..624], ParentLocatorEntry3.PlatformDataSpace);
-        BinaryPrimitives.WriteUInt32BigEndian(span[624..628], ParentLocatorEntry3.PlatformDataLength);
-        BinaryPrimitives.WriteUInt64BigEndian(span[628..636], ParentLocatorEntry3.PlatformDataOffset);
-
-        BinaryPrimitives.WriteUInt32BigEndian(span[636..640], (uint)ParentLocatorEntry4.PlatformCode);
-        BinaryPrimitives.WriteUInt32BigEndian(span[640..644], ParentLocatorEntry4.PlatformDataSpace);
-        BinaryPrimitives.WriteUInt32BigEndian(span[644..648], ParentLocatorEntry4.PlatformDataLength);
-        BinaryPrimitives.WriteUInt64BigEndian(span[648..656], ParentLocatorEntry4.PlatformDataOffset);
-
-        BinaryPrimitives.WriteUInt32BigEndian(span[656..660], (uint)ParentLocatorEntry5.PlatformCode);
-        BinaryPrimitives.WriteUInt32BigEndian(span[660..664], ParentLocatorEntry5.PlatformDataSpace);
-        BinaryPrimitives.WriteUInt32BigEndian(span[664..668], ParentLocatorEntry5.PlatformDataLength);
-        BinaryPrimitives.WriteUInt64BigEndian(span[668..676], ParentLocatorEntry5.PlatformDataOffset);
-
-        BinaryPrimitives.WriteUInt32BigEndian(span[676..680], (uint)ParentLocatorEntry6.PlatformCode);
-        BinaryPrimitives.WriteUInt32BigEndian(span[680..684], ParentLocatorEntry6.PlatformDataSpace);
-        BinaryPrimitives.WriteUInt32BigEndian(span[684..688], ParentLocatorEntry6.PlatformDataLength);
-        BinaryPrimitives.WriteUInt64BigEndian(span[688..696], ParentLocatorEntry6.PlatformDataOffset);
-
-        BinaryPrimitives.WriteUInt32BigEndian(span[696..700], (uint)ParentLocatorEntry7.PlatformCode);
-        BinaryPrimitives.WriteUInt32BigEndian(span[700..704], ParentLocatorEntry7.PlatformDataSpace);
-        BinaryPrimitives.WriteUInt32BigEndian(span[704..708], ParentLocatorEntry7.PlatformDataLength);
-        BinaryPrimitives.WriteUInt64BigEndian(span[708..716], ParentLocatorEntry7.PlatformDataOffset);
-
-        BinaryPrimitives.WriteUInt32BigEndian(span[716..720], (uint)ParentLocatorEntry8.PlatformCode);
-        BinaryPrimitives.WriteUInt32BigEndian(span[720..724], ParentLocatorEntry8.PlatformDataSpace);
-        BinaryPrimitives.WriteUInt32BigEndian(span[724..728], ParentLocatorEntry8.PlatformDataLength);
-        BinaryPrimitives.WriteUInt64BigEndian(span[728..736], ParentLocatorEntry8.PlatformDataOffset);
+        ParentLocatorEntry1.GetByteSpan().CopyTo(span[576..600]);
+        ParentLocatorEntry2.GetByteSpan().CopyTo(span[600..624]);
+        ParentLocatorEntry3.GetByteSpan().CopyTo(span[624..648]);
+        ParentLocatorEntry4.GetByteSpan().CopyTo(span[648..672]);
+        ParentLocatorEntry5.GetByteSpan().CopyTo(span[672..696]);
+        ParentLocatorEntry6.GetByteSpan().CopyTo(span[696..720]);
+        ParentLocatorEntry7.GetByteSpan().CopyTo(span[720..744]);
+        ParentLocatorEntry8.GetByteSpan().CopyTo(span[744..768]);
 
         return span;
     }
@@ -331,6 +300,21 @@ public class VhdDynamicHeader
             /// A file URL with UTF-8 encoding conforming to RFC 2396
             /// </summary>
             MacX = 0x4D616358
+        }
+
+        /// <summary>
+        /// Gets the raw bytes representing this platform locator entry
+        /// </summary>
+        public Span<byte> GetByteSpan()
+        {
+            var bytes = new byte[24];
+
+            BinaryPrimitives.WriteUInt32BigEndian(bytes[0..4], (uint)PlatformCode);
+            BinaryPrimitives.WriteUInt32BigEndian(bytes[4..8], PlatformDataSpace);
+            BinaryPrimitives.WriteUInt32BigEndian(bytes[8..12], PlatformDataLength);
+            BinaryPrimitives.WriteUInt64BigEndian(bytes[16..24], PlatformDataOffset);
+
+            return bytes.AsSpan();
         }
     }
 }
