@@ -22,6 +22,7 @@ using TotalImage.FileSystems.BPB;
 using TiFile = TotalImage.FileSystems.File;
 using TiDirectory = TotalImage.FileSystems.Directory;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
+using TotalImage.Containers.NHD;
 
 namespace TotalImage
 {
@@ -607,6 +608,7 @@ namespace TotalImage
                 "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "ISO image (*.iso)|*.iso|" +
                 "Microsoft VHD (*.vhd)|*.vhd|" +
+                "T98-Next HD (*.nhd)|*.nhd|" +
                 "All files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -1779,6 +1781,9 @@ namespace TotalImage
                     {
                         case ".vhd":
                             image = new VhdContainer(path, memoryMapping);
+                            break;
+                        case ".nhd":
+                            image = new NhdContainer(path, memoryMapping);
                             break;
                         default:
                             image = new RawContainer(path, memoryMapping);
