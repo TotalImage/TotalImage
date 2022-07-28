@@ -52,7 +52,7 @@ namespace TotalImage.Containers
         /// <summary>
         /// The length of the container file
         /// </summary>
-        public long Length => Content.Length;
+        public long Length => containerStream.Length;
 
         /// <summary>
         /// Create a container file from an existing file
@@ -64,7 +64,11 @@ namespace TotalImage.Containers
             if (memoryMapping)
             {
                 backingFile = MemoryMappedFile.CreateFromFile(path, FileMode.Open);
-                containerStream = backingFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
+
+                /* Using 0 for ViewStream size can cause problems when the view ends up being larger than the file (e.g. with VHDs, as the metadata is in
+                 * the footer at the end of the file...), so for now let's just set it to file length instead. */
+                FileInfo fileInfo = new FileInfo(path);
+                containerStream = backingFile.CreateViewStream(0, fileInfo.Length, MemoryMappedFileAccess.Read);
             }
             else
             {

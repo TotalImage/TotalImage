@@ -23,7 +23,7 @@ Read and Create functionality is limited to supported features below.
 
 Read and Create functionality is limited to supported features below.
 
-Only fixed-size VHDs are currently supported.
+Differencing VHDs are not supported.
 
 ## Disk geometries
 | Name | Read | Write | Create |
