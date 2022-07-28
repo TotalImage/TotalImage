@@ -201,58 +201,6 @@ public class VhdFooter
     }
 
     /// <summary>
-    /// Returns canonical CHS values for a given disk size according to the VHD specification
-    /// </summary>
-    /// <param name="size">The size of the disk in bytes</param>
-    /// <returns>A tuple of CHS values</returns>
-    private static (ushort, byte, byte) GetGeometryFromSize(ulong size)
-    {
-        // Taken from CHS Calculation in VHD Spec, App. A
-        ushort cylinders = 0;
-        byte heads = 0;
-        byte sectorsPerTrack = 0;
-        uint cylinderTimesHeads = 0;
-
-        uint sectors = (uint)Math.Max(size / 512, 65535 * 16 * 255);
-
-        if (sectors >= 65535 * 16 * 63)
-        {
-            sectorsPerTrack = 255;
-            heads = 16;
-            cylinderTimesHeads = sectors / sectorsPerTrack;
-        }
-        else
-        {
-            sectorsPerTrack = 17;
-            cylinderTimesHeads = sectors / sectorsPerTrack;
-
-            heads = (byte)((cylinderTimesHeads + 1023) / 1024);
-
-            if (heads < 4)
-            {
-                heads = 4;
-            }
-            if (cylinderTimesHeads >= (heads * 1024) || heads > 16)
-            {
-                sectorsPerTrack = 31;
-                heads = 16;
-                cylinderTimesHeads = sectors / sectorsPerTrack;
-            }
-            if (cylinderTimesHeads >= (heads * 1024))
-            {
-                sectorsPerTrack = 63;
-                heads = 16;
-                cylinderTimesHeads = sectors / sectorsPerTrack;
-            }
-        }
-
-        cylinders = (ushort)(cylinderTimesHeads / heads);
-
-        return (cylinders, heads, sectorsPerTrack);
-
-    }
-
-    /// <summary>
     /// Create an empty new VHD footer for a specified disk size
     /// </summary>
     /// <param name="size">Size of disk in bytes</param>
@@ -270,7 +218,7 @@ public class VhdFooter
         CreatorHost = "Wi2k";
         OriginalSize = size;
         CurrentSize = size;
-        (DiskCylinders, DiskHeads, DiskSectorsPerCylinder) = GetGeometryFromSize(size);
+        (DiskCylinders, DiskHeads, DiskSectorsPerCylinder) = CHSAddress.GetGeometryFromSize(size);
         Type = VhdType.FixedHardDisk;
         Checksum = 0;
         UniqueId = Guid.NewGuid();
