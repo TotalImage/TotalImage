@@ -29,64 +29,80 @@ namespace TotalImage
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Container information", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Partition information", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("File system information", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Miscellaneous", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("File information", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Container information", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Partition information", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("File system information", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Miscellaneous", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
-            "File name",
+            "Filename",
             "<filename>"}, -1);
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] {
-            "File size",
+            "Size",
             "<filesize>"}, -1);
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Container type",
-            "<containertype>"}, -1);
+            "Created",
+            "<created>"}, -1);
             System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Container subtype",
-            "<containersubtype>"}, -1);
+            "Modified",
+            "<modified>"}, -1);
             System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Created by",
-            "<createdby>"}, -1);
+            "Accessed",
+            "<accessed>"}, -1);
             System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Partitioning scheme",
-            "<partitionscheme>"}, -1);
+            "Attributes",
+            "<attributes>"}, -1);
             System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] {
-            "No. of partitions",
-            "<nopartitions>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Selected partition",
-            "<selectedpartition>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Partition ID/type",
-            "<selectedpartitionID>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
-            "File system",
-            "<filesystem>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Volume label",
-            "<volumelabel>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Volume serial number",
-            "<volumeserial>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Total storage capacity",
-            "<capacity>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Free space",
-            "<freespace>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Files",
-            "<nofiles>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Subdirectories",
-            "<subdirectories>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] {
             "MD5 hash",
             "<md5hash>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] {
             "SHA-1 hash",
             "<sha1hash>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Container type",
+            "<containertype>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Container subtype",
+            "<containersubtype>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Version",
+            "<containerver>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Created by",
+            "<createdby>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Partitioning scheme",
+            "<partitionscheme>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] {
+            "No. of partitions",
+            "<nopartitions>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Selected partition",
+            "<selectedpartition>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Partition ID/type",
+            "<selectedpartitionID>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] {
+            "File system",
+            "<filesystem>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Volume label",
+            "<volumelabel>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Volume serial number",
+            "<volumeserial>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Total storage capacity",
+            "<capacity>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Free space",
+            "<freespace>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Files",
+            "<nofiles>"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Subdirectories",
+            "<subdirectories>"}, -1);
             this.btnOK = new System.Windows.Forms.Button();
             this.pnlBottom = new System.Windows.Forms.Panel();
             this.btnSave = new System.Windows.Forms.Button();
@@ -167,67 +183,85 @@ namespace TotalImage
             this.lstProperties.ContextMenuStrip = this.cmsCopy;
             this.lstProperties.FullRowSelect = true;
             listViewGroup1.CollapsedState = System.Windows.Forms.ListViewGroupCollapsedState.Expanded;
-            listViewGroup1.Header = "Container information";
-            listViewGroup1.Name = "grpContainerInfo";
+            listViewGroup1.Header = "File information";
+            listViewGroup1.Name = "grpFileInfo";
             listViewGroup2.CollapsedState = System.Windows.Forms.ListViewGroupCollapsedState.Expanded;
-            listViewGroup2.Header = "Partition information";
-            listViewGroup2.Name = "grpPartitionInfo";
+            listViewGroup2.Header = "Container information";
+            listViewGroup2.Name = "grpContainerInfo";
             listViewGroup3.CollapsedState = System.Windows.Forms.ListViewGroupCollapsedState.Expanded;
-            listViewGroup3.Header = "File system information";
-            listViewGroup3.Name = "grpFsInfo";
+            listViewGroup3.Header = "Partition information";
+            listViewGroup3.Name = "grpPartitionInfo";
             listViewGroup4.CollapsedState = System.Windows.Forms.ListViewGroupCollapsedState.Expanded;
-            listViewGroup4.Header = "Miscellaneous";
-            listViewGroup4.Name = "grpMiscInfo";
+            listViewGroup4.Header = "File system information";
+            listViewGroup4.Name = "grpFsInfo";
+            listViewGroup5.CollapsedState = System.Windows.Forms.ListViewGroupCollapsedState.Expanded;
+            listViewGroup5.Header = "Miscellaneous";
+            listViewGroup5.Name = "grpMiscInfo";
             this.lstProperties.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2,
             listViewGroup3,
-            listViewGroup4});
+            listViewGroup4,
+            listViewGroup5});
             this.lstProperties.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             listViewItem1.Group = listViewGroup1;
             listViewItem1.StateImageIndex = 0;
-            listViewItem1.Tag = "File name";
+            listViewItem1.Tag = "Filename";
             listViewItem2.Group = listViewGroup1;
             listViewItem2.StateImageIndex = 0;
             listViewItem2.Tag = "Filesize";
             listViewItem3.Group = listViewGroup1;
             listViewItem3.StateImageIndex = 0;
-            listViewItem3.Tag = "Container";
+            listViewItem3.Tag = "Filecreated";
             listViewItem4.Group = listViewGroup1;
+            listViewItem4.StateImageIndex = 0;
+            listViewItem4.Tag = "Filemodified";
             listViewItem5.Group = listViewGroup1;
-            listViewItem6.Group = listViewGroup2;
-            listViewItem6.StateImageIndex = 0;
-            listViewItem6.Tag = "Partscheme";
-            listViewItem7.Group = listViewGroup2;
-            listViewItem7.StateImageIndex = 0;
-            listViewItem7.Tag = "Partcount";
-            listViewItem8.Group = listViewGroup2;
-            listViewItem8.StateImageIndex = 0;
-            listViewItem8.Tag = "Selpart";
+            listViewItem5.Tag = "Fileaccessed";
+            listViewItem6.Group = listViewGroup1;
+            listViewItem6.Tag = "Fileattrib";
+            listViewItem7.Group = listViewGroup1;
+            listViewItem7.Tag = "md5";
+            listViewItem8.Group = listViewGroup1;
+            listViewItem8.Tag = "sha1";
             listViewItem9.Group = listViewGroup2;
-            listViewItem9.Tag = "PartID";
-            listViewItem10.Group = listViewGroup3;
-            listViewItem10.StateImageIndex = 0;
-            listViewItem10.Tag = "Fs";
-            listViewItem11.Group = listViewGroup3;
-            listViewItem12.Group = listViewGroup3;
-            listViewItem12.Tag = "VolSerial";
+            listViewItem9.StateImageIndex = 0;
+            listViewItem9.Tag = "Container";
+            listViewItem10.Group = listViewGroup2;
+            listViewItem10.Tag = "Containersubtype";
+            listViewItem11.Group = listViewGroup2;
+            listViewItem11.Tag = "Containerver";
+            listViewItem12.Group = listViewGroup2;
+            listViewItem12.Tag = "Creator";
             listViewItem13.Group = listViewGroup3;
             listViewItem13.StateImageIndex = 0;
-            listViewItem13.Tag = "Capacity";
+            listViewItem13.Tag = "Partscheme";
             listViewItem14.Group = listViewGroup3;
             listViewItem14.StateImageIndex = 0;
-            listViewItem14.Tag = "Freespace";
+            listViewItem14.Tag = "Partcount";
             listViewItem15.Group = listViewGroup3;
             listViewItem15.StateImageIndex = 0;
-            listViewItem15.Tag = "Filecount";
+            listViewItem15.Tag = "Selpart";
             listViewItem16.Group = listViewGroup3;
-            listViewItem16.StateImageIndex = 0;
-            listViewItem16.Tag = "Dircount";
+            listViewItem16.Tag = "PartID";
             listViewItem17.Group = listViewGroup4;
-            listViewItem17.Tag = "md5";
+            listViewItem17.StateImageIndex = 0;
+            listViewItem17.Tag = "Fs";
             listViewItem18.Group = listViewGroup4;
-            listViewItem18.Tag = "sha1";
+            listViewItem19.Group = listViewGroup4;
+            listViewItem19.Tag = "VolSerial";
+            listViewItem20.Group = listViewGroup4;
+            listViewItem20.StateImageIndex = 0;
+            listViewItem20.Tag = "Capacity";
+            listViewItem21.Group = listViewGroup4;
+            listViewItem21.StateImageIndex = 0;
+            listViewItem21.Tag = "Freespace";
+            listViewItem22.Group = listViewGroup4;
+            listViewItem22.StateImageIndex = 0;
+            listViewItem22.Tag = "Filecount";
+            listViewItem23.Group = listViewGroup4;
+            listViewItem23.StateImageIndex = 0;
+            listViewItem23.Tag = "Dircount";
             this.lstProperties.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -246,7 +280,12 @@ namespace TotalImage
             listViewItem15,
             listViewItem16,
             listViewItem17,
-            listViewItem18});
+            listViewItem18,
+            listViewItem19,
+            listViewItem20,
+            listViewItem21,
+            listViewItem22,
+            listViewItem23});
             this.lstProperties.LabelWrap = false;
             this.lstProperties.Location = new System.Drawing.Point(15, 15);
             this.lstProperties.Margin = new System.Windows.Forms.Padding(4);
