@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TotalImage.Containers.NHD;
 
 namespace TotalImage
 {
@@ -22,7 +23,7 @@ namespace TotalImage
             FileInfo fileInfo = new FileInfo(mainForm.filepath);
 
             //Fixes the column width on high DPI screens
-            this.lstProperties.Columns[1].Width = lstProperties.ClientRectangle.Width - lstProperties.Columns[0].Width;
+            lstProperties.Columns[1].Width = lstProperties.ClientRectangle.Width - lstProperties.Columns[0].Width;
 
             lstProperties.FindItemWithText("Filename").SubItems[1].Text = mainForm.filename;
             lstProperties.FindItemWithText("Size").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
@@ -49,9 +50,15 @@ namespace TotalImage
             lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = "Please wait...";
             lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = "Please wait...";
 
-            //Obtain this from the container metadata if it exists and display it
-            txtComment.Text = "This container type does not support comments.";
-            txtComment.Enabled = false;
+            txtComment.ReadOnly = true; //TODO: Change this when we have write support so changes to the comment can be saved
+            if (mainForm.image is NhdContainer)
+            {
+                txtComment.Text = ((NhdContainer)mainForm.image).Header.Comment;
+            }
+            else
+            {
+                txtComment.Text = "This container type does not support comments.";
+            }
         }
 
         private void btnSave_Click(object sender, System.EventArgs e)

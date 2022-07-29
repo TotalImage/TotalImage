@@ -171,7 +171,6 @@ namespace TotalImage
             this.txtComment.Margin = new System.Windows.Forms.Padding(4);
             this.txtComment.Multiline = true;
             this.txtComment.Name = "txtComment";
-            this.txtComment.ReadOnly = true;
             this.txtComment.Size = new System.Drawing.Size(560, 113);
             this.txtComment.TabIndex = 1;
             // 
