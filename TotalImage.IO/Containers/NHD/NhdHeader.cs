@@ -77,11 +77,7 @@ namespace TotalImage.Containers.NHD
             Comment = "Created by TotalImage 1.0";
             HeaderSize = 512;
             SectorSize = 512;
-
-            //Bogus, figure out actual calculation of CHS values from size
-            Cylinders = 1024;
-            Heads = 16;
-            Sectors = 63;
+            (Cylinders, Heads, Sectors) = CHSAddress.GetGeometryFromSize(size);
         }
 
         /// <summary>
@@ -96,7 +92,7 @@ namespace TotalImage.Containers.NHD
                 throw new InvalidDataException("Could not find a valid NHD header");
             }
 
-            Comment = Encoding.ASCII.GetString(bytes[16..256]).TrimEnd().TrimEnd('\0'); //Also clear the trailing null bytes
+            Comment = Encoding.ASCII.GetString(bytes[16..256]).TrimEnd().TrimEnd('\0'); //Also clear the trailing null bytes just in case
             HeaderSize = BinaryPrimitives.ReadUInt32LittleEndian(bytes[272..276]);
             Cylinders = BinaryPrimitives.ReadUInt32LittleEndian(bytes[276..280]);
             Heads = BinaryPrimitives.ReadUInt16LittleEndian(bytes[280..282]);
