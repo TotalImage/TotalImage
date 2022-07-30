@@ -37,7 +37,8 @@ namespace TotalImage
             //VHD specifics
             if (mainForm.image is VhdContainer vhd)
             {
-                lstProperties.FindItemWithText("Container subtype").SubItems[1].Text = vhd.Footer.Type.ToString();
+                string vhdType = vhd.Footer.Type.ToString();
+                lstProperties.FindItemWithText("Container subtype").SubItems[1].Text = vhdType.Substring(0, vhdType.IndexOf("HardDisk"));
 
                 string containerVersion = $"{vhd.Footer.FormatVersionMajor}.{vhd.Footer.FormatVersionMinor}";
                 if (containerVersion != "0.0")
