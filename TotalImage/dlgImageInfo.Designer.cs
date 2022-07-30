@@ -84,7 +84,7 @@ namespace TotalImage
             "<selectedpartition>"}, -1);
             System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] {
             "Partition ID/type",
-            "<selectedpartitionID>"}, -1);
+            "N/A"}, -1);
             System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] {
             "File system",
             "<filesystem>"}, -1);
