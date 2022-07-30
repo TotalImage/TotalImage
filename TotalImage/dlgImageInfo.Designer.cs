@@ -93,7 +93,7 @@ namespace TotalImage
             "N/A"}, -1);
             System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] {
             "Volume serial number",
-            "<volumeserial>"}, -1);
+            "N/A"}, -1);
             System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] {
             "Total storage capacity",
             "<capacity>"}, -1);
