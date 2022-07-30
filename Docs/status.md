@@ -20,6 +20,7 @@ Read and Create functionality is limited to supported features below.
 | --- | --- | --- | --- | --- |
 | Raw sector image | IMG, ISO, IMA, FLP, VFD, DSK | ✔ Yes | ❌ No | ✔ Yes |
 | Microsoft VHD | VHD | ⚠ Partial | ❌ No | ❌ No |
+| T98-Next HD | NHD | ✔ Yes | ❌ No | ❌ No |
 
 Read and Create functionality is limited to supported features below.
 
