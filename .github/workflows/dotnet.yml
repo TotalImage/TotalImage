@@ -3,8 +3,10 @@ name: .NET
 on:
   push:
     branches: [ master ]
+    paths: [ TotalImage*/**, .github/workflows/** ]
   pull_request:
     branches: [ master ]
+    paths: [ TotalImage*/**, .github/workflows/** ]
 
 jobs:
   build:
