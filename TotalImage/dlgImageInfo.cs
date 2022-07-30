@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Containers.NHD;
+using TotalImage.Containers.VHD;
 
 namespace TotalImage
 {
@@ -32,32 +33,46 @@ namespace TotalImage
             lstProperties.FindItemWithText("Accessed").SubItems[1].Text = fileInfo.LastAccessTime.ToString();
             lstProperties.FindItemWithText("Attributes").SubItems[1].Text = fileInfo.Attributes.ToString();
             lstProperties.FindItemWithText("Container type").SubItems[1].Text = mainForm.image.DisplayName;
-            lstProperties.FindItemWithText("Container subtype").SubItems[1].Text = "N/A"; //Obtain this from the container metadata if it exists
-            lstProperties.FindItemWithText("Version").SubItems[1].Text = "N/A"; //Obtain this from the container metadata if it exists
+
+            //VHD specifics
+            if (mainForm.image is VhdContainer vhd)
+            {
+                lstProperties.FindItemWithText("Container subtype").SubItems[1].Text = vhd.Footer.Type.ToString();
+
+                string containerVersion = $"{vhd.Footer.FormatVersionMajor}.{vhd.Footer.FormatVersionMinor}";
+                if (containerVersion != "0.0")
+                    lstProperties.FindItemWithText("Container version").SubItems[1].Text = containerVersion;
+
+                //We might want to prettify this further so we show "Windows" instead of "win", for example.
+                lstProperties.FindItemWithText("Created by").SubItems[1].Text = string.IsNullOrWhiteSpace(vhd.Footer.CreatorApplication) ? "Unknown" : vhd.Footer.CreatorApplication;
+
+                string creatorVersion = $"{vhd.Footer.CreatorVersionMajor}.{vhd.Footer.CreatorVersionMinor}";
+                if(creatorVersion != "0.0")
+                    lstProperties.FindItemWithText("Creator version").SubItems[1].Text = creatorVersion;
+            }            
+            
             lstProperties.FindItemWithText("File system").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.DisplayName;
+            
             var volLabel = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.VolumeLabel;
-            _ = string.IsNullOrWhiteSpace(volLabel) ? lstProperties.FindItemWithText("Volume label").SubItems[1].Text = "N/A" : lstProperties.FindItemWithText("Volume label").SubItems[1].Text = volLabel;
+            if(!string.IsNullOrWhiteSpace(volLabel))
+                lstProperties.FindItemWithText("Volume label").SubItems[1].Text = volLabel;
+
             lstProperties.FindItemWithText("Partitioning scheme").SubItems[1].Text = mainForm.image.PartitionTable.DisplayName;
             lstProperties.FindItemWithText("No. of partitions").SubItems[1].Text = mainForm.image.PartitionTable.Partitions.Count.ToString();
             lstProperties.FindItemWithText("Selected partition").SubItems[1].Text = mainForm.CurrentPartitionIndex.ToString();
             lstProperties.FindItemWithText("Partition ID/type").SubItems[1].Text = "N/A"; //Obtain this from the partition entry, if it exists
             lstProperties.FindItemWithText("Files").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.FileCount(true).ToString();
             lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.SubdirectoryCount(true).ToString();
-            lstProperties.FindItemWithText("Created by").SubItems[1].Text = "Unknown"; //Obtain this from the container metadata if it exists
             lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             lstProperties.FindItemWithText("Free space").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.TotalFreeSpace, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             lstProperties.FindItemWithText("Volume serial number").SubItems[1].Text = "N/A"; //Obtain this from the BPB if it exists
             lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = "Please wait...";
             lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = "Please wait...";
 
-            txtComment.ReadOnly = true; //TODO: Change this when we have write support so changes to the comment can be saved
-            if (mainForm.image is NhdContainer)
+            //TODO: This needs to be editeable (ReadOnly = false) once we have write support
+            if (mainForm.image is NhdContainer nhd)
             {
-                txtComment.Text = ((NhdContainer)mainForm.image).Header.Comment;
-            }
-            else
-            {
-                txtComment.Text = "This container type does not support comments.";
+                txtComment.Text = nhd.Header.Comment;
             }
         }
 

@@ -63,44 +63,47 @@ namespace TotalImage
             "<containertype>"}, -1);
             System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] {
             "Container subtype",
-            "<containersubtype>"}, -1);
+            "N/A"}, -1);
             System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Version",
-            "<containerver>"}, -1);
+            "Container version",
+            "Unknown"}, -1);
             System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] {
             "Created by",
-            "<createdby>"}, -1);
+            "Unknown"}, -1);
             System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Creator version",
+            "Unknown"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] {
             "Partitioning scheme",
             "<partitionscheme>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] {
             "No. of partitions",
             "<nopartitions>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new string[] {
             "Selected partition",
             "<selectedpartition>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] {
             "Partition ID/type",
             "<selectedpartitionID>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] {
             "File system",
             "<filesystem>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Volume label",
-            "<volumelabel>"}, -1);
             System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem(new string[] {
+            "Volume label",
+            "N/A"}, -1);
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] {
             "Volume serial number",
             "<volumeserial>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] {
             "Total storage capacity",
             "<capacity>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[] {
             "Free space",
             "<freespace>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem(new string[] {
             "Files",
             "<nofiles>"}, -1);
-            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem(new string[] {
+            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem(new string[] {
             "Subdirectories",
             "<subdirectories>"}, -1);
             this.btnOK = new System.Windows.Forms.Button();
@@ -171,8 +174,10 @@ namespace TotalImage
             this.txtComment.Margin = new System.Windows.Forms.Padding(4);
             this.txtComment.Multiline = true;
             this.txtComment.Name = "txtComment";
+            this.txtComment.ReadOnly = true;
             this.txtComment.Size = new System.Drawing.Size(560, 113);
             this.txtComment.TabIndex = 1;
+            this.txtComment.Text = "This container type does not support comments.";
             // 
             // lstProperties
             // 
@@ -232,35 +237,37 @@ namespace TotalImage
             listViewItem11.Tag = "Containerver";
             listViewItem12.Group = listViewGroup2;
             listViewItem12.Tag = "Creator";
-            listViewItem13.Group = listViewGroup3;
-            listViewItem13.StateImageIndex = 0;
-            listViewItem13.Tag = "Partscheme";
+            listViewItem13.Group = listViewGroup2;
+            listViewItem13.Tag = "Creatorver";
             listViewItem14.Group = listViewGroup3;
             listViewItem14.StateImageIndex = 0;
-            listViewItem14.Tag = "Partcount";
+            listViewItem14.Tag = "Partscheme";
             listViewItem15.Group = listViewGroup3;
             listViewItem15.StateImageIndex = 0;
-            listViewItem15.Tag = "Selpart";
+            listViewItem15.Tag = "Partcount";
             listViewItem16.Group = listViewGroup3;
-            listViewItem16.Tag = "PartID";
-            listViewItem17.Group = listViewGroup4;
-            listViewItem17.StateImageIndex = 0;
-            listViewItem17.Tag = "Fs";
+            listViewItem16.StateImageIndex = 0;
+            listViewItem16.Tag = "Selpart";
+            listViewItem17.Group = listViewGroup3;
+            listViewItem17.Tag = "PartID";
             listViewItem18.Group = listViewGroup4;
+            listViewItem18.StateImageIndex = 0;
+            listViewItem18.Tag = "Fs";
             listViewItem19.Group = listViewGroup4;
-            listViewItem19.Tag = "VolSerial";
             listViewItem20.Group = listViewGroup4;
-            listViewItem20.StateImageIndex = 0;
-            listViewItem20.Tag = "Capacity";
+            listViewItem20.Tag = "VolSerial";
             listViewItem21.Group = listViewGroup4;
             listViewItem21.StateImageIndex = 0;
-            listViewItem21.Tag = "Freespace";
+            listViewItem21.Tag = "Capacity";
             listViewItem22.Group = listViewGroup4;
             listViewItem22.StateImageIndex = 0;
-            listViewItem22.Tag = "Filecount";
+            listViewItem22.Tag = "Freespace";
             listViewItem23.Group = listViewGroup4;
             listViewItem23.StateImageIndex = 0;
-            listViewItem23.Tag = "Dircount";
+            listViewItem23.Tag = "Filecount";
+            listViewItem24.Group = listViewGroup4;
+            listViewItem24.StateImageIndex = 0;
+            listViewItem24.Tag = "Dircount";
             this.lstProperties.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -284,7 +291,8 @@ namespace TotalImage
             listViewItem20,
             listViewItem21,
             listViewItem22,
-            listViewItem23});
+            listViewItem23,
+            listViewItem24});
             this.lstProperties.LabelWrap = false;
             this.lstProperties.Location = new System.Drawing.Point(15, 15);
             this.lstProperties.Margin = new System.Windows.Forms.Padding(4);
