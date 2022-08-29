@@ -2401,14 +2401,23 @@ namespace TotalImage
                         {
                             var item = GetSelectedItemData(0);
                             lbStatusPath.Text = item.FullName;
-                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
+                            if(item is TiDirectory dir)
+                                lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, false))} in 1 item";
+                            else
+                                lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
                             break;
                         }
                     case StatusBarState.MultipleSelected:
                         {
                             var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
                             var selectedSize = 0ul;
-                            foreach (var entry in SelectedItems) selectedSize += entry.Length;
+                            foreach (var entry in SelectedItems)
+                            {
+                                if(entry is TiDirectory subdir)
+                                    selectedSize += subdir.Size(true, false);
+                                else
+                                    selectedSize += entry.Length;
+                            }
 
                             lbStatusPath.Text = dir.FullName;
                             lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
