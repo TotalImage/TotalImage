@@ -45,7 +45,7 @@ namespace TotalImage.FileSystems.ISO
 
             if (!success)
             {
-                throw new ArgumentOutOfRangeException(nameof(date));
+                return null;
             }
 
             if (year == 0 && month == 0 && day == 0 && hour == 0 && minute == 0 && second == 0 && hundredths == 0)
