@@ -19,7 +19,7 @@ namespace TotalImage.FileSystems.ISO
         /// Converts an ISO-9660 or High Sierra date format to a DateTimeOffset
         /// </summary>
         /// <param name="date">the ISO-9660 or High Sierra date format</param>
-        /// <returns>a DateTimeOffset containing the time</returns>
+        /// <returns>a DateTimeOffset containing the time if the date is valid, otherwise null</returns>
         public static DateTimeOffset? FromIsoDateTime(ReadOnlySpan<char> date)
         {
             if (date.Length < 16 || date.Length > 17)
