@@ -1736,7 +1736,7 @@ namespace TotalImage
                     item.Font = sfont;
                 }
 
-                item.ToolTipText = $"Type: {item.SubItems[1].Text}{Environment.NewLine}Size: {item.SubItems[2].Text}{Environment.NewLine}Modified: {item.SubItems[3].Text}";
+                item.ToolTipText = $"Type: {item.SubItems[1].Text}{Environment.NewLine}Size: {Settings.CurrentSettings.SizeUnit.FormatSize(fso.Length)}{Environment.NewLine}Modified: {item.SubItems[3].Text}";
 
                 item.Tag = fso;
                 currentFolderView.Add(item);
