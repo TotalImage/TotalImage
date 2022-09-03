@@ -1709,10 +1709,18 @@ namespace TotalImage
                 var item = new ListViewItem();
                 item.Text = fso.Name;
                 item.SubItems.Add(GetFileTypeName(fso.Name, fso.Attributes));
-                if (fso is TiDirectory)
+
+                string size = "";
+                if (fso is TiDirectory subdir)
+                {
                     item.SubItems.Add(string.Empty);
+                    size = Settings.CurrentSettings.SizeUnit.FormatSize(subdir.Size(true, false));
+                }
                 else
-                    item.SubItems.Add(Settings.CurrentSettings.SizeUnit.FormatSize(fso.Length));
+                {
+                    size = Settings.CurrentSettings.SizeUnit.FormatSize(fso.Length);
+                    item.SubItems.Add(size);
+                }
 
                 item.ImageIndex = GetFileTypeIconIndex(fso.Name, fso.Attributes);
 
@@ -1736,7 +1744,7 @@ namespace TotalImage
                     item.Font = sfont;
                 }
 
-                item.ToolTipText = $"Type: {item.SubItems[1].Text}{Environment.NewLine}Size: {Settings.CurrentSettings.SizeUnit.FormatSize(fso.Length)}{Environment.NewLine}Modified: {item.SubItems[3].Text}";
+                item.ToolTipText = $"Type: {item.SubItems[1].Text}{Environment.NewLine}Size: {size}{Environment.NewLine}Modified: {item.SubItems[3].Text}";
 
                 item.Tag = fso;
                 currentFolderView.Add(item);
