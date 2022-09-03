@@ -76,6 +76,8 @@ namespace TotalImage
             this.selectPartitionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.managePartitionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.parentDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.expandDirectoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseDirectoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
@@ -130,6 +132,7 @@ namespace TotalImage
             this.bootsectToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.infoToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.parentDirectoryToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.viewToolStripButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.showHiddenItemsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.showDeletedItemsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -177,6 +180,7 @@ namespace TotalImage
             // 
             // cmsDirTree
             // 
+            this.cmsDirTree.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsDirTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.expandDirectoryTreeToolStripMenuItem1,
             this.collapseDirectoryTreeToolStripMenuItem1,
@@ -258,6 +262,7 @@ namespace TotalImage
             // menuBar
             // 
             this.menuBar.ContextMenuStrip = this.cmsToolbars;
+            this.menuBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
@@ -274,6 +279,7 @@ namespace TotalImage
             // 
             // cmsToolbars
             // 
+            this.cmsToolbars.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsToolbars.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.commandBarToolStripMenuItem1,
             this.directoryTreeToolStripMenuItem1,
@@ -568,6 +574,8 @@ namespace TotalImage
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.parentDirectoryToolStripMenuItem,
+            this.toolStripSeparator4,
             this.expandDirectoryTreeToolStripMenuItem,
             this.collapseDirectoryTreeToolStripMenuItem,
             this.toolStripSeparator16,
@@ -586,6 +594,18 @@ namespace TotalImage
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
             this.viewToolStripMenuItem.Text = "View";
             this.viewToolStripMenuItem.DropDownOpening += new System.EventHandler(this.viewMenu_DropDownOpening);
+            // 
+            // parentDirectoryToolStripMenuItem
+            // 
+            this.parentDirectoryToolStripMenuItem.Name = "parentDirectoryToolStripMenuItem";
+            this.parentDirectoryToolStripMenuItem.Size = new System.Drawing.Size(242, 26);
+            this.parentDirectoryToolStripMenuItem.Text = "Parent directory";
+            this.parentDirectoryToolStripMenuItem.Click += new System.EventHandler(this.parentDirectoryToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(239, 6);
             // 
             // expandDirectoryTreeToolStripMenuItem
             // 
@@ -811,6 +831,7 @@ namespace TotalImage
             // statusBar
             // 
             this.statusBar.ContextMenuStrip = this.cmsToolbars;
+            this.statusBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatusCapacity,
             this.lblStatusFreeCapacity,
@@ -868,6 +889,7 @@ namespace TotalImage
             // 
             this.commandBar.ContextMenuStrip = this.cmsToolbars;
             this.commandBar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.commandBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.commandBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripButton,
             this.openToolStripButton,
@@ -887,6 +909,7 @@ namespace TotalImage
             this.bootsectToolStripButton,
             this.infoToolStripButton,
             this.toolStripSeparator10,
+            this.parentDirectoryToolStripButton,
             this.viewToolStripButton,
             this.sortToolStripButton,
             this.toolStripSeparator12,
@@ -1070,6 +1093,16 @@ namespace TotalImage
             this.toolStripSeparator10.Name = "toolStripSeparator10";
             this.toolStripSeparator10.Size = new System.Drawing.Size(6, 28);
             // 
+            // parentDirectoryToolStripButton
+            // 
+            this.parentDirectoryToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.parentDirectoryToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("parentDirectoryToolStripButton.Image")));
+            this.parentDirectoryToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.parentDirectoryToolStripButton.Name = "parentDirectoryToolStripButton";
+            this.parentDirectoryToolStripButton.Size = new System.Drawing.Size(29, 25);
+            this.parentDirectoryToolStripButton.Text = "Parent directory";
+            this.parentDirectoryToolStripButton.Click += new System.EventHandler(this.parentDirectoryToolStripButton_Click);
+            // 
             // viewToolStripButton
             // 
             this.viewToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -1203,7 +1236,7 @@ namespace TotalImage
             this.splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer.Location = new System.Drawing.Point(0, 56);
-            this.splitContainer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.splitContainer.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer.Name = "splitContainer";
             // 
             // splitContainer.Panel1
@@ -1228,7 +1261,7 @@ namespace TotalImage
             this.lstDirectories.ImageList = this.imgFilesSmall;
             this.lstDirectories.LabelEdit = true;
             this.lstDirectories.Location = new System.Drawing.Point(0, 0);
-            this.lstDirectories.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstDirectories.Margin = new System.Windows.Forms.Padding(4);
             this.lstDirectories.Name = "lstDirectories";
             this.lstDirectories.SelectedImageIndex = 0;
             this.lstDirectories.ShowLines = false;
@@ -1265,11 +1298,10 @@ namespace TotalImage
             this.lstFiles.ContextMenuStrip = this.cmsFileList;
             this.lstFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstFiles.FullRowSelect = true;
-            this.lstFiles.HideSelection = false;
             this.lstFiles.LabelEdit = true;
             this.lstFiles.LargeImageList = this.imgFilesLarge;
             this.lstFiles.Location = new System.Drawing.Point(0, 0);
-            this.lstFiles.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstFiles.Margin = new System.Windows.Forms.Padding(4);
             this.lstFiles.Name = "lstFiles";
             this.lstFiles.ShowGroups = false;
             this.lstFiles.ShowItemToolTips = true;
@@ -1333,6 +1365,7 @@ namespace TotalImage
             // 
             // cmsFileList
             // 
+            this.cmsFileList.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsFileList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.extractToolStripMenuItem2,
             this.newFolderToolStripMenuItem2,
@@ -1423,7 +1456,7 @@ namespace TotalImage
             this.Controls.Add(this.menuBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuBar;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(808, 488);
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
@@ -1445,6 +1478,7 @@ namespace TotalImage
             this.cmsFileList.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -1580,6 +1614,9 @@ namespace TotalImage
         private System.Windows.Forms.ToolStripButton lblNotifications;
         internal System.Windows.Forms.ImageList imgFilesSmall;
         internal System.Windows.Forms.ImageList imgFilesLarge;
+        private System.Windows.Forms.ToolStripMenuItem parentDirectoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton parentDirectoryToolStripButton;
     }
 }
 

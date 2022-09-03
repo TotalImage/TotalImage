@@ -4,11 +4,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.FileSystems.FAT;
 using TotalImage.Containers;
@@ -19,7 +16,6 @@ using static Interop.User32;
 using System.Diagnostics;
 using TotalImage.FileSystems.BPB;
 
-using TiFile = TotalImage.FileSystems.File;
 using TiDirectory = TotalImage.FileSystems.Directory;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 using TotalImage.Containers.NHD;
@@ -49,7 +45,8 @@ namespace TotalImage
 
         private ListViewItem upOneFolderListViewItem = new ListViewItem()
         {
-            Text = ".."
+            Text = "..",
+            ToolTipText = "Parent directory"
         };
 
         private List<ListViewItem> currentFolderView = new List<ListViewItem>();
@@ -77,7 +74,8 @@ namespace TotalImage
 
             GetDefaultIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-
+            parentDirectoryToolStripMenuItem.Image = parentDirectoryToolStripButton.Image = imgFilesSmall.Images["up"];
+            
             //Open the file that was dragged onto the exe/shortcut or passed as a command line argument
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
@@ -1563,6 +1561,22 @@ namespace TotalImage
                 return;
             }
         }
+
+        private void parentDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lstDirectories.SelectedNode.Parent != null)
+            {
+                lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
+            }
+        }
+
+        private void parentDirectoryToolStripButton_Click(object sender, EventArgs e)
+        {
+            if (lstDirectories.SelectedNode.Parent != null)
+            {
+                lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
+            }
+        }
         #endregion
 
         private int IndexShift => lstFiles.VirtualListSize - currentFolderView.Count;
@@ -1678,7 +1692,17 @@ namespace TotalImage
             upOneFolderListViewItem.Tag = dir.Parent;
 
             var count = 0;
-            if (dir.Parent != null) count++;
+            if (dir.Parent != null)
+            {
+                count++;
+                parentDirectoryToolStripMenuItem.Enabled = true;
+                parentDirectoryToolStripButton.Enabled = true;
+            }
+            else
+            {
+                parentDirectoryToolStripMenuItem.Enabled = false;
+                parentDirectoryToolStripButton.Enabled = false;
+            }
 
             foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems))
             {
@@ -2229,6 +2253,8 @@ namespace TotalImage
             managePartitionsToolStripButton.Enabled = false;
             selectPartitionToolStripComboBox.Enabled = false;
             lblStatusProgressBar.Visible = false;
+            parentDirectoryToolStripMenuItem.Enabled = false;
+            parentDirectoryToolStripButton.Enabled = false;
 
             // Change border sides for status bar children to remove seperator-like looks.
             lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.None;
