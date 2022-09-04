@@ -61,37 +61,25 @@ namespace TotalImage
             if (entry is IFatFileSystemObject fatObj)
             {
                 txtShortFilename1.Text = fatObj.ShortName;
-                txtShortFilename1.Enabled = true;
-                lblShortFilename.Enabled = true;
                 txtFirstCluster1.Text = fatObj.FirstCluster.ToString();
-                txtFirstCluster1.Enabled = true;
-                lblFirstCluster.Enabled = true;
             }
             else
             {
                 txtShortFilename1.Text = "N/A"; //For now. We might want to always generate this anyway even for other file systems?
-                txtShortFilename1.Enabled = false;
-                lblShortFilename.Enabled = false;
                 txtFirstCluster1.Text = "N/A";
-                txtFirstCluster1.Enabled = false;
-                lblFirstCluster.Enabled = false;
             }
 
             if (entry is FileSystems.File file)
             {
                 txtLocation1.Text = file.DirectoryName;
-                txtContains1.Enabled = false;
                 txtContains1.Text = "N/A";
-                lblContains.Enabled = false;
                 txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
                 txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entry.LengthOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             }
             else if (entry is FileSystems.Directory dir)
             {
                 txtLocation1.Text = dir.Parent?.FullName;
-                txtContains1.Enabled = true;
                 txtContains1.Text = $"Files: {dir.FileCount(true)}, subdirectories: {dir.SubdirectoryCount(true)}";
-                lblContains.Enabled = true;
                 txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, false), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
                 txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, true), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             }

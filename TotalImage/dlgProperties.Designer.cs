@@ -64,6 +64,7 @@
             this.lblAttributes = new System.Windows.Forms.Label();
             this.txtType1 = new System.Windows.Forms.TextBox();
             this.txtLocation1 = new System.Windows.Forms.TextBox();
+            this.lblMultipleObjectsCount = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imgIcon)).BeginInit();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
@@ -494,6 +495,17 @@
             this.txtLocation1.TabStop = false;
             this.txtLocation1.Text = "<location>";
             // 
+            // lblMultipleObjectsCount
+            // 
+            this.lblMultipleObjectsCount.AutoSize = true;
+            this.lblMultipleObjectsCount.Location = new System.Drawing.Point(63, 23);
+            this.lblMultipleObjectsCount.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblMultipleObjectsCount.Name = "lblMultipleObjectsCount";
+            this.lblMultipleObjectsCount.Size = new System.Drawing.Size(146, 20);
+            this.lblMultipleObjectsCount.TabIndex = 36;
+            this.lblMultipleObjectsCount.Text = "Files: X, directories: Y";
+            this.lblMultipleObjectsCount.Visible = false;
+            // 
             // dlgProperties
             // 
             this.AcceptButton = this.btnOK;
@@ -502,6 +514,7 @@
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(480, 538);
+            this.Controls.Add(this.lblMultipleObjectsCount);
             this.Controls.Add(this.txtFirstCluster1);
             this.Controls.Add(this.lblFirstCluster);
             this.Controls.Add(this.txtContains1);
@@ -585,5 +598,6 @@
         private System.Windows.Forms.Label lblContains;
         private System.Windows.Forms.TextBox txtFirstCluster1;
         private System.Windows.Forms.Label lblFirstCluster;
+        private System.Windows.Forms.Label lblMultipleObjectsCount;
     }
 }
