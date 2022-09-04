@@ -1710,11 +1710,15 @@ namespace TotalImage
                 item.Text = fso.Name;
                 item.SubItems.Add(GetFileTypeName(fso.Name, fso.Attributes));
 
-                string size = "";
+                string size = string.Empty;
                 if (fso is TiDirectory subdir)
                 {
-                    item.SubItems.Add(string.Empty);
                     size = Settings.CurrentSettings.SizeUnit.FormatSize(subdir.Size(true, false));
+
+                    if (Settings.CurrentSettings.FileListShowDirSize)
+                        item.SubItems.Add(size);
+                    else
+                        item.SubItems.Add(string.Empty);                   
                 }
                 else
                 {

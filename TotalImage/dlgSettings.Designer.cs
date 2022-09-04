@@ -49,6 +49,7 @@
             this.cbxConfirmDeletion = new System.Windows.Forms.CheckBox();
             this.cbxConfirmInjection = new System.Windows.Forms.CheckBox();
             this.tabView = new System.Windows.Forms.TabPage();
+            this.cbxShowDirSizes = new System.Windows.Forms.CheckBox();
             this.lstSortOrder = new System.Windows.Forms.ComboBox();
             this.lblSortOrder = new System.Windows.Forms.Label();
             this.cbxShowDeletedItems = new System.Windows.Forms.CheckBox();
@@ -345,6 +346,7 @@
             // 
             // tabView
             // 
+            this.tabView.Controls.Add(this.cbxShowDirSizes);
             this.tabView.Controls.Add(this.lstSortOrder);
             this.tabView.Controls.Add(this.lblSortOrder);
             this.tabView.Controls.Add(this.cbxShowDeletedItems);
@@ -366,6 +368,18 @@
             this.tabView.TabIndex = 2;
             this.tabView.Text = "View";
             this.tabView.UseVisualStyleBackColor = true;
+            // 
+            // cbxShowDirSizes
+            // 
+            this.cbxShowDirSizes.AutoSize = true;
+            this.cbxShowDirSizes.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxShowDirSizes.Location = new System.Drawing.Point(22, 253);
+            this.cbxShowDirSizes.Margin = new System.Windows.Forms.Padding(4);
+            this.cbxShowDirSizes.Name = "cbxShowDirSizes";
+            this.cbxShowDirSizes.Size = new System.Drawing.Size(238, 25);
+            this.cbxShowDirSizes.TabIndex = 20;
+            this.cbxShowDirSizes.Text = "Show directory sizes in file list";
+            this.cbxShowDirSizes.UseVisualStyleBackColor = true;
             // 
             // lstSortOrder
             // 
@@ -840,5 +854,6 @@
         private System.Windows.Forms.Label lblResetSettings;
         private System.Windows.Forms.Label lblClearTemp;
         private System.Windows.Forms.Label lblClearRecent;
+        private System.Windows.Forms.CheckBox cbxShowDirSizes;
     }
 }

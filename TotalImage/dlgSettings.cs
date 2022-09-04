@@ -94,6 +94,7 @@ namespace TotalImage
             cbxConfirmInjection.Checked = Settings.CurrentSettings.ConfirmInjection;
             cbxConfirmOverwriteExtract.Checked = Settings.CurrentSettings.ConfirmOverwriteExtraction;
             txtMemoryMapping.Value = Settings.CurrentSettings.MemoryMappingThreshold / 1048576;
+            cbxShowDirSizes.Checked = Settings.CurrentSettings.FileListShowDirSize;
 
             switch (Settings.CurrentSettings.FilesView)
             {
@@ -151,6 +152,7 @@ namespace TotalImage
             Settings.CurrentSettings.ConfirmInjection = cbxConfirmInjection.Checked;
             Settings.CurrentSettings.ConfirmOverwriteExtraction = cbxConfirmOverwriteExtract.Checked;
             Settings.CurrentSettings.MemoryMappingThreshold = (long)txtMemoryMapping.Value * 1048576;
+            Settings.CurrentSettings.FileListShowDirSize = cbxShowDirSizes.Checked;
 
             switch (lstSizeUnits.SelectedIndex)
             {

@@ -44,6 +44,7 @@ namespace TotalImage
             public bool ConfirmOverwriteExtraction { get; set; } = true;
             public bool AutoIncrementFilename { get; set; } = true;
             public long MemoryMappingThreshold { get; set; } = 104857600; //100 MiB
+            public bool FileListShowDirSize { get; set; } = false;
         }
 
         public static SettingsModel CurrentSettings { get; private set; }
@@ -135,7 +136,8 @@ namespace TotalImage
                     CurrentSettings.ConfirmDeletion = settings.ConfirmDeletion;
                     CurrentSettings.ConfirmInjection = settings.ConfirmInjection;
                     CurrentSettings.ConfirmOverwriteExtraction = settings.ConfirmOverwriteExtraction;
-                    CurrentSettings.MemoryMappingThreshold = 1048576;
+                    CurrentSettings.MemoryMappingThreshold = settings.MemoryMappingThreshold;
+                    CurrentSettings.FileListShowDirSize = settings.FileListShowDirSize;
                 }
             }
             catch (IOException)
@@ -199,6 +201,7 @@ namespace TotalImage
             CurrentSettings.ConfirmInjection = true;
             CurrentSettings.ConfirmOverwriteExtraction = true;
             CurrentSettings.MemoryMappingThreshold = 1048576;
+            CurrentSettings.FileListShowDirSize = false;
         }
 
         //Saves all settings to permanent storage (settings.json)
