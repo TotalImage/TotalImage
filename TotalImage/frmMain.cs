@@ -758,14 +758,17 @@ namespace TotalImage
         //TODO: Implement the Properties dialog for multiple selected objects like Windows does it
         private void properties_Click(object sender, EventArgs e)
         {
+            List<TiFileSystemObject> entries = new List<TiFileSystemObject>();
             if (lstDirectories.Focused)
             {
-                using dlgProperties dlg = new dlgProperties((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
-                dlg.ShowDialog();
+                /*using dlgProperties dlg = new dlgProperties((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
+                dlg.ShowDialog();*/
+
+                entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
             }
             else if (lstFiles.Focused)
             {
-                if (lstFiles.SelectedIndices.Count == 1)
+                /*if (lstFiles.SelectedIndices.Count == 1)
                 {
                     using dlgProperties dlg = new dlgProperties(GetSelectedItemData(0));
                     dlg.ShowDialog();
@@ -773,8 +776,14 @@ namespace TotalImage
                 else if (lstFiles.SelectedIndices.Count > 1)
                 {
                     throw new NotImplementedException("This feature is not implemented yet.");
-                }
+                }*/
+                
+                for (int i = 0; i < lstFiles.SelectedIndices.Count; i++)
+                    entries.Add(GetSelectedItemData(i));               
             }
+
+            using dlgProperties dlg = new dlgProperties(entries);
+            dlg.ShowDialog();
         }
 
         private void injectFiles_Click(object sender, EventArgs e)

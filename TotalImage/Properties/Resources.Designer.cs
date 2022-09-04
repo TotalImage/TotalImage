@@ -183,6 +183,16 @@ namespace TotalImage.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap multiple_select_32 {
+            get {
+                object obj = ResourceManager.GetObject("multiple_select_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap new_16 {
             get {
                 object obj = ResourceManager.GetObject("new_16", resourceCulture);
