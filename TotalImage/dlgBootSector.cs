@@ -21,9 +21,8 @@ namespace TotalImage
         {
             mainForm = (frmMain)Application.OpenForms["frmMain"];
 
-            /* Right now this assumes a FAT file system.
-             * TODO: Extend support for other file systems/partition types/media as well.
-             */
+            /* TODO: Implement this for all file systems etc. For now let's keep it disabled since we are yet to figure out the UI specifics of it.
+             * 
             FileSystems.FAT.FatFileSystem fs = (FileSystems.FAT.FatFileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
             txtOEMID.Text = fs.BiosParameterBlock.OemId;
 
@@ -31,7 +30,7 @@ namespace TotalImage
             mainForm.image.Content.Seek(mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Offset, SeekOrigin.Begin);
             mainForm.image.Content.Read(jmpBytes, 0, 3);
             uint jmp = BinaryPrimitives.ReadUInt32BigEndian(jmpBytes) / 256;
-            txtJumpCode.Text = string.Format("{0:X}", jmp);
+            txtJumpCode.Text = string.Format("{0:X}", jmp);*/
         }
 
         private void btnLoad_Click(object sender, EventArgs e)
