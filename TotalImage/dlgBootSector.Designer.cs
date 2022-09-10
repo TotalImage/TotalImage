@@ -36,6 +36,10 @@
             this.lblPreset = new System.Windows.Forms.Label();
             this.lstPresets = new System.Windows.Forms.ComboBox();
             this.btnApply = new System.Windows.Forms.Button();
+            this.txtBootSector = new System.Windows.Forms.RichTextBox();
+            this.rbnMBR = new System.Windows.Forms.RadioButton();
+            this.lblShow = new System.Windows.Forms.Label();
+            this.rbnVBR = new System.Windows.Forms.RadioButton();
             this.pnlBottom.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -81,7 +85,7 @@
             // 
             this.btnLoad.Enabled = false;
             this.btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnLoad.Location = new System.Drawing.Point(12, 12);
+            this.btnLoad.Location = new System.Drawing.Point(12, 43);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(100, 32);
             this.btnLoad.TabIndex = 11;
@@ -93,7 +97,7 @@
             // 
             this.btnSave.Enabled = false;
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnSave.Location = new System.Drawing.Point(118, 12);
+            this.btnSave.Location = new System.Drawing.Point(118, 43);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(100, 32);
             this.btnSave.TabIndex = 12;
@@ -105,7 +109,7 @@
             // 
             this.lblPreset.AutoSize = true;
             this.lblPreset.Enabled = false;
-            this.lblPreset.Location = new System.Drawing.Point(224, 18);
+            this.lblPreset.Location = new System.Drawing.Point(224, 49);
             this.lblPreset.Name = "lblPreset";
             this.lblPreset.Size = new System.Drawing.Size(58, 20);
             this.lblPreset.TabIndex = 13;
@@ -117,7 +121,7 @@
             this.lstPresets.Enabled = false;
             this.lstPresets.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.lstPresets.FormattingEnabled = true;
-            this.lstPresets.Location = new System.Drawing.Point(288, 14);
+            this.lstPresets.Location = new System.Drawing.Point(288, 45);
             this.lstPresets.Name = "lstPresets";
             this.lstPresets.Size = new System.Drawing.Size(302, 28);
             this.lstPresets.TabIndex = 14;
@@ -126,12 +130,55 @@
             // 
             this.btnApply.Enabled = false;
             this.btnApply.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnApply.Location = new System.Drawing.Point(596, 12);
+            this.btnApply.Location = new System.Drawing.Point(596, 43);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(100, 32);
             this.btnApply.TabIndex = 15;
             this.btnApply.Text = "Apply";
             this.btnApply.UseVisualStyleBackColor = true;
+            // 
+            // txtBootSector
+            // 
+            this.txtBootSector.Enabled = false;
+            this.txtBootSector.Location = new System.Drawing.Point(12, 94);
+            this.txtBootSector.Name = "txtBootSector";
+            this.txtBootSector.ReadOnly = true;
+            this.txtBootSector.Size = new System.Drawing.Size(680, 374);
+            this.txtBootSector.TabIndex = 16;
+            this.txtBootSector.Text = "";
+            // 
+            // rbnMBR
+            // 
+            this.rbnMBR.AutoSize = true;
+            this.rbnMBR.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.rbnMBR.Location = new System.Drawing.Point(66, 12);
+            this.rbnMBR.Name = "rbnMBR";
+            this.rbnMBR.Size = new System.Drawing.Size(147, 25);
+            this.rbnMBR.TabIndex = 17;
+            this.rbnMBR.TabStop = true;
+            this.rbnMBR.Text = "Disk boot sector";
+            this.rbnMBR.UseVisualStyleBackColor = true;
+            // 
+            // lblShow
+            // 
+            this.lblShow.AutoSize = true;
+            this.lblShow.Location = new System.Drawing.Point(12, 13);
+            this.lblShow.Name = "lblShow";
+            this.lblShow.Size = new System.Drawing.Size(48, 20);
+            this.lblShow.TabIndex = 18;
+            this.lblShow.Text = "Show:";
+            // 
+            // rbnVBR
+            // 
+            this.rbnVBR.AutoSize = true;
+            this.rbnVBR.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.rbnVBR.Location = new System.Drawing.Point(219, 12);
+            this.rbnVBR.Name = "rbnVBR";
+            this.rbnVBR.Size = new System.Drawing.Size(237, 25);
+            this.rbnVBR.TabIndex = 19;
+            this.rbnVBR.TabStop = true;
+            this.rbnVBR.Text = "Selected partition boot sector";
+            this.rbnVBR.UseVisualStyleBackColor = true;
             // 
             // dlgBootSector
             // 
@@ -141,6 +188,10 @@
             this.BackColor = System.Drawing.Color.White;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(708, 547);
+            this.Controls.Add(this.rbnVBR);
+            this.Controls.Add(this.lblShow);
+            this.Controls.Add(this.rbnMBR);
+            this.Controls.Add(this.txtBootSector);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.lstPresets);
             this.Controls.Add(this.lblPreset);
@@ -174,5 +225,9 @@
         private System.Windows.Forms.Label lblPreset;
         private System.Windows.Forms.ComboBox lstPresets;
         private System.Windows.Forms.Button btnApply;
+        private System.Windows.Forms.RichTextBox txtBootSector;
+        private System.Windows.Forms.RadioButton rbnMBR;
+        private System.Windows.Forms.Label lblShow;
+        private System.Windows.Forms.RadioButton rbnVBR;
     }
 }

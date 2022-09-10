@@ -2,6 +2,7 @@ using System;
 using System.Buffers.Binary;
 using System.IO;
 using System.Windows.Forms;
+using TotalImage.Partitions;
 
 namespace TotalImage
 {
@@ -21,6 +22,16 @@ namespace TotalImage
         {
             mainForm = (frmMain)Application.OpenForms["frmMain"];
 
+            if (mainForm.image.PartitionTable is NoPartitionTable)
+            {
+                rbnMBR.Enabled = false;
+                rbnVBR.Enabled = rbnVBR.Checked = true;
+            }
+            else
+            {
+                rbnMBR.Enabled = true;
+                rbnVBR.Enabled = rbnVBR.Checked = true;
+            }
             /* TODO: Implement this for all file systems etc. For now let's keep it disabled since we are yet to figure out the UI specifics of it.
              * 
             FileSystems.FAT.FatFileSystem fs = (FileSystems.FAT.FatFileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
