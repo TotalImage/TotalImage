@@ -9,6 +9,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using TotalImage.Containers;
+using TotalImage.Containers.NHD;
+using TotalImage.Containers.VHD;
 using TotalImage.FileSystems;
 using TotalImage.Partitions;
 using TotalImage.UI.Converters;
@@ -26,14 +28,79 @@ namespace TotalImage.UI
 
         private async void MenuOpen_OnClick(object? sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            OpenFileDialog ofd = new()
+            {
+                AllowMultiple = false,
+                Filters = new List<FileDialogFilter>
+                {
+                    new FileDialogFilter
+                    {
+                        Name = "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)",
+                        Extensions = new List<string> { "*.img", "*.ima", "*.vfd", "*.flp", "*.dsk", "*.xdf", "*.hdm" }
+                    },
+                    new FileDialogFilter
+                    {
+                        Name = "ISO image (*.iso)",
+                        Extensions = new List<string> { "*.iso" }
+                    },
+                    new FileDialogFilter
+                    {
+                        Name = "Microsoft VHD (*.vhd)",
+                        Extensions = new List<string> { "*.vhd" }
+                    },
+                    new FileDialogFilter
+                    {
+                        Name = "T98-Next HD (*.nhd)",
+                        Extensions = new List<string> { "*.nhd" }
+                    },
+                    new FileDialogFilter
+                    {
+                        Name = "All files (*.*)",
+                        Extensions = new List<string> { "*.*" }
+                    }
+                }
+            };
+
             string[]? result = await ofd.ShowAsync(this);
             if (result is not { Length: 1 })
             {
                 return;
             }
 
-            DataContext = new MainWindowViewModel(result[0]);
+            string path = result[0];
+
+            bool memoryMapping = false;
+            string ext = Path.GetExtension(path).ToLowerInvariant();
+            Container image = ext switch
+            {
+                ".vhd" => new VhdContainer(path, memoryMapping),
+                ".nhd" => new NhdContainer(path, memoryMapping),
+                _ => new RawContainer(path, memoryMapping),
+            };
+
+            if (image.PartitionTable.Partitions.Count == 0)
+            {
+                return;
+            }
+
+            if (image.PartitionTable.Partitions.Count == 1)
+            {
+                DataContext = new MainWindowViewModel(path, image, image.PartitionTable.Partitions[0]);
+                return;
+            }
+
+
+            SelectPartitionDialog partitionWnd = new()
+            {
+                DataContext = new SelectPartitionViewModel(image.PartitionTable)
+            };
+            await partitionWnd.ShowDialog(this);
+
+            if (partitionWnd.DataContext is SelectPartitionViewModel spvm && spvm.SelectedPartition != null)
+            {
+
+                DataContext = new MainWindowViewModel(path, image, spvm.SelectedPartition);
+            }
         }
 
         private void MenuQuit_OnClick(object? sender, RoutedEventArgs e)
@@ -49,8 +116,8 @@ namespace TotalImage.UI
     {
         private readonly string _imagePath = "";
         private readonly Container? _container;
-        private readonly int? _partitionIndex;
         private readonly PartitionEntry? _partitionEntry;
+        private IFileSystemObjectViewModel? _selectedItem;
 
         private FileSystems.Directory? Root
             => _partitionEntry?.FileSystem.RootDirectory;
@@ -68,20 +135,35 @@ namespace TotalImage.UI
         public long? PartitionSize => _partitionEntry?.FileSystem.TotalSize;
         public long? PartitionFree => _partitionEntry?.FileSystem.TotalFreeSpace;
 
+        public PartitionEntry? SelectedPartition
+        {
+            get => _partitionEntry;
+        }
+
+        public IFileSystemObjectViewModel? SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                _selectedItem = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedItem)));
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public MainWindowViewModel()
         {
         }
 
-        public MainWindowViewModel(string path)
+        public MainWindowViewModel(string path, Container? container, PartitionEntry? partition)
         {
             _imagePath = path;
-            _container = new RawContainer(path, false);
-            _partitionIndex = 0;
-            _partitionEntry = _container == null || _partitionIndex == null
-                ? null
-                : _container.PartitionTable.Partitions[_partitionIndex.Value];
+            _container = container;
+            _partitionEntry = partition;
+            _selectedItem = _partitionEntry != null
+                ? new DirectoryViewModel(_partitionEntry.FileSystem.RootDirectory)
+                : null;
         }
     }
 
