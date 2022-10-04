@@ -16,14 +16,28 @@
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" MaxWidth="200" />
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
         <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <MenuItem Header="File">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New..." IsEnabled="False" />
                 <MenuItem Header="_Open..." Click="MenuOpen_OnClick" />
+                <MenuItem Header="_Save..." IsEnabled="False" />
+                <MenuItem Header="Save As..." IsEnabled="False" />
+                <MenuItem Header="Close" IsEnabled="False" />
+                <Separator />
+                <MenuItem Header="Recent files">
+                    <MenuItem Header="No files..." IsEnabled="False" />
+                </MenuItem>
                 <Separator />
                 <MenuItem Header="_Quit" Click="MenuQuit_OnClick" />
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="_Settings..." IsEnabled="False" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About..." IsEnabled="False" />
             </MenuItem>
         </Menu>
         <TreeView Name="DirectoryTree" Grid.Row="1" Grid.Column="0" Items="{Binding Directories}">
@@ -36,9 +50,16 @@
         <DataGrid Grid.Row="1" Grid.Column="1" Items="{Binding #DirectoryTree.SelectedItem.Objects}" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="Last Modified" Binding="{Binding LastWriteTime}" />
-                <DataGridTextColumn Header="Size" Binding="{Binding Length, Converter={StaticResource SizeConverter}}" />
+                <DataGridTextColumn Header="Size" Binding="{Binding Length, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
+                <DataGridTextColumn Header="Last Modified" Binding="{Binding LastWriteTime, Mode=OneWay}" />
+                <DataGridTextColumn Header="Attributes" Binding="{Binding Attributes}" FontFamily="Consolas,Monospace,Courier" />
             </DataGrid.Columns>
         </DataGrid>
+        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Orientation="Horizontal" Spacing="16" Margin="16,0">
+            <TextBlock Text="{Binding PartitionSize, Converter={StaticResource SizeConverter}, Mode=OneWay, StringFormat='Partition size: {0}'}" />
+            <TextBlock Text="{Binding PartitionFree, Converter={StaticResource SizeConverter}, Mode=OneWay, StringFormat='Free space: {0}'}" />
+            <TextBlock Text="{Binding #DirectoryTree.SelectedItem.FooterLabel}" />
+            <TextBlock Text="{Binding #DirectoryTree.SelectedItem.FullName}" />
+        </StackPanel>
     </Grid>
 </Window>

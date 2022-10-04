@@ -6,7 +6,9 @@ namespace TotalImage.UI.Converters;
 
 public class SizeConverter : IValueConverter
 {
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    internal static SizeConverter Instance { get; } = new SizeConverter();
+
+    public static object? Convert(object? value)
     {
         if (value == null)
         {
@@ -24,6 +26,8 @@ public class SizeConverter : IValueConverter
 
         return $"{adjustedSize:0.##} {unit}";
     }
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => Convert(value);
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
