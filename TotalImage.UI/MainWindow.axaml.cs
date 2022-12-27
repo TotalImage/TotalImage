@@ -31,6 +31,7 @@ namespace TotalImage.UI
             OpenFileDialog ofd = new()
             {
                 AllowMultiple = false,
+                /*
                 Filters = new List<FileDialogFilter>
                 {
                     new FileDialogFilter
@@ -59,6 +60,7 @@ namespace TotalImage.UI
                         Extensions = new List<string> { "*.*" }
                     }
                 }
+                */
             };
 
             string[]? result = await ofd.ShowAsync(this);
