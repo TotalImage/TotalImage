@@ -47,8 +47,8 @@ namespace TotalImage
             public bool FileListShowDirSize { get; set; } = false;
         }
 
-        public static SettingsModel CurrentSettings { get; private set; }
-        public static UIStateModel CurrentUIState { get; private set; }
+        public static SettingsModel CurrentSettings { get; set; }
+        public static UIStateModel CurrentUIState { get; set; }
 
         private static readonly string SettingsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotalImage");
         private static readonly string SettingsFile = Path.Combine(SettingsDir, "settings.json");
@@ -180,28 +180,8 @@ namespace TotalImage
         public static void LoadDefaults()
         {
             //Set all settings to a default value here
-            CurrentSettings.OpenFolderAfterExtract = true;
-            CurrentSettings.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Preserve;
-            CurrentSettings.DefaultExtractPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            CurrentSettings.SizeUnit = SizeUnit.Bytes;
-            CurrentSettings.ShowCommandBar = true;
-            CurrentSettings.ShowDeletedItems = false;
-            CurrentSettings.ShowDirectoryTree = true;
-            CurrentSettings.ShowHiddenItems = true;
-            CurrentSettings.ShowStatusBar = true;
-            CurrentSettings.FilesSortingColumn = 0;
-            CurrentSettings.FilesSortOrder = SortOrder.Ascending;
-            CurrentSettings.FilesView = View.Details;
-            CurrentSettings.ExtractPreserveAttributes = false;
-            CurrentSettings.ExtractPreserveDates = true;
-            CurrentSettings.ExtractAlwaysAsk = true;
-            CurrentSettings.QueryShellForFileTypeInfo = true;
-            CurrentSettings.AutoIncrementFilename = true;
-            CurrentSettings.ConfirmDeletion = true;
-            CurrentSettings.ConfirmInjection = true;
-            CurrentSettings.ConfirmOverwriteExtraction = true;
-            CurrentSettings.MemoryMappingThreshold = 1048576;
-            CurrentSettings.FileListShowDirSize = false;
+            CurrentSettings = new SettingsModel();
+            Save();
         }
 
         //Saves all settings to permanent storage (settings.json)
