@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using System;
 
 namespace TotalImage.UI
