@@ -2029,7 +2029,13 @@ namespace TotalImage
                     return;
                 }
 
-                selectPartitionToolStripComboBox.Items.Add($"{image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[0].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length)})");
+                var label = image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ');
+                if (string.IsNullOrWhiteSpace(label))
+                    label = "<no label>";
+                var fs = image.PartitionTable.Partitions[0].FileSystem.DisplayName;
+                var length = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length);
+
+                selectPartitionToolStripComboBox.Items.Add($"{label} ({fs}, {length})");
                 selectPartitionToolStripComboBox.SelectedIndex = 0;
             }
             else
@@ -2098,7 +2104,14 @@ namespace TotalImage
                         if (image.PartitionTable.Partitions[i].FileSystem is FileSystems.RAW.RawFileSystem)
                             continue;
 
-                        selectPartitionToolStripComboBox.Items.Add($"{(image.PartitionTable.Partitions.Count > 1 ? i + ": " : string.Empty)}{image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
+                        var label = image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ');
+                        if (string.IsNullOrWhiteSpace(label))
+                            label = "<no label>";
+                        var fs = image.PartitionTable.Partitions[i].FileSystem.DisplayName;
+                        var length = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length);
+
+                        selectPartitionToolStripComboBox.Items.Add($"{(image.PartitionTable.Partitions.Count > 1 ? i + ": " : string.Empty)}{label} ({fs}, {length})");
+
                     }
                     catch (InvalidDataException)
                     {
