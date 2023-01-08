@@ -1318,10 +1318,17 @@ namespace TotalImage
 
         private void selectPartitionToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (selectPartitionToolStripComboBox.SelectedIndex != CurrentPartitionIndex)
+            /* Note that we can't simply use the ComboBox.SelectedIndex, as unsupported partitions aren't added to the ComboBox and thus item
+             * indices are shifted compared to actual partition indices. */
+            if (image.PartitionTable.Partitions.Count > 1)
             {
-                LoadPartitionInCurrentImage(selectPartitionToolStripComboBox.SelectedIndex);
-                CurrentPartitionIndex = selectPartitionToolStripComboBox.SelectedIndex;
+                int realIndex = int.Parse(selectPartitionToolStripComboBox.SelectedItem.ToString().Substring(0, 1));
+
+                if (realIndex != CurrentPartitionIndex)
+                {
+                    LoadPartitionInCurrentImage(realIndex);
+                    CurrentPartitionIndex = realIndex;
+                }
             }
         }
 
@@ -2092,17 +2099,14 @@ namespace TotalImage
                             continue;
 
                         selectPartitionToolStripComboBox.Items.Add($"{(image.PartitionTable.Partitions.Count > 1 ? i + ": " : string.Empty)}{image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
-
-                        if (i == CurrentPartitionIndex)
-                        {
-                            selectPartitionToolStripComboBox.SelectedIndex = i;
-                        }
                     }
                     catch (InvalidDataException)
                     {
 
                     }
                 }
+
+                selectPartitionToolStripComboBox.SelectedIndex = selectPartitionToolStripComboBox.FindString($"{CurrentPartitionIndex}: ");
             }
 
             LoadPartitionInCurrentImage(CurrentPartitionIndex);
