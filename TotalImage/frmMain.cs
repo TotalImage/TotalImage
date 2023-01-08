@@ -75,7 +75,7 @@ namespace TotalImage
             GetDefaultIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
             parentDirectoryToolStripMenuItem.Image = parentDirectoryToolStripButton.Image = imgFilesSmall.Images["up"];
-            
+
             //Open the file that was dragged onto the exe/shortcut or passed as a command line argument
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
@@ -250,13 +250,16 @@ namespace TotalImage
          * -"Save as" when the file has not been saved yet */
         private void save_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(filename) || (ToolStripMenuItem)sender == saveAsToolStripMenuItem) //File hasn't been saved yet
+            if (image != null)
             {
-                saveFileAs();
-            }
-            else
-            {
-                saveFile();
+                if (string.IsNullOrEmpty(filename) || (ToolStripMenuItem)sender == saveAsToolStripMenuItem) //File hasn't been saved yet
+                {
+                    saveFileAs();
+                }
+                else
+                {
+                    saveFile();
+                }
             }
         }
 
@@ -777,9 +780,9 @@ namespace TotalImage
                 {
                     throw new NotImplementedException("This feature is not implemented yet.");
                 }*/
-                
+
                 for (int i = 0; i < lstFiles.SelectedIndices.Count; i++)
-                    entries.Add(GetSelectedItemData(i));               
+                    entries.Add(GetSelectedItemData(i));
             }
 
             using dlgProperties dlg = new dlgProperties(entries);
@@ -1586,6 +1589,15 @@ namespace TotalImage
                 lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
             }
         }
+
+        private void frmMain_KeyUp(object sender, KeyEventArgs e)
+        {
+            //This is needed for whatever reason because otherwise CTRL+W doesn't work except when the menu is open...
+            if (e.KeyCode == Keys.W && e.Modifiers == Keys.Control)
+            {
+                closeImage_Click(sender, e);
+            }
+        }
         #endregion
 
         private int IndexShift => lstFiles.VirtualListSize - currentFolderView.Count;
@@ -1727,7 +1739,7 @@ namespace TotalImage
                     if (Settings.CurrentSettings.FileListShowDirSize)
                         item.SubItems.Add(size);
                     else
-                        item.SubItems.Add(string.Empty);                   
+                        item.SubItems.Add(string.Empty);
                 }
                 else
                 {
@@ -1871,7 +1883,7 @@ namespace TotalImage
                     CloseImage();
                     return;
                 }
-                catch(UnauthorizedAccessException)
+                catch (UnauthorizedAccessException)
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
@@ -1889,7 +1901,7 @@ namespace TotalImage
                     CloseImage();
                     return;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
@@ -2448,7 +2460,7 @@ namespace TotalImage
                         {
                             var item = GetSelectedItemData(0);
                             lbStatusPath.Text = item.FullName;
-                            if(item is TiDirectory dir)
+                            if (item is TiDirectory dir)
                                 lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, false))} in 1 item";
                             else
                                 lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
@@ -2460,7 +2472,7 @@ namespace TotalImage
                             var selectedSize = 0ul;
                             foreach (var entry in SelectedItems)
                             {
-                                if(entry is TiDirectory subdir)
+                                if (entry is TiDirectory subdir)
                                     selectedSize += subdir.Size(true, false);
                                 else
                                     selectedSize += entry.Length;
@@ -2473,5 +2485,7 @@ namespace TotalImage
                 }
             }
         }
+
+        
     }
 }
