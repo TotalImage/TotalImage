@@ -1831,7 +1831,8 @@ namespace TotalImage
 
                 try
                 {
-                    bool memoryMapping = fileinfo.Length > Settings.CurrentSettings.MemoryMappingThreshold;
+                    //Disable this for now until it's properly implemented
+                    bool memoryMapping = false; //fileinfo.Length > Settings.CurrentSettings.MemoryMappingThreshold;
 
                     var ext = Path.GetExtension(filename).ToLowerInvariant();
                     switch (ext)
