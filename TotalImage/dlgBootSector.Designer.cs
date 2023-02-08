@@ -140,7 +140,7 @@ namespace TotalImage
             // 
             // txtBootSector
             // 
-            this.txtBootSector.Enabled = false;
+            this.txtBootSector.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.txtBootSector.Location = new System.Drawing.Point(10, 75);
             this.txtBootSector.Margin = new System.Windows.Forms.Padding(2);
             this.txtBootSector.Name = "txtBootSector";

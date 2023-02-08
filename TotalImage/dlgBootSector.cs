@@ -22,21 +22,25 @@ namespace TotalImage
         {
             mainForm = (frmMain)Application.OpenForms["frmMain"];
 
-            if (mainForm.image.PartitionTable is NoPartitionTable)
-            {
-                rbnMBR.Enabled = false;
-                rbnVBR.Enabled = rbnVBR.Checked = true;
-            }
-            else
-            {
-                rbnMBR.Enabled = true;
-                rbnVBR.Enabled = rbnVBR.Checked = true;
-            }
-            /* TODO: Implement this for all file systems etc. For now let's keep it disabled since we are yet to figure out the UI specifics of it.
-             * 
-            FileSystems.FAT.FatFileSystem fs = (FileSystems.FAT.FatFileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
-            txtOEMID.Text = fs.BiosParameterBlock.OemId;
+            rbnMBR.Enabled = !(mainForm.image.PartitionTable is NoPartitionTable);
+            rbnVBR.Checked = true;
 
+            FileSystems.FAT.FatFileSystem fs = (FileSystems.FAT.FatFileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
+            var sectorSize = fs.BiosParameterBlock.BytesPerLogicalSector;
+            byte[] bytes = new byte[sectorSize];
+            mainForm.image.Content.Seek(mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Offset, SeekOrigin.Begin);
+            mainForm.image.Content.Read(bytes, 0, sectorSize);
+
+            for(int i = 1; i <= bytes.Length; i++)
+            {
+                txtBootSector.Text += string.Format("{0:X2}", bytes[i-1]) + " ";
+                if (i % 16 == 0)
+                    txtBootSector.Text += Environment.NewLine;
+            }
+
+            //Old code below, keeping it around for now in case it comes in handy for future work...
+            /*txtOEMID.Text = fs.BiosParameterBlock.OemId;
+            
             byte[] jmpBytes = new byte[4];
             mainForm.image.Content.Seek(mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Offset, SeekOrigin.Begin);
             mainForm.image.Content.Read(jmpBytes, 0, 3);
@@ -44,9 +48,10 @@ namespace TotalImage
             txtJumpCode.Text = string.Format("{0:X}", jmp);*/
         }
 
+        //Keep this commented out for now
         private void btnLoad_Click(object sender, EventArgs e)
         {
-            using OpenFileDialog ofd = new OpenFileDialog();
+            /*using OpenFileDialog ofd = new OpenFileDialog();
             ofd.AutoUpgradeEnabled = true;
             ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             ofd.CheckFileExists = true;
@@ -56,10 +61,10 @@ namespace TotalImage
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                FileInfo fi = new FileInfo(ofd.FileName);
+                FileInfo fi = new FileInfo(ofd.FileName);*/
                 /* TODO: Reliable check against bootsector size of the current image to make sure the user doesn't try to load an oversized
                  * bootsector. */
-
+            /*
                 FileSystems.FAT.FatFileSystem fs = (FileSystems.FAT.FatFileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
                 if (fi.Length > fs.BiosParameterBlock.ReservedLogicalSectors * fs.BiosParameterBlock.BytesPerLogicalSector)
                 {
@@ -81,7 +86,7 @@ namespace TotalImage
                 }
 
                 //Apply the bootsector
-            }
+            }*/
         }
 
         private void btnSave_Click(object sender, EventArgs e)
