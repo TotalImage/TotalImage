@@ -84,7 +84,7 @@ namespace TotalImage
             }
         }
 
-        private void btnExport_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
             using SaveFileDialog sfd = new SaveFileDialog();
             sfd.AutoUpgradeEnabled = true;
@@ -108,7 +108,7 @@ namespace TotalImage
 
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"The bootsector has been successfully exported to {sfd.FileName}",
+                        Text = $"The bootsector was successfully exported to {sfd.FileName}",
                         Heading = "Export successful",
                         Caption = "Success",
                         Buttons =
@@ -153,7 +153,7 @@ namespace TotalImage
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"Cannot not write to the target file. Make sure you have the required permissions and that the file is not locked by another process, then try again.{Environment.NewLine}{Environment.NewLine}" +
+                        Text = $"Cannot write to the target file. Make sure you have the required permissions and that the file is not locked by another process, then try again.{Environment.NewLine}{Environment.NewLine}" +
                     $"If you think this is a bug, please submit a bug report on our GitHub repo.",
                         Heading = "Cannot write to file",
                         Caption = "Error",
