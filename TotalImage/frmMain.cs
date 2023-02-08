@@ -1646,10 +1646,10 @@ namespace TotalImage
                 var root = new TreeNode(@"\");
                 root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                root.Tag = image.PartitionTable.Partitions[0].FileSystem.RootDirectory;
+                root.Tag = image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.RootDirectory;
 
                 lstDirectories.BeginUpdate();
-                PopulateTreeView(root, image.PartitionTable.Partitions[0].FileSystem.RootDirectory);
+                PopulateTreeView(root, image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.RootDirectory);
 
                 lstDirectories.Nodes.Clear();
                 lstDirectories.Nodes.Add(root);
