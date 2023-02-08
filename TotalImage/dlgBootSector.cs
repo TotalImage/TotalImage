@@ -1,5 +1,4 @@
 using System;
-using System.Buffers.Binary;
 using System.IO;
 using System.Windows.Forms;
 using TotalImage.Partitions;
@@ -8,9 +7,7 @@ namespace TotalImage
 {
     public partial class dlgBootSector : Form
     {
-        internal string OEMID;
-        internal byte[] JumpCode;
-        
+        private byte[] BootSectorBytes;
         private frmMain mainForm;
 
         public dlgBootSector()
@@ -24,28 +21,6 @@ namespace TotalImage
 
             rbnMBR.Enabled = !(mainForm.image.PartitionTable is NoPartitionTable);
             rbnVBR.Checked = true;
-
-            FileSystems.FAT.FatFileSystem fs = (FileSystems.FAT.FatFileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
-            var sectorSize = fs.BiosParameterBlock.BytesPerLogicalSector;
-            byte[] bytes = new byte[sectorSize];
-            mainForm.image.Content.Seek(mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Offset, SeekOrigin.Begin);
-            mainForm.image.Content.Read(bytes, 0, sectorSize);
-
-            for(int i = 1; i <= bytes.Length; i++)
-            {
-                txtBootSector.Text += string.Format("{0:X2}", bytes[i-1]) + " ";
-                if (i % 16 == 0)
-                    txtBootSector.Text += Environment.NewLine;
-            }
-
-            //Old code below, keeping it around for now in case it comes in handy for future work...
-            /*txtOEMID.Text = fs.BiosParameterBlock.OemId;
-            
-            byte[] jmpBytes = new byte[4];
-            mainForm.image.Content.Seek(mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Offset, SeekOrigin.Begin);
-            mainForm.image.Content.Read(jmpBytes, 0, 3);
-            uint jmp = BinaryPrimitives.ReadUInt32BigEndian(jmpBytes) / 256;
-            txtJumpCode.Text = string.Format("{0:X}", jmp);*/
         }
 
         //Keep this commented out for now
@@ -62,8 +37,8 @@ namespace TotalImage
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 FileInfo fi = new FileInfo(ofd.FileName);*/
-                /* TODO: Reliable check against bootsector size of the current image to make sure the user doesn't try to load an oversized
-                 * bootsector. */
+            /* TODO: Reliable check against bootsector size of the current image to make sure the user doesn't try to load an oversized
+             * bootsector. */
             /*
                 FileSystems.FAT.FatFileSystem fs = (FileSystems.FAT.FatFileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
                 if (fi.Length > fs.BiosParameterBlock.ReservedLogicalSectors * fs.BiosParameterBlock.BytesPerLogicalSector)
@@ -98,18 +73,12 @@ namespace TotalImage
             sfd.DefaultExt = "bin";
             sfd.Filter = "All files (*.*)|*.*";
 
-            FileSystems.FAT.FatFileSystem fs = (FileSystems.FAT.FatFileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
-            Stream stream = mainForm.image.Content;
-            byte[] bsBytes = new byte[fs.BiosParameterBlock.ReservedLogicalSectors * fs.BiosParameterBlock.BytesPerLogicalSector];
-            stream.Seek(mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Offset, SeekOrigin.Begin);
-            stream.Read(bsBytes, 0, bsBytes.Length);
-
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 //Write all bytes to the file
                 try
                 {
-                    File.WriteAllBytes(sfd.FileName, bsBytes);
+                    File.WriteAllBytes(sfd.FileName, BootSectorBytes);
 
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
@@ -124,7 +93,7 @@ namespace TotalImage
                         DefaultButton = TaskDialogButton.OK
                     });
                 }
-                catch(UnauthorizedAccessException)
+                catch (UnauthorizedAccessException)
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
@@ -171,6 +140,54 @@ namespace TotalImage
                     });
                 }
             }
+        }
+
+        private void rbnVBR_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbnVBR.Checked)
+            {
+                FileSystems.FAT.FatFileSystem fs = (FileSystems.FAT.FatFileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
+                var sectorSize = fs.BiosParameterBlock.BytesPerLogicalSector;
+                ReadBootSectorBytes(false, sectorSize);
+                PrintBootSectorBytes();
+            }
+        }
+
+        private void rbnMBR_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbnMBR.Checked)
+            {
+                ReadBootSectorBytes(true, 512); //Hardcoding this to 512 bytes for now, since this was the sector size on the vast majority of hard disks
+                PrintBootSectorBytes();
+            }
+        }
+
+        //Prints the read bootsector bytes into the textbox as hex values with leading zeroes
+        private void PrintBootSectorBytes()
+        {
+            txtBootSector.Clear();
+
+            for (int i = 1; i <= BootSectorBytes.Length; i++)
+            {
+                txtBootSector.Text += string.Format("{0:X2}", BootSectorBytes[i - 1]);
+                if (i % 16 == 0 && i < BootSectorBytes.Length)
+                    txtBootSector.Text += Environment.NewLine;
+                else
+                    txtBootSector.Text += " ";
+            }
+        }
+
+        //Reads the desired number of bootsector bytes of the MBR or the selected partition's VBR into an array
+        private void ReadBootSectorBytes(bool mbr, int length)
+        {
+            BootSectorBytes = new byte[length];
+
+            if (mbr)
+                mainForm.image.Content.Seek(0, SeekOrigin.Begin);
+            else
+                mainForm.image.Content.Seek(mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Offset, SeekOrigin.Begin);
+
+            mainForm.image.Content.Read(BootSectorBytes, 0, length);
         }
     }
 }

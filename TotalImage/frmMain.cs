@@ -166,11 +166,11 @@ namespace TotalImage
          */
         private void bootSectorProperties_Click(object sender, EventArgs e)
         {
-            if(image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FileSystems.FAT.FatFileSystem)
+            if(image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FatFileSystem)
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
-                    Text = "This feature is currently only available for FAT partitions.",
+                    Text = "This feature is currently only available for FAT file systems.",
                     Heading = "Feature not available",
                     Caption = "Information",
                     Buttons =
