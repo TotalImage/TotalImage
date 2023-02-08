@@ -8,7 +8,7 @@ See the [Status page](https://github.com/TotalImage/TotalImage/blob/master/Docs/
 Currently the project is still in early stages of development (alpha-level), and as such is not quite ready for everyday use yet. We will provide official builds once we reach that stage, in the mean time you can build it yourself or ask us to provide binaries for you (see the *Development* and *Support* sections below).
 
 ### System requirements
-* [.NET 6.0](https://dotnet.microsoft.com/download/dotnet/6.0) Desktop Runtime
+* [.NET 7.0](https://dotnet.microsoft.com/download/dotnet/7.0) Desktop Runtime
 * Windows 7 SP1/8.1/10/11
 
 Support for other operating systems will be considered within the limitations of .NET.
@@ -49,7 +49,7 @@ Below is a list of things we plan to support. Please note that this list is not 
 ## Development
 To develop TotalImage, we recommend you install [Microsoft Visual Studio 2022](https://visualstudio.microsoft.com/vs/). This will give you the designer for Windows Forms, which makes it easier to work with the frontend.
 
-Alternatively, you can also just build the solution with [.NET CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/), which is included in the [.NET SDK](https://dotnet.microsoft.com/download/dotnet/6.0).
+Alternatively, you can also just build the solution with [.NET CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/), which is included in the [.NET SDK](https://dotnet.microsoft.com/download/dotnet/7.0).
 
 ## Support
 Please open an issue on this repo for any bug reports and suggestions you may have. If you wish to talk to us directly, visit the official TotalImage Discord server:
