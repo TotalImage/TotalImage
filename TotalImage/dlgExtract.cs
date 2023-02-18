@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace TotalImage
 {
@@ -28,6 +30,35 @@ namespace TotalImage
             else if (rbnPreserveDirs.Checked)
             {
                 DirectoryExtractionMode = DirectoryExtractionMode.Preserve;
+            }
+
+            //If directory doesn't exist, ask the user to create it 
+            if(!System.IO.Directory.Exists(TargetPath))
+            {
+                TaskDialogPage page = new TaskDialogPage()
+                {
+                    Text = $"The target directory you selected does not exist.{Environment.NewLine}Would you like to create it and continue the extraction?",
+                    Heading = $"Directory does not exist",
+                    Caption = "Extraction",
+                    Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                    Icon = TaskDialogIcon.Warning,
+                    SizeToContent = true
+                };
+                TaskDialogButton result = TaskDialog.ShowDialog(this, page);
+
+                if(result == TaskDialogButton.Yes)
+                {
+                    System.IO.Directory.CreateDirectory(TargetPath);
+                }
+                else
+                {
+                    DialogResult = DialogResult.None;
+                    return;
+                }
             }
         }
 

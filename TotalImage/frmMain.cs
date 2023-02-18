@@ -108,7 +108,7 @@ namespace TotalImage
                             TaskDialogButton.Yes,
                             TaskDialogButton.No
                         },
-                        Icon = new TaskDialogIcon(SystemIcons.Question), //This is still the old pre-Win8 question icon for some reason...
+                        Icon = TaskDialogIcon.Warning,
                         Verification = new TaskDialogVerificationCheckBox()
                         {
                             Text = "Do not ask for confirmation again"
@@ -835,7 +835,7 @@ namespace TotalImage
                             TaskDialogButton.Yes,
                             TaskDialogButton.No
                         },
-                        Icon = new TaskDialogIcon(SystemIcons.Question), //This is still the old pre-Win8 question icon for some reason...
+                        Icon = TaskDialogIcon.Warning,
                         Verification = new TaskDialogVerificationCheckBox()
                         {
                             Text = "Do not ask for confirmation again"
