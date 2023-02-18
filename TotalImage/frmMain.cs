@@ -646,22 +646,52 @@ namespace TotalImage
             dlg.ShowDialog();
         }
 
-        //Extracts file(s) or folder(s) from the image to the specified path
-        //TODO: Implement this here, in the extraction dialog and in FS/container.
+        //Extracts file(s) or folder(s) from the image to the specified path.
         private void extract_Click(object sender, EventArgs e)
         {
-            if (Settings.CurrentSettings.ExtractAlwaysAsk)
+            /* We need to check the treeview and listview focus so we know which items to extract.
+             * Some of this might be a bit of a hack, but it works for now... */
+
+            if (lstFiles.Focused)
             {
+                if (SelectedItems.Count() == 0)
+                    lstFiles.SelectAllItems();
+            }
+            else if (lstDirectories.Focused)
+            {
+                if(((TiDirectory)lstDirectories.SelectedNode.Tag).Parent == null) //Root dir is selected, so we have to handle this separately
+                {
+                    lstFiles.Focus();
+                    lstFiles.SelectAllItems();
+                }             
+            }
+            
+            if (Settings.CurrentSettings.ExtractAlwaysAsk)
+            {              
                 using dlgExtract dlg = new dlgExtract();
-                dlg.lblPath.Text = $"Extract {SelectedItems.Count()} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
+                dlg.lblPath.Text = $"Extract { (lstDirectories.Focused ? "1" : SelectedItems.Count())} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    FileExtraction.ExtractFiles(this, SelectedItems, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
+                    if (lstFiles.Focused)
+                    {
+                        FileExtraction.ExtractFiles(this, SelectedItems, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
+                    }
+                    else if(lstDirectories.Focused)
+                    {
+                        FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag }, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
+                    }                  
                 }
             }
             else
             {
-                FileExtraction.ExtractFiles(this, SelectedItems);
+                if (lstFiles.Focused)
+                {
+                    FileExtraction.ExtractFiles(this, SelectedItems);
+                }
+                else if (lstDirectories.Focused)
+                {
+                    FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag });
+                }             
             }
         }
 
