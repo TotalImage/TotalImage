@@ -46,21 +46,24 @@ namespace TotalImage.Partitions
             for (int i = 0; i < 4; i++)
             {
                 var record = buffer[(i * 16)..((i + 1) * 16)];
-                byte status = record[0];
-                CHSAddress chsStart = new CHSAddress(record[1..4]);
-                MbrPartitionType type = (MbrPartitionType)record[4];
-                CHSAddress chsEnd = new CHSAddress(record[5..8]);
-                uint lbaStart = BinaryPrimitives.ReadUInt32LittleEndian(record[8..12]);
-                uint lbaLength = BinaryPrimitives.ReadUInt32LittleEndian(record[12..16]);
 
+                MbrPartitionType type = (MbrPartitionType)record[4];
                 if (type == MbrPartitionType.Empty)
                 {
                     continue;
                 }
 
+                byte status = record[0];
+                CHSAddress chsStart = new CHSAddress(record[1..4]);
+                CHSAddress chsEnd = new CHSAddress(record[5..8]);
+                uint lbaStart = BinaryPrimitives.ReadUInt32LittleEndian(record[8..12]);
+                uint lbaLength = BinaryPrimitives.ReadUInt32LittleEndian(record[12..16]);
+
+
+
                 uint offset = lbaStart * _sectorSize;
                 uint length = lbaLength * _sectorSize;
-                MbrPartitionEntry entry = new MbrPartitionEntry((status & 0x80) != 0, type, offset, length, new PartialStream(_container.Content, offset, length));
+                MbrPartitionEntry entry = new MbrPartitionEntry((status & 0x80) != 0, type, chsStart, chsEnd, lbaStart, lbaLength, offset, length, new PartialStream(_container.Content, offset, length));
                 entries.Add(entry);
             }
 
@@ -74,9 +77,13 @@ namespace TotalImage.Partitions
         {
             private bool _active;
             private MbrPartitionType _type;
+            private CHSAddress _chsStart;
+            private CHSAddress _chsEnd;
+            private uint _lbaStart;
+            private uint _lbaLength;
 
             /// <summary>
-            /// Indicates whether this partition is marked as active
+            /// Indicates whether the partition is marked as active
             /// </summary>
             public bool Active
             {
@@ -94,18 +101,74 @@ namespace TotalImage.Partitions
             }
 
             /// <summary>
+            /// CHS address of first absolute sector in the partition. Maximum supported values are 1023,255,63.
+            /// </summary>
+            /// <remarks>
+            /// For very large disks, these values are bogus and LBA-aware software will use the LBA fields instead.
+            /// </remarks>
+            public CHSAddress ChsStart
+            {
+                get => _chsStart;
+                set => _chsStart = value;
+            }
+
+            /// <summary>
+            /// CHS address of last absolute sector in the partition. Maximum supported values are 1023,255,63.
+            /// </summary>
+            /// <remarks>
+            /// For very large disks, these values are bogus and LBA-aware software will use the LBA fields instead.
+            /// </remarks>
+            public CHSAddress ChsEnd
+            {
+                get => _chsEnd;
+                set => _chsEnd = value;
+            }
+
+            /// <summary>
+            /// LBA of first absolute sector in the partition. 
+            /// </summary>
+            /// <remarks>
+            /// This value is only used by LBA-aware software.
+            /// </remarks>
+            public uint LbaStart
+            {
+                get => _lbaStart;
+                set => _lbaStart = value;
+            }
+
+            /// <summary>
+            /// Number of sectors in the partition. Must be non-zero for valid entries.
+            /// </summary>
+            /// <remarks>
+            /// This value is only used by LBA-aware software.
+            /// </remarks>
+            public uint LbaLength
+            {
+                get => _lbaLength;
+                set => _lbaLength = value;
+            }
+
+            /// <summary>
             /// Initialises an MBR partition entry
             /// </summary>
             /// <param name="active">Whether the partition is marked as active</param>
             /// <param name="type">The type of the partition</param>
+            /// <param name="chsStart">CHS address of first absolute sector in the partition.</param>
+            /// <param name="chsEnd">CHS address of last absolute sector in the partition.</param>
+            /// <param name="lbaStart">LBA of first absolute sector in the partition.</param>
+            /// <param name="lbaLength">Number of sectors in the partition.</param>
             /// <param name="offset">The offset of the partition in it's container file</param>
             /// <param name="length">The length of the partition</param>
             /// <param name="stream">The stream containing the partition data</param>
-            public MbrPartitionEntry(bool active, MbrPartitionType type, uint offset, uint length, Stream stream)
+            public MbrPartitionEntry(bool active, MbrPartitionType type, CHSAddress chsStart, CHSAddress chsEnd, uint lbaStart, uint lbaLength, uint offset, uint length, Stream stream)
                 : base(offset, length, stream)
             {
                 _active = active;
                 _type = type;
+                _chsStart = chsStart;
+                _chsEnd = chsEnd;
+                _lbaStart = lbaStart;
+                _lbaLength = lbaLength;
             }
         }
 
@@ -121,68 +184,74 @@ namespace TotalImage.Partitions
             Empty = 0,
 
             /// <summary>
-            /// A FAT12 primary partition in first physical 32 MB of the disk or a logical drive anywhere on the disk.
+            /// A FAT12 primary partition in first physical 32 MB of the disk, or in a logical drive anywhere on the disk.
             /// </summary>
             [Display(Name = "FAT12")]
             Fat12 = 0x01,
 
             /// <summary>
-            /// A FAT16 primary partition with fewer than 65,536 sectors (32 MB) in first physical 32 MB of the disk, or a logical drive anywhere on the disk.
+            /// A FAT16 primary partition with fewer than 65,536 sectors (32 MB) in the first physical 32 MB of the disk, or in a logical drive anywhere on the disk.
             /// </summary>
             [Display(Name = "FAT16")]
             Fat16 = 0x04,
 
             /// <summary>
-            /// Extended partition with CHS addressing. It must reside within the first physical 8 GB of the disk.
+            /// Extended partition that can contain logical partitions. Must reside within the first physical 8 GB of the disk.
             /// </summary>
-            [Display(Name = "Extended Partition (CHS)")]
-            ExtendedChs = 0x05,
+            [Display(Name = "Extended Partition")]
+            Extended = 0x05,
 
             /// <summary>
-            /// A FAT16B primary partition with 65,536 or more sectors. It must reside within the first 8 GB of the disk unless used for logical drives in an 0Fh extended partition.
+            /// A FAT16B primary partition with 65,536 (32 MB) or more sectors in the first 8 GB of the disk, or in a logical drive anywhere on the disk.
             /// Also used for FAT12 and FAT16 volumes in primary partitions if they are not residing in first physical 32 MB of the disk.
             /// </summary>
-            [Display(Name = "FAT16B (CHS)")]
+            [Display(Name = "FAT16B")]
             Fat16B = 0x06,
 
             /// <summary>
-            /// A partition containing HPFS, NTFS or exFAT file system.
+            /// A primary partition containing HPFS, NTFS or exFAT file systems.
             /// </summary>
             [Display(Name = "HPFS/NTFS/exFAT")]
             HpfsNtfsExFat = 0x07,
 
             /// <summary>
-            /// A partition containing FAT32 with CHS addressing.
+            /// A FAT32 primary partition.
             /// </summary>
-            [Display(Name = "FAT32 (CHS)")]
-            Fat32Chs = 0x0B,
+            [Display(Name = "FAT32")]
+            Fat32 = 0x0B,
 
             /// <summary>
-            /// A partition containing FAT32 with Logical Block Addressing.
+            /// A FAT32 primary partition that requires Logical Block Addressing for access.
             /// </summary>
             [Display(Name = "FAT32 (LBA)")]
             Fat32Lba = 0x0C,
 
             /// <summary>
-            /// A partition containing FAT32 with Logical Block Addressing.
+            /// A FAT16B primary partition that requires Logical Block Addressing for access.
             /// </summary>
             [Display(Name = "FAT16B (LBA)")]
             Fat16BLba = 0x0E,
 
             /// <summary>
-            /// Extended partition with Logical Block Addressing.
+            /// Extended partition that requires Logical Block Addressing for access.
             /// </summary>
             [Display(Name = "Extended Partition (LBA)")]
             ExtendedLba = 0x0F,
 
             /// <summary>
-            /// Dynamic Disk Volume marker.
+            /// Linux swap space.
             /// </summary>
-            [Display(Name = "Dynamic Disk Volume")]
-            Dynamic = 0x42,
+            [Display(Name = "Linux swap")]
+            LinuxSwap = 0x82,
 
             /// <summary>
-            /// A protective MBR partition for GPT drives.
+            /// Partition containing a native Linux file system such as the ext family etc.
+            /// </summary>
+            [Display(Name = "Linux native")]
+            LinuxNative = 0x83,
+
+            /// <summary>
+            /// A protective MBR partition for GPT drives that prevents GPT-unaware software from overwriting the GPT partitions.
             /// </summary>
             [Display(Name = "GPT Protective Partition")]
             GptProtectivePartition = 0xEE,
