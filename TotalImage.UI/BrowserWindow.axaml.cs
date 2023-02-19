@@ -176,7 +176,12 @@ namespace TotalImage.UI
                 }
                 else if (FolderItems.SelectedItems[0] is DirectoryViewModel dvm)
                 {
-                    // Handle directory property sheet
+                    DirectoryPropertiesWindow dpw = new DirectoryPropertiesWindow
+                    {
+                        DataContext = dvm.ToPropertyViewModel()
+                    };
+
+                    await dpw.ShowDialog(this);
                 }
             }
             else if (FolderItems.SelectedItems.Count > 1)
