@@ -152,14 +152,12 @@ namespace TotalImage.UI
 
             foreach (object? selectedItem in FolderItems.SelectedItems)
             {
-                if (selectedItem is FileViewModel fvm)
+                if (selectedItem is not IFileSystemObjectViewModel fsovm)
                 {
-                    // Handle file extract
+                    return;
                 }
-                else if (selectedItem is DirectoryViewModel dvm)
-                {
-                    // Handle directory extract
-                }
+
+                await fsovm.Extract(folder);
             }
         }
     }
