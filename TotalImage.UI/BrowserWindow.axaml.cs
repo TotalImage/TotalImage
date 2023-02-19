@@ -169,7 +169,7 @@ namespace TotalImage.UI
                 {
                     FilePropertiesWindow fpw = new FilePropertiesWindow
                     {
-                        DataContext = fvm
+                        DataContext = fvm.ToPropertyViewModel()
                     };
 
                     await fpw.ShowDialog(this);

@@ -7,7 +7,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
         <TextBlock Name="LabelText" Grid.Column="0" TextAlignment="Right" Margin="4" Text="{Binding $parent[UserControl].Label}" />
         <TextBlock Name="ValueText" Grid.Column="1" TextAlignment="Left" Margin="4" Text="{Binding $parent[UserControl].Value}" />

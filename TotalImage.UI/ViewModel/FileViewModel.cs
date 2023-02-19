@@ -5,6 +5,9 @@ namespace TotalImage.UI.ViewModel
 {
     public class FileViewModel : FileSystemObjectViewModel<FileSystems.File>
     {
+        public FilePropertiesWindowViewModel ToPropertyViewModel()
+            => new FilePropertiesWindowViewModel(_fsObject);
+
         public override async Task Extract(string destination)
         {
             string path = Path.Combine(destination, _fsObject.Name);
