@@ -9,9 +9,30 @@
     <Window.Resources>
         <conv:SizeConverter x:Key="SizeConverter" />
     </Window.Resources>
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="File">
+                <NativeMenu>
+                    <NativeMenuItem Header="New..." IsEnabled="False" />
+                    <NativeMenuItem Header="Open..." Click="MenuOpen_OnClick" />
+                    <NativeMenuItem Header="Save..." IsEnabled="False" />
+                    <NativeMenuItem Header="Save As..." IsEnabled="False" />
+                    <NativeMenuItem Header="Close" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="Recent files">
+                        <NativeMenu>
+                            <NativeMenuItem Header="No files..." IsEnabled="False" />
+                        </NativeMenu>
+                    </NativeMenuItem>
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="Quit" Click="MenuQuit_OnClick" />
+                </NativeMenu>
+            </NativeMenuItem>
+        </NativeMenu>
+    </NativeMenu.Menu>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="32" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="32" />
         </Grid.RowDefinitions>
@@ -19,47 +40,32 @@
             <ColumnDefinition Width="*" MaxWidth="200" />
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
-        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-            <MenuItem Header="_File">
-                <MenuItem Header="_New..." IsEnabled="False" />
-                <MenuItem Header="_Open..." Click="MenuOpen_OnClick" />
-                <MenuItem Header="_Save..." IsEnabled="False" />
-                <MenuItem Header="Save As..." IsEnabled="False" />
-                <MenuItem Header="Close" IsEnabled="False" />
-                <Separator />
-                <MenuItem Header="Recent files">
-                    <MenuItem Header="No files..." IsEnabled="False" />
-                </MenuItem>
-                <Separator />
-                <MenuItem Header="_Quit" Click="MenuQuit_OnClick" />
-            </MenuItem>
-            <MenuItem Header="_Tools">
-                <MenuItem Header="_Settings..." IsEnabled="False" />
-            </MenuItem>
-            <MenuItem Header="_Help">
-                <MenuItem Header="_About..." IsEnabled="False" />
-            </MenuItem>
-        </Menu>
-        <TreeView Name="DirectoryTree" Grid.Row="1" Grid.Column="0" Items="{Binding Directories}" SelectedItem="{Binding SelectedItem}">
+        <NativeMenuBar Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
+        <TreeView Name="DirectoryTree" Grid.Row="1" Grid.Column="0" Items="{Binding Directories}" SelectedItem="{Binding SelectedDirectory}" SelectionMode="Single">
             <TreeView.ItemTemplate>
                 <TreeDataTemplate ItemsSource="{Binding Directories}">
                     <TextBlock Text="{Binding Name}" />
                 </TreeDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
-        <DataGrid Grid.Row="1" Grid.Column="1" Items="{Binding SelectedItem.Objects}" IsReadOnly="True">
+        <DataGrid Name="FolderItems" Grid.Row="1" Grid.Column="1" Items="{Binding SelectedDirectory.Objects}" IsReadOnly="True" SelectionMode="Extended">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Size" Binding="{Binding Length, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
                 <DataGridTextColumn Header="Last Modified" Binding="{Binding LastWriteTime, Mode=OneWay}" />
                 <DataGridTextColumn Header="Attributes" Binding="{Binding Attributes}" FontFamily="Consolas,Monospace,Courier" />
             </DataGrid.Columns>
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Extract" Click="Extract_OnClick" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
         </DataGrid>
         <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Orientation="Horizontal" Spacing="16" Margin="16,0">
             <TextBlock Text="{Binding PartitionSize, Converter={StaticResource SizeConverter}, Mode=OneWay, StringFormat='Partition size: {0}'}" />
             <TextBlock Text="{Binding PartitionFree, Converter={StaticResource SizeConverter}, Mode=OneWay, StringFormat='Free space: {0}'}" />
-            <TextBlock Text="{Binding SelectedItem.FooterLabel}" />
-            <TextBlock Text="{Binding SelectedItem.FullName}" />
+            <TextBlock Text="{Binding SelectedDirectory.FooterLabel}" />
+            <TextBlock Text="{Binding SelectedDirectory.FullName}" />
         </StackPanel>
     </Grid>
 </Window>

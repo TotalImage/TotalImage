@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -19,6 +20,12 @@ namespace TotalImage.UI
             }
 
             base.OnFrameworkInitializationCompleted();
+        }
+
+        private void About_Click(object? sender, EventArgs e)
+        {
+            AboutWindow wnd = new AboutWindow();
+            wnd.Show();
         }
     }
 }
