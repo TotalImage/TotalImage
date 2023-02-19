@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:uic="clr-namespace:TotalImage.UI.Controls"
+        xmlns:conv="clr-namespace:TotalImage.UI.Converters"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TotalImage.UI.FilePropertiesWindow"
+        Title="{Binding Name, StringFormat='{}{0} - Properties'}" Width="480" Height="320">
+    <Window.Resources>
+        <conv:SizeConverter x:Key="SizeConverter" />
+    </Window.Resources>
+    <Grid>
+        <StackPanel Orientation="Vertical" Margin="12,20" Spacing="12">
+            <uic:PropertyRow Label="Name:" Value="{Binding Name}" />
+            <uic:PropertyRow Label="Size:" Value="{Binding Length, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
+        </StackPanel>
+    </Grid>
+</Window>
