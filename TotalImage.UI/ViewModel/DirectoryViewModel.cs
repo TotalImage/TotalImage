@@ -27,6 +27,9 @@ namespace TotalImage.UI.ViewModel
                 ? $"{SizeConverter.Convert(Files.Sum(e => (long)e.Length))} in {Files.Count()} item(s)"
                 : "";
 
+        public DirectoryPropertiesWindowViewModel ToPropertyViewModel()
+            => new DirectoryPropertiesWindowViewModel(_fsObject);
+
         public override async Task Extract(string destination)
         {
             string path = Path.Combine(destination, _fsObject.Name);
