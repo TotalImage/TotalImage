@@ -6,14 +6,44 @@
         xmlns:conv="clr-namespace:TotalImage.UI.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TotalImage.UI.FilePropertiesWindow"
-        Title="{Binding Name, StringFormat='{}{0} - Properties'}" Width="480" Height="320">
+        Title="{Binding Name, StringFormat='{}{0} - Properties'}" Width="400" Height="480">
     <Window.Resources>
         <conv:SizeConverter x:Key="SizeConverter" />
     </Window.Resources>
     <Grid>
         <StackPanel Orientation="Vertical" Margin="12,20" Spacing="12">
             <uic:PropertyRow Label="Name:" Value="{Binding Name}" />
+            <uic:PropertyRow Label="Location:" Value="{Binding Location}" />
             <uic:PropertyRow Label="Size:" Value="{Binding Length, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
+            <uic:PropertyRow Label="Size on Disk:" Value="{Binding LengthOnDisk, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
+            <uic:PropertyRow Label="Created:" Value="{Binding Created}" />
+            <uic:PropertyRow Label="Modified:" Value="{Binding Modified}" />
+            <uic:PropertyRow Label="Accessed:" Value="{Binding Accessed}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Attributes:" Margin="4" TextAlignment="Right" />
+                <StackPanel Grid.Column="1" Orientation="Vertical" Margin="6,0" Spacing="4">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <CheckBox IsEnabled="False" IsChecked="{Binding IsReadOnly}" />
+                        <TextBlock Text="Read-only" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <CheckBox IsEnabled="False" IsChecked="{Binding IsHidden}" />
+                        <TextBlock Text="Hidden" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <CheckBox IsEnabled="False" IsChecked="{Binding IsSystem}" />
+                        <TextBlock Text="System" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <CheckBox IsEnabled="False" IsChecked="{Binding IsArchive}" />
+                        <TextBlock Text="Archive" VerticalAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
         </StackPanel>
     </Grid>
 </Window>
