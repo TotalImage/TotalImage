@@ -160,5 +160,29 @@ namespace TotalImage.UI
                 await fsovm.Extract(folder);
             }
         }
+
+        private async void Properties_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (FolderItems.SelectedItems.Count == 1)
+            {
+                if (FolderItems.SelectedItems[0] is FileViewModel fvm)
+                {
+                    FilePropertiesWindow fpw = new FilePropertiesWindow
+                    {
+                        DataContext = fvm
+                    };
+
+                    await fpw.ShowDialog(this);
+                }
+                else if (FolderItems.SelectedItems[0] is DirectoryViewModel dvm)
+                {
+                    // Handle directory property sheet
+                }
+            }
+            else if (FolderItems.SelectedItems.Count > 1)
+            {
+                // Handle multiple items property sheet
+            }
+        }
     }
 }

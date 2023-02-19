@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace TotalImage.UI;
 
-public partial class AboutWindow : Window
+public partial class FilePropertiesWindow : Window
 {
-    public AboutWindow()
+    public FilePropertiesWindow()
     {
         InitializeComponent();
     }

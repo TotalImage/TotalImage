@@ -58,6 +58,7 @@
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Extract" Click="Extract_OnClick" />
+                    <MenuItem Header="Properties..." Click="Properties_OnClick" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>
