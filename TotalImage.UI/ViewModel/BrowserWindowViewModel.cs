@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using TotalImage.Containers;
 using TotalImage.Partitions;
 
@@ -11,7 +13,7 @@ namespace TotalImage.UI.ViewModel
         private readonly string _imagePath = "";
         private readonly Containers.Container? _container;
         private readonly PartitionEntry? _partitionEntry;
-        private IFileSystemObjectViewModel? _selectedItem;
+        private DirectoryViewModel? _selectedDirectory;
 
         private FileSystems.Directory? Root
             => _partitionEntry?.FileSystem.RootDirectory;
@@ -34,13 +36,13 @@ namespace TotalImage.UI.ViewModel
             get => _partitionEntry;
         }
 
-        public IFileSystemObjectViewModel? SelectedItem
+        public DirectoryViewModel? SelectedDirectory
         {
-            get => _selectedItem;
+            get => _selectedDirectory;
             set
             {
-                _selectedItem = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedItem)));
+                _selectedDirectory = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedDirectory)));
             }
         }
 
@@ -55,7 +57,7 @@ namespace TotalImage.UI.ViewModel
             _imagePath = path;
             _container = container;
             _partitionEntry = partition;
-            _selectedItem = _partitionEntry != null
+            _selectedDirectory = _partitionEntry != null
                 ? new DirectoryViewModel(_partitionEntry.FileSystem.RootDirectory)
                 : null;
         }

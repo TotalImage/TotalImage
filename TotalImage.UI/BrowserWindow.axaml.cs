@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Avalonia;
@@ -17,19 +18,7 @@ namespace TotalImage.UI
     {
         private static List<FileDialogFilter> GetPlatformFilter()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                return new List<FileDialogFilter>
-                {
-                    new FileDialogFilter
-                    {
-                        Name = "Supported files",
-                        Extensions = new List<string> { "*.img", "*.ima", "*.vfd", "*.flp", "*.dsk", "*.xdf", "*.hdm", "*.iso", "*.vhd", "*.nhd" }
-                    }
-                };
-            }
-
-            return new List<FileDialogFilter>
+            var filters = new List<FileDialogFilter>
             {
                 new FileDialogFilter
                 {
@@ -57,6 +46,17 @@ namespace TotalImage.UI
                     Extensions = new List<string> { "*.*" }
                 }
             };
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                foreach (var filter in filters)
+                for (int j = 0; j < filter.Extensions.Count; j++)
+                {
+                    filter.Extensions[j] = filter.Extensions[j].Replace("*.", "");
+                }
+            }
+
+            return filters;
         }
 
         public BrowserWindow()
@@ -115,7 +115,7 @@ namespace TotalImage.UI
             return null;
         }
 
-        public async void MenuOpen_OnClick(object? sender, RoutedEventArgs e)
+        public async void MenuOpen_OnClick(object? sender, EventArgs e)
         {
             var result = await OpenFileAsync(this);
             if (result != null)
@@ -128,11 +128,38 @@ namespace TotalImage.UI
             }
         }
 
-        private void MenuQuit_OnClick(object? sender, RoutedEventArgs e)
+        private void MenuQuit_OnClick(object? sender, EventArgs e)
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.Shutdown();
+            }
+        }
+
+        private async void Extract_OnClick(object? sender, RoutedEventArgs e)
+        {
+            if (FolderItems.SelectedItems.Count == 0)
+            {
+                return;
+            }
+
+            OpenFolderDialog ofd = new OpenFolderDialog();
+            string? folder = await ofd.ShowAsync(this);
+            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
+            {
+                return;
+            }
+
+            foreach (object? selectedItem in FolderItems.SelectedItems)
+            {
+                if (selectedItem is FileViewModel fvm)
+                {
+                    // Handle file extract
+                }
+                else if (selectedItem is DirectoryViewModel dvm)
+                {
+                    // Handle directory extract
+                }
             }
         }
     }
