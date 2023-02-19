@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace TotalImage.UI.ViewModel
 {
@@ -10,5 +11,7 @@ namespace TotalImage.UI.ViewModel
         DateTime? LastWriteTime { get; }
         string Attributes { get; }
         bool IsHidden { get; }
+
+        Task Extract(string destination);
     }
 }

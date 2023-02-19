@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using TotalImage.FileSystems;
 
 namespace TotalImage.UI.ViewModel
@@ -27,7 +28,9 @@ namespace TotalImage.UI.ViewModel
 
         public bool IsHidden => _fsObject.Attributes.HasFlag(FileAttributes.Hidden);
 
-        public FileSystemObjectViewModel(T obj)
+        public abstract Task Extract(string destination);
+
+        protected FileSystemObjectViewModel(T obj)
         {
             _fsObject = obj;
 
