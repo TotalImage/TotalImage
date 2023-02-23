@@ -1951,7 +1951,7 @@ namespace TotalImage
                     {
                         Text = $"File \"{filename}\" could not be opened because it's in use by another process. Close all processes using this file and try again.{Environment.NewLine}{Environment.NewLine}" +
                     $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "File in use by another process",
+                        Heading = "File is in use",
                         Caption = "Error",
                         Buttons =
                         {
@@ -2119,7 +2119,7 @@ namespace TotalImage
                     }
                 }
 
-                selectPartitionToolStripComboBox.SelectedIndex = selectPartitionToolStripComboBox.FindString($"{CurrentPartitionIndex}: ");
+                selectPartitionToolStripComboBox.SelectedIndex = image.PartitionTable.Partitions.Count > 1 ? selectPartitionToolStripComboBox.FindString($"{CurrentPartitionIndex}: ") : 0;
             }
 
             LoadPartitionInCurrentImage(CurrentPartitionIndex);
