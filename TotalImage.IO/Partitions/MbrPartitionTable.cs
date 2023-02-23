@@ -14,6 +14,56 @@ namespace TotalImage.Partitions
     public class MbrPartitionTable : PartitionTable
     {
         private readonly uint _sectorSize;
+        private byte _driveNumber;
+        private byte _timestampHours;
+        private byte _timestampMinutes;
+        private byte _timestampSeconds;
+        private uint _serialNumber;
+
+        /// <summary>
+        /// The physical drive number (0x80 to 0xFF).
+        /// </summary>
+        public byte DriveNumber
+        {
+            get => _driveNumber;
+            set => _driveNumber = value;
+        }
+
+        /// <summary>
+        /// Hours part of the timestamp.
+        /// </summary>
+        public byte TimestampHours
+        {
+            get => _timestampHours;
+            set => _timestampHours = value;
+        }
+
+        /// <summary>
+        /// Minutes part of the timestamp.
+        /// </summary>
+        public byte TimestampMinutes
+        {
+            get => _timestampMinutes;
+            set => _timestampMinutes = value;
+        }
+
+        /// <summary>
+        /// Seconds part of the timestamp.
+        /// </summary>
+        public byte TimestampSeconds
+        {
+            get => _timestampSeconds;   
+            set => _timestampSeconds = value;
+        }
+
+        /// <summary>
+        /// 32-bit signature of this disk.
+        /// </summary>
+        public uint SerialNumber
+        {
+            get => _serialNumber;
+            set => _serialNumber = value;
+        }
 
         /// <inheritdoc />
         public override string DisplayName => "Master Boot Record";
@@ -27,9 +77,21 @@ namespace TotalImage.Partitions
         /// <inheritdoc />
         protected override IEnumerable<PartitionEntry> LoadPartitions()
         {
+            Span<byte> buffer = new byte[4];
+
+            _container.Content.Seek(0xDC, SeekOrigin.Begin);
+            _container.Content.Read(buffer);
+            _driveNumber = buffer[0];
+            _timestampSeconds = buffer[1];
+            _timestampMinutes = buffer[2];
+            _timestampHours = buffer[3];
+            _container.Content.Seek(0x1B8, SeekOrigin.Begin);
+            _container.Content.Read(buffer);
+            _serialNumber = BinaryPrimitives.ReadUInt32LittleEndian(buffer[0..4]);
+
             _container.Content.Seek(0x1FE, SeekOrigin.Begin);
 
-            Span<byte> buffer = new byte[2];
+            buffer = new byte[2];
             _container.Content.Read(buffer);
             ushort signature = BinaryPrimitives.ReadUInt16LittleEndian(buffer);
             if (signature != 0xAA55)
@@ -58,9 +120,6 @@ namespace TotalImage.Partitions
                 CHSAddress chsEnd = new CHSAddress(record[5..8]);
                 uint lbaStart = BinaryPrimitives.ReadUInt32LittleEndian(record[8..12]);
                 uint lbaLength = BinaryPrimitives.ReadUInt32LittleEndian(record[12..16]);
-
-
-
                 uint offset = lbaStart * _sectorSize;
                 uint length = lbaLength * _sectorSize;
                 MbrPartitionEntry entry = new MbrPartitionEntry((status & 0x80) != 0, type, chsStart, chsEnd, lbaStart, lbaLength, offset, length, new PartialStream(_container.Content, offset, length));
