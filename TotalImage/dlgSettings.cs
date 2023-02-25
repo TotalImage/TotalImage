@@ -220,20 +220,18 @@ namespace TotalImage
 
         private void lstSizeUnits_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SizeUnit currentUnit = Settings.CurrentSettings.SizeUnit; //Backup the currently stored setting first
+            SizeUnit previewUnit = Settings.CurrentSettings.SizeUnit;
 
             switch (lstSizeUnits.SelectedIndex)
             {
-                case 0: Settings.CurrentSettings.SizeUnit = SizeUnit.Bytes; break;
-                case 1: Settings.CurrentSettings.SizeUnit = SizeUnit.Decimal; break;
-                case 2: Settings.CurrentSettings.SizeUnit = SizeUnit.Binary; break;
+                case 0: previewUnit = SizeUnit.Bytes; break;
+                case 1: previewUnit = SizeUnit.Decimal; break;
+                case 2: previewUnit = SizeUnit.Binary; break;
             }
 
-            lblSizeUnitsPreview.Text = $"Preview:{Environment.NewLine}{Settings.CurrentSettings.SizeUnit.FormatSize(234)}, " +
-                $"{Settings.CurrentSettings.SizeUnit.FormatSize(2345)}, {Settings.CurrentSettings.SizeUnit.FormatSize(2345678)}, " +
-                $"{Settings.CurrentSettings.SizeUnit.FormatSize(2345678901)}, {Settings.CurrentSettings.SizeUnit.FormatSize(2345678901234)}";
-
-            Settings.CurrentSettings.SizeUnit = currentUnit;
+            lblSizeUnitsPreview.Text = $"Preview:{Environment.NewLine}{previewUnit.FormatSize(234)}, " +
+                $"{previewUnit.FormatSize(2345)}, {previewUnit.FormatSize(2345678)}, " +
+                $"{previewUnit.FormatSize(2345678901)}, {previewUnit.FormatSize(2345678901234)}";
         }
     }
 }
