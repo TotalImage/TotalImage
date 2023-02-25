@@ -672,6 +672,8 @@ namespace TotalImage
                 dlg.lblPath.Text = $"Extract { (lstDirectories.Focused ? "1" : SelectedItems.Count())} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
+                    Settings.CurrentSettings.DefaultExtractPath = dlg.TargetPath;
+
                     if (lstFiles.Focused)
                     {
                         FileExtraction.ExtractFiles(this, SelectedItems, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);

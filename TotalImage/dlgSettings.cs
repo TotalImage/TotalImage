@@ -233,5 +233,11 @@ namespace TotalImage
                 $"{previewUnit.FormatSize(2345)}, {previewUnit.FormatSize(2345678)}, " +
                 $"{previewUnit.FormatSize(2345678901)}, {previewUnit.FormatSize(2345678901234)}";
         }
+
+        private void cbxExtractAsk_CheckedChanged(object sender, EventArgs e)
+        {
+            rbnExtractFlat.Enabled = rbnExtractPreserve.Enabled = rbnIgnoreFolders.Enabled = btnBrowse.Enabled = txtExtractPath.Enabled = 
+                cbxOpenDir.Enabled = !cbxExtractAsk.Checked;
+        }
     }
 }

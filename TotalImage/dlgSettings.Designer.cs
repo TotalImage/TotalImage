@@ -69,16 +69,18 @@ namespace TotalImage
             this.cbxShowDeletedItems = new System.Windows.Forms.CheckBox();
             this.cbxShowHiddenItems = new System.Windows.Forms.CheckBox();
             this.tabExtraction = new System.Windows.Forms.TabPage();
-            this.cbxPreserveAttributes = new System.Windows.Forms.CheckBox();
+            this.gbxExtractionPreserve = new System.Windows.Forms.GroupBox();
             this.cbxPreserveDates = new System.Windows.Forms.CheckBox();
-            this.cbxOpenDir = new System.Windows.Forms.CheckBox();
-            this.rbnExtractPreserve = new System.Windows.Forms.RadioButton();
-            this.rbnExtractFlat = new System.Windows.Forms.RadioButton();
-            this.rbnIgnoreFolders = new System.Windows.Forms.RadioButton();
-            this.btnBrowse = new System.Windows.Forms.Button();
-            this.txtExtractPath = new System.Windows.Forms.TextBox();
-            this.lblExtractPath = new System.Windows.Forms.Label();
+            this.cbxPreserveAttributes = new System.Windows.Forms.CheckBox();
+            this.gbxExtractionDefaults = new System.Windows.Forms.GroupBox();
             this.cbxExtractAsk = new System.Windows.Forms.CheckBox();
+            this.lblExtractPath = new System.Windows.Forms.Label();
+            this.txtExtractPath = new System.Windows.Forms.TextBox();
+            this.cbxOpenDir = new System.Windows.Forms.CheckBox();
+            this.btnBrowse = new System.Windows.Forms.Button();
+            this.rbnExtractPreserve = new System.Windows.Forms.RadioButton();
+            this.rbnIgnoreFolders = new System.Windows.Forms.RadioButton();
+            this.rbnExtractFlat = new System.Windows.Forms.RadioButton();
             this.tabIntegration = new System.Windows.Forms.TabPage();
             this.gbxFileAssociations = new System.Windows.Forms.GroupBox();
             this.lblFileAssoc = new System.Windows.Forms.Label();
@@ -86,7 +88,6 @@ namespace TotalImage
             this.gbxIntegrationMisc = new System.Windows.Forms.GroupBox();
             this.lblSystemIcons = new System.Windows.Forms.Label();
             this.cbxShellFileIcons = new System.Windows.Forms.CheckBox();
-            this.gbxExtraction = new System.Windows.Forms.GroupBox();
             this.pnlBottom.SuspendLayout();
             this.tabs.SuspendLayout();
             this.tabGeneral.SuspendLayout();
@@ -98,10 +99,11 @@ namespace TotalImage
             this.gbxFileList.SuspendLayout();
             this.gbxMainWindow.SuspendLayout();
             this.tabExtraction.SuspendLayout();
+            this.gbxExtractionPreserve.SuspendLayout();
+            this.gbxExtractionDefaults.SuspendLayout();
             this.tabIntegration.SuspendLayout();
             this.gbxFileAssociations.SuspendLayout();
             this.gbxIntegrationMisc.SuspendLayout();
-            this.gbxExtraction.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCancel
@@ -622,7 +624,8 @@ namespace TotalImage
             // 
             // tabExtraction
             // 
-            this.tabExtraction.Controls.Add(this.gbxExtraction);
+            this.tabExtraction.Controls.Add(this.gbxExtractionPreserve);
+            this.tabExtraction.Controls.Add(this.gbxExtractionDefaults);
             this.tabExtraction.Location = new System.Drawing.Point(4, 29);
             this.tabExtraction.Margin = new System.Windows.Forms.Padding(4);
             this.tabExtraction.Name = "tabExtraction";
@@ -632,23 +635,24 @@ namespace TotalImage
             this.tabExtraction.Text = "Extraction";
             this.tabExtraction.UseVisualStyleBackColor = true;
             // 
-            // cbxPreserveAttributes
+            // gbxExtractionPreserve
             // 
-            this.cbxPreserveAttributes.AutoSize = true;
-            this.cbxPreserveAttributes.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxPreserveAttributes.Location = new System.Drawing.Point(14, 299);
-            this.cbxPreserveAttributes.Margin = new System.Windows.Forms.Padding(4);
-            this.cbxPreserveAttributes.Name = "cbxPreserveAttributes";
-            this.cbxPreserveAttributes.Size = new System.Drawing.Size(296, 25);
-            this.cbxPreserveAttributes.TabIndex = 9;
-            this.cbxPreserveAttributes.Text = "Preserve file attributes when extracting";
-            this.cbxPreserveAttributes.UseVisualStyleBackColor = true;
+            this.gbxExtractionPreserve.Controls.Add(this.cbxPreserveDates);
+            this.gbxExtractionPreserve.Controls.Add(this.cbxPreserveAttributes);
+            this.gbxExtractionPreserve.Location = new System.Drawing.Point(8, 276);
+            this.gbxExtractionPreserve.Margin = new System.Windows.Forms.Padding(4);
+            this.gbxExtractionPreserve.Name = "gbxExtractionPreserve";
+            this.gbxExtractionPreserve.Padding = new System.Windows.Forms.Padding(4);
+            this.gbxExtractionPreserve.Size = new System.Drawing.Size(552, 100);
+            this.gbxExtractionPreserve.TabIndex = 23;
+            this.gbxExtractionPreserve.TabStop = false;
+            this.gbxExtractionPreserve.Text = "Preserve information";
             // 
             // cbxPreserveDates
             // 
             this.cbxPreserveDates.AutoSize = true;
             this.cbxPreserveDates.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxPreserveDates.Location = new System.Drawing.Point(14, 267);
+            this.cbxPreserveDates.Location = new System.Drawing.Point(14, 28);
             this.cbxPreserveDates.Margin = new System.Windows.Forms.Padding(4);
             this.cbxPreserveDates.Name = "cbxPreserveDates";
             this.cbxPreserveDates.Size = new System.Drawing.Size(269, 25);
@@ -656,17 +660,91 @@ namespace TotalImage
             this.cbxPreserveDates.Text = "Preserve file dates when extracting";
             this.cbxPreserveDates.UseVisualStyleBackColor = true;
             // 
+            // cbxPreserveAttributes
+            // 
+            this.cbxPreserveAttributes.AutoSize = true;
+            this.cbxPreserveAttributes.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxPreserveAttributes.Location = new System.Drawing.Point(14, 61);
+            this.cbxPreserveAttributes.Margin = new System.Windows.Forms.Padding(4);
+            this.cbxPreserveAttributes.Name = "cbxPreserveAttributes";
+            this.cbxPreserveAttributes.Size = new System.Drawing.Size(296, 25);
+            this.cbxPreserveAttributes.TabIndex = 9;
+            this.cbxPreserveAttributes.Text = "Preserve file attributes when extracting";
+            this.cbxPreserveAttributes.UseVisualStyleBackColor = true;
+            // 
+            // gbxExtractionDefaults
+            // 
+            this.gbxExtractionDefaults.Controls.Add(this.cbxExtractAsk);
+            this.gbxExtractionDefaults.Controls.Add(this.lblExtractPath);
+            this.gbxExtractionDefaults.Controls.Add(this.txtExtractPath);
+            this.gbxExtractionDefaults.Controls.Add(this.cbxOpenDir);
+            this.gbxExtractionDefaults.Controls.Add(this.btnBrowse);
+            this.gbxExtractionDefaults.Controls.Add(this.rbnExtractPreserve);
+            this.gbxExtractionDefaults.Controls.Add(this.rbnIgnoreFolders);
+            this.gbxExtractionDefaults.Controls.Add(this.rbnExtractFlat);
+            this.gbxExtractionDefaults.Location = new System.Drawing.Point(8, 8);
+            this.gbxExtractionDefaults.Margin = new System.Windows.Forms.Padding(4);
+            this.gbxExtractionDefaults.Name = "gbxExtractionDefaults";
+            this.gbxExtractionDefaults.Padding = new System.Windows.Forms.Padding(4);
+            this.gbxExtractionDefaults.Size = new System.Drawing.Size(552, 260);
+            this.gbxExtractionDefaults.TabIndex = 22;
+            this.gbxExtractionDefaults.TabStop = false;
+            this.gbxExtractionDefaults.Text = "Default options";
+            // 
+            // cbxExtractAsk
+            // 
+            this.cbxExtractAsk.AutoSize = true;
+            this.cbxExtractAsk.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbxExtractAsk.Location = new System.Drawing.Point(14, 28);
+            this.cbxExtractAsk.Margin = new System.Windows.Forms.Padding(4);
+            this.cbxExtractAsk.Name = "cbxExtractAsk";
+            this.cbxExtractAsk.Size = new System.Drawing.Size(415, 25);
+            this.cbxExtractAsk.TabIndex = 0;
+            this.cbxExtractAsk.Text = "Always ask for these extraction options before extracting";
+            this.cbxExtractAsk.UseVisualStyleBackColor = true;
+            this.cbxExtractAsk.CheckedChanged += new System.EventHandler(this.cbxExtractAsk_CheckedChanged);
+            // 
+            // lblExtractPath
+            // 
+            this.lblExtractPath.AutoSize = true;
+            this.lblExtractPath.Location = new System.Drawing.Point(10, 63);
+            this.lblExtractPath.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblExtractPath.Name = "lblExtractPath";
+            this.lblExtractPath.Size = new System.Drawing.Size(339, 20);
+            this.lblExtractPath.TabIndex = 1;
+            this.lblExtractPath.Text = "Extract selected item(s) to the following directory:";
+            // 
+            // txtExtractPath
+            // 
+            this.txtExtractPath.Location = new System.Drawing.Point(14, 85);
+            this.txtExtractPath.Margin = new System.Windows.Forms.Padding(4);
+            this.txtExtractPath.Name = "txtExtractPath";
+            this.txtExtractPath.Size = new System.Drawing.Size(422, 27);
+            this.txtExtractPath.TabIndex = 2;
+            // 
             // cbxOpenDir
             // 
             this.cbxOpenDir.AutoSize = true;
             this.cbxOpenDir.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxOpenDir.Location = new System.Drawing.Point(14, 234);
+            this.cbxOpenDir.Location = new System.Drawing.Point(14, 224);
             this.cbxOpenDir.Margin = new System.Windows.Forms.Padding(4);
             this.cbxOpenDir.Name = "cbxOpenDir";
             this.cbxOpenDir.Size = new System.Drawing.Size(322, 25);
             this.cbxOpenDir.TabIndex = 7;
             this.cbxOpenDir.Text = "Open destination directory after extraction";
             this.cbxOpenDir.UseVisualStyleBackColor = true;
+            // 
+            // btnBrowse
+            // 
+            this.btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnBrowse.Location = new System.Drawing.Point(444, 82);
+            this.btnBrowse.Margin = new System.Windows.Forms.Padding(4);
+            this.btnBrowse.Name = "btnBrowse";
+            this.btnBrowse.Size = new System.Drawing.Size(100, 32);
+            this.btnBrowse.TabIndex = 3;
+            this.btnBrowse.Text = "Browse...";
+            this.btnBrowse.UseVisualStyleBackColor = true;
+            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
             // rbnExtractPreserve
             // 
@@ -681,19 +759,6 @@ namespace TotalImage
             this.rbnExtractPreserve.Text = "Preserve original directory structure";
             this.rbnExtractPreserve.UseVisualStyleBackColor = true;
             // 
-            // rbnExtractFlat
-            // 
-            this.rbnExtractFlat.AutoSize = true;
-            this.rbnExtractFlat.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.rbnExtractFlat.Location = new System.Drawing.Point(14, 160);
-            this.rbnExtractFlat.Margin = new System.Windows.Forms.Padding(4);
-            this.rbnExtractFlat.Name = "rbnExtractFlat";
-            this.rbnExtractFlat.Size = new System.Drawing.Size(292, 25);
-            this.rbnExtractFlat.TabIndex = 5;
-            this.rbnExtractFlat.TabStop = true;
-            this.rbnExtractFlat.Text = "Extract all files into the same directory";
-            this.rbnExtractFlat.UseVisualStyleBackColor = true;
-            // 
             // rbnIgnoreFolders
             // 
             this.rbnIgnoreFolders.AutoSize = true;
@@ -707,47 +772,18 @@ namespace TotalImage
             this.rbnIgnoreFolders.Text = "Ignore directories and subdirectories";
             this.rbnIgnoreFolders.UseVisualStyleBackColor = true;
             // 
-            // btnBrowse
+            // rbnExtractFlat
             // 
-            this.btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnBrowse.Location = new System.Drawing.Point(450, 83);
-            this.btnBrowse.Margin = new System.Windows.Forms.Padding(4);
-            this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(94, 31);
-            this.btnBrowse.TabIndex = 3;
-            this.btnBrowse.Text = "Browse...";
-            this.btnBrowse.UseVisualStyleBackColor = true;
-            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
-            // 
-            // txtExtractPath
-            // 
-            this.txtExtractPath.Location = new System.Drawing.Point(14, 85);
-            this.txtExtractPath.Margin = new System.Windows.Forms.Padding(4);
-            this.txtExtractPath.Name = "txtExtractPath";
-            this.txtExtractPath.Size = new System.Drawing.Size(428, 27);
-            this.txtExtractPath.TabIndex = 2;
-            // 
-            // lblExtractPath
-            // 
-            this.lblExtractPath.AutoSize = true;
-            this.lblExtractPath.Location = new System.Drawing.Point(10, 63);
-            this.lblExtractPath.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblExtractPath.Name = "lblExtractPath";
-            this.lblExtractPath.Size = new System.Drawing.Size(339, 20);
-            this.lblExtractPath.TabIndex = 1;
-            this.lblExtractPath.Text = "Extract selected item(s) to the following directory:";
-            // 
-            // cbxExtractAsk
-            // 
-            this.cbxExtractAsk.AutoSize = true;
-            this.cbxExtractAsk.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cbxExtractAsk.Location = new System.Drawing.Point(14, 28);
-            this.cbxExtractAsk.Margin = new System.Windows.Forms.Padding(4);
-            this.cbxExtractAsk.Name = "cbxExtractAsk";
-            this.cbxExtractAsk.Size = new System.Drawing.Size(376, 25);
-            this.cbxExtractAsk.TabIndex = 0;
-            this.cbxExtractAsk.Text = "Always ask for extraction options before extracting";
-            this.cbxExtractAsk.UseVisualStyleBackColor = true;
+            this.rbnExtractFlat.AutoSize = true;
+            this.rbnExtractFlat.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.rbnExtractFlat.Location = new System.Drawing.Point(14, 160);
+            this.rbnExtractFlat.Margin = new System.Windows.Forms.Padding(4);
+            this.rbnExtractFlat.Name = "rbnExtractFlat";
+            this.rbnExtractFlat.Size = new System.Drawing.Size(292, 25);
+            this.rbnExtractFlat.TabIndex = 5;
+            this.rbnExtractFlat.TabStop = true;
+            this.rbnExtractFlat.Text = "Extract all files into the same directory";
+            this.rbnExtractFlat.UseVisualStyleBackColor = true;
             // 
             // tabIntegration
             // 
@@ -835,27 +871,6 @@ namespace TotalImage
             this.cbxShellFileIcons.Text = "Display system icons and file type names in file list";
             this.cbxShellFileIcons.UseVisualStyleBackColor = true;
             // 
-            // gbxExtraction
-            // 
-            this.gbxExtraction.Controls.Add(this.cbxExtractAsk);
-            this.gbxExtraction.Controls.Add(this.cbxPreserveAttributes);
-            this.gbxExtraction.Controls.Add(this.lblExtractPath);
-            this.gbxExtraction.Controls.Add(this.cbxPreserveDates);
-            this.gbxExtraction.Controls.Add(this.txtExtractPath);
-            this.gbxExtraction.Controls.Add(this.cbxOpenDir);
-            this.gbxExtraction.Controls.Add(this.btnBrowse);
-            this.gbxExtraction.Controls.Add(this.rbnExtractPreserve);
-            this.gbxExtraction.Controls.Add(this.rbnIgnoreFolders);
-            this.gbxExtraction.Controls.Add(this.rbnExtractFlat);
-            this.gbxExtraction.Location = new System.Drawing.Point(8, 8);
-            this.gbxExtraction.Margin = new System.Windows.Forms.Padding(4);
-            this.gbxExtraction.Name = "gbxExtraction";
-            this.gbxExtraction.Padding = new System.Windows.Forms.Padding(4);
-            this.gbxExtraction.Size = new System.Drawing.Size(552, 336);
-            this.gbxExtraction.TabIndex = 22;
-            this.gbxExtraction.TabStop = false;
-            this.gbxExtraction.Text = "Extraction options";
-            // 
             // dlgSettings
             // 
             this.AcceptButton = this.btnOK;
@@ -892,13 +907,15 @@ namespace TotalImage
             this.gbxMainWindow.ResumeLayout(false);
             this.gbxMainWindow.PerformLayout();
             this.tabExtraction.ResumeLayout(false);
+            this.gbxExtractionPreserve.ResumeLayout(false);
+            this.gbxExtractionPreserve.PerformLayout();
+            this.gbxExtractionDefaults.ResumeLayout(false);
+            this.gbxExtractionDefaults.PerformLayout();
             this.tabIntegration.ResumeLayout(false);
             this.gbxFileAssociations.ResumeLayout(false);
             this.gbxFileAssociations.PerformLayout();
             this.gbxIntegrationMisc.ResumeLayout(false);
             this.gbxIntegrationMisc.PerformLayout();
-            this.gbxExtraction.ResumeLayout(false);
-            this.gbxExtraction.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -963,6 +980,7 @@ namespace TotalImage
         private System.Windows.Forms.GroupBox gbxSizeUnits;
         private System.Windows.Forms.Label lblSizeUnitsPreview;
         private System.Windows.Forms.Label lblSizeUnitsTip;
-        private System.Windows.Forms.GroupBox gbxExtraction;
+        private System.Windows.Forms.GroupBox gbxExtractionDefaults;
+        private System.Windows.Forms.GroupBox gbxExtractionPreserve;
     }
 }
