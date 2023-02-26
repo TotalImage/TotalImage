@@ -1,24 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using TotalImage.FileSystems.FAT;
 using TotalImage.Containers;
+using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
+using TotalImage.FileSystems.BPB;
+using TotalImage.FileSystems.FAT;
 using static Interop.ComCtl32;
 using static Interop.Shell32;
 using static Interop.User32;
-using System.Diagnostics;
-using TotalImage.FileSystems.BPB;
-
 using TiDirectory = TotalImage.FileSystems.Directory;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
-using TotalImage.Containers.NHD;
 
 namespace TotalImage
 {
@@ -1905,6 +1905,9 @@ namespace TotalImage
                             break;
                         case ".nhd":
                             image = new NhdContainer(path, memoryMapping);
+                            break;
+                        case ".imz": //IMZ is a plain sector image in a ZIP archive, so it needs to be unzipped first
+                            image = new ImzContainer(path, memoryMapping);
                             break;
                         default:
                             image = new RawContainer(path, memoryMapping);
