@@ -28,7 +28,7 @@ namespace TotalImage
             lstProperties.Columns[1].Width = lstProperties.ClientRectangle.Width - lstProperties.Columns[0].Width;
 
             lstProperties.FindItemWithText("Filename").SubItems[1].Text = mainForm.filename;
-            lstProperties.FindItemWithText("Size").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+            lstProperties.FindItemWithText("Size").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)fileInfo.Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             lstProperties.FindItemWithText("Created").SubItems[1].Text = fileInfo.CreationTime.ToString();
             lstProperties.FindItemWithText("Modified").SubItems[1].Text = fileInfo.LastWriteTime.ToString();
             lstProperties.FindItemWithText("Accessed").SubItems[1].Text = fileInfo.LastAccessTime.ToString();
