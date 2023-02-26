@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
 using TotalImage.Properties;
-using static System.Net.WebRequestMethods;
 
 namespace TotalImage
 {
@@ -285,6 +283,23 @@ namespace TotalImage
                 imgIcon.Image = Resources.multiple_select_32;
                 imgIcon.SizeMode = PictureBoxSizeMode.StretchImage;
             }
+
+            /* ALPHA 1 - READ-ONLY PREVIEW 
+             * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
+
+            cbxArchive.Enabled = false;
+            cbxDateAccessed.Enabled = false;
+            cbxDateModified.Enabled = false;
+            cbxDateCreated.Enabled = false;
+            cbxHidden.Enabled = false;
+            cbxReadOnly.Enabled = false;
+            cbxSystem.Enabled = false; 
+            btnOK.Enabled = false;
+            txtFilename.Enabled = false;
+            lblAttributes.Enabled = false;
+            dtpAccessed.Enabled = false;
+            dtpCreated.Enabled = false;
+            dtpModified.Enabled = false;
         }
 
         private void cbxDateCreated_CheckedChanged(object sender, EventArgs e)
