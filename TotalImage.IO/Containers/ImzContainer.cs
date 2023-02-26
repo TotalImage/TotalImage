@@ -6,10 +6,10 @@ namespace TotalImage.Containers
     /// <summary>
     /// Class for handling a compressed raw container (IMZ), supported by WinImage
     /// </summary>
-    public class ImzContainer : RawContainer
+    public class ImzContainer : Container
     {
         /// <inheritdoc />
-        public override Stream Content => containerStream;
+        public override Stream Content { get; }
 
         /// <inheritdoc />
         public override string DisplayName => "WinImage compressed image";
@@ -19,13 +19,8 @@ namespace TotalImage.Containers
         {
             using (var zip = new ZipArchive(containerStream, ZipArchiveMode.Read))
             {
-                foreach (var entry in zip.Entries)
-                {
-                    using (var stream = entry.Open())
-                    {
-                        //stream here is the unzipped image
-                    }
-                }
+                Content = new MemoryStream();
+                zip.Entries[0].Open().CopyTo(Content);
             }
         }
     }
