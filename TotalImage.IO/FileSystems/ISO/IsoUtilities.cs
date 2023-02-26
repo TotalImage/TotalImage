@@ -124,10 +124,12 @@ namespace TotalImage.FileSystems.ISO
             ushort leValue = BinaryPrimitives.ReadUInt16LittleEndian(bytes[0..2]);
             ushort beValue = BinaryPrimitives.ReadUInt16BigEndian(bytes[2..4]);
 
-            if (leValue != beValue)
+            /* Ideally we would warn the user about this and try to recover, but for now let's just carry on until we get a warning framework
+             * in place... */
+            /*if (leValue != beValue)
             {
                 throw new InvalidDataException();
-            }
+            }*/
 
             return leValue;
         }
@@ -149,10 +151,12 @@ namespace TotalImage.FileSystems.ISO
             uint leValue = BinaryPrimitives.ReadUInt32LittleEndian(bytes[0..4]);
             uint beValue = BinaryPrimitives.ReadUInt32BigEndian(bytes[4..8]);
 
-            if (leValue != beValue)
+            /* Ideally we would warn the user about this and try to recover, but for now let's just carry on until we get a warning framework
+             * in place... */
+            /*if (leValue != beValue)
             {
                 throw new InvalidDataException();
-            }
+            }*/
 
             return leValue;
         }
