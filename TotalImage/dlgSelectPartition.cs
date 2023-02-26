@@ -184,10 +184,10 @@ namespace TotalImage
                     lstPartitions.Columns[4].Text = "Active";
                     lvi.SubItems.Add(mbrEntry.Active ? "Yes" : "No");
                 }
-                else
+                else if(entry is GptPartitionTable.GptPartitionEntry gptEntry)
                 {
                     lstPartitions.Columns[4].Text = "Legacy boot";
-                    lvi.SubItems.Add("Unknown"); //TODO: check the GPT attributes for this
+                    lvi.SubItems.Add(gptEntry.Flags.HasFlag(GptPartitionTable.GptPartitionFlags.BiosBootable) ? "Yes" : "No");
                 }
                 lstPartitions.Items.Add(lvi);
             }
