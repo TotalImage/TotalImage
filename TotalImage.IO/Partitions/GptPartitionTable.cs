@@ -266,16 +266,22 @@ namespace TotalImage.Partitions
             None = 0x0,
 
             /// <summary>
+            /// Indicates the partition is required for the computer to function properly and should not be modified
+            /// </summary>
+            [Display(Name = "Platform required")]
+            PlatformRequired = 0x1,
+
+            /// <summary>
             /// Indicates EFI firmware should ignore the partition
             /// </summary>
             [Display(Name = "Should be ignored by EFI")]
-            EfiIgnore = 0x1,
+            EfiIgnore = 0x2,
 
             /// <summary>
             /// Legacy BIOSes can boot from this partition - equivalent to "active" flag in MBR
             /// </summary>
             [Display(Name = "Bootable by Legacy BIOS")]
-            BiosBootable = 0x2
+            BiosBootable = 0x4
         }
     }
 }
