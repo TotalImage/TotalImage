@@ -11,6 +11,11 @@ namespace TotalImage.Containers
         /// <inheritdoc />
         public override Stream Content { get; }
 
+        /// <summary>
+        /// The comment for this image.
+        /// </summary>
+        public string Comment { get; set; }
+
         /// <inheritdoc />
         public override string DisplayName => "WinImage compressed image";
 
@@ -20,6 +25,7 @@ namespace TotalImage.Containers
             var zip = new ZipArchive(containerStream, ZipArchiveMode.Read);
             Content = new MemoryStream();
             zip.Entries[0].Open().CopyTo(Content);
+            Comment = zip.Comment;
         }
     }
 }

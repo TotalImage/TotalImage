@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TotalImage.Containers;
 using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
 using TotalImage.Partitions;
@@ -96,6 +97,10 @@ namespace TotalImage
             if (mainForm.image is NhdContainer nhd)
             {
                 txtComment.Text = nhd.Header.Comment;
+            }
+            else if(mainForm.image is ImzContainer imz)
+            {
+                txtComment.Text = imz.Comment;
             }
         }
 
