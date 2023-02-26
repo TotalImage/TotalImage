@@ -1906,7 +1906,7 @@ namespace TotalImage
                         case ".nhd":
                             image = new NhdContainer(path, memoryMapping);
                             break;
-                        case ".imz": //IMZ is a plain sector image in a ZIP archive, so it needs to be unzipped first
+                        case ".imz":
                             image = new ImzContainer(path, memoryMapping);
                             break;
                         default:
