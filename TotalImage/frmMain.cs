@@ -925,6 +925,9 @@ namespace TotalImage
         private void sortBySize_Click(object sender, EventArgs e)
             => SortListViewBy(lstFiles.Columns.IndexOfKey("clmSize"));
 
+        private void sortByAttributes_Click(object sender, EventArgs e)
+            => SortListViewBy(lstFiles.Columns.IndexOfKey("clmAttributes"));
+
         private void lstDirectories_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
             //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
@@ -1219,35 +1222,17 @@ namespace TotalImage
             Settings.SaveUIState();
         }
 
-        //Sets the CurrentUIState to what the current state of UI is
-        private void SetUIState()
-        {
-            Settings.CurrentUIState.SplitterDistance = splitContainer.SplitterDistance;
-
-            if (WindowState != FormWindowState.Minimized)
-            {
-                Settings.CurrentUIState.WindowPosition = Location;
-                Settings.CurrentUIState.WindowState = WindowState;
-                Settings.CurrentUIState.WindowSize = Size;
-            }
-
-            foreach (ColumnHeader col in lstFiles.Columns)
-            {
-                Settings.CurrentUIState.MWColumnOrder[col.Index] = col.DisplayIndex;
-                Settings.CurrentUIState.MWColumnWidth[col.Index] = col.Width;
-            }
-        }
-
         private void viewMenu_DropDownOpening(object sender, EventArgs e)
         {
             nameToolStripMenuItem.Checked = typeToolStripMenuItem.Checked = sizeToolStripMenuItem.Checked =
-                modifiedToolStripMenuItem.Checked = false;
+                modifiedToolStripMenuItem.Checked = attributesToolStripMenuItem.Checked = false;
             switch (sortColumn)
             {
                 case 0: nameToolStripMenuItem.Checked = true; break;
                 case 1: typeToolStripMenuItem.Checked = true; break;
                 case 2: sizeToolStripMenuItem.Checked = true; break;
                 case 3: modifiedToolStripMenuItem.Checked = true; break;
+                case 4: attributesToolStripMenuItem.Checked = true; break;
             }
 
             largeIconsToolStripMenuItem.Checked = smallIconsToolStripMenuItem.Checked = detailsToolStripMenuItem.Checked = listToolStripMenuItem.Checked = false;
@@ -1295,13 +1280,14 @@ namespace TotalImage
         private void sortMenu_DropDownOpening(object sender, EventArgs e)
         {
             nameToolStripMenuItem1.Checked = typeToolStripMenuItem1.Checked = sizeToolStripMenuItem1.Checked =
-                modifiedToolStripMenuItem1.Checked = false;
+                modifiedToolStripMenuItem1.Checked = attributesToolStripMenuItem1.Checked = false;
             switch (sortColumn)
             {
                 case 0: nameToolStripMenuItem1.Checked = true; break;
                 case 1: typeToolStripMenuItem1.Checked = true; break;
                 case 2: sizeToolStripMenuItem1.Checked = true; break;
                 case 3: modifiedToolStripMenuItem1.Checked = true; break;
+                case 4: attributesToolStripMenuItem1.Checked = true; break;
             }
         }
 
@@ -1651,6 +1637,11 @@ namespace TotalImage
                 closeImage_Click(sender, e);
             }
         }
+
+
+
+
+
         #endregion
 
         private int IndexShift => lstFiles.VirtualListSize - currentFolderView.Count;
@@ -1667,6 +1658,25 @@ namespace TotalImage
                 1 => StatusBarState.OneSelected,
                 _ => StatusBarState.MultipleSelected
             };
+
+        //Sets the CurrentUIState to what the current state of UI is
+        private void SetUIState()
+        {
+            Settings.CurrentUIState.SplitterDistance = splitContainer.SplitterDistance;
+
+            if (WindowState != FormWindowState.Minimized)
+            {
+                Settings.CurrentUIState.WindowPosition = Location;
+                Settings.CurrentUIState.WindowState = WindowState;
+                Settings.CurrentUIState.WindowSize = Size;
+            }
+
+            foreach (ColumnHeader col in lstFiles.Columns)
+            {
+                Settings.CurrentUIState.MWColumnOrder[col.Index] = col.DisplayIndex;
+                Settings.CurrentUIState.MWColumnWidth[col.Index] = col.Width;
+            }
+        }
 
         // Used for events that require the current folder view to be updated (e.g. show hidden/deleted items toggled, etc.)
         private void ResetView()
@@ -2539,7 +2549,5 @@ namespace TotalImage
                 }
             }
         }
-
-        
     }
 }
