@@ -64,6 +64,7 @@ namespace TotalImage
             lstProperties.FindItemWithText("No. of partitions").SubItems[1].Text = mainForm.image.PartitionTable.Partitions.Count.ToString();
             lstProperties.FindItemWithText("Selected partition").SubItems[1].Text = mainForm.CurrentPartitionIndex.ToString();
 
+            //We might want to prettify this once the image-loading branchis merged in
             if(mainForm.image.PartitionTable is MbrPartitionTable mbr)
             {
                 MbrPartitionTable.MbrPartitionEntry entry = (MbrPartitionTable.MbrPartitionEntry)mbr.Partitions[mainForm.CurrentPartitionIndex];
@@ -75,7 +76,6 @@ namespace TotalImage
                 lstProperties.FindItemWithText("Partition ID/type").SubItems[1].Text = entry.TypeId.ToString();
             }
 
-            //lstProperties.FindItemWithText("Partition ID/type").SubItems[1].Text = "N/A"; //Obtain this from the partition entry, if it exists
             lstProperties.FindItemWithText("Files").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.FileCount(true).ToString();
             lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.SubdirectoryCount(true).ToString();
             lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
@@ -83,13 +83,12 @@ namespace TotalImage
 
             if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.FAT.FatFileSystem fs)
             {
-                if(fs.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)
-                    lstProperties.FindItemWithText("Volume serial number").SubItems[1].Text = $"{ebpb.VolumeSerialNumber:X}";
+                if (fs.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)
+                    lstProperties.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"{ebpb.VolumeSerialNumber:X}";
                 else if (fs.BiosParameterBlock is FileSystems.BPB.Fat32BiosParameterBlock f32bpb)
-                    lstProperties.FindItemWithText("Volume serial number").SubItems[1].Text = $"{f32bpb.VolumeSerialNumber:X}";
+                    lstProperties.FindItemWithText("Volume serial number").SubItems[1].Text = f32bpb.VolumeSerialNumber == 0 ? "N/A" : $"{f32bpb.VolumeSerialNumber:X}";
             }
 
-            //lstProperties.FindItemWithText("Volume serial number").SubItems[1].Text = "N/A"; //Obtain this from the BPB if it exists
             lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = "Please wait...";
             lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = "Please wait...";
 
@@ -106,6 +105,31 @@ namespace TotalImage
 
         private void btnSave_Click(object sender, System.EventArgs e)
         {
+            if (!hashesDone)
+            {
+                TaskDialogPage page = new TaskDialogPage()
+                {
+                    Text = $"File hashes are still being calculated and won't be included in the exported file{Environment.NewLine}unless you wait for the calculations to complete first.",
+                    Heading = "Hash calculations in progress",
+                    Caption = "Warning",
+                    Buttons =
+                    {
+                        TaskDialogButton.Cancel,
+                        TaskDialogButton.Continue                
+                    },
+                    Icon = TaskDialogIcon.Warning,
+                    DefaultButton = TaskDialogButton.Continue,
+                    SizeToContent = true
+                };
+
+                TaskDialogButton warningResult = TaskDialog.ShowDialog(this, page);
+
+                if (warningResult == TaskDialogButton.Cancel)
+                {
+                    return;
+                }
+            }
+
             using SaveFileDialog sfd = new SaveFileDialog();
             sfd.AutoUpgradeEnabled = true;
             sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
@@ -132,23 +156,8 @@ namespace TotalImage
                 sw.WriteLine($"-Attributes: {lstProperties.FindItemWithText("Attributes").SubItems[1].Text}");
 
                 //Skip the hashes if they're not done yet
-                if (!hashesDone)
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = "File hashes are still being calculated and won't be included in the exported file.",
-                        Heading = "Hash calculation in progress",
-                        Caption = "Warning",
-                        Buttons =
-                    {
-                        TaskDialogButton.OK
-                    },
-                        Icon = TaskDialogIcon.Warning,
-                        DefaultButton = TaskDialogButton.OK
-                    });
-                }
-                else
-                {
+                if (hashesDone) 
+                { 
                     sw.WriteLine($"-MD5 hash: {lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text}");
                     sw.WriteLine($"-SHA-1 hash: {lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text}");
                 }
@@ -157,8 +166,9 @@ namespace TotalImage
                 sw.WriteLine("Container information");
                 sw.WriteLine($"-Container type: {lstProperties.FindItemWithText("Container type").SubItems[1].Text}");
                 sw.WriteLine($"-Container subtype: {lstProperties.FindItemWithText("Container subtype").SubItems[1].Text}");
-                sw.WriteLine($"-Version: {lstProperties.FindItemWithText("Version").SubItems[1].Text}");
+                sw.WriteLine($"-Container version: {lstProperties.FindItemWithText("Container version").SubItems[1].Text}");
                 sw.WriteLine($"-Created by: {lstProperties.FindItemWithText("Created by").SubItems[1].Text}");
+                sw.WriteLine($"-Creator version: {lstProperties.FindItemWithText("Created by").SubItems[1].Text}");
                 sw.WriteLine();
                 sw.WriteLine("Partition information");
                 sw.WriteLine($"-Partitioning scheme: {lstProperties.FindItemWithText("Partitioning scheme").SubItems[1].Text}");
@@ -175,6 +185,14 @@ namespace TotalImage
                 sw.WriteLine($"-Files: {lstProperties.FindItemWithText("Files").SubItems[1].Text}");
                 sw.WriteLine($"-Subdirectories: {lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text}");          
                 sw.WriteLine();
+
+                if (!string.IsNullOrWhiteSpace(txtComment.Text))
+                {
+                    sw.WriteLine("Comment");
+                    sw.WriteLine($"\"{txtComment.Text}\"");
+                    sw.WriteLine();
+                }
+
                 sw.Write("*** End of file ***");
                 sw.Flush();
                 sw.Close();
