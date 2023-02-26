@@ -702,11 +702,13 @@ namespace TotalImage
 
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e) // This method will be used more than once, thus it is separated from the main event.
         {
-            if (image is not null)
+            /* ALPHA 1 - READ-ONLY PREVIEW 
+             * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
+			if (image is not null)
             {
                 if (lstFiles.SelectedIndices.Count == 0)
                 {
-                    deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    deleteToolStripButton.Enabled = false; //deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                     extractToolStripButton.Enabled = true;
                     propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
 
@@ -724,7 +726,7 @@ namespace TotalImage
                 {
                     //Check if selected item is a deleted entry and enable the UI accordingly
                     TiFileSystemObject entry = GetSelectedItemData(0);
-                    deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
+                    deleteToolStripButton.Enabled = false; //deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
                     extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
                     propertiesToolStripButton.Enabled = true;
 
@@ -732,7 +734,7 @@ namespace TotalImage
                 }
                 else
                 {
-                    deleteToolStripButton.Enabled = true;
+                    deleteToolStripButton.Enabled = false; //deleteToolStripButton.Enabled = true;
                     extractToolStripButton.Enabled = true;
                     propertiesToolStripButton.Enabled = true;
 
@@ -753,14 +755,17 @@ namespace TotalImage
                 return;
             }
 
-            newFolderToolStripMenuItem2.Enabled = true;
+            /* ALPHA 1 - READ-ONLY PREVIEW 
+             * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
+
+            newFolderToolStripMenuItem2.Enabled = false; //newFolderToolStripMenuItem2.Enabled = true;
             extractToolStripMenuItem2.Enabled = true;
 
             if (lstFiles.SelectedIndices.Count == 0)
             {
-                deleteToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                deleteToolStripMenuItem2.Enabled = false; //deleteToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 propertiesToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                renameToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                renameToolStripMenuItem2.Enabled = false; //renameToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 undeleteToolStripMenuItem2.Enabled = false;
             }
             else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
@@ -771,15 +776,15 @@ namespace TotalImage
             else if (lstFiles.SelectedIndices.Count == 1)
             {
                 TiFileSystemObject entry = GetSelectedItemData(0);
-                deleteToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                deleteToolStripMenuItem2.Enabled = false; //deleteToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
                 extractToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
                 propertiesToolStripMenuItem2.Enabled = true;
-                renameToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-                undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
+                renameToolStripMenuItem2.Enabled = false; //renameToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                undeleteToolStripMenuItem2.Enabled = false; //undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
             }
             else
             {
-                deleteToolStripMenuItem2.Enabled = true;
+                deleteToolStripMenuItem2.Enabled = false; //deleteToolStripMenuItem2.Enabled = true;
                 extractToolStripMenuItem2.Enabled = true;
                 propertiesToolStripMenuItem2.Enabled = true;
                 renameToolStripMenuItem2.Enabled = false;
@@ -973,9 +978,12 @@ namespace TotalImage
             }
             else
             {
+                /* ALPHA 1 - READ-ONLY PREVIEW 
+                 * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
+
                 extractToolStripButton.Enabled = true;
-                newFolderToolStripButton.Enabled = true;
-                deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                newFolderToolStripButton.Enabled = false; //newFolderToolStripButton.Enabled = true;
+                deleteToolStripButton.Enabled = false; //deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
             }
         }
@@ -1030,10 +1038,16 @@ namespace TotalImage
                 return;
             }
 
-            deleteToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-            renameToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+            /* ALPHA 1 - READ-ONLY PREVIEW 
+             * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
+
+            deleteToolStripMenuItem1.Enabled = false; //deleteToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+            renameToolStripMenuItem1.Enabled = false; //renameToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
             extractToolStripMenuItem1.Enabled = true;
             propertiesToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+
+            //This was not actually toggled on/off before Alpha 1, implement the relevant check here once write capability is implemented
+            newFolderToolStripMenuItem1.Enabled = false;
 
             expandDirectoryTreeToolStripMenuItem1.Enabled = lstDirectories.Nodes[0].Nodes.Count > 0;
             collapseDirectoryTreeToolStripMenuItem1.Enabled = lstDirectories.Nodes[0].Nodes.Count > 0;
@@ -1451,6 +1465,9 @@ namespace TotalImage
 
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
+            /* ALPHA 1 - READ-ONLY PREVIEW 
+             * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
+
             if (image is null)
             {
                 injectAFolderToolStripMenuItem.Enabled = false;
@@ -1473,33 +1490,33 @@ namespace TotalImage
                 return;
             }
 
-            changeFormatToolStripMenuItem.Enabled = true;
+            changeFormatToolStripMenuItem.Enabled = false; //changeFormatToolStripMenuItem.Enabled = true;
             selectPartitionToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable; ;
-            managePartitionsToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable; ;
+            managePartitionsToolStripMenuItem.Enabled = false; //managePartitionsToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable; ;
             bootSectorPropertiesToolStripMenuItem.Enabled = true;
-            changeVolumeLabelToolStripMenuItem.Enabled = true;
-            formatToolStripMenuItem.Enabled = true;
-            defragmentToolStripMenuItem.Enabled = true;
-            injectAFolderToolStripMenuItem.Enabled = true;
-            injectFilesToolStripMenuItem.Enabled = true;
+            changeVolumeLabelToolStripMenuItem.Enabled = false; //changeVolumeLabelToolStripMenuItem.Enabled = true;
+            formatToolStripMenuItem.Enabled = false; //formatToolStripMenuItem.Enabled = true;
+            defragmentToolStripMenuItem.Enabled = false; //defragmentToolStripMenuItem.Enabled = true;
+            injectAFolderToolStripMenuItem.Enabled = false; //injectAFolderToolStripMenuItem.Enabled = true;
+            injectFilesToolStripMenuItem.Enabled = false; //injectFilesToolStripMenuItem.Enabled = true;
             extractToolStripMenuItem.Enabled = true;
             selectAllToolStripMenuItem.Enabled = true;
-            newFolderToolStripMenuItem.Enabled = true;
+            newFolderToolStripMenuItem.Enabled = false; //newFolderToolStripMenuItem.Enabled = true;
 
             if (lstDirectories.Focused)
             {
                 undeleteToolStripMenuItem.Enabled = false;
-                renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                renameToolStripMenuItem.Enabled = false; //renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                deleteToolStripMenuItem.Enabled = false; //deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 propertiesToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
             }
             else if (lstFiles.Focused)
             {
                 if (lstFiles.SelectedIndices.Count == 0)
                 {
-                    deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    deleteToolStripMenuItem.Enabled = false; //deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                     propertiesToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                    renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    renameToolStripMenuItem.Enabled = false; //renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                     undeleteToolStripMenuItem.Enabled = false;
                 }
                 else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
@@ -1512,15 +1529,15 @@ namespace TotalImage
                 else if (lstFiles.SelectedIndices.Count == 1)
                 {
                     TiFileSystemObject entry = GetSelectedItemData(0);
-                    deleteToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                    deleteToolStripMenuItem.Enabled = false; //deleteToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
                     extractToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
                     propertiesToolStripMenuItem.Enabled = true;
-                    renameToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                    undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
+                    renameToolStripMenuItem.Enabled = false; //renameToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                    undeleteToolStripMenuItem.Enabled = false; //undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
                 }
                 else
                 {
-                    deleteToolStripMenuItem.Enabled = true;
+                    deleteToolStripMenuItem.Enabled = false; //deleteToolStripMenuItem.Enabled = true;
                     propertiesToolStripMenuItem.Enabled = true;
                     renameToolStripMenuItem.Enabled = false;
                     undeleteToolStripMenuItem.Enabled = false;
@@ -1530,17 +1547,23 @@ namespace TotalImage
 
         private void toolsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
+            /* ALPHA 1 - READ-ONLY PREVIEW 
+             * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
+
             imageInformationToolStripMenuItem.Enabled = image is not null;
-            hexViewToolStripMenuItem.Enabled = image is not null;
+            hexViewToolStripMenuItem.Enabled = false; //hexViewToolStripMenuItem.Enabled = image is not null;
         }
 
         private void lstFiles_Enter(object sender, EventArgs e)
         {
+            /* ALPHA 1 - READ-ONLY PREVIEW 
+             * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
+
             if (image is not null)
             {
                 if (lstFiles.SelectedIndices.Count == 0)
                 {
-                    deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    deleteToolStripButton.Enabled = false; //deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                     extractToolStripButton.Enabled = true;
                     propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 }
@@ -1554,13 +1577,13 @@ namespace TotalImage
                 {
                     //Check if selected item is a deleted entry and enable the UI accordingly
                     TiFileSystemObject entry = GetSelectedItemData(0);
-                    deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
+                    deleteToolStripButton.Enabled = false; //deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
                     extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
                     propertiesToolStripButton.Enabled = true;
                 }
                 else
                 {
-                    deleteToolStripButton.Enabled = true;
+                    deleteToolStripButton.Enabled = false; //deleteToolStripButton.Enabled = true;
                     extractToolStripButton.Enabled = true;
                     propertiesToolStripButton.Enabled = true;
                 }
@@ -1580,9 +1603,12 @@ namespace TotalImage
                 }
                 else
                 {
+                    /* ALPHA 1 - READ-ONLY PREVIEW 
+                     * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
+
                     extractToolStripButton.Enabled = true;
-                    newFolderToolStripButton.Enabled = true;
-                    deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
+                    newFolderToolStripButton.Enabled = false; //newFolderToolStripButton.Enabled = true;
+                    deleteToolStripButton.Enabled = false; //deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                     propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 }
             }
@@ -2397,10 +2423,13 @@ namespace TotalImage
         //Enables various UI elements after an image is loaded
         public void EnableUI()
         {
+            /* ALPHA 1 - READ-ONLY PREVIEW 
+             * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
+
             closeToolStripButton.Enabled = true;
-            injectToolStripButton.Enabled = true;
-            newFolderToolStripButton.Enabled = true;
-            labelToolStripMenuButton.Enabled = true;
+            injectToolStripButton.Enabled = false; //injectToolStripButton.Enabled = true;
+            newFolderToolStripButton.Enabled = false; //newFolderToolStripButton.Enabled = true;
+            labelToolStripMenuButton.Enabled = false; //labelToolStripMenuButton.Enabled = true;
             bootsectToolStripButton.Enabled = true;
             infoToolStripButton.Enabled = true;
             lblStatusProgressBar.Visible = true;
@@ -2409,11 +2438,12 @@ namespace TotalImage
             lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.Right;
             lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
 
-            if (unsavedChanges)
-                saveToolStripButton.Enabled = true;
+            saveToolStripButton.Enabled = false;
+            /*if (unsavedChanges)
+               saveToolStripButton.Enabled = true;*/
 
             //Enabling this now since we have rudimentary HDD support.
-            managePartitionsToolStripButton.Enabled = image is not null && image.PartitionTable is not Partitions.NoPartitionTable;
+            managePartitionsToolStripButton.Enabled = false; //managePartitionsToolStripButton.Enabled = image is not null && image.PartitionTable is not Partitions.NoPartitionTable;
             selectPartitionToolStripComboBox.Enabled = true;
         }
 
