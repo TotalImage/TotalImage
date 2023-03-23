@@ -37,7 +37,7 @@ namespace TotalImage.FileSystems.ISO
         public override DateTime? CreationTime { get => null; set => throw new NotImplementedException(); }
 
         /// <inheritdoc />
-        public override ulong Length { get => Record.DataLength; set => throw new NotImplementedException(); }
+        public override long Length { get => Record.DataLength; set => throw new NotImplementedException(); }
 
         /// <inheritdoc />
         public override Directory CreateSubdirectory(string path)
@@ -111,9 +111,9 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc/>
-        public override ulong FileCount(bool recursive)
+        public override long FileCount(bool recursive)
         {
-            ulong count = 0;
+            long count = 0;
             Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
             var stream = FileSystem.GetStream();
 
@@ -163,9 +163,9 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc/>
-        public override ulong Size(bool recursive, bool sizeOnDisk)
+        public override long Size(bool recursive, bool sizeOnDisk)
         {
-            ulong size = 0;
+            long size = 0;
             Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
             var stream = FileSystem.GetStream();
 
@@ -221,9 +221,9 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc/>
-        public override ulong SubdirectoryCount(bool recursive)
+        public override long SubdirectoryCount(bool recursive)
         {
-            ulong count = 0;
+            long count = 0;
             Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
             var stream = FileSystem.GetStream();
 

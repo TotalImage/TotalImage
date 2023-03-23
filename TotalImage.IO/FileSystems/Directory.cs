@@ -92,14 +92,14 @@ namespace TotalImage.FileSystems
         /// </summary>
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <returns>File count in a directory excluding subdirectories if recursive is false, otherwise file count in a directory including subdirectories.</returns>
-        public abstract ulong FileCount(bool recursive);
+        public abstract long FileCount(bool recursive);
 
         /// <summary>
         /// Get the subdirectory count in a directory.
         /// </summary>
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <returns>Subdirectory count in a directory excluding subdirectory contents if recursive is false, otherwise subdirectory count in a directory including subdirectory contents.</returns>
-        public abstract ulong SubdirectoryCount(bool recursive);
+        public abstract long SubdirectoryCount(bool recursive);
 
         /// <summary>
         /// Get the combined size of files in a directory.
@@ -107,6 +107,6 @@ namespace TotalImage.FileSystems
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <param name="sizeOnDisk">Whether to report actual file size or size on disk.</param>
         /// <returns>Combined size of files in a directory excluding subdirectories if recursive is false, otherwise combined size of files in a directory including subdirectories.</returns>
-        public abstract ulong Size(bool recursive, bool sizeOnDisk);
+        public abstract long Size(bool recursive, bool sizeOnDisk);
     }
 }

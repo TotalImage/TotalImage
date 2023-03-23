@@ -66,7 +66,7 @@ namespace TotalImage
                 }
                 lvi.SubItems.Add($"{entry.Offset:n0}");
                 lvi.SubItems.Add($"{entry.Offset + entry.Length:n0}");
-                lvi.SubItems.Add(Settings.CurrentSettings.SizeUnit.FormatSize((ulong)entry.Length));
+                lvi.SubItems.Add(Settings.CurrentSettings.SizeUnit.FormatSize(entry.Length));
 
                 if (entry is MbrPartitionTable.MbrPartitionEntry mbrEntry)
                 {

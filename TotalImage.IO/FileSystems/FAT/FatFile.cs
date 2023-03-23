@@ -70,7 +70,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override ulong Length
+        public override long Length
         {
             get => entry.fileSize;
             set => throw new NotImplementedException();

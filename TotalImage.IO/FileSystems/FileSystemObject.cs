@@ -57,12 +57,12 @@ namespace TotalImage.FileSystems
         /// <summary>
         /// The length of the file system object
         /// </summary>
-        public abstract ulong Length { get; set; }
+        public abstract long Length { get; set; }
 
         /// <summary>
         /// The length of the file system object as represented on the disk
         /// </summary>
-        public virtual ulong LengthOnDisk => ((Length / FileSystem.AllocationUnitSize) + 1) * FileSystem.AllocationUnitSize;
+        public virtual long LengthOnDisk => ((Length / FileSystem.AllocationUnitSize) + 1) * FileSystem.AllocationUnitSize;
 
         /// <summary>
         /// Delete a file system object

@@ -161,7 +161,7 @@ namespace TotalImage
         }
 
         /* Allows viewing and editing bootsector properties
-         * 
+         *
          * TODO: Enable this for other file systems/partition types/media too.
          */
         private void bootSectorProperties_Click(object sender, EventArgs e)
@@ -321,7 +321,7 @@ namespace TotalImage
         {
             if (lstFiles.Focused)
             {
-                var selectedSize = 0ul;
+                var selectedSize = 0L;
                 foreach (var entry in SelectedItems) selectedSize += entry.Length;
 
                 if (Settings.CurrentSettings.ConfirmDeletion)
@@ -665,11 +665,11 @@ namespace TotalImage
                 {
                     lstFiles.Focus();
                     lstFiles.SelectAllItems();
-                }             
+                }
             }
-            
+
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
-            {              
+            {
                 using dlgExtract dlg = new dlgExtract();
                 dlg.lblPath.Text = $"Extract { (lstDirectories.Focused ? "1" : SelectedItems.Count())} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
@@ -683,7 +683,7 @@ namespace TotalImage
                     else if(lstDirectories.Focused)
                     {
                         FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag }, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
-                    }                  
+                    }
                 }
             }
             else
@@ -695,7 +695,7 @@ namespace TotalImage
                 else if (lstDirectories.Focused)
                 {
                     FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag });
-                }             
+                }
             }
         }
 
@@ -1564,8 +1564,8 @@ namespace TotalImage
                 return;
             }
 
-            /* If the left mouse button was released, complete the drag and drop operation. In our case, this means that any files or folders 
-             * that may have been dragged out of the window have to be extracted into a temporary folder first, then the drop is performed so 
+            /* If the left mouse button was released, complete the drag and drop operation. In our case, this means that any files or folders
+             * that may have been dragged out of the window have to be extracted into a temporary folder first, then the drop is performed so
              * Explorer will move these items to the actual drag and drop destination. Dropping inside the window is not supported yet. */
             if ((e.KeyState & 1) == 0)
             {
@@ -2074,7 +2074,7 @@ namespace TotalImage
                 {
                     try
                     {
-                        selectPartitionToolStripComboBox.Items.Add($"{(image.PartitionTable.Partitions.Count > 1 ? i + ": " : string.Empty)}{image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length)})");
+                        selectPartitionToolStripComboBox.Items.Add($"{(image.PartitionTable.Partitions.Count > 1 ? i + ": " : string.Empty)}{image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ')} ({image.PartitionTable.Partitions[i].FileSystem.DisplayName}, {Settings.CurrentSettings.SizeUnit.FormatSize(image.PartitionTable.Partitions[i].Length)})");
 
                         if (i == CurrentPartitionIndex)
                         {
@@ -2132,9 +2132,9 @@ namespace TotalImage
 
         /* Returns size of directory
          * TODO: Move to this to the appropriate file system class and implement support for subdirectories */
-        private ulong CalculateDirSize()
+        private long CalculateDirSize()
         {
-            var dirSize = 0ul;
+            var dirSize = 0L;
 
             foreach (ListViewItem lvi in currentFolderView)
             {
@@ -2500,9 +2500,9 @@ namespace TotalImage
                 //Makes no sense to do this every time selection changes, etc. Only when operations that affect the free space are performed
                 if (updateFreeSpace)
                 {
-                    lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
+                    lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize(image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
                     double freeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
-                    lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({freeSpacePercentage / 100:p2})";
+                    lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize(image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({freeSpacePercentage / 100:p2})";
                     if (freeSpacePercentage <= 10)
                         lblStatusProgressBar.ProgressBar.SetState(ProgressBarState.Error); // Set the progress bar colour to red.
                     else if (freeSpacePercentage <= 20)
@@ -2538,7 +2538,7 @@ namespace TotalImage
                     case StatusBarState.MultipleSelected:
                         {
                             var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
-                            var selectedSize = 0ul;
+                            var selectedSize = 0L;
                             foreach (var entry in SelectedItems)
                             {
                                 if (entry is TiDirectory subdir)

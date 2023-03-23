@@ -15,7 +15,7 @@ namespace TotalImage.FileSystems.FAT
 
         public FatDirectory(FatFileSystem fat) : base(fat, null)
         {
-            
+
         }
 
         public FatDirectory(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[]? lfnEntries, Directory parent) : base(fat, parent)
@@ -74,7 +74,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override ulong Length
+        public override long Length
         {
             get => Size(true, false);
             set => throw new NotSupportedException();
@@ -219,9 +219,9 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override ulong FileCount(bool recursive)
+        public override long FileCount(bool recursive)
         {
-            ulong count = 0;
+            long count = 0;
             var fat = (FatFileSystem)FileSystem;
 
             IEnumerable<DirectoryEntry> entries;
@@ -269,9 +269,9 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override ulong SubdirectoryCount(bool recursive)
+        public override long SubdirectoryCount(bool recursive)
         {
-            ulong count = 0;
+            long count = 0;
             var fat = (FatFileSystem)FileSystem;
 
             IEnumerable<DirectoryEntry> entries;
@@ -313,9 +313,9 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override ulong Size(bool recursive, bool sizeOnDisk)
+        public override long Size(bool recursive, bool sizeOnDisk)
         {
-            ulong size = 0;
+            long size = 0;
             var fat = (FatFileSystem)FileSystem;
 
             IEnumerable<DirectoryEntry> entries;

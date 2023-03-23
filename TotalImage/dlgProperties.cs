@@ -177,8 +177,8 @@ namespace TotalImage
 
                 int dirs = 0;
                 int files = 0;
-                ulong size = 0;
-                ulong sizeOnDisk = 0;
+                long size = 0;
+                long sizeOnDisk = 0;
                 uint attribReadOnly = 0;
                 uint attribSystem = 0;
                 uint attribHidden = 0;
@@ -231,7 +231,7 @@ namespace TotalImage
                             txtType1.Text = $"{foExt.Substring(1).ToUpper()} File";
                         else
                             txtType1.Text = "File";
-                    }                    
+                    }
                 }
 
                 if (attribReadOnly > 0)

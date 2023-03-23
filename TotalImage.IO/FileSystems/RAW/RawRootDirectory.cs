@@ -53,7 +53,7 @@ namespace TotalImage.FileSystems.RAW
         }
 
         /// <inheritdoc />
-        public override ulong Length
+        public override long Length
         {
             get => 0;
             set { return; }
@@ -76,7 +76,7 @@ namespace TotalImage.FileSystems.RAW
             => Array.Empty<FileSystemObject>();
 
         /// <inheritdoc />
-        public override ulong FileCount(bool recursive)
+        public override long FileCount(bool recursive)
             => 0;
 
         /// <inheritdoc />
@@ -86,11 +86,11 @@ namespace TotalImage.FileSystems.RAW
         }
 
         /// <inheritdoc />
-        public override ulong Size(bool recursive, bool sizeOnDisk)
+        public override long Size(bool recursive, bool sizeOnDisk)
             => 0;
 
         /// <inheritdoc />
-        public override ulong SubdirectoryCount(bool recursive)
+        public override long SubdirectoryCount(bool recursive)
             => 0;
     }
 }

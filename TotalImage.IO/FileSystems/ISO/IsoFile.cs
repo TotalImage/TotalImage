@@ -51,7 +51,7 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc />
-        public override ulong Length
+        public override long Length
         {
             get => Record.DataLength;
             set => throw new NotImplementedException();
