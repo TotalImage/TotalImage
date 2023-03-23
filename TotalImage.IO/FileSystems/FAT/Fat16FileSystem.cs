@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
 {

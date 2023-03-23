@@ -1,4 +1,4 @@
-namespace TotalImage.FileSystems.BPB
+namespace TotalImage.FileSystems.FAT
 {
     public enum ExtendedBootSignature : byte
     {

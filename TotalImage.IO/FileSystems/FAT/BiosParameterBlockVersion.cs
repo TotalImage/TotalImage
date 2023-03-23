@@ -1,4 +1,4 @@
-﻿namespace TotalImage.FileSystems.BPB
+﻿namespace TotalImage.FileSystems.FAT
 {
     /// <summary>
     /// Distinct BIOS Parameter Block versions.
@@ -23,11 +23,6 @@
         /// <summary>
         /// A BIOS Parameter Block intended for use alongside the FAT32 file system
         /// </summary>
-        Fat32,
-
-        /// <summary>
-        /// A BIOS Parameter Block intended for use alongside the NTFS file system
-        /// </summary>
-        Ntfs
+        Fat32
     }
 }

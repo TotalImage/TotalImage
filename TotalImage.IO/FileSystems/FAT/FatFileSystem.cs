@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -13,7 +12,7 @@ namespace TotalImage.FileSystems.FAT
         public BiosParameterBlock BiosParameterBlock => _bpb;
 
         protected FatFileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
-        { 
+        {
             _bpb = bpb;
             RootDirectory = new FatDirectory(this);
         }
@@ -52,33 +51,33 @@ namespace TotalImage.FileSystems.FAT
                 var fatOffset = (uint)_bpb.ReservedLogicalSectors;
                 var fatSize = (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
                 var rootDirSize = (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
-                return fatOffset + fatSize + RootDirectorySectors;
+                return (uint)(fatOffset + fatSize + RootDirectorySectors);
             }
         }
 
         public uint TotalSectors
-            => _bpb.TotalLogicalSectors;
+            => (uint)_bpb.TotalLogicalSectors;
 
         public uint ReservedSectors
-            => _bpb.ReservedLogicalSectors;
+            => (uint)_bpb.ReservedLogicalSectors;
 
         public uint ClusterMapsSectors
-            => (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
+            => (uint)_bpb.NumberOfFATs * (uint)_bpb.LogicalSectorsPerFAT;
 
         public uint RootDirectorySectors
-            => (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
+            => (uint)_bpb.RootDirectoryEntries * 32 / (uint)_bpb.BytesPerLogicalSector;
 
         public uint DataAreaSectors
             => TotalSectors - ReservedSectors - ClusterMapsSectors - RootDirectorySectors;
 
         public uint BytesPerCluster
-            => (uint)_bpb.LogicalSectorsPerCluster * _bpb.BytesPerLogicalSector;
+            => (uint)_bpb.LogicalSectorsPerCluster * (uint)_bpb.BytesPerLogicalSector;
 
         public uint BytesPerClusterMap
-            => (uint)_bpb.LogicalSectorsPerFAT * _bpb.BytesPerLogicalSector;
+            => (uint)_bpb.LogicalSectorsPerFAT * (uint)_bpb.BytesPerLogicalSector;
 
         public uint ClusterCount
-            => DataAreaSectors / _bpb.LogicalSectorsPerCluster;
+            => DataAreaSectors / (uint)_bpb.LogicalSectorsPerCluster;
 
         public abstract FileAllocationTable[] Fats { get; }
         public FileAllocationTable MainFat => Fats[0];
@@ -91,7 +90,7 @@ namespace TotalImage.FileSystems.FAT
 
         public string? BpbVolumeLabel
         {
-            get => BiosParameterBlock.Version == BiosParameterBlockVersion.Dos40 ? ((ExtendedBiosParameterBlock)BiosParameterBlock).VolumeLabel : null;
+            get => BiosParameterBlock.VolumeLabel;
             set => throw new NotImplementedException();
         }
 
@@ -101,8 +100,8 @@ namespace TotalImage.FileSystems.FAT
             {
                 IEnumerable<DirectoryEntry> entries;
 
-                if (_bpb is Fat32BiosParameterBlock fat32bpb && _bpb.RootDirectoryEntries == 0)
-                    entries = DirectoryEntry.ReadSubdirectory(this, fat32bpb.RootDirectoryCluster);
+                if (_bpb.RootDirectoryEntries == 0 && _bpb.RootDirectoryCluster is not null)
+                    entries = DirectoryEntry.ReadSubdirectory(this, _bpb.RootDirectoryCluster.Value, false);
                 else
                     entries = DirectoryEntry.ReadRootDirectory(this);
 

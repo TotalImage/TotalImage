@@ -3,8 +3,8 @@ using System.Data;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Forms;
-using TotalImage.FileSystems.BPB;
 using TotalImage.DiskGeometries;
+using TotalImage.FileSystems.FAT;
 
 namespace TotalImage
 {

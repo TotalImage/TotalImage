@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -18,10 +17,10 @@ namespace TotalImage.FileSystems.FAT
             for(int i = 0; i < bpb.NumberOfFATs; i++)
                 Fats[i] = new FileAllocationTable(this, i);
 
-            if (bpb is Fat32BiosParameterBlock fat32bpb)
+            if (bpb.FsInfoSector is not null)
             {
                 using var reader = new BinaryReader(stream);
-                stream.Position = fat32bpb.BytesPerLogicalSector * fat32bpb.FsInfo;
+                stream.Position = bpb.BytesPerLogicalSector * bpb.FsInfoSector.Value;
                 _fsInfo = FsInfo.Parse(reader);
             }
         }

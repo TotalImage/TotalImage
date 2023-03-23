@@ -52,10 +52,10 @@ namespace TotalImage
                 string creatorVersion = $"{vhd.Footer.CreatorVersionMajor}.{vhd.Footer.CreatorVersionMinor}";
                 if(creatorVersion != "0.0")
                     lstProperties.FindItemWithText("Creator version").SubItems[1].Text = creatorVersion;
-            }            
-            
+            }
+
             lstProperties.FindItemWithText("File system").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.DisplayName;
-            
+
             var volLabel = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.VolumeLabel;
             if(!string.IsNullOrWhiteSpace(volLabel))
                 lstProperties.FindItemWithText("Volume label").SubItems[1].Text = volLabel;
@@ -83,10 +83,8 @@ namespace TotalImage
 
             if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.FAT.FatFileSystem fs)
             {
-                if (fs.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)
-                    lstProperties.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"{ebpb.VolumeSerialNumber:X}";
-                else if (fs.BiosParameterBlock is FileSystems.BPB.Fat32BiosParameterBlock f32bpb)
-                    lstProperties.FindItemWithText("Volume serial number").SubItems[1].Text = f32bpb.VolumeSerialNumber == 0 ? "N/A" : $"{f32bpb.VolumeSerialNumber:X}";
+                if (fs.BiosParameterBlock.VolumeSerialNumber.HasValue)
+                    lstProperties.FindItemWithText("Volume serial number").SubItems[1].Text = fs.BiosParameterBlock.VolumeSerialNumber == 0 ? "N/A" : $"{fs.BiosParameterBlock.VolumeSerialNumber:X}";
             }
 
             lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text = "Please wait...";
@@ -111,7 +109,7 @@ namespace TotalImage
                     Buttons =
                     {
                         TaskDialogButton.Cancel,
-                        TaskDialogButton.Continue                
+                        TaskDialogButton.Continue
                     },
                     Icon = TaskDialogIcon.Warning,
                     DefaultButton = TaskDialogButton.Continue,
@@ -152,8 +150,8 @@ namespace TotalImage
                 sw.WriteLine($"-Attributes: {lstProperties.FindItemWithText("Attributes").SubItems[1].Text}");
 
                 //Skip the hashes if they're not done yet
-                if (hashesDone) 
-                { 
+                if (hashesDone)
+                {
                     sw.WriteLine($"-MD5 hash: {lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text}");
                     sw.WriteLine($"-SHA-1 hash: {lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text}");
                 }
@@ -179,7 +177,7 @@ namespace TotalImage
                 sw.WriteLine($"-Total storage capacity: {lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text}");
                 sw.WriteLine($"-Free space: {lstProperties.FindItemWithText("Free space").SubItems[1].Text}");
                 sw.WriteLine($"-Files: {lstProperties.FindItemWithText("Files").SubItems[1].Text}");
-                sw.WriteLine($"-Subdirectories: {lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text}");          
+                sw.WriteLine($"-Subdirectories: {lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text}");
                 sw.WriteLine();
 
                 if (!string.IsNullOrWhiteSpace(txtComment.Text))

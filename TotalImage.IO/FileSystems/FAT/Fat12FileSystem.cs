@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -27,8 +26,8 @@ namespace TotalImage.FileSystems.FAT
                 throw new ArgumentNullException(nameof(stream), "stream cannot be null!");
             if (bpb == null)
                 throw new ArgumentNullException(nameof(bpb), "bpb cannot be null!");
-            if (!bpb.Validate())
-                throw new InvalidDataException("bpb is invalid!");
+            // if (!bpb.Validate())
+            //     throw new InvalidDataException("bpb is invalid!");
 
             var fat = new Fat12FileSystem(stream, bpb);
 
@@ -76,20 +75,19 @@ namespace TotalImage.FileSystems.FAT
                     //DOS 3.4+ specific values
                     if (bpb.Version == BiosParameterBlockVersion.Dos34 || bpb.Version == BiosParameterBlockVersion.Dos40)
                     {
-                        var ebpb = (ExtendedBiosParameterBlock)bpb;
-                        writer.Write(ebpb.PhysicalDriveNumber);
-                        writer.Write(ebpb.Flags);
-                        writer.Write((byte)ebpb.ExtendedBootSignature);
-                        writer.Write(ebpb.VolumeSerialNumber.Value);
+                        writer.Write(bpb.PhysicalDriveNumber!.Value);
+                        writer.Write(bpb.Flags!.Value);
+                        writer.Write((byte)bpb.ExtendedBootSignature!.Value);
+                        writer.Write(bpb.VolumeSerialNumber!.Value);
 
                         //DOS 4.0 adds volume label and FS type as well
                         if (bpb.Version == BiosParameterBlockVersion.Dos40)
                         {
-                            if (string.IsNullOrWhiteSpace(ebpb.VolumeLabel))
+                            if (string.IsNullOrWhiteSpace(bpb.VolumeLabel))
                                 writer.Write("NO NAME    ".ToCharArray());
                             else
-                                writer.Write(ebpb.VolumeLabel.PadRight(11, ' ').ToCharArray());
-                            writer.Write(ebpb.FileSystemType.PadRight(8, ' ').ToCharArray());
+                                writer.Write(bpb.VolumeLabel.PadRight(11, ' ').ToCharArray());
+                            writer.Write(bpb.FileSystemType.PadRight(8, ' ').ToCharArray());
                         }
                     }
                 }
@@ -114,9 +112,9 @@ namespace TotalImage.FileSystems.FAT
                 stream.Seek(fat2Offset + fatSize, SeekOrigin.Begin);
 
                 //First 11 bytes (8.3 space-padded filename without the period) are the label itself
-                if (bpb is ExtendedBiosParameterBlock bpb40 && !string.IsNullOrWhiteSpace(bpb40.VolumeLabel))
+                if (!string.IsNullOrWhiteSpace(bpb.VolumeLabel))
                 {
-                    writer.Write(bpb40.VolumeLabel.PadRight(11, ' ').ToCharArray());
+                    writer.Write(bpb.VolumeLabel.PadRight(11, ' ').ToCharArray());
                     writer.Write((byte)0x08); //Volume label attribute
                 }
             }

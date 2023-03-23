@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.IO;
 using System.Text;
-using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -12,13 +12,11 @@ namespace TotalImage.FileSystems.FAT
     {
         private static FileSystem? GetFatFromBiosParameterBlock(Stream stream, BiosParameterBlock bpb)
         {
-            uint rootDirSectors = (((uint)bpb.RootDirectoryEntries * 32) + ((uint)bpb.BytesPerLogicalSector - 1)) / (uint)bpb.BytesPerLogicalSector;
+            var fatSectors = bpb.NumberOfFATs * bpb.LogicalSectorsPerFAT;
+            var rootDirectorySectors = bpb.RootDirectoryEntries * 32 / bpb.BytesPerLogicalSector;
+            var dataSectors = bpb.TotalLogicalSectors - bpb.ReservedLogicalSectors - fatSectors - rootDirectorySectors;
 
-            uint fatSectors = bpb.LogicalSectorsPerFAT;
-            uint totalSectors = bpb.TotalLogicalSectors;
-
-            uint dataSectors = totalSectors - (bpb.ReservedLogicalSectors + (bpb.NumberOfFATs * fatSectors) + rootDirSectors);
-            uint clusterCount = dataSectors / bpb.LogicalSectorsPerCluster;
+            var clusterCount = dataSectors / bpb.LogicalSectorsPerCluster;
 
             stream.Position = 0;
             if (clusterCount < 4085)
@@ -41,19 +39,21 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public FileSystem? TryLoadFileSystem(Stream stream)
         {
-            using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+            var bootSectorBytes = new byte[512];
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.Read(bootSectorBytes);
 
             BiosParameterBlock? _bpb;
             byte bpbOffset = 0x0B;
 
             try
             {
-                _bpb = BiosParameterBlock.Parse(reader, bpbOffset); //Try to parse the BPB at the standard offset
+                _bpb = BiosParameterBlock.Parse(bootSectorBytes, bpbOffset); //Try to parse the BPB at the standard offset
             }
             catch (InvalidDataException)
             {
                 //BPB likely invalid, check if this is an Acorn 800k disk without one
-                if (CheckForAcorn800k(reader))
+                if (CheckForAcorn800k(bootSectorBytes))
                 {
                     return new Fat12FileSystem(stream, BiosParameterBlock.DefaultAcornParameters);
                 }
@@ -63,7 +63,7 @@ namespace TotalImage.FileSystems.FAT
                     try
                     {
                         bpbOffset = 0x50;
-                        _bpb = BiosParameterBlock.Parse(reader, bpbOffset);
+                        _bpb = BiosParameterBlock.Parse(bootSectorBytes, bpbOffset);
                     }
                     catch (InvalidDataException)
                     {
@@ -84,10 +84,7 @@ namespace TotalImage.FileSystems.FAT
         /// Checks whether the image contains Acorn 800k format, which starts with the first (and only) FAT.
         /// </summary>
         /// <returns></returns>
-        private static bool CheckForAcorn800k(BinaryReader reader)
-        {
-            reader.BaseStream.Seek(0, SeekOrigin.Begin);
-            return (reader.ReadUInt32() & 0xFFFFFF) == 0xFFFFFD;
-        }
+        private static bool CheckForAcorn800k(ReadOnlySpan<byte> bytes) =>
+            (BinaryPrimitives.ReadUInt32LittleEndian(bytes[0..4]) & 0xFFFFFF) == 0xFFFFFD;
     }
 }

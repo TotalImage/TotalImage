@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using TotalImage.Containers;
 using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
-using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using static Interop.ComCtl32;
 using static Interop.Shell32;
@@ -161,7 +160,7 @@ namespace TotalImage
         }
 
         /* Allows viewing and editing bootsector properties
-         * 
+         *
          * TODO: Enable this for other file systems/partition types/media too.
          */
         private void bootSectorProperties_Click(object sender, EventArgs e)
@@ -255,12 +254,12 @@ namespace TotalImage
                     CloseImage();
                 image = null;
 
-                BiosParameterBlock bpb = dlg.BPBVersion == BiosParameterBlockVersion.Dos34 || dlg.BPBVersion == BiosParameterBlockVersion.Dos40
-                    ? ExtendedBiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID, dlg.SerialNumber, dlg.FileSystemType, dlg.VolumeLabel)
-                    : BiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID);
+                //BiosParameterBlock bpb = dlg.BPBVersion == BiosParameterBlockVersion.Dos34 || dlg.BPBVersion == BiosParameterBlockVersion.Dos40
+                //    ? ExtendedBiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID, dlg.SerialNumber, dlg.FileSystemType, dlg.VolumeLabel)
+                //    : BiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID);
 
                 //Create a new image and immediately open it
-                image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
+                //image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
                 unsavedChanges = true;
                 OpenImage(null);
             }
@@ -665,11 +664,11 @@ namespace TotalImage
                 {
                     lstFiles.Focus();
                     lstFiles.SelectAllItems();
-                }             
+                }
             }
-            
+
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
-            {              
+            {
                 using dlgExtract dlg = new dlgExtract();
                 dlg.lblPath.Text = $"Extract { (lstDirectories.Focused ? "1" : SelectedItems.Count())} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
@@ -683,7 +682,7 @@ namespace TotalImage
                     else if(lstDirectories.Focused)
                     {
                         FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag }, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
-                    }                  
+                    }
                 }
             }
             else
@@ -695,7 +694,7 @@ namespace TotalImage
                 else if (lstDirectories.Focused)
                 {
                     FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag });
-                }             
+                }
             }
         }
 
@@ -1564,8 +1563,8 @@ namespace TotalImage
                 return;
             }
 
-            /* If the left mouse button was released, complete the drag and drop operation. In our case, this means that any files or folders 
-             * that may have been dragged out of the window have to be extracted into a temporary folder first, then the drop is performed so 
+            /* If the left mouse button was released, complete the drag and drop operation. In our case, this means that any files or folders
+             * that may have been dragged out of the window have to be extracted into a temporary folder first, then the drop is performed so
              * Explorer will move these items to the actual drag and drop destination. Dropping inside the window is not supported yet. */
             if ((e.KeyState & 1) == 0)
             {

@@ -43,7 +43,7 @@ public abstract class FileAllocationTable : IEnumerable<uint>
                 return ClusterType.Bad;
             if ((cluster & 0xF) > 7)
                 return ClusterType.EndOfChain;
-            
+
             return ClusterType.Reserved;
         }
         else if (cluster < 2)
@@ -95,7 +95,7 @@ public abstract class FileAllocationTable : IEnumerable<uint>
         return clusters.ToArray();
     }
 
-    public class Enumerator : IEnumerator<uint>
+    class Enumerator : IEnumerator<uint>
     {
         uint _currentIndex = 0;
         FileAllocationTable _fat;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -15,7 +14,7 @@ namespace TotalImage.FileSystems.FAT
 
         public FatDirectory(FatFileSystem fat) : base(fat, null)
         {
-            
+
         }
 
         public FatDirectory(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[]? lfnEntries, Directory parent) : base(fat, parent)
@@ -119,9 +118,9 @@ namespace TotalImage.FileSystems.FAT
             if (entry.HasValue)
                 // This is a regular subdirectory
                 entries = DirectoryEntry.ReadSubdirectory(fat, entry.Value, showDeleted);
-            else if (fat.BiosParameterBlock is Fat32BiosParameterBlock fat32bpb && fat32bpb.RootDirectoryEntries == 0)
+            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryCluster is not null)
                 // This is a root directory located in the data area (typical for FAT32)
-                entries = DirectoryEntry.ReadSubdirectory(fat, fat32bpb.RootDirectoryCluster, showDeleted);
+                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryCluster.Value, showDeleted);
             else
                 // This is a root directory in the system area (typical for FAT12 and FAT16)
                 entries = DirectoryEntry.ReadRootDirectory(fat, showDeleted);
@@ -229,9 +228,9 @@ namespace TotalImage.FileSystems.FAT
             if (entry.HasValue)
                 // This is a regular subdirectory
                 entries = DirectoryEntry.ReadSubdirectory(fat, entry.Value, false);
-            else if (fat.BiosParameterBlock is Fat32BiosParameterBlock fat32bpb && fat32bpb.RootDirectoryEntries == 0)
+            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryCluster is not null)
                 // This is a root directory located in the data area (typical for FAT32)
-                entries = DirectoryEntry.ReadSubdirectory(fat, fat32bpb.RootDirectoryCluster, false);
+                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryCluster.Value, false);
             else
                 // This is a root directory in the system area (typical for FAT12 and FAT16)
                 entries = DirectoryEntry.ReadRootDirectory(fat, false);
@@ -279,9 +278,9 @@ namespace TotalImage.FileSystems.FAT
             if (entry.HasValue)
                 // This is a regular subdirectory
                 entries = DirectoryEntry.ReadSubdirectory(fat, entry.Value, false);
-            else if (fat.BiosParameterBlock is Fat32BiosParameterBlock fat32bpb && fat32bpb.RootDirectoryEntries == 0)
+            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryCluster is not null)
                 // This is a root directory located in the data area (typical for FAT32)
-                entries = DirectoryEntry.ReadSubdirectory(fat, fat32bpb.RootDirectoryCluster, false);
+                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryCluster.Value, false);
             else
                 // This is a root directory in the system area (typical for FAT12 and FAT16)
                 entries = DirectoryEntry.ReadRootDirectory(fat, false);
@@ -323,9 +322,9 @@ namespace TotalImage.FileSystems.FAT
             if (entry.HasValue)
                 // This is a regular subdirectory
                 entries = DirectoryEntry.ReadSubdirectory(fat, entry.Value, false);
-            else if (fat.BiosParameterBlock is Fat32BiosParameterBlock fat32bpb && fat32bpb.RootDirectoryEntries == 0)
+            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryCluster is not null)
                 // This is a root directory located in the data area (typical for FAT32)
-                entries = DirectoryEntry.ReadSubdirectory(fat, fat32bpb.RootDirectoryCluster, false);
+                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryCluster.Value, false);
             else
                 // This is a root directory in the system area (typical for FAT12 and FAT16)
                 entries = DirectoryEntry.ReadRootDirectory(fat, false);
