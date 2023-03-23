@@ -76,7 +76,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override long Length
         {
-            get => Size(true, false);
+            get => GetSize(true, false);
             set => throw new NotSupportedException();
         }
 
@@ -219,7 +219,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override long FileCount(bool recursive)
+        public override long GetFileCount(bool recursive)
         {
             long count = 0;
             var fat = (FatFileSystem)FileSystem;
@@ -253,7 +253,7 @@ namespace TotalImage.FileSystems.FAT
                 {
                     if (recursive)
                     {
-                        count += new FatDirectory(fat, entry, null, this).FileCount(recursive);
+                        count += new FatDirectory(fat, entry, null, this).GetFileCount(recursive);
                     }
                     else
                         continue;
@@ -269,7 +269,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override long SubdirectoryCount(bool recursive)
+        public override long GetSubdirectoryCount(bool recursive)
         {
             long count = 0;
             var fat = (FatFileSystem)FileSystem;
@@ -304,7 +304,7 @@ namespace TotalImage.FileSystems.FAT
                     count++;
                     if (recursive)
                     {
-                        count += new FatDirectory(fat, entry, null, this).SubdirectoryCount(recursive);
+                        count += new FatDirectory(fat, entry, null, this).GetSubdirectoryCount(recursive);
                     }
                 }
             }
@@ -313,7 +313,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override long Size(bool recursive, bool sizeOnDisk)
+        public override long GetSize(bool recursive, bool sizeOnDisk)
         {
             long size = 0;
             var fat = (FatFileSystem)FileSystem;
@@ -347,7 +347,7 @@ namespace TotalImage.FileSystems.FAT
                 {
                     if (recursive)
                     {
-                        size += new FatDirectory(fat, entry, null, this).Size(recursive, sizeOnDisk);
+                        size += new FatDirectory(fat, entry, null, this).GetSize(recursive, sizeOnDisk);
                     }
                     else
                         continue;

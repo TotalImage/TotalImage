@@ -111,7 +111,7 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc/>
-        public override long FileCount(bool recursive)
+        public override long GetFileCount(bool recursive)
         {
             long count = 0;
             Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
@@ -145,7 +145,7 @@ namespace TotalImage.FileSystems.ISO
                     {
                         if (recursive)
                         {
-                            count += new IsoDirectory(record, fileSystem, this).FileCount(recursive);
+                            count += new IsoDirectory(record, fileSystem, this).GetFileCount(recursive);
                         }
                         else
                             continue;
@@ -163,7 +163,7 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc/>
-        public override long Size(bool recursive, bool sizeOnDisk)
+        public override long GetSize(bool recursive, bool sizeOnDisk)
         {
             long size = 0;
             Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
@@ -196,7 +196,7 @@ namespace TotalImage.FileSystems.ISO
                     {
                         if (recursive)
                         {
-                            size += new IsoDirectory(record, fileSystem, this).Size(recursive, sizeOnDisk);
+                            size += new IsoDirectory(record, fileSystem, this).GetSize(recursive, sizeOnDisk);
                         }
                         else
                             continue;
@@ -221,7 +221,7 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc/>
-        public override long SubdirectoryCount(bool recursive)
+        public override long GetSubdirectoryCount(bool recursive)
         {
             long count = 0;
             Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
@@ -257,7 +257,7 @@ namespace TotalImage.FileSystems.ISO
                         count++;
                         if (recursive)
                         {
-                            count += new IsoDirectory(record, fileSystem, this).SubdirectoryCount(recursive);
+                            count += new IsoDirectory(record, fileSystem, this).GetSubdirectoryCount(recursive);
                         }
                     }
                 }

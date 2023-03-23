@@ -1799,7 +1799,7 @@ namespace TotalImage
                 string size = string.Empty;
                 if (fso is TiDirectory subdir)
                 {
-                    size = Settings.CurrentSettings.SizeUnit.FormatSize(subdir.Size(true, false));
+                    size = Settings.CurrentSettings.SizeUnit.FormatSize(subdir.GetSize(true, false));
 
                     if (Settings.CurrentSettings.FileListShowDirSize)
                         item.SubItems.Add(size);
@@ -2530,7 +2530,7 @@ namespace TotalImage
                             var item = GetSelectedItemData(0);
                             lbStatusPath.Text = item.FullName;
                             if (item is TiDirectory dir)
-                                lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, false))} in 1 item";
+                                lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, false))} in 1 item";
                             else
                                 lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
                             break;
@@ -2542,7 +2542,7 @@ namespace TotalImage
                             foreach (var entry in SelectedItems)
                             {
                                 if (entry is TiDirectory subdir)
-                                    selectedSize += subdir.Size(true, false);
+                                    selectedSize += subdir.GetSize(true, false);
                                 else
                                     selectedSize += entry.Length;
                             }

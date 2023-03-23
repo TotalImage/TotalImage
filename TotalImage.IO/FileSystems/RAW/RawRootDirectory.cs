@@ -76,7 +76,7 @@ namespace TotalImage.FileSystems.RAW
             => Array.Empty<FileSystemObject>();
 
         /// <inheritdoc />
-        public override long FileCount(bool recursive)
+        public override long GetFileCount(bool recursive)
             => 0;
 
         /// <inheritdoc />
@@ -86,11 +86,11 @@ namespace TotalImage.FileSystems.RAW
         }
 
         /// <inheritdoc />
-        public override long Size(bool recursive, bool sizeOnDisk)
+        public override long GetSize(bool recursive, bool sizeOnDisk)
             => 0;
 
         /// <inheritdoc />
-        public override long SubdirectoryCount(bool recursive)
+        public override long GetSubdirectoryCount(bool recursive)
             => 0;
     }
 }
