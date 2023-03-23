@@ -93,13 +93,9 @@ namespace TotalImage
             lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text = "Please wait...";
 
             //TODO: This needs to be editeable (ReadOnly = false) once we have write support
-            if (mainForm.image is NhdContainer nhd)
+            if (mainForm.image is IContainerComment containerComment)
             {
-                txtComment.Text = nhd.Header.Comment;
-            }
-            else if(mainForm.image is ImzContainer imz)
-            {
-                txtComment.Text = imz.Comment;
+                txtComment.Text = containerComment.Comment;
             }
         }
 

@@ -5,7 +5,7 @@ namespace TotalImage.Containers.NHD
     /// <summary>
     /// Represents a T98-Next HD (NHD) container file
     /// </summary>
-    public class NhdContainer : Container
+    public class NhdContainer : Container, IContainerComment
     {
         private readonly Stream _contentStream;
         private readonly NhdHeader _header;
@@ -26,6 +26,9 @@ namespace TotalImage.Containers.NHD
 
         /// <inheritdoc />
         public override string DisplayName => "T98-Next HD";
+
+        /// <inheritdoc />
+        public string? Comment => Header.Comment;
 
         /// <summary>
         /// The header structure of this NHD image

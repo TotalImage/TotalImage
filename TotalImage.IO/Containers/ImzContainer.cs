@@ -1,20 +1,19 @@
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 
 namespace TotalImage.Containers
 {
     /// <summary>
     /// Class for handling a compressed raw container (IMZ), supported by WinImage
     /// </summary>
-    public class ImzContainer : Container
+    public class ImzContainer : Container, IContainerComment
     {
         /// <inheritdoc />
         public override Stream Content { get; }
 
-        /// <summary>
-        /// The comment for this image.
-        /// </summary>
-        public string Comment { get; set; }
+        /// <inheritdoc />
+        public string? Comment { get; }
 
         /// <inheritdoc />
         public override string DisplayName => "WinImage compressed image";
@@ -22,9 +21,14 @@ namespace TotalImage.Containers
         /// <inheritdoc />
         public ImzContainer(string path, bool memoryMapping) : base(path, memoryMapping)
         {
-            var zip = new ZipArchive(containerStream, ZipArchiveMode.Read);
-            Content = new MemoryStream();
-            zip.Entries[0].Open().CopyTo(Content);
+            using var zip = new ZipArchive(containerStream, ZipArchiveMode.Read);
+            var image = zip.Entries.Single();
+
+            Content = new MemoryStream((int)image.Length);
+
+            using var imageStream = image.Open();
+            imageStream.CopyTo(Content);
+
             Comment = zip.Comment;
         }
     }
