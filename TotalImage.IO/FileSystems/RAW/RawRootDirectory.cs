@@ -76,21 +76,9 @@ namespace TotalImage.FileSystems.RAW
             => Array.Empty<FileSystemObject>();
 
         /// <inheritdoc />
-        public override long GetFileCount(bool recursive)
-            => 0;
-
-        /// <inheritdoc />
         public override void MoveTo(string path)
         {
             throw new NotSupportedException();
         }
-
-        /// <inheritdoc />
-        public override long GetSize(bool recursive, bool sizeOnDisk)
-            => 0;
-
-        /// <inheritdoc />
-        public override long GetSubdirectoryCount(bool recursive)
-            => 0;
     }
 }
