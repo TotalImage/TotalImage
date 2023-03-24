@@ -281,14 +281,31 @@ public class BiosParameterBlock
             bpb.largeSectors = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[32..36]);
         }
 
-        if (bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack == 0)
+        // Windows only accepts the following sector sizes
+        if (bpb.BytesPerLogicalSector is not (128 or 256 or 512 or 1024 or 2048 or 4096))
         {
-            throw new InvalidDataException("Claimed BPB parameters don't match actual image size.");
+            throw new InvalidDataException("The sector size is invalid.");
+        }
+
+
+        if (bpb.LogicalSectorsPerCluster is not (1 or 2 or 4 or 8 or 16 or 32 or 64 or 128))
+        {
+            throw new InvalidDataException("The cluster size is invalid.");
+        }
+
+        if (bpb.ReservedLogicalSectors == 0)
+        {
+            throw new InvalidDataException("The number of reserved sectors is zero.");
+        }
+
+        if (bpb.NumberOfFats == 0)
+        {
+            throw new InvalidDataException("The number of FATs is zero.");
         }
 
         if (bpb.TotalLogicalSectors == 0)
         {
-            throw new InvalidDataException("Claimed total number of logical sectors is zero.");
+            throw new InvalidDataException("The total number of sectors is zero.");
         }
 
         void ReadEbpb(ReadOnlySpan<byte> ebpbBytes)
@@ -307,12 +324,12 @@ public class BiosParameterBlock
 
         if (bpb.sectorsPerFat > 0)
         {
-            ReadEbpb(sectorBytes[36..]);
-
             if (bpb.rootEntries == 0)
             {
-                throw new InvalidDataException("Claimed root directory entry count is zero.");
+                throw new InvalidDataException("The number of root directory entries is zero.");
             }
+
+            ReadEbpb(sectorBytes[36..]);
         }
         else
         {
@@ -324,12 +341,17 @@ public class BiosParameterBlock
             bpb.backupBootSector = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[50..52]);
             bpb.reserved = sectorBytes[54..64].ToArray();
 
-            ReadEbpb(sectorBytes[64..]);
-        }
+            if (bpb.LogicalSectorsPerFat == 0)
+            {
+                throw new InvalidDataException("The allocation table size is zero.");
+            }
 
-        if (bpb.LogicalSectorsPerFat == 0)
-        {
-            throw new InvalidDataException("Claimed size of the File Allocation Table is zero.");
+            if (bpb.FileSystemVersion != 0)
+            {
+                throw new NotSupportedException($"FAT32 version ${bpb.FileSystemVersion} is not supported.");
+            }
+
+            ReadEbpb(sectorBytes[64..]);
         }
 
         return bpb;
