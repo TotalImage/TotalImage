@@ -14,8 +14,8 @@ namespace TotalImage.FileSystems.FAT
 
         public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
-            for (int i = 0; i < bpb.NumberOfFATs; i++)
+            Fats = new FAT.FileAllocationTable[bpb.NumberOfFats];
+            for (int i = 0; i < bpb.NumberOfFats; i++)
                 Fats[i] = new FileAllocationTable(this, i);
         }
 
@@ -33,7 +33,7 @@ namespace TotalImage.FileSystems.FAT
 
             uint totalSize = (uint)stream.Length;
             uint rootDirSize = (uint)(bpb.RootDirectoryEntries << 5);
-            uint fatSize = (uint)(bpb.LogicalSectorsPerFAT * bpb.BytesPerLogicalSector);
+            uint fatSize = (uint)(bpb.LogicalSectorsPerFat * bpb.BytesPerLogicalSector);
             uint fat1Offset = (uint)(bpb.ReservedLogicalSectors * bpb.BytesPerLogicalSector);
             uint fat2Offset = fat1Offset + fatSize;
             uint dataAreaOffset = fat2Offset + fatSize + rootDirSize;
@@ -62,11 +62,11 @@ namespace TotalImage.FileSystems.FAT
                     writer.Write(bpb.BytesPerLogicalSector);
                     writer.Write(bpb.LogicalSectorsPerCluster);
                     writer.Write(bpb.ReservedLogicalSectors);
-                    writer.Write(bpb.NumberOfFATs);
+                    writer.Write(bpb.NumberOfFats);
                     writer.Write(bpb.RootDirectoryEntries);
                     writer.Write(bpb.TotalLogicalSectors <= ushort.MaxValue ? (ushort)bpb.TotalLogicalSectors : (ushort)0);
                     writer.Write(bpb.MediaDescriptor);
-                    writer.Write(bpb.Version != BiosParameterBlockVersion.Fat32 ? (ushort)bpb.LogicalSectorsPerFAT : (ushort)0);
+                    writer.Write(bpb.Version != BiosParameterBlockVersion.Fat32 ? (ushort)bpb.LogicalSectorsPerFat : (ushort)0);
                     writer.Write(bpb.PhysicalSectorsPerTrack);
                     writer.Write(bpb.NumberOfHeads);
                     writer.Write(bpb.HiddenSectors);
@@ -77,7 +77,7 @@ namespace TotalImage.FileSystems.FAT
                     {
                         writer.Write(bpb.PhysicalDriveNumber!.Value);
                         writer.Write(bpb.Flags!.Value);
-                        writer.Write((byte)bpb.ExtendedBootSignature!.Value);
+                        writer.Write((byte)bpb.Signature!.Value);
                         writer.Write(bpb.VolumeSerialNumber!.Value);
 
                         //DOS 4.0 adds volume label and FS type as well
@@ -131,7 +131,7 @@ namespace TotalImage.FileSystems.FAT
             int _fatIndex;
             internal FileAllocationTable(Fat12FileSystem fat12, int fatIndex)
             {
-                if (fatIndex >= fat12._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();
+                if (fatIndex >= fat12._bpb.NumberOfFats || fatIndex < 0) throw new ArgumentOutOfRangeException();
 
                 _fat12 = fat12;
                 _fatIndex = fatIndex;
@@ -157,7 +157,7 @@ namespace TotalImage.FileSystems.FAT
                     if (_fatIndex > 0)
                     {
                         // Reading from a backup FAT, so seek to the beginning of that.
-                        var fatOffset = _fatIndex * _fat12._bpb.LogicalSectorsPerFAT * _fat12._bpb.BytesPerLogicalSector;
+                        var fatOffset = _fatIndex * _fat12._bpb.LogicalSectorsPerFat * _fat12._bpb.BytesPerLogicalSector;
                         reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
                     }
 

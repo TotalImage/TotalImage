@@ -118,9 +118,9 @@ namespace TotalImage.FileSystems.FAT
             if (entry.HasValue)
                 // This is a regular subdirectory
                 entries = DirectoryEntry.ReadSubdirectory(fat, entry.Value, showDeleted);
-            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryCluster is not null)
+            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryFirstCluster is not null)
                 // This is a root directory located in the data area (typical for FAT32)
-                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryCluster.Value, showDeleted);
+                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryFirstCluster.Value, showDeleted);
             else
                 // This is a root directory in the system area (typical for FAT12 and FAT16)
                 entries = DirectoryEntry.ReadRootDirectory(fat, showDeleted);
@@ -228,9 +228,9 @@ namespace TotalImage.FileSystems.FAT
             if (entry.HasValue)
                 // This is a regular subdirectory
                 entries = DirectoryEntry.ReadSubdirectory(fat, entry.Value, false);
-            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryCluster is not null)
+            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryFirstCluster is not null)
                 // This is a root directory located in the data area (typical for FAT32)
-                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryCluster.Value, false);
+                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryFirstCluster.Value, false);
             else
                 // This is a root directory in the system area (typical for FAT12 and FAT16)
                 entries = DirectoryEntry.ReadRootDirectory(fat, false);
@@ -278,9 +278,9 @@ namespace TotalImage.FileSystems.FAT
             if (entry.HasValue)
                 // This is a regular subdirectory
                 entries = DirectoryEntry.ReadSubdirectory(fat, entry.Value, false);
-            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryCluster is not null)
+            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryFirstCluster is not null)
                 // This is a root directory located in the data area (typical for FAT32)
-                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryCluster.Value, false);
+                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryFirstCluster.Value, false);
             else
                 // This is a root directory in the system area (typical for FAT12 and FAT16)
                 entries = DirectoryEntry.ReadRootDirectory(fat, false);
@@ -322,9 +322,9 @@ namespace TotalImage.FileSystems.FAT
             if (entry.HasValue)
                 // This is a regular subdirectory
                 entries = DirectoryEntry.ReadSubdirectory(fat, entry.Value, false);
-            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryCluster is not null)
+            else if (fat.BiosParameterBlock.RootDirectoryEntries == 0 && fat.BiosParameterBlock.RootDirectoryFirstCluster is not null)
                 // This is a root directory located in the data area (typical for FAT32)
-                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryCluster.Value, false);
+                entries = DirectoryEntry.ReadSubdirectory(fat, fat.BiosParameterBlock.RootDirectoryFirstCluster.Value, false);
             else
                 // This is a root directory in the system area (typical for FAT12 and FAT16)
                 entries = DirectoryEntry.ReadRootDirectory(fat, false);

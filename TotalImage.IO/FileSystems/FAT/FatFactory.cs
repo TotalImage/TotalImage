@@ -12,7 +12,7 @@ namespace TotalImage.FileSystems.FAT
     {
         private static FileSystem? GetFatFromBiosParameterBlock(Stream stream, BiosParameterBlock bpb)
         {
-            var fatSectors = bpb.NumberOfFATs * bpb.LogicalSectorsPerFAT;
+            var fatSectors = bpb.NumberOfFats * bpb.LogicalSectorsPerFat;
             var rootDirectorySectors = bpb.RootDirectoryEntries * 32 / bpb.BytesPerLogicalSector;
             var dataSectors = bpb.TotalLogicalSectors - bpb.ReservedLogicalSectors - fatSectors - rootDirectorySectors;
 

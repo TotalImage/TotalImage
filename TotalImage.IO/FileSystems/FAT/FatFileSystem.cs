@@ -49,7 +49,7 @@ namespace TotalImage.FileSystems.FAT
             get
             {
                 var fatOffset = (uint)_bpb.ReservedLogicalSectors;
-                var fatSize = (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
+                var fatSize = (uint)_bpb.NumberOfFats * _bpb.LogicalSectorsPerFat;
                 var rootDirSize = (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
                 return (uint)(fatOffset + fatSize + RootDirectorySectors);
             }
@@ -62,7 +62,7 @@ namespace TotalImage.FileSystems.FAT
             => (uint)_bpb.ReservedLogicalSectors;
 
         public uint ClusterMapsSectors
-            => (uint)_bpb.NumberOfFATs * (uint)_bpb.LogicalSectorsPerFAT;
+            => (uint)_bpb.NumberOfFats * (uint)_bpb.LogicalSectorsPerFat;
 
         public uint RootDirectorySectors
             => (uint)_bpb.RootDirectoryEntries * 32 / (uint)_bpb.BytesPerLogicalSector;
@@ -74,7 +74,7 @@ namespace TotalImage.FileSystems.FAT
             => (uint)_bpb.LogicalSectorsPerCluster * (uint)_bpb.BytesPerLogicalSector;
 
         public uint BytesPerClusterMap
-            => (uint)_bpb.LogicalSectorsPerFAT * (uint)_bpb.BytesPerLogicalSector;
+            => (uint)_bpb.LogicalSectorsPerFat * (uint)_bpb.BytesPerLogicalSector;
 
         public uint ClusterCount
             => DataAreaSectors / (uint)_bpb.LogicalSectorsPerCluster;
@@ -100,8 +100,8 @@ namespace TotalImage.FileSystems.FAT
             {
                 IEnumerable<DirectoryEntry> entries;
 
-                if (_bpb.RootDirectoryEntries == 0 && _bpb.RootDirectoryCluster is not null)
-                    entries = DirectoryEntry.ReadSubdirectory(this, _bpb.RootDirectoryCluster.Value, false);
+                if (_bpb.RootDirectoryEntries == 0 && _bpb.RootDirectoryFirstCluster is not null)
+                    entries = DirectoryEntry.ReadSubdirectory(this, _bpb.RootDirectoryFirstCluster.Value, false);
                 else
                     entries = DirectoryEntry.ReadRootDirectory(this);
 

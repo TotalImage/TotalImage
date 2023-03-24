@@ -11,8 +11,8 @@ namespace TotalImage.FileSystems.FAT
     {
         public Fat16FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
-            for(int i = 0; i < bpb.NumberOfFATs; i++)
+            Fats = new FAT.FileAllocationTable[bpb.NumberOfFats];
+            for(int i = 0; i < bpb.NumberOfFats; i++)
                 Fats[i] = new FileAllocationTable(this, i);
         }
 
@@ -28,7 +28,7 @@ namespace TotalImage.FileSystems.FAT
             int _fatIndex;
             internal FileAllocationTable(Fat16FileSystem fat16, int fatIndex)
             {
-                if (fatIndex >= fat16._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();
+                if (fatIndex >= fat16._bpb.NumberOfFats || fatIndex < 0) throw new ArgumentOutOfRangeException();
 
                 _fat16 = fat16;
                 _fatIndex = fatIndex;
@@ -54,7 +54,7 @@ namespace TotalImage.FileSystems.FAT
                     if (_fatIndex > 0)
                     {
                         // Reading from a backup FAT, so seek to the beginning of that.
-                        var fatOffset = _fatIndex * _fat16._bpb.LogicalSectorsPerFAT * _fat16._bpb.BytesPerLogicalSector;
+                        var fatOffset = _fatIndex * _fat16._bpb.LogicalSectorsPerFat * _fat16._bpb.BytesPerLogicalSector;
                         reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
                     }
 

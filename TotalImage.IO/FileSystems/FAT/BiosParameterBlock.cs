@@ -33,15 +33,6 @@ public class BiosParameterBlock
     private uint largeSectors;
     #endregion
 
-    #region Extended BIOS Parameter Block fields (DOS 4.0+)
-    private byte physicalDriveNumber;
-    private byte reserved1;
-    private ExtendedBootSignature signature;
-    private uint id;
-    private byte[] volumeLabel = new byte[11];
-    private byte[] systemId = new byte[8];
-    #endregion
-
     #region FAT32 BIOS Parameter Block fields
     private uint largeSectorsPerFat;
     private ushort extendedFlags;
@@ -50,6 +41,15 @@ public class BiosParameterBlock
     private ushort fsInfoSector;
     private ushort backupBootSector;
     private byte[] reserved = new byte[12];
+    #endregion
+
+    #region Extended BIOS Parameter Block fields (DOS 4.0+)
+    private byte physicalDriveNumber;
+    private byte reserved1;
+    private ExtendedBootSignature signature;
+    private uint id;
+    private byte[] volumeLabel = new byte[11];
+    private byte[] systemId = new byte[8];
     #endregion
 
     /// <summary>
@@ -115,7 +115,7 @@ public class BiosParameterBlock
     /// <summary>
     /// The number of file allocation tables
     /// </summary>
-    public int NumberOfFATs => fats;
+    public int NumberOfFats => fats;
 
     /// <summary>
     /// The number of root directory entries
@@ -135,7 +135,7 @@ public class BiosParameterBlock
     /// <summary>
     /// The size of the file allocation table in logical sectors
     /// </summary>
-    public long LogicalSectorsPerFAT => sectorsPerFat > 0 ? sectorsPerFat : largeSectorsPerFat;
+    public long LogicalSectorsPerFat => sectorsPerFat > 0 ? sectorsPerFat : largeSectorsPerFat;
 
     /// <summary>
     /// The number of physical sectors per track
@@ -176,7 +176,7 @@ public class BiosParameterBlock
     /// Extended boot signature, or <c>null</c> if not supported. Determines
     /// whether the EBPB includes volume label and filesystem type fields.
     /// </summary>
-    public ExtendedBootSignature? ExtendedBootSignature => HasDos34Fields ? signature : null;
+    public ExtendedBootSignature? Signature => HasDos34Fields ? signature : null;
 
     /// <summary>
     /// Volume serial number, or <c>null</c> if not supported.
@@ -189,7 +189,7 @@ public class BiosParameterBlock
     public string? VolumeLabel => HasDos40Fields ? Encoding.ASCII.GetString(volumeLabel) : null;
 
     /// <summary>
-    /// Filesystem type for display purposes, or <c>null</c> if not supported.
+    /// File system type for display purposes, or <c>null</c> if not supported.
     /// </summary>
     public string? FileSystemType => HasDos40Fields ? Encoding.ASCII.GetString(systemId) : null;
 
@@ -206,7 +206,7 @@ public class BiosParameterBlock
     /// <summary>
     /// Cluster number of root directory start, or <c>null</c> if not supported.
     /// </summary>
-    public uint? RootDirectoryCluster => HasFat32Fields ? rootDirFirstCluster : null;
+    public uint? RootDirectoryFirstCluster => HasFat32Fields ? rootDirFirstCluster : null;
 
     /// <summary>
     /// Logical sector number of the File System Information Sector, or
@@ -327,7 +327,7 @@ public class BiosParameterBlock
             ReadEbpb(sectorBytes[64..]);
         }
 
-        if (bpb.LogicalSectorsPerFAT == 0)
+        if (bpb.LogicalSectorsPerFat == 0)
         {
             throw new InvalidDataException("Claimed size of the File Allocation Table is zero.");
         }
