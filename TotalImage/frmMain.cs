@@ -161,7 +161,7 @@ namespace TotalImage
         }
 
         /* Allows viewing and editing bootsector properties
-         * 
+         *
          * TODO: Enable this for other file systems/partition types/media too.
          */
         private void bootSectorProperties_Click(object sender, EventArgs e)
@@ -665,11 +665,11 @@ namespace TotalImage
                 {
                     lstFiles.Focus();
                     lstFiles.SelectAllItems();
-                }             
+                }
             }
-            
+
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
-            {              
+            {
                 using dlgExtract dlg = new dlgExtract();
                 dlg.lblPath.Text = $"Extract { (lstDirectories.Focused ? "1" : SelectedItems.Count())} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
@@ -683,7 +683,7 @@ namespace TotalImage
                     else if(lstDirectories.Focused)
                     {
                         FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag }, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
-                    }                  
+                    }
                 }
             }
             else
@@ -695,7 +695,7 @@ namespace TotalImage
                 else if (lstDirectories.Focused)
                 {
                     FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag });
-                }             
+                }
             }
         }
 
@@ -1564,8 +1564,8 @@ namespace TotalImage
                 return;
             }
 
-            /* If the left mouse button was released, complete the drag and drop operation. In our case, this means that any files or folders 
-             * that may have been dragged out of the window have to be extracted into a temporary folder first, then the drop is performed so 
+            /* If the left mouse button was released, complete the drag and drop operation. In our case, this means that any files or folders
+             * that may have been dragged out of the window have to be extracted into a temporary folder first, then the drop is performed so
              * Explorer will move these items to the actual drag and drop destination. Dropping inside the window is not supported yet. */
             if ((e.KeyState & 1) == 0)
             {
@@ -1799,7 +1799,7 @@ namespace TotalImage
                 string size = string.Empty;
                 if (fso is TiDirectory subdir)
                 {
-                    size = Settings.CurrentSettings.SizeUnit.FormatSize(subdir.Size(true, false));
+                    size = Settings.CurrentSettings.SizeUnit.FormatSize(subdir.GetSize(true, false));
 
                     if (Settings.CurrentSettings.FileListShowDirSize)
                         item.SubItems.Add(size);
@@ -2530,7 +2530,7 @@ namespace TotalImage
                             var item = GetSelectedItemData(0);
                             lbStatusPath.Text = item.FullName;
                             if (item is TiDirectory dir)
-                                lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, false))} in 1 item";
+                                lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, false))} in 1 item";
                             else
                                 lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
                             break;
@@ -2542,7 +2542,7 @@ namespace TotalImage
                             foreach (var entry in SelectedItems)
                             {
                                 if (entry is TiDirectory subdir)
-                                    selectedSize += subdir.Size(true, false);
+                                    selectedSize += subdir.GetSize(true, false);
                                 else
                                     selectedSize += entry.Length;
                             }

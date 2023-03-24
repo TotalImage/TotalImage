@@ -52,10 +52,10 @@ namespace TotalImage
                 string creatorVersion = $"{vhd.Footer.CreatorVersionMajor}.{vhd.Footer.CreatorVersionMinor}";
                 if(creatorVersion != "0.0")
                     lstProperties.FindItemWithText("Creator version").SubItems[1].Text = creatorVersion;
-            }            
-            
+            }
+
             lstProperties.FindItemWithText("File system").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.DisplayName;
-            
+
             var volLabel = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.VolumeLabel;
             if(!string.IsNullOrWhiteSpace(volLabel))
                 lstProperties.FindItemWithText("Volume label").SubItems[1].Text = volLabel;
@@ -76,8 +76,8 @@ namespace TotalImage
                 lstProperties.FindItemWithText("Partition ID/type").SubItems[1].Text = entry.TypeId.ToString();
             }
 
-            lstProperties.FindItemWithText("Files").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.FileCount(true).ToString();
-            lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.SubdirectoryCount(true).ToString();
+            lstProperties.FindItemWithText("Files").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.CountFiles(true).ToString();
+            lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.CountSubdirectories(true).ToString();
             lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             lstProperties.FindItemWithText("Free space").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.TotalFreeSpace, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
 
@@ -111,7 +111,7 @@ namespace TotalImage
                     Buttons =
                     {
                         TaskDialogButton.Cancel,
-                        TaskDialogButton.Continue                
+                        TaskDialogButton.Continue
                     },
                     Icon = TaskDialogIcon.Warning,
                     DefaultButton = TaskDialogButton.Continue,
@@ -152,8 +152,8 @@ namespace TotalImage
                 sw.WriteLine($"-Attributes: {lstProperties.FindItemWithText("Attributes").SubItems[1].Text}");
 
                 //Skip the hashes if they're not done yet
-                if (hashesDone) 
-                { 
+                if (hashesDone)
+                {
                     sw.WriteLine($"-MD5 hash: {lstProperties.FindItemWithText("MD5 hash").SubItems[1].Text}");
                     sw.WriteLine($"-SHA-1 hash: {lstProperties.FindItemWithText("SHA-1 hash").SubItems[1].Text}");
                 }
@@ -179,7 +179,7 @@ namespace TotalImage
                 sw.WriteLine($"-Total storage capacity: {lstProperties.FindItemWithText("Total storage capacity").SubItems[1].Text}");
                 sw.WriteLine($"-Free space: {lstProperties.FindItemWithText("Free space").SubItems[1].Text}");
                 sw.WriteLine($"-Files: {lstProperties.FindItemWithText("Files").SubItems[1].Text}");
-                sw.WriteLine($"-Subdirectories: {lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text}");          
+                sw.WriteLine($"-Subdirectories: {lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text}");
                 sw.WriteLine();
 
                 if (!string.IsNullOrWhiteSpace(txtComment.Text))

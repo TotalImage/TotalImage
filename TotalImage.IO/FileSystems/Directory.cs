@@ -110,7 +110,7 @@ namespace TotalImage.FileSystems
         /// </summary>
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <returns>File count in a directory excluding subdirectories if recursive is false, otherwise file count in a directory including subdirectories.</returns>
-        public ulong FileCount(bool recursive) =>
+        public ulong CountFiles(bool recursive) =>
             (ulong)EnumerateFileSystemObjectsInternal(recursive).Where(x => x is File).Count();
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace TotalImage.FileSystems
         /// </summary>
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <returns>Subdirectory count in a directory excluding subdirectory contents if recursive is false, otherwise subdirectory count in a directory including subdirectory contents.</returns>
-        public ulong SubdirectoryCount(bool recursive) =>
+        public ulong CountSubdirectories(bool recursive) =>
             (ulong)EnumerateFileSystemObjectsInternal(recursive).Where(x => x is Directory).Count();
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace TotalImage.FileSystems
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <param name="sizeOnDisk">Whether to report actual file size or size on disk.</param>
         /// <returns>Combined size of files in a directory excluding subdirectories if recursive is false, otherwise combined size of files in a directory including subdirectories.</returns>
-        public ulong Size(bool recursive, bool sizeOnDisk) =>
+        public ulong GetSize(bool recursive, bool sizeOnDisk) =>
             (ulong)EnumerateFileSystemObjectsInternal(recursive).Sum(x => sizeOnDisk ? (long)x.LengthOnDisk : (long)x.Length);
     }
 }
