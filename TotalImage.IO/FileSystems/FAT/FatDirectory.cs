@@ -15,7 +15,7 @@ namespace TotalImage.FileSystems.FAT
 
         public FatDirectory(FatFileSystem fat) : base(fat, null)
         {
-            
+
         }
 
         public FatDirectory(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[]? lfnEntries, Directory parent) : base(fat, parent)
@@ -76,7 +76,20 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override ulong Length
         {
-            get => Size(true, false);
+            get
+            {
+                var fat = (FatFileSystem)FileSystem;
+
+                if (entry is not null)
+                {
+                    var clusters = fat.MainFat.GetClusterChain(FirstCluster).Length;
+                    return (uint)clusters * fat.BytesPerCluster;
+                }
+                else
+                {
+                    return fat.RootDirectorySectors * fat.BiosParameterBlock.BytesPerLogicalSector;
+                }
+            }
             set => throw new NotSupportedException();
         }
 
