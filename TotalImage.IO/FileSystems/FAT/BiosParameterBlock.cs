@@ -242,46 +242,6 @@ public class BiosParameterBlock
             sectorsPerFat = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[11..13]),
         };
 
-        if (bpb is { bytesPerSector: 0 } or { sectorsPerCluster: 0 } or { reservedSectors: 0 } or { fats: 0 })
-        {
-            throw new InvalidDataException("At least one of the required BPB parameters is zero.");
-        }
-
-        if (offset == 0x50)
-        {
-            if (bpb.MediaDescriptor is 0xFC or 0xFE)
-            {
-                bpb.IsApricot = true;
-                return bpb;
-            }
-            else
-            {
-                throw new InvalidDataException("Unrecognized Media Descriptor value for an Apricot-style FAT.");
-            }
-        }
-
-        bpb.sectorsPerTrack = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[24..26]);
-        bpb.heads = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[26..28]);
-
-        if (bpb is { sectorsPerTrack: 0 } or { heads: 0 })
-        {
-            throw new InvalidDataException("At least one of the required BPB parameters is zero.");
-        }
-
-        bpb.jump = sectorBytes[0..3].ToArray();
-        bpb.oem = sectorBytes[3..11].ToArray();
-
-        if (bpb.sectors > 0)
-        {
-            bpb.hiddenSectors = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[28..30]);
-        }
-        else
-        {
-            bpb.hiddenSectors = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[28..32]);
-            bpb.largeSectors = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[32..36]);
-        }
-
-        // Windows only accepts the following sector sizes
         if (bpb.BytesPerLogicalSector is not (128 or 256 or 512 or 1024 or 2048 or 4096))
         {
             throw new InvalidDataException("The sector size is invalid.");
@@ -300,6 +260,35 @@ public class BiosParameterBlock
         if (bpb.NumberOfFats == 0)
         {
             throw new InvalidDataException("The number of FATs is zero.");
+        }
+
+        if (offset == 0x50)
+        {
+            if (bpb.MediaDescriptor is 0xFC or 0xFE)
+            {
+                bpb.IsApricot = true;
+                return bpb;
+            }
+            else
+            {
+                throw new InvalidDataException("Unrecognized Media Descriptor value for an Apricot-style FAT.");
+            }
+        }
+
+        bpb.sectorsPerTrack = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[24..26]);
+        bpb.heads = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[26..28]);
+
+        bpb.jump = sectorBytes[0..3].ToArray();
+        bpb.oem = sectorBytes[3..11].ToArray();
+
+        if (bpb.sectors > 0)
+        {
+            bpb.hiddenSectors = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[28..30]);
+        }
+        else
+        {
+            bpb.hiddenSectors = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[28..32]);
+            bpb.largeSectors = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[32..36]);
         }
 
         if (bpb.TotalLogicalSectors == 0)
