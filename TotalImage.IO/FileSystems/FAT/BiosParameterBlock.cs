@@ -14,41 +14,41 @@ namespace TotalImage.FileSystems.FAT;
 public class BiosParameterBlock
 {
     #region Boot Record
-    private byte[] jmpBoot = new byte[3];
-    private byte[] oemName = new byte[8];
+    private byte[] jump = new byte[3];
+    private byte[] oem = new byte[8];
     #endregion
 
     #region Original BIOS Parameter Block fields (DOS 2.0+)
-    private ushort bytsPerSec;
-    private byte secPerClus;
-    private ushort rsvdSecCnt;
-    private byte numFATs;
-    private ushort rootEntCnt;
-    private ushort totSec16;
+    private ushort bytesPerSector;
+    private byte sectorsPerCluster;
+    private ushort reservedSectors;
+    private byte fats;
+    private ushort rootEntries;
+    private ushort sectors;
     private byte media;
-    private ushort fatSz16;
-    private ushort secPerTrk;
-    private ushort numHeads;
-    private uint hiddSec;
-    private uint totSec32;
+    private ushort sectorsPerFat;
+    private ushort sectorsPerTrack;
+    private ushort heads;
+    private uint hiddenSectors;
+    private uint largeSectors;
     #endregion
 
     #region Extended BIOS Parameter Block fields (DOS 4.0+)
-    private byte drvNum;
+    private byte physicalDriveNumber;
     private byte reserved1;
-    private ExtendedBootSignature bootSig;
-    private uint volId;
-    private byte[] volLab = new byte[11];
-    private byte[] filSysType = new byte[8];
+    private ExtendedBootSignature signature;
+    private uint id;
+    private byte[] volumeLabel = new byte[11];
+    private byte[] systemId = new byte[8];
     #endregion
 
     #region FAT32 BIOS Parameter Block fields
-    private uint fatSz32;
-    private ushort extFlags;
-    private ushort fsVer;
-    private uint rootClus;
-    private ushort fsInfo;
-    private ushort bkBootSec;
+    private uint largeSectorsPerFat;
+    private ushort extendedFlags;
+    private ushort fsVersion;
+    private uint rootDirFirstCluster;
+    private ushort fsInfoSector;
+    private ushort backupBootSector;
     private byte[] reserved = new byte[12];
     #endregion
 
@@ -62,19 +62,19 @@ public class BiosParameterBlock
     /// number field.
     /// </summary>
     public bool HasDos34Fields =>
-        bootSig is FAT.ExtendedBootSignature.Dos34 or FAT.ExtendedBootSignature.Dos40;
+        signature is FAT.ExtendedBootSignature.Dos34 or FAT.ExtendedBootSignature.Dos40;
 
     /// <summary>
     /// <c>true</c> if this BIOS Parameter Block includes the volume label and
     /// filesystem type fields.
     /// </summary>
     public bool HasDos40Fields =>
-        bootSig == FAT.ExtendedBootSignature.Dos40;
+        signature == FAT.ExtendedBootSignature.Dos40;
 
     /// <summary>
     /// <c>true</c> if this BIOS Parameter Block includes FAT32-specific fields.
     /// </summary>
-    public bool HasFat32Fields => fatSz16 == 0;
+    public bool HasFat32Fields => sectorsPerFat == 0;
 
     /// <summary>
     /// The version of the BIOS Parameter Block
@@ -90,42 +90,42 @@ public class BiosParameterBlock
     /// <summary>
     /// The three-byte jump instruction in the beginning of the boot sector
     /// </summary>
-    public byte[] BootJump => jmpBoot;
+    public byte[] BootJump => jump;
 
     /// <summary>
     /// The eight-character OEM ID from the boot sector
     /// </summary>
-    public string OemId => Encoding.ASCII.GetString(oemName);
+    public string OemId => Encoding.ASCII.GetString(oem);
 
     /// <summary>
     /// The number of bytes per logical sector
     /// </summary>
-    public int BytesPerLogicalSector => bytsPerSec;
+    public int BytesPerLogicalSector => bytesPerSector;
 
     /// <summary>
     /// The number of logical sectors per cluster
     /// </summary>
-    public int LogicalSectorsPerCluster => secPerClus;
+    public int LogicalSectorsPerCluster => sectorsPerCluster;
 
     /// <summary>
     /// The number of reserved logical sectors
     /// </summary>
-    public int ReservedLogicalSectors => rsvdSecCnt;
+    public int ReservedLogicalSectors => reservedSectors;
 
     /// <summary>
     /// The number of file allocation tables
     /// </summary>
-    public int NumberOfFATs => numFATs;
+    public int NumberOfFATs => fats;
 
     /// <summary>
     /// The number of root directory entries
     /// </summary>
-    public int RootDirectoryEntries => rootEntCnt;
+    public int RootDirectoryEntries => rootEntries;
 
     /// <summary>
     /// The total number of logical sectors
     /// </summary>
-    public long TotalLogicalSectors => totSec16 > 0 ? totSec16 : totSec32;
+    public long TotalLogicalSectors => sectors > 0 ? sectors : largeSectors;
 
     /// <summary>
     /// The media descriptor
@@ -135,7 +135,7 @@ public class BiosParameterBlock
     /// <summary>
     /// The size of the file allocation table in logical sectors
     /// </summary>
-    public long LogicalSectorsPerFAT => fatSz16 > 0 ? fatSz16 : fatSz32;
+    public long LogicalSectorsPerFAT => sectorsPerFat > 0 ? sectorsPerFat : largeSectorsPerFat;
 
     /// <summary>
     /// The number of physical sectors per track
@@ -144,7 +144,7 @@ public class BiosParameterBlock
     {
         { IsApricot: true, MediaDescriptor: 0xFC } => 70, // 315k
         { IsApricot: true, MediaDescriptor: 0xFE } => 80, // 720k
-        _ => secPerTrk
+        _ => sectorsPerTrack
     };
 
     /// <summary>
@@ -154,18 +154,18 @@ public class BiosParameterBlock
     {
         { IsApricot: true, MediaDescriptor: 0xFC } => 1, // 315k
         { IsApricot: true, MediaDescriptor: 0xFE } => 2, // 720k
-        _ => numHeads
+        _ => heads
     };
 
     /// <summary>
     /// The number of hidden sectors.
     /// </summary>
-    public long HiddenSectors => hiddSec;
+    public long HiddenSectors => hiddenSectors;
 
     /// <summary>
     /// Physical drive number per INT 13h, or <c>null</c> if not supported.
     /// </summary>
-    public byte? PhysicalDriveNumber => HasDos34Fields ? drvNum : null;
+    public byte? PhysicalDriveNumber => HasDos34Fields ? physicalDriveNumber : null;
 
     /// <summary>
     /// Reserved field, or <c>null</c> if not supported.
@@ -176,49 +176,49 @@ public class BiosParameterBlock
     /// Extended boot signature, or <c>null</c> if not supported. Determines
     /// whether the EBPB includes volume label and filesystem type fields.
     /// </summary>
-    public ExtendedBootSignature? ExtendedBootSignature => HasDos34Fields ? bootSig : null;
+    public ExtendedBootSignature? ExtendedBootSignature => HasDos34Fields ? signature : null;
 
     /// <summary>
     /// Volume serial number, or <c>null</c> if not supported.
     /// </summary>
-    public uint? VolumeSerialNumber => HasDos34Fields ? volId : null;
+    public uint? VolumeSerialNumber => HasDos34Fields ? id : null;
 
     /// <summary>
     /// Partition volume label, or <c>null</c> if not supported.
     /// </summary>
-    public string? VolumeLabel => HasDos40Fields ? Encoding.ASCII.GetString(volLab) : null;
+    public string? VolumeLabel => HasDos40Fields ? Encoding.ASCII.GetString(volumeLabel) : null;
 
     /// <summary>
     /// Filesystem type for display purposes, or <c>null</c> if not supported.
     /// </summary>
-    public string? FileSystemType => HasDos40Fields ? Encoding.ASCII.GetString(filSysType) : null;
+    public string? FileSystemType => HasDos40Fields ? Encoding.ASCII.GetString(systemId) : null;
 
     /// <summary>
     /// FAT32 extended flags, or <c>null</c> if not supported.
     /// </summary>
-    public ushort? ExtendedFlags => HasFat32Fields ? extFlags : null;
+    public ushort? ExtendedFlags => HasFat32Fields ? extendedFlags : null;
 
     /// <summary>
     /// FAT32 version number, or <c>null</c> if not supported.
     /// </summary>
-    public int? FileSystemVersion => HasFat32Fields ? fsVer : null;
+    public int? FileSystemVersion => HasFat32Fields ? fsVersion : null;
 
     /// <summary>
     /// Cluster number of root directory start, or <c>null</c> if not supported.
     /// </summary>
-    public uint? RootDirectoryCluster => HasFat32Fields ? rootClus : null;
+    public uint? RootDirectoryCluster => HasFat32Fields ? rootDirFirstCluster : null;
 
     /// <summary>
     /// Logical sector number of the File System Information Sector, or
     /// <c>null</c> if not supported.
     /// </summary>
-    public uint? FsInfoSector => HasFat32Fields ? fsInfo : null;
+    public uint? FsInfoSector => HasFat32Fields ? fsInfoSector : null;
 
     /// <summary>
     /// First logical sector number of a copy of the FAT32 boot sectors, or
     /// <c>null</c> if not supported.
     /// </summary>
-    public int? BackupBootSector => HasFat32Fields ? bkBootSec : null;
+    public int? BackupBootSector => HasFat32Fields ? backupBootSector : null;
 
     /// <summary>
     /// Parse a BIOS Parameter Block.
@@ -232,17 +232,17 @@ public class BiosParameterBlock
 
         var bpb = new BiosParameterBlock
         {
-            bytsPerSec = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[0..2]),
-            secPerClus = bpbBytes[2],
-            rsvdSecCnt = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[3..5]),
-            numFATs = bpbBytes[5],
-            rootEntCnt = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[6..8]),
-            totSec16 = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[8..10]),
+            bytesPerSector = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[0..2]),
+            sectorsPerCluster = bpbBytes[2],
+            reservedSectors = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[3..5]),
+            fats = bpbBytes[5],
+            rootEntries = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[6..8]),
+            sectors = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[8..10]),
             media = bpbBytes[10],
-            fatSz16 = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[11..13]),
+            sectorsPerFat = BinaryPrimitives.ReadUInt16LittleEndian(bpbBytes[11..13]),
         };
 
-        if (bpb is { bytsPerSec: 0 } or { secPerClus: 0 } or { rsvdSecCnt: 0 } or { numFATs: 0 })
+        if (bpb is { bytesPerSector: 0 } or { sectorsPerCluster: 0 } or { reservedSectors: 0 } or { fats: 0 })
         {
             throw new InvalidDataException("At least one of the required BPB parameters is zero.");
         }
@@ -260,25 +260,25 @@ public class BiosParameterBlock
             }
         }
 
-        bpb.secPerTrk = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[24..26]);
-        bpb.numHeads = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[26..28]);
+        bpb.sectorsPerTrack = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[24..26]);
+        bpb.heads = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[26..28]);
 
-        if (bpb is { secPerTrk: 0 } or { numHeads: 0 })
+        if (bpb is { sectorsPerTrack: 0 } or { heads: 0 })
         {
             throw new InvalidDataException("At least one of the required BPB parameters is zero.");
         }
 
-        bpb.jmpBoot = sectorBytes[0..3].ToArray();
-        bpb.oemName = sectorBytes[3..11].ToArray();
+        bpb.jump = sectorBytes[0..3].ToArray();
+        bpb.oem = sectorBytes[3..11].ToArray();
 
-        if (bpb.totSec16 > 0)
+        if (bpb.sectors > 0)
         {
-            bpb.hiddSec = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[28..30]);
+            bpb.hiddenSectors = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[28..30]);
         }
         else
         {
-            bpb.hiddSec = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[28..32]);
-            bpb.totSec32 = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[32..36]);
+            bpb.hiddenSectors = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[28..32]);
+            bpb.largeSectors = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[32..36]);
         }
 
         if (bpb.TotalLogicalSectors / bpb.NumberOfHeads / bpb.PhysicalSectorsPerTrack == 0)
@@ -293,35 +293,35 @@ public class BiosParameterBlock
 
         void ReadEbpb(ReadOnlySpan<byte> ebpbBytes)
         {
-            bpb.drvNum = ebpbBytes[0];
+            bpb.physicalDriveNumber = ebpbBytes[0];
             bpb.reserved1 = ebpbBytes[1];
-            bpb.bootSig = (ExtendedBootSignature)ebpbBytes[2];
-            bpb.volId = BinaryPrimitives.ReadUInt32LittleEndian(ebpbBytes[3..7]);
+            bpb.signature = (ExtendedBootSignature)ebpbBytes[2];
+            bpb.id = BinaryPrimitives.ReadUInt32LittleEndian(ebpbBytes[3..7]);
 
-            if (bpb.bootSig == FAT.ExtendedBootSignature.Dos40)
+            if (bpb.signature == FAT.ExtendedBootSignature.Dos40)
             {
-                bpb.volLab = ebpbBytes[7..18].ToArray();
-                bpb.filSysType = ebpbBytes[18..26].ToArray();
+                bpb.volumeLabel = ebpbBytes[7..18].ToArray();
+                bpb.systemId = ebpbBytes[18..26].ToArray();
             }
         }
 
-        if (bpb.fatSz16 > 0)
+        if (bpb.sectorsPerFat > 0)
         {
             ReadEbpb(sectorBytes[36..]);
 
-            if (bpb.rootEntCnt == 0)
+            if (bpb.rootEntries == 0)
             {
                 throw new InvalidDataException("Claimed root directory entry count is zero.");
             }
         }
         else
         {
-            bpb.fatSz32 = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[36..40]);
-            bpb.extFlags = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[40..42]);
-            bpb.fsVer = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[42..44]);
-            bpb.rootClus = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[44..48]);
-            bpb.fsInfo = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[48..50]);
-            bpb.bkBootSec = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[50..52]);
+            bpb.largeSectorsPerFat = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[36..40]);
+            bpb.extendedFlags = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[40..42]);
+            bpb.fsVersion = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[42..44]);
+            bpb.rootDirFirstCluster = BinaryPrimitives.ReadUInt32LittleEndian(sectorBytes[44..48]);
+            bpb.fsInfoSector = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[48..50]);
+            bpb.backupBootSector = BinaryPrimitives.ReadUInt16LittleEndian(sectorBytes[50..52]);
             bpb.reserved = sectorBytes[54..64].ToArray();
 
             ReadEbpb(sectorBytes[64..]);
@@ -342,87 +342,87 @@ public class BiosParameterBlock
     {
         [163840] = new() //5.25" 160 KiB
         {
-            bytsPerSec = 512,
-            secPerClus = 1,
-            rsvdSecCnt = 1,
-            numFATs = 2,
-            rootEntCnt = 64,
-            totSec16 = 320,
+            bytesPerSector = 512,
+            sectorsPerCluster = 1,
+            reservedSectors = 1,
+            fats = 2,
+            rootEntries = 64,
+            sectors = 320,
             media = 0xFE,
-            fatSz16 = 1,
-            secPerTrk = 8,
-            numHeads = 1,
-            hiddSec = 0
+            sectorsPerFat = 1,
+            sectorsPerTrack = 8,
+            heads = 1,
+            hiddenSectors = 0
         },
         [184320] = new() //5.25" 180 KiB
         {
-            bytsPerSec = 512,
-            secPerClus = 1,
-            rsvdSecCnt = 1,
-            numFATs = 2,
-            rootEntCnt = 64,
-            totSec16 = 360,
+            bytesPerSector = 512,
+            sectorsPerCluster = 1,
+            reservedSectors = 1,
+            fats = 2,
+            rootEntries = 64,
+            sectors = 360,
             media = 0xFC,
-            fatSz16 = 1,
-            secPerTrk = 9,
-            numHeads = 1,
-            hiddSec = 0,
+            sectorsPerFat = 1,
+            sectorsPerTrack = 9,
+            heads = 1,
+            hiddenSectors = 0,
         },
         [327680] = new() //5.25" 320 KiB
         {
-            bytsPerSec = 512,
-            secPerClus = 2,
-            rsvdSecCnt = 1,
-            numFATs = 2,
-            rootEntCnt = 112,
-            totSec16 = 640,
+            bytesPerSector = 512,
+            sectorsPerCluster = 2,
+            reservedSectors = 1,
+            fats = 2,
+            rootEntries = 112,
+            sectors = 640,
             media = 0xFF,
-            fatSz16 = 1,
-            secPerTrk = 8,
-            numHeads = 2,
-            hiddSec = 0
+            sectorsPerFat = 1,
+            sectorsPerTrack = 8,
+            heads = 2,
+            hiddenSectors = 0
         },
         [368640] = new() //5.25" 360 KiB
         {
-            bytsPerSec = 512,
-            secPerClus = 2,
-            rsvdSecCnt = 1,
-            numFATs = 2,
-            rootEntCnt = 112,
-            totSec16 = 720,
+            bytesPerSector = 512,
+            sectorsPerCluster = 2,
+            reservedSectors = 1,
+            fats = 2,
+            rootEntries = 112,
+            sectors = 720,
             media = 0xFD,
-            fatSz16 = 2,
-            secPerTrk = 9,
-            numHeads = 2,
-            hiddSec = 0
+            sectorsPerFat = 2,
+            sectorsPerTrack = 9,
+            heads = 2,
+            hiddenSectors = 0
         },
         [256256] = new() //8" 250 KiB
         {
-            bytsPerSec = 128,
-            secPerClus = 4,
-            rsvdSecCnt = 1,
-            numFATs = 2,
-            rootEntCnt = 68,
-            totSec16 = 2002,
+            bytesPerSector = 128,
+            sectorsPerCluster = 4,
+            reservedSectors = 1,
+            fats = 2,
+            rootEntries = 68,
+            sectors = 2002,
             media = 0xFE,
-            fatSz16 = 6,
-            secPerTrk = 26,
-            numHeads = 1,
-            hiddSec = 0
+            sectorsPerFat = 6,
+            sectorsPerTrack = 26,
+            heads = 1,
+            hiddenSectors = 0
         },
         [1261568] = new() //8" 1232 KiB
         {
-            bytsPerSec = 1024,
-            secPerClus = 1,
-            rsvdSecCnt = 1,
-            numFATs = 2,
-            rootEntCnt = 192,
-            totSec16 = 1232,
+            bytesPerSector = 1024,
+            sectorsPerCluster = 1,
+            reservedSectors = 1,
+            fats = 2,
+            rootEntries = 192,
+            sectors = 1232,
             media = 0xFE,
-            fatSz16 = 2,
-            secPerTrk = 8,
-            numHeads = 2,
-            hiddSec = 0
+            sectorsPerFat = 2,
+            sectorsPerTrack = 8,
+            heads = 2,
+            hiddenSectors = 0
         }
     }.ToImmutableDictionary();
 
@@ -431,16 +431,16 @@ public class BiosParameterBlock
     /// </summary>
     public static BiosParameterBlock DefaultAcornParameters => new()
     {
-        bytsPerSec = 1024,
-        secPerClus = 1,
-        rsvdSecCnt = 0,
-        numFATs = 1,
-        rootEntCnt = 2,
-        totSec16 = 192,
+        bytesPerSector = 1024,
+        sectorsPerCluster = 1,
+        reservedSectors = 0,
+        fats = 1,
+        rootEntries = 2,
+        sectors = 192,
         media = 5,
-        fatSz16 = 2,
-        secPerTrk = 800,
-        numHeads = 0xFD,
-        hiddSec = 0
+        sectorsPerFat = 2,
+        sectorsPerTrack = 800,
+        heads = 0xFD,
+        hiddenSectors = 0
     };
 }
