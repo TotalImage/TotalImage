@@ -287,7 +287,6 @@ public class BiosParameterBlock
             throw new InvalidDataException("The sector size is invalid.");
         }
 
-
         if (bpb.LogicalSectorsPerCluster is not (1 or 2 or 4 or 8 or 16 or 32 or 64 or 128))
         {
             throw new InvalidDataException("The cluster size is invalid.");
