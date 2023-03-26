@@ -24,7 +24,7 @@ namespace TotalImage.Containers.FDI
         /// <inheritdoc />
         public FdiContainer(string path, bool memoryMapping) : base(path, memoryMapping)
         {
-            _contentStream = new PartialStream(containerStream, 4096, containerStream.Length);
+            _contentStream = new PartialStream(containerStream, 4096, containerStream.Length - 4096);
 
             byte[] header = new byte[4096];
             containerStream.Seek(0, SeekOrigin.Begin);
