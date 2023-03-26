@@ -13,7 +13,7 @@ namespace TotalImage.Containers.NHD
         /// <inheritdoc />
         public NhdContainer(string path, bool memoryMapping) : base(path, memoryMapping)
         {
-            _contentStream = new PartialStream(containerStream, 512, containerStream.Length);
+            _contentStream = new PartialStream(containerStream, 512, containerStream.Length - 512);
 
             byte[] header = new byte[512];
             containerStream.Seek(0, SeekOrigin.Begin);
