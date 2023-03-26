@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using TotalImage.Containers;
 using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
-using TotalImage.Containers.FDI;
+using TotalImage.Containers.Anex86;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using TiDirectory = TotalImage.FileSystems.Directory;
@@ -624,10 +624,10 @@ namespace TotalImage
             //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
             //ofd.ShowReadOnly = true;
             ofd.Filter =
-                "All supported containers (*.*)|*.nhd;*.vhd;*.iso;*.imz;*.fdi;*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360|" +
+                "All supported containers (*.*)|*.nhd;*.vhd;*.iso;*.imz;*.fdi;*.hdi;*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360|" +
                 "Plain sector image (*.img,*.ima,*.vfd,*.flp,*.dsk,*.hdm,*.288,*.144,*.12,*.720,*.360)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360|" +
                 "WinImage compressed image (*.imz)|*.imz|" +
-                "Anex86 floppy disk image (*.fdi)|*.fdi|" +
+                "Anex86 disk image (*.fdi,*.hdi)|*.fdi;*.hdi|" +
                 "ISO image (*.iso)|*.iso|" +
                 "Microsoft VHD (*.vhd)|*.vhd|" +
                 "T98-Next HD (*.nhd)|*.nhd|" +
@@ -1978,8 +1978,9 @@ namespace TotalImage
                         case ".imz":
                             image = new ImzContainer(path, memoryMapping);
                             break;
+                        case ".hdi":
                         case ".fdi":
-                            image = new FdiContainer(path, memoryMapping);
+                            image = new Anex86Container(path, memoryMapping);
                             break;
                         default:
                             image = new RawContainer(path, memoryMapping);
