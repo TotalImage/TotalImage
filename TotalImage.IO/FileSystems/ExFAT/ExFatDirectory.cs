@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Text;
+using TotalImage.FileSystems.FAT;
 
 namespace TotalImage.FileSystems.ExFAT;
 
@@ -53,18 +54,18 @@ public class ExFatDirectory : Directory
 
     public override DateTime? LastAccessTime
     {
-        get => null;
+        get => FileDirectoryEntry?.LastAccessedTime ?? null;
         set => throw new NotImplementedException();
     }
     public override DateTime? LastWriteTime
     {
-        get => null;
+        get => FileDirectoryEntry?.LastModifiedTime ?? null;
         set => throw new NotImplementedException();
     }
 
     public override DateTime? CreationTime
     {
-        get => null;
+        get => FileDirectoryEntry?.CreateTime;
         set => throw new NotImplementedException();
     }
 

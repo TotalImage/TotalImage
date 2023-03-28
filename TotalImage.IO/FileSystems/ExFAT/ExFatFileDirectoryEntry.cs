@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using TotalImage.FileSystems.FAT;
 
 namespace TotalImage.FileSystems.ExFAT;
 
@@ -33,4 +34,20 @@ public class ExFatFileDirectoryEntry
         LastModifiedUtcOffset = entry[23];
         LastAccessedUtcOffset = entry[24];
     }
+
+    public DateTime? CreateTime =>
+        FatDateTime.ToDateTime(
+            (ushort)((CreateTimestamp & 0xFFFF_0000) >> 16),
+            (ushort)CreateTimestamp, Create10msIncrement);
+
+    public DateTime? LastModifiedTime =>
+        FatDateTime.ToDateTime(
+            (ushort)((LastModifiedTimestamp & 0xFFFF_0000) >> 16),
+            (ushort)LastModifiedTimestamp, LastModified10msIncrement);
+
+
+    public DateTime? LastAccessedTime =>
+        FatDateTime.ToDateTime(
+            (ushort)((LastAccessedTimestamp & 0xFFFF_0000) >> 16),
+            (ushort)LastAccessedTimestamp);
 }
