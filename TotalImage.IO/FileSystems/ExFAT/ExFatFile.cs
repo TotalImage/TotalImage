@@ -70,10 +70,8 @@ public class ExFatFile : File
         throw new NotImplementedException();
     }
 
-    public override Stream GetStream()
-    {
-        throw new NotImplementedException();
-    }
+    public override Stream GetStream() =>
+        StreamExtensionDirectoryEntry.GetStream((ExFatFileSystem)FileSystem);
 
     public override void MoveTo(string path)
     {

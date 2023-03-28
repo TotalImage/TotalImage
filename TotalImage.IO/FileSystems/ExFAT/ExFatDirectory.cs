@@ -8,15 +8,38 @@ namespace TotalImage.FileSystems.ExFAT;
 
 public class ExFatDirectory : Directory
 {
+    protected ExFatFileDirectoryEntry? FileDirectoryEntry { get; }
+    protected ExFatStreamExtensionDirectoryEntry? StreamExtensionDirectoryEntry { get; }
+    protected ImmutableArray<ExFatFileNameDirectoryEntry>? FileNameDirectoryEntries { get; }
+
     public ExFatDirectory(ExFatFileSystem fileSystem) : base(fileSystem, null)
     {
 
+    }
+
+    public ExFatDirectory(Directory directory, ExFatFileDirectoryEntry fileEntry, ExFatStreamExtensionDirectoryEntry streamExtensionEntry, IEnumerable<ExFatFileNameDirectoryEntry> fileNameEntries) : base(directory.FileSystem, directory)
+    {
+        FileDirectoryEntry = fileEntry;
+        StreamExtensionDirectoryEntry = streamExtensionEntry;
+        FileNameDirectoryEntries = fileNameEntries.ToImmutableArray();
     }
 
     public override string Name
     {
         get
         {
+            if (FileNameDirectoryEntries is not null)
+            {
+                var sb = new StringBuilder(FileNameDirectoryEntries.Value.Length * 15);
+
+                foreach (var entry in FileNameDirectoryEntries)
+                {
+                    sb.Append(entry.FileName);
+                }
+
+                return sb.ToString().TrimEnd('\0');
+            }
+
             return string.Empty;
         }
         set => throw new NotImplementedException();
@@ -49,9 +72,16 @@ public class ExFatDirectory : Directory
     {
         get
         {
-            var exFat = (ExFatFileSystem)FileSystem;
-            var clusters = exFat.ActiveFat.GetClusterChain(exFat.BootSector.FirstClusterOfRootDirectory);
-            return (ulong)(clusters.Length * exFat.BytesPerCluster);
+            if (StreamExtensionDirectoryEntry is not null)
+            {
+                return StreamExtensionDirectoryEntry.ValidDataLength;
+            }
+            else
+            {
+                var exFat = (ExFatFileSystem)FileSystem;
+                var clusters = exFat.ActiveFat.GetClusterChain(exFat.BootSector.FirstClusterOfRootDirectory);
+                return (ulong)(clusters.Length * exFat.BytesPerCluster);
+            }
         }
         set => throw new NotImplementedException();
     }
@@ -70,7 +100,8 @@ public class ExFatDirectory : Directory
     public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
     {
         var fileSystem = (ExFatFileSystem)FileSystem;
-        var stream = new ExFatDataStream(fileSystem, fileSystem.BootSector.FirstClusterOfRootDirectory);
+        var stream = StreamExtensionDirectoryEntry?.GetStream(fileSystem) ??
+            new ExFatDataStream(fileSystem, fileSystem.BootSector.FirstClusterOfRootDirectory);
 
         var entry = new byte[32];
 
@@ -88,7 +119,14 @@ public class ExFatDirectory : Directory
             {
                 if (fileDirEntry != null && streamExtDirEntry != null && fileNameDirEntries.Count != 0)
                 {
-                    yield return new ExFatFile(this, fileDirEntry, streamExtDirEntry, fileNameDirEntries);
+                    if (((FileAttributes)fileDirEntry.FileAttributes).HasFlag(FileAttributes.Directory))
+                    {
+                        yield return new ExFatDirectory(this, fileDirEntry, streamExtDirEntry, fileNameDirEntries);
+                    }
+                    else
+                    {
+                        yield return new ExFatFile(this, fileDirEntry, streamExtDirEntry, fileNameDirEntries);
+                    }
                 }
 
                 fileDirEntry = new(entry);
@@ -110,7 +148,14 @@ public class ExFatDirectory : Directory
 
         if (fileDirEntry != null && streamExtDirEntry != null && fileNameDirEntries.Count != 0)
         {
-            yield return new ExFatFile(this, fileDirEntry, streamExtDirEntry, fileNameDirEntries);
+            if (((FileAttributes)fileDirEntry.FileAttributes).HasFlag(FileAttributes.Directory))
+            {
+                yield return new ExFatDirectory(this, fileDirEntry, streamExtDirEntry, fileNameDirEntries);
+            }
+            else
+            {
+                yield return new ExFatFile(this, fileDirEntry, streamExtDirEntry, fileNameDirEntries);
+            }
         }
     }
 
