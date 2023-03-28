@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.IO;
+using TotalImage.FileSystems.ExFAT;
 using TotalImage.FileSystems.FAT;
 using TotalImage.FileSystems.ISO;
 using TotalImage.FileSystems.RAW;
@@ -13,6 +14,7 @@ namespace TotalImage.FileSystems
     {
         private static readonly ImmutableArray<IFileSystemFactory> _knownFactories = ImmutableArray.Create<IFileSystemFactory>(
             new FatFactory(),
+            new ExFatFactory(),
             new IsoFactory()
         );
 
