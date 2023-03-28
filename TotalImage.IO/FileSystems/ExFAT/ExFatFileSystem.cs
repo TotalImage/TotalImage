@@ -44,7 +44,7 @@ public class ExFatFileSystem : FileSystem
         set => throw new NotImplementedException();
     }
 
-    public override Directory RootDirectory => throw new NotImplementedException();
+    public override Directory RootDirectory => new ExFatDirectory(this);
 
     public override long TotalFreeSpace => 0;
 
