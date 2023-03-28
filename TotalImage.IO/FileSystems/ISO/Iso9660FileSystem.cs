@@ -101,6 +101,6 @@ namespace TotalImage.FileSystems.ISO
         public override long TotalSize { get; }
 
         /// <inheritdoc />
-        public override uint AllocationUnitSize => PrimaryVolumeDescriptor.LogicalBlockSize;
+        public override long AllocationUnitSize => PrimaryVolumeDescriptor.LogicalBlockSize;
     }
 }

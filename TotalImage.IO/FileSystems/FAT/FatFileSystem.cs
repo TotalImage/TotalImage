@@ -13,7 +13,7 @@ namespace TotalImage.FileSystems.FAT
         public BiosParameterBlock BiosParameterBlock => _bpb;
 
         protected FatFileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
-        { 
+        {
             _bpb = bpb;
             RootDirectory = new FatDirectory(this);
         }
@@ -28,7 +28,7 @@ namespace TotalImage.FileSystems.FAT
         public override long TotalFreeSpace => TotalFreeClusters * BytesPerCluster;
 
         /// <inheritdoc />
-        public override uint AllocationUnitSize => BytesPerCluster;
+        public override long AllocationUnitSize => BytesPerCluster;
 
         public virtual uint TotalFreeClusters
         {
