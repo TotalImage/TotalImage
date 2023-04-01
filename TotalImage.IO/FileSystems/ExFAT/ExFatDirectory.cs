@@ -9,16 +9,16 @@ namespace TotalImage.FileSystems.ExFAT;
 
 public class ExFatDirectory : Directory
 {
-    protected ExFatFileDirectoryEntry? FileDirectoryEntry { get; }
-    protected ExFatStreamExtensionDirectoryEntry? StreamExtensionDirectoryEntry { get; }
-    protected ImmutableArray<ExFatFileNameDirectoryEntry>? FileNameDirectoryEntries { get; }
+    protected FileDirectoryEntry? FileDirectoryEntry { get; }
+    protected StreamExtensionDirectoryEntry? StreamExtensionDirectoryEntry { get; }
+    protected ImmutableArray<FileNameDirectoryEntry>? FileNameDirectoryEntries { get; }
 
     public ExFatDirectory(ExFatFileSystem fileSystem) : base(fileSystem, null)
     {
 
     }
 
-    public ExFatDirectory(Directory directory, ExFatFileDirectoryEntry fileEntry, ExFatStreamExtensionDirectoryEntry streamExtensionEntry, IEnumerable<ExFatFileNameDirectoryEntry> fileNameEntries) : base(directory.FileSystem, directory)
+    public ExFatDirectory(Directory directory, FileDirectoryEntry fileEntry, StreamExtensionDirectoryEntry streamExtensionEntry, IEnumerable<FileNameDirectoryEntry> fileNameEntries) : base(directory.FileSystem, directory)
     {
         FileDirectoryEntry = fileEntry;
         StreamExtensionDirectoryEntry = streamExtensionEntry;
@@ -106,9 +106,9 @@ public class ExFatDirectory : Directory
 
         var entry = new byte[32];
 
-        ExFatFileDirectoryEntry fileDirEntry = null;
-        ExFatStreamExtensionDirectoryEntry streamExtDirEntry = null;
-        List<ExFatFileNameDirectoryEntry> fileNameDirEntries = new();
+        FileDirectoryEntry fileDirEntry = null;
+        StreamExtensionDirectoryEntry streamExtDirEntry = null;
+        List<FileNameDirectoryEntry> fileNameDirEntries = new();
 
         do
         {

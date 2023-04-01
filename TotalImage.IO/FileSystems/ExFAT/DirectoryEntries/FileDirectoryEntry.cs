@@ -4,11 +4,8 @@ using TotalImage.FileSystems.FAT;
 
 namespace TotalImage.FileSystems.ExFAT;
 
-public class ExFatFileDirectoryEntry
+public class FileDirectoryEntry : PrimaryDirectoryEntry
 {
-    public byte EntryType { get; }
-    public byte SecondaryCount { get; }
-    public ushort SetChecksum { get; }
     public ushort FileAttributes { get; }
     public uint CreateTimestamp { get; }
     public uint LastModifiedTimestamp { get; }
@@ -19,11 +16,8 @@ public class ExFatFileDirectoryEntry
     public byte LastModifiedUtcOffset { get; }
     public byte LastAccessedUtcOffset { get; }
 
-    public ExFatFileDirectoryEntry(in ReadOnlySpan<byte> entry)
+    public FileDirectoryEntry(in ReadOnlySpan<byte> entry) : base(entry)
     {
-        EntryType = entry[0];
-        SecondaryCount = entry[1];
-        SetChecksum = BinaryPrimitives.ReadUInt16LittleEndian(entry[2..4]);
         FileAttributes = BinaryPrimitives.ReadUInt16LittleEndian(entry[4..6]);
         CreateTimestamp = BinaryPrimitives.ReadUInt32LittleEndian(entry[8..12]);
         LastModifiedTimestamp = BinaryPrimitives.ReadUInt32LittleEndian(entry[12..16]);
@@ -50,4 +44,8 @@ public class ExFatFileDirectoryEntry
         FatDateTime.ToDateTime(
             (ushort)((LastAccessedTimestamp & 0xFFFF_0000) >> 16),
             (ushort)LastAccessedTimestamp);
+
+    public override ushort GeneralPrimaryFlags => throw new InvalidOperationException();
+    public override uint FirstCluster => throw new InvalidOperationException();
+    public override ulong DataLength => throw new InvalidOperationException();
 }

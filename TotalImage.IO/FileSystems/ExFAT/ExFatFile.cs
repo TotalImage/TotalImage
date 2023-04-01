@@ -9,11 +9,11 @@ namespace TotalImage.FileSystems.ExFAT;
 
 public class ExFatFile : File
 {
-    protected ExFatFileDirectoryEntry FileDirectoryEntry { get; }
-    protected ExFatStreamExtensionDirectoryEntry StreamExtensionDirectoryEntry { get; }
-    protected ImmutableArray<ExFatFileNameDirectoryEntry> FileNameDirectoryEntries { get; }
+    protected FileDirectoryEntry FileDirectoryEntry { get; }
+    protected StreamExtensionDirectoryEntry StreamExtensionDirectoryEntry { get; }
+    protected ImmutableArray<FileNameDirectoryEntry> FileNameDirectoryEntries { get; }
 
-    public ExFatFile(Directory directory, ExFatFileDirectoryEntry fileEntry, ExFatStreamExtensionDirectoryEntry streamExtensionEntry, IEnumerable<ExFatFileNameDirectoryEntry> fileNameEntries) : base(directory.FileSystem, directory)
+    public ExFatFile(Directory directory, FileDirectoryEntry fileEntry, StreamExtensionDirectoryEntry streamExtensionEntry, IEnumerable<FileNameDirectoryEntry> fileNameEntries) : base(directory.FileSystem, directory)
     {
         FileDirectoryEntry = fileEntry;
         StreamExtensionDirectoryEntry = streamExtensionEntry;
