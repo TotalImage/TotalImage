@@ -41,7 +41,15 @@ public class ExFatFileSystem : FileSystem
 
     public override string VolumeLabel
     {
-        get => "";
+        get
+        {
+            var rootDirectoryStream = new ExFatDataStream(this, BootSector.FirstClusterOfRootDirectory);
+            var volumeLabel = (VolumeLabelDirectoryEntry?)DirectoryEntry
+                .EnumerateDirectory(rootDirectoryStream)
+                .SingleOrDefault(x => x is VolumeLabelDirectoryEntry);
+
+            return volumeLabel?.VolumeLabel[0..volumeLabel.CharacterCount] ?? string.Empty;
+        }
         set => throw new NotImplementedException();
     }
 
