@@ -1,5 +1,8 @@
 using System;
 using System.Buffers.Binary;
+using System.Collections.Generic;
+using System.IO;
+using DirectoryEntryType = TotalImage.FileSystems.ExFAT.EntryType;
 
 namespace TotalImage.FileSystems.ExFAT;
 
@@ -35,4 +38,37 @@ public abstract class DirectoryEntry
 
     protected Stream GetStreamInternal(ExFatFileSystem fileSystem, bool noFatChain) =>
         GetStreamInternal(fileSystem, noFatChain, DataLength);
+
+    public static DirectoryEntry? Parse(in ReadOnlySpan<byte> entry) => (EntryType)entry[0] switch
+    {
+        DirectoryEntryType.File => new FileDirectoryEntry(entry),
+        DirectoryEntryType.StreamExtension => new StreamExtensionDirectoryEntry(entry),
+        DirectoryEntryType.FileName => new FileNameDirectoryEntry(entry),
+        _ => null
+    };
+
+    public static IEnumerable<DirectoryEntry> EnumerateDirectory(Stream stream)
+    {
+        var buffer = new byte[32];
+
+        DirectoryEntry? entry = null;
+
+        do
+        {
+            stream.Read(buffer);
+
+            var position = stream.Position;
+
+            if ((entry = Parse(buffer)) is not null)
+            {
+                yield return entry;
+            }
+
+            // PartialStream is stupid and we have no guarantee the stream
+            // will remain at the same position we left it on before
+            // the `yield return`
+            stream.Position = position;
+        }
+        while (buffer[0] != (byte)DirectoryEntryType.EndOfDirectory);
+    }
 }

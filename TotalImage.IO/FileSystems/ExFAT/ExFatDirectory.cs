@@ -104,19 +104,13 @@ public class ExFatDirectory : Directory
         var stream = StreamExtensionDirectoryEntry?.GetStream(fileSystem) ??
             new ExFatDataStream(fileSystem, fileSystem.BootSector.FirstClusterOfRootDirectory);
 
-        var entry = new byte[32];
-
-        FileDirectoryEntry fileDirEntry = null;
-        StreamExtensionDirectoryEntry streamExtDirEntry = null;
+        FileDirectoryEntry? fileDirEntry = null;
+        StreamExtensionDirectoryEntry? streamExtDirEntry = null;
         List<FileNameDirectoryEntry> fileNameDirEntries = new();
 
-        do
+        foreach(var entry in DirectoryEntry.EnumerateDirectory(stream))
         {
-            stream.Read(entry);
-
-            var position = stream.Position;
-
-            if (entry[0] == 0x85) // File
+            if (entry is FileDirectoryEntry)
             {
                 if (fileDirEntry != null && streamExtDirEntry != null && fileNameDirEntries.Count != 0)
                 {
@@ -130,22 +124,19 @@ public class ExFatDirectory : Directory
                     }
                 }
 
-                fileDirEntry = new(entry);
+                fileDirEntry = (FileDirectoryEntry)entry;
                 streamExtDirEntry = null;
                 fileNameDirEntries.Clear();
             }
-            else if (entry[0] == 0xC0) // Stream Extension
+            else if (entry is StreamExtensionDirectoryEntry)
             {
-                streamExtDirEntry = new(entry);
+                streamExtDirEntry = (StreamExtensionDirectoryEntry)entry;
             }
-            else if (entry[0] == 0xC1) // File Name
+            else if (entry is FileNameDirectoryEntry)
             {
-                fileNameDirEntries.Add(new(entry));
+                fileNameDirEntries.Add((FileNameDirectoryEntry)entry);
             }
-
-            stream.Position = position;
         }
-        while (entry[0] != 0x00);
 
         if (fileDirEntry != null && streamExtDirEntry != null && fileNameDirEntries.Count != 0)
         {
