@@ -4,7 +4,7 @@ using System.IO;
 
 namespace TotalImage.FileSystems.ExFAT;
 
-public class StreamExtensionDirectoryEntry : SecondaryDirectoryEntry
+public class StreamExtensionDirectoryEntry : SecondaryDirectoryEntry, IStreamable
 {
     public byte NameLength { get; }
     public ushort NameHash { get; }
@@ -17,20 +17,6 @@ public class StreamExtensionDirectoryEntry : SecondaryDirectoryEntry
         ValidDataLength = BinaryPrimitives.ReadUInt64LittleEndian(entry[8..16]);
     }
 
-    public Stream GetStream(ExFatFileSystem fileSystem)
-    {
-        if ((GeneralSecondaryFlags & 0x02) != 0) // NoFatChain
-        {
-            var clusterHeapOffset = fileSystem.BootSector.ClusterHeapOffset * fileSystem.BytesPerSector;
-            var clusterOffset = clusterHeapOffset + (FirstCluster - 2) * fileSystem.BytesPerCluster;
-            return new PartialStream(fileSystem.GetStream(), clusterOffset, (long)ValidDataLength)
-            {
-                Position = 0
-            };
-        }
-        else
-        {
-            return new ExFatDataStream(fileSystem, FirstCluster);
-        }
-    }
+    public Stream GetStream(ExFatFileSystem fileSystem) =>
+        GetStreamInternal(fileSystem, (GeneralSecondaryFlags & 0x02) != 0, ValidDataLength);
 }
