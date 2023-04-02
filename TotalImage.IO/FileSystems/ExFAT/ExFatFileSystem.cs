@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
 
 namespace TotalImage.FileSystems.ExFAT;
 
@@ -24,7 +25,7 @@ public class ExFatFileSystem : FileSystem
 
         var builder = ImmutableArray.CreateBuilder<ExFatFileAllocationTable>();
 
-        for(var i = 0; i < BootSector.NumberOfFats; i++)
+        for (var i = 0; i < BootSector.NumberOfFats; i++)
         {
             builder.Add(new ExFatFileAllocationTable(this, i));
         }
@@ -46,7 +47,44 @@ public class ExFatFileSystem : FileSystem
 
     public override Directory RootDirectory => new ExFatDirectory(this);
 
-    public override long TotalFreeSpace => 0;
+    public override long TotalFreeSpace
+    {
+        get
+        {
+            var rootDirectoryStream = new ExFatDataStream(this, BootSector.FirstClusterOfRootDirectory);
+            var allocationBitmap = (AllocationBitmapDirectoryEntry)DirectoryEntry
+                .EnumerateDirectory(rootDirectoryStream)
+                .Single(x => x is AllocationBitmapDirectoryEntry entry &&
+                    (entry.BitmapFlags & 0x01) == (BootSector.VolumeFlags & 0x01));
+
+            var buffer = new byte[BootSector.ClusterCount / 8 + 1];
+            var stream = allocationBitmap.GetStream(this);
+            stream.Read(buffer);
+
+            var freeClusters = 0L;
+
+            for (var i = 0; i < buffer.Length - 1; i++)
+            {
+                for (var shift = 0; shift < 8; shift++)
+                {
+                    if ((buffer[i] & (1 << shift)) == 0)
+                    {
+                        freeClusters++;
+                    }
+                }
+            }
+
+            for (var shift = 0; shift < buffer.Length % 8; shift++)
+            {
+                if ((buffer[^1] & (1 << shift)) == 0)
+                {
+                    freeClusters++;
+                }
+            }
+
+            return freeClusters * BytesPerCluster;
+        }
+    }
 
     public override long TotalSize => (long)BootSector.VolumeLength;
 

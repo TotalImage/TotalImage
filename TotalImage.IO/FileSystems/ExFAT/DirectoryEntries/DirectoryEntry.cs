@@ -41,6 +41,7 @@ public abstract class DirectoryEntry
 
     public static DirectoryEntry? Parse(in ReadOnlySpan<byte> entry) => (EntryType)entry[0] switch
     {
+        DirectoryEntryType.AllocationBitmap => new AllocationBitmapDirectoryEntry(entry),
         DirectoryEntryType.File => new FileDirectoryEntry(entry),
         DirectoryEntryType.StreamExtension => new StreamExtensionDirectoryEntry(entry),
         DirectoryEntryType.FileName => new FileNameDirectoryEntry(entry),
