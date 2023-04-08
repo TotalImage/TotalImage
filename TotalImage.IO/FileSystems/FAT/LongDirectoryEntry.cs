@@ -26,7 +26,7 @@ namespace TotalImage.FileSystems.FAT
         /// Characters 1-5 of the long name sub-component.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        ImmutableArray<char> name1;
+        string name1;
 
         /// <summary>
         /// Attributes - must be <c>FatAttributes.LongName</c>
@@ -48,7 +48,7 @@ namespace TotalImage.FileSystems.FAT
         /// Characters 6-11 of the long name sub-component.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-        ImmutableArray<char> name2;
+        string name2;
 
         /// <summary>
         /// Must be zero.
@@ -59,48 +59,35 @@ namespace TotalImage.FileSystems.FAT
         /// Characters 12-13 of the long name sub-component.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        ImmutableArray<char> name3;
+        string name3;
 
         public LongDirectoryEntry(ReadOnlySpan<byte> entry) : this()
         {
             ordinal = entry[0];
-
-            var name1 = new char[5];
-            Encoding.Unicode.GetChars(entry[1..11], name1);
-            this.name1 = name1.ToImmutableArray();
-
+            name1 = Encoding.Unicode.GetString(entry[1..11]);
             attributes = (FatAttributes)entry[11];
             type = entry[12];
             checksum = entry[13];
-
-            var name2 = new char[6];
-            Encoding.Unicode.GetChars(entry[14..26], name2);
-            this.name2 = name2.ToImmutableArray();
-
+            name2 = Encoding.Unicode.GetString(entry[14..26]);
             mustBeZero = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
-
-            var name3 = new char[2];
-            Encoding.Unicode.GetChars(entry[28..32], name3);
-            this.name3 = name3.ToImmutableArray();
+            name3 = Encoding.Unicode.GetString(entry[28..32]);
         }
 
         public int Ordinal => ordinal;
         public byte Type => type;
         public byte Checksum => checksum;
 
-        public static string CombineEntries(LongDirectoryEntry[] entries)
+        public static string CombineEntries(ICollection<LongDirectoryEntry> entries)
         {
-            var sb = new StringBuilder(entries.Length * 13);
+            var sb = new StringBuilder(entries.Count * 13);
             foreach(var entry in entries)
             {
-                sb.Append(entry.name1.AsSpan());
-                sb.Append(entry.name2.AsSpan());
-                sb.Append(entry.name3.AsSpan());
+                sb.Append(entry.name1);
+                sb.Append(entry.name2);
+                sb.Append(entry.name3);
             }
 
-            var name = sb.ToString();
-            var nullIndex = name.IndexOf('\0');
-            return nullIndex > 0 ? name.Substring(0, nullIndex) : name;
+            return sb.ToString().Split('\0')[0];
         }
 
         public static byte GetShortNameChecksum(ReadOnlySpan<byte> filename)
