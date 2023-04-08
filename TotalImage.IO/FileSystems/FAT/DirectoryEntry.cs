@@ -1,6 +1,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -18,89 +19,93 @@ namespace TotalImage.FileSystems.FAT
         /// “Short” file name limited to 11 characters.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-        public byte[] name;
+        ImmutableArray<byte> fileName;
 
         /// <summary>
         /// File attributes.
         /// </summary>
-        public FatAttributes attr;
+        FatAttributes attributes;
 
         /// <summary>
         /// Reserved. Must be set to 0.
         /// </summary>
-        public byte ntRes;
+        byte ntByte;
 
         /// <summary>
         /// Component of the file creation time. Count of tenths of a second.
         /// </summary>
-        public byte crtTimeTenth;
+        byte creationMSec;
 
         /// <summary>
         /// Creation time. Granularity is 2 seconds.
         /// </summary>
-        public ushort crtTime;
+        ushort creationTime;
 
         /// <summary>
         /// Creation date.
         /// </summary>
-        public ushort crtDate;
+        ushort creationDate;
 
         /// <summary>
         /// Last access date. Last access is defined as a read or write operation performed on the file/directory described by this entry
         /// </summary>
-        public ushort lstAccDate;
+        ushort lastAccessDate;
 
         /// <summary>
         /// High word of first data cluster number for file/directory described by this entry. Only valid for volumes formatted FAT32. Must be set to 0 on volumes formatted FAT12/FAT16.
         /// </summary>
-        public ushort fstClusHI;
+        ushort firstClusterOfFileHi;
 
         /// <summary>
         /// Last modification (write) time.
         /// </summary>
-        public ushort wrtTime;
+        ushort lastWriteTime;
 
         /// <summary>
         /// Last modification (write) date.
         /// </summary>
-        public ushort wrtDate;
+        ushort lastWriteDate;
 
         /// <summary>
         /// Low word of first data cluster number for file/directory described by this entry.
         /// </summary>
-        public ushort fstClusLO;
+        ushort firstClusterOfFile;
 
         /// <summary>
         /// 32-bit quantity containing size in bytes of file/directory described by this entry.
         /// </summary>
-        public uint fileSize;
+        uint fileSize;
 
         public DirectoryEntry(ReadOnlySpan<byte> entry)
         {
-            name = entry[0..11].ToArray();
-            attr = (FatAttributes)entry[11];
-            ntRes = entry[12];
-            crtTimeTenth = entry[13];
-            crtTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[14..16]);
-            crtDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[16..18]);
-            lstAccDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[18..20]);
-            fstClusHI = BinaryPrimitives.ReadUInt16LittleEndian(entry[20..22]);
-            wrtTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[22..24]);
-            wrtDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[24..26]);
-            fstClusLO = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
+            fileName = entry[0..11].ToImmutableArray();
+            attributes = (FatAttributes)entry[11];
+            ntByte = entry[12];
+            creationMSec = entry[13];
+            creationTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[14..16]);
+            creationDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[16..18]);
+            lastAccessDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[18..20]);
+            firstClusterOfFileHi = BinaryPrimitives.ReadUInt16LittleEndian(entry[20..22]);
+            lastWriteTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[22..24]);
+            lastWriteDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[24..26]);
+            firstClusterOfFile = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
             fileSize = BinaryPrimitives.ReadUInt32LittleEndian(entry[28..32]);
         }
 
-        public string BaseName => Encoding.ASCII.GetString(name[0..8]).Trim();
-        public string Extension => Encoding.ASCII.GetString(name[8..11]).Trim();
+        public string BaseName => Encoding.ASCII.GetString(fileName.AsSpan()[0..8]).Trim();
+        public string Extension => Encoding.ASCII.GetString(fileName.AsSpan()[8..11]).Trim();
 
-        public string Name => $"{BaseName}{(!string.IsNullOrWhiteSpace(Extension) ? "." : "")}{Extension}";
+        public string FileName => $"{BaseName}{(!string.IsNullOrWhiteSpace(Extension) ? "." : "")}{Extension}";
+        public ReadOnlySpan<byte> FileNameBytes => fileName.AsSpan();
 
-        public DateTime? CreationTime => FatDateTime.ToDateTime(crtDate, crtTime, crtTimeTenth);
-        public DateTime? LastAccessTime => FatDateTime.ToDateTime(lstAccDate);
-        public DateTime? LastWriteTime => FatDateTime.ToDateTime(wrtDate, wrtTime);
+        public DateTime? CreationTime => FatDateTime.ToDateTime(creationDate, creationTime, creationMSec);
+        public DateTime? LastAccessTime => FatDateTime.ToDateTime(lastAccessDate);
+        public DateTime? LastWriteTime => FatDateTime.ToDateTime(lastWriteDate, lastWriteTime);
 
-        public FileAttributes Attributes => (FileAttributes)attr;
+        public FatAttributes Attributes => attributes;
+
+        public uint FirstClusterOfFile => (uint)(firstClusterOfFileHi << 16) | firstClusterOfFile;
+        public uint FileSize => fileSize;
 
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateRootDirectory(FatFileSystem fat, bool includeDeleted = false)
         {
@@ -119,7 +124,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, DirectoryEntry entry, bool includeDeleted = false) =>
-            EnumerateSubdirectory(fat, (uint)(entry.fstClusHI << 16) | entry.fstClusLO, includeDeleted);
+            EnumerateSubdirectory(fat, entry.FirstClusterOfFile, includeDeleted);
 
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, uint firstCluster, bool includeDeleted = false)
         {
@@ -149,17 +154,17 @@ namespace TotalImage.FileSystems.FAT
                 {
                     var lfnEntry = new LongDirectoryEntry(entry);
 
-                    if (lfnEntry.type != 0)
+                    if (lfnEntry.Type != 0)
                     {
                         // Type is supposed to be zero
                         lfnStack.Clear();
                     }
-                    else if (lfnEntry.ord == 0xE5)
+                    else if (lfnEntry.Ordinal == 0xE5)
                     {
                         // This is a deleted LFN entry
                         lfnStack.Clear();
                     }
-                    else if (Convert.ToBoolean(lfnEntry.ord & 0x40))
+                    else if (Convert.ToBoolean(lfnEntry.Ordinal & 0x40))
                     {
                         // This is the first LFN entry
                         lfnStack.Clear();
@@ -167,12 +172,12 @@ namespace TotalImage.FileSystems.FAT
                     }
                     else if (lfnStack.TryPeek(out var previousLfnEntry))
                     {
-                        if ((previousLfnEntry.ord & 0x1F) != (lfnEntry.ord & 0x1F) + 1)
+                        if ((previousLfnEntry.Ordinal & 0x1F) != (lfnEntry.Ordinal & 0x1F) + 1)
                         {
                             // The LFN entry is out of order
                             lfnStack.Clear();
                         }
-                        else if (previousLfnEntry.chksum != lfnEntry.chksum)
+                        else if (previousLfnEntry.Checksum != lfnEntry.Checksum)
                         {
                             // Short name checksum is different from the last entry
                             lfnStack.Clear();
@@ -208,7 +213,7 @@ namespace TotalImage.FileSystems.FAT
                     }
                 }
 
-                if (lfnStack.TryPeek(out var topLfnEntry) && topLfnEntry.chksum != LongDirectoryEntry.GetShortNameChecksum(entry[0..11]))
+                if (lfnStack.TryPeek(out var topLfnEntry) && topLfnEntry.Checksum != LongDirectoryEntry.GetShortNameChecksum(entry[0..11]))
                 {
                     lfnStack.Clear();
                 }

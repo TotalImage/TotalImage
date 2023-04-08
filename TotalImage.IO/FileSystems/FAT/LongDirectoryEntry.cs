@@ -1,6 +1,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -19,75 +20,82 @@ namespace TotalImage.FileSystems.FAT
         /// If masked with 0x40, this indicates the entry is the last entry in
         /// the set (physically first).
         /// </summary>
-        public byte ord;
+        byte ordinal;
 
         /// <summary>
         /// Characters 1-5 of the long name sub-component.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        public char[] name1;
+        ImmutableArray<char> name1;
 
         /// <summary>
         /// Attributes - must be <c>FatAttributes.LongName</c>
         /// </summary>
-        public FatAttributes attr;
+        FatAttributes attributes;
 
         /// <summary>
         /// If zero, indicates a directory entry that is a sub-component of a
         /// long name. Other values are reserved for future extensions.
         /// </summary>
-        public byte type;
+        byte type;
 
         /// <summary>
         /// Checksum of the short directory entry at the end of the set.
         /// </summary>
-        public byte chksum;
+        byte checksum;
 
         /// <summary>
         /// Characters 6-11 of the long name sub-component.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-        public char[] name2;
+        ImmutableArray<char> name2;
 
         /// <summary>
         /// Must be zero.
         /// </summary>
-        public ushort fstClusLO;
+        ushort mustBeZero;
 
         /// <summary>
         /// Characters 12-13 of the long name sub-component.
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public char[] name3;
+        ImmutableArray<char> name3;
 
         public LongDirectoryEntry(ReadOnlySpan<byte> entry) : this()
         {
-            ord = entry[0];
+            ordinal = entry[0];
 
-            name1 = new char[5];
+            var name1 = new char[5];
             Encoding.Unicode.GetChars(entry[1..11], name1);
+            this.name1 = name1.ToImmutableArray();
 
-            attr = (FatAttributes)entry[11];
+            attributes = (FatAttributes)entry[11];
             type = entry[12];
-            chksum = entry[13];
+            checksum = entry[13];
 
-            name2 = new char[6];
+            var name2 = new char[6];
             Encoding.Unicode.GetChars(entry[14..26], name2);
+            this.name2 = name2.ToImmutableArray();
 
-            fstClusLO = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
+            mustBeZero = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
 
-            name3 = new char[2];
+            var name3 = new char[2];
             Encoding.Unicode.GetChars(entry[28..32], name3);
+            this.name3 = name3.ToImmutableArray();
         }
+
+        public int Ordinal => ordinal;
+        public byte Type => type;
+        public byte Checksum => checksum;
 
         public static string CombineEntries(LongDirectoryEntry[] entries)
         {
             var sb = new StringBuilder(entries.Length * 13);
             foreach(var entry in entries)
             {
-                sb.Append(entry.name1);
-                sb.Append(entry.name2);
-                sb.Append(entry.name3);
+                sb.Append(entry.name1.AsSpan());
+                sb.Append(entry.name2.AsSpan());
+                sb.Append(entry.name3.AsSpan());
             }
 
             var name = sb.ToString();

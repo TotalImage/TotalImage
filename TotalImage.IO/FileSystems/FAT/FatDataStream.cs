@@ -21,11 +21,11 @@ namespace TotalImage.FileSystems.FAT
             _length = (uint)_clusters.Length * fat.BytesPerCluster;
         }
 
-        public FatDataStream(FatFileSystem fat, DirectoryEntry entry, bool ignoreSize) : this(fat, (uint)(entry.fstClusHI << 16) | entry.fstClusLO)
+        public FatDataStream(FatFileSystem fat, DirectoryEntry entry, bool ignoreSize) : this(fat, entry.FirstClusterOfFile)
         {
             if (!ignoreSize)
             {
-                _length = entry.fileSize;
+                _length = entry.FileSize;
             }
         }
 

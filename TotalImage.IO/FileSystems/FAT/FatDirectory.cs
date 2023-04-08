@@ -27,7 +27,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string ShortName
         {
-            get => entry?.Name ?? string.Empty;
+            get => entry?.FileName ?? string.Empty;
             set => throw new NotImplementedException();
         }
 
@@ -48,7 +48,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override FileAttributes Attributes
         {
-            get => entry?.Attributes ?? FileAttributes.Directory;
+            get => (FileAttributes?)entry?.Attributes ?? FileAttributes.Directory;
             set => throw new NotImplementedException();
         }
 
@@ -96,7 +96,9 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public uint FirstCluster
         {
-            get => (uint)((entry?.fstClusHI << 16) | entry?.fstClusLO);
+            get => entry?.FirstClusterOfFile ??
+                (((FatFileSystem)FileSystem).BiosParameterBlock as Fat32BiosParameterBlock)?.RootDirectoryCluster ??
+                throw new InvalidOperationException();
             set => throw new NotImplementedException();
         }
 
@@ -132,17 +134,17 @@ namespace TotalImage.FileSystems.FAT
 
             foreach (var (entry, lfnEntries) in entries)
             {
-                if (entry.attr.HasFlag(FatAttributes.VolumeId))
+                if (entry.Attributes.HasFlag(FatAttributes.VolumeId))
                 {
                     // Skip volume label entries
                     continue;
                 }
-                else if (entry.attr.HasFlag(FatAttributes.Hidden) && !showHidden)
+                else if (entry.Attributes.HasFlag(FatAttributes.Hidden) && !showHidden)
                 {
                     // Skip hidden files unless showHidden is true
                     continue;
                 }
-                else if (entry.attr.HasFlag(FatAttributes.Subdirectory))
+                else if (entry.Attributes.HasFlag(FatAttributes.Subdirectory))
                 {
                     // Folder entry
                     yield return new FatDirectory(fat, entry, lfnEntries, this);

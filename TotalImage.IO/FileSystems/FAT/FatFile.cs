@@ -23,7 +23,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string ShortName
         {
-            get => entry.Name;
+            get => entry.FileName;
             set => throw new NotImplementedException();
         }
 
@@ -44,7 +44,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override FileAttributes Attributes
         {
-            get => entry.Attributes;
+            get => (FileAttributes)entry.Attributes;
             set => throw new NotImplementedException();
         }
 
@@ -72,7 +72,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override ulong Length
         {
-            get => entry.fileSize;
+            get => entry.FileSize;
             set => throw new NotImplementedException();
         }
 
@@ -82,7 +82,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public uint FirstCluster
         {
-            get => (uint)((entry.fstClusHI << 16) | entry.fstClusLO);
+            get => entry.FirstClusterOfFile;
             set => throw new NotImplementedException();
         }
 

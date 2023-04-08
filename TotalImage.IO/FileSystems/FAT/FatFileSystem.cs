@@ -13,7 +13,7 @@ namespace TotalImage.FileSystems.FAT
         public BiosParameterBlock BiosParameterBlock => _bpb;
 
         protected FatFileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
-        { 
+        {
             _bpb = bpb;
             RootDirectory = new FatDirectory(this);
         }
@@ -101,9 +101,9 @@ namespace TotalImage.FileSystems.FAT
             {
                 foreach(var (entry, _) in DirectoryEntry.EnumerateRootDirectory(this))
                 {
-                    if (entry.attr.HasFlag(FatAttributes.VolumeId) && !entry.attr.HasFlag(FatAttributes.LongName))
+                    if (entry.Attributes.HasFlag(FatAttributes.VolumeId) && !entry.Attributes.HasFlag(FatAttributes.LongName))
                     {
-                        return Encoding.ASCII.GetString(entry.name).TrimEnd();
+                        return Encoding.ASCII.GetString(entry.FileNameBytes).TrimEnd();
                     }
                 }
                 return null;
