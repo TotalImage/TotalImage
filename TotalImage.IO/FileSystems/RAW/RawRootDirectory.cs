@@ -76,21 +76,9 @@ namespace TotalImage.FileSystems.RAW
             => Array.Empty<FileSystemObject>();
 
         /// <inheritdoc />
-        public override ulong FileCount(bool recursive)
-            => 0;
-
-        /// <inheritdoc />
         public override void MoveTo(string path)
         {
             throw new NotSupportedException();
         }
-
-        /// <inheritdoc />
-        public override ulong Size(bool recursive, bool sizeOnDisk)
-            => 0;
-
-        /// <inheritdoc />
-        public override ulong SubdirectoryCount(bool recursive)
-            => 0;
     }
 }

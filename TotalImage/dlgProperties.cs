@@ -86,9 +86,9 @@ namespace TotalImage
                 else if (entries[0] is FileSystems.Directory dir)
                 {
                     txtLocation1.Text = dir.Parent?.FullName;
-                    txtContains1.Text = $"Files: {dir.FileCount(true)}, subdirectories: {dir.SubdirectoryCount(true)}";
-                    txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, false), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
-                    txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.Size(true, true), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                    txtContains1.Text = $"Files: {dir.CountFiles(true)}, subdirectories: {dir.CountSubdirectories(true)}";
+                    txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, false), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                    txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, true), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
                 }
 
                 // These are indeed supposed to be assignments in the conditions.
@@ -191,8 +191,8 @@ namespace TotalImage
                     if (fso is FileSystems.Directory dir)
                     {
                         dirs++;
-                        size += dir.Size(true, false);
-                        sizeOnDisk += dir.Size(true, true);
+                        size += dir.GetSize(true, false);
+                        sizeOnDisk += dir.GetSize(true, true);
 
                         if (!foExt.Equals("folder"))
                             differentTypes = true;
@@ -231,7 +231,7 @@ namespace TotalImage
                             txtType1.Text = $"{foExt.Substring(1).ToUpper()} File";
                         else
                             txtType1.Text = "File";
-                    }                    
+                    }
                 }
 
                 if (attribReadOnly > 0)

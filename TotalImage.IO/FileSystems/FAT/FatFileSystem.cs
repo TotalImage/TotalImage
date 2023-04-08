@@ -98,14 +98,7 @@ namespace TotalImage.FileSystems.FAT
         {
             get
             {
-                IEnumerable<DirectoryEntry> entries;
-
-                if (_bpb.RootDirectoryEntries == 0 && _bpb.RootDirectoryFirstCluster is not null)
-                    entries = DirectoryEntry.ReadSubdirectory(this, _bpb.RootDirectoryFirstCluster.Value, false);
-                else
-                    entries = DirectoryEntry.ReadRootDirectory(this);
-
-                foreach(var entry in entries)
+                foreach(var (entry, _) in DirectoryEntry.EnumerateRootDirectory(this))
                 {
                     if (entry.attr.HasFlag(FatAttributes.VolumeId) && !entry.attr.HasFlag(FatAttributes.LongName))
                     {

@@ -21,7 +21,7 @@ namespace TotalImage.Containers
         /// <inheritdoc />
         public ImzContainer(string path, bool memoryMapping) : base(path, memoryMapping)
         {
-            using var zip = new ZipArchive(containerStream, ZipArchiveMode.Read);
+            using var zip = new ZipArchive(containerStream, ZipArchiveMode.Read, true);
             var image = zip.Entries.Single();
 
             Content = new MemoryStream((int)image.Length);

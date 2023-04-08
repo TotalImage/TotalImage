@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Path = System.IO.Path;
 
 namespace TotalImage.FileSystems
@@ -37,6 +38,23 @@ namespace TotalImage.FileSystems
         /// <param name="showDeleted">Whether to show deleted objects</param>
         /// <returns>An enumerable of file system objects contained within the directory</returns>
         public abstract IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted);
+
+        // For lack of a better name
+        private IEnumerable<FileSystemObject> EnumerateFileSystemObjectsInternal(bool recursive)
+        {
+            foreach (var item in EnumerateFileSystemObjects(true, false))
+            {
+                yield return item;
+
+                if (item is Directory dir && recursive)
+                {
+                    foreach (var child in dir.EnumerateFileSystemObjectsInternal(true))
+                    {
+                        yield return child;
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Get directories contained within a directory
@@ -92,14 +110,16 @@ namespace TotalImage.FileSystems
         /// </summary>
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <returns>File count in a directory excluding subdirectories if recursive is false, otherwise file count in a directory including subdirectories.</returns>
-        public abstract ulong FileCount(bool recursive);
+        public ulong CountFiles(bool recursive) =>
+            (ulong)EnumerateFileSystemObjectsInternal(recursive).Where(x => x is File).Count();
 
         /// <summary>
         /// Get the subdirectory count in a directory.
         /// </summary>
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <returns>Subdirectory count in a directory excluding subdirectory contents if recursive is false, otherwise subdirectory count in a directory including subdirectory contents.</returns>
-        public abstract ulong SubdirectoryCount(bool recursive);
+        public ulong CountSubdirectories(bool recursive) =>
+            (ulong)EnumerateFileSystemObjectsInternal(recursive).Where(x => x is Directory).Count();
 
         /// <summary>
         /// Get the combined size of files in a directory.
@@ -107,6 +127,7 @@ namespace TotalImage.FileSystems
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <param name="sizeOnDisk">Whether to report actual file size or size on disk.</param>
         /// <returns>Combined size of files in a directory excluding subdirectories if recursive is false, otherwise combined size of files in a directory including subdirectories.</returns>
-        public abstract ulong Size(bool recursive, bool sizeOnDisk);
+        public ulong GetSize(bool recursive, bool sizeOnDisk) =>
+            (ulong)EnumerateFileSystemObjectsInternal(recursive).Sum(x => sizeOnDisk ? (long)x.LengthOnDisk : (long)x.Length);
     }
 }
