@@ -99,14 +99,7 @@ namespace TotalImage.FileSystems.FAT
         {
             get
             {
-                IEnumerable<DirectoryEntry> entries;
-
-                if (_bpb is Fat32BiosParameterBlock fat32bpb && _bpb.RootDirectoryEntries == 0)
-                    entries = DirectoryEntry.ReadSubdirectory(this, fat32bpb.RootDirectoryCluster);
-                else
-                    entries = DirectoryEntry.ReadRootDirectory(this);
-
-                foreach(var entry in entries)
+                foreach(var (entry, _) in DirectoryEntry.EnumerateRootDirectory(this))
                 {
                     if (entry.attr.HasFlag(FatAttributes.VolumeId) && !entry.attr.HasFlag(FatAttributes.LongName))
                     {

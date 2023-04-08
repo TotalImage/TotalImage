@@ -12,9 +12,9 @@ namespace TotalImage.FileSystems.FAT
     public class FatFile : File, IFatFileSystemObject
     {
         private DirectoryEntry entry;
-        private LongDirectoryEntry[]? lfnEntries;
+        private LongDirectoryEntry[] lfnEntries;
 
-        public FatFile(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[]? lfnEntries, Directory dir) : base(fat, dir)
+        public FatFile(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[] lfnEntries, Directory dir) : base(fat, dir)
         {
             this.entry = entry;
             this.lfnEntries = lfnEntries;
@@ -30,7 +30,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public string? LongName
         {
-            get => lfnEntries != null ? LongDirectoryEntry.CombineEntries(lfnEntries) : null;
+            get => lfnEntries.Length > 0 ? LongDirectoryEntry.CombineEntries(lfnEntries) : null;
             set => throw new NotImplementedException();
         }
 
