@@ -60,8 +60,8 @@ internal class VhdStream : Stream
                 Seek(0, SeekOrigin.Current);
 
                 var readBytes = _vhd.BlockAllocationTable.HasData(i) ?
-                    _base.Read(buffer, offset + totalRead, Math.Min(count - totalRead, VhdContainer.SectorLength)) :
-                    ReadZeros(buffer, offset + totalRead, Math.Min(count - totalRead, VhdContainer.SectorLength));
+                    _base.Read(buffer, offset + totalRead, Math.Min(count - totalRead, (int)_vhd.DynamicHeader.BlockSize)) :
+                    ReadZeros(buffer, offset + totalRead, Math.Min(count - totalRead, (int)_vhd.DynamicHeader.BlockSize));
 
                 _position += (uint)readBytes;
                 totalRead += readBytes;
