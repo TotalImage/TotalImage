@@ -12,7 +12,6 @@ namespace TotalImage.FileSystems.FAT
     /// This struct represents the special directory entry used to store long
     /// file names.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
     public struct LongDirectoryEntry
     {
         /// <summary>
@@ -25,7 +24,6 @@ namespace TotalImage.FileSystems.FAT
         /// <summary>
         /// Characters 1-5 of the long name sub-component.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
         string name1;
 
         /// <summary>
@@ -47,7 +45,6 @@ namespace TotalImage.FileSystems.FAT
         /// <summary>
         /// Characters 6-11 of the long name sub-component.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
         string name2;
 
         /// <summary>
@@ -58,10 +55,9 @@ namespace TotalImage.FileSystems.FAT
         /// <summary>
         /// Characters 12-13 of the long name sub-component.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         string name3;
 
-        public LongDirectoryEntry(ReadOnlySpan<byte> entry) : this()
+        public LongDirectoryEntry(ReadOnlySpan<byte> entry)
         {
             ordinal = entry[0];
             name1 = Encoding.Unicode.GetString(entry[1..11]);

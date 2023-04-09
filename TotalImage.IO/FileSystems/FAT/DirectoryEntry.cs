@@ -12,13 +12,11 @@ namespace TotalImage.FileSystems.FAT
     /// <summary>
     /// This class represents the traditional 32-byte FAT directory entry, used in FAT12, FAT16 and FAT32
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DirectoryEntry
     {
         /// <summary>
         /// “Short” file name limited to 11 characters.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
         ImmutableArray<byte> fileName;
 
         /// <summary>
