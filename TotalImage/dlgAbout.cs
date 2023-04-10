@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -19,7 +19,7 @@ namespace TotalImage
         private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             lnkGitHub.LinkVisited = true;
-            ProcessStartInfo psi = new ProcessStartInfo
+            ProcessStartInfo psi = new()
             {
                 FileName = lnkGitHub.Text,
                 UseShellExecute = true

@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
 using System.Drawing;
+using System.Linq;
 
 namespace TotalImage
 {
@@ -77,7 +78,7 @@ namespace TotalImage
                 var json = File.ReadAllText(SettingsFile);
                 var settings = JsonSerializer.Deserialize<SettingsModel>(json);
 
-                if (settings != null)
+                if (settings is not null)
                     CurrentSettings = settings;
                 else
                 {
@@ -86,7 +87,7 @@ namespace TotalImage
                 }
             }
 
-            settingsWatcher = new FileSystemWatcher(SettingsDir, "settings.json");
+            settingsWatcher = new(SettingsDir, "settings.json");
             settingsWatcher.EnableRaisingEvents = true;
             settingsWatcher.NotifyFilter = NotifyFilters.LastWrite;
             settingsWatcher.Changed += settingsWatcher_Changed;
@@ -101,7 +102,7 @@ namespace TotalImage
                 var json = File.ReadAllText(UIStateFile);
                 var state = JsonSerializer.Deserialize<UIStateModel>(json);
 
-                if (state != null)
+                if (state is not null)
                     CurrentUIState = state;
                 else
                 {
@@ -119,7 +120,7 @@ namespace TotalImage
                 var json = File.ReadAllText(SettingsFile);
                 var settings = JsonSerializer.Deserialize<SettingsModel>(json);
 
-                if (settings != null)
+                if (settings is not null)
                 {
                     // We could just reload the entire settings, however:
                     // 1. The loaded settings could include changes to UI options.
@@ -151,7 +152,7 @@ namespace TotalImage
             var json = File.ReadAllText(SettingsFile);
             var settings = JsonSerializer.Deserialize<SettingsModel>(json);
 
-            if (settings != null)
+            if (settings is not null)
                 CurrentSettings = settings;
             else
             {
@@ -167,7 +168,7 @@ namespace TotalImage
             var json = File.ReadAllText(UIStateFile);
             var state = JsonSerializer.Deserialize<UIStateModel>(json);
 
-            if (state != null)
+            if (state is not null)
                 CurrentUIState = state;
             else
             {
@@ -220,7 +221,7 @@ namespace TotalImage
             }
 
             // Let's not make us reload the very settings we're about to save
-            if (settingsWatcher != null)
+            if (settingsWatcher is not null)
             {
                 settingsWatcher.EnableRaisingEvents = false;
             }
@@ -234,7 +235,7 @@ namespace TotalImage
                 //We can't write to the file, probably because it's opened by another instance, so let's just silently give up
             }
 
-            if (settingsWatcher != null)
+            if (settingsWatcher is not null)
             {
                 settingsWatcher.EnableRaisingEvents = true;
             }
@@ -268,7 +269,7 @@ namespace TotalImage
         public static void AddRecentImage(string path)
         {
             //This prevents duplicate entries by removing the old entry first - the new one is then put at the start of the list
-            if (CurrentSettings.RecentImages.Count > 0)
+            if (CurrentSettings.RecentImages.Any())
             {
                 if (CurrentSettings.RecentImages.LastIndexOf(path) > -1)
                     CurrentSettings.RecentImages.RemoveAt(CurrentSettings.RecentImages.LastIndexOf(path));

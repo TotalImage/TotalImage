@@ -23,7 +23,7 @@ namespace TotalImage
         private void dlgImageInfo_Load(object sender, System.EventArgs e)
         {
             frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
-            FileInfo fileInfo = new FileInfo(mainForm.filepath);
+            FileInfo fileInfo = new(mainForm.filepath);
 
             //Fixes the column width on high DPI screens
             lstProperties.Columns[1].Width = lstProperties.ClientRectangle.Width - lstProperties.Columns[0].Width;
@@ -40,7 +40,7 @@ namespace TotalImage
             if (mainForm.image is VhdContainer vhd)
             {
                 string vhdType = vhd.Footer.Type.ToString();
-                lstProperties.FindItemWithText("Container subtype").SubItems[1].Text = vhdType.Substring(0, vhdType.IndexOf("HardDisk"));
+                lstProperties.FindItemWithText("Container subtype").SubItems[1].Text = vhdType[..vhdType.IndexOf("HardDisk")];
 
                 string containerVersion = $"{vhd.Footer.FormatVersionMajor}.{vhd.Footer.FormatVersionMinor}";
                 if (containerVersion != "0.0")
@@ -103,7 +103,7 @@ namespace TotalImage
         {
             if (!hashesDone)
             {
-                TaskDialogPage page = new TaskDialogPage()
+                TaskDialogPage page = new()
                 {
                     Text = $"File hashes are still being calculated and won't be included in the exported file{Environment.NewLine}unless you wait for the calculations to complete first.",
                     Heading = "Hash calculations in progress",
@@ -126,7 +126,7 @@ namespace TotalImage
                 }
             }
 
-            using SaveFileDialog sfd = new SaveFileDialog();
+            using SaveFileDialog sfd = new();
             sfd.AutoUpgradeEnabled = true;
             sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             sfd.OverwritePrompt = true;
@@ -195,14 +195,14 @@ namespace TotalImage
             }
         }
 
-        CancellationTokenSource cts = new CancellationTokenSource();
+        CancellationTokenSource cts = new();
 
         private async void dlgImageInfo_Shown(object sender, EventArgs e)
         {
             if (Application.OpenForms["frmMain"] is frmMain mainForm && mainForm.image is not null)
             {
-                var md5 = Task.Run<string>(async () => await mainForm.image.CalculateMd5HashAsync(cts.Token));
-                var sha1 = Task.Run<string>(async () => await mainForm.image.CalculateSha1HashAsync(cts.Token));
+                var md5 = Task.Run(async () => await mainForm.image.CalculateMd5HashAsync(cts.Token));
+                var sha1 = Task.Run(async () => await mainForm.image.CalculateSha1HashAsync(cts.Token));
 
                 try
                 {
@@ -233,7 +233,7 @@ namespace TotalImage
             if (lstProperties.SelectedItems.Count == 1)
             {
                 if (lstProperties.SelectedItems[0].SubItems[1].Text == "N/A" || (
-                    !hashesDone && (lstProperties.SelectedItems[0].Tag == "md5" || lstProperties.SelectedItems[0].Tag == "sha1")))
+                    !hashesDone && (lstProperties.SelectedItems[0].Tag.ToString() == "md5" || lstProperties.SelectedItems[0].Tag.ToString() == "sha1")))
                     copyValueToolStripMenuItem.Enabled = false;
                 else
                     copyValueToolStripMenuItem.Enabled = true;

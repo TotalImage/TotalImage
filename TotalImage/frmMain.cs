@@ -39,18 +39,18 @@ namespace TotalImage
         public int CurrentPartitionIndex;
         private int sortColumn;
         private SortOrder sortOrder;
-        private TiDirectory lastViewedDir;
-        internal static Dictionary<string, (string name, int iconIndex)> fileTypes = new Dictionary<string, (string name, int iconIndex)>(StringComparer.InvariantCultureIgnoreCase);
+        private TiDirectory? lastViewedDir;
+        internal static Dictionary<string, (string name, int iconIndex)> fileTypes = new(StringComparer.InvariantCultureIgnoreCase);
         private string? lastSavedFilename;
-        private TiDirectory draggedDir;
+        private TiDirectory? draggedDir;
 
-        private ListViewItem upOneFolderListViewItem = new ListViewItem()
+        private ListViewItem upOneFolderListViewItem = new()
         {
             Text = "..",
             ToolTipText = "Parent directory"
         };
 
-        private List<ListViewItem> currentFolderView = new List<ListViewItem>();
+        private List<ListViewItem> currentFolderView = new();
 
         public frmMain()
         {
@@ -92,14 +92,14 @@ namespace TotalImage
         //Injects a folder into the image
         private void injectFolder_Click(object sender, EventArgs e)
         {
-            using FolderBrowserDialog fbd = new FolderBrowserDialog();
+            using FolderBrowserDialog fbd = new();
             fbd.ShowNewFolderButton = true;
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {
                 if (Settings.CurrentSettings.ConfirmInjection)
                 {
-                    TaskDialogPage page = new TaskDialogPage()
+                    TaskDialogPage page = new()
                     {
                         Text = $"Are you sure you want to inject this folder into the image?",
                         Heading = $"A folder will be injected",
@@ -131,7 +131,7 @@ namespace TotalImage
         //Shows a hex view of the current image
         private void hexView_Click(object sender, EventArgs e)
         {
-            using dlgHexView frm = new dlgHexView();
+            using dlgHexView frm = new();
             frm.ShowDialog();
         }
 
@@ -139,7 +139,7 @@ namespace TotalImage
         //TODO: Actually change the volume labels
         private void changeVolumeLabel_Click(object sender, EventArgs e)
         {
-            if (!(image?.PartitionTable.Partitions[0].FileSystem is FatFileSystem fs))
+            if (image?.PartitionTable.Partitions[0].FileSystem is not FatFileSystem fs)
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
@@ -157,7 +157,7 @@ namespace TotalImage
                 return;
             }
 
-            using dlgChangeVolLabel dlg = new dlgChangeVolLabel(fs.RootDirectoryVolumeLabel, fs.BpbVolumeLabel);
+            using dlgChangeVolLabel dlg = new(fs.RootDirectoryVolumeLabel, fs.BpbVolumeLabel);
             dlg.ShowDialog();
         }
 
@@ -167,7 +167,7 @@ namespace TotalImage
          */
         private void bootSectorProperties_Click(object sender, EventArgs e)
         {
-            if(image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FatFileSystem)
+            if(image is not null && image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FatFileSystem)
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
@@ -185,21 +185,21 @@ namespace TotalImage
                 return;
             }
 
-            using dlgBootSector dlg = new dlgBootSector();
+            using dlgBootSector dlg = new();
             dlg.ShowDialog();
         }
 
         //Shows current image information
         private void imageInformation_Click(object sender, EventArgs e)
         {
-            using dlgImageInfo dlg = new dlgImageInfo();
+            using dlgImageInfo dlg = new();
             dlg.ShowDialog();
         }
 
         //Click event handler for all menu items in the Recent images menu
         private void recentImage_Click(object sender, EventArgs e)
         {
-            string imagePath = ((ToolStripMenuItem)sender).Text.Substring(3, ((ToolStripMenuItem)sender).Text.Length - 3).Trim(' ');
+            string imagePath = ((ToolStripMenuItem)sender).Text[3..].Trim(' ');
             if (!File.Exists(imagePath))
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
@@ -229,7 +229,7 @@ namespace TotalImage
         //TODO: Implement the "save changes first" code path
         private void newImage_Click(object sender, EventArgs e)
         {
-            using dlgNewImage dlg = new dlgNewImage();
+            using dlgNewImage dlg = new();
             if (dlg.ShowDialog() == DialogResult.OK)
             {
                 if (unsavedChanges)
@@ -248,11 +248,11 @@ namespace TotalImage
                         Icon = TaskDialogIcon.Warning,
                     });
 
-                    if (result.Tag != null) /* Save changes first... */ ;
+                    if (result.Tag is not null) /* Save changes first... */ ;
                     else if (result == TaskDialogButton.Cancel) return;
                 }
 
-                if (image != null)
+                if (image is not null)
                     CloseImage();
                 image = null;
 
@@ -272,7 +272,7 @@ namespace TotalImage
          * -"Save as" when the file has not been saved yet */
         private void save_Click(object sender, EventArgs e)
         {
-            if (image != null)
+            if (image is not null)
             {
                 if (string.IsNullOrEmpty(filename) || (ToolStripMenuItem)sender == saveAsToolStripMenuItem) //File hasn't been saved yet
                 {
@@ -288,7 +288,7 @@ namespace TotalImage
         //Creates a new folder
         private void newFolder_Click(object sender, EventArgs e)
         {
-            using dlgNewFolder dlg = new dlgNewFolder();
+            using dlgNewFolder dlg = new();
             dlg.ShowDialog();
         }
 
@@ -327,7 +327,7 @@ namespace TotalImage
 
                 if (Settings.CurrentSettings.ConfirmDeletion)
                 {
-                    TaskDialogPage page = new TaskDialogPage()
+                    TaskDialogPage page = new()
                     {
                         Text = $"Are you sure you want to delete {SelectedItems.Count()} item(s) occupying {Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)}?{Environment.NewLine}" +
                         $"You might still be able to undo this operation later.",
@@ -359,7 +359,7 @@ namespace TotalImage
             {
                 if (Settings.CurrentSettings.ConfirmDeletion)
                 {
-                    TaskDialogPage page = new TaskDialogPage()
+                    TaskDialogPage page = new()
                     {
                         Text = $"Are you sure you want to delete this directory and all its contents?{Environment.NewLine}" +
                         $"You might still be able to undo this operation later.",
@@ -394,7 +394,7 @@ namespace TotalImage
         //when it's not applicable, some additional checks here probably wouldn't hurt either...
         private void undelete_Click(object sender, EventArgs e)
         {
-            using dlgUndelete dlg = new dlgUndelete();
+            using dlgUndelete dlg = new();
             dlg.ShowDialog();
         }
 
@@ -434,7 +434,7 @@ namespace TotalImage
         //TODO: Implement this here and in FS/container.
         private void defragment_Click(object sender, EventArgs e)
         {
-            using dlgDefragment dlg = new dlgDefragment();
+            using dlgDefragment dlg = new();
             dlg.ShowDialog();
         }
 
@@ -442,7 +442,7 @@ namespace TotalImage
         //TODO: Implement this here and in FS/container.
         private void format_Click(object sender, EventArgs e)
         {
-            using dlgFormat dlg = new dlgFormat();
+            using dlgFormat dlg = new();
             if (dlg.ShowDialog() == DialogResult.Yes)
             {
                 throw new NotImplementedException();
@@ -455,7 +455,7 @@ namespace TotalImage
         //TODO: Perhaps this needs some rethinking too, depending on recent changes to the container?
         private void saveFile()
         {
-            if (image == null)
+            if (image is null)
             {
                 throw new Exception("No image is currently loaded");
             }
@@ -472,12 +472,12 @@ namespace TotalImage
         //Saves the current image as a new file, along with any changes made to it since the last save
         private bool saveFileAs()
         {
-            if (image == null)
+            if (image is null)
             {
                 throw new Exception("No image is currently loaded");
             }
 
-            using SaveFileDialog sfd = new SaveFileDialog();
+            using SaveFileDialog sfd = new();
             sfd.AutoUpgradeEnabled = true;
             sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             sfd.OverwritePrompt = true;
@@ -486,11 +486,11 @@ namespace TotalImage
                 "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
                 "All files (*.*)|*.*";
 
-            if (lastSavedFilename != null)
+            if (lastSavedFilename is not null)
             {
                 string nameNoExt = Path.GetFileNameWithoutExtension(lastSavedFilename);
                 string number = System.Text.RegularExpressions.Regex.Match(nameNoExt, @"\d+$").Value;
-                string prefix = nameNoExt.Substring(0, nameNoExt.LastIndexOf(number));
+                string prefix = nameNoExt[..nameNoExt.LastIndexOf(number)];
                 int i = int.Parse(number) + 1;
                 string newFilename = prefix + i.ToString(new string('0', number.Length));
                 sfd.FileName = newFilename;
@@ -558,7 +558,7 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Warning,
                 });
 
-                if (result.Tag != null)
+                if (result.Tag is not null)
                 {
                     if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
                     {
@@ -615,11 +615,11 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Warning,
                 });
 
-                if (result.Tag != null) save_Click(result, e);
+                if (result.Tag is not null) save_Click(result, e);
                 else if (result == TaskDialogButton.Cancel) return;
             }
 
-            using OpenFileDialog ofd = new OpenFileDialog();
+            using OpenFileDialog ofd = new();
             ofd.AutoUpgradeEnabled = true;
             ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             ofd.CheckFileExists = true;
@@ -645,7 +645,7 @@ namespace TotalImage
 
         private void about_Click(object sender, EventArgs e)
         {
-            using dlgAbout dlg = new dlgAbout();
+            using dlgAbout dlg = new();
             dlg.ShowDialog();
         }
 
@@ -657,12 +657,12 @@ namespace TotalImage
 
             if (lstFiles.Focused)
             {
-                if (SelectedItems.Count() == 0)
+                if (!SelectedItems.Any())
                     lstFiles.SelectAllItems();
             }
             else if (lstDirectories.Focused)
             {
-                if(((TiDirectory)lstDirectories.SelectedNode.Tag).Parent == null) //Root dir is selected, so we have to handle this separately
+                if(((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is null) //Root dir is selected, so we have to handle this separately
                 {
                     lstFiles.Focus();
                     lstFiles.SelectAllItems();
@@ -671,7 +671,7 @@ namespace TotalImage
 
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
             {
-                using dlgExtract dlg = new dlgExtract();
+                using dlgExtract dlg = new();
                 dlg.lblPath.Text = $"Extract { (lstDirectories.Focused ? "1" : SelectedItems.Count())} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
@@ -702,7 +702,7 @@ namespace TotalImage
 
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e) // This method will be used more than once, thus it is separated from the main event.
         {
-            if (image != null)
+            if (image is not null)
             {
                 if (lstFiles.SelectedIndices.Count == 0)
                 {
@@ -737,7 +737,7 @@ namespace TotalImage
                     propertiesToolStripButton.Enabled = true;
 
                     var path = lstDirectories.SelectedNode.FullPath;
-                    if (path.Substring(path.Length - lstDirectories.PathSeparator.Length) != lstDirectories.PathSeparator)
+                    if(!path.EndsWith(lstDirectories.PathSeparator))
                         path += lstDirectories.PathSeparator;
 
                     UpdateStatusBar(false);
@@ -747,7 +747,7 @@ namespace TotalImage
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (image == null)
+            if (image is null)
             {
                 e.Cancel = true;
                 return;
@@ -791,13 +791,13 @@ namespace TotalImage
 
         private void managePartitions_Click(object sender, EventArgs e)
         {
-            using dlgManagePartitions dlg = new dlgManagePartitions();
+            using dlgManagePartitions dlg = new();
             dlg.ShowDialog();
         }
 
         private void settings_Click(object sender, EventArgs e)
         {
-            using dlgSettings dlg = new dlgSettings();
+            using dlgSettings dlg = new();
             DialogResult result = dlg.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -817,7 +817,7 @@ namespace TotalImage
         //TODO: Implement the Properties dialog for multiple selected objects like Windows does it
         private void properties_Click(object sender, EventArgs e)
         {
-            List<TiFileSystemObject> entries = new List<TiFileSystemObject>();
+            List<TiFileSystemObject> entries = new();
             if (lstDirectories.Focused)
             {
                 /*using dlgProperties dlg = new dlgProperties((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
@@ -841,13 +841,13 @@ namespace TotalImage
                     entries.Add(GetSelectedItemData(i));
             }
 
-            using dlgProperties dlg = new dlgProperties(entries);
+            using dlgProperties dlg = new(entries);
             dlg.ShowDialog();
         }
 
         private void injectFiles_Click(object sender, EventArgs e)
         {
-            using OpenFileDialog ofd = new OpenFileDialog();
+            using OpenFileDialog ofd = new();
             ofd.AutoUpgradeEnabled = true;
             ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             ofd.CheckFileExists = true;
@@ -860,7 +860,7 @@ namespace TotalImage
             {
                 if (Settings.CurrentSettings.ConfirmInjection)
                 {
-                    TaskDialogPage page = new TaskDialogPage()
+                    TaskDialogPage page = new()
                     {
                         Text = $"Are you sure you want to inject {SelectedItems.Count()} item(s) occupying {Settings.CurrentSettings.SizeUnit.FormatSize(0)} into the image?",
                         Heading = $"{SelectedItems.Count()} item(s) will be injected",
@@ -907,7 +907,7 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Warning,
                 });
 
-                if (result.Tag != null) /* Save changes... */ ;
+                if (result.Tag is not null) /* Save changes... */ ;
                 else if (result == TaskDialogButton.Cancel) return;
             }
             CloseImage();
@@ -958,7 +958,7 @@ namespace TotalImage
             PopulateListView((TiDirectory)e.Node.Tag);
             UpdateStatusBar(false);
 
-            if (lstDirectories.SelectedNode == null)
+            if (lstDirectories.SelectedNode is null)
             {
                 extractToolStripButton.Enabled = false;
                 newFolderToolStripButton.Enabled = false;
@@ -981,7 +981,7 @@ namespace TotalImage
                 if (GetSelectedItemData(0) is TiDirectory dir) //A folder was double-clicked
                 {
                     var node = FindNode(lstDirectories.Nodes[0], dir);
-                    if (node != null)
+                    if (node is not null)
                     {
                         lstDirectories.SelectedNode = node;
                     }
@@ -1018,7 +1018,7 @@ namespace TotalImage
 
         private void cmsDirTree_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (lstDirectories.Nodes.Count == 0 || lstDirectories.SelectedNode == null)
+            if (lstDirectories.Nodes.Count == 0 || lstDirectories.SelectedNode is null)
             {
                 e.Cancel = true;
                 return;
@@ -1041,7 +1041,7 @@ namespace TotalImage
 
         private void list_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) && image == null)
+            if (e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) && image is null)
                 e.Effect = DragDropEffects.Copy;
             else
                 e.Effect = DragDropEffects.None;
@@ -1052,7 +1052,7 @@ namespace TotalImage
          * TODO: Implement other drag and drop scenarios (moving files within the image, etc.). */
         private void list_DragDrop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop) && image == null)
+            if (e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) && image is null)
             {
                 //Files are being dragged into the listview from outside the form
                 string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
@@ -1087,7 +1087,7 @@ namespace TotalImage
                 TreeNode newNode = lstDirectories.GetNodeAt(e.X, e.Y);
 
                 //This prevents opening the menu on empty area of the TreeView, as well as on any deleted folders
-                if (newNode != null)
+                if (newNode is not null)
                 {
                     TiFileSystemObject entry = (TiFileSystemObject)newNode.Tag;
                     if (entry.Name.StartsWith("?"))
@@ -1129,7 +1129,7 @@ namespace TotalImage
          * the drop is performed. */
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && e.Item is not null)
             {
                 string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
                 if (!Directory.Exists(tempdir))
@@ -1142,16 +1142,16 @@ namespace TotalImage
                     return;
                 }
 
-                List<string> items = new List<string>();
+                List<string> items = new();
                 foreach (TiFileSystemObject fso in SelectedItems)
                 {
                     string item = Path.Combine(tempdir, fso.Name);
                     items.Add(item);
                 }
-                StringCollection draggedItems = new StringCollection();
+                StringCollection draggedItems = new();
                 draggedItems.AddRange(items.ToArray());
 
-                DataObject data = new DataObject();
+                DataObject data = new();
                 data.SetFileDropList(draggedItems); //Needed for Explorer
                 lstFiles.DoDragDrop(data, DragDropEffects.Move);
             }
@@ -1161,7 +1161,7 @@ namespace TotalImage
          * the drop is performed. */
         private void lstDirectories_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left && e.Item is not null)
             {
                 string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
                 if (!Directory.Exists(tempdir))
@@ -1170,9 +1170,9 @@ namespace TotalImage
                 }
 
                 //This array is needed for Explorer to perform the file copy/move operation later on.
-                List<string> items = new List<string>();
+                List<string> items = new();
                 draggedDir = (TiDirectory)((TreeNode)e.Item).Tag;
-                if (draggedDir.Parent == null)
+                if (draggedDir.Parent is null)
                 {
                     /* Add the root dir contents (non-recursively) to the list instead of the tempdir itself, so Explorer doesn't end up moving it
                      * instead of the contents. */
@@ -1185,10 +1185,10 @@ namespace TotalImage
                 {
                     items.Add(Path.Combine(tempdir, draggedDir.Name));
                 }
-                StringCollection draggedItems = new StringCollection();
+                StringCollection draggedItems = new();
                 draggedItems.AddRange(items.ToArray());
 
-                DataObject data = new DataObject();
+                DataObject data = new();
                 data.SetFileDropList(draggedItems); //FileDrop is needed for Explorer
                 lstDirectories.DoDragDrop(data, DragDropEffects.Move);
             }
@@ -1212,8 +1212,9 @@ namespace TotalImage
                     Icon = TaskDialogIcon.Warning,
                 });
 
-                if (result.Tag != null) /* Save changes... */ ;
-                else if (result == TaskDialogButton.Cancel)
+                /*if (result.Tag is not null) // Save changes... ;
+                else */
+                if (result == TaskDialogButton.Cancel)
                 {
                     e.Cancel = true;
                     return;
@@ -1254,8 +1255,8 @@ namespace TotalImage
             showHiddenItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
             showDeletedItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowDeletedItems;
 
-            expandDirectoryTreeToolStripMenuItem.Enabled = image != null && lstDirectories.Nodes[0].Nodes.Count > 0;
-            collapseDirectoryTreeToolStripMenuItem.Enabled = image != null && lstDirectories.Nodes[0].Nodes.Count > 0;
+            expandDirectoryTreeToolStripMenuItem.Enabled = image is not null && lstDirectories.Nodes[0].Nodes.Count > 0;
+            collapseDirectoryTreeToolStripMenuItem.Enabled = image is not null && lstDirectories.Nodes[0].Nodes.Count > 0;
         }
 
         private void cmsToolbars_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -1296,7 +1297,7 @@ namespace TotalImage
 
         private void selectPartitionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            dlgSelectPartition dlg = new dlgSelectPartition()
+            dlgSelectPartition dlg = new()
             {
                 PartitionTable = image.PartitionTable
             };
@@ -1318,7 +1319,7 @@ namespace TotalImage
 
         private void lstFiles_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Back && lstDirectories.SelectedNode.Parent != null)
+            if (e.KeyCode == Keys.Back && lstDirectories.SelectedNode.Parent is not null)
             {
                 lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
             }
@@ -1330,7 +1331,7 @@ namespace TotalImage
                     if (fso is TiDirectory dir)
                     {
                         var node = FindNode(lstDirectories.Nodes[0], dir);
-                        if (node != null)
+                        if (node is not null)
                         {
                             lstDirectories.SelectedNode = node;
                         }
@@ -1346,7 +1347,7 @@ namespace TotalImage
 
                         FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
 
-                        ProcessStartInfo psi = new ProcessStartInfo
+                        ProcessStartInfo psi = new()
                         {
                             FileName = targetFile,
                             UseShellExecute = true
@@ -1377,20 +1378,20 @@ namespace TotalImage
 
         private void lblNotifications_Click(object sender, EventArgs e)
         {
-            using dlgNotifications dlg = new dlgNotifications();
+            using dlgNotifications dlg = new();
             dlg.ShowDialog();
         }
 
         private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            closeImageToolStripMenuItem.Enabled = image != null;
-            saveToolStripMenuItem.Enabled = image != null && unsavedChanges;
-            saveAsToolStripMenuItem.Enabled = image != null;
+            closeImageToolStripMenuItem.Enabled = image is not null;
+            saveToolStripMenuItem.Enabled = image is not null && unsavedChanges;
+            saveAsToolStripMenuItem.Enabled = image is not null;
         }
 
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            if (image == null)
+            if (image is null)
             {
                 injectAFolderToolStripMenuItem.Enabled = false;
                 injectFilesToolStripMenuItem.Enabled = false;
@@ -1469,13 +1470,13 @@ namespace TotalImage
 
         private void toolsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            imageInformationToolStripMenuItem.Enabled = image != null;
-            hexViewToolStripMenuItem.Enabled = image != null;
+            imageInformationToolStripMenuItem.Enabled = image is not null;
+            hexViewToolStripMenuItem.Enabled = image is not null;
         }
 
         private void lstFiles_Enter(object sender, EventArgs e)
         {
-            if (image != null)
+            if (image is not null)
             {
                 if (lstFiles.SelectedIndices.Count == 0)
                 {
@@ -1508,9 +1509,9 @@ namespace TotalImage
 
         private void lstDirectories_Enter(object sender, EventArgs e)
         {
-            if (image != null)
+            if (image is not null)
             {
-                if (lstDirectories.SelectedNode == null)
+                if (lstDirectories.SelectedNode is null)
                 {
                     extractToolStripButton.Enabled = false;
                     newFolderToolStripButton.Enabled = false;
@@ -1580,11 +1581,10 @@ namespace TotalImage
                     {
                         extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Preserve);
                     }
-                    else if (sender is TreeView)
+                    else if (sender is TreeView && draggedDir is not null)
                     {
-                        if (draggedDir.Parent == null) //Root dir needs to be treated separately
+                        if (draggedDir.Parent is null) //Root dir needs to be treated separately
                             extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), DirectoryExtractionMode.Preserve);
-
                         else
                             extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, new TiFileSystemObject[] { draggedDir }, DirectoryExtractionMode.Preserve);
                     }
@@ -1610,7 +1610,7 @@ namespace TotalImage
 
         private void parentDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (lstDirectories.SelectedNode.Parent != null)
+            if (lstDirectories.SelectedNode.Parent is not null)
             {
                 lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
             }
@@ -1618,7 +1618,7 @@ namespace TotalImage
 
         private void parentDirectoryToolStripButton_Click(object sender, EventArgs e)
         {
-            if (lstDirectories.SelectedNode.Parent != null)
+            if (lstDirectories.SelectedNode.Parent is not null)
             {
                 lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
             }
@@ -1676,7 +1676,7 @@ namespace TotalImage
         // Used for events that require the current folder view to be updated (e.g. show hidden/deleted items toggled, etc.)
         private void ResetView()
         {
-            if (image != null)
+            if (image is not null)
             {
                 lastViewedDir = (TiDirectory)lstDirectories.SelectedNode.Tag;
 
@@ -1693,10 +1693,10 @@ namespace TotalImage
                 lstDirectories.Sort();
                 lstDirectories.EndUpdate();
 
-                if (lastViewedDir != null)
+                if (lastViewedDir is not null)
                 {
                     TreeNode? node = FindNode(lstDirectories.Nodes[0], lastViewedDir);
-                    if (node == null)
+                    if (node is null)
                         lstDirectories.SelectedNode = lstDirectories.Nodes[0];
                     else
                         lstDirectories.SelectedNode = node;
@@ -1730,7 +1730,7 @@ namespace TotalImage
                 //Deleted folders have strikthrough fontstyle
                 if (subdir.Name.StartsWith("?"))
                 {
-                    Font font = new Font("Segoe UI", 9f, FontStyle.Strikeout);
+                    Font font = new("Segoe UI", 9f, FontStyle.Strikeout);
                     subnode.NodeFont = font;
                 }
                 subnode.Tag = subdir;
@@ -1742,18 +1742,18 @@ namespace TotalImage
 
         private Bitmap CreateHiddenIcon(Bitmap normalIcon)
         {
-            ColorMatrix cm = new ColorMatrix();
+            ColorMatrix cm = new();
             cm.Matrix33 = 0.65f; //65% opacity
-            ImageAttributes attributes = new ImageAttributes();
+            ImageAttributes attributes = new();
             attributes.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
             Point[] points = { new Point(0, 0),
                                new Point(normalIcon.Width, 0),
                                new Point(0, normalIcon.Height),
                              };
-            Rectangle rect = new Rectangle(0, 0, normalIcon.Width, normalIcon.Height);
+            Rectangle rect = new(0, 0, normalIcon.Width, normalIcon.Height);
 
-            Bitmap bmp = new Bitmap(normalIcon.Width, normalIcon.Height);
+            Bitmap bmp = new(normalIcon.Width, normalIcon.Height);
             using (Graphics gr = Graphics.FromImage(bmp))
             {
                 gr.DrawImage(normalIcon, points, rect, GraphicsUnit.Pixel, attributes);
@@ -1771,7 +1771,7 @@ namespace TotalImage
             upOneFolderListViewItem.Tag = dir.Parent;
 
             var count = 0;
-            if (dir.Parent != null)
+            if (dir.Parent is not null)
             {
                 count++;
                 parentDirectoryToolStripMenuItem.Enabled = true;
@@ -1810,7 +1810,7 @@ namespace TotalImage
                 item.SubItems.Add(fso.LastWriteTime.ToString());
                 item.SubItems.Add(FileAttributesToString(fso.Attributes));
                 item.UseItemStyleForSubItems = false;
-                item.SubItems[4].Font = new Font(FontFamily.GenericMonospace, 9);
+                item.SubItems[4].Font = new(FontFamily.GenericMonospace, 9);
 
                 //Do some simple styling for hidden and deleted items
                 if (fso.Attributes.HasFlag(FileAttributes.Hidden))
@@ -1822,7 +1822,7 @@ namespace TotalImage
                 }
                 if (fso.Name.StartsWith("?"))
                 {
-                    Font sfont = new Font("Segoe UI", 9f, FontStyle.Strikeout);
+                    Font sfont = new("Segoe UI", 9f, FontStyle.Strikeout);
                     item.UseItemStyleForSubItems = false;
                     item.Font = sfont;
                 }
@@ -1885,7 +1885,7 @@ namespace TotalImage
             {
                 filepath = path;
                 filename = Path.GetFileName(path);
-                FileInfo fileinfo = new FileInfo(path);
+                FileInfo fileinfo = new(path);
 
                 try
                 {
@@ -1893,21 +1893,13 @@ namespace TotalImage
                     bool memoryMapping = false; //fileinfo.Length > Settings.CurrentSettings.MemoryMappingThreshold;
 
                     var ext = Path.GetExtension(filename).ToLowerInvariant();
-                    switch (ext)
+                    image = ext switch
                     {
-                        case ".vhd":
-                            image = new VhdContainer(path, memoryMapping);
-                            break;
-                        case ".nhd":
-                            image = new NhdContainer(path, memoryMapping);
-                            break;
-                        case ".imz":
-                            image = new ImzContainer(path, memoryMapping);
-                            break;
-                        default:
-                            image = new RawContainer(path, memoryMapping);
-                            break;
-                    }
+                        ".vhd" => new VhdContainer(path, memoryMapping),
+                        ".nhd" => new NhdContainer(path, memoryMapping),
+                        ".imz" => new ImzContainer(path, memoryMapping),
+                        _ => new RawContainer(path, memoryMapping),
+                    };
                 }
                 catch (FileNotFoundException)
                 {
@@ -2004,7 +1996,7 @@ namespace TotalImage
             }
 
             CurrentPartitionIndex = 0;
-            if (image.PartitionTable.Partitions.Count == 0)
+            if (image is not null && !image.PartitionTable.Partitions.Any())
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
@@ -2023,11 +2015,11 @@ namespace TotalImage
                 CloseImage();
                 return;
             }
-            else if (image.PartitionTable.Partitions.Count >= 1)
+            else if (image is not null && image.PartitionTable.Partitions.Any())
             {
                 if (image.PartitionTable.Partitions.Count > 1)
                 {
-                    dlgSelectPartition selectFrm = new dlgSelectPartition()
+                    dlgSelectPartition selectFrm = new()
                     {
                         PartitionTable = image.PartitionTable
                     };
@@ -2095,7 +2087,7 @@ namespace TotalImage
 
         private void LoadPartitionInCurrentImage(int index)
         {
-            if (image == null)
+            if (image is null)
             {
                 return;
             }
@@ -2175,7 +2167,7 @@ namespace TotalImage
                 if (attributes.HasFlag(FileAttributes.Directory))
                     return "File folder";
                 else if (extension.Length > 0)
-                    return $"{extension.Substring(1).ToUpper()} File";
+                    return $"{extension[1..].ToUpper()} File";
                 else
                     return "File";
             }
@@ -2223,7 +2215,7 @@ namespace TotalImage
         {
             IImageList list;
             var iid = new Guid(IID_IImageList);
-            SHGetImageList(large ? SHIL.LARGE : SHIL.SMALL, ref iid, out list);
+            _ = SHGetImageList(large ? SHIL.LARGE : SHIL.SMALL, ref iid, out list);
 
             IntPtr hIcon;
             list.GetIcon(index, ILD.TRANSPARENT, out hIcon);
@@ -2274,7 +2266,7 @@ namespace TotalImage
             var largeIcons = new IntPtr[1];
             var smallIcons = new IntPtr[1];
 
-            ExtractIconEx("shell32.dll", 45, largeIcons, smallIcons, 1);
+            _ = ExtractIconEx("shell32.dll", 45, largeIcons, smallIcons, 1);
 
             imgFilesSmall.Images.Add("up", (Icon)Icon.FromHandle(smallIcons[0]).Clone());
             imgFilesLarge.Images.Add("up", (Icon)Icon.FromHandle(largeIcons[0]).Clone());
@@ -2299,7 +2291,7 @@ namespace TotalImage
                     else
                     {
                         TreeNode? nodeChild = FindNode(node, dir);
-                        if (nodeChild != null)
+                        if (nodeChild is not null)
                         {
                             return nodeChild;
                         }
@@ -2369,7 +2361,7 @@ namespace TotalImage
                     continue;
                 }
 
-                ToolStripMenuItem newItem = new ToolStripMenuItem();
+                ToolStripMenuItem newItem = new();
                 newItem.Text = $"{(Settings.CurrentSettings.RecentImages.Count - i)}: {Settings.CurrentSettings.RecentImages[i]}";
                 newItem.Click += recentImage_Click;
                 recentFilesToolStripMenuItem.DropDownItems.Add(newItem);
@@ -2481,7 +2473,7 @@ namespace TotalImage
 
         private void UpdateStatusBar(bool updateFreeSpace)
         {
-            if (image == null)
+            if (image is null)
             {
                 lblStatusCapacity.Text = string.Empty;
                 lblStatusFreeCapacity.Text = string.Empty;

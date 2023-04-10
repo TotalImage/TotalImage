@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
 using TotalImage.Properties;
@@ -28,7 +29,7 @@ namespace TotalImage
 
         public dlgProperties(List<FileSystemObject> entries) : this()
         {
-            if (entries == null || entries.Count == 0)
+            if (entries is null || !entries.Any())
                 throw new ArgumentNullException(nameof(entries), "Entries list cannot be null or have 0 items!");
 
             this.entries = entries;

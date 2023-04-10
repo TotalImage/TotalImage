@@ -122,7 +122,7 @@ namespace TotalImage
 
         private void btnBrowse_Click(object sender, System.EventArgs e)
         {
-            using FolderBrowserDialog fbd = new FolderBrowserDialog();
+            using FolderBrowserDialog fbd = new();
             fbd.ShowNewFolderButton = true;
 
             if (fbd.ShowDialog() == DialogResult.OK)
@@ -208,7 +208,7 @@ namespace TotalImage
         {
             /* While the old command opens the Default apps page of Win10 Settings just fine, we still do it "the right way" on Win10 just in case
              * the old one ever stops working. */
-            ProcessStartInfo psi = new ProcessStartInfo
+            ProcessStartInfo psi = new()
             {
                 FileName = Environment.OSVersion.Version.Major > 6 ? "ms-settings:defaultapps" : "control",
                 Arguments = Environment.OSVersion.Version.Major == 6 ? "/name Microsoft.DefaultPrograms /page pageDefaultProgram" : "",

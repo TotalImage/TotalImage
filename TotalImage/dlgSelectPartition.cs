@@ -83,14 +83,17 @@ namespace TotalImage
         private void lstPartitions_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             ListViewHitTestInfo hitTestInfo = lstPartitions.HitTest(e.X, e.Y);
-            ListViewItem lvi = hitTestInfo.Item;
-
-            if (lvi != null && lvi.SubItems[2].Text != "RAW")
+            if(hitTestInfo.Item is not null) 
             {
-                ReadOnly = cbxReadOnly.Checked;
-                SelectedEntry = int.Parse(lvi.Text);
-                DialogResult = DialogResult.OK;
-                Close();
+                ListViewItem lvi = hitTestInfo.Item;
+
+                if (lvi is not null && lvi.SubItems[2].Text != "RAW")
+                {
+                    ReadOnly = cbxReadOnly.Checked;
+                    SelectedEntry = int.Parse(lvi.Text);
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
             }
         }
     }
