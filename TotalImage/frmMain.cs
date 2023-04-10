@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -934,6 +933,9 @@ namespace TotalImage
         private void lstDirectories_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
             //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
+            if(e.Node is null) 
+                return;
+            
             TiDirectory dir = (TiDirectory)e.Node.Tag;
             if (dir.Name.StartsWith("?"))
             {
@@ -945,6 +947,9 @@ namespace TotalImage
         //TODO: Move that file count stuff elsewhere and just call it to get the number.
         private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            if(e.Node is null)
+                return;
+
             //This makes sure the selected image doesn't change when a hidden folder is selected
             if (((TiFileSystemObject)e.Node.Tag).Attributes.HasFlag(FileAttributes.Hidden))
             {
@@ -1055,12 +1060,16 @@ namespace TotalImage
             if (e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) && image is null)
             {
                 //Files are being dragged into the listview from outside the form
-                string[] items = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-                if (items.Length == 1)
+                var data = e.Data.GetData(DataFormats.FileDrop, false);
+                if (data is not null)
                 {
-                    CloseImage();
-                    filepath = items[0];
-                    OpenImage(filepath);
+                    string[] items = (string[])data;
+                    if (items.Length == 1)
+                    {
+                        CloseImage();
+                        filepath = items[0];
+                        OpenImage(filepath);
+                    }
                 }
             }
         }
@@ -1297,6 +1306,9 @@ namespace TotalImage
 
         private void selectPartitionToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if(image is null)
+                return;
+
             dlgSelectPartition dlg = new()
             {
                 PartitionTable = image.PartitionTable
@@ -2320,7 +2332,7 @@ namespace TotalImage
                 saveToolStripButton.Enabled = true;
 
             //Enabling this now since we have rudimentary HDD support.
-            managePartitionsToolStripButton.Enabled = image.PartitionTable is not Partitions.NoPartitionTable;
+            managePartitionsToolStripButton.Enabled = image is not null && image.PartitionTable is not Partitions.NoPartitionTable;
             selectPartitionToolStripComboBox.Enabled = true;
         }
 

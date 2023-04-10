@@ -25,6 +25,9 @@ namespace TotalImage
             frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
             FileInfo fileInfo = new(mainForm.filepath);
 
+            if (mainForm.image is null)
+                return;
+
             //Fixes the column width on high DPI screens
             lstProperties.Columns[1].Width = lstProperties.ClientRectangle.Width - lstProperties.Columns[0].Width;
 

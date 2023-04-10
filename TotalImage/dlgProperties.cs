@@ -150,7 +150,7 @@ namespace TotalImage
                     if (entries[0].Attributes.HasFlag(FileAttributes.Directory))
                         txtType1.Text = "File folder";
                     else if (extension.Length > 0)
-                        txtType1.Text = $"{extension.Substring(1).ToUpper()} File";
+                        txtType1.Text = $"{extension[1..].ToUpper()} File";
                     else
                         txtType1.Text = "File";
                 }
@@ -229,7 +229,7 @@ namespace TotalImage
                         if (entries[0].Attributes.HasFlag(FileAttributes.Directory))
                             txtType1.Text = "File folder";
                         else if (foExt.Length > 0)
-                            txtType1.Text = $"{foExt.Substring(1).ToUpper()} File";
+                            txtType1.Text = $"{foExt[1..].ToUpper()} File";
                         else
                             txtType1.Text = "File";
                     }

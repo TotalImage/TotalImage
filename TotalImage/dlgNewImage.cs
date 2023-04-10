@@ -58,7 +58,7 @@ namespace TotalImage
          * TODO: Should this be moved elsewhere? */
         private static int GenerateVolumeID()
         {
-            Random rnd = new Random();
+            Random rnd = new();
             return rnd.Next();
         }
 
@@ -86,6 +86,9 @@ namespace TotalImage
 
         private void lstFloppyGeometries_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (lstFloppyGeometries.SelectedValue is null)
+                return;
+
             _ = Enum.TryParse(lstFloppyGeometries.SelectedValue.ToString(), out selectedItem);
 
             if (selectedItem != FloppyGeometry.FriendlyName.Custom)
@@ -125,10 +128,10 @@ namespace TotalImage
 
         private void btnAdvanced_Click(object sender, EventArgs e)
         {
-            using dlgNewImageAdvanced dlgAdvanced = new dlgNewImageAdvanced();
+            using dlgNewImageAdvanced dlgAdvanced = new();
             dlgAdvanced.ShowDialog();
 
-            FloppyGeometry newGeometry = new FloppyGeometry((byte)(dlgAdvanced.lstFloppySides.SelectedIndex + 1), (byte)dlgAdvanced.txtFloppyTracks.Value,
+            FloppyGeometry newGeometry = new((byte)(dlgAdvanced.lstFloppySides.SelectedIndex + 1), (byte)dlgAdvanced.txtFloppyTracks.Value,
                 (byte)dlgAdvanced.txtFloppySPT.Value, (byte)(Math.Log((double)dlgAdvanced.txtFloppyBPS.Value, 2) - 7), (byte)dlgAdvanced.txtFloppyMediaDesc.Value,
                 (byte)dlgAdvanced.txtFloppySPC.Value, (byte)dlgAdvanced.txtFloppyNumFATs.Value, (byte)dlgAdvanced.txtFloppySPF.Value, (ushort)dlgAdvanced.txtFloppyRootDir.Value,
                 (byte)dlgAdvanced.txtFloppyReservedSect.Value);

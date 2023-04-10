@@ -19,7 +19,7 @@ namespace TotalImage
         {
             mainForm = (frmMain)Application.OpenForms["frmMain"];
 
-            rbnMBR.Enabled = !(mainForm.image.PartitionTable is NoPartitionTable);
+            rbnMBR.Enabled = mainForm.image is not null && mainForm.image.PartitionTable is not NoPartitionTable;
             rbnVBR.Checked = true;
         }
 
@@ -66,7 +66,7 @@ namespace TotalImage
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            using SaveFileDialog sfd = new SaveFileDialog();
+            using SaveFileDialog sfd = new();
             sfd.AutoUpgradeEnabled = true;
             sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
             sfd.OverwritePrompt = true;
@@ -144,7 +144,7 @@ namespace TotalImage
 
         private void rbnVBR_CheckedChanged(object sender, EventArgs e)
         {
-            if (rbnVBR.Checked)
+            if (mainForm.image is not null && rbnVBR.Checked)
             {
                 FileSystems.FAT.FatFileSystem fs = (FileSystems.FAT.FatFileSystem)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem;
                 var sectorSize = fs.BiosParameterBlock.BytesPerLogicalSector;
@@ -180,6 +180,9 @@ namespace TotalImage
         //Reads the desired number of bootsector bytes of the MBR or the selected partition's VBR into an array
         private void ReadBootSectorBytes(bool mbr, int length)
         {
+            if (mainForm.image is null)
+                return;
+
             BootSectorBytes = new byte[length];
 
             if (mbr)
