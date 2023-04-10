@@ -166,7 +166,7 @@ namespace TotalImage
          */
         private void bootSectorProperties_Click(object sender, EventArgs e)
         {
-            if(image is not null && image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FatFileSystem)
+            if (image is not null && image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FatFileSystem)
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
@@ -661,7 +661,7 @@ namespace TotalImage
             }
             else if (lstDirectories.Focused)
             {
-                if(((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is null) //Root dir is selected, so we have to handle this separately
+                if (((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is null) //Root dir is selected, so we have to handle this separately
                 {
                     lstFiles.Focus();
                     lstFiles.SelectAllItems();
@@ -671,7 +671,7 @@ namespace TotalImage
             if (Settings.CurrentSettings.ExtractAlwaysAsk)
             {
                 using dlgExtract dlg = new();
-                dlg.lblPath.Text = $"Extract { (lstDirectories.Focused ? "1" : SelectedItems.Count())} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
+                dlg.lblPath.Text = $"Extract {(lstDirectories.Focused ? "1" : SelectedItems.Count())} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     Settings.CurrentSettings.DefaultExtractPath = dlg.TargetPath;
@@ -680,7 +680,7 @@ namespace TotalImage
                     {
                         FileExtraction.ExtractFiles(this, SelectedItems, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
                     }
-                    else if(lstDirectories.Focused)
+                    else if (lstDirectories.Focused)
                     {
                         FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag }, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
                     }
@@ -736,7 +736,7 @@ namespace TotalImage
                     propertiesToolStripButton.Enabled = true;
 
                     var path = lstDirectories.SelectedNode.FullPath;
-                    if(!path.EndsWith(lstDirectories.PathSeparator))
+                    if (!path.EndsWith(lstDirectories.PathSeparator))
                         path += lstDirectories.PathSeparator;
 
                     UpdateStatusBar(false);
@@ -933,9 +933,9 @@ namespace TotalImage
         private void lstDirectories_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
             //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
-            if(e.Node is null) 
+            if (e.Node is null)
                 return;
-            
+
             TiDirectory dir = (TiDirectory)e.Node.Tag;
             if (dir.Name.StartsWith("?"))
             {
@@ -947,7 +947,7 @@ namespace TotalImage
         //TODO: Move that file count stuff elsewhere and just call it to get the number.
         private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if(e.Node is null)
+            if (e.Node is null)
                 return;
 
             //This makes sure the selected image doesn't change when a hidden folder is selected
@@ -1306,7 +1306,7 @@ namespace TotalImage
 
         private void selectPartitionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(image is null)
+            if (image is null)
                 return;
 
             dlgSelectPartition dlg = new()
@@ -1365,6 +1365,30 @@ namespace TotalImage
                             UseShellExecute = true
                         };
                         Process.Start(psi);
+                    }
+                }
+            }
+            else
+            {
+                /* Searches the currently displayed items for the first one that starts with the character of the pressed key.
+                 * Currently this is very rudimentary, as it only works for English letters and digits, and the first item that is found.
+                 * Could be improved to continue the search further etc. */
+                string character = e.KeyCode.ToString();
+
+                //This crap is done so numeric keys also work...
+                if ((byte)e.KeyCode > 0x30 && (byte)e.KeyCode < 0x39)
+                    character = ((int)e.KeyCode - 0x30).ToString();
+                else if ((byte)e.KeyCode > 0x60 && (byte)e.KeyCode < 0x69)
+                    character = ((int)e.KeyCode - 0x60).ToString();
+
+                foreach (ListViewItem lvi in currentFolderView)
+                {
+                    if (lvi.Text.ToLower().StartsWith(character.ToLower()))
+                    {
+                        lstFiles.SelectedIndices.Clear();
+                        lvi.Focused = true;
+                        lvi.Selected = true;
+                        return;
                     }
                 }
             }
