@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -1125,8 +1126,7 @@ namespace TotalImage
         }
 
         /* Fires when the user starts dragging a ListViewItem around. String array is needed for Explorer to perform the move operation once
-         * the drop is performed.
-         * TODO: Build an array of selected ListViewItems and path strings to perform the drag and drop with */
+         * the drop is performed. */
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -1148,17 +1148,17 @@ namespace TotalImage
                     string item = Path.Combine(tempdir, fso.Name);
                     items.Add(item);
                 }
-                string[] draggedItems = items.ToArray();
+                StringCollection draggedItems = new StringCollection();
+                draggedItems.AddRange(items.ToArray());
 
                 DataObject data = new DataObject();
-                data.SetData(DataFormats.FileDrop, draggedItems); //Needed for Explorer
+                data.SetFileDropList(draggedItems); //Needed for Explorer
                 lstFiles.DoDragDrop(data, DragDropEffects.Move);
             }
         }
 
         /* Fires when the user starts dragging a TreeNode around. String array is needed for Explorer to perform the move operation once
-         * the drop is performed.
-         * TODO: Build an array of selected TreeNodes and path strings to perform the drag and drop with */
+         * the drop is performed. */
         private void lstDirectories_ItemDrag(object sender, ItemDragEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -1185,10 +1185,11 @@ namespace TotalImage
                 {
                     items.Add(Path.Combine(tempdir, draggedDir.Name));
                 }
-                string[] itemsArray = items.ToArray();
+                StringCollection draggedItems = new StringCollection();
+                draggedItems.AddRange(items.ToArray());
 
                 DataObject data = new DataObject();
-                data.SetData(DataFormats.FileDrop, itemsArray); //FileDrop is needed for Explorer
+                data.SetFileDropList(draggedItems); //FileDrop is needed for Explorer
                 lstDirectories.DoDragDrop(data, DragDropEffects.Move);
             }
         }
@@ -1572,7 +1573,6 @@ namespace TotalImage
                 if (!ClientRectangle.Contains(PointToClient(MousePosition)))
                 {
                     Capture = true;
-
                     var extractionSucceeded = false;
 
                     //Here is where the actual extraction to the temp dir happens
@@ -1583,36 +1583,29 @@ namespace TotalImage
                     else if (sender is TreeView)
                     {
                         if (draggedDir.Parent == null) //Root dir needs to be treated separately
-                        {
                             extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), DirectoryExtractionMode.Preserve);
-                        }
+
                         else
-                        {
                             extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, new TiFileSystemObject[] { draggedDir }, DirectoryExtractionMode.Preserve);
-                        }
                     }
 
                     //User cancelled extraction via the dialog, so the drop needs to be cancelled too or Explorer will try to move items that don't exist
                     if (extractionSucceeded)
                         e.Action = DragAction.Drop;
                     else
+                    {
                         e.Action = DragAction.Cancel;
-
-                    return;
+                        Directory.Delete(Path.Combine(Path.GetTempPath(), "TotalImage", filename), true);
+                    }
                 }
                 else
-                {
                     e.Action = DragAction.Cancel;
-                    Directory.Delete(Path.Combine(Path.GetTempPath(), "TotalImage", filename), true);
-                    return;
-                }
+
+                return;
             }
             //Left mouse button wasn't released yes, continue the drag
             else
-            {
                 e.Action = DragAction.Continue;
-                return;
-            }
         }
 
         private void parentDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
