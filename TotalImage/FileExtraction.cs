@@ -255,7 +255,7 @@ public static class FileExtraction
     }
 
     public static bool ExtractFilesToTemporaryDirectory(IWin32Window parentWindow, IEnumerable<TiFileSystemObject> items, DirectoryExtractionMode mode)
-        => ExtractFiles(parentWindow, items, Path.Combine(Path.GetTempPath(), "TotalImage", ((frmMain)Application.OpenForms["frmMain"]).filename), mode, false, true);
+        => ExtractFiles(parentWindow, items, Path.Combine(Settings.TempDir, ((frmMain)Application.OpenForms["frmMain"]).filename), mode, false, true);
 
     public static bool ExtractFiles(IWin32Window parentWindow, IEnumerable<TiFileSystemObject> items)
         => ExtractFiles(parentWindow, items,

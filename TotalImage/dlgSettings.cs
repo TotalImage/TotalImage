@@ -193,10 +193,10 @@ namespace TotalImage
                     Heading = "Multiple instances are running",
                     Caption = "Warning",
                     Buttons =
-                {
-                    TaskDialogButton.Yes,
-                    TaskDialogButton.No,
-                },
+                    {
+                        TaskDialogButton.Yes,
+                        TaskDialogButton.No,
+                    },
                     Icon = TaskDialogIcon.Warning,
                     DefaultButton = TaskDialogButton.No,
                     SizeToContent = true
@@ -208,17 +208,14 @@ namespace TotalImage
                     return;
             }
 
-            string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage");
             try
             {
-                if (Directory.Exists(tempdir))
-                {
-                    Directory.Delete(tempdir, true);
-                }
+                if (Directory.Exists(Settings.TempDir))
+                    Directory.Delete(Settings.TempDir, true);
 
-                Directory.CreateDirectory(tempdir);
+                Directory.CreateDirectory(Settings.TempDir);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
@@ -226,9 +223,9 @@ namespace TotalImage
                     Heading = "Cannot clear temporary folder",
                     Caption = "Error",
                     Buttons =
-                {
-                    TaskDialogButton.OK
-                },
+                    {
+                        TaskDialogButton.OK
+                    },
                     Icon = TaskDialogIcon.Error,
                     DefaultButton = TaskDialogButton.OK
                 });
@@ -290,7 +287,7 @@ namespace TotalImage
         {
             ProcessStartInfo psi = new()
             {
-                FileName = Path.Combine(Path.GetTempPath(), "TotalImage"),
+                FileName = Settings.TempDir,
                 UseShellExecute = true
             };
 

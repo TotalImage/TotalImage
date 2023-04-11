@@ -997,7 +997,7 @@ namespace TotalImage
                 }
                 else //A file was double-clicked - extract to temp dir then open it
                 {
-                    string targetDir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
+                    string targetDir = Path.Combine(Settings.TempDir, filename);
                     string targetFile = Path.Combine(targetDir, SelectedItems.First().Name);
 
                     FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
@@ -1140,7 +1140,7 @@ namespace TotalImage
         {
             if (e.Button == MouseButtons.Left && e.Item is not null)
             {
-                string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
+                string tempdir = Path.Combine(Settings.TempDir, filename);
                 if (!Directory.Exists(tempdir))
                 {
                     Directory.CreateDirectory(tempdir);
@@ -1172,7 +1172,7 @@ namespace TotalImage
         {
             if (e.Button == MouseButtons.Left && e.Item is not null)
             {
-                string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
+                string tempdir = Path.Combine(Settings.TempDir, filename);
                 if (!Directory.Exists(tempdir))
                 {
                     Directory.CreateDirectory(tempdir);
@@ -1233,6 +1233,22 @@ namespace TotalImage
             Settings.Save();
             SetUIState();
             Settings.SaveUIState();
+
+            //Try to clear the temp folder if this is the only instance
+            if(Process.GetProcessesByName("TotalImage").Length == 1)
+            {
+                try
+                {
+                    if (Directory.Exists(Settings.TempDir))
+                        Directory.Delete(Settings.TempDir, true);
+
+                    Directory.CreateDirectory(Settings.TempDir);
+                }
+                catch (Exception)
+                {
+                    //Ignore the exception, since the program is closing anyway... The folder can be cleared another day.
+                }
+            }
         }
 
         private void viewMenu_DropDownOpening(object sender, EventArgs e)
@@ -1354,7 +1370,7 @@ namespace TotalImage
                     }
                     else
                     {
-                        string targetDir = Path.Combine(Path.GetTempPath(), "TotalImage", filename);
+                        string targetDir = Path.Combine(Settings.TempDir, filename);
                         string targetFile = Path.Combine(targetDir, SelectedItems.First().Name);
 
                         FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
@@ -1598,7 +1614,7 @@ namespace TotalImage
             if (e.EscapePressed)
             {
                 e.Action = DragAction.Cancel;
-                Directory.Delete(Path.Combine(Path.GetTempPath(), "TotalImage", filename), true);
+                Directory.Delete(Path.Combine(Settings.TempDir, filename), true);
                 return;
             }
 
@@ -1631,7 +1647,7 @@ namespace TotalImage
                     else
                     {
                         e.Action = DragAction.Cancel;
-                        Directory.Delete(Path.Combine(Path.GetTempPath(), "TotalImage", filename), true);
+                        Directory.Delete(Path.Combine(Settings.TempDir, filename), true);
                     }
                 }
                 else

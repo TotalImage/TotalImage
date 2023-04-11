@@ -54,6 +54,7 @@ namespace TotalImage
         private static readonly string SettingsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotalImage");
         private static readonly string SettingsFile = Path.Combine(SettingsDir, "settings.json");
         private static readonly string UIStateFile = Path.Combine(SettingsDir, "uistate.json");
+        public static readonly string TempDir = Path.Combine(Path.GetTempPath(), "TotalImage");
 
         private static FileSystemWatcher settingsWatcher;
 
