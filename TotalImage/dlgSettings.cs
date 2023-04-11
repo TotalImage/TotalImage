@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TotalImage
 {
@@ -182,13 +183,58 @@ namespace TotalImage
 
         private void btnClearTemp_Click(object sender, EventArgs e)
         {
-            string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage");
-            if (Directory.Exists(tempdir))
+            //If there's more than one instance running, deleting the temp folder now is a bad idea, so let's warn the user first just in case.
+            if (Process.GetProcessesByName("TotalImage").Length > 1)
             {
-                Directory.Delete(tempdir, true);
+                TaskDialogPage page = new()
+                {
+                    Text = $"More than one instance of TotalImage is currently running. Attempting to clear the temporary folder while other instances are " +
+                    $"using it can cause unpredictable behavior.{Environment.NewLine}{Environment.NewLine}Are you sure you want to continue?",
+                    Heading = "Multiple instances are running",
+                    Caption = "Warning",
+                    Buttons =
+                {
+                    TaskDialogButton.Yes,
+                    TaskDialogButton.No,
+                },
+                    Icon = TaskDialogIcon.Warning,
+                    DefaultButton = TaskDialogButton.No,
+                    SizeToContent = true
+                };
+
+                TaskDialogButton result = TaskDialog.ShowDialog(this, page);
+
+                if (result == TaskDialogButton.No)
+                    return;
             }
 
-            Directory.CreateDirectory(tempdir);
+            string tempdir = Path.Combine(Path.GetTempPath(), "TotalImage");
+            try
+            {
+                if (Directory.Exists(tempdir))
+                {
+                    Directory.Delete(tempdir, true);
+                }
+
+                Directory.CreateDirectory(tempdir);
+            }
+            catch(Exception)
+            {
+                TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = "Temporary folder could not be cleared because it is in use by another process or inaccessible.",
+                    Heading = "Cannot clear temporary folder",
+                    Caption = "Error",
+                    Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                    Icon = TaskDialogIcon.Error,
+                    DefaultButton = TaskDialogButton.OK
+                });
+
+                return;
+            }
 
             TaskDialog.ShowDialog(this, new TaskDialogPage()
             {
