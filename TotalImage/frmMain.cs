@@ -42,6 +42,7 @@ namespace TotalImage
         internal static Dictionary<string, (string name, int iconIndex)> fileTypes = new(StringComparer.InvariantCultureIgnoreCase);
         private string? lastSavedFilename;
         private TiDirectory? draggedDir;
+        public string tempDir;
 
         private ListViewItem upOneFolderListViewItem = new()
         {
@@ -997,8 +998,8 @@ namespace TotalImage
                 }
                 else //A file was double-clicked - extract to temp dir then open it
                 {
-                    string targetDir = Path.Combine(Settings.TempDir, filename);
-                    string targetFile = Path.Combine(targetDir, SelectedItems.First().Name);
+                    tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
+                    string targetFile = Path.Combine(tempDir, SelectedItems.First().Name);
 
                     FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
 
@@ -1140,10 +1141,10 @@ namespace TotalImage
         {
             if (e.Button == MouseButtons.Left && e.Item is not null)
             {
-                string tempdir = Path.Combine(Settings.TempDir, filename);
-                if (!Directory.Exists(tempdir))
+                tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
+                if (!Directory.Exists(tempDir))
                 {
-                    Directory.CreateDirectory(tempdir);
+                    Directory.CreateDirectory(tempDir);
                 }
 
                 if (((ListViewItem)e.Item).Text == "..")
@@ -1154,7 +1155,7 @@ namespace TotalImage
                 List<string> items = new();
                 foreach (TiFileSystemObject fso in SelectedItems)
                 {
-                    string item = Path.Combine(tempdir, fso.Name);
+                    string item = Path.Combine(tempDir, fso.Name);
                     items.Add(item);
                 }
                 StringCollection draggedItems = new();
@@ -1172,10 +1173,10 @@ namespace TotalImage
         {
             if (e.Button == MouseButtons.Left && e.Item is not null)
             {
-                string tempdir = Path.Combine(Settings.TempDir, filename);
-                if (!Directory.Exists(tempdir))
+                tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
+                if (!Directory.Exists(tempDir))
                 {
-                    Directory.CreateDirectory(tempdir);
+                    Directory.CreateDirectory(tempDir);
                 }
 
                 //This array is needed for Explorer to perform the file copy/move operation later on.
@@ -1187,12 +1188,12 @@ namespace TotalImage
                      * instead of the contents. */
                     foreach (var fso in draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false))
                     {
-                        items.Add(Path.Combine(tempdir, fso.Name));
+                        items.Add(Path.Combine(tempDir, fso.Name));
                     }
                 }
                 else
                 {
-                    items.Add(Path.Combine(tempdir, draggedDir.Name));
+                    items.Add(Path.Combine(tempDir, draggedDir.Name));
                 }
                 StringCollection draggedItems = new();
                 draggedItems.AddRange(items.ToArray());
@@ -1370,8 +1371,8 @@ namespace TotalImage
                     }
                     else
                     {
-                        string targetDir = Path.Combine(Settings.TempDir, filename);
-                        string targetFile = Path.Combine(targetDir, SelectedItems.First().Name);
+                        tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
+                        string targetFile = Path.Combine(tempDir, SelectedItems.First().Name);
 
                         FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
 
@@ -1614,7 +1615,7 @@ namespace TotalImage
             if (e.EscapePressed)
             {
                 e.Action = DragAction.Cancel;
-                Directory.Delete(Path.Combine(Settings.TempDir, filename), true);
+                Directory.Delete(tempDir, true);
                 return;
             }
 
@@ -1647,7 +1648,7 @@ namespace TotalImage
                     else
                     {
                         e.Action = DragAction.Cancel;
-                        Directory.Delete(Path.Combine(Settings.TempDir, filename), true);
+                        Directory.Delete(tempDir, true);
                     }
                 }
                 else
@@ -1684,11 +1685,6 @@ namespace TotalImage
                 closeImage_Click(sender, e);
             }
         }
-
-
-
-
-
         #endregion
 
         private int IndexShift => lstFiles.VirtualListSize - currentFolderView.Count;
@@ -2590,6 +2586,23 @@ namespace TotalImage
                         }
                 }
             }
+        }
+
+        //Generates a random name for a subfolder in the temp folder, used during double-click, ENTER keypress and drag-n-drop extraction
+        private static string GetRandomDirName()
+        {
+            string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            Random rand = new();
+            StringBuilder sb = new("~");
+            int index;
+
+            for (int i = 0; i < 10; i++)
+            {
+                index = rand.Next(chars.Length);
+                sb.Append(Convert.ToChar(chars[index]));
+            }
+            
+            return sb.ToString();
         }
     }
 }
