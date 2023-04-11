@@ -1763,7 +1763,7 @@ namespace TotalImage
                     subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
                 }
 
-                //Deleted folders have strikthrough fontstyle
+                //Deleted folders have strikethrough fontstyle
                 if (subdir.Name.StartsWith("?"))
                 {
                     Font font = new("Segoe UI", 9f, FontStyle.Strikeout);

@@ -236,8 +236,19 @@ namespace TotalImage
 
         private void cbxExtractAsk_CheckedChanged(object sender, EventArgs e)
         {
-            rbnExtractFlat.Enabled = rbnExtractPreserve.Enabled = rbnIgnoreFolders.Enabled = btnBrowse.Enabled = txtExtractPath.Enabled = 
+            rbnExtractFlat.Enabled = rbnExtractPreserve.Enabled = rbnIgnoreFolders.Enabled = btnBrowse.Enabled = txtExtractPath.Enabled =
                 cbxOpenDir.Enabled = !cbxExtractAsk.Checked;
+        }
+
+        private void btnOpenTemp_Click(object sender, EventArgs e)
+        {
+            ProcessStartInfo psi = new()
+            {
+                FileName = Path.Combine(Path.GetTempPath(), "TotalImage"),
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
         }
     }
 }
