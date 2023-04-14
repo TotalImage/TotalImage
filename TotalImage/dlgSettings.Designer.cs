@@ -112,10 +112,9 @@ namespace TotalImage
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnCancel.Location = new System.Drawing.Point(491, 15);
-            btnCancel.Margin = new System.Windows.Forms.Padding(4);
+            btnCancel.Location = new System.Drawing.Point(393, 12);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new System.Drawing.Size(100, 32);
+            btnCancel.Size = new System.Drawing.Size(80, 26);
             btnCancel.TabIndex = 1;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
@@ -125,10 +124,9 @@ namespace TotalImage
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnOK.Location = new System.Drawing.Point(384, 15);
-            btnOK.Margin = new System.Windows.Forms.Padding(4);
+            btnOK.Location = new System.Drawing.Point(307, 12);
             btnOK.Name = "btnOK";
-            btnOK.Size = new System.Drawing.Size(100, 32);
+            btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 0;
             btnOK.Text = "OK";
             btnOK.UseVisualStyleBackColor = true;
@@ -140,10 +138,9 @@ namespace TotalImage
             pnlBottom.Controls.Add(btnCancel);
             pnlBottom.Controls.Add(btnOK);
             pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 626);
-            pnlBottom.Margin = new System.Windows.Forms.Padding(4);
+            pnlBottom.Location = new System.Drawing.Point(0, 500);
             pnlBottom.Name = "pnlBottom";
-            pnlBottom.Size = new System.Drawing.Size(606, 62);
+            pnlBottom.Size = new System.Drawing.Size(485, 50);
             pnlBottom.TabIndex = 2;
             // 
             // tabs
@@ -153,22 +150,20 @@ namespace TotalImage
             tabs.Controls.Add(tabView);
             tabs.Controls.Add(tabExtraction);
             tabs.Controls.Add(tabIntegration);
-            tabs.Location = new System.Drawing.Point(15, 16);
-            tabs.Margin = new System.Windows.Forms.Padding(4);
+            tabs.Location = new System.Drawing.Point(12, 13);
             tabs.Name = "tabs";
             tabs.SelectedIndex = 0;
-            tabs.Size = new System.Drawing.Size(576, 602);
+            tabs.Size = new System.Drawing.Size(461, 482);
             tabs.TabIndex = 3;
             // 
             // tabGeneral
             // 
             tabGeneral.Controls.Add(gbxMisc);
             tabGeneral.Controls.Add(gbxBehavior);
-            tabGeneral.Location = new System.Drawing.Point(4, 29);
-            tabGeneral.Margin = new System.Windows.Forms.Padding(4);
+            tabGeneral.Location = new System.Drawing.Point(4, 24);
             tabGeneral.Name = "tabGeneral";
-            tabGeneral.Padding = new System.Windows.Forms.Padding(4);
-            tabGeneral.Size = new System.Drawing.Size(568, 569);
+            tabGeneral.Padding = new System.Windows.Forms.Padding(3);
+            tabGeneral.Size = new System.Drawing.Size(453, 454);
             tabGeneral.TabIndex = 0;
             tabGeneral.Text = "General";
             tabGeneral.UseVisualStyleBackColor = true;
@@ -182,11 +177,9 @@ namespace TotalImage
             gbxMisc.Controls.Add(btnClearTemp);
             gbxMisc.Controls.Add(btnClearRecent);
             gbxMisc.Controls.Add(btnResetSettings);
-            gbxMisc.Location = new System.Drawing.Point(8, 216);
-            gbxMisc.Margin = new System.Windows.Forms.Padding(4);
+            gbxMisc.Location = new System.Drawing.Point(6, 173);
             gbxMisc.Name = "gbxMisc";
-            gbxMisc.Padding = new System.Windows.Forms.Padding(4);
-            gbxMisc.Size = new System.Drawing.Size(552, 200);
+            gbxMisc.Size = new System.Drawing.Size(442, 160);
             gbxMisc.TabIndex = 1;
             gbxMisc.TabStop = false;
             gbxMisc.Text = "Advanced options";
@@ -194,10 +187,9 @@ namespace TotalImage
             // btnOpenTemp
             // 
             btnOpenTemp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnOpenTemp.Location = new System.Drawing.Point(444, 154);
-            btnOpenTemp.Margin = new System.Windows.Forms.Padding(4);
+            btnOpenTemp.Location = new System.Drawing.Point(355, 123);
             btnOpenTemp.Name = "btnOpenTemp";
-            btnOpenTemp.Size = new System.Drawing.Size(100, 32);
+            btnOpenTemp.Size = new System.Drawing.Size(80, 26);
             btnOpenTemp.TabIndex = 10;
             btnOpenTemp.Text = "Open";
             btnOpenTemp.UseVisualStyleBackColor = true;
@@ -206,40 +198,39 @@ namespace TotalImage
             // lblClearTemp
             // 
             lblClearTemp.AutoSize = true;
-            lblClearTemp.Location = new System.Drawing.Point(11, 120);
+            lblClearTemp.Location = new System.Drawing.Point(9, 96);
             lblClearTemp.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblClearTemp.Name = "lblClearTemp";
-            lblClearTemp.Size = new System.Drawing.Size(416, 20);
+            lblClearTemp.Size = new System.Drawing.Size(327, 15);
             lblClearTemp.TabIndex = 9;
             lblClearTemp.Text = "Clear TotalImage's temporary folder in local application data.";
             // 
             // lblClearRecent
             // 
             lblClearRecent.AutoSize = true;
-            lblClearRecent.Location = new System.Drawing.Point(11, 76);
+            lblClearRecent.Location = new System.Drawing.Point(9, 61);
             lblClearRecent.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblClearRecent.Name = "lblClearRecent";
-            lblClearRecent.Size = new System.Drawing.Size(191, 20);
+            lblClearRecent.Size = new System.Drawing.Size(152, 15);
             lblClearRecent.TabIndex = 8;
             lblClearRecent.Text = "Clear the recent images list.";
             // 
             // lblResetSettings
             // 
             lblResetSettings.AutoSize = true;
-            lblResetSettings.Location = new System.Drawing.Point(11, 30);
+            lblResetSettings.Location = new System.Drawing.Point(9, 24);
             lblResetSettings.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblResetSettings.Name = "lblResetSettings";
-            lblResetSettings.Size = new System.Drawing.Size(350, 20);
+            lblResetSettings.Size = new System.Drawing.Size(275, 15);
             lblResetSettings.TabIndex = 7;
             lblResetSettings.Text = "Reset all TotalImage settings to their default values.";
             // 
             // btnClearTemp
             // 
             btnClearTemp.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnClearTemp.Location = new System.Drawing.Point(444, 114);
-            btnClearTemp.Margin = new System.Windows.Forms.Padding(4);
+            btnClearTemp.Location = new System.Drawing.Point(355, 91);
             btnClearTemp.Name = "btnClearTemp";
-            btnClearTemp.Size = new System.Drawing.Size(100, 32);
+            btnClearTemp.Size = new System.Drawing.Size(80, 26);
             btnClearTemp.TabIndex = 6;
             btnClearTemp.Text = "Clear";
             btnClearTemp.UseVisualStyleBackColor = true;
@@ -248,10 +239,9 @@ namespace TotalImage
             // btnClearRecent
             // 
             btnClearRecent.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnClearRecent.Location = new System.Drawing.Point(444, 70);
-            btnClearRecent.Margin = new System.Windows.Forms.Padding(4);
+            btnClearRecent.Location = new System.Drawing.Point(355, 56);
             btnClearRecent.Name = "btnClearRecent";
-            btnClearRecent.Size = new System.Drawing.Size(100, 32);
+            btnClearRecent.Size = new System.Drawing.Size(80, 26);
             btnClearRecent.TabIndex = 5;
             btnClearRecent.Text = "Clear";
             btnClearRecent.UseVisualStyleBackColor = true;
@@ -260,10 +250,9 @@ namespace TotalImage
             // btnResetSettings
             // 
             btnResetSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnResetSettings.Location = new System.Drawing.Point(444, 24);
-            btnResetSettings.Margin = new System.Windows.Forms.Padding(4);
+            btnResetSettings.Location = new System.Drawing.Point(355, 19);
             btnResetSettings.Name = "btnResetSettings";
-            btnResetSettings.Size = new System.Drawing.Size(100, 32);
+            btnResetSettings.Size = new System.Drawing.Size(80, 26);
             btnResetSettings.TabIndex = 4;
             btnResetSettings.Text = "Reset";
             btnResetSettings.UseVisualStyleBackColor = true;
@@ -278,11 +267,9 @@ namespace TotalImage
             gbxBehavior.Controls.Add(cbxConfirmOverwriteExtract);
             gbxBehavior.Controls.Add(cbxConfirmDeletion);
             gbxBehavior.Controls.Add(cbxConfirmInjection);
-            gbxBehavior.Location = new System.Drawing.Point(8, 8);
-            gbxBehavior.Margin = new System.Windows.Forms.Padding(4);
+            gbxBehavior.Location = new System.Drawing.Point(6, 6);
             gbxBehavior.Name = "gbxBehavior";
-            gbxBehavior.Padding = new System.Windows.Forms.Padding(4);
-            gbxBehavior.Size = new System.Drawing.Size(552, 200);
+            gbxBehavior.Size = new System.Drawing.Size(442, 160);
             gbxBehavior.TabIndex = 0;
             gbxBehavior.TabStop = false;
             gbxBehavior.Text = "Behavior";
@@ -291,21 +278,19 @@ namespace TotalImage
             // 
             lblMemoryMapping1.AutoSize = true;
             lblMemoryMapping1.Enabled = false;
-            lblMemoryMapping1.Location = new System.Drawing.Point(436, 163);
-            lblMemoryMapping1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblMemoryMapping1.Location = new System.Drawing.Point(349, 130);
             lblMemoryMapping1.Name = "lblMemoryMapping1";
-            lblMemoryMapping1.Size = new System.Drawing.Size(35, 20);
+            lblMemoryMapping1.Size = new System.Drawing.Size(28, 15);
             lblMemoryMapping1.TabIndex = 21;
             lblMemoryMapping1.Text = "MiB";
             // 
             // txtMemoryMapping
             // 
             txtMemoryMapping.Enabled = false;
-            txtMemoryMapping.Location = new System.Drawing.Point(303, 161);
-            txtMemoryMapping.Margin = new System.Windows.Forms.Padding(4);
+            txtMemoryMapping.Location = new System.Drawing.Point(242, 129);
             txtMemoryMapping.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
             txtMemoryMapping.Name = "txtMemoryMapping";
-            txtMemoryMapping.Size = new System.Drawing.Size(125, 27);
+            txtMemoryMapping.Size = new System.Drawing.Size(100, 23);
             txtMemoryMapping.TabIndex = 20;
             txtMemoryMapping.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -313,10 +298,9 @@ namespace TotalImage
             // 
             lblMemoryMapping.AutoSize = true;
             lblMemoryMapping.Enabled = false;
-            lblMemoryMapping.Location = new System.Drawing.Point(11, 163);
-            lblMemoryMapping.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblMemoryMapping.Location = new System.Drawing.Point(9, 130);
             lblMemoryMapping.Name = "lblMemoryMapping";
-            lblMemoryMapping.Size = new System.Drawing.Size(284, 20);
+            lblMemoryMapping.Size = new System.Drawing.Size(227, 15);
             lblMemoryMapping.TabIndex = 19;
             lblMemoryMapping.Text = "Threshold for mapping files into memory:";
             // 
@@ -325,10 +309,9 @@ namespace TotalImage
             cbxAutoincrementFilename.AutoSize = true;
             cbxAutoincrementFilename.Enabled = false;
             cbxAutoincrementFilename.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxAutoincrementFilename.Location = new System.Drawing.Point(14, 127);
-            cbxAutoincrementFilename.Margin = new System.Windows.Forms.Padding(4);
+            cbxAutoincrementFilename.Location = new System.Drawing.Point(11, 102);
             cbxAutoincrementFilename.Name = "cbxAutoincrementFilename";
-            cbxAutoincrementFilename.Size = new System.Drawing.Size(420, 25);
+            cbxAutoincrementFilename.Size = new System.Drawing.Size(337, 20);
             cbxAutoincrementFilename.TabIndex = 18;
             cbxAutoincrementFilename.Text = "When saving, auto-increment last filename when possible";
             cbxAutoincrementFilename.UseVisualStyleBackColor = true;
@@ -337,10 +320,9 @@ namespace TotalImage
             // 
             cbxConfirmOverwriteExtract.AutoSize = true;
             cbxConfirmOverwriteExtract.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxConfirmOverwriteExtract.Location = new System.Drawing.Point(14, 28);
-            cbxConfirmOverwriteExtract.Margin = new System.Windows.Forms.Padding(4);
+            cbxConfirmOverwriteExtract.Location = new System.Drawing.Point(11, 22);
             cbxConfirmOverwriteExtract.Name = "cbxConfirmOverwriteExtract";
-            cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(276, 25);
+            cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(222, 20);
             cbxConfirmOverwriteExtract.TabIndex = 17;
             cbxConfirmOverwriteExtract.Text = "Confirm overwrite during extraction";
             cbxConfirmOverwriteExtract.UseVisualStyleBackColor = true;
@@ -350,10 +332,9 @@ namespace TotalImage
             cbxConfirmDeletion.AutoSize = true;
             cbxConfirmDeletion.Enabled = false;
             cbxConfirmDeletion.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxConfirmDeletion.Location = new System.Drawing.Point(14, 61);
-            cbxConfirmDeletion.Margin = new System.Windows.Forms.Padding(4);
+            cbxConfirmDeletion.Location = new System.Drawing.Point(11, 49);
             cbxConfirmDeletion.Name = "cbxConfirmDeletion";
-            cbxConfirmDeletion.Size = new System.Drawing.Size(152, 25);
+            cbxConfirmDeletion.Size = new System.Drawing.Size(122, 20);
             cbxConfirmDeletion.TabIndex = 16;
             cbxConfirmDeletion.Text = "Confirm deletion";
             cbxConfirmDeletion.UseVisualStyleBackColor = true;
@@ -363,10 +344,9 @@ namespace TotalImage
             cbxConfirmInjection.AutoSize = true;
             cbxConfirmInjection.Enabled = false;
             cbxConfirmInjection.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxConfirmInjection.Location = new System.Drawing.Point(14, 94);
-            cbxConfirmInjection.Margin = new System.Windows.Forms.Padding(4);
+            cbxConfirmInjection.Location = new System.Drawing.Point(11, 75);
             cbxConfirmInjection.Name = "cbxConfirmInjection";
-            cbxConfirmInjection.Size = new System.Drawing.Size(154, 25);
+            cbxConfirmInjection.Size = new System.Drawing.Size(125, 20);
             cbxConfirmInjection.TabIndex = 15;
             cbxConfirmInjection.Text = "Confirm injection";
             cbxConfirmInjection.UseVisualStyleBackColor = true;
@@ -376,11 +356,10 @@ namespace TotalImage
             tabView.Controls.Add(gbxSizeUnits);
             tabView.Controls.Add(gbxFileList);
             tabView.Controls.Add(gbxMainWindow);
-            tabView.Location = new System.Drawing.Point(4, 29);
-            tabView.Margin = new System.Windows.Forms.Padding(4);
+            tabView.Location = new System.Drawing.Point(4, 24);
             tabView.Name = "tabView";
-            tabView.Padding = new System.Windows.Forms.Padding(4);
-            tabView.Size = new System.Drawing.Size(568, 569);
+            tabView.Padding = new System.Windows.Forms.Padding(3);
+            tabView.Size = new System.Drawing.Size(453, 454);
             tabView.TabIndex = 2;
             tabView.Text = "View";
             tabView.UseVisualStyleBackColor = true;
@@ -391,11 +370,9 @@ namespace TotalImage
             gbxSizeUnits.Controls.Add(lblSizeUnitsPreview);
             gbxSizeUnits.Controls.Add(lblSizeUnits);
             gbxSizeUnits.Controls.Add(lstSizeUnits);
-            gbxSizeUnits.Location = new System.Drawing.Point(8, 314);
-            gbxSizeUnits.Margin = new System.Windows.Forms.Padding(4);
+            gbxSizeUnits.Location = new System.Drawing.Point(6, 251);
             gbxSizeUnits.Name = "gbxSizeUnits";
-            gbxSizeUnits.Padding = new System.Windows.Forms.Padding(4);
-            gbxSizeUnits.Size = new System.Drawing.Size(552, 145);
+            gbxSizeUnits.Size = new System.Drawing.Size(442, 116);
             gbxSizeUnits.TabIndex = 23;
             gbxSizeUnits.TabStop = false;
             gbxSizeUnits.Text = "Size units";
@@ -403,30 +380,27 @@ namespace TotalImage
             // lblSizeUnitsTip
             // 
             lblSizeUnitsTip.AutoSize = true;
-            lblSizeUnitsTip.Location = new System.Drawing.Point(256, 24);
-            lblSizeUnitsTip.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblSizeUnitsTip.Location = new System.Drawing.Point(219, 19);
             lblSizeUnitsTip.Name = "lblSizeUnitsTip";
-            lblSizeUnitsTip.Size = new System.Drawing.Size(283, 60);
+            lblSizeUnitsTip.Size = new System.Drawing.Size(213, 45);
             lblSizeUnitsTip.TabIndex = 22;
-            lblSizeUnitsTip.Text = "For binary and decimal, TotalImage will\r\nautomatically determine the most\r\nappropriate unit and convert accordingly.";
+            lblSizeUnitsTip.Text = "For binary and decimal, TotalImage will\r\nautomatically determine the most\r\nappropriate unit and convert to it.";
             // 
             // lblSizeUnitsPreview
             // 
             lblSizeUnitsPreview.AutoSize = true;
-            lblSizeUnitsPreview.Location = new System.Drawing.Point(14, 87);
-            lblSizeUnitsPreview.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblSizeUnitsPreview.Location = new System.Drawing.Point(9, 73);
             lblSizeUnitsPreview.Name = "lblSizeUnitsPreview";
-            lblSizeUnitsPreview.Size = new System.Drawing.Size(382, 40);
+            lblSizeUnitsPreview.Size = new System.Drawing.Size(303, 30);
             lblSizeUnitsPreview.TabIndex = 21;
-            lblSizeUnitsPreview.Text = "Preview:\r\n234 B, 2345 B, 234567 B, 234567890 B, 2345678901234 B";
+            lblSizeUnitsPreview.Text = "Preview:\r\n234 B | 2345 B | 234567 B | 234567890 B | 2345678901234 B";
             // 
             // lblSizeUnits
             // 
             lblSizeUnits.AutoSize = true;
-            lblSizeUnits.Location = new System.Drawing.Point(11, 24);
-            lblSizeUnits.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblSizeUnits.Location = new System.Drawing.Point(9, 19);
             lblSizeUnits.Name = "lblSizeUnits";
-            lblSizeUnits.Size = new System.Drawing.Size(101, 20);
+            lblSizeUnits.Size = new System.Drawing.Size(80, 15);
             lblSizeUnits.TabIndex = 10;
             lblSizeUnits.Text = "Show sizes as:";
             // 
@@ -436,10 +410,9 @@ namespace TotalImage
             lstSizeUnits.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstSizeUnits.FormattingEnabled = true;
             lstSizeUnits.Items.AddRange(new object[] { "Bytes", "Decimal units (factor 1000)", "Binary units (factor 1024)" });
-            lstSizeUnits.Location = new System.Drawing.Point(15, 46);
-            lstSizeUnits.Margin = new System.Windows.Forms.Padding(4);
+            lstSizeUnits.Location = new System.Drawing.Point(12, 37);
             lstSizeUnits.Name = "lstSizeUnits";
-            lstSizeUnits.Size = new System.Drawing.Size(212, 28);
+            lstSizeUnits.Size = new System.Drawing.Size(170, 23);
             lstSizeUnits.TabIndex = 11;
             lstSizeUnits.SelectedIndexChanged += lstSizeUnits_SelectedIndexChanged;
             // 
@@ -452,11 +425,9 @@ namespace TotalImage
             gbxFileList.Controls.Add(lblSortOrder);
             gbxFileList.Controls.Add(lblSortBy);
             gbxFileList.Controls.Add(lstSortBy);
-            gbxFileList.Location = new System.Drawing.Point(8, 149);
-            gbxFileList.Margin = new System.Windows.Forms.Padding(4);
+            gbxFileList.Location = new System.Drawing.Point(6, 119);
             gbxFileList.Name = "gbxFileList";
-            gbxFileList.Padding = new System.Windows.Forms.Padding(4);
-            gbxFileList.Size = new System.Drawing.Size(552, 157);
+            gbxFileList.Size = new System.Drawing.Size(442, 126);
             gbxFileList.TabIndex = 22;
             gbxFileList.TabStop = false;
             gbxFileList.Text = "File list";
@@ -465,10 +436,9 @@ namespace TotalImage
             // 
             cbxShowDirSizes.AutoSize = true;
             cbxShowDirSizes.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxShowDirSizes.Location = new System.Drawing.Point(259, 110);
-            cbxShowDirSizes.Margin = new System.Windows.Forms.Padding(4);
+            cbxShowDirSizes.Location = new System.Drawing.Point(221, 88);
             cbxShowDirSizes.Name = "cbxShowDirSizes";
-            cbxShowDirSizes.Size = new System.Drawing.Size(238, 25);
+            cbxShowDirSizes.Size = new System.Drawing.Size(188, 20);
             cbxShowDirSizes.TabIndex = 20;
             cbxShowDirSizes.Text = "Show directory sizes in file list";
             cbxShowDirSizes.UseVisualStyleBackColor = true;
@@ -476,10 +446,9 @@ namespace TotalImage
             // lblViewType
             // 
             lblViewType.AutoSize = true;
-            lblViewType.Location = new System.Drawing.Point(11, 24);
-            lblViewType.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblViewType.Location = new System.Drawing.Point(9, 19);
             lblViewType.Name = "lblViewType";
-            lblViewType.Size = new System.Drawing.Size(183, 20);
+            lblViewType.Size = new System.Drawing.Size(144, 15);
             lblViewType.TabIndex = 6;
             lblViewType.Text = "Display items in file list as:";
             // 
@@ -489,10 +458,9 @@ namespace TotalImage
             lstSortOrder.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstSortOrder.FormattingEnabled = true;
             lstSortOrder.Items.AddRange(new object[] { "Ascending", "Descending" });
-            lstSortOrder.Location = new System.Drawing.Point(15, 110);
-            lstSortOrder.Margin = new System.Windows.Forms.Padding(4);
+            lstSortOrder.Location = new System.Drawing.Point(11, 88);
             lstSortOrder.Name = "lstSortOrder";
-            lstSortOrder.Size = new System.Drawing.Size(212, 28);
+            lstSortOrder.Size = new System.Drawing.Size(170, 23);
             lstSortOrder.TabIndex = 19;
             // 
             // lstViewType
@@ -501,29 +469,26 @@ namespace TotalImage
             lstViewType.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstViewType.FormattingEnabled = true;
             lstViewType.Items.AddRange(new object[] { "Large icons", "Small icons", "List", "Details" });
-            lstViewType.Location = new System.Drawing.Point(14, 46);
-            lstViewType.Margin = new System.Windows.Forms.Padding(4);
+            lstViewType.Location = new System.Drawing.Point(11, 37);
             lstViewType.Name = "lstViewType";
-            lstViewType.Size = new System.Drawing.Size(212, 28);
+            lstViewType.Size = new System.Drawing.Size(170, 23);
             lstViewType.TabIndex = 7;
             // 
             // lblSortOrder
             // 
             lblSortOrder.AutoSize = true;
-            lblSortOrder.Location = new System.Drawing.Point(11, 87);
-            lblSortOrder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblSortOrder.Location = new System.Drawing.Point(9, 70);
             lblSortOrder.Name = "lblSortOrder";
-            lblSortOrder.Size = new System.Drawing.Size(171, 20);
+            lblSortOrder.Size = new System.Drawing.Size(134, 15);
             lblSortOrder.TabIndex = 18;
             lblSortOrder.Text = "Sorting order for file list:";
             // 
             // lblSortBy
             // 
             lblSortBy.AutoSize = true;
-            lblSortBy.Location = new System.Drawing.Point(256, 24);
-            lblSortBy.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblSortBy.Location = new System.Drawing.Point(219, 19);
             lblSortBy.Name = "lblSortBy";
-            lblSortBy.Size = new System.Drawing.Size(163, 20);
+            lblSortBy.Size = new System.Drawing.Size(129, 15);
             lblSortBy.TabIndex = 8;
             lblSortBy.Text = "Sort items in file list by:";
             // 
@@ -533,10 +498,9 @@ namespace TotalImage
             lstSortBy.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstSortBy.FormattingEnabled = true;
             lstSortBy.Items.AddRange(new object[] { "Name", "Type", "Size", "Modified", "Attributes" });
-            lstSortBy.Location = new System.Drawing.Point(259, 47);
-            lstSortBy.Margin = new System.Windows.Forms.Padding(4);
+            lstSortBy.Location = new System.Drawing.Point(221, 37);
             lstSortBy.Name = "lstSortBy";
-            lstSortBy.Size = new System.Drawing.Size(212, 28);
+            lstSortBy.Size = new System.Drawing.Size(170, 23);
             lstSortBy.TabIndex = 9;
             // 
             // gbxMainWindow
@@ -546,11 +510,9 @@ namespace TotalImage
             gbxMainWindow.Controls.Add(cbxShowDirectoryTree);
             gbxMainWindow.Controls.Add(cbxShowDeletedItems);
             gbxMainWindow.Controls.Add(cbxShowHiddenItems);
-            gbxMainWindow.Location = new System.Drawing.Point(8, 8);
-            gbxMainWindow.Margin = new System.Windows.Forms.Padding(4);
+            gbxMainWindow.Location = new System.Drawing.Point(6, 6);
             gbxMainWindow.Name = "gbxMainWindow";
-            gbxMainWindow.Padding = new System.Windows.Forms.Padding(4);
-            gbxMainWindow.Size = new System.Drawing.Size(552, 133);
+            gbxMainWindow.Size = new System.Drawing.Size(442, 106);
             gbxMainWindow.TabIndex = 21;
             gbxMainWindow.TabStop = false;
             gbxMainWindow.Text = "Main window";
@@ -559,10 +521,9 @@ namespace TotalImage
             // 
             cbxShowCommandBar.AutoSize = true;
             cbxShowCommandBar.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxShowCommandBar.Location = new System.Drawing.Point(14, 28);
-            cbxShowCommandBar.Margin = new System.Windows.Forms.Padding(4);
+            cbxShowCommandBar.Location = new System.Drawing.Point(11, 22);
             cbxShowCommandBar.Name = "cbxShowCommandBar";
-            cbxShowCommandBar.Size = new System.Drawing.Size(173, 25);
+            cbxShowCommandBar.Size = new System.Drawing.Size(139, 20);
             cbxShowCommandBar.TabIndex = 12;
             cbxShowCommandBar.Text = "Show command bar";
             cbxShowCommandBar.UseVisualStyleBackColor = true;
@@ -571,10 +532,9 @@ namespace TotalImage
             // 
             cbxShowStatusBar.AutoSize = true;
             cbxShowStatusBar.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxShowStatusBar.Location = new System.Drawing.Point(14, 94);
-            cbxShowStatusBar.Margin = new System.Windows.Forms.Padding(4);
+            cbxShowStatusBar.Location = new System.Drawing.Point(11, 75);
             cbxShowStatusBar.Name = "cbxShowStatusBar";
-            cbxShowStatusBar.Size = new System.Drawing.Size(144, 25);
+            cbxShowStatusBar.Size = new System.Drawing.Size(115, 20);
             cbxShowStatusBar.TabIndex = 16;
             cbxShowStatusBar.Text = "Show status bar";
             cbxShowStatusBar.UseVisualStyleBackColor = true;
@@ -583,10 +543,9 @@ namespace TotalImage
             // 
             cbxShowDirectoryTree.AutoSize = true;
             cbxShowDirectoryTree.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxShowDirectoryTree.Location = new System.Drawing.Point(14, 61);
-            cbxShowDirectoryTree.Margin = new System.Windows.Forms.Padding(4);
+            cbxShowDirectoryTree.Location = new System.Drawing.Point(11, 49);
             cbxShowDirectoryTree.Name = "cbxShowDirectoryTree";
-            cbxShowDirectoryTree.Size = new System.Drawing.Size(169, 25);
+            cbxShowDirectoryTree.Size = new System.Drawing.Size(134, 20);
             cbxShowDirectoryTree.TabIndex = 15;
             cbxShowDirectoryTree.Text = "Show directory tree";
             cbxShowDirectoryTree.UseVisualStyleBackColor = true;
@@ -595,10 +554,9 @@ namespace TotalImage
             // 
             cbxShowDeletedItems.AutoSize = true;
             cbxShowDeletedItems.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxShowDeletedItems.Location = new System.Drawing.Point(259, 28);
-            cbxShowDeletedItems.Margin = new System.Windows.Forms.Padding(4);
+            cbxShowDeletedItems.Location = new System.Drawing.Point(221, 22);
             cbxShowDeletedItems.Name = "cbxShowDeletedItems";
-            cbxShowDeletedItems.Size = new System.Drawing.Size(183, 25);
+            cbxShowDeletedItems.Size = new System.Drawing.Size(144, 20);
             cbxShowDeletedItems.TabIndex = 17;
             cbxShowDeletedItems.Text = "Show deleted objects";
             cbxShowDeletedItems.UseVisualStyleBackColor = true;
@@ -607,10 +565,9 @@ namespace TotalImage
             // 
             cbxShowHiddenItems.AutoSize = true;
             cbxShowHiddenItems.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxShowHiddenItems.Location = new System.Drawing.Point(259, 61);
-            cbxShowHiddenItems.Margin = new System.Windows.Forms.Padding(4);
+            cbxShowHiddenItems.Location = new System.Drawing.Point(221, 48);
             cbxShowHiddenItems.Name = "cbxShowHiddenItems";
-            cbxShowHiddenItems.Size = new System.Drawing.Size(178, 25);
+            cbxShowHiddenItems.Size = new System.Drawing.Size(142, 20);
             cbxShowHiddenItems.TabIndex = 14;
             cbxShowHiddenItems.Text = "Show hidden objects";
             cbxShowHiddenItems.UseVisualStyleBackColor = true;
@@ -619,11 +576,10 @@ namespace TotalImage
             // 
             tabExtraction.Controls.Add(gbxExtractionPreserve);
             tabExtraction.Controls.Add(gbxExtractionDefaults);
-            tabExtraction.Location = new System.Drawing.Point(4, 29);
-            tabExtraction.Margin = new System.Windows.Forms.Padding(4);
+            tabExtraction.Location = new System.Drawing.Point(4, 24);
             tabExtraction.Name = "tabExtraction";
-            tabExtraction.Padding = new System.Windows.Forms.Padding(4);
-            tabExtraction.Size = new System.Drawing.Size(568, 569);
+            tabExtraction.Padding = new System.Windows.Forms.Padding(3);
+            tabExtraction.Size = new System.Drawing.Size(453, 454);
             tabExtraction.TabIndex = 3;
             tabExtraction.Text = "Extraction";
             tabExtraction.UseVisualStyleBackColor = true;
@@ -632,11 +588,9 @@ namespace TotalImage
             // 
             gbxExtractionPreserve.Controls.Add(cbxPreserveDates);
             gbxExtractionPreserve.Controls.Add(cbxPreserveAttributes);
-            gbxExtractionPreserve.Location = new System.Drawing.Point(8, 276);
-            gbxExtractionPreserve.Margin = new System.Windows.Forms.Padding(4);
+            gbxExtractionPreserve.Location = new System.Drawing.Point(6, 221);
             gbxExtractionPreserve.Name = "gbxExtractionPreserve";
-            gbxExtractionPreserve.Padding = new System.Windows.Forms.Padding(4);
-            gbxExtractionPreserve.Size = new System.Drawing.Size(552, 100);
+            gbxExtractionPreserve.Size = new System.Drawing.Size(442, 80);
             gbxExtractionPreserve.TabIndex = 23;
             gbxExtractionPreserve.TabStop = false;
             gbxExtractionPreserve.Text = "Preserve information";
@@ -645,10 +599,9 @@ namespace TotalImage
             // 
             cbxPreserveDates.AutoSize = true;
             cbxPreserveDates.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxPreserveDates.Location = new System.Drawing.Point(14, 28);
-            cbxPreserveDates.Margin = new System.Windows.Forms.Padding(4);
+            cbxPreserveDates.Location = new System.Drawing.Point(11, 22);
             cbxPreserveDates.Name = "cbxPreserveDates";
-            cbxPreserveDates.Size = new System.Drawing.Size(269, 25);
+            cbxPreserveDates.Size = new System.Drawing.Size(214, 20);
             cbxPreserveDates.TabIndex = 8;
             cbxPreserveDates.Text = "Preserve file dates when extracting";
             cbxPreserveDates.UseVisualStyleBackColor = true;
@@ -657,10 +610,9 @@ namespace TotalImage
             // 
             cbxPreserveAttributes.AutoSize = true;
             cbxPreserveAttributes.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxPreserveAttributes.Location = new System.Drawing.Point(14, 61);
-            cbxPreserveAttributes.Margin = new System.Windows.Forms.Padding(4);
+            cbxPreserveAttributes.Location = new System.Drawing.Point(11, 49);
             cbxPreserveAttributes.Name = "cbxPreserveAttributes";
-            cbxPreserveAttributes.Size = new System.Drawing.Size(296, 25);
+            cbxPreserveAttributes.Size = new System.Drawing.Size(236, 20);
             cbxPreserveAttributes.TabIndex = 9;
             cbxPreserveAttributes.Text = "Preserve file attributes when extracting";
             cbxPreserveAttributes.UseVisualStyleBackColor = true;
@@ -675,11 +627,9 @@ namespace TotalImage
             gbxExtractionDefaults.Controls.Add(rbnExtractPreserve);
             gbxExtractionDefaults.Controls.Add(rbnIgnoreFolders);
             gbxExtractionDefaults.Controls.Add(rbnExtractFlat);
-            gbxExtractionDefaults.Location = new System.Drawing.Point(8, 8);
-            gbxExtractionDefaults.Margin = new System.Windows.Forms.Padding(4);
+            gbxExtractionDefaults.Location = new System.Drawing.Point(6, 6);
             gbxExtractionDefaults.Name = "gbxExtractionDefaults";
-            gbxExtractionDefaults.Padding = new System.Windows.Forms.Padding(4);
-            gbxExtractionDefaults.Size = new System.Drawing.Size(552, 260);
+            gbxExtractionDefaults.Size = new System.Drawing.Size(442, 208);
             gbxExtractionDefaults.TabIndex = 22;
             gbxExtractionDefaults.TabStop = false;
             gbxExtractionDefaults.Text = "Default options";
@@ -688,10 +638,9 @@ namespace TotalImage
             // 
             cbxExtractAsk.AutoSize = true;
             cbxExtractAsk.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxExtractAsk.Location = new System.Drawing.Point(14, 28);
-            cbxExtractAsk.Margin = new System.Windows.Forms.Padding(4);
+            cbxExtractAsk.Location = new System.Drawing.Point(11, 22);
             cbxExtractAsk.Name = "cbxExtractAsk";
-            cbxExtractAsk.Size = new System.Drawing.Size(415, 25);
+            cbxExtractAsk.Size = new System.Drawing.Size(330, 20);
             cbxExtractAsk.TabIndex = 0;
             cbxExtractAsk.Text = "Always ask for these extraction options before extracting";
             cbxExtractAsk.UseVisualStyleBackColor = true;
@@ -700,29 +649,26 @@ namespace TotalImage
             // lblExtractPath
             // 
             lblExtractPath.AutoSize = true;
-            lblExtractPath.Location = new System.Drawing.Point(10, 63);
-            lblExtractPath.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblExtractPath.Location = new System.Drawing.Point(8, 50);
             lblExtractPath.Name = "lblExtractPath";
-            lblExtractPath.Size = new System.Drawing.Size(339, 20);
+            lblExtractPath.Size = new System.Drawing.Size(269, 15);
             lblExtractPath.TabIndex = 1;
             lblExtractPath.Text = "Extract selected item(s) to the following directory:";
             // 
             // txtExtractPath
             // 
-            txtExtractPath.Location = new System.Drawing.Point(14, 85);
-            txtExtractPath.Margin = new System.Windows.Forms.Padding(4);
+            txtExtractPath.Location = new System.Drawing.Point(11, 68);
             txtExtractPath.Name = "txtExtractPath";
-            txtExtractPath.Size = new System.Drawing.Size(422, 27);
+            txtExtractPath.Size = new System.Drawing.Size(338, 23);
             txtExtractPath.TabIndex = 2;
             // 
             // cbxOpenDir
             // 
             cbxOpenDir.AutoSize = true;
             cbxOpenDir.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxOpenDir.Location = new System.Drawing.Point(14, 224);
-            cbxOpenDir.Margin = new System.Windows.Forms.Padding(4);
+            cbxOpenDir.Location = new System.Drawing.Point(11, 179);
             cbxOpenDir.Name = "cbxOpenDir";
-            cbxOpenDir.Size = new System.Drawing.Size(322, 25);
+            cbxOpenDir.Size = new System.Drawing.Size(256, 20);
             cbxOpenDir.TabIndex = 7;
             cbxOpenDir.Text = "Open destination directory after extraction";
             cbxOpenDir.UseVisualStyleBackColor = true;
@@ -730,10 +676,9 @@ namespace TotalImage
             // btnBrowse
             // 
             btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnBrowse.Location = new System.Drawing.Point(444, 82);
-            btnBrowse.Margin = new System.Windows.Forms.Padding(4);
+            btnBrowse.Location = new System.Drawing.Point(355, 66);
             btnBrowse.Name = "btnBrowse";
-            btnBrowse.Size = new System.Drawing.Size(100, 32);
+            btnBrowse.Size = new System.Drawing.Size(80, 26);
             btnBrowse.TabIndex = 3;
             btnBrowse.Text = "Browse...";
             btnBrowse.UseVisualStyleBackColor = true;
@@ -743,10 +688,9 @@ namespace TotalImage
             // 
             rbnExtractPreserve.AutoSize = true;
             rbnExtractPreserve.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            rbnExtractPreserve.Location = new System.Drawing.Point(14, 191);
-            rbnExtractPreserve.Margin = new System.Windows.Forms.Padding(4);
+            rbnExtractPreserve.Location = new System.Drawing.Point(11, 153);
             rbnExtractPreserve.Name = "rbnExtractPreserve";
-            rbnExtractPreserve.Size = new System.Drawing.Size(273, 25);
+            rbnExtractPreserve.Size = new System.Drawing.Size(218, 20);
             rbnExtractPreserve.TabIndex = 6;
             rbnExtractPreserve.TabStop = true;
             rbnExtractPreserve.Text = "Preserve original directory structure";
@@ -756,10 +700,9 @@ namespace TotalImage
             // 
             rbnIgnoreFolders.AutoSize = true;
             rbnIgnoreFolders.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            rbnIgnoreFolders.Location = new System.Drawing.Point(14, 129);
-            rbnIgnoreFolders.Margin = new System.Windows.Forms.Padding(4);
+            rbnIgnoreFolders.Location = new System.Drawing.Point(11, 103);
             rbnIgnoreFolders.Name = "rbnIgnoreFolders";
-            rbnIgnoreFolders.Size = new System.Drawing.Size(282, 25);
+            rbnIgnoreFolders.Size = new System.Drawing.Size(223, 20);
             rbnIgnoreFolders.TabIndex = 4;
             rbnIgnoreFolders.TabStop = true;
             rbnIgnoreFolders.Text = "Ignore directories and subdirectories";
@@ -769,10 +712,9 @@ namespace TotalImage
             // 
             rbnExtractFlat.AutoSize = true;
             rbnExtractFlat.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            rbnExtractFlat.Location = new System.Drawing.Point(14, 160);
-            rbnExtractFlat.Margin = new System.Windows.Forms.Padding(4);
+            rbnExtractFlat.Location = new System.Drawing.Point(11, 128);
             rbnExtractFlat.Name = "rbnExtractFlat";
-            rbnExtractFlat.Size = new System.Drawing.Size(292, 25);
+            rbnExtractFlat.Size = new System.Drawing.Size(231, 20);
             rbnExtractFlat.TabIndex = 5;
             rbnExtractFlat.TabStop = true;
             rbnExtractFlat.Text = "Extract all files into the same directory";
@@ -782,11 +724,10 @@ namespace TotalImage
             // 
             tabIntegration.Controls.Add(gbxFileAssociations);
             tabIntegration.Controls.Add(gbxIntegrationMisc);
-            tabIntegration.Location = new System.Drawing.Point(4, 29);
-            tabIntegration.Margin = new System.Windows.Forms.Padding(4);
+            tabIntegration.Location = new System.Drawing.Point(4, 24);
             tabIntegration.Name = "tabIntegration";
-            tabIntegration.Padding = new System.Windows.Forms.Padding(4);
-            tabIntegration.Size = new System.Drawing.Size(568, 569);
+            tabIntegration.Padding = new System.Windows.Forms.Padding(3);
+            tabIntegration.Size = new System.Drawing.Size(453, 454);
             tabIntegration.TabIndex = 1;
             tabIntegration.Text = "Integration";
             tabIntegration.UseVisualStyleBackColor = true;
@@ -795,11 +736,9 @@ namespace TotalImage
             // 
             gbxFileAssociations.Controls.Add(lblFileAssoc);
             gbxFileAssociations.Controls.Add(btnFileAssoc);
-            gbxFileAssociations.Location = new System.Drawing.Point(8, 8);
-            gbxFileAssociations.Margin = new System.Windows.Forms.Padding(4);
+            gbxFileAssociations.Location = new System.Drawing.Point(6, 6);
             gbxFileAssociations.Name = "gbxFileAssociations";
-            gbxFileAssociations.Padding = new System.Windows.Forms.Padding(4);
-            gbxFileAssociations.Size = new System.Drawing.Size(552, 85);
+            gbxFileAssociations.Size = new System.Drawing.Size(442, 68);
             gbxFileAssociations.TabIndex = 8;
             gbxFileAssociations.TabStop = false;
             gbxFileAssociations.Text = "File associations";
@@ -807,20 +746,20 @@ namespace TotalImage
             // lblFileAssoc
             // 
             lblFileAssoc.AutoSize = true;
-            lblFileAssoc.Location = new System.Drawing.Point(11, 24);
+            lblFileAssoc.Location = new System.Drawing.Point(9, 21);
             lblFileAssoc.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblFileAssoc.Name = "lblFileAssoc";
-            lblFileAssoc.Size = new System.Drawing.Size(389, 40);
+            lblFileAssoc.Size = new System.Drawing.Size(308, 30);
             lblFileAssoc.TabIndex = 4;
             lblFileAssoc.Text = "File associations for TotalImage can be managed through\r\nControl Panel/Windows Settings.";
             // 
             // btnFileAssoc
             // 
             btnFileAssoc.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnFileAssoc.Location = new System.Drawing.Point(446, 26);
+            btnFileAssoc.Location = new System.Drawing.Point(357, 21);
             btnFileAssoc.Margin = new System.Windows.Forms.Padding(2);
             btnFileAssoc.Name = "btnFileAssoc";
-            btnFileAssoc.Size = new System.Drawing.Size(100, 32);
+            btnFileAssoc.Size = new System.Drawing.Size(80, 26);
             btnFileAssoc.TabIndex = 5;
             btnFileAssoc.Text = "Open";
             btnFileAssoc.UseVisualStyleBackColor = true;
@@ -830,11 +769,11 @@ namespace TotalImage
             // 
             gbxIntegrationMisc.Controls.Add(lblSystemIcons);
             gbxIntegrationMisc.Controls.Add(cbxShellFileIcons);
-            gbxIntegrationMisc.Location = new System.Drawing.Point(8, 99);
+            gbxIntegrationMisc.Location = new System.Drawing.Point(6, 79);
             gbxIntegrationMisc.Margin = new System.Windows.Forms.Padding(2);
             gbxIntegrationMisc.Name = "gbxIntegrationMisc";
             gbxIntegrationMisc.Padding = new System.Windows.Forms.Padding(2);
-            gbxIntegrationMisc.Size = new System.Drawing.Size(552, 150);
+            gbxIntegrationMisc.Size = new System.Drawing.Size(442, 120);
             gbxIntegrationMisc.TabIndex = 7;
             gbxIntegrationMisc.TabStop = false;
             gbxIntegrationMisc.Text = "Other options";
@@ -842,10 +781,10 @@ namespace TotalImage
             // lblSystemIcons
             // 
             lblSystemIcons.AutoSize = true;
-            lblSystemIcons.Location = new System.Drawing.Point(11, 64);
+            lblSystemIcons.Location = new System.Drawing.Point(9, 51);
             lblSystemIcons.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblSystemIcons.Name = "lblSystemIcons";
-            lblSystemIcons.Size = new System.Drawing.Size(522, 60);
+            lblSystemIcons.Size = new System.Drawing.Size(412, 45);
             lblSystemIcons.TabIndex = 6;
             lblSystemIcons.Text = "If this option is enabled, TotalImage will obtain icons and names for file types\r\nfrom Windows, which can be slower in some situations. If disabled, generic\r\nicons and names will be used instead.";
             // 
@@ -853,10 +792,9 @@ namespace TotalImage
             // 
             cbxShellFileIcons.AutoSize = true;
             cbxShellFileIcons.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxShellFileIcons.Location = new System.Drawing.Point(14, 28);
-            cbxShellFileIcons.Margin = new System.Windows.Forms.Padding(4);
+            cbxShellFileIcons.Location = new System.Drawing.Point(11, 22);
             cbxShellFileIcons.Name = "cbxShellFileIcons";
-            cbxShellFileIcons.Size = new System.Drawing.Size(374, 25);
+            cbxShellFileIcons.Size = new System.Drawing.Size(297, 20);
             cbxShellFileIcons.TabIndex = 3;
             cbxShellFileIcons.Text = "Display system icons and file type names in file list";
             cbxShellFileIcons.UseVisualStyleBackColor = true;
@@ -864,15 +802,14 @@ namespace TotalImage
             // dlgSettings
             // 
             AcceptButton = btnOK;
-            AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.Color.White;
             CancelButton = btnCancel;
-            ClientSize = new System.Drawing.Size(606, 688);
+            ClientSize = new System.Drawing.Size(485, 550);
             Controls.Add(tabs);
             Controls.Add(pnlBottom);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            Margin = new System.Windows.Forms.Padding(4);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "dlgSettings";

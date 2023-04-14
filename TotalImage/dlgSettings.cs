@@ -271,9 +271,9 @@ namespace TotalImage
                 case 2: previewUnit = SizeUnit.Binary; break;
             }
 
-            lblSizeUnitsPreview.Text = $"Preview:{Environment.NewLine}{previewUnit.FormatSize(234)}, " +
-                $"{previewUnit.FormatSize(2345)}, {previewUnit.FormatSize(2345678)}, " +
-                $"{previewUnit.FormatSize(2345678901)}, {previewUnit.FormatSize(2345678901234)}";
+            lblSizeUnitsPreview.Text = $"Preview:{Environment.NewLine}{previewUnit.FormatSize(234)} | " +
+                $"{previewUnit.FormatSize(2345)} | {previewUnit.FormatSize(2345678)} | " +
+                $"{previewUnit.FormatSize(2345678901)} | {previewUnit.FormatSize(2345678901234)}";
         }
 
         private void cbxExtractAsk_CheckedChanged(object sender, EventArgs e)
@@ -284,7 +284,7 @@ namespace TotalImage
 
         private void btnOpenTemp_Click(object sender, EventArgs e)
         {
-            if(!Directory.Exists(Settings.TempDir))
+            if (!Directory.Exists(Settings.TempDir))
                 Directory.CreateDirectory(Settings.TempDir);
 
             ProcessStartInfo psi = new()
