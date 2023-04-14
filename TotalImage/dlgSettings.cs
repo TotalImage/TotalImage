@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TotalImage
 {
@@ -285,6 +284,9 @@ namespace TotalImage
 
         private void btnOpenTemp_Click(object sender, EventArgs e)
         {
+            if(!Directory.Exists(Settings.TempDir))
+                Directory.CreateDirectory(Settings.TempDir);
+
             ProcessStartInfo psi = new()
             {
                 FileName = Settings.TempDir,
