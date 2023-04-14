@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,11 +15,6 @@ namespace TotalImage
         public dlgNotifications()
         {
             InitializeComponent();
-        }
-
-        private void dlgNotifications_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

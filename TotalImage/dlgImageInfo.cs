@@ -53,14 +53,14 @@ namespace TotalImage
                 lstProperties.FindItemWithText("Created by").SubItems[1].Text = string.IsNullOrWhiteSpace(vhd.Footer.CreatorApplication) ? "Unknown" : vhd.Footer.CreatorApplication;
 
                 string creatorVersion = $"{vhd.Footer.CreatorVersionMajor}.{vhd.Footer.CreatorVersionMinor}";
-                if(creatorVersion != "0.0")
+                if (creatorVersion != "0.0")
                     lstProperties.FindItemWithText("Creator version").SubItems[1].Text = creatorVersion;
             }
 
             lstProperties.FindItemWithText("File system").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.DisplayName;
 
             var volLabel = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.VolumeLabel;
-            if(!string.IsNullOrWhiteSpace(volLabel))
+            if (!string.IsNullOrWhiteSpace(volLabel))
                 lstProperties.FindItemWithText("Volume label").SubItems[1].Text = volLabel;
 
             lstProperties.FindItemWithText("Partitioning scheme").SubItems[1].Text = mainForm.image.PartitionTable.DisplayName;
@@ -68,12 +68,12 @@ namespace TotalImage
             lstProperties.FindItemWithText("Selected partition").SubItems[1].Text = mainForm.CurrentPartitionIndex.ToString();
 
             //We might want to prettify this once the image-loading branchis merged in
-            if(mainForm.image.PartitionTable is MbrPartitionTable mbr)
+            if (mainForm.image.PartitionTable is MbrPartitionTable mbr)
             {
                 MbrPartitionTable.MbrPartitionEntry entry = (MbrPartitionTable.MbrPartitionEntry)mbr.Partitions[mainForm.CurrentPartitionIndex];
                 lstProperties.FindItemWithText("Partition ID/type").SubItems[1].Text = $"0x{entry.Type:X}";
             }
-            else if(mainForm.image.PartitionTable is GptPartitionTable gpt)
+            else if (mainForm.image.PartitionTable is GptPartitionTable gpt)
             {
                 GptPartitionTable.GptPartitionEntry entry = (GptPartitionTable.GptPartitionEntry)gpt.Partitions[mainForm.CurrentPartitionIndex];
                 lstProperties.FindItemWithText("Partition ID/type").SubItems[1].Text = entry.TypeId.ToString();
@@ -227,7 +227,7 @@ namespace TotalImage
 
         private void copyValueToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(lstProperties.SelectedItems.Count == 1)
+            if (lstProperties.SelectedItems.Count == 1)
                 Clipboard.SetText(lstProperties.SelectedItems[0].SubItems[1].Text);
         }
 

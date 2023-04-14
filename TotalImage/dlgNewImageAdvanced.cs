@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using TotalImage.DiskGeometries;
 
@@ -15,7 +15,7 @@ namespace TotalImage
 
         //TODO: Should the capacities list be loaded from the KnownGeometries list or something like that?
         private void dlgNewImageAdvanced_Load(object sender, EventArgs e)
-        {           
+        {
             baseDialog = (dlgNewImage)Application.OpenForms["dlgNewImage"];
 
             lstFloppySides.SelectedIndex = baseDialog.Geometry.Sides - 1;
@@ -30,7 +30,7 @@ namespace TotalImage
             txtFloppyReservedSect.Value = baseDialog.Geometry.ReservedSectors;
             txtFloppyTotalSect.Value = baseDialog.Geometry.Tracks * baseDialog.Geometry.SPT * baseDialog.Geometry.Sides;
 
-            if(baseDialog.selectedItem == FloppyGeometry.FriendlyName.Acorn800k)
+            if (baseDialog.selectedItem == FloppyGeometry.FriendlyName.Acorn800k)
             {
                 txtFloppyOEMID.Text = "";
                 txtFloppyOEMID.Enabled = false;
@@ -50,7 +50,7 @@ namespace TotalImage
                 txtFloppyFSType.Text = baseDialog.FileSystemType;
             }
         }
-        
+
         private void btnOK_Click(object sender, EventArgs e)
         {
             //TODO: Perform some validation of parameters before leaving in case the user tries to create an impossible image

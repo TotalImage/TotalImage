@@ -1236,7 +1236,7 @@ namespace TotalImage
             Settings.SaveUIState();
 
             //Try to clear the temp folder if this is the only instance
-            if(Process.GetProcessesByName("TotalImage").Length == 1)
+            if (Process.GetProcessesByName("TotalImage").Length == 1)
             {
                 try
                 {
@@ -2601,7 +2601,7 @@ namespace TotalImage
                 index = rand.Next(chars.Length);
                 sb.Append(Convert.ToChar(chars[index]));
             }
-            
+
             return sb.ToString();
         }
     }

@@ -83,7 +83,7 @@ namespace TotalImage
         private void lstPartitions_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             ListViewHitTestInfo hitTestInfo = lstPartitions.HitTest(e.X, e.Y);
-            if(hitTestInfo.Item is not null) 
+            if (hitTestInfo.Item is not null)
             {
                 ListViewItem lvi = hitTestInfo.Item;
 

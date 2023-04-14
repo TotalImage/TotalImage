@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 namespace TotalImage
@@ -31,7 +31,7 @@ namespace TotalImage
                 Icon = TaskDialogIcon.Warning,
             });
 
-            if(result == TaskDialogButton.Yes)
+            if (result == TaskDialogButton.Yes)
             {
                 throw new NotImplementedException();
             }

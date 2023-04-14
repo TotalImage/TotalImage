@@ -1,4 +1,4 @@
-﻿
+
 namespace TotalImage
 {
     partial class dlgNotifications
@@ -46,9 +46,7 @@ namespace TotalImage
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Notifications";
-            this.Load += new System.EventHandler(this.dlgNotifications_Load);
             this.ResumeLayout(false);
-
         }
 
         #endregion

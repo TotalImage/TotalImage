@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace TotalImage
@@ -33,7 +32,7 @@ namespace TotalImage
             }
 
             //If directory doesn't exist, ask the user to create it 
-            if(!System.IO.Directory.Exists(TargetPath))
+            if (!System.IO.Directory.Exists(TargetPath))
             {
                 TaskDialogPage page = new TaskDialogPage()
                 {
@@ -50,7 +49,7 @@ namespace TotalImage
                 };
                 TaskDialogButton result = TaskDialog.ShowDialog(this, page);
 
-                if(result == TaskDialogButton.Yes)
+                if (result == TaskDialogButton.Yes)
                 {
                     System.IO.Directory.CreateDirectory(TargetPath);
                 }
