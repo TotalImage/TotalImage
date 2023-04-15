@@ -13,6 +13,7 @@ namespace TotalImage
     public partial class dlgImageInfo : Form
     {
         private bool hashesDone = false;
+        private frmMain mainForm;
 
         //TODO: Obtain actual data from the main form/relevant classes and display it
         public dlgImageInfo()
@@ -22,7 +23,7 @@ namespace TotalImage
 
         private void dlgImageInfo_Load(object sender, System.EventArgs e)
         {
-            frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
+            mainForm = (frmMain)Application.OpenForms["frmMain"];
             FileInfo fileInfo = new(mainForm.filepath);
 
             if (mainForm.image is null)
@@ -193,7 +194,7 @@ namespace TotalImage
                 sw.WriteLine($"-Subdirectories: {lstProperties.FindItemWithText("Subdirectories").SubItems[1].Text}");
                 sw.WriteLine();
 
-                if (!string.IsNullOrWhiteSpace(txtComment.Text))
+                if (mainForm.image is IContainerComment)
                 {
                     sw.WriteLine("Comment");
                     sw.WriteLine($"\"{txtComment.Text}\"");
