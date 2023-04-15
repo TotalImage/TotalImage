@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using TotalImage.Containers;
@@ -16,6 +17,32 @@ namespace TotalImage.Partitions
     {
         private GptHeader? _header = null;
         private readonly uint _sectorSize;
+
+        /// <summary>
+        /// A dictionary of known GPT partition types, represented by their assigned GUIDs and our display names.
+        /// </summary>
+        public static readonly Dictionary<Guid, string> GptPartitionTypes = new Dictionary<Guid, string>()
+        {
+            //Source: https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
+            { Guid.Parse("00000000-0000-0000-0000-000000000000"), "Empty"                           }, //Empty/unused entry
+            { Guid.Parse("024DEE41-33E7-11D3-9D69-0008C781F39F"), "MBR"                             }, //Related to protective MBR ???
+            { Guid.Parse("C12A7328-F81F-11D2-BA4B-00A0C93EC93B"), "EFI System Partition"            },
+            { Guid.Parse("21686148-6449-6E6F-744E-656564454649"), "BIOS Boot Partition"             }, //Used by GRUB for booting from GPT disks on BIOS machines
+            { Guid.Parse("E3C9E316-0B5C-4DB8-817D-F92DF00215AE"), "Microsoft Reserved Partition"    },
+            { Guid.Parse("EBD0A0A2-B9E5-4433-87C0-68B6B72699C7"), "Basic Data Partition"            }, //Used for MS file systems, previously also by Linux
+            { Guid.Parse("DE94BBA4-06D1-4D40-A16A-BFD50179D6AC"), "Windows Recovery Environment"    },
+            { Guid.Parse("0FC63DAF-8483-4772-8E79-3D69D8477DE4"), "Linux Data Partition"            }, //Used for Linux file systems for a while now
+            { Guid.Parse("44479540-F297-41B2-9AF7-D131D5F0458A"), "Linux Root Partition (x86)"      },
+            { Guid.Parse("4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709"), "Linux Root Partition (x64)"      },
+            { Guid.Parse("69DAD710-2CE4-4E3C-B16C-21A1D49ABED3"), "Linux Root Partition (ARM32)"    },
+            { Guid.Parse("B921B045-1DF0-41C3-AF44-4C6F280D3FAE"), "Linux Root Partition (ARM64)"    },
+            { Guid.Parse("BC13C2FF-59E6-4262-A352-B275FD6F7172"), "Linux Boot Partition"            },
+            { Guid.Parse("0657FD6D-A4AB-43C4-84E5-0933C84B4F4F"), "Linux Swap Partition"            },
+            { Guid.Parse("933AC7E1-2EB4-4F13-B844-0E14E2AEF915"), "Linux Home Partition"            },
+            { Guid.Parse("8DA63339-0007-60C0-C436-083AC8230908"), "Linux Reserved Partition"        },
+            { Guid.Parse("48465300-0000-11AA-AA11-00306543ECAC"), "HFS+"                            },
+            { Guid.Parse("7C3457EF-0000-11AA-AA11-00306543ECAC"), "APFS"                            },
+        };
 
         /// <summary>
         /// The header for the GUID Partition Table
@@ -65,7 +92,7 @@ namespace TotalImage.Partitions
 
                 if (typeId != Guid.Empty)
                 {
-                    entries.Add(new GptPartitionEntry(typeId, entryId, flags, name, offset, length, new PartialStream(_container.Content, offset, length)));
+                    entries.Add(new GptPartitionEntry(typeId, entryId, flags, name, offset, length, firstLba, lastLba, new PartialStream(_container.Content, offset, length)));
                 }
             }
 
@@ -115,12 +142,12 @@ namespace TotalImage.Partitions
             /// <summary>
             /// The first LBA available for use in GPT partitions
             /// </summary>
-            public ulong FirstPartitionLBA { get; }
+            public ulong FirstUsableLBA { get; }
 
             /// <summary>
             /// The last LBA available for use in GPT partitions
             /// </summary>
-            public ulong LastPartitionLBA { get; }
+            public ulong LastUsableLBA { get; }
 
             /// <summary>
             /// The GUID of this disk
@@ -160,8 +187,8 @@ namespace TotalImage.Partitions
                 HeaderHash = BinaryPrimitives.ReadUInt32LittleEndian(bytes[16..20]);
                 CurrentLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[24..32]);
                 BackupLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[32..40]);
-                FirstPartitionLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[40..48]);
-                LastPartitionLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[48..56]);
+                FirstUsableLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[40..48]);
+                LastUsableLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[48..56]);
                 DiskGuid = new Guid(bytes[56..72]);
                 TableLBA = BinaryPrimitives.ReadUInt64LittleEndian(bytes[72..80]);
                 PartitionEntries = BinaryPrimitives.ReadUInt32LittleEndian(bytes[80..84]);
@@ -196,6 +223,16 @@ namespace TotalImage.Partitions
             public string Name { get; }
 
             /// <summary>
+            /// The first LBA of the partition
+            /// </summary>
+            public ulong FirstLBA { get; }
+
+            /// <summary>
+            /// The last LBA (inclusive) of the partition
+            /// </summary>
+            public ulong LastLBA { get; }
+
+            /// <summary>
             /// Create a GUID Partition Table entry
             /// </summary>
             /// <param name="typeId">A unique identifier indicating the type of the partition</param>
@@ -205,12 +242,14 @@ namespace TotalImage.Partitions
             /// <param name="offset">The offset of the partition in it's container file</param>
             /// <param name="length">The length of the partition</param>
             /// <param name="stream">The stream containing the partition data</param>
-            public GptPartitionEntry(Guid typeId, Guid entryId, GptPartitionFlags flags, string name, long offset, long length, Stream stream) : base(offset, length, stream)
+            public GptPartitionEntry(Guid typeId, Guid entryId, GptPartitionFlags flags, string name, long offset, long length, ulong firstLba, ulong lastLba, Stream stream) : base(offset, length, stream)
             {
                 TypeId = typeId;
                 EntryId = entryId;
                 Flags = flags;
                 Name = name;
+                FirstLBA = firstLba;
+                LastLBA = lastLba;
             }
         }
 
@@ -227,16 +266,22 @@ namespace TotalImage.Partitions
             None = 0x0,
 
             /// <summary>
+            /// Indicates the partition is required for the computer to function properly and should not be modified
+            /// </summary>
+            [Display(Name = "Platform required")]
+            PlatformRequired = 0x1,
+
+            /// <summary>
             /// Indicates EFI firmware should ignore the partition
             /// </summary>
             [Display(Name = "Should be ignored by EFI")]
-            EfiIgnore = 0x1,
+            EfiIgnore = 0x2,
 
             /// <summary>
             /// Legacy BIOSes can boot from this partition - equivalent to "active" flag in MBR
             /// </summary>
             [Display(Name = "Bootable by Legacy BIOS")]
-            BiosBootable = 0x2
+            BiosBootable = 0x4
         }
     }
 }

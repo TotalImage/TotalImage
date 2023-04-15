@@ -87,52 +87,12 @@ namespace TotalImage.Containers
         }
 
         /// <summary>
-        /// Load the file system from the container image
+        /// Load the partition table from the container image
         /// </summary>
-        /// <returns>The file system found on the image</returns>
+        /// <returns>The partition table found in the image</returns>
         protected virtual PartitionTable LoadPartitionTable()
         {
-            // TODO: introduce a factory system that tries and then fails as required, like file systems have
-
-            Content.Seek(0x1FE, SeekOrigin.Begin);
-
-            byte[] signatureBytes = new byte[2];
-            Content.Read(signatureBytes);
-            ushort signature = BinaryPrimitives.ReadUInt16LittleEndian(signatureBytes);
-
-            if (signature != 0xaa55)
-            {
-                return new NoPartitionTable(this);
-            }
-
-            MbrPartitionTable mbrPartition = new MbrPartitionTable(this);
-            if (mbrPartition.Partitions.Count >= 1)
-            {
-                if (mbrPartition.Partitions[0] is MbrPartitionTable.MbrPartitionEntry entry
-                    && (entry.Offset + entry.Length) > uint.MaxValue
-                    && entry.Type == MbrPartitionTable.MbrPartitionType.GptProtectivePartition)
-                {
-                    return new GptPartitionTable(this);
-                }
-
-                // check partitions seem fine (ie, no overlapping)
-                bool sanity = true;
-                long lastOffset = 512;
-                foreach (var partition in mbrPartition.Partitions)
-                {
-                    sanity &= (partition.Offset >= lastOffset);
-                    sanity &= (partition.Length > 0);
-                    lastOffset = partition.Offset + partition.Length;
-                    sanity &= (lastOffset <= Content.Length);
-                }
-
-                if (sanity)
-                {
-                    return mbrPartition;
-                }
-            }
-
-            return new NoPartitionTable(this);
+            return PartitionTable.AttemptDetection(this);
         }
 
         /// <summary>

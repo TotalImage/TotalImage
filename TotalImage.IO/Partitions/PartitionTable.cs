@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using TotalImage.Containers;
 
 namespace TotalImage.Partitions
@@ -9,6 +10,10 @@ namespace TotalImage.Partitions
     /// </summary>
     public abstract class PartitionTable
     {
+        private static readonly ImmutableArray<IPartitionTableFactory> _knownFactories = ImmutableArray.Create<IPartitionTableFactory>(
+            new MbrGptFactory()
+        );
+
         /// <summary>
         /// The container that contains the partition table
         /// </summary>
@@ -51,5 +56,24 @@ namespace TotalImage.Partitions
         /// </summary>
         /// <returns>A list of partition entries</returns>
         protected abstract IEnumerable<PartitionEntry> LoadPartitions();
+
+        /// <summary>
+        /// Attempt to detect the partition table of a container using known partition table types
+        /// </summary>
+        /// <param name="container">The container containing a partition table</param>
+        /// <returns>A partition table if detection was successful, null if not.</returns>
+        public static PartitionTable AttemptDetection(Container container)
+        {
+            foreach (var factory in _knownFactories)
+            {
+                var result = factory.TryLoadPartitionTable(container);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return new NoPartitionTable(container);
+        }
     }
 }
