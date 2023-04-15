@@ -77,9 +77,9 @@ namespace TotalImage
             lblVer.AutoSize = true;
             lblVer.Location = new System.Drawing.Point(9, 73);
             lblVer.Name = "lblVer";
-            lblVer.Size = new System.Drawing.Size(118, 15);
+            lblVer.Size = new System.Drawing.Size(127, 15);
             lblVer.TabIndex = 3;
-            lblVer.Text = "Version: 1.0.0.0 Alpha";
+            lblVer.Text = "Version: 1.0.0.0 Alpha 1";
             // 
             // lblCopyright
             // 
