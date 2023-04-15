@@ -85,7 +85,7 @@ namespace TotalImage.FileSystems.FAT
 
         public override string VolumeLabel
         {
-            get => RootDirectoryVolumeLabel ?? BpbVolumeLabel ?? "NO NAME";
+            get => RootDirectoryVolumeLabel is not null ? RootDirectoryVolumeLabel : BpbVolumeLabel is not null && BpbVolumeLabel.ToUpper() != "NO NAME    " ? BpbVolumeLabel : "<no label>";
             set => throw new NotImplementedException();
         }
 
