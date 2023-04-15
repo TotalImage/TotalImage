@@ -21,10 +21,11 @@ Read and Create functionality is limited to supported features below.
 | Raw sector image | IMG, ISO, IMA, FLP, VFD, DSK | ✔ Yes | ❌ No | ✔ Yes |
 | Microsoft VHD | VHD | ⚠ Partial | ❌ No | ❌ No |
 | T98-Next HD | NHD | ✔ Yes | ❌ No | ❌ No |
+| WinImage compressed image | IMZ | ✔ Yes | ❌ No | ❌ No |
 
 Read and Create functionality is limited to supported features below.
 
-Differencing VHDs are not supported.
+Differencing VHDs are not supported yet.
 
 ## Disk geometries
 | Name | Read | Write | Create |
