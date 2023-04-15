@@ -1874,6 +1874,7 @@ namespace TotalImage
                     item.SubItems[1].ForeColor = Color.Gray;
                     item.SubItems[2].ForeColor = Color.Gray;
                     item.SubItems[3].ForeColor = Color.Gray;
+                    item.SubItems[4].ForeColor = Color.Gray;
                 }
                 if (fso.Name.StartsWith("?"))
                 {
