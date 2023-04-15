@@ -29,7 +29,7 @@ namespace TotalImage
             {
                 btnOK.Enabled = lstPartitions.SelectedItems[0].SubItems[1].Text != "RAW";
 
-                if(PartitionTable is GptPartitionTable gpt)
+                if (PartitionTable is GptPartitionTable gpt)
                 {
                     GptPartitionTable.GptPartitionEntry entry = (GptPartitionTable.GptPartitionEntry)gpt.Partitions[int.Parse(lstPartitions.SelectedItems[0].SubItems[0].Text)];
                     lblPartitionType1.Text = GptPartitionTable.GptPartitionTypes[entry.TypeId];
@@ -41,17 +41,17 @@ namespace TotalImage
                     lblPartitionGuid1.Text = entry.EntryId.ToString();
                     lblPartitionSerial1.Text = "N/A";
                 }
-                else if(PartitionTable is MbrPartitionTable mbr)
+                else if (PartitionTable is MbrPartitionTable mbr)
                 {
                     MbrPartitionTable.MbrPartitionEntry entry = (MbrPartitionTable.MbrPartitionEntry)mbr.Partitions[int.Parse(lstPartitions.SelectedItems[0].SubItems[0].Text)];
-                    
+
                     //TODO: This, too, might be a hack. See if there's any way to make it better.
                     string entryType = "Unknown";
                     try
                     {
                         entryType = (Attribute.GetCustomAttribute(entry.Type.GetType().GetField(entry.Type.ToString()), typeof(DisplayAttribute)) as DisplayAttribute).Name;
                     }
-                    catch(Exception) { }
+                    catch (Exception) { }
 
                     lblPartitionType1.Text = $"0x{entry.Type:X} {entryType}";
                     lblPartitionGuid1.Text = "N/A";
@@ -105,7 +105,7 @@ namespace TotalImage
             lblPartitionGuid1.Text = string.Empty;
             lblPartitionStartOffset1.Text = string.Empty;
 
-            if(PartitionTable is GptPartitionTable gpt)
+            if (PartitionTable is GptPartitionTable gpt)
             {
                 //Let's just assume 512-byte sectors for now
                 lblDiskTotalSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(gpt.Header.BackupLBA * 512 + 512)}";
@@ -114,12 +114,12 @@ namespace TotalImage
                 lblDiskGuid1.Text = gpt.Header.DiskGuid.ToString();
                 lblDiskTimestamp1.Text = "N/A";
                 lblDiskSerial1.Text = "N/A";
-            }    
-            else if(PartitionTable is MbrPartitionTable mbr)
+            }
+            else if (PartitionTable is MbrPartitionTable mbr)
             {
                 lblDiskGuid1.Text = "N/A";
                 lblDiskSerial1.Text = "N/A";
-                if(mbr.SerialNumber > 0) //This is a very simplistic check...
+                if (mbr.SerialNumber > 0) //This is a very simplistic check...
                     lblDiskSerial1.Text = $"{mbr.SerialNumber:X}";
 
                 //Timestamp can be completely bogus/absent in modern MBRs, so let's ignore it if it is
@@ -166,14 +166,14 @@ namespace TotalImage
                 ListViewItem lvi = new(i.ToString());
                 try
                 {
-                    lvi.SubItems.Add(entry.FileSystem.DisplayName);                   
-                    lvi.SubItems.Add(entry.FileSystem.VolumeLabel);                   
+                    lvi.SubItems.Add(entry.FileSystem.DisplayName);
+                    lvi.SubItems.Add(entry.FileSystem.VolumeLabel);
                 }
                 catch (InvalidDataException)
                 {
                     // this is probably an unsupported file system - we'll just mark it as RAW
                     lvi.SubItems.Add("RAW");
-                    lvi.SubItems.Add("");                    
+                    lvi.SubItems.Add("");
                     lvi.ForeColor = Color.Gray;
                 }
 
@@ -184,7 +184,7 @@ namespace TotalImage
                     lstPartitions.Columns[4].Text = "Active";
                     lvi.SubItems.Add(mbrEntry.Active ? "Yes" : "No");
                 }
-                else if(entry is GptPartitionTable.GptPartitionEntry gptEntry)
+                else if (entry is GptPartitionTable.GptPartitionEntry gptEntry)
                 {
                     lstPartitions.Columns[4].Text = "Legacy boot";
                     lvi.SubItems.Add(gptEntry.Flags.HasFlag(GptPartitionTable.GptPartitionFlags.BiosBootable) ? "Yes" : "No");
@@ -198,35 +198,35 @@ namespace TotalImage
             ListViewHitTestInfo hitTestInfo = lstPartitions.HitTest(e.X, e.Y);
 
             if (hitTestInfo.Item is not null)
-			{
+            {
                 ListViewItem lvi = hitTestInfo.Item;
 
-                if (lvi.SubItems[2].Text != "RAW")
+                if (lvi.SubItems[1].Text != "RAW")
                 {
                     ReadOnly = cbxReadOnly.Checked;
                     SelectedEntry = int.Parse(lvi.Text);
                     DialogResult = DialogResult.OK;
                     Close();
                 }
-				else
-				{
-					TaskDialog.ShowDialog(this, new TaskDialogPage()
-					{
-						Text = $"This partition cannot be loaded because it or the file system contained within is not supported. Select a supported partition to load.",
-						Heading = "Unsupported partition type",
-						Caption = "Information",
-						Buttons =
-						{
-							TaskDialogButton.OK
-						},
-						Icon = TaskDialogIcon.Information,
-						DefaultButton = TaskDialogButton.OK,
-						SizeToContent = true
-					});
+                else
+                {
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = $"This partition cannot be loaded because it or the file system contained within is not supported. Select a supported partition to load.",
+                        Heading = "Unsupported partition type",
+                        Caption = "Information",
+                        Buttons =
+                        {
+                            TaskDialogButton.OK
+                        },
+                        Icon = TaskDialogIcon.Information,
+                        DefaultButton = TaskDialogButton.OK,
+                        SizeToContent = true
+                    });
 
-					return;
-				}
-            } 
+                    return;
+                }
+            }
         }
     }
 }
