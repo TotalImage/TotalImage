@@ -213,6 +213,7 @@ namespace TotalImage
             lstProperties.Location = new System.Drawing.Point(12, 12);
             lstProperties.MultiSelect = false;
             lstProperties.Name = "lstProperties";
+            lstProperties.ShowItemToolTips = true;
             lstProperties.Size = new System.Drawing.Size(449, 245);
             lstProperties.TabIndex = 0;
             lstProperties.UseCompatibleStateImageBehavior = false;
