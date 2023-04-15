@@ -1,10 +1,10 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Containers;
-using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
 using TotalImage.Partitions;
 
@@ -71,12 +71,20 @@ namespace TotalImage
             if (mainForm.image.PartitionTable is MbrPartitionTable mbr)
             {
                 MbrPartitionTable.MbrPartitionEntry entry = (MbrPartitionTable.MbrPartitionEntry)mbr.Partitions[mainForm.CurrentPartitionIndex];
-                lstProperties.FindItemWithText("Partition ID/type").SubItems[1].Text = $"0x{entry.Type:X}";
+
+                string entryType = "Unknown";
+                try
+                {
+                    entryType = (Attribute.GetCustomAttribute(entry.Type.GetType().GetField(entry.Type.ToString()), typeof(DisplayAttribute)) as DisplayAttribute).Name;
+                }
+                catch (Exception) { }
+
+                lstProperties.FindItemWithText("Partition ID/type").SubItems[1].Text = $"0x{entry.Type:X} {entryType}";
             }
             else if (mainForm.image.PartitionTable is GptPartitionTable gpt)
             {
                 GptPartitionTable.GptPartitionEntry entry = (GptPartitionTable.GptPartitionEntry)gpt.Partitions[mainForm.CurrentPartitionIndex];
-                lstProperties.FindItemWithText("Partition ID/type").SubItems[1].Text = entry.TypeId.ToString();
+                lstProperties.FindItemWithText("Partition ID/type").SubItems[1].Text = GptPartitionTable.GptPartitionTypes[entry.TypeId];
             }
 
             lstProperties.FindItemWithText("Files").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.CountFiles(true).ToString();
