@@ -759,14 +759,13 @@ namespace TotalImage
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.Click += about_Click;
             // 
             // statusBar
             // 
             statusBar.ContextMenuStrip = cmsToolbars;
-            statusBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { lblStatusCapacity, lblStatusFreeCapacity, lblStatusProgressBar, lblStatusSize, lbStatusPath, lblNotifications });
             statusBar.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             statusBar.Location = new System.Drawing.Point(0, 639);
@@ -779,28 +778,28 @@ namespace TotalImage
             // lblStatusCapacity
             // 
             lblStatusCapacity.Name = "lblStatusCapacity";
-            lblStatusCapacity.Size = new System.Drawing.Size(0, 17);
+            lblStatusCapacity.Size = new System.Drawing.Size(0, 21);
             // 
             // lblStatusFreeCapacity
             // 
             lblStatusFreeCapacity.Name = "lblStatusFreeCapacity";
-            lblStatusFreeCapacity.Size = new System.Drawing.Size(0, 17);
+            lblStatusFreeCapacity.Size = new System.Drawing.Size(0, 21);
             // 
             // lblStatusProgressBar
             // 
             lblStatusProgressBar.Margin = new System.Windows.Forms.Padding(0, 3, 4, 2);
             lblStatusProgressBar.Name = "lblStatusProgressBar";
-            lblStatusProgressBar.Size = new System.Drawing.Size(100, 17);
+            lblStatusProgressBar.Size = new System.Drawing.Size(100, 21);
             // 
             // lblStatusSize
             // 
             lblStatusSize.Name = "lblStatusSize";
-            lblStatusSize.Size = new System.Drawing.Size(0, 17);
+            lblStatusSize.Size = new System.Drawing.Size(0, 21);
             // 
             // lbStatusPath
             // 
             lbStatusPath.Name = "lbStatusPath";
-            lbStatusPath.Size = new System.Drawing.Size(0, 17);
+            lbStatusPath.Size = new System.Drawing.Size(0, 21);
             // 
             // lblNotifications
             // 
