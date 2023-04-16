@@ -1993,7 +1993,7 @@ namespace TotalImage
                 {
                     //Disable this for now until it's properly implemented
                     bool memoryMapping = false; //fileinfo.Length > Settings.CurrentSettings.MemoryMappingThreshold;
-					
+
                     var ext = Path.GetExtension(filename).ToLowerInvariant();
 
                     image = ext switch

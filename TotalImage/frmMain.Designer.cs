@@ -255,7 +255,6 @@ namespace TotalImage
             // menuBar
             // 
             menuBar.ContextMenuStrip = cmsToolbars;
-            menuBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             menuBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, viewToolStripMenuItem, toolsToolStripMenuItem, helpToolStripMenuItem });
             menuBar.Location = new System.Drawing.Point(0, 0);
             menuBar.Name = "menuBar";
@@ -767,7 +766,6 @@ namespace TotalImage
             // statusBar
             // 
             statusBar.ContextMenuStrip = cmsToolbars;
-            statusBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { lblStatusCapacity, lblStatusFreeCapacity, lblStatusProgressBar, lblStatusSize, lbStatusPath, lblNotifications });
             statusBar.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             statusBar.Location = new System.Drawing.Point(0, 639);
@@ -780,28 +778,28 @@ namespace TotalImage
             // lblStatusCapacity
             // 
             lblStatusCapacity.Name = "lblStatusCapacity";
-            lblStatusCapacity.Size = new System.Drawing.Size(0, 17);
+            lblStatusCapacity.Size = new System.Drawing.Size(0, 21);
             // 
             // lblStatusFreeCapacity
             // 
             lblStatusFreeCapacity.Name = "lblStatusFreeCapacity";
-            lblStatusFreeCapacity.Size = new System.Drawing.Size(0, 17);
+            lblStatusFreeCapacity.Size = new System.Drawing.Size(0, 21);
             // 
             // lblStatusProgressBar
             // 
             lblStatusProgressBar.Margin = new System.Windows.Forms.Padding(0, 3, 4, 2);
             lblStatusProgressBar.Name = "lblStatusProgressBar";
-            lblStatusProgressBar.Size = new System.Drawing.Size(100, 17);
+            lblStatusProgressBar.Size = new System.Drawing.Size(100, 21);
             // 
             // lblStatusSize
             // 
             lblStatusSize.Name = "lblStatusSize";
-            lblStatusSize.Size = new System.Drawing.Size(0, 17);
+            lblStatusSize.Size = new System.Drawing.Size(0, 21);
             // 
             // lbStatusPath
             // 
             lbStatusPath.Name = "lbStatusPath";
-            lbStatusPath.Size = new System.Drawing.Size(0, 17);
+            lbStatusPath.Size = new System.Drawing.Size(0, 21);
             // 
             // lblNotifications
             // 
@@ -818,12 +816,11 @@ namespace TotalImage
             // 
             commandBar.ContextMenuStrip = cmsToolbars;
             commandBar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            commandBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             commandBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripButton, openToolStripButton, saveToolStripButton, closeToolStripButton, toolStripSeparator8, injectToolStripButton, extractToolStripButton, newFolderToolStripButton, deleteToolStripButton, propertiesToolStripButton, toolStripSeparator9, selectPartitionToolStripComboBox, managePartitionsToolStripButton, toolStripSeparator11, labelToolStripMenuButton, bootsectToolStripButton, infoToolStripButton, toolStripSeparator10, parentDirectoryToolStripButton, viewToolStripButton, sortToolStripButton, toolStripSeparator12, settingsToolStripButton });
             commandBar.Location = new System.Drawing.Point(0, 24);
             commandBar.Name = "commandBar";
             commandBar.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            commandBar.Size = new System.Drawing.Size(984, 27);
+            commandBar.Size = new System.Drawing.Size(984, 25);
             commandBar.TabIndex = 2;
             commandBar.Text = "toolStrip1";
             // 
@@ -833,7 +830,7 @@ namespace TotalImage
             newToolStripButton.Image = Properties.Resources.new_16;
             newToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             newToolStripButton.Name = "newToolStripButton";
-            newToolStripButton.Size = new System.Drawing.Size(24, 24);
+            newToolStripButton.Size = new System.Drawing.Size(23, 22);
             newToolStripButton.Text = "&New";
             newToolStripButton.ToolTipText = "New image...";
             newToolStripButton.Click += newImage_Click;
@@ -844,7 +841,7 @@ namespace TotalImage
             openToolStripButton.Image = Properties.Resources.open_16;
             openToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             openToolStripButton.Name = "openToolStripButton";
-            openToolStripButton.Size = new System.Drawing.Size(24, 24);
+            openToolStripButton.Size = new System.Drawing.Size(23, 22);
             openToolStripButton.Text = "&Open";
             openToolStripButton.ToolTipText = "Open image...";
             openToolStripButton.Click += openImage_Click;
@@ -855,7 +852,7 @@ namespace TotalImage
             saveToolStripButton.Image = Properties.Resources.save_16;
             saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             saveToolStripButton.Name = "saveToolStripButton";
-            saveToolStripButton.Size = new System.Drawing.Size(24, 24);
+            saveToolStripButton.Size = new System.Drawing.Size(23, 22);
             saveToolStripButton.Text = "&Save";
             saveToolStripButton.Click += save_Click;
             // 
@@ -865,14 +862,14 @@ namespace TotalImage
             closeToolStripButton.Image = Properties.Resources.close_16;
             closeToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             closeToolStripButton.Name = "closeToolStripButton";
-            closeToolStripButton.Size = new System.Drawing.Size(24, 24);
+            closeToolStripButton.Size = new System.Drawing.Size(23, 22);
             closeToolStripButton.Text = "Close image";
             closeToolStripButton.Click += closeImage_Click;
             // 
             // toolStripSeparator8
             // 
             toolStripSeparator8.Name = "toolStripSeparator8";
-            toolStripSeparator8.Size = new System.Drawing.Size(6, 27);
+            toolStripSeparator8.Size = new System.Drawing.Size(6, 25);
             // 
             // injectToolStripButton
             // 
@@ -880,7 +877,7 @@ namespace TotalImage
             injectToolStripButton.Image = Properties.Resources.inject_file_16;
             injectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             injectToolStripButton.Name = "injectToolStripButton";
-            injectToolStripButton.Size = new System.Drawing.Size(24, 24);
+            injectToolStripButton.Size = new System.Drawing.Size(23, 22);
             injectToolStripButton.Text = "Inject files";
             injectToolStripButton.ToolTipText = "Inject files...";
             injectToolStripButton.Click += injectFiles_Click;
@@ -891,7 +888,7 @@ namespace TotalImage
             extractToolStripButton.Image = Properties.Resources.extract_16;
             extractToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             extractToolStripButton.Name = "extractToolStripButton";
-            extractToolStripButton.Size = new System.Drawing.Size(24, 24);
+            extractToolStripButton.Size = new System.Drawing.Size(23, 22);
             extractToolStripButton.Text = "Extract";
             extractToolStripButton.ToolTipText = "Extract...";
             extractToolStripButton.Click += extract_Click;
@@ -902,7 +899,7 @@ namespace TotalImage
             newFolderToolStripButton.Image = Properties.Resources.new_folder_16;
             newFolderToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             newFolderToolStripButton.Name = "newFolderToolStripButton";
-            newFolderToolStripButton.Size = new System.Drawing.Size(24, 24);
+            newFolderToolStripButton.Size = new System.Drawing.Size(23, 22);
             newFolderToolStripButton.Text = "New folder";
             newFolderToolStripButton.ToolTipText = "New folder...";
             newFolderToolStripButton.Click += newFolder_Click;
@@ -913,7 +910,7 @@ namespace TotalImage
             deleteToolStripButton.Image = Properties.Resources.delete_16;
             deleteToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             deleteToolStripButton.Name = "deleteToolStripButton";
-            deleteToolStripButton.Size = new System.Drawing.Size(24, 24);
+            deleteToolStripButton.Size = new System.Drawing.Size(23, 22);
             deleteToolStripButton.Text = "Delete";
             deleteToolStripButton.Click += delete_Click;
             // 
@@ -923,7 +920,7 @@ namespace TotalImage
             propertiesToolStripButton.Image = Properties.Resources.properties_16;
             propertiesToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             propertiesToolStripButton.Name = "propertiesToolStripButton";
-            propertiesToolStripButton.Size = new System.Drawing.Size(24, 24);
+            propertiesToolStripButton.Size = new System.Drawing.Size(23, 22);
             propertiesToolStripButton.Text = "Properties";
             propertiesToolStripButton.ToolTipText = "Properties...";
             propertiesToolStripButton.Click += properties_Click;
@@ -931,7 +928,7 @@ namespace TotalImage
             // toolStripSeparator9
             // 
             toolStripSeparator9.Name = "toolStripSeparator9";
-            toolStripSeparator9.Size = new System.Drawing.Size(6, 27);
+            toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
             // 
             // selectPartitionToolStripComboBox
             // 
@@ -951,7 +948,7 @@ namespace TotalImage
             managePartitionsToolStripButton.Image = Properties.Resources.disks_16;
             managePartitionsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             managePartitionsToolStripButton.Name = "managePartitionsToolStripButton";
-            managePartitionsToolStripButton.Size = new System.Drawing.Size(24, 24);
+            managePartitionsToolStripButton.Size = new System.Drawing.Size(23, 22);
             managePartitionsToolStripButton.Text = "Manage partitions";
             managePartitionsToolStripButton.ToolTipText = "Manage partitions...";
             managePartitionsToolStripButton.Click += managePartitions_Click;
@@ -959,7 +956,7 @@ namespace TotalImage
             // toolStripSeparator11
             // 
             toolStripSeparator11.Name = "toolStripSeparator11";
-            toolStripSeparator11.Size = new System.Drawing.Size(6, 27);
+            toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
             // 
             // labelToolStripMenuButton
             // 
@@ -967,7 +964,7 @@ namespace TotalImage
             labelToolStripMenuButton.Image = Properties.Resources.label_16;
             labelToolStripMenuButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             labelToolStripMenuButton.Name = "labelToolStripMenuButton";
-            labelToolStripMenuButton.Size = new System.Drawing.Size(24, 24);
+            labelToolStripMenuButton.Size = new System.Drawing.Size(23, 22);
             labelToolStripMenuButton.Text = "Change volume label";
             labelToolStripMenuButton.ToolTipText = "Change volume label...";
             labelToolStripMenuButton.Click += changeVolumeLabel_Click;
@@ -978,7 +975,7 @@ namespace TotalImage
             bootsectToolStripButton.Image = (System.Drawing.Image)resources.GetObject("bootsectToolStripButton.Image");
             bootsectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             bootsectToolStripButton.Name = "bootsectToolStripButton";
-            bootsectToolStripButton.Size = new System.Drawing.Size(24, 24);
+            bootsectToolStripButton.Size = new System.Drawing.Size(23, 22);
             bootsectToolStripButton.Text = "Boot sector properties";
             bootsectToolStripButton.ToolTipText = "Boot sector properties...";
             bootsectToolStripButton.Click += bootSectorProperties_Click;
@@ -989,7 +986,7 @@ namespace TotalImage
             infoToolStripButton.Image = Properties.Resources.info_16;
             infoToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             infoToolStripButton.Name = "infoToolStripButton";
-            infoToolStripButton.Size = new System.Drawing.Size(24, 24);
+            infoToolStripButton.Size = new System.Drawing.Size(23, 22);
             infoToolStripButton.Text = "Image information";
             infoToolStripButton.ToolTipText = "Image information...";
             infoToolStripButton.Click += imageInformation_Click;
@@ -997,7 +994,7 @@ namespace TotalImage
             // toolStripSeparator10
             // 
             toolStripSeparator10.Name = "toolStripSeparator10";
-            toolStripSeparator10.Size = new System.Drawing.Size(6, 27);
+            toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
             // 
             // parentDirectoryToolStripButton
             // 
@@ -1005,7 +1002,7 @@ namespace TotalImage
             parentDirectoryToolStripButton.Image = (System.Drawing.Image)resources.GetObject("parentDirectoryToolStripButton.Image");
             parentDirectoryToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             parentDirectoryToolStripButton.Name = "parentDirectoryToolStripButton";
-            parentDirectoryToolStripButton.Size = new System.Drawing.Size(24, 24);
+            parentDirectoryToolStripButton.Size = new System.Drawing.Size(23, 22);
             parentDirectoryToolStripButton.Text = "Parent directory";
             parentDirectoryToolStripButton.Click += parentDirectoryToolStripButton_Click;
             // 
@@ -1016,7 +1013,7 @@ namespace TotalImage
             viewToolStripButton.Image = Properties.Resources.view_16;
             viewToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             viewToolStripButton.Name = "viewToolStripButton";
-            viewToolStripButton.Size = new System.Drawing.Size(33, 24);
+            viewToolStripButton.Size = new System.Drawing.Size(29, 22);
             viewToolStripButton.Text = "View";
             viewToolStripButton.DropDownOpening += viewToolStripButton_DropDownOpening;
             // 
@@ -1078,7 +1075,7 @@ namespace TotalImage
             sortToolStripButton.Image = Properties.Resources.sort_16;
             sortToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             sortToolStripButton.Name = "sortToolStripButton";
-            sortToolStripButton.Size = new System.Drawing.Size(33, 24);
+            sortToolStripButton.Size = new System.Drawing.Size(29, 22);
             sortToolStripButton.Text = "Sort by";
             sortToolStripButton.DropDownOpening += sortMenu_DropDownOpening;
             // 
@@ -1120,7 +1117,7 @@ namespace TotalImage
             // toolStripSeparator12
             // 
             toolStripSeparator12.Name = "toolStripSeparator12";
-            toolStripSeparator12.Size = new System.Drawing.Size(6, 27);
+            toolStripSeparator12.Size = new System.Drawing.Size(6, 25);
             // 
             // settingsToolStripButton
             // 
@@ -1128,7 +1125,7 @@ namespace TotalImage
             settingsToolStripButton.Image = Properties.Resources.options_alt_16;
             settingsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             settingsToolStripButton.Name = "settingsToolStripButton";
-            settingsToolStripButton.Size = new System.Drawing.Size(24, 24);
+            settingsToolStripButton.Size = new System.Drawing.Size(23, 22);
             settingsToolStripButton.Text = "Settings";
             settingsToolStripButton.ToolTipText = "Settings...";
             settingsToolStripButton.Click += settings_Click;
@@ -1137,7 +1134,7 @@ namespace TotalImage
             // 
             splitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             splitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            splitContainer.Location = new System.Drawing.Point(0, 51);
+            splitContainer.Location = new System.Drawing.Point(0, 49);
             splitContainer.Name = "splitContainer";
             // 
             // splitContainer.Panel1
@@ -1147,7 +1144,7 @@ namespace TotalImage
             // splitContainer.Panel2
             // 
             splitContainer.Panel2.Controls.Add(lstFiles);
-            splitContainer.Size = new System.Drawing.Size(984, 588);
+            splitContainer.Size = new System.Drawing.Size(984, 590);
             splitContainer.SplitterDistance = 280;
             splitContainer.SplitterWidth = 3;
             splitContainer.TabIndex = 3;
@@ -1166,7 +1163,7 @@ namespace TotalImage
             lstDirectories.Name = "lstDirectories";
             lstDirectories.SelectedImageIndex = 0;
             lstDirectories.ShowLines = false;
-            lstDirectories.Size = new System.Drawing.Size(280, 588);
+            lstDirectories.Size = new System.Drawing.Size(280, 590);
             lstDirectories.TabIndex = 0;
             lstDirectories.BeforeLabelEdit += lstDirectories_BeforeLabelEdit;
             lstDirectories.AfterLabelEdit += lstDirectories_AfterLabelEdit;
@@ -1200,7 +1197,7 @@ namespace TotalImage
             lstFiles.Name = "lstFiles";
             lstFiles.ShowGroups = false;
             lstFiles.ShowItemToolTips = true;
-            lstFiles.Size = new System.Drawing.Size(701, 588);
+            lstFiles.Size = new System.Drawing.Size(701, 590);
             lstFiles.SmallImageList = imgFilesSmall;
             lstFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
             lstFiles.TabIndex = 0;
