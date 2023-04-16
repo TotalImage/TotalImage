@@ -285,7 +285,7 @@ namespace TotalImage
                 dtpModified.Text = "";
                 dtpModified.CustomFormat = " ";
 
-                imgIcon.Image = Resources.multiple_select_32;
+                imgIcon.Image = Resources.page_white_stack;
                 imgIcon.SizeMode = PictureBoxSizeMode.StretchImage;
             }
         }

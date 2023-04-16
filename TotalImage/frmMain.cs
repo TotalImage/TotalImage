@@ -71,7 +71,7 @@ namespace TotalImage
 
             GetDefaultIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            parentDirectoryToolStripMenuItem.Image = parentDirectoryToolStripButton.Image = imgFilesSmall.Images["up"];
+            //parentDirectoryToolStripMenuItem.Image = parentDirectoryToolStripButton.Image = imgFilesSmall.Images["up"];
 
             //Open the file that was dragged onto the exe/shortcut or passed as a command line argument
             string[] args = Environment.GetCommandLineArgs();
@@ -2312,10 +2312,8 @@ namespace TotalImage
             }
 
             // "Up one folder" icon
-            var (smallUpIcon, largeUpIcon) = ShellInterop.GetGoUpIcons();
-            imgFilesSmall.Images.Add("up", smallUpIcon);
-            imgFilesLarge.Images.Add("up", largeUpIcon);
-
+            imgFilesSmall.Images.Add("up", Properties.Resources.folder_up);
+            imgFilesLarge.Images.Add("up", Properties.Resources.folder_up_32);
             upOneFolderListViewItem.ImageIndex = imgFilesSmall.Images.IndexOfKey("up");
         }
 

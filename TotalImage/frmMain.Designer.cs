@@ -182,73 +182,75 @@ namespace TotalImage
             // 
             // cmsDirTree
             // 
-            cmsDirTree.ImageScalingSize = new System.Drawing.Size(20, 20);
             cmsDirTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { expandDirectoryTreeToolStripMenuItem1, collapseDirectoryTreeToolStripMenuItem1, toolStripSeparator15, extractToolStripMenuItem1, newFolderToolStripMenuItem1, deleteToolStripMenuItem1, renameToolStripMenuItem1, propertiesToolStripMenuItem1 });
             cmsDirTree.Name = "cmsDirTree";
             cmsDirTree.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            cmsDirTree.Size = new System.Drawing.Size(221, 192);
+            cmsDirTree.Size = new System.Drawing.Size(217, 164);
             cmsDirTree.Opening += cmsDirTree_Opening;
             // 
             // expandDirectoryTreeToolStripMenuItem1
             // 
+            expandDirectoryTreeToolStripMenuItem1.Image = Properties.Resources.arrow_up_down;
             expandDirectoryTreeToolStripMenuItem1.Name = "expandDirectoryTreeToolStripMenuItem1";
-            expandDirectoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(220, 26);
+            expandDirectoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             expandDirectoryTreeToolStripMenuItem1.Text = "Expand directory tree";
             expandDirectoryTreeToolStripMenuItem1.Click += expandDirectoryTree_Click;
             // 
             // collapseDirectoryTreeToolStripMenuItem1
             // 
+            collapseDirectoryTreeToolStripMenuItem1.Image = Properties.Resources.arrow_down_up;
             collapseDirectoryTreeToolStripMenuItem1.Name = "collapseDirectoryTreeToolStripMenuItem1";
-            collapseDirectoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(220, 26);
+            collapseDirectoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             collapseDirectoryTreeToolStripMenuItem1.Text = "Collapse directory tree";
             collapseDirectoryTreeToolStripMenuItem1.Click += collapseDirectoryTree_Click;
             // 
             // toolStripSeparator15
             // 
             toolStripSeparator15.Name = "toolStripSeparator15";
-            toolStripSeparator15.Size = new System.Drawing.Size(217, 6);
+            toolStripSeparator15.Size = new System.Drawing.Size(213, 6);
             // 
             // extractToolStripMenuItem1
             // 
-            extractToolStripMenuItem1.Image = Properties.Resources.extract_16;
+            extractToolStripMenuItem1.Image = Properties.Resources.redo;
             extractToolStripMenuItem1.Name = "extractToolStripMenuItem1";
             extractToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X;
-            extractToolStripMenuItem1.Size = new System.Drawing.Size(220, 26);
+            extractToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             extractToolStripMenuItem1.Text = "Extract...";
             extractToolStripMenuItem1.Click += extract_Click;
             // 
             // newFolderToolStripMenuItem1
             // 
-            newFolderToolStripMenuItem1.Image = Properties.Resources.new_folder_16;
+            newFolderToolStripMenuItem1.Image = Properties.Resources.folder_new;
             newFolderToolStripMenuItem1.Name = "newFolderToolStripMenuItem1";
             newFolderToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.N;
-            newFolderToolStripMenuItem1.Size = new System.Drawing.Size(220, 26);
+            newFolderToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             newFolderToolStripMenuItem1.Text = "New folder...";
             newFolderToolStripMenuItem1.Click += newFolder_Click;
             // 
             // deleteToolStripMenuItem1
             // 
-            deleteToolStripMenuItem1.Image = Properties.Resources.delete_16;
+            deleteToolStripMenuItem1.Image = Properties.Resources.bin_empty;
             deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
             deleteToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            deleteToolStripMenuItem1.Size = new System.Drawing.Size(220, 26);
+            deleteToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             deleteToolStripMenuItem1.Text = "Delete";
             deleteToolStripMenuItem1.Click += delete_Click;
             // 
             // renameToolStripMenuItem1
             // 
+            renameToolStripMenuItem1.Image = Properties.Resources.textfield_rename;
             renameToolStripMenuItem1.Name = "renameToolStripMenuItem1";
             renameToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            renameToolStripMenuItem1.Size = new System.Drawing.Size(220, 26);
+            renameToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             renameToolStripMenuItem1.Text = "Rename...";
             renameToolStripMenuItem1.Click += rename_Click;
             // 
             // propertiesToolStripMenuItem1
             // 
-            propertiesToolStripMenuItem1.Image = Properties.Resources.properties_16;
+            propertiesToolStripMenuItem1.Image = Properties.Resources.page_white_edit;
             propertiesToolStripMenuItem1.Name = "propertiesToolStripMenuItem1";
             propertiesToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return;
-            propertiesToolStripMenuItem1.Size = new System.Drawing.Size(220, 26);
+            propertiesToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             propertiesToolStripMenuItem1.Text = "Properties...";
             propertiesToolStripMenuItem1.Click += properties_Click;
             // 
@@ -266,7 +268,6 @@ namespace TotalImage
             // 
             // cmsToolbars
             // 
-            cmsToolbars.ImageScalingSize = new System.Drawing.Size(20, 20);
             cmsToolbars.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { commandBarToolStripMenuItem1, directoryTreeToolStripMenuItem1, statusBarToolStripMenuItem1 });
             cmsToolbars.Name = "cmsToolbars";
             cmsToolbars.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -314,7 +315,7 @@ namespace TotalImage
             // 
             // newToolStripMenuItem
             // 
-            newToolStripMenuItem.Image = Properties.Resources.new_16;
+            newToolStripMenuItem.Image = Properties.Resources.page_white;
             newToolStripMenuItem.Name = "newToolStripMenuItem";
             newToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N;
             newToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
@@ -323,7 +324,7 @@ namespace TotalImage
             // 
             // openToolStripMenuItem
             // 
-            openToolStripMenuItem.Image = Properties.Resources.open_16;
+            openToolStripMenuItem.Image = Properties.Resources.folder_go;
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O;
             openToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
@@ -332,7 +333,7 @@ namespace TotalImage
             // 
             // saveToolStripMenuItem
             // 
-            saveToolStripMenuItem.Image = Properties.Resources.save_16;
+            saveToolStripMenuItem.Image = Properties.Resources.diskette;
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
             saveToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
@@ -341,6 +342,7 @@ namespace TotalImage
             // 
             // saveAsToolStripMenuItem
             // 
+            saveAsToolStripMenuItem.Image = Properties.Resources.disk_multiple;
             saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             saveAsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.S;
             saveAsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
@@ -349,7 +351,7 @@ namespace TotalImage
             // 
             // closeImageToolStripMenuItem
             // 
-            closeImageToolStripMenuItem.Image = Properties.Resources.close_16;
+            closeImageToolStripMenuItem.Image = Properties.Resources.cross;
             closeImageToolStripMenuItem.Name = "closeImageToolStripMenuItem";
             closeImageToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W;
             closeImageToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
@@ -363,6 +365,7 @@ namespace TotalImage
             // 
             // recentFilesToolStripMenuItem
             // 
+            recentFilesToolStripMenuItem.Image = Properties.Resources.clock_history_frame;
             recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
             recentFilesToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             recentFilesToolStripMenuItem.Text = "Recent files";
@@ -374,6 +377,7 @@ namespace TotalImage
             // 
             // exitToolStripMenuItem
             // 
+            exitToolStripMenuItem.Image = Properties.Resources.door_out;
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4;
             exitToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
@@ -391,7 +395,7 @@ namespace TotalImage
             // 
             // injectFilesToolStripMenuItem
             // 
-            injectFilesToolStripMenuItem.Image = Properties.Resources.inject_file_16;
+            injectFilesToolStripMenuItem.Image = Properties.Resources.page_white_add;
             injectFilesToolStripMenuItem.Name = "injectFilesToolStripMenuItem";
             injectFilesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Insert;
             injectFilesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -400,7 +404,7 @@ namespace TotalImage
             // 
             // injectAFolderToolStripMenuItem
             // 
-            injectAFolderToolStripMenuItem.Image = Properties.Resources.inject_folder_16;
+            injectAFolderToolStripMenuItem.Image = Properties.Resources.folder_add;
             injectAFolderToolStripMenuItem.Name = "injectAFolderToolStripMenuItem";
             injectAFolderToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             injectAFolderToolStripMenuItem.Text = "Inject a folder...";
@@ -408,7 +412,7 @@ namespace TotalImage
             // 
             // extractToolStripMenuItem
             // 
-            extractToolStripMenuItem.Image = Properties.Resources.extract_16;
+            extractToolStripMenuItem.Image = Properties.Resources.redo;
             extractToolStripMenuItem.Name = "extractToolStripMenuItem";
             extractToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X;
             extractToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -417,7 +421,7 @@ namespace TotalImage
             // 
             // newFolderToolStripMenuItem
             // 
-            newFolderToolStripMenuItem.Image = Properties.Resources.new_folder_16;
+            newFolderToolStripMenuItem.Image = Properties.Resources.folder_new;
             newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
             newFolderToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.N;
             newFolderToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -426,7 +430,7 @@ namespace TotalImage
             // 
             // deleteToolStripMenuItem
             // 
-            deleteToolStripMenuItem.Image = Properties.Resources.delete_16;
+            deleteToolStripMenuItem.Image = Properties.Resources.bin_empty;
             deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             deleteToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -435,6 +439,7 @@ namespace TotalImage
             // 
             // undeleteToolStripMenuItem
             // 
+            undeleteToolStripMenuItem.Image = Properties.Resources.recycle;
             undeleteToolStripMenuItem.Name = "undeleteToolStripMenuItem";
             undeleteToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             undeleteToolStripMenuItem.Text = "Undelete...";
@@ -442,6 +447,7 @@ namespace TotalImage
             // 
             // renameToolStripMenuItem
             // 
+            renameToolStripMenuItem.Image = Properties.Resources.textfield_rename;
             renameToolStripMenuItem.Name = "renameToolStripMenuItem";
             renameToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
             renameToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -450,7 +456,7 @@ namespace TotalImage
             // 
             // propertiesToolStripMenuItem
             // 
-            propertiesToolStripMenuItem.Image = Properties.Resources.properties_16;
+            propertiesToolStripMenuItem.Image = Properties.Resources.page_white_edit;
             propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
             propertiesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return;
             propertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -472,7 +478,7 @@ namespace TotalImage
             // 
             // changeVolumeLabelToolStripMenuItem
             // 
-            changeVolumeLabelToolStripMenuItem.Image = Properties.Resources.label_16;
+            changeVolumeLabelToolStripMenuItem.Image = Properties.Resources.drive_rename;
             changeVolumeLabelToolStripMenuItem.Name = "changeVolumeLabelToolStripMenuItem";
             changeVolumeLabelToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             changeVolumeLabelToolStripMenuItem.Text = "Change volume label...";
@@ -487,6 +493,7 @@ namespace TotalImage
             // 
             // defragmentToolStripMenuItem
             // 
+            defragmentToolStripMenuItem.Image = Properties.Resources.module;
             defragmentToolStripMenuItem.Name = "defragmentToolStripMenuItem";
             defragmentToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             defragmentToolStripMenuItem.Text = "Defragment...";
@@ -501,7 +508,7 @@ namespace TotalImage
             // 
             // bootSectorPropertiesToolStripMenuItem
             // 
-            bootSectorPropertiesToolStripMenuItem.Image = (System.Drawing.Image)resources.GetObject("bootSectorPropertiesToolStripMenuItem.Image");
+            bootSectorPropertiesToolStripMenuItem.Image = Properties.Resources.application_xp_terminal;
             bootSectorPropertiesToolStripMenuItem.Name = "bootSectorPropertiesToolStripMenuItem";
             bootSectorPropertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             bootSectorPropertiesToolStripMenuItem.Text = "Boot sector properties...";
@@ -514,6 +521,7 @@ namespace TotalImage
             // 
             // selectPartitionToolStripMenuItem
             // 
+            selectPartitionToolStripMenuItem.Image = Properties.Resources.drive_go;
             selectPartitionToolStripMenuItem.Name = "selectPartitionToolStripMenuItem";
             selectPartitionToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             selectPartitionToolStripMenuItem.Text = "Select partition...";
@@ -521,7 +529,7 @@ namespace TotalImage
             // 
             // managePartitionsToolStripMenuItem
             // 
-            managePartitionsToolStripMenuItem.Image = Properties.Resources.disks_16;
+            managePartitionsToolStripMenuItem.Image = Properties.Resources.drive_edit;
             managePartitionsToolStripMenuItem.Name = "managePartitionsToolStripMenuItem";
             managePartitionsToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             managePartitionsToolStripMenuItem.Text = "Manage partitions...";
@@ -550,6 +558,7 @@ namespace TotalImage
             // 
             // expandDirectoryTreeToolStripMenuItem
             // 
+            expandDirectoryTreeToolStripMenuItem.Image = Properties.Resources.arrow_up_down;
             expandDirectoryTreeToolStripMenuItem.Name = "expandDirectoryTreeToolStripMenuItem";
             expandDirectoryTreeToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             expandDirectoryTreeToolStripMenuItem.Text = "Expand directory tree";
@@ -557,6 +566,7 @@ namespace TotalImage
             // 
             // collapseDirectoryTreeToolStripMenuItem
             // 
+            collapseDirectoryTreeToolStripMenuItem.Image = Properties.Resources.arrow_down_up;
             collapseDirectoryTreeToolStripMenuItem.Name = "collapseDirectoryTreeToolStripMenuItem";
             collapseDirectoryTreeToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             collapseDirectoryTreeToolStripMenuItem.Text = "Collapse directory tree";
@@ -626,6 +636,7 @@ namespace TotalImage
             // sortByToolStripMenuItem
             // 
             sortByToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { nameToolStripMenuItem, typeToolStripMenuItem, sizeToolStripMenuItem, modifiedToolStripMenuItem, attributesToolStripMenuItem });
+            sortByToolStripMenuItem.Image = Properties.Resources.sort_descending;
             sortByToolStripMenuItem.Name = "sortByToolStripMenuItem";
             sortByToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             sortByToolStripMenuItem.Text = "Sort by";
@@ -668,6 +679,7 @@ namespace TotalImage
             // toolbarsToolStripMenuItem
             // 
             toolbarsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { menuBarToolStripMenuItem, commandBarToolStripMenuItem, directoryTreeToolStripMenuItem, statusBarToolStripMenuItem });
+            toolbarsToolStripMenuItem.Image = Properties.Resources.layout;
             toolbarsToolStripMenuItem.Name = "toolbarsToolStripMenuItem";
             toolbarsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             toolbarsToolStripMenuItem.Text = "Toolbars";
@@ -722,6 +734,7 @@ namespace TotalImage
             // 
             // hexViewToolStripMenuItem
             // 
+            hexViewToolStripMenuItem.Image = Properties.Resources.digit_separator;
             hexViewToolStripMenuItem.Name = "hexViewToolStripMenuItem";
             hexViewToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             hexViewToolStripMenuItem.Text = "Hex view...";
@@ -729,7 +742,7 @@ namespace TotalImage
             // 
             // imageInformationToolStripMenuItem
             // 
-            imageInformationToolStripMenuItem.Image = Properties.Resources.info_16;
+            imageInformationToolStripMenuItem.Image = Properties.Resources.document_info;
             imageInformationToolStripMenuItem.Name = "imageInformationToolStripMenuItem";
             imageInformationToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             imageInformationToolStripMenuItem.Text = "Image information...";
@@ -742,7 +755,7 @@ namespace TotalImage
             // 
             // settingsToolStripMenuItem1
             // 
-            settingsToolStripMenuItem1.Image = Properties.Resources.options_alt_16;
+            settingsToolStripMenuItem1.Image = Properties.Resources.cog;
             settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
             settingsToolStripMenuItem1.Size = new System.Drawing.Size(182, 22);
             settingsToolStripMenuItem1.Text = "Settings...";
@@ -758,6 +771,7 @@ namespace TotalImage
             // 
             // aboutToolStripMenuItem
             // 
+            aboutToolStripMenuItem.Image = Properties.Resources.information;
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             aboutToolStripMenuItem.Text = "About...";
@@ -804,7 +818,7 @@ namespace TotalImage
             // lblNotifications
             // 
             lblNotifications.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            lblNotifications.Image = (System.Drawing.Image)resources.GetObject("lblNotifications.Image");
+            lblNotifications.Image = Properties.Resources.error;
             lblNotifications.ImageTransparentColor = System.Drawing.Color.Magenta;
             lblNotifications.Name = "lblNotifications";
             lblNotifications.Size = new System.Drawing.Size(95, 24);
@@ -827,7 +841,7 @@ namespace TotalImage
             // newToolStripButton
             // 
             newToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            newToolStripButton.Image = Properties.Resources.new_16;
+            newToolStripButton.Image = Properties.Resources.page_white;
             newToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             newToolStripButton.Name = "newToolStripButton";
             newToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -838,7 +852,7 @@ namespace TotalImage
             // openToolStripButton
             // 
             openToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            openToolStripButton.Image = Properties.Resources.open_16;
+            openToolStripButton.Image = Properties.Resources.folder_go;
             openToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             openToolStripButton.Name = "openToolStripButton";
             openToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -849,7 +863,7 @@ namespace TotalImage
             // saveToolStripButton
             // 
             saveToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            saveToolStripButton.Image = Properties.Resources.save_16;
+            saveToolStripButton.Image = Properties.Resources.diskette;
             saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             saveToolStripButton.Name = "saveToolStripButton";
             saveToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -859,7 +873,7 @@ namespace TotalImage
             // closeToolStripButton
             // 
             closeToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            closeToolStripButton.Image = Properties.Resources.close_16;
+            closeToolStripButton.Image = Properties.Resources.cross;
             closeToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             closeToolStripButton.Name = "closeToolStripButton";
             closeToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -874,7 +888,7 @@ namespace TotalImage
             // injectToolStripButton
             // 
             injectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            injectToolStripButton.Image = Properties.Resources.inject_file_16;
+            injectToolStripButton.Image = Properties.Resources.page_white_add;
             injectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             injectToolStripButton.Name = "injectToolStripButton";
             injectToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -885,7 +899,7 @@ namespace TotalImage
             // extractToolStripButton
             // 
             extractToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            extractToolStripButton.Image = Properties.Resources.extract_16;
+            extractToolStripButton.Image = Properties.Resources.redo;
             extractToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             extractToolStripButton.Name = "extractToolStripButton";
             extractToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -896,7 +910,7 @@ namespace TotalImage
             // newFolderToolStripButton
             // 
             newFolderToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            newFolderToolStripButton.Image = Properties.Resources.new_folder_16;
+            newFolderToolStripButton.Image = Properties.Resources.folder_new;
             newFolderToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             newFolderToolStripButton.Name = "newFolderToolStripButton";
             newFolderToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -907,7 +921,7 @@ namespace TotalImage
             // deleteToolStripButton
             // 
             deleteToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            deleteToolStripButton.Image = Properties.Resources.delete_16;
+            deleteToolStripButton.Image = Properties.Resources.bin_empty;
             deleteToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             deleteToolStripButton.Name = "deleteToolStripButton";
             deleteToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -917,7 +931,7 @@ namespace TotalImage
             // propertiesToolStripButton
             // 
             propertiesToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            propertiesToolStripButton.Image = Properties.Resources.properties_16;
+            propertiesToolStripButton.Image = Properties.Resources.page_white_edit;
             propertiesToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             propertiesToolStripButton.Name = "propertiesToolStripButton";
             propertiesToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -947,7 +961,7 @@ namespace TotalImage
             // managePartitionsToolStripButton
             // 
             managePartitionsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            managePartitionsToolStripButton.Image = Properties.Resources.disks_16;
+            managePartitionsToolStripButton.Image = Properties.Resources.drive_edit;
             managePartitionsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             managePartitionsToolStripButton.Name = "managePartitionsToolStripButton";
             managePartitionsToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -963,7 +977,7 @@ namespace TotalImage
             // labelToolStripMenuButton
             // 
             labelToolStripMenuButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            labelToolStripMenuButton.Image = Properties.Resources.label_16;
+            labelToolStripMenuButton.Image = Properties.Resources.drive_rename;
             labelToolStripMenuButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             labelToolStripMenuButton.Name = "labelToolStripMenuButton";
             labelToolStripMenuButton.Size = new System.Drawing.Size(23, 22);
@@ -985,7 +999,7 @@ namespace TotalImage
             // infoToolStripButton
             // 
             infoToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            infoToolStripButton.Image = Properties.Resources.info_16;
+            infoToolStripButton.Image = Properties.Resources.document_info;
             infoToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             infoToolStripButton.Name = "infoToolStripButton";
             infoToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1001,7 +1015,7 @@ namespace TotalImage
             // parentDirectoryToolStripButton
             // 
             parentDirectoryToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            parentDirectoryToolStripButton.Image = (System.Drawing.Image)resources.GetObject("parentDirectoryToolStripButton.Image");
+            parentDirectoryToolStripButton.Image = Properties.Resources.folder_up;
             parentDirectoryToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             parentDirectoryToolStripButton.Name = "parentDirectoryToolStripButton";
             parentDirectoryToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1012,7 +1026,7 @@ namespace TotalImage
             // 
             viewToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             viewToolStripButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { showHiddenItemsToolStripMenuItem1, showDeletedItemsToolStripMenuItem1, toolStripSeparator14, largeIconsToolStripMenuItem1, smallIconsToolStripMenuItem1, listToolStripMenuItem1, detailsToolStripMenuItem1 });
-            viewToolStripButton.Image = Properties.Resources.view_16;
+            viewToolStripButton.Image = Properties.Resources.application_view_tile;
             viewToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             viewToolStripButton.Name = "viewToolStripButton";
             viewToolStripButton.Size = new System.Drawing.Size(29, 22);
@@ -1074,7 +1088,7 @@ namespace TotalImage
             // 
             sortToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             sortToolStripButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { nameToolStripMenuItem1, typeToolStripMenuItem1, sizeToolStripMenuItem1, modifiedToolStripMenuItem1, attributesToolStripMenuItem1 });
-            sortToolStripButton.Image = Properties.Resources.sort_16;
+            sortToolStripButton.Image = Properties.Resources.sort_descending;
             sortToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             sortToolStripButton.Name = "sortToolStripButton";
             sortToolStripButton.Size = new System.Drawing.Size(29, 22);
@@ -1124,7 +1138,7 @@ namespace TotalImage
             // settingsToolStripButton
             // 
             settingsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            settingsToolStripButton.Image = Properties.Resources.options_alt_16;
+            settingsToolStripButton.Image = Properties.Resources.cog;
             settingsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             settingsToolStripButton.Name = "settingsToolStripButton";
             settingsToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1259,61 +1273,62 @@ namespace TotalImage
             // 
             // cmsFileList
             // 
-            cmsFileList.ImageScalingSize = new System.Drawing.Size(20, 20);
             cmsFileList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { extractToolStripMenuItem2, newFolderToolStripMenuItem2, deleteToolStripMenuItem2, undeleteToolStripMenuItem2, renameToolStripMenuItem2, propertiesToolStripMenuItem2, selectAllToolStripMenuItem1 });
             cmsFileList.Name = "cmsFileList";
             cmsFileList.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            cmsFileList.Size = new System.Drawing.Size(221, 186);
+            cmsFileList.Size = new System.Drawing.Size(217, 158);
             cmsFileList.Opening += cmsFileList_Opening;
             // 
             // extractToolStripMenuItem2
             // 
-            extractToolStripMenuItem2.Image = Properties.Resources.extract_16;
+            extractToolStripMenuItem2.Image = Properties.Resources.redo;
             extractToolStripMenuItem2.Name = "extractToolStripMenuItem2";
             extractToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X;
-            extractToolStripMenuItem2.Size = new System.Drawing.Size(220, 26);
+            extractToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             extractToolStripMenuItem2.Text = "Extract...";
             extractToolStripMenuItem2.Click += extract_Click;
             // 
             // newFolderToolStripMenuItem2
             // 
-            newFolderToolStripMenuItem2.Image = Properties.Resources.new_folder_16;
+            newFolderToolStripMenuItem2.Image = Properties.Resources.folder_new;
             newFolderToolStripMenuItem2.Name = "newFolderToolStripMenuItem2";
             newFolderToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.N;
-            newFolderToolStripMenuItem2.Size = new System.Drawing.Size(220, 26);
+            newFolderToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             newFolderToolStripMenuItem2.Text = "New folder...";
             newFolderToolStripMenuItem2.Click += newFolder_Click;
             // 
             // deleteToolStripMenuItem2
             // 
-            deleteToolStripMenuItem2.Image = Properties.Resources.delete_16;
+            deleteToolStripMenuItem2.Image = Properties.Resources.bin_empty;
             deleteToolStripMenuItem2.Name = "deleteToolStripMenuItem2";
             deleteToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            deleteToolStripMenuItem2.Size = new System.Drawing.Size(220, 26);
+            deleteToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             deleteToolStripMenuItem2.Text = "Delete";
             deleteToolStripMenuItem2.Click += delete_Click;
             // 
             // undeleteToolStripMenuItem2
             // 
+            undeleteToolStripMenuItem2.Image = Properties.Resources.recycle;
             undeleteToolStripMenuItem2.Name = "undeleteToolStripMenuItem2";
-            undeleteToolStripMenuItem2.Size = new System.Drawing.Size(220, 26);
+            undeleteToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             undeleteToolStripMenuItem2.Text = "Undelete...";
             undeleteToolStripMenuItem2.Click += undelete_Click;
             // 
             // renameToolStripMenuItem2
             // 
+            renameToolStripMenuItem2.Image = Properties.Resources.textfield_rename;
             renameToolStripMenuItem2.Name = "renameToolStripMenuItem2";
             renameToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            renameToolStripMenuItem2.Size = new System.Drawing.Size(220, 26);
+            renameToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             renameToolStripMenuItem2.Text = "Rename...";
             renameToolStripMenuItem2.Click += rename_Click;
             // 
             // propertiesToolStripMenuItem2
             // 
-            propertiesToolStripMenuItem2.Image = Properties.Resources.properties_16;
+            propertiesToolStripMenuItem2.Image = Properties.Resources.page_white_edit;
             propertiesToolStripMenuItem2.Name = "propertiesToolStripMenuItem2";
             propertiesToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return;
-            propertiesToolStripMenuItem2.Size = new System.Drawing.Size(220, 26);
+            propertiesToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             propertiesToolStripMenuItem2.Text = "Properties...";
             propertiesToolStripMenuItem2.Click += properties_Click;
             // 
@@ -1321,7 +1336,7 @@ namespace TotalImage
             // 
             selectAllToolStripMenuItem1.Name = "selectAllToolStripMenuItem1";
             selectAllToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
-            selectAllToolStripMenuItem1.Size = new System.Drawing.Size(220, 26);
+            selectAllToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             selectAllToolStripMenuItem1.Text = "Select all";
             selectAllToolStripMenuItem1.Click += selectAll_Click;
             // 
