@@ -71,7 +71,6 @@ namespace TotalImage
 
             GetDefaultIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            //parentDirectoryToolStripMenuItem.Image = parentDirectoryToolStripButton.Image = imgFilesSmall.Images["up"];
 
             //Open the file that was dragged onto the exe/shortcut or passed as a command line argument
             string[] args = Environment.GetCommandLineArgs();

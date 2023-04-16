@@ -546,6 +546,7 @@ namespace TotalImage
             // 
             // parentDirectoryToolStripMenuItem
             // 
+            parentDirectoryToolStripMenuItem.Image = Properties.Resources.folder_up;
             parentDirectoryToolStripMenuItem.Name = "parentDirectoryToolStripMenuItem";
             parentDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             parentDirectoryToolStripMenuItem.Text = "Parent directory";
