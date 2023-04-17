@@ -1343,7 +1343,7 @@ namespace TotalImage
              * indices are shifted compared to actual partition indices. */
             if (image.PartitionTable.Partitions.Count > 1)
             {
-                int realIndex = int.Parse(selectPartitionToolStripComboBox.SelectedItem.ToString().Substring(0, 1));
+                int realIndex = int.Parse(selectPartitionToolStripComboBox.SelectedItem.ToString()[..1]);
 
                 if (realIndex != CurrentPartitionIndex)
                 {
