@@ -46,7 +46,7 @@ internal static class ShellInterop
         }
     }
 
-    public static Icon GetFileTypeIcon(string fileName, FileAttributes attributes, bool large = false)
+    public static Icon GetFileTypeIcon(string fileName, FileAttributes attributes, bool large = true)
         => GetFileTypeIcon(GetFileTypeIconIndex(fileName, attributes), large);
 
     public static Icon LargeFolderIcon => GetFileTypeIcon(GetFileTypeIconIndex("folder", FileAttributes.Directory), true);
