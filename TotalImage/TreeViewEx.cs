@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using static Interop.ComCtl32;
-using static Interop.User32;
-using static Interop.UxTheme;
+using Windows.Win32.Foundation;
+
+using static Windows.Win32.PInvoke;
 
 namespace TotalImage
 {
@@ -12,8 +12,8 @@ namespace TotalImage
         protected override void CreateHandle()
         {
             base.CreateHandle();
-            _ = SetWindowTheme(this.Handle, "explorer", null); //Enable Explorer-like appearance
-            SendMessage(this.Handle, (uint)TVM.SETEXTENDEDSTYLE, (IntPtr)TVS_EX.AUTOHSCROLL, (IntPtr)TVS_EX.AUTOHSCROLL); //Enable auto-scroll extended style
+            _ = SetWindowTheme((HWND)this.Handle, "explorer", null); //Enable Explorer-like appearance
+            SendMessage((HWND)this.Handle, TVM_SETEXTENDEDSTYLE, (nuint)TVS_EX_AUTOHSCROLL, (nint)TVS_EX_AUTOHSCROLL); //Enable auto-scroll extended style
         }
     }
 }

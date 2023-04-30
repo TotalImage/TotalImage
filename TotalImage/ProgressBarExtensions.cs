@@ -1,8 +1,8 @@
 using System;
 using System.Windows.Forms;
+using Windows.Win32.Foundation;
 
-using static Interop.User32;
-using static Interop.ComCtl32;
+using static Windows.Win32.PInvoke;
 
 namespace TotalImage
 {
@@ -17,12 +17,12 @@ namespace TotalImage
     {
         public static void SetState(this ProgressBar bar, ProgressBarState state)
         {
-            SendMessage(bar.Handle, (uint)PBM.SETSTATE, (nint)state, (nint)0);
+            SendMessage((HWND)bar.Handle, PBM_SETSTATE, (nuint)state, 0);
         }
 
         public static ProgressBarState GetState(this ProgressBar bar)
         {
-            return (ProgressBarState)SendMessage(bar.Handle, (uint)PBM.GETSTATE, (nint)0, (nint)0);
+            return (ProgressBarState)(nint)SendMessage((HWND)bar.Handle, PBM_GETSTATE, 0, 0);
         }
     }
 }

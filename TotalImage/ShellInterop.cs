@@ -3,9 +3,10 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using static Interop.ComCtl32;
-using static Interop.Shell32;
-using static Interop.User32;
+using Windows.Win32;
+using Windows.Win32.Storage.FileSystem;
+using Windows.Win32.UI.Controls;
+using Windows.Win32.UI.Shell;
 
 namespace TotalImage;
 
@@ -13,16 +14,16 @@ internal static class ShellInterop
 {
     static Dictionary<string, (string Name, int IconIndex)> _fileTypes = new(StringComparer.InvariantCultureIgnoreCase);
 
-    static (string Name, int IconIndex) GetFileTypeInfo(string fileName, FileAttributes attributes)
+    unsafe static (string Name, int IconIndex) GetFileTypeInfo(string fileName, FileAttributes attributes)
     {
         var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(fileName);
 
         if (!_fileTypes.ContainsKey(extension))
         {
-            var shinfo = new SHFILEINFO();
-            var flags = SHGFI.TYPENAME | SHGFI.SYSICONINDEX | SHGFI.USEFILEATTRIBUTES;
+            var shinfo = new SHFILEINFOW();
+            var flags = SHGFI_FLAGS.SHGFI_TYPENAME | SHGFI_FLAGS.SHGFI_SYSICONINDEX | SHGFI_FLAGS.SHGFI_USEFILEATTRIBUTES;
 
-            SHGetFileInfo(fileName, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
+            PInvoke.SHGetFileInfo(fileName, (FILE_FLAGS_AND_ATTRIBUTES)attributes, &shinfo, (uint)Marshal.SizeOf(shinfo), flags);
 
             _fileTypes.Add(extension, (shinfo.szTypeName.ToString(), shinfo.iIcon));
         }
@@ -35,14 +36,14 @@ internal static class ShellInterop
 
     public static Icon GetFileTypeIcon(int index, bool large)
     {
-        var iid = new Guid(IID_IImageList);
-        _ = SHGetImageList(large ? SHIL.LARGE : SHIL.SMALL, ref iid, out var list);
+        PInvoke.SHGetImageList(large ? (int)PInvoke.SHIL_LARGE : (int)PInvoke.SHIL_SMALL, typeof(IImageList).GUID, out var obj);
 
-        list.GetIcon(index, ILD.TRANSPARENT, out var iconHandle);
+        var imageList = (IImageList)obj;
+        imageList.GetIcon(index, (uint)IMAGE_LIST_DRAW_STYLE.ILD_TRANSPARENT, out var icon);
 
-        using (iconHandle)
+        using (icon)
         {
-            return iconHandle.ToIcon();
+            return (Icon)Icon.FromHandle(icon.DangerousGetHandle()).Clone();
         }
     }
 
@@ -56,12 +57,15 @@ internal static class ShellInterop
 
     public static (Icon Small, Icon Large) GetGoUpIcons()
     {
-        if (ExtractIconEx("shell32.dll", 45, out var largeIconHandle, out var smallIconHandle, 1) != uint.MaxValue)
+        if (PInvoke.ExtractIconEx("shell32.dll", 45, out var largeIcon, out var smallIcon, 1) != uint.MaxValue)
         {
-            using (largeIconHandle)
-            using (smallIconHandle)
+            using (largeIcon)
+            using (smallIcon)
             {
-                return (smallIconHandle.ToIcon(), largeIconHandle.ToIcon());
+                return (
+                    (Icon)Icon.FromHandle(smallIcon.DangerousGetHandle()).Clone(),
+                    (Icon)Icon.FromHandle(largeIcon.DangerousGetHandle()).Clone()
+                );
             }
         }
 

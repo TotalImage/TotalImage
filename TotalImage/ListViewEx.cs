@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using static Interop.ComCtl32;
-using static Interop.User32;
-using static Interop.UxTheme;
+using Windows.Win32.Foundation;
+using Windows.Win32.UI.Controls;
+
+using static Windows.Win32.PInvoke;
 
 namespace TotalImage
 {
@@ -11,49 +12,76 @@ namespace TotalImage
     {
         public static void SelectAllItems(this ListView listView)
         {
-            var lvItem = new LVITEM()
+            var lvItem = new LVITEMW()
             {
-                state = LVIS.SELECTED,
-                stateMask = LVIS.SELECTED
+                state = LIST_VIEW_ITEM_STATE_FLAGS.LVIS_SELECTED,
+                stateMask = LIST_VIEW_ITEM_STATE_FLAGS.LVIS_SELECTED
             };
 
-            SendMessage(listView.Handle, (uint)LVM.SETITEMSTATE, (nint)(-1), ref lvItem);
+            var plvItem = Marshal.AllocHGlobal(Marshal.SizeOf(lvItem));
+            Marshal.StructureToPtr(lvItem, plvItem, false);
+
+            try
+            {
+                SendMessage((HWND)listView.Handle, LVM_SETITEMSTATE, unchecked((nuint)(-1)), plvItem);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(plvItem);
+            }
         }
 
         public static void SetSortIcon(this ListView listView, int columnIndex, SortOrder order)
         {
-            var headerHwnd = SendMessage(listView.Handle, (uint)LVM.GETHEADER, (nint)0, (nint)0);
+            var headerHwnd = (HWND)SendMessage((HWND)listView.Handle, LVM_GETHEADER, 0, 0).Value;
 
-            for (int columnNumber = 0; columnNumber <= listView.Columns.Count - 1; columnNumber++)
+            var phdItem = Marshal.AllocHGlobal(Marshal.SizeOf<HDITEMW>());
+
+            try
             {
-                var hdItem = new HDITEM()
+                for (int columnNumber = 0; columnNumber <= listView.Columns.Count - 1; columnNumber++)
                 {
-                    mask = HDI.FORMAT
-                };
-
-                SendMessage(headerHwnd, (uint)HDM.GETITEMW, (nint)columnNumber, ref hdItem);
-
-                if (!(order == SortOrder.None) && columnNumber == columnIndex)
-                {
-                    switch (order)
+                    var hdItem = new HDITEMW()
                     {
-                        case SortOrder.Ascending:
-                            hdItem.fmt &= ~HDF.SORTDOWN;
-                            hdItem.fmt |= HDF.SORTUP;
-                            break;
-                        case SortOrder.Descending:
-                            hdItem.fmt &= ~HDF.SORTUP;
-                            hdItem.fmt |= HDF.SORTDOWN;
-                            break;
-                    }
-                    hdItem.fmt |= (HDF.LEFT | HDF.BITMAP_ON_RIGHT);
-                }
-                else
-                {
-                    hdItem.fmt &= ~HDF.SORTDOWN & ~HDF.SORTUP & ~HDF.BITMAP_ON_RIGHT;
-                }
+                        mask = HDI_MASK.HDI_FORMAT
+                    };
 
-                SendMessage(headerHwnd, (uint)HDM.SETITEMW, (nint)columnNumber, ref hdItem);
+                    Marshal.StructureToPtr(hdItem, phdItem, false);
+
+                    SendMessage(headerHwnd, HDM_GETITEMW, (nuint)columnNumber, phdItem);
+
+                    hdItem = Marshal.PtrToStructure<HDITEMW>(phdItem);
+
+                    if (!(order == SortOrder.None) && columnNumber == columnIndex)
+                    {
+                        switch (order)
+                        {
+                            case SortOrder.Ascending:
+                                hdItem.fmt &= ~HEADER_CONTROL_FORMAT_FLAGS.HDF_SORTDOWN;
+                                hdItem.fmt |= HEADER_CONTROL_FORMAT_FLAGS.HDF_SORTUP;
+                                break;
+                            case SortOrder.Descending:
+                                hdItem.fmt &= ~HEADER_CONTROL_FORMAT_FLAGS.HDF_SORTUP;
+                                hdItem.fmt |= HEADER_CONTROL_FORMAT_FLAGS.HDF_SORTDOWN;
+                                break;
+                        }
+                        hdItem.fmt |= HEADER_CONTROL_FORMAT_FLAGS.HDF_LEFT | HEADER_CONTROL_FORMAT_FLAGS.HDF_BITMAP_ON_RIGHT;
+                    }
+                    else
+                    {
+                        hdItem.fmt &= ~HEADER_CONTROL_FORMAT_FLAGS.HDF_SORTDOWN & ~HEADER_CONTROL_FORMAT_FLAGS.HDF_SORTUP & ~HEADER_CONTROL_FORMAT_FLAGS.HDF_BITMAP_ON_RIGHT;
+                    }
+
+                    Marshal.StructureToPtr(hdItem, phdItem, true);
+
+                    SendMessage(headerHwnd, HDM_SETITEMW, (nuint)columnNumber, phdItem);
+
+                    Marshal.DestroyStructure<HDITEMW>(phdItem);
+                }
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(phdItem);
             }
         }
     }
@@ -63,8 +91,8 @@ namespace TotalImage
         protected override void CreateHandle()
         {
             base.CreateHandle();
-            SetWindowTheme(Handle, "explorer", null); //Enables Explorer-like appearance
-            SendMessage(Handle, (uint)LVM.SETEXTENDEDLISTVIEWSTYLE, (nint)LVS_EX.DOUBLEBUFFER, (nint)LVS_EX.DOUBLEBUFFER); //Enables semi-transparent selection rectangle
+            SetWindowTheme((HWND)Handle, "explorer", null); //Enables Explorer-like appearance
+            SendMessage((HWND)Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, (nuint)LVS_EX_DOUBLEBUFFER, (nint)LVS_EX_DOUBLEBUFFER); //Enables semi-transparent selection rectangle
         }
     }
 }
