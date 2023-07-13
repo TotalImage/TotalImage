@@ -231,18 +231,17 @@ namespace TotalImage
             // 
             // cmsCopy
             // 
-            cmsCopy.ImageScalingSize = new System.Drawing.Size(20, 20);
             cmsCopy.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyValueToolStripMenuItem });
             cmsCopy.Name = "cmsCopy";
             cmsCopy.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            cmsCopy.Size = new System.Drawing.Size(138, 30);
+            cmsCopy.Size = new System.Drawing.Size(181, 48);
             cmsCopy.Opening += cmsCopy_Opening;
             // 
             // copyValueToolStripMenuItem
             // 
-            copyValueToolStripMenuItem.Image = Properties.Resources.copy_16;
+            copyValueToolStripMenuItem.Image = Properties.Resources.page_white_copy;
             copyValueToolStripMenuItem.Name = "copyValueToolStripMenuItem";
-            copyValueToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
+            copyValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             copyValueToolStripMenuItem.Text = "Copy value";
             copyValueToolStripMenuItem.Click += copyValueToolStripMenuItem_Click;
             // 
