@@ -19,7 +19,7 @@ internal static partial class Interop
             [PreserveSig] int AddMasked(IntPtr hbmImage, int crMask, ref int pi);
             [PreserveSig] int Draw(ref IMAGELISTDRAWPARAMS pimldp);
             [PreserveSig] int Remove(int i);
-            [PreserveSig] int GetIcon(int i, ILD flags, out IntPtr picon);
+            [PreserveSig] int GetIcon(int i, ILD flags, out SafeIconHandle picon);
             [PreserveSig] int GetImageInfo(int i, ref IMAGEINFO pImageInfo);
             [PreserveSig] int Copy(int iDst, IImageList punkSrc, int iSrc, int uFlags);
             [PreserveSig] int Merge(int i1, IImageList punk2, int i2, int dx, int dy, ref Guid riid, ref IntPtr ppv);
@@ -27,11 +27,11 @@ internal static partial class Interop
             [PreserveSig] int GetImageRect(int i, ref RECT prc);
             [PreserveSig] int GetIconSize(ref int cx, ref int cy);
             [PreserveSig] int SetIconSize(int cx, int cy);
-            [PreserveSig] int GetImageCount(ref int pi); 
+            [PreserveSig] int GetImageCount(ref int pi);
             [PreserveSig] int SetImageCount(int uNewCount);
             [PreserveSig] int SetBkColor(int clrBk, ref int pclr);
             [PreserveSig] int GetBkColor(ref int pclr);
-            [PreserveSig] int BeginDrag(int iTrack, int dxHotspot, int dyHotspot); 
+            [PreserveSig] int BeginDrag(int iTrack, int dxHotspot, int dyHotspot);
             [PreserveSig] int EndDrag();
             [PreserveSig] int DragEnter(IntPtr hwndLock, int x, int y);
             [PreserveSig] int DragLeave(IntPtr hwndLock);

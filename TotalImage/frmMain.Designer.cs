@@ -759,7 +759,7 @@ namespace TotalImage
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             aboutToolStripMenuItem.Text = "About...";
             aboutToolStripMenuItem.Click += about_Click;
             // 
@@ -768,9 +768,9 @@ namespace TotalImage
             statusBar.ContextMenuStrip = cmsToolbars;
             statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { lblStatusCapacity, lblStatusFreeCapacity, lblStatusProgressBar, lblStatusSize, lbStatusPath, lblNotifications });
             statusBar.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            statusBar.Location = new System.Drawing.Point(0, 639);
+            statusBar.Location = new System.Drawing.Point(0, 635);
             statusBar.Name = "statusBar";
-            statusBar.Size = new System.Drawing.Size(984, 22);
+            statusBar.Size = new System.Drawing.Size(984, 26);
             statusBar.SizingGrip = false;
             statusBar.TabIndex = 1;
             statusBar.Text = "statusStrip1";
@@ -807,7 +807,7 @@ namespace TotalImage
             lblNotifications.Image = (System.Drawing.Image)resources.GetObject("lblNotifications.Image");
             lblNotifications.ImageTransparentColor = System.Drawing.Color.Magenta;
             lblNotifications.Name = "lblNotifications";
-            lblNotifications.Size = new System.Drawing.Size(99, 24);
+            lblNotifications.Size = new System.Drawing.Size(95, 24);
             lblNotifications.Text = "Notifications";
             lblNotifications.Visible = false;
             lblNotifications.Click += lblNotifications_Click;
@@ -933,13 +933,15 @@ namespace TotalImage
             // selectPartitionToolStripComboBox
             // 
             selectPartitionToolStripComboBox.AutoSize = false;
+            selectPartitionToolStripComboBox.AutoToolTip = true;
             selectPartitionToolStripComboBox.DropDownHeight = 200;
             selectPartitionToolStripComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             selectPartitionToolStripComboBox.DropDownWidth = 250;
+            selectPartitionToolStripComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             selectPartitionToolStripComboBox.IntegralHeight = false;
+            selectPartitionToolStripComboBox.MaxDropDownItems = 64;
             selectPartitionToolStripComboBox.Name = "selectPartitionToolStripComboBox";
             selectPartitionToolStripComboBox.Size = new System.Drawing.Size(250, 23);
-            selectPartitionToolStripComboBox.ToolTipText = "Select partition";
             selectPartitionToolStripComboBox.SelectedIndexChanged += selectPartitionToolStripComboBox_SelectedIndexChanged;
             // 
             // managePartitionsToolStripButton
@@ -1144,7 +1146,7 @@ namespace TotalImage
             // splitContainer.Panel2
             // 
             splitContainer.Panel2.Controls.Add(lstFiles);
-            splitContainer.Size = new System.Drawing.Size(984, 590);
+            splitContainer.Size = new System.Drawing.Size(984, 586);
             splitContainer.SplitterDistance = 280;
             splitContainer.SplitterWidth = 3;
             splitContainer.TabIndex = 3;
@@ -1163,7 +1165,7 @@ namespace TotalImage
             lstDirectories.Name = "lstDirectories";
             lstDirectories.SelectedImageIndex = 0;
             lstDirectories.ShowLines = false;
-            lstDirectories.Size = new System.Drawing.Size(280, 590);
+            lstDirectories.Size = new System.Drawing.Size(280, 586);
             lstDirectories.TabIndex = 0;
             lstDirectories.BeforeLabelEdit += lstDirectories_BeforeLabelEdit;
             lstDirectories.AfterLabelEdit += lstDirectories_AfterLabelEdit;
@@ -1197,7 +1199,7 @@ namespace TotalImage
             lstFiles.Name = "lstFiles";
             lstFiles.ShowGroups = false;
             lstFiles.ShowItemToolTips = true;
-            lstFiles.Size = new System.Drawing.Size(701, 590);
+            lstFiles.Size = new System.Drawing.Size(701, 586);
             lstFiles.SmallImageList = imgFilesSmall;
             lstFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
             lstFiles.TabIndex = 0;

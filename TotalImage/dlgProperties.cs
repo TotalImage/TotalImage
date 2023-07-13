@@ -60,7 +60,6 @@ namespace TotalImage
         //TODO: Maybe we should follow the user's locale for the date format?
         private void dlgProperties_Load(object sender, EventArgs e)
         {
-            frmMain mainForm = (frmMain)Application.OpenForms["frmMain"];
             if (entries.Count == 1) //Single object is straightforward
             {
                 txtFilename.Text = entries[0].Name;
@@ -134,16 +133,16 @@ namespace TotalImage
 
                 if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
                 {
-                    var extension = entries[0].Attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(entries[0].Name);
-                    string key = frmMain.fileTypes[extension].iconIndex.ToString();
-                    imgIcon.Image = mainForm.imgFilesLarge.Images[key];
-                    txtType1.Text = frmMain.fileTypes[extension].name;
+                    imgIcon.Image = ShellInterop.GetFileTypeIcon(entries[0].Name, entries[0].Attributes).ToBitmap();
+                    txtType1.Text = ShellInterop.GetFileTypeName(entries[0].Name, entries[0].Attributes);
                 }
                 else
                 {
-                    string extension = Path.GetExtension(entries[0].Name);
-                    string key = entries[0].Attributes.HasFlag(FileAttributes.Directory) ? "folder" : "file";
-                    imgIcon.Image = mainForm.imgFilesLarge.Images[key];
+                    imgIcon.Image = entries[0].Attributes.HasFlag(FileAttributes.Directory)
+                        ? ShellInterop.LargeFolderIcon.ToBitmap()
+                        : ShellInterop.LargeFileIcon.ToBitmap();
+
+                    var extension = Path.GetExtension(entries[0].Name);
 
                     if (entries[0].Attributes.HasFlag(FileAttributes.Directory))
                         txtType1.Text = "File folder";
@@ -217,11 +216,15 @@ namespace TotalImage
                 }
 
                 if (differentTypes)
+                {
                     txtType1.Text = "Multiple types";
+                }
                 else
                 {
                     if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
-                        txtType1.Text = frmMain.fileTypes[foExt].name;
+                    {
+                        txtType1.Text = ShellInterop.GetFileTypeName(entries[0].Name, entries[0].Attributes);
+                    }
                     else
                     {
                         if (entries[0].Attributes.HasFlag(FileAttributes.Directory))

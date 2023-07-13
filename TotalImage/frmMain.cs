@@ -14,9 +14,6 @@ using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
-using static Interop.ComCtl32;
-using static Interop.Shell32;
-using static Interop.User32;
 using TiDirectory = TotalImage.FileSystems.Directory;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
@@ -39,7 +36,6 @@ namespace TotalImage
         private int sortColumn;
         private SortOrder sortOrder;
         private TiDirectory? lastViewedDir;
-        internal static Dictionary<string, (string name, int iconIndex)> fileTypes = new(StringComparer.InvariantCultureIgnoreCase);
         private string? lastSavedFilename;
         private TiDirectory? draggedDir;
         public string tempDir;
@@ -1357,7 +1353,7 @@ namespace TotalImage
              * indices are shifted compared to actual partition indices. */
             if (image.PartitionTable.Partitions.Count > 1)
             {
-                int realIndex = int.Parse(selectPartitionToolStripComboBox.SelectedItem.ToString().Substring(0, 1));
+                int realIndex = int.Parse(selectPartitionToolStripComboBox.SelectedItem.ToString()[..1]);
 
                 if (realIndex != CurrentPartitionIndex)
                 {
@@ -2276,10 +2272,7 @@ namespace TotalImage
 
             if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
             {
-                if (!fileTypes.ContainsKey(extension))
-                    fileTypes.Add(extension, GetShellFileTypeInfo(filename, attributes));
-
-                return fileTypes[extension].name;
+                return ShellInterop.GetFileTypeName(filename, attributes);
             }
             else
             {
@@ -2295,21 +2288,18 @@ namespace TotalImage
         private int GetFileTypeIconIndex(string filename, FileAttributes attributes)
         {
             string key;
+
             if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
             {
-                var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
-
-                if (!fileTypes.ContainsKey(extension))
-                    fileTypes.Add(extension, GetShellFileTypeInfo(filename, attributes));
-
-                key = fileTypes[extension].iconIndex.ToString();
+                var index = ShellInterop.GetFileTypeIconIndex(filename, attributes);
+                key = index.ToString();
 
                 if (!imgFilesSmall.Images.ContainsKey(key))
                 {
                     (ImageList, Icon)[] icons =
                     {
-                        (imgFilesSmall, GetSystemIcon(fileTypes[extension].iconIndex, false)),
-                        (imgFilesLarge, GetSystemIcon(fileTypes[extension].iconIndex, true))
+                        (imgFilesSmall, ShellInterop.GetFileTypeIcon(index, false)),
+                        (imgFilesLarge, ShellInterop.GetFileTypeIcon(index, true))
                     };
 
                     foreach (var (list, icon) in icons)
@@ -2329,66 +2319,28 @@ namespace TotalImage
             return imgFilesSmall.Images.IndexOfKey(key);
         }
 
-        //Obtains the icon for the file type
-        private static Icon GetSystemIcon(int index, bool large)
-        {
-            IImageList list;
-            var iid = new Guid(IID_IImageList);
-            _ = SHGetImageList(large ? SHIL.LARGE : SHIL.SMALL, ref iid, out list);
-
-            IntPtr hIcon;
-            list.GetIcon(index, ILD.TRANSPARENT, out hIcon);
-
-            Icon icon = (Icon)Icon.FromHandle(hIcon).Clone();
-            DestroyIcon(hIcon);
-            return icon;
-        }
-
-        private static (string name, int iconIndex) GetShellFileTypeInfo(string filename, FileAttributes attributes)
-        {
-            var shinfo = new SHFILEINFO();
-            var flags = SHGFI.TYPENAME | SHGFI.SYSICONINDEX | SHGFI.USEFILEATTRIBUTES;
-
-            SHGetFileInfo(filename, attributes, ref shinfo, (uint)Marshal.SizeOf(shinfo), flags);
-
-            return (shinfo.szTypeName, shinfo.iIcon);
-        }
-
         //Gets the default Windows folder icon and type name with SHGetFileInfo
         private void GetDefaultIcons()
         {
             // Folder and file icons
-            (string, FileAttributes)[] types =
+            (string, ImageList, Icon)[] types =
             {
-                ("folder", FileAttributes.Directory),
-                ("file", 0)
+                ("file", imgFilesSmall, ShellInterop.SmallFileIcon),
+                ("file", imgFilesLarge, ShellInterop.LargeFileIcon),
+                ("folder", imgFilesSmall, ShellInterop.SmallFolderIcon),
+                ("folder", imgFilesLarge, ShellInterop.LargeFolderIcon)
             };
 
-            foreach (var (key, attributes) in types)
+            foreach (var (key, list, icon) in types)
             {
-                var (_, index) = GetShellFileTypeInfo(key, attributes);
-
-                (ImageList, Icon)[] icons =
-                {
-                    (imgFilesSmall, GetSystemIcon(index, false)),
-                    (imgFilesLarge, GetSystemIcon(index, true))
-                };
-
-                foreach (var (list, icon) in icons)
-                {
-                    list.Images.Add(key, icon);
-                    list.Images.Add($"{key} (Hidden)", CreateHiddenIcon(icon.ToBitmap()));
-                }
+                list.Images.Add(key, icon);
+                list.Images.Add($"{key} (Hidden)", CreateHiddenIcon(icon.ToBitmap()));
             }
 
             // "Up one folder" icon
-            var largeIcons = new IntPtr[1];
-            var smallIcons = new IntPtr[1];
-
-            _ = ExtractIconEx("shell32.dll", 45, largeIcons, smallIcons, 1);
-
-            imgFilesSmall.Images.Add("up", (Icon)Icon.FromHandle(smallIcons[0]).Clone());
-            imgFilesLarge.Images.Add("up", (Icon)Icon.FromHandle(largeIcons[0]).Clone());
+            var (smallUpIcon, largeUpIcon) = ShellInterop.GetGoUpIcons();
+            imgFilesSmall.Images.Add("up", smallUpIcon);
+            imgFilesLarge.Images.Add("up", largeUpIcon);
 
             upOneFolderListViewItem.ImageIndex = imgFilesSmall.Images.IndexOfKey("up");
         }
