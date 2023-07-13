@@ -2298,10 +2298,10 @@ namespace TotalImage
             // Folder and file icons
             (string, ImageList, Icon)[] types =
             {
-                ("file", imgFilesSmall, ShellInterop.SmallFileIcon),
-                ("file", imgFilesLarge, ShellInterop.LargeFileIcon),
-                ("folder", imgFilesSmall, ShellInterop.SmallFolderIcon),
-                ("folder", imgFilesLarge, ShellInterop.LargeFolderIcon)
+                ("file", imgFilesSmall, Properties.Resources.icon_page_white),
+                ("file", imgFilesLarge, Properties.Resources.icon_page_white_32),
+                ("folder", imgFilesSmall, Properties.Resources.icon_folder),
+                ("folder", imgFilesLarge, Properties.Resources.icon_folder_32)
             };
 
             foreach (var (key, list, icon) in types)

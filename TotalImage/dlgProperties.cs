@@ -135,14 +135,16 @@ namespace TotalImage
 
                 if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
                 {
+                    imgIcon.SizeMode = PictureBoxSizeMode.Normal;
                     imgIcon.Image = ShellInterop.GetFileTypeIcon(entries[0].Name, entries[0].Attributes).ToBitmap();
                     txtType1.Text = ShellInterop.GetFileTypeName(entries[0].Name, entries[0].Attributes);
                 }
                 else
                 {
+                    imgIcon.SizeMode = PictureBoxSizeMode.StretchImage;
                     imgIcon.Image = entries[0].Attributes.HasFlag(FileAttributes.Directory)
-                        ? ShellInterop.LargeFolderIcon.ToBitmap()
-                        : ShellInterop.LargeFileIcon.ToBitmap();
+                        ? Resources.icon_folder_32.ToBitmap()
+                        : Resources.icon_page_white_32.ToBitmap();
 
                     var extension = Path.GetExtension(entries[0].Name);
 
