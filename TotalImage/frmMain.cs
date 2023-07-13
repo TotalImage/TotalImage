@@ -1838,7 +1838,7 @@ namespace TotalImage
             {
                 var item = new ListViewItem();
                 item.Text = fso.Name;
-                item.SubItems.Add(ShellInterop.GetFileTypeName(fso.Name, fso.Attributes));
+                item.SubItems.Add(GetFileTypeName(fso.Name, fso.Attributes));
 
                 string size = string.Empty;
                 if (fso is TiDirectory subdir)
