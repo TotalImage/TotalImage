@@ -1969,23 +1969,12 @@ namespace TotalImage
 
                     image = ext switch
                     {
-                        case ".vhd":
-                            image = new VhdContainer(path, memoryMapping);
-                            break;
-                        case ".nhd":
-                            image = new NhdContainer(path, memoryMapping);
-                            break;
-                        case ".imz":
-                            image = new ImzContainer(path, memoryMapping);
-                            break;
-                        case ".hdi":
-                        case ".fdi":
-                            image = new Anex86Container(path, memoryMapping);
-                            break;
-                        default:
-                            image = new RawContainer(path, memoryMapping);
-                            break;
-                    }
+                        ".vhd" => new VhdContainer(path, memoryMapping),
+                        ".nhd" => new NhdContainer(path, memoryMapping),
+                        ".imz" => new ImzContainer(path, memoryMapping),
+                        ".hdi" or ".fdi" => new Anex86Container(path, memoryMapping),
+                        _ => new RawContainer(path, memoryMapping),
+                    };
                 }
                 catch (FileNotFoundException)
                 {
