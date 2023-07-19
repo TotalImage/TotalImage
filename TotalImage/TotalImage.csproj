@@ -24,6 +24,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MSBuildGitHash" Version="2.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 

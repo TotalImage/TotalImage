@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace TotalImage
@@ -13,7 +15,10 @@ namespace TotalImage
 
         private void dlgAbout_Load(object sender, EventArgs e)
         {
-            lblVer.Text = $"Version: {System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version} Alpha";
+            var asm = Assembly.GetEntryAssembly();
+            var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
+            var attr = attrs.FirstOrDefault(a => a.Key == "GitHash");
+            lblVer.Text = $"Version: {asm.GetName().Version}-{attr.Value}";
         }
 
         private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
