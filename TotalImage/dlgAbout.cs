@@ -17,8 +17,8 @@ namespace TotalImage
         {
             var asm = Assembly.GetEntryAssembly();
             var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
-            var attr = attrs.FirstOrDefault(a => a.Key == "GitHash");
-            lblVer.Text = $"Version: {asm.GetName().Version}-{attr.Value}";
+            var hash = attrs.FirstOrDefault(a => a.Key == "GitHash");
+            lblVer.Text = $"Version: {asm.GetName().Version}-{hash.Value}";
         }
 
         private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
