@@ -46,7 +46,7 @@ namespace TotalImage
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnOK.Location = new System.Drawing.Point(178, 12);
+            btnOK.Location = new System.Drawing.Point(177, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 0;
@@ -77,9 +77,9 @@ namespace TotalImage
             lblVer.AutoSize = true;
             lblVer.Location = new System.Drawing.Point(9, 73);
             lblVer.Name = "lblVer";
-            lblVer.Size = new System.Drawing.Size(127, 15);
+            lblVer.Size = new System.Drawing.Size(229, 15);
             lblVer.TabIndex = 3;
-            lblVer.Text = "Version: 1.0.0.0 Alpha 1";
+            lblVer.Text = "Version: <version> <release> (<commit>)";
             // 
             // lblCopyright
             // 
@@ -95,9 +95,9 @@ namespace TotalImage
             pnlBottom.BackColor = System.Drawing.SystemColors.Control;
             pnlBottom.Controls.Add(btnOK);
             pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 192);
+            pnlBottom.Location = new System.Drawing.Point(0, 206);
             pnlBottom.Name = "pnlBottom";
-            pnlBottom.Size = new System.Drawing.Size(270, 50);
+            pnlBottom.Size = new System.Drawing.Size(269, 50);
             pnlBottom.TabIndex = 5;
             // 
             // imgLogo
@@ -115,14 +115,14 @@ namespace TotalImage
             lblLicense.AutoSize = true;
             lblLicense.Location = new System.Drawing.Point(9, 121);
             lblLicense.Name = "lblLicense";
-            lblLicense.Size = new System.Drawing.Size(241, 30);
+            lblLicense.Size = new System.Drawing.Size(249, 45);
             lblLicense.TabIndex = 7;
-            lblLicense.Text = "TotalImage is licensed under the MIT license.\r\nSee the LICENSE file for more information.";
+            lblLicense.Text = "TotalImage is licensed under the MIT license. \r\nSee the LICENSE file for more information and\r\nAUTHORS for a list of contributors.";
             // 
             // lnkGitHub
             // 
             lnkGitHub.AutoSize = true;
-            lnkGitHub.Location = new System.Drawing.Point(9, 160);
+            lnkGitHub.Location = new System.Drawing.Point(9, 175);
             lnkGitHub.Name = "lnkGitHub";
             lnkGitHub.Size = new System.Drawing.Size(235, 15);
             lnkGitHub.TabIndex = 8;
@@ -136,7 +136,7 @@ namespace TotalImage
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.Color.White;
-            ClientSize = new System.Drawing.Size(270, 242);
+            ClientSize = new System.Drawing.Size(269, 256);
             Controls.Add(lnkGitHub);
             Controls.Add(lblLicense);
             Controls.Add(imgLogo);

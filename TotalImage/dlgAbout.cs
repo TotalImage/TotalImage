@@ -1,11 +1,15 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace TotalImage
 {
     public partial class dlgAbout : Form
     {
+        private const string RELEASE_NAME = "Alpha 1";
+
         public dlgAbout()
         {
             InitializeComponent();
@@ -13,7 +17,10 @@ namespace TotalImage
 
         private void dlgAbout_Load(object sender, EventArgs e)
         {
-            lblVer.Text = $"Version: {System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version} Alpha 1";
+            var asm = Assembly.GetEntryAssembly();
+            var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
+            var hash = attrs.FirstOrDefault(a => a.Key == "GitHash");
+            lblVer.Text = $"Version: {asm.GetName().Version} {RELEASE_NAME} ({hash.Value})";
         }
 
         private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

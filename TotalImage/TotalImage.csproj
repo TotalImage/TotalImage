@@ -15,7 +15,7 @@
     <Authors>The TotalImage Team</Authors>
     <Copyright>Copyright © 2020-2023 The TotalImage Team</Copyright>
     <ApplicationIcon>logo.ico</ApplicationIcon>
-    <Version>1.0.0.0-alpha</Version>
+    <Version>1.0.0.0</Version>
     <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>
 
@@ -24,6 +24,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MSBuildGitHash" Version="2.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 
