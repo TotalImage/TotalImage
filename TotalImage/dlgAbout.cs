@@ -8,6 +8,8 @@ namespace TotalImage
 {
     public partial class dlgAbout : Form
     {
+        private const string RELEASE_NAME = "Alpha 1";
+
         public dlgAbout()
         {
             InitializeComponent();
@@ -18,7 +20,7 @@ namespace TotalImage
             var asm = Assembly.GetEntryAssembly();
             var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
             var hash = attrs.FirstOrDefault(a => a.Key == "GitHash");
-            lblVer.Text = $"Version: {asm.GetName().Version} ({hash.Value})";
+            lblVer.Text = $"Version: {asm.GetName().Version} {RELEASE_NAME} ({hash.Value})";
         }
 
         private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
