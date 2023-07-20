@@ -315,6 +315,7 @@ namespace TotalImage
             // 
             // newToolStripMenuItem
             // 
+            newToolStripMenuItem.Enabled = false;
             newToolStripMenuItem.Image = Properties.Resources.page_white;
             newToolStripMenuItem.Name = "newToolStripMenuItem";
             newToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N;
@@ -842,6 +843,7 @@ namespace TotalImage
             // newToolStripButton
             // 
             newToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            newToolStripButton.Enabled = false;
             newToolStripButton.Image = Properties.Resources.page_white;
             newToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             newToolStripButton.Name = "newToolStripButton";

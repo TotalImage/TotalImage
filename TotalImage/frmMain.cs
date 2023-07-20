@@ -701,7 +701,7 @@ namespace TotalImage
         {
             /* ALPHA 1 - READ-ONLY PREVIEW 
              * Disabled the write-related UI controls for this release. Re-enable when we get write functionality working. */
-			if (image is not null)
+            if (image is not null)
             {
                 if (lstFiles.SelectedIndices.Count == 0)
                 {
