@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using TotalImage.Containers;
@@ -1939,14 +1938,16 @@ namespace TotalImage
                 filepath = path;
                 filename = Path.GetFileName(path);
                 FileInfo fileinfo = new(path);
+                var fileext = Path.GetExtension(filename).ToLowerInvariant();
+                var filesize = fileinfo.Length;
 
                 //Stop with empty files rightaway
-                if (fileinfo.Length == 0)
+                if (filesize == 0)
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"File \"{filename}\" appears to be empty (zero bytes in size). If you downloaded or copied this file from some other location, make sure the source file is not damaged and the transfer completed successfully.{Environment.NewLine}{Environment.NewLine}" +
-                        $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Text = $"The file \"{filename}\" appears to be empty (ie. zero bytes in size). If you downloaded or copied this file from some other location, make sure the source file is not damaged and that the transfer completed successfully.{Environment.NewLine}{Environment.NewLine}" +
+                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "File is empty",
                         Caption = "Error",
                         Buttons =
@@ -1954,6 +1955,7 @@ namespace TotalImage
                             TaskDialogButton.OK
                         },
                         Icon = TaskDialogIcon.Error,
+                        SizeToContent = true
                     });
 
                     CloseImage();
@@ -1965,23 +1967,23 @@ namespace TotalImage
                     //Disable this for now until it's properly implemented
                     bool memoryMapping = false; //fileinfo.Length > Settings.CurrentSettings.MemoryMappingThreshold;
 
-                    var ext = Path.GetExtension(filename).ToLowerInvariant();
-
-                    image = ext switch
+                    image = fileext switch
                     {
                         ".vhd" => new VhdContainer(path, memoryMapping),
                         ".nhd" => new NhdContainer(path, memoryMapping),
                         ".imz" => new ImzContainer(path, memoryMapping),
                         ".hdi" or ".fdi" => new Anex86Container(path, memoryMapping),
-                        _ => new RawContainer(path, memoryMapping),
+                        ".img" or ".ima" or ".iso" or ".vfd" or ".flp" or ".360" or 
+                        ".720" or ".12" or ".144" or ".288" or ".dsk" or ".hdm" => new RawContainer(path, memoryMapping),
+                        _ => throw new InvalidDataException("This container format is not recognized and cannot be opened."),
                     };
                 }
                 catch (FileNotFoundException)
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"File \"{filename}\" could not be opened because it no longer exists.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Text = $"The file \"{filename}\" could not be opened because it no longer exists. It may have been moved or deleted in the mean time. Make sure the file exists and is accessible and try again.{Environment.NewLine}{Environment.NewLine}" +
+                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "File not found",
                         Caption = "Error",
                         Buttons =
@@ -1991,6 +1993,7 @@ namespace TotalImage
                         Icon = TaskDialogIcon.Error,
                         SizeToContent = true
                     });
+
                     CloseImage();
                     return;
                 }
@@ -1998,8 +2001,8 @@ namespace TotalImage
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"File \"{filename}\" could not be opened because it's in use by another process. Close all processes using this file and try again.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Text = $"The file \"{filename}\" could not be opened because it's currently locked by another process. Close all processes using this file and try again.{Environment.NewLine}{Environment.NewLine}" +
+                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "File is in use",
                         Caption = "Error",
                         Buttons =
@@ -2009,6 +2012,7 @@ namespace TotalImage
                         Icon = TaskDialogIcon.Error,
                         SizeToContent = true
                     });
+
                     CloseImage();
                     return;
                 }
@@ -2016,8 +2020,8 @@ namespace TotalImage
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"File \"{filename}\" could not be opened because access was denied. Make sure you have the required permissions and that the file is not marked as read-only.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Text = $"The file \"{filename}\" could not be opened because access was denied. Make sure you have the required permissions and that the file is not marked as read-only.{Environment.NewLine}{Environment.NewLine}" +
+                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "Access denied",
                         Caption = "Error",
                         Buttons =
@@ -2027,6 +2031,7 @@ namespace TotalImage
                         Icon = TaskDialogIcon.Error,
                         SizeToContent = true
                     });
+
                     CloseImage();
                     return;
                 }
@@ -2034,8 +2039,8 @@ namespace TotalImage
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"File \"{filename}\" could not be opened due to the following exception:{Environment.NewLine}{Environment.NewLine}" +
-                        $"{e.Message}{Environment.NewLine}{Environment.NewLine}If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Text = $"The file \"{filename}\" could not be opened due to the following exception:{Environment.NewLine}{Environment.NewLine}" +
+                                $"{e.Message}{Environment.NewLine}{Environment.NewLine}If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "Cannot open file",
                         Caption = "Error",
                         Buttons =
@@ -2045,6 +2050,7 @@ namespace TotalImage
                         Icon = TaskDialogIcon.Error,
                         SizeToContent = true
                     });
+
                     CloseImage();
                     return;
                 }
@@ -2062,9 +2068,10 @@ namespace TotalImage
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"We found no partition table in this image, though there appears to be an unsupported file system contained inside. This image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "Unsupported file system",
+                        Text = $"We attempted to open this file as the {image.DisplayName} container, but found no supported partition table or any supported file systems inside, so this image cannot be loaded. " +
+                                $"It's also possible this container format might not be correct for this file.{Environment.NewLine}{Environment.NewLine}" +
+                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Heading = "Cannot open file",
                         Caption = "Error",
                         Buttons =
                         {
@@ -2093,8 +2100,8 @@ namespace TotalImage
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"We found a supported partition table in this image, but no partitions, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Text = $"We found a supported partition table in this image ({image.PartitionTable.DisplayName}), but no partitions, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
+                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "No partitions found",
                         Caption = "Error",
                         Buttons =
@@ -2111,6 +2118,35 @@ namespace TotalImage
 
                 if (image.PartitionTable.Partitions.Count > 1)
                 {
+                    //If there's multiple partitions in a supported partition table, and they're all unsupported types, for now we just back out.
+                    //Once we implement partition management (soon™), we can offer that to the user.
+                    int rawCount = 0;
+                    foreach(Partitions.PartitionEntry entry in image.PartitionTable.Partitions)
+                    {
+                        if(entry.FileSystem is FileSystems.RAW.RawFileSystem)
+                            rawCount++;
+                    }
+
+                    if(rawCount == image.PartitionTable.Partitions.Count)
+                    {
+                        TaskDialog.ShowDialog(this, new TaskDialogPage()
+                        {
+                            Text = $"We found a supported partition table ({image.PartitionTable.DisplayName}) and several partitions in this image, but they all contain unsupported file systems, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
+                                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                            Heading = "No supported file systems",
+                            Caption = "Error",
+                            Buttons =
+                            {
+                                TaskDialogButton.OK
+                            },
+                            Icon = TaskDialogIcon.Error,
+                            SizeToContent = true
+                        });
+
+                        CloseImage();
+                        return;
+                    }
+
                     dlgSelectPartition selectFrm = new()
                     {
                         PartitionTable = image.PartitionTable
@@ -2129,8 +2165,8 @@ namespace TotalImage
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"We found one partition in this image, but it contains an unsupported file system, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                        Text = $"We found a supported partition table ({image.PartitionTable.DisplayName}) and one partition in this image, but it contains an unsupported file system, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
+                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "Unsupported file system",
                         Caption = "Error",
                         Buttons =
