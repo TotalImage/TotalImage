@@ -22,6 +22,7 @@ Read and Create functionality is limited to supported features below.
 | Microsoft VHD | VHD | ⚠ Partial | ❌ No | ❌ No |
 | T98-Next HD | NHD | ✔ Yes | ❌ No | ❌ No |
 | WinImage compressed image | IMZ | ✔ Yes | ❌ No | ❌ No |
+| Anex86 disk image | FDI, HDI | ✔ Yes | ❌ No | ❌ No |
 
 Read and Create functionality is limited to supported features below.
 
