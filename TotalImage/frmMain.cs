@@ -2321,25 +2321,36 @@ namespace TotalImage
             return imgFilesSmall.Images.IndexOfKey(key);
         }
 
-        //Gets the default Windows folder icon and type name with SHGetFileInfo
+        //Adds small and large icons for generic file and folder in normal and hidden variants to the image lists for treeview and listview
         private void GetDefaultIcons()
         {
-            // Folder and file icons
+            //Clear any existing icons from the lists to make sure we're not adding duplicate keys
+            imgFilesSmall.Images.RemoveByKey("folder");
+            imgFilesSmall.Images.RemoveByKey("folder (Hidden)");
+            imgFilesSmall.Images.RemoveByKey("file");
+            imgFilesSmall.Images.RemoveByKey("file (Hidden)");
+            imgFilesLarge.Images.RemoveByKey("folder");
+            imgFilesLarge.Images.RemoveByKey("folder (Hidden)");
+            imgFilesLarge.Images.RemoveByKey("file");
+            imgFilesLarge.Images.RemoveByKey("file (Hidden)");
+
+            //If shell integration is disabled, we use our own icons for file and folder, otherwise we obtain them from the shell
             (string, ImageList, Icon)[] types =
             {
-                ("file", imgFilesSmall, Properties.Resources.icon_page_white),
-                ("file", imgFilesLarge, Properties.Resources.icon_page_white_32),
-                ("folder", imgFilesSmall, Properties.Resources.icon_folder),
-                ("folder", imgFilesLarge, Properties.Resources.icon_folder_32)
+                ("file", imgFilesSmall, Settings.CurrentSettings.QueryShellForFileTypeInfo ? ShellInterop.SmallFileIcon : Properties.Resources.icon_page_white),
+                ("file", imgFilesLarge, Settings.CurrentSettings.QueryShellForFileTypeInfo ? ShellInterop.LargeFileIcon : Properties.Resources.icon_page_white_32),
+                ("folder", imgFilesSmall, Settings.CurrentSettings.QueryShellForFileTypeInfo ? ShellInterop.SmallFolderIcon : Properties.Resources.icon_folder),
+                ("folder", imgFilesLarge, Settings.CurrentSettings.QueryShellForFileTypeInfo ? ShellInterop.LargeFolderIcon : Properties.Resources.icon_folder_32)
             };
 
+            //Also create a hidden variant for every icon above
             foreach (var (key, list, icon) in types)
             {
                 list.Images.Add(key, icon);
                 list.Images.Add($"{key} (Hidden)", CreateHiddenIcon(icon.ToBitmap()));
             }
 
-            // "Up one folder" icon
+            //The "Up one folder" icon is special - it's always our own and doesn't need a hidden variant
             imgFilesSmall.Images.Add("up", Properties.Resources.folder_up);
             imgFilesLarge.Images.Add("up", Properties.Resources.folder_up_32);
             upOneFolderListViewItem.ImageIndex = imgFilesSmall.Images.IndexOfKey("up");
@@ -2542,6 +2553,7 @@ namespace TotalImage
             sortColumn = Settings.CurrentSettings.FilesSortingColumn;
 
             lstFiles.SetSortIcon(sortColumn, sortOrder);
+            GetDefaultIcons(); //This is needed so that icons update immediately, rather than after a restart of the app
 
             PopulateRecentList();
         }
