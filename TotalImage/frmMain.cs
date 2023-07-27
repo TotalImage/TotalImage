@@ -200,7 +200,7 @@ namespace TotalImage
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
-                    Text = $"File \"{Path.GetFileName(imagePath)}\" could not be opened because it no longer exists and will be removed from your recent images list.{Environment.NewLine}{Environment.NewLine}" +
+                    Text = $"The file \"{Path.GetFileName(imagePath)}\" could not be opened because it no longer exists. It may have been renamed, moved or deleted since it was last opened in TotalImage. It will now be removed from your recent images list.{Environment.NewLine}{Environment.NewLine}" +
                     $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                     Heading = "File not found",
                     Caption = "Error",
@@ -209,6 +209,7 @@ namespace TotalImage
                             TaskDialogButton.OK
                         },
                     Icon = TaskDialogIcon.Error,
+                    SizeToContent = true
                 });
 
                 //Remove the non-working entry
