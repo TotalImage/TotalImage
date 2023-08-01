@@ -1389,12 +1389,12 @@ namespace TotalImage
                     }
                 }
             }
-            else
-            {
+            /*else
+            {*/
                 /* Searches the currently displayed items for the first one that starts with the character of the pressed key.
                  * Currently this is very rudimentary, as it only works for English letters and digits, and the first item that is found.
                  * Could be improved to continue the search further etc. */
-                string character = e.KeyCode.ToString();
+               /* string character = e.KeyCode.ToString();
 
                 //This crap is done so numeric keys also work...
                 if ((byte)e.KeyCode > 0x30 && (byte)e.KeyCode < 0x39)
@@ -1412,7 +1412,7 @@ namespace TotalImage
                         return;
                     }
                 }
-            }
+            }*/
         }
 
         private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
