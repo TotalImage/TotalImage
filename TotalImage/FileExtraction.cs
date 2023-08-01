@@ -80,8 +80,11 @@ public static class FileExtraction
 
         foreach (var file in files)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            yield return (file, Path.Combine(path, file.Name));
+            if (!file.Name.StartsWith('?'))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                yield return (file, Path.Combine(path, file.Name));
+            }
         }
 
         if (mode != DirectoryExtractionMode.Skip)
