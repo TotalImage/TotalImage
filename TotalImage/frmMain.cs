@@ -631,6 +631,7 @@ namespace TotalImage
                 "ISO image (*.iso)|*.iso|" +
                 "Microsoft VHD (*.vhd)|*.vhd|" +
                 "T98-Next HD (*.nhd)|*.nhd|" +
+                "PCjs disk images (*.json)|*.json|" +
                 "All files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -1974,10 +1975,11 @@ namespace TotalImage
                         ".nhd" => new NhdContainer(path, memoryMapping),
                         ".imz" => new ImzContainer(path, memoryMapping),
                         ".hdi" or ".fdi" => new Anex86Container(path, memoryMapping),
-                        ".img" or ".ima" or ".iso" or ".vfd" or ".flp" or ".360" or 
+                        ".img" or ".ima" or ".iso" or ".vfd" or ".flp" or ".360" or
                         ".720" or ".12" or ".144" or ".288" or ".dsk" or ".hdm" => new RawContainer(path, memoryMapping),
+                        ".json" => new PCjsContainer(path, memoryMapping),
                         _ => throw new InvalidDataException("This container format is not recognized and cannot be opened."),
-                    };
+                    }; ;
                 }
                 catch (FileNotFoundException)
                 {
