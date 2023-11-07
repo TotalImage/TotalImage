@@ -624,8 +624,8 @@ namespace TotalImage
             //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
             //ofd.ShowReadOnly = true;
             ofd.Filter =
-                "All supported containers (*.*)|*.nhd;*.vhd;*.iso;*.imz;*.fdi;*.hdi;*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360|" +
-                "Plain sector image (*.img,*.ima,*.vfd,*.flp,*.dsk,*.hdm,*.288,*.144,*.12,*.720,*.360)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360|" +
+                "All supported containers (*.*)|*.nhd;*.vhd;*.iso;*.imz;*.fdi;*.hdi;*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360;*.json|" +
+                "Plain sector image (*.img,*.ima,*.vfd,*.flp,*.dsk,*.hdm,*.288,*.144,*.12,*.720,*.360,*.json)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360;*.json|" +
                 "WinImage compressed image (*.imz)|*.imz|" +
                 "Anex86 disk image (*.fdi,*.hdi)|*.fdi;*.hdi|" +
                 "ISO image (*.iso)|*.iso|" +
