@@ -818,25 +818,25 @@ namespace TotalImage
             List<TiFileSystemObject> entries = new();
             if (lstDirectories.Focused)
             {
-                /*using dlgProperties dlg = new dlgProperties((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
-                dlg.ShowDialog();*/
-
-                entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
+                if(lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
+                    entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
             }
             else if (lstFiles.Focused)
             {
-                /*if (lstFiles.SelectedIndices.Count == 1)
-                {
-                    using dlgProperties dlg = new dlgProperties(GetSelectedItemData(0));
-                    dlg.ShowDialog();
-                }
-                else if (lstFiles.SelectedIndices.Count > 1)
-                {
-                    throw new NotImplementedException("This feature is not implemented yet.");
-                }*/
-
                 for (int i = 0; i < lstFiles.SelectedIndices.Count; i++)
                     entries.Add(GetSelectedItemData(i));
+            }
+            else
+            {
+                if (lstFiles.SelectedIndices.Count > 0)
+                {
+                    for (int i = 0; i < lstFiles.SelectedIndices.Count; i++)
+                        entries.Add(GetSelectedItemData(i));
+                }
+                else if (lstDirectories.SelectedNode != null && lstDirectories.SelectedNode.Text != "\\")
+                    entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
+                else
+                    return; //Can't show properties for whatever is selected, so let's just return
             }
 
             using dlgProperties dlg = new(entries);
