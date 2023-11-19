@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -274,6 +274,42 @@ namespace TotalImage.FileSystems.BPB
             NumberOfHeads = 2,
             TotalLogicalSectors = 800,
             MediaDescriptor = 0xFD,
+            HiddenSectors = 0
+        };
+
+        /// <summary>
+        /// Get the default BPB for a single-sided Victor 9000 disk that doesn't include its own BPB.
+        /// </summary>
+        public static readonly BiosParameterBlock DefaultVictorSSParameters = new BiosParameterBlock
+        {
+            BytesPerLogicalSector = 512,
+            LogicalSectorsPerCluster = 4,
+            ReservedLogicalSectors = 1,
+            NumberOfFATs = 2,
+            LogicalSectorsPerFAT = 1,
+            RootDirectoryEntries = 128, //This can be also 256 on some later (ie. DOS 3.x) disks
+            PhysicalSectorsPerTrack = 0, //The actual value varies from 11 to 19 depending on the zone the track is in, but for our purposes we can assume 0.
+            NumberOfHeads = 1,
+            TotalLogicalSectors = 1224,
+            MediaDescriptor = 0xF8,
+            HiddenSectors = 0
+        };
+
+        /// <summary>
+        /// Get the default BPB for a double-sided Victor 9000 disk that doesn't include its own BPB.
+        /// </summary>
+        public static readonly BiosParameterBlock DefaultVictorDSParameters = new BiosParameterBlock
+        {
+            BytesPerLogicalSector = 512,
+            LogicalSectorsPerCluster = 4,
+            ReservedLogicalSectors = 1,
+            NumberOfFATs = 2,
+            LogicalSectorsPerFAT = 2,
+            RootDirectoryEntries = 128, //This can be also 256 on some later (ie. DOS 3.x) disks
+            PhysicalSectorsPerTrack = 0, //The actual value varies from 11 to 19 depending on the zone the track is in, but for our purposes we can assume 0.
+            NumberOfHeads = 2,
+            TotalLogicalSectors = 2391,
+            MediaDescriptor = 0xF8,
             HiddenSectors = 0
         };
 

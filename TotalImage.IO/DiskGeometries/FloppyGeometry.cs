@@ -87,6 +87,11 @@ namespace TotalImage.DiskGeometries
             [Display(Name = "400 KiB (Alphatronic PC-16)")]
             AlphatronicPC16,
             /// <summary>
+            /// A proprietary single-sided 5.25" format with 612 KiB formatted capacity, used by Victor 9000/Sirius 1.
+            /// </summary>
+            [Display(Name = "612 KiB (Victor 9000)")]
+            Victor9000SS,
+            /// <summary>
             /// A rare double-sided 5.25" or 3.5" format with 640 KiB formatted capacity.
             /// </summary>
             [Display(Name = "640 KiB")]
@@ -116,6 +121,11 @@ namespace TotalImage.DiskGeometries
             /// </summary>
             [Display(Name = "800 KiB (BBC Master 512)")]
             Acorn800k,
+            /// <summary>
+            /// A proprietary double-sided 5.25" format with just over 1195 KiB formatted capacity, used by Victor 9000/Sirius 1.
+            /// </summary>
+            [Display(Name = "1195 KiB (Victor 9000)")]
+            Victor9000DS,
             /// <summary>
             /// A standard double-sided 5.25" PC-compatible format with 1200 KiB formatted capacity.
             /// </summary>
@@ -164,7 +174,7 @@ namespace TotalImage.DiskGeometries
         /// <param name="sides">Number of sides, either 1 or 2.</param>
         /// <param name="tracks">Number of tracks per side.</param>
         /// <param name="spt">Number of sectors per track.</param>
-        /// <param name="bps">Number of bytes per sector.</param>
+        /// <param name="bps">Number of bytes per sector. Left-shift 128 by this number to get the actual value.</param>
         /// <param name="mediadesc">Media descriptor byte.</param>
         /// <param name="spc">Number of sectors per cluster.</param>
         /// <param name="noofFATs">Number of file allocation tables.</param>
@@ -197,12 +207,14 @@ namespace TotalImage.DiskGeometries
             { FriendlyName.DoubleDensity320k, new FloppyGeometry(2, 40,  8, 2, 0xFF, 2, 2,  1, 112, 1) },
             { FriendlyName.DoubleDensity360k, new FloppyGeometry(2, 40,  9, 2, 0xFD, 2, 2,  2, 112, 1) },
             { FriendlyName.AlphatronicPC16,   new FloppyGeometry(2, 40,  5, 3, 0xFF, 2, 2,  1, 128, 1) },
+            { FriendlyName.Victor9000SS,      new FloppyGeometry(1, 80,  0, 2, 0xF8, 4, 2,  1, 128, 1) },
             { FriendlyName.QuadDensity,       new FloppyGeometry(2, 80,  8, 2, 0xFB, 2, 2,  2, 112, 1) },
             { FriendlyName.Tandy2000,         new FloppyGeometry(2, 80,  9, 2, 0xFD, 4, 2,  2, 112, 1) },
             { FriendlyName.SiemensPCD,        new FloppyGeometry(2, 80,  9, 2, 0xF9, 4, 2,  2, 144, 1) },
             { FriendlyName.DoubleDensity720k, new FloppyGeometry(2, 80,  9, 2, 0xF9, 2, 2,  3, 112, 1) },
             { FriendlyName.Eagle1600,         new FloppyGeometry(2, 80,  5, 3, 0xFD, 1, 2,  2, 320, 1) },
             { FriendlyName.Acorn800k,         new FloppyGeometry(2, 80,  5, 3, 0xFD, 1, 1,  2, 192, 0) },
+            { FriendlyName.Victor9000DS,      new FloppyGeometry(2, 80,  0, 2, 0xF8, 4, 2,  2, 128, 1) },
             { FriendlyName.HighDensity1200k,  new FloppyGeometry(2, 80, 15, 2, 0xF9, 1, 2,  7, 224, 1) },
             { FriendlyName.HighDensity1232k,  new FloppyGeometry(2, 77,  8, 3, 0xFE, 1, 2,  2, 192, 1) },
             { FriendlyName.HighDensity1440k,  new FloppyGeometry(2, 80, 18, 2, 0xF0, 1, 2,  9, 224, 1) },
