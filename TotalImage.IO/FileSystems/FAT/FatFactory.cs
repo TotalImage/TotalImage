@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Text;
 using TotalImage.FileSystems.BPB;
@@ -60,11 +59,11 @@ namespace TotalImage.FileSystems.FAT
                 //Try Victor 9000 instead, which also has no BPB
                 else if (CheckForVictor9k(reader) == 1 && stream.Length == 626688)
                 {
-                    return new Fat12FileSystem(stream, BiosParameterBlock.DefaultVictorSSParameters);
+                    return new Fat12FileSystem(stream, BiosParameterBlock.DefaultVictorSSParameters); //Single-sided
                 }
                 else if (CheckForVictor9k(reader) == 2 && stream.Length == 1224192)
                 {
-                    return new Fat12FileSystem(stream, BiosParameterBlock.DefaultVictorDSParameters);
+                    return new Fat12FileSystem(stream, BiosParameterBlock.DefaultVictorDSParameters); //Double-sided
                 }
                 else
                 {
@@ -102,7 +101,7 @@ namespace TotalImage.FileSystems.FAT
         /// <summary>
         /// Checks whether the image contains Victor 9000 single-sided format, which does not have a BPB and needs special treatment.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>0 if the disk is not a Victor disk, 1 if it's a single-sided Victor disk, 2 if it's a double-sided Victor disk</returns>
         private static byte CheckForVictor9k(BinaryReader reader)
         {
             //First look for the first FAT with the 0xF8 media descriptor byte

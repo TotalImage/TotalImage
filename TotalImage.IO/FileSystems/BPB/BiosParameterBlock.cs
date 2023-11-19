@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -286,8 +285,8 @@ namespace TotalImage.FileSystems.BPB
             LogicalSectorsPerCluster = 4,
             ReservedLogicalSectors = 1,
             NumberOfFATs = 2,
-            LogicalSectorsPerFAT = 1,
-            RootDirectoryEntries = 128, //This can be also 256 on some later (ie. DOS 3.x) disks
+            LogicalSectorsPerFAT = 1, //This can also be 2 on some single-sided disks (possibly if only one side was dumped)
+            RootDirectoryEntries = 128, //This can also be 256 on some later (ie. DOS 3.x) disks
             PhysicalSectorsPerTrack = 0, //The actual value varies from 11 to 19 depending on the zone the track is in, but for our purposes we can assume 0.
             NumberOfHeads = 1,
             TotalLogicalSectors = 1224,
@@ -305,7 +304,7 @@ namespace TotalImage.FileSystems.BPB
             ReservedLogicalSectors = 1,
             NumberOfFATs = 2,
             LogicalSectorsPerFAT = 2,
-            RootDirectoryEntries = 128, //This can be also 256 on some later (ie. DOS 3.x) disks
+            RootDirectoryEntries = 128, //This can also be 256 on some later (ie. DOS 3.x) disks
             PhysicalSectorsPerTrack = 0, //The actual value varies from 11 to 19 depending on the zone the track is in, but for our purposes we can assume 0.
             NumberOfHeads = 2,
             TotalLogicalSectors = 2391,
