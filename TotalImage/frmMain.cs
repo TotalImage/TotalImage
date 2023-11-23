@@ -62,7 +62,7 @@ namespace TotalImage
         private void frmMain_Load(object sender, EventArgs e)
         {
             //This fixes the problem of certain settings values not being returned correctly when using high DPI. Go figure...
-            Settings.Reload();
+            Settings.ReloadSettings();
             Settings.ReloadUIState();
 
             SyncUIOptions();
@@ -194,7 +194,7 @@ namespace TotalImage
         //Click event handler for all menu items in the Recent images menu
         private void recentImage_Click(object sender, EventArgs e)
         {
-            string imagePath = ((ToolStripMenuItem)sender).Text[3..].Trim(' ');
+            string imagePath = ((ToolStripMenuItem)sender).Text[3..].Trim(' '); //Remove the leading index in the menuitem text
             if (!File.Exists(imagePath))
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
@@ -2564,6 +2564,7 @@ namespace TotalImage
             lstFiles.SetSortIcon(sortColumn, sortOrder);
             GetDefaultIcons(); //This is needed so that icons update immediately, rather than after a restart of the app
 
+            Settings.CheckRecentImages();
             PopulateRecentList();
         }
 

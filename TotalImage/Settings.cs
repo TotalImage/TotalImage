@@ -8,56 +8,166 @@ using System.Linq;
 
 namespace TotalImage
 {
-    //This class is a singleton, thread-safe with a double check lock
+    /// <summary>
+    /// Singleton thread-safe with a double check lock class for managing the program's settings and UI state.
+    /// </summary>
     public static class Settings
     {
+        /// <summary>
+        /// The UI state model for storing values related to the state of the main window and its child controls.
+        /// </summary>
         public class UIStateModel
         {
+            /// <summary>
+            /// Location of the splitter between the directory tree and the file list. Only relevant if the directory tree is enabled.
+            /// </summary>
             public int SplitterDistance { get; set; } = 280;
+            /// <summary>
+            /// Size of the main window.
+            /// </summary>
             public Size WindowSize { get; set; } = new Size(1000, 700);
+            /// <summary>
+            /// Position of the main window on the screen.
+            /// </summary>
             public Point WindowPosition { get; set; } = new Point((Screen.PrimaryScreen.Bounds.Width - 1000) / 2, (Screen.PrimaryScreen.Bounds.Height - 700) / 2);
+            /// <summary>
+            /// State of the main window.
+            /// </summary>
             public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
+            /// <summary>
+            /// Order of the columns in the file list in the main window.
+            /// </summary>
             public List<int> MWColumnOrder { get; set; } = new List<int>(new[] { 0, 1, 2, 3, 4 });
+            /// <summary>
+            /// Width of each column in the file list in the main window.
+            /// </summary>
             public List<int> MWColumnWidth { get; set; } = new List<int>(new[] { 150, 150, 150, 150, 85 });
         }
 
+        /// <summary>
+        /// The settings model for storing the program's various settings and options.
+        /// </summary>
         public class SettingsModel
         {
+            /// <summary>
+            /// The view type of the file list in the main window.
+            /// </summary>
             public View FilesView { get; set; } = View.Details;
+            /// <summary>
+            /// The sorting column of the file list in the main window.
+            /// </summary>
             public int FilesSortingColumn { get; set; } = 0;
+            /// <summary>
+            /// Sort order of the file list in the main window.
+            /// </summary>
             public SortOrder FilesSortOrder { get; set; } = SortOrder.Ascending;
+            /// <summary>
+            /// List of recently opened images in the File menu.
+            /// </summary>
             public List<string> RecentImages { get; set; } = new List<string>();
+            /// <summary>
+            /// Parse hidden file system objects in all directories and show them in the directory tree and file list.
+            /// </summary>
+            /// <remarks>May not apply to all supported file systems.</remarks>
             public bool ShowHiddenItems { get; set; } = true;
+            /// <summary>
+            /// Parse deleted file system objects in all directories and show them in the directory tree and file list.
+            /// </summary>
+            /// <remarks>May not apply to all supported file systems.</remarks>
             public bool ShowDeletedItems { get; set; } = false;
+            /// <summary>
+            /// Show the command bar in the main window.
+            /// </summary>
             public bool ShowCommandBar { get; set; } = true;
+            /// <summary>
+            /// Show the directory tree in the main window.
+            /// </summary>
             public bool ShowDirectoryTree { get; set; } = true;
+            /// <summary>
+            /// Show the status bar in the main window.
+            /// </summary>
             public bool ShowStatusBar { get; set; } = true;
+            /// <summary>
+            /// The size unit that will be used to display all sizes in the UI.
+            /// </summary>
             public SizeUnit SizeUnit { get; set; } = SizeUnit.Bytes;
+            /// <summary>
+            /// The default path for extraction that is used unless the user manually selects a different path.
+            /// </summary>
             public string DefaultExtractPath { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            /// <summary>
+            /// The default directory extraction mode that is used unless the user manually selects a different mode.
+            /// </summary>
             public DirectoryExtractionMode DefaultDirectoryExtractionMode { get; set; } = DirectoryExtractionMode.Preserve;
+            /// <summary>
+            /// Always ask for extraction options before extracting.
+            /// </summary>
             public bool ExtractAlwaysAsk { get; set; } = true;
+            /// <summary>
+            /// Open the target folder after extraction.
+            /// </summary>
             public bool OpenFolderAfterExtract { get; set; } = true;
+            /// <summary>
+            /// Preserve original file system object timestamps during extraction.
+            /// </summary>
+            /// <remarks>May not apply to all supported file systems.</remarks>
             public bool ExtractPreserveDates { get; set; } = true;
+            /// <summary>
+            /// Preserve original file system object attributes during extraction.
+            /// </summary>
+            /// <remarks>May not apply to all supported file systems.</remarks>
             public bool ExtractPreserveAttributes { get; set; } = false;
+            /// <summary>
+            /// Obtain file type information such as icon and name from Windows instead of using generic defaults.
+            /// </summary>
+            /// <remarks>May slightly increase the loading time for large images on slower systems.</remarks>
             public bool QueryShellForFileTypeInfo { get; set; } = true;
+            /// <summary>
+            /// Confirm injecting objects into the image.
+            /// </summary>
             public bool ConfirmInjection { get; set; } = true;
+            /// <summary>
+            /// Confirm deleting objects from the image.
+            /// </summary>
             public bool ConfirmDeletion { get; set; } = true;
+            /// <summary>
+            /// Confirm overwriting existing objects in the target folder during extraction.
+            /// </summary>
             public bool ConfirmOverwriteExtraction { get; set; } = true;
+            /// <summary>
+            /// Automatically increment the last used file name when saving images if the filename ends with a numeric character.
+            /// </summary>
             public bool AutoIncrementFilename { get; set; } = true;
+            /// <summary>
+            /// The threshold image size for using memory-mapping when opening images.
+            /// </summary>
+            /// <remarks>Default is 100 MiB (104.86 MB).</remarks>
             public long MemoryMappingThreshold { get; set; } = 104857600; //100 MiB
+            /// <summary>
+            /// Calculate and display the total size of every directory shown in the file list.
+            /// </summary>
             public bool FileListShowDirSize { get; set; } = false;
         }
 
+        /// <summary>
+        /// The currently used settings.
+        /// </summary>
         public static SettingsModel CurrentSettings { get; private set; }
+
+        /// <summary>
+        /// The currently used UI state.
+        /// </summary>
         public static UIStateModel CurrentUIState { get; private set; }
+
+        /// <summary>
+        /// Path of the folder where temporary files are stored.
+        /// </summary>
+        public static readonly string TempDir = Path.Combine(Path.GetTempPath(), "TotalImage");
 
         private static readonly string SettingsDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotalImage");
         private static readonly string SettingsFile = Path.Combine(SettingsDir, "settings.json");
         private static readonly string UIStateFile = Path.Combine(SettingsDir, "uistate.json");
-        public static readonly string TempDir = Path.Combine(Path.GetTempPath(), "TotalImage");
-
         private static FileSystemWatcher settingsWatcher;
-
 
         //Loads all settings from permanent storage (settings.json)
         static Settings()
@@ -148,7 +258,10 @@ namespace TotalImage
             }
         }
 
-        public static void Reload()
+        /// <summary>
+        /// Reloads the settings from the settings.json file. If the file doesn't exist or can't be used, the default values are loaded instead.
+        /// </summary>
+        public static void ReloadSettings()
         {
             var json = File.ReadAllText(SettingsFile);
             var settings = JsonSerializer.Deserialize<SettingsModel>(json);
@@ -164,6 +277,9 @@ namespace TotalImage
             }
         }
 
+        /// <summary>
+        /// Reloads the UI state from the uistate.json file. If the file doesn't exist or can't be used, the default values are loaded instead.
+        /// </summary>
         public static void ReloadUIState()
         {
             var json = File.ReadAllText(UIStateFile);
@@ -178,7 +294,9 @@ namespace TotalImage
             }
         }
 
-        //Sets all settings to their default values
+        /// <summary>
+        /// Resets all settings to their default values.
+        /// </summary>
         public static void LoadDefaults()
         {
             //Set all settings to a default value here
@@ -206,7 +324,9 @@ namespace TotalImage
             CurrentSettings.FileListShowDirSize = false;
         }
 
-        //Saves all settings to permanent storage (settings.json)
+        /// <summary>
+        /// Saves all settings to file settings.json.
+        /// </summary>
         public static void Save()
         {
             var options = new JsonSerializerOptions
@@ -242,7 +362,9 @@ namespace TotalImage
             }
         }
 
-        //Saves the current UI state to permanent storage (uistate.json)
+        /// <summary>
+        /// Saves the current UI state to file uistate.json.
+        /// </summary>
         public static void SaveUIState()
         {
             var options = new JsonSerializerOptions
@@ -266,7 +388,11 @@ namespace TotalImage
             }
         }
 
-        //Adds an image to the recent list
+        /// <summary>
+        /// Adds a single item to the recent images list. If the number of items exceedes 10, the oldest item is removed.
+        /// If the provided item already exists in the list, it is removed from its old position and readded at the beginning.
+        /// </summary>
+        /// <param name="path">The file path to add to the list.</param>
         public static void AddRecentImage(string path)
         {
             //This prevents duplicate entries by removing the old entry first - the new one is then put at the start of the list
@@ -282,16 +408,36 @@ namespace TotalImage
             CurrentSettings.RecentImages.Add(path);
         }
 
-        //Removes the specified entry from the recent list
+        /// <summary>
+        /// Removes a single item from the recent images list.
+        /// </summary>
+        /// <param name="path">The file path to be removed from the list.</param>
         public static void RemoveRecentImage(string path)
         {
             CurrentSettings.RecentImages.Remove(path);
         }
 
-        //Clears all recent images
+        /// <summary>
+        /// Removed all items from the recent images list.
+        /// </summary>
         public static void ClearRecentImages()
         {
             CurrentSettings.RecentImages.Clear();
+        }
+
+        /// <summary>
+        /// Checks all the items in the recent images list and removes any that no longer exist.
+        /// </summary>
+        /// <remarks>PopulateRecentList() method of frmMain should be called after this method to sync the menu items with the new state of the list.</remarks>
+        public static void CheckRecentImages()
+        {
+            for(int i = CurrentSettings.RecentImages.Count - 1; i >= 0; i--)
+            {
+                if (!File.Exists(CurrentSettings.RecentImages[i]))
+                {
+                    RemoveRecentImage(CurrentSettings.RecentImages[i]);
+                }
+            }
         }
     }
 }
