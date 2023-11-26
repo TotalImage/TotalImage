@@ -23,6 +23,7 @@ Read and Create functionality is limited to supported features below.
 | T98-Next HD | NHD | ✔ Yes | ❌ No | ❌ No |
 | WinImage compressed image | IMZ | ✔ Yes | ❌ No | ❌ No |
 | Anex86 disk image | FDI, HDI | ✔ Yes | ❌ No | ❌ No |
+| PCjs.org JSON | JSON | ✔ Yes | ❌ No | ❌ No |
 
 Read and Create functionality is limited to supported features below.
 
@@ -41,6 +42,7 @@ Differencing VHDs are not supported yet.
 | Tandy 2000 720k | ✔ Yes | ❌ No | ✔ Yes |
 | Acorn 800k | ✔ Yes | ❌ No | ⚠ Partial |
 | Apricot 315k/720k | ✔ Yes | ❌ No | ❌ No |
+| Victor 9000 612k/1196k | ✔ Yes | ❌ No | ❌ No |
 | Hard disks with 512-byte sectors | ✔ Yes | ❌ No | ❌ No |
 
 These disk formats are only supported when formatted with a supported file system (depends on media type) and contained in a supported container.
