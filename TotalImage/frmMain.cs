@@ -284,6 +284,15 @@ namespace TotalImage
         //Creates a new folder
         private void newFolder_Click(object sender, EventArgs e)
         {
+            if (image is not null && image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is FatFileSystem)
+            {
+                var fs = (FatFileSystem)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem;
+                if (fs.IsSmall)
+                {
+                    MessageBox.Show("Disks with 16-byte directory entries cannot have subdirectories.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }    
+            }
             using dlgNewFolder dlg = new();
             dlg.ShowDialog();
         }

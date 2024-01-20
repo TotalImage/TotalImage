@@ -35,7 +35,16 @@ Differencing VHDs are not supported yet.
 | Common PC-compatible formats with a BPB | ✔ Yes | ❌ No | ✔ Yes |
 | Common PC-compatible formats without a BPB | ✔ Yes | ❌ No | ✔ Yes |
 | Microsoft DMF (1024 and 2048-byte clusters) | ✔ Yes | ❌ No | ✔ Yes |
-| 8" 250k/1232k | ✔ Yes | ❌ No | ✔ Yes |
+| 86-DOS 0.x 5.25" 90k | ✔ Yes | ❌ No | ❌ No |
+| 86-DOS 0.x 5.25" 160k (IBM PC) | ✔ Yes | ❌ No | ❌ No |
+| 86-DOS 0.x 8" 250.25k | ✔ Yes | ❌ No | ❌ No |
+| 86-DOS 1.x 5.25" 87.5k (NorthStar) | ✔ Yes | ❌ No | ❌ No |
+| 86-DOS 1.x 5.25" 90k | ✔ Yes | ❌ No | ❌ No |
+| 86-DOS 1.x 5.25" 160k (IBM PC) | ✔ Yes | ❌ No | ❌ No |
+| 86-DOS 1.x 8" 250.25k/1232k | ✔ Yes | ❌ No | ❌ No |
+| 86-DOS 1.x/MS-DOS 8" 616k | ✔ Yes | ❌ No | ✔ Yes |
+| MS-DOS 5.25" 87.5k (NorthStar) | ✔ Yes | ❌ No | ✔ Yes |
+| MS-DOS 8" 250.25k/1232k | ✔ Yes | ❌ No | ✔ Yes |
 | Siemens PC-D 720k | ✔ Yes | ❌ No | ✔ Yes |
 | Alphatronic PC-16 400k | ✔ Yes | ❌ No | ✔ Yes |
 | Eagle 1600 800k | ✔ Yes | ❌ No | ✔ Yes |
