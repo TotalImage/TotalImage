@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 
 namespace TotalImage.DiskGeometries
@@ -199,7 +199,7 @@ namespace TotalImage.DiskGeometries
         /// <summary>
         /// List of known floppy disk geometries.
         /// </summary>
-        public static readonly IReadOnlyDictionary<FriendlyName, FloppyGeometry> KnownGeometries = ImmutableDictionary.CreateRange(new Dictionary<FriendlyName, FloppyGeometry>()
+        public static readonly IReadOnlyDictionary<FriendlyName, FloppyGeometry> KnownGeometries = new Dictionary<FriendlyName, FloppyGeometry>()
         {
             { FriendlyName.DoubleDensity160k, new FloppyGeometry(1, 40,  8, 2, 0xFE, 1, 2,  1,  64, 1) },
             { FriendlyName.DoubleDensity180k, new FloppyGeometry(1, 40,  9, 2, 0xFC, 1, 2,  1,  64, 1) },
@@ -222,7 +222,7 @@ namespace TotalImage.DiskGeometries
             { FriendlyName.DMF2048,           new FloppyGeometry(2, 80, 21, 2, 0xF0, 4, 2,  3,  16, 1) },
             { FriendlyName.HighDensity1722k,  new FloppyGeometry(2, 82, 21, 2, 0xF0, 1, 2, 10, 224, 1) },
             { FriendlyName.ExtendedDensity,   new FloppyGeometry(2, 80, 36, 2, 0xF0, 2, 2,  9, 240, 1) },
-        });
+        }.ToFrozenDictionary();
 
         /// <inheritdoc />
         public override int GetHashCode()

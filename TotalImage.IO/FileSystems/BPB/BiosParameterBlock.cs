@@ -1,5 +1,5 @@
+using System.Collections.Frozen;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using TotalImage.DiskGeometries;
 using TotalImage.FileSystems.FAT;
@@ -420,7 +420,7 @@ namespace TotalImage.FileSystems.BPB
                 }
             };
 
-            DefaultParametersForSize = defaultParams.ToImmutableDictionary();
+            DefaultParametersForSize = defaultParams.ToFrozenDictionary();
         }
         #endregion
     }
