@@ -159,12 +159,12 @@ namespace TotalImage
             // clmNumber
             // 
             clmNumber.Text = "No.";
-            clmNumber.Width = 45;
+            clmNumber.Width = 35;
             // 
             // clmFileSystem
             // 
             clmFileSystem.Text = "File system";
-            clmFileSystem.Width = 130;
+            clmFileSystem.Width = 120;
             // 
             // clmVolumeLabel
             // 
@@ -174,7 +174,7 @@ namespace TotalImage
             // clmSize
             // 
             clmSize.Text = "Size";
-            clmSize.Width = 130;
+            clmSize.Width = 100;
             // 
             // clmActive
             // 
@@ -231,9 +231,9 @@ namespace TotalImage
             gbxDiskInfo.Controls.Add(lblDiskTotalSize);
             gbxDiskInfo.FlatStyle = System.Windows.Forms.FlatStyle.System;
             gbxDiskInfo.Location = new System.Drawing.Point(10, 176);
-            gbxDiskInfo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            gbxDiskInfo.Margin = new System.Windows.Forms.Padding(2);
             gbxDiskInfo.Name = "gbxDiskInfo";
-            gbxDiskInfo.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            gbxDiskInfo.Padding = new System.Windows.Forms.Padding(2);
             gbxDiskInfo.Size = new System.Drawing.Size(230, 172);
             gbxDiskInfo.TabIndex = 11;
             gbxDiskInfo.TabStop = false;
@@ -389,9 +389,9 @@ namespace TotalImage
             gbxPartitionInfo.Controls.Add(lblPartitionType1);
             gbxPartitionInfo.FlatStyle = System.Windows.Forms.FlatStyle.System;
             gbxPartitionInfo.Location = new System.Drawing.Point(245, 176);
-            gbxPartitionInfo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            gbxPartitionInfo.Margin = new System.Windows.Forms.Padding(2);
             gbxPartitionInfo.Name = "gbxPartitionInfo";
-            gbxPartitionInfo.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            gbxPartitionInfo.Padding = new System.Windows.Forms.Padding(2);
             gbxPartitionInfo.Size = new System.Drawing.Size(231, 172);
             gbxPartitionInfo.TabIndex = 12;
             gbxPartitionInfo.TabStop = false;
@@ -562,9 +562,9 @@ namespace TotalImage
             gbxLoadOptions.Controls.Add(cbxReadOnly);
             gbxLoadOptions.FlatStyle = System.Windows.Forms.FlatStyle.System;
             gbxLoadOptions.Location = new System.Drawing.Point(10, 353);
-            gbxLoadOptions.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            gbxLoadOptions.Margin = new System.Windows.Forms.Padding(2);
             gbxLoadOptions.Name = "gbxLoadOptions";
-            gbxLoadOptions.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            gbxLoadOptions.Padding = new System.Windows.Forms.Padding(2);
             gbxLoadOptions.Size = new System.Drawing.Size(466, 54);
             gbxLoadOptions.TabIndex = 13;
             gbxLoadOptions.TabStop = false;
@@ -575,7 +575,7 @@ namespace TotalImage
             AcceptButton = btnOK;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            BackColor = System.Drawing.Color.White;
+            BackColor = System.Drawing.SystemColors.Window;
             CancelButton = btnCancel;
             ClientSize = new System.Drawing.Size(486, 470);
             Controls.Add(gbxLoadOptions);

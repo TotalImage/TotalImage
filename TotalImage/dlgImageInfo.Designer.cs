@@ -234,14 +234,14 @@ namespace TotalImage
             cmsCopy.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyValueToolStripMenuItem });
             cmsCopy.Name = "cmsCopy";
             cmsCopy.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            cmsCopy.Size = new System.Drawing.Size(181, 48);
+            cmsCopy.Size = new System.Drawing.Size(134, 26);
             cmsCopy.Opening += cmsCopy_Opening;
             // 
             // copyValueToolStripMenuItem
             // 
             copyValueToolStripMenuItem.Image = Properties.Resources.page_white_copy;
             copyValueToolStripMenuItem.Name = "copyValueToolStripMenuItem";
-            copyValueToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            copyValueToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             copyValueToolStripMenuItem.Text = "Copy value";
             copyValueToolStripMenuItem.Click += copyValueToolStripMenuItem_Click;
             // 
@@ -250,7 +250,7 @@ namespace TotalImage
             AcceptButton = btnOK;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            BackColor = System.Drawing.Color.White;
+            BackColor = System.Drawing.SystemColors.Window;
             ClientSize = new System.Drawing.Size(473, 443);
             Controls.Add(lstProperties);
             Controls.Add(txtComment);

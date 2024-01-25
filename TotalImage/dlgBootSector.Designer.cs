@@ -192,7 +192,7 @@ namespace TotalImage
             AcceptButton = btnOK;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            BackColor = System.Drawing.Color.White;
+            BackColor = System.Drawing.SystemColors.Window;
             CancelButton = btnCancel;
             ClientSize = new System.Drawing.Size(566, 438);
             Controls.Add(rbnVBR);

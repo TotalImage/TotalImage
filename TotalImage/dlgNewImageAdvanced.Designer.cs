@@ -413,7 +413,7 @@ namespace TotalImage
             AcceptButton = btnOK;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            BackColor = System.Drawing.Color.White;
+            BackColor = System.Drawing.SystemColors.Window;
             ClientSize = new System.Drawing.Size(514, 276);
             Controls.Add(txtFloppyTracks);
             Controls.Add(lblFloppyTracks);
