@@ -230,7 +230,7 @@ namespace TotalImage.FileSystems.FAT
 
                     // Some old DOS 1.x disks don't mark unused entries with 0x00
                     // and instead use the deleted marker (0xE5)
-                    if (BinaryPrimitives.ReadUInt32LittleEndian(entry[1..5]) == 0xF6F6F6F6 || BinaryPrimitives.ReadUInt32LittleEndian(entry[1..5]) == 0xE5E5E5E5)
+                    if (BinaryPrimitives.ReadUInt32LittleEndian(entry[1..5]) == 0xF6F6F6F6 || BinaryPrimitives.ReadUInt32LittleEndian(entry[1..5]) == 0xE5E5E5E5 || BinaryPrimitives.ReadUInt32LittleEndian(entry[1..5]) == 0x00000000)
                     {
                         break;
                     }
