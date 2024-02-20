@@ -190,7 +190,7 @@ namespace TotalImage.FileSystems.BPB
 
                 var oldpos = reader.BaseStream.Position;
                 var len = reader.BaseStream.Length;
-                if (len == 256256 || len == 163840)
+                if (len == 256256 || len == 163840 || len == 92160)
                 {
                     try
                     {
