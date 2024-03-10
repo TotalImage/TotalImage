@@ -20,7 +20,7 @@ namespace TotalImage.FileSystems.FAT
 
             if (bpb is Fat32BiosParameterBlock fat32bpb)
             {
-                using var reader = new BinaryReader(stream);
+                using var reader = new BinaryReader(stream, Encoding.ASCII, true);
                 stream.Position = fat32bpb.BytesPerLogicalSector * fat32bpb.FsInfo;
                 _fsInfo = FsInfo.Parse(reader);
             }
