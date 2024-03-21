@@ -11,10 +11,13 @@ namespace TotalImage.FileSystems.FAT
     {
         protected readonly BiosParameterBlock _bpb;
         public BiosParameterBlock BiosParameterBlock => _bpb;
+        protected readonly bool _isSmall;
+        public bool IsSmall => _isSmall;
 
         protected FatFileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
         {
             _bpb = bpb;
+            _isSmall = bpb.IsSmall;
             RootDirectory = new FatDirectory(this);
         }
 
@@ -51,7 +54,7 @@ namespace TotalImage.FileSystems.FAT
             {
                 var fatOffset = (uint)_bpb.ReservedLogicalSectors;
                 var fatSize = (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
-                var rootDirSize = (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
+                var rootDirSize = (uint)_bpb.RootDirectoryEntries * (IsSmall ? 16u : 32u) / _bpb.BytesPerLogicalSector;
                 return fatOffset + fatSize + RootDirectorySectors;
             }
         }
@@ -66,7 +69,7 @@ namespace TotalImage.FileSystems.FAT
             => (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
 
         public uint RootDirectorySectors
-            => (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
+            => (uint)_bpb.RootDirectoryEntries * (IsSmall ? 16u : 32u) / _bpb.BytesPerLogicalSector;
 
         public uint DataAreaSectors
             => TotalSectors - ReservedSectors - ClusterMapsSectors - RootDirectorySectors;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using TotalImage.FileSystems.BPB;
@@ -33,7 +33,7 @@ namespace TotalImage.FileSystems.FAT
             var fat = new Fat12FileSystem(stream, bpb);
 
             uint totalSize = (uint)stream.Length;
-            uint rootDirSize = (uint)(bpb.RootDirectoryEntries << 5);
+            uint rootDirSize = (uint)(bpb.RootDirectoryEntries << (bpb.IsSmall ? 4 : 5));
             uint fatSize = (uint)(bpb.LogicalSectorsPerFAT * bpb.BytesPerLogicalSector);
             uint fat1Offset = (uint)(bpb.ReservedLogicalSectors * bpb.BytesPerLogicalSector);
             uint fat2Offset = fat1Offset + fatSize;

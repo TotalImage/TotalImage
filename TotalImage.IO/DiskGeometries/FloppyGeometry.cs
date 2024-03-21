@@ -57,6 +57,11 @@ namespace TotalImage.DiskGeometries
         public enum FriendlyName
         {
             /// <summary>
+            /// A standard single-sided 5.25" NorthStar format with 87.5 KiB formatted capacity.
+            /// </summary>
+            [Display(Name = "87.5 KiB")]
+            SingleDensity87k,
+            /// <summary>
             /// A standard single-sided 5.25" PC-compatible format with 160 KiB formatted capacity.
             /// </summary>
             [Display(Name = "160 KiB")]
@@ -67,9 +72,9 @@ namespace TotalImage.DiskGeometries
             [Display(Name = "180 KiB")]
             DoubleDensity180k,
             /// <summary>
-            /// A standard single-sided 8" format with 250 KiB formatted capacity.
+            /// A standard single-sided 8" format with 250.25 KiB formatted capacity.
             /// </summary>
-            [Display(Name = "250 KiB")]
+            [Display(Name = "250.25 KiB")]
             SingleDensity,
             /// <summary>
             /// A standard double-sided 5.25" PC-compatible format with 320 KiB formatted capacity.
@@ -91,6 +96,11 @@ namespace TotalImage.DiskGeometries
             /// </summary>
             [Display(Name = "612 KiB (Victor 9000)")]
             Victor9000SS,
+            /// <summary>
+            /// A standard single-sided 8" format with 616 KiB formatted capacity.
+            /// </summary>
+            [Display(Name = "616 KiB")]
+            HighDensity616k,
             /// <summary>
             /// A rare double-sided 5.25" or 3.5" format with 640 KiB formatted capacity.
             /// </summary>
@@ -201,6 +211,7 @@ namespace TotalImage.DiskGeometries
         /// </summary>
         public static readonly IReadOnlyDictionary<FriendlyName, FloppyGeometry> KnownGeometries = ImmutableDictionary.CreateRange(new Dictionary<FriendlyName, FloppyGeometry>()
         {
+            { FriendlyName.SingleDensity87k,  new FloppyGeometry(1, 35, 10, 1, 0xFE, 1, 2,  2,  64, 1) },
             { FriendlyName.DoubleDensity160k, new FloppyGeometry(1, 40,  8, 2, 0xFE, 1, 2,  1,  64, 1) },
             { FriendlyName.DoubleDensity180k, new FloppyGeometry(1, 40,  9, 2, 0xFC, 1, 2,  1,  64, 1) },
             { FriendlyName.SingleDensity,     new FloppyGeometry(1, 77, 26, 0, 0xFE, 4, 2,  6,  68, 1) },
@@ -216,6 +227,7 @@ namespace TotalImage.DiskGeometries
             { FriendlyName.Acorn800k,         new FloppyGeometry(2, 80,  5, 3, 0xFD, 1, 1,  2, 192, 0) },
             { FriendlyName.Victor9000DS,      new FloppyGeometry(2, 80,  0, 2, 0xF8, 4, 2,  2, 128, 1) },
             { FriendlyName.HighDensity1200k,  new FloppyGeometry(2, 80, 15, 2, 0xF9, 1, 2,  7, 224, 1) },
+            { FriendlyName.HighDensity616k,   new FloppyGeometry(1, 77,  8, 3, 0xFE, 1, 2,  1,  96, 1) },
             { FriendlyName.HighDensity1232k,  new FloppyGeometry(2, 77,  8, 3, 0xFE, 1, 2,  2, 192, 1) },
             { FriendlyName.HighDensity1440k,  new FloppyGeometry(2, 80, 18, 2, 0xF0, 1, 2,  9, 224, 1) },
             { FriendlyName.DMF1024,           new FloppyGeometry(2, 80, 21, 2, 0xF0, 2, 2,  5,  16, 1) },

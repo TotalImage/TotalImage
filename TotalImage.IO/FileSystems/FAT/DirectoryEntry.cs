@@ -74,20 +74,43 @@ namespace TotalImage.FileSystems.FAT
         /// </summary>
         uint fileSize;
 
-        public DirectoryEntry(ReadOnlySpan<byte> entry)
+        /// <summary>
+        /// Whether this directory entry uses the 86-DOS 0.x format.
+        /// </summary>
+        bool isSmall;
+
+        public DirectoryEntry(ReadOnlySpan<byte> entry, bool small)
         {
             fileName = entry[0..11].ToImmutableArray();
-            attributes = (FatAttributes)entry[11];
-            ntByte = entry[12];
-            creationMSec = entry[13];
-            creationTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[14..16]);
-            creationDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[16..18]);
-            lastAccessDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[18..20]);
-            firstClusterOfFileHi = BinaryPrimitives.ReadUInt16LittleEndian(entry[20..22]);
-            lastWriteTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[22..24]);
-            lastWriteDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[24..26]);
-            firstClusterOfFile = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
-            fileSize = BinaryPrimitives.ReadUInt32LittleEndian(entry[28..32]);
+            if (!small)
+            {
+                attributes = (FatAttributes)entry[11];
+                ntByte = entry[12];
+                creationMSec = entry[13];
+                creationTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[14..16]);
+                creationDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[16..18]);
+                lastAccessDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[18..20]);
+                firstClusterOfFileHi = BinaryPrimitives.ReadUInt16LittleEndian(entry[20..22]);
+                lastWriteTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[22..24]);
+                lastWriteDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[24..26]);
+                firstClusterOfFile = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
+                fileSize = BinaryPrimitives.ReadUInt32LittleEndian(entry[28..32]);
+            }
+            else
+            {
+                attributes = 0;
+                ntByte = 0;
+                creationMSec = 0;
+                creationTime = 0;
+                creationDate = 0;
+                lastAccessDate = 0;
+                firstClusterOfFileHi = 0;
+                lastWriteTime = 0;
+                lastWriteDate = 0;
+                firstClusterOfFile = BinaryPrimitives.ReadUInt16LittleEndian(entry[11..13]);
+                fileSize = (uint)entry[15] << 16 | BinaryPrimitives.ReadUInt16LittleEndian(entry[13..15]);
+            }
+            isSmall = small;
         }
 
         public string BaseName => Encoding.ASCII.GetString(fileName.AsSpan()[0..8]).Trim();
@@ -104,6 +127,7 @@ namespace TotalImage.FileSystems.FAT
 
         public uint FirstClusterOfFile => (uint)(firstClusterOfFileHi << 16) | firstClusterOfFile;
         public uint FileSize => fileSize;
+        public bool IsSmall => isSmall;
 
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateRootDirectory(FatFileSystem fat, bool includeDeleted = false)
         {
@@ -113,12 +137,12 @@ namespace TotalImage.FileSystems.FAT
             }
 
             var stream = fat.GetStream();
-            var buffer = new byte[fat.BiosParameterBlock.RootDirectoryEntries * 32];
+            var buffer = new byte[fat.BiosParameterBlock.RootDirectoryEntries * (fat.IsSmall ? 16 : 32)];
 
             stream.Position = (fat.ReservedSectors + fat.ClusterMapsSectors) * fat.BiosParameterBlock.BytesPerLogicalSector;
             stream.Read(buffer);
 
-            return EnumerateDirectory(buffer, includeDeleted);
+            return EnumerateDirectory(buffer, fat.IsSmall, includeDeleted);
         }
 
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, DirectoryEntry entry, bool includeDeleted = false) =>
@@ -131,16 +155,17 @@ namespace TotalImage.FileSystems.FAT
 
             stream.Read(buffer);
 
-            return EnumerateDirectory(buffer, includeDeleted);
+            return EnumerateDirectory(buffer, fat.IsSmall, includeDeleted);
         }
 
-        private static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateDirectory(ReadOnlyMemory<byte> buffer, bool includeDeleted)
+        private static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateDirectory(ReadOnlyMemory<byte> buffer, bool small, bool includeDeleted)
         {
             var lfnStack = new Stack<LongDirectoryEntry>();
+            var entrylen = small ? 16 : 32;
 
-            for (var i = 0; i < buffer.Length; i += 32)
+            for (var i = 0; i < buffer.Length; i += entrylen)
             {
-                var entry = buffer.Slice(i, 32).Span;
+                var entry = buffer.Slice(i, entrylen).Span;
 
                 if (entry[0] is 0x00 or 0xF6)
                 {
@@ -148,7 +173,7 @@ namespace TotalImage.FileSystems.FAT
                     break;
                 }
 
-                if (entry[11] == (byte)FatAttributes.LongName)
+                if (!small && entry[11] == (byte)FatAttributes.LongName)
                 {
                     var lfnEntry = new LongDirectoryEntry(entry);
 
@@ -205,7 +230,7 @@ namespace TotalImage.FileSystems.FAT
 
                     // Some old DOS 1.x disks don't mark unused entries with 0x00
                     // and instead use the deleted marker (0xE5)
-                    if (BinaryPrimitives.ReadUInt32LittleEndian(entry[1..5]) == 0xF6F6F6F6)
+                    if (BinaryPrimitives.ReadUInt32LittleEndian(entry[1..5]) == 0xF6F6F6F6 || BinaryPrimitives.ReadUInt32LittleEndian(entry[1..5]) == 0xE5E5E5E5 || BinaryPrimitives.ReadUInt32LittleEndian(entry[1..5]) == 0x00000000)
                     {
                         break;
                     }
@@ -216,7 +241,7 @@ namespace TotalImage.FileSystems.FAT
                     lfnStack.Clear();
                 }
 
-                yield return (new DirectoryEntry(entry), lfnStack.ToArray());
+                yield return (new DirectoryEntry(entry, small), lfnStack.ToArray());
 
                 lfnStack.Clear();
             }

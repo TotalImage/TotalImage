@@ -59,13 +59,46 @@ namespace TotalImage.Partitions
         }
 
         /// <summary>
-        /// Checks if the boot sector is immediately followed by a FAT12 file allocation table, which would make this a floppy image.
+        /// Checks if the boot sector/system area is immediately followed by a FAT12 file allocation table, which would make this a floppy image.
         /// </summary>
         /// <param name="Content">Content stream to check</param>
         /// <returns></returns>
         private bool CheckIfUnpartitioned(Stream Content)
         {
-            Content.Seek(0x201, SeekOrigin.Begin);
+            // Check for 86-DOS 0.x and 1.x floppy formats
+            // They contain reserved system areas, so our FAT-after-boot-sect
+            // algo won't work on them
+            if (Content.Length == 256256)
+            {
+                // 8" SSSD floppy
+                return true;
+            }
+            else if (Content.Length == 92160)
+            {
+                // Cromemco 5.25" SSSD
+                return true;
+            }
+            else if (Content.Length == 89600)
+            {
+                // NorthStar 5.25" SSSD
+                return true;
+            }
+            else if (Content.Length == 163840)
+            {
+                // IBM PC 5.25" SSDD
+                return true;
+            }
+            else if (Content.Length == 630784)
+            {
+                // 8" SSDD
+                return true;
+            }
+            else if (Content.Length == 1261568)
+            {
+                // 8" DSDD
+                return true;
+            }
+            Content.Seek(0x201, SeekOrigin.Begin); //TODO: DON'T ASSUME 512 BYTE SECT!
             byte[] fatBytes = new byte[2];
             Content.Read(fatBytes);
             ushort fatSignature = BinaryPrimitives.ReadUInt16LittleEndian(fatBytes);
