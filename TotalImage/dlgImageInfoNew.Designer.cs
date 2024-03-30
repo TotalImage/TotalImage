@@ -29,19 +29,30 @@ namespace TotalImage
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] { "Filename", "<filename>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] { "Size", "<filesize>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new string[] { "Created", "<created>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] { "Modified", "<modified>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] { "Accessed", "<accessed>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem(new string[] { "Attributes", "<attributes>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] { "MD5 hash", "<md5hash>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] { "SHA-1 hash", "<sha1hash>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] { "Container type", "<containertype>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] { "Container subtype", "N/A" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] { "Container version", "Unknown" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] { "Created by", "Unknown" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] { "Creator version", "Unknown" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] { "Filename", "<filename>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] { "Size", "<filesize>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] { "Created", "<created>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] { "Modified", "<modified>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] { "Accessed", "<accessed>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] { "Attributes", "<attributes>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] { "MD5 hash", "<md5hash>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] { "SHA-1 hash", "<sha1hash>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] { "Container type", "<containertype>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] { "Container subtype", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] { "Container version", "Unknown" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] { "Created by", "Unknown" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] { "Creator version", "Unknown" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] { "Partitioning scheme", "<partitionscheme>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] { "No. of partitions", "<nopartitions>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new string[] { "Selected partition", "<selectedpartition>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] { "Partition ID/type", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] { "File system", "<filesystem>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem(new string[] { "Volume label", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] { "Volume serial number", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] { "Total storage capacity", "<capacity>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[] { "Free space", "<freespace>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem(new string[] { "Files", "<nofiles>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem(new string[] { "Subdirectories", "<subdirectories>" }, -1);
             btnOK = new System.Windows.Forms.Button();
             pnlBottom = new System.Windows.Forms.Panel();
             btnSave = new System.Windows.Forms.Button();
@@ -52,21 +63,32 @@ namespace TotalImage
             tclImageInfo = new System.Windows.Forms.TabControl();
             tabFileInfo = new System.Windows.Forms.TabPage();
             lstPropertiesFile = new System.Windows.Forms.ListView();
-            clmProperty = new System.Windows.Forms.ColumnHeader();
-            clmValue = new System.Windows.Forms.ColumnHeader();
+            clmProperty1 = new System.Windows.Forms.ColumnHeader();
+            clmValue1 = new System.Windows.Forms.ColumnHeader();
             tabContainer = new System.Windows.Forms.TabPage();
-            tabPartitionTable = new System.Windows.Forms.TabPage();
-            tabPartition = new System.Windows.Forms.TabPage();
-            tabFileSystem = new System.Windows.Forms.TabPage();
-            tabMisc = new System.Windows.Forms.TabPage();
             lstPropertiesContainer = new System.Windows.Forms.ListView();
-            columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            clmProperty2 = new System.Windows.Forms.ColumnHeader();
+            clmValue2 = new System.Windows.Forms.ColumnHeader();
+            tabPartitionTable = new System.Windows.Forms.TabPage();
+            lstPropertiesPT = new System.Windows.Forms.ListView();
+            clmPropery3 = new System.Windows.Forms.ColumnHeader();
+            clmValue3 = new System.Windows.Forms.ColumnHeader();
+            tabPartition = new System.Windows.Forms.TabPage();
+            lstPropertiesPartition = new System.Windows.Forms.ListView();
+            clmProperty4 = new System.Windows.Forms.ColumnHeader();
+            clmValue4 = new System.Windows.Forms.ColumnHeader();
+            tabFileSystem = new System.Windows.Forms.TabPage();
+            lstPropertiesFS = new System.Windows.Forms.ListView();
+            clmProperty5 = new System.Windows.Forms.ColumnHeader();
+            clmValue5 = new System.Windows.Forms.ColumnHeader();
             pnlBottom.SuspendLayout();
             cmsCopy.SuspendLayout();
             tclImageInfo.SuspendLayout();
             tabFileInfo.SuspendLayout();
             tabContainer.SuspendLayout();
+            tabPartitionTable.SuspendLayout();
+            tabPartition.SuspendLayout();
+            tabFileSystem.SuspendLayout();
             SuspendLayout();
             // 
             // btnOK
@@ -146,7 +168,6 @@ namespace TotalImage
             tclImageInfo.Controls.Add(tabPartitionTable);
             tclImageInfo.Controls.Add(tabPartition);
             tclImageInfo.Controls.Add(tabFileSystem);
-            tclImageInfo.Controls.Add(tabMisc);
             tclImageInfo.Location = new System.Drawing.Point(12, 12);
             tclImageInfo.Name = "tclImageInfo";
             tclImageInfo.SelectedIndex = 0;
@@ -166,42 +187,43 @@ namespace TotalImage
             // 
             // lstPropertiesFile
             // 
-            lstPropertiesFile.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { clmProperty, clmValue });
+            lstPropertiesFile.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { clmProperty1, clmValue1 });
             lstPropertiesFile.ContextMenuStrip = cmsCopy;
             lstPropertiesFile.FullRowSelect = true;
             lstPropertiesFile.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            listViewItem14.StateImageIndex = 0;
-            listViewItem14.Tag = "Filename";
-            listViewItem15.StateImageIndex = 0;
-            listViewItem15.Tag = "Filesize";
-            listViewItem16.StateImageIndex = 0;
-            listViewItem16.Tag = "Filecreated";
-            listViewItem17.StateImageIndex = 0;
-            listViewItem17.Tag = "Filemodified";
-            listViewItem18.Tag = "Fileaccessed";
-            listViewItem19.Tag = "Fileattrib";
-            listViewItem20.Tag = "md5";
-            listViewItem21.Tag = "sha1";
-            lstPropertiesFile.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem14, listViewItem15, listViewItem16, listViewItem17, listViewItem18, listViewItem19, listViewItem20, listViewItem21 });
+            listViewItem1.StateImageIndex = 0;
+            listViewItem1.Tag = "Filename";
+            listViewItem2.StateImageIndex = 0;
+            listViewItem2.Tag = "Filesize";
+            listViewItem3.StateImageIndex = 0;
+            listViewItem3.Tag = "Filecreated";
+            listViewItem4.StateImageIndex = 0;
+            listViewItem4.Tag = "Filemodified";
+            listViewItem5.Tag = "Fileaccessed";
+            listViewItem6.Tag = "Fileattrib";
+            listViewItem7.Tag = "md5";
+            listViewItem8.Tag = "sha1";
+            lstPropertiesFile.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem1, listViewItem2, listViewItem3, listViewItem4, listViewItem5, listViewItem6, listViewItem7, listViewItem8 });
             lstPropertiesFile.LabelWrap = false;
             lstPropertiesFile.Location = new System.Drawing.Point(6, 6);
             lstPropertiesFile.MultiSelect = false;
             lstPropertiesFile.Name = "lstPropertiesFile";
+            lstPropertiesFile.ShowGroups = false;
             lstPropertiesFile.ShowItemToolTips = true;
             lstPropertiesFile.Size = new System.Drawing.Size(429, 335);
             lstPropertiesFile.TabIndex = 1;
             lstPropertiesFile.UseCompatibleStateImageBehavior = false;
             lstPropertiesFile.View = System.Windows.Forms.View.Details;
             // 
-            // clmProperty
+            // clmProperty1
             // 
-            clmProperty.Text = "Property";
-            clmProperty.Width = 170;
+            clmProperty1.Text = "Property";
+            clmProperty1.Width = 170;
             // 
-            // clmValue
+            // clmValue1
             // 
-            clmValue.Text = "Value";
-            clmValue.Width = 250;
+            clmValue1.Text = "Value";
+            clmValue1.Width = 250;
             // 
             // tabContainer
             // 
@@ -216,8 +238,43 @@ namespace TotalImage
             tabContainer.Text = "Container";
             tabContainer.UseVisualStyleBackColor = true;
             // 
+            // lstPropertiesContainer
+            // 
+            lstPropertiesContainer.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { clmProperty2, clmValue2 });
+            lstPropertiesContainer.ContextMenuStrip = cmsCopy;
+            lstPropertiesContainer.FullRowSelect = true;
+            lstPropertiesContainer.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewItem9.StateImageIndex = 0;
+            listViewItem9.Tag = "Container";
+            listViewItem10.Tag = "Containersubtype";
+            listViewItem11.Tag = "Containerver";
+            listViewItem12.Tag = "Creator";
+            listViewItem13.Tag = "Creatorver";
+            lstPropertiesContainer.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem9, listViewItem10, listViewItem11, listViewItem12, listViewItem13 });
+            lstPropertiesContainer.LabelWrap = false;
+            lstPropertiesContainer.Location = new System.Drawing.Point(6, 6);
+            lstPropertiesContainer.MultiSelect = false;
+            lstPropertiesContainer.Name = "lstPropertiesContainer";
+            lstPropertiesContainer.ShowGroups = false;
+            lstPropertiesContainer.ShowItemToolTips = true;
+            lstPropertiesContainer.Size = new System.Drawing.Size(429, 213);
+            lstPropertiesContainer.TabIndex = 24;
+            lstPropertiesContainer.UseCompatibleStateImageBehavior = false;
+            lstPropertiesContainer.View = System.Windows.Forms.View.Details;
+            // 
+            // clmProperty2
+            // 
+            clmProperty2.Text = "Property";
+            clmProperty2.Width = 170;
+            // 
+            // clmValue2
+            // 
+            clmValue2.Text = "Value";
+            clmValue2.Width = 250;
+            // 
             // tabPartitionTable
             // 
+            tabPartitionTable.Controls.Add(lstPropertiesPT);
             tabPartitionTable.Location = new System.Drawing.Point(4, 24);
             tabPartitionTable.Name = "tabPartitionTable";
             tabPartitionTable.Padding = new System.Windows.Forms.Padding(3);
@@ -226,18 +283,83 @@ namespace TotalImage
             tabPartitionTable.Text = "Partition table";
             tabPartitionTable.UseVisualStyleBackColor = true;
             // 
+            // lstPropertiesPT
+            // 
+            lstPropertiesPT.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { clmPropery3, clmValue3 });
+            lstPropertiesPT.ContextMenuStrip = cmsCopy;
+            lstPropertiesPT.FullRowSelect = true;
+            lstPropertiesPT.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewItem14.StateImageIndex = 0;
+            listViewItem14.Tag = "Partscheme";
+            listViewItem15.StateImageIndex = 0;
+            listViewItem15.Tag = "Partcount";
+            listViewItem16.StateImageIndex = 0;
+            listViewItem16.Tag = "Selpart";
+            lstPropertiesPT.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem14, listViewItem15, listViewItem16 });
+            lstPropertiesPT.LabelWrap = false;
+            lstPropertiesPT.Location = new System.Drawing.Point(6, 6);
+            lstPropertiesPT.MultiSelect = false;
+            lstPropertiesPT.Name = "lstPropertiesPT";
+            lstPropertiesPT.ShowGroups = false;
+            lstPropertiesPT.ShowItemToolTips = true;
+            lstPropertiesPT.Size = new System.Drawing.Size(429, 335);
+            lstPropertiesPT.TabIndex = 1;
+            lstPropertiesPT.UseCompatibleStateImageBehavior = false;
+            lstPropertiesPT.View = System.Windows.Forms.View.Details;
+            // 
+            // clmPropery3
+            // 
+            clmPropery3.Text = "Property";
+            clmPropery3.Width = 170;
+            // 
+            // clmValue3
+            // 
+            clmValue3.Text = "Value";
+            clmValue3.Width = 250;
+            // 
             // tabPartition
             // 
+            tabPartition.Controls.Add(lstPropertiesPartition);
             tabPartition.Location = new System.Drawing.Point(4, 24);
             tabPartition.Name = "tabPartition";
             tabPartition.Padding = new System.Windows.Forms.Padding(3);
             tabPartition.Size = new System.Drawing.Size(441, 347);
             tabPartition.TabIndex = 3;
-            tabPartition.Text = "Partition";
+            tabPartition.Text = "Selected partition";
             tabPartition.UseVisualStyleBackColor = true;
+            // 
+            // lstPropertiesPartition
+            // 
+            lstPropertiesPartition.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { clmProperty4, clmValue4 });
+            lstPropertiesPartition.ContextMenuStrip = cmsCopy;
+            lstPropertiesPartition.FullRowSelect = true;
+            lstPropertiesPartition.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewItem17.Tag = "PartID";
+            lstPropertiesPartition.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem17 });
+            lstPropertiesPartition.LabelWrap = false;
+            lstPropertiesPartition.Location = new System.Drawing.Point(6, 6);
+            lstPropertiesPartition.MultiSelect = false;
+            lstPropertiesPartition.Name = "lstPropertiesPartition";
+            lstPropertiesPartition.ShowGroups = false;
+            lstPropertiesPartition.ShowItemToolTips = true;
+            lstPropertiesPartition.Size = new System.Drawing.Size(429, 335);
+            lstPropertiesPartition.TabIndex = 1;
+            lstPropertiesPartition.UseCompatibleStateImageBehavior = false;
+            lstPropertiesPartition.View = System.Windows.Forms.View.Details;
+            // 
+            // clmProperty4
+            // 
+            clmProperty4.Text = "Property";
+            clmProperty4.Width = 170;
+            // 
+            // clmValue4
+            // 
+            clmValue4.Text = "Value";
+            clmValue4.Width = 250;
             // 
             // tabFileSystem
             // 
+            tabFileSystem.Controls.Add(lstPropertiesFS);
             tabFileSystem.Location = new System.Drawing.Point(4, 24);
             tabFileSystem.Name = "tabFileSystem";
             tabFileSystem.Padding = new System.Windows.Forms.Padding(3);
@@ -246,48 +368,43 @@ namespace TotalImage
             tabFileSystem.Text = "File system";
             tabFileSystem.UseVisualStyleBackColor = true;
             // 
-            // tabMisc
+            // lstPropertiesFS
             // 
-            tabMisc.Location = new System.Drawing.Point(4, 24);
-            tabMisc.Name = "tabMisc";
-            tabMisc.Padding = new System.Windows.Forms.Padding(3);
-            tabMisc.Size = new System.Drawing.Size(441, 347);
-            tabMisc.TabIndex = 5;
-            tabMisc.Text = "Miscellaneous";
-            tabMisc.UseVisualStyleBackColor = true;
+            lstPropertiesFS.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { clmProperty5, clmValue5 });
+            lstPropertiesFS.FullRowSelect = true;
+            lstPropertiesFS.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewItem18.StateImageIndex = 0;
+            listViewItem18.Tag = "Fs";
+            listViewItem20.Tag = "VolSerial";
+            listViewItem21.StateImageIndex = 0;
+            listViewItem21.Tag = "Capacity";
+            listViewItem22.StateImageIndex = 0;
+            listViewItem22.Tag = "Freespace";
+            listViewItem23.StateImageIndex = 0;
+            listViewItem23.Tag = "Filecount";
+            listViewItem24.StateImageIndex = 0;
+            listViewItem24.Tag = "Dircount";
+            lstPropertiesFS.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem18, listViewItem19, listViewItem20, listViewItem21, listViewItem22, listViewItem23, listViewItem24 });
+            lstPropertiesFS.LabelWrap = false;
+            lstPropertiesFS.Location = new System.Drawing.Point(6, 6);
+            lstPropertiesFS.MultiSelect = false;
+            lstPropertiesFS.Name = "lstPropertiesFS";
+            lstPropertiesFS.ShowGroups = false;
+            lstPropertiesFS.ShowItemToolTips = true;
+            lstPropertiesFS.Size = new System.Drawing.Size(429, 335);
+            lstPropertiesFS.TabIndex = 24;
+            lstPropertiesFS.UseCompatibleStateImageBehavior = false;
+            lstPropertiesFS.View = System.Windows.Forms.View.Details;
             // 
-            // lstPropertiesContainer
+            // clmProperty5
             // 
-            lstPropertiesContainer.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { columnHeader1, columnHeader2 });
-            lstPropertiesContainer.ContextMenuStrip = cmsCopy;
-            lstPropertiesContainer.FullRowSelect = true;
-            lstPropertiesContainer.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            listViewItem1.StateImageIndex = 0;
-            listViewItem1.Tag = "Container";
-            listViewItem2.Tag = "Containersubtype";
-            listViewItem3.Tag = "Containerver";
-            listViewItem4.Tag = "Creator";
-            listViewItem5.Tag = "Creatorver";
-            lstPropertiesContainer.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem1, listViewItem2, listViewItem3, listViewItem4, listViewItem5 });
-            lstPropertiesContainer.LabelWrap = false;
-            lstPropertiesContainer.Location = new System.Drawing.Point(6, 6);
-            lstPropertiesContainer.MultiSelect = false;
-            lstPropertiesContainer.Name = "lstPropertiesContainer";
-            lstPropertiesContainer.ShowItemToolTips = true;
-            lstPropertiesContainer.Size = new System.Drawing.Size(429, 213);
-            lstPropertiesContainer.TabIndex = 24;
-            lstPropertiesContainer.UseCompatibleStateImageBehavior = false;
-            lstPropertiesContainer.View = System.Windows.Forms.View.Details;
+            clmProperty5.Text = "Property";
+            clmProperty5.Width = 170;
             // 
-            // columnHeader1
+            // clmValue5
             // 
-            columnHeader1.Text = "Property";
-            columnHeader1.Width = 170;
-            // 
-            // columnHeader2
-            // 
-            columnHeader2.Text = "Value";
-            columnHeader2.Width = 250;
+            clmValue5.Text = "Value";
+            clmValue5.Width = 250;
             // 
             // dlgImageInfoNew
             // 
@@ -305,7 +422,7 @@ namespace TotalImage
             ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            Text = "Image information new";
+            Text = "Image information";
             FormClosing += dlgImageInfo_FormClosing;
             Load += dlgImageInfo_Load;
             Shown += dlgImageInfo_Shown;
@@ -315,6 +432,9 @@ namespace TotalImage
             tabFileInfo.ResumeLayout(false);
             tabContainer.ResumeLayout(false);
             tabContainer.PerformLayout();
+            tabPartitionTable.ResumeLayout(false);
+            tabPartition.ResumeLayout(false);
+            tabFileSystem.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -333,12 +453,22 @@ namespace TotalImage
         private System.Windows.Forms.TabPage tabPartitionTable;
         private System.Windows.Forms.TabPage tabPartition;
         private System.Windows.Forms.TabPage tabFileSystem;
-        private System.Windows.Forms.TabPage tabMisc;
         private System.Windows.Forms.ListView lstPropertiesFile;
-        private System.Windows.Forms.ColumnHeader clmProperty;
-        private System.Windows.Forms.ColumnHeader clmValue;
+        private System.Windows.Forms.ColumnHeader clmProperty1;
+        private System.Windows.Forms.ColumnHeader clmValue1;
         private System.Windows.Forms.ListView lstPropertiesContainer;
+        private System.Windows.Forms.ColumnHeader clmProperty2;
+        private System.Windows.Forms.ColumnHeader clmValue2;
+        private System.Windows.Forms.ListView lstPropertiesFS;
+        private System.Windows.Forms.ListView lstPropertiesPT;
+        private System.Windows.Forms.ColumnHeader clmPropery3;
+        private System.Windows.Forms.ColumnHeader clmValue3;
+        private System.Windows.Forms.ListView lstPropertiesPartition;
+        private System.Windows.Forms.ColumnHeader clmProperty4;
+        private System.Windows.Forms.ColumnHeader clmValue4;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader clmProperty5;
+        private System.Windows.Forms.ColumnHeader clmValue5;
     }
 }
