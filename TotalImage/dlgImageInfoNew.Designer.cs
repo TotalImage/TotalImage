@@ -371,6 +371,7 @@ namespace TotalImage
             // lstPropertiesFS
             // 
             lstPropertiesFS.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { clmProperty5, clmValue5 });
+            lstPropertiesFS.ContextMenuStrip = cmsCopy;
             lstPropertiesFS.FullRowSelect = true;
             lstPropertiesFS.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             listViewItem18.StateImageIndex = 0;
