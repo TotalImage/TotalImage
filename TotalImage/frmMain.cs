@@ -1969,6 +1969,8 @@ namespace TotalImage
                     //Disable this for now until it's properly implemented
                     bool memoryMapping = false; //fileinfo.Length > Settings.CurrentSettings.MemoryMappingThreshold;
 
+                    //We're hardcoded for supported file extensions currently. This should probably be revisited at some point to see if
+                    //there's a better way to handle weird extensions for supported container types etc.
                     image = fileext switch
                     {
                         ".vhd" => new VhdContainer(path, memoryMapping),
@@ -2405,7 +2407,7 @@ namespace TotalImage
             labelToolStripMenuButton.Enabled = true;
             bootsectToolStripButton.Enabled = true;
             infoToolStripButton.Enabled = true;
-            lblStatusProgressBar.Visible = true;
+            pbrStatusCapacity.Visible = true;
 
             // Change border sides for status bar children to add seperator-like looks.
             lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.Right;
@@ -2434,7 +2436,7 @@ namespace TotalImage
             saveToolStripButton.Enabled = false;
             managePartitionsToolStripButton.Enabled = false;
             selectPartitionToolStripComboBox.Enabled = false;
-            lblStatusProgressBar.Visible = false;
+            pbrStatusCapacity.Visible = false;
             parentDirectoryToolStripMenuItem.Enabled = false;
             parentDirectoryToolStripButton.Enabled = false;
 
@@ -2586,16 +2588,16 @@ namespace TotalImage
                     double freeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
                     lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({freeSpacePercentage / 100:p2})";
                     if (freeSpacePercentage <= 10)
-                        lblStatusProgressBar.ProgressBar.SetState(ProgressBarState.Error); // Set the progress bar colour to red.
+                        pbrStatusCapacity.ProgressBar.SetState(ProgressBarState.Error); // Set the progress bar colour to red.
                     else if (freeSpacePercentage <= 20)
-                        lblStatusProgressBar.ProgressBar.SetState(ProgressBarState.Paused); // Set the progress bar colour to yellow.
+                        pbrStatusCapacity.ProgressBar.SetState(ProgressBarState.Paused); // Set the progress bar colour to yellow.
                     else
-                        lblStatusProgressBar.ProgressBar.SetState(ProgressBarState.Normal); // Set the progress bar colour to green.
+                        pbrStatusCapacity.ProgressBar.SetState(ProgressBarState.Normal); // Set the progress bar colour to green.
 
                     // Set progress bar value with a bit of a hack to disable the glow.
-                    lblStatusProgressBar.Minimum = 100 - (int)freeSpacePercentage;
-                    lblStatusProgressBar.Value = 100 - (int)freeSpacePercentage;
-                    lblStatusProgressBar.Minimum = 0;
+                    pbrStatusCapacity.Minimum = 100 - (int)freeSpacePercentage;
+                    pbrStatusCapacity.Value = 100 - (int)freeSpacePercentage;
+                    pbrStatusCapacity.Minimum = 0;
                 }
 
                 switch (StatusBarState)

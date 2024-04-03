@@ -110,7 +110,7 @@ namespace TotalImage
             statusBar = new System.Windows.Forms.StatusStrip();
             lblStatusCapacity = new System.Windows.Forms.ToolStripStatusLabel();
             lblStatusFreeCapacity = new System.Windows.Forms.ToolStripStatusLabel();
-            lblStatusProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            pbrStatusCapacity = new System.Windows.Forms.ToolStripProgressBar();
             lblStatusSize = new System.Windows.Forms.ToolStripStatusLabel();
             lbStatusPath = new System.Windows.Forms.ToolStripStatusLabel();
             lblNotifications = new System.Windows.Forms.ToolStripButton();
@@ -781,7 +781,7 @@ namespace TotalImage
             // statusBar
             // 
             statusBar.ContextMenuStrip = cmsToolbars;
-            statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { lblStatusCapacity, lblStatusFreeCapacity, lblStatusProgressBar, lblStatusSize, lbStatusPath, lblNotifications });
+            statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { lblStatusCapacity, lblStatusFreeCapacity, pbrStatusCapacity, lblStatusSize, lbStatusPath, lblNotifications });
             statusBar.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             statusBar.Location = new System.Drawing.Point(0, 635);
             statusBar.Name = "statusBar";
@@ -792,27 +792,31 @@ namespace TotalImage
             // 
             // lblStatusCapacity
             // 
+            lblStatusCapacity.BackColor = System.Drawing.Color.Transparent;
             lblStatusCapacity.Name = "lblStatusCapacity";
             lblStatusCapacity.Size = new System.Drawing.Size(0, 21);
             // 
             // lblStatusFreeCapacity
             // 
+            lblStatusFreeCapacity.BackColor = System.Drawing.Color.Transparent;
             lblStatusFreeCapacity.Name = "lblStatusFreeCapacity";
             lblStatusFreeCapacity.Size = new System.Drawing.Size(0, 21);
             // 
-            // lblStatusProgressBar
+            // pbrStatusCapacity
             // 
-            lblStatusProgressBar.Margin = new System.Windows.Forms.Padding(0, 3, 4, 2);
-            lblStatusProgressBar.Name = "lblStatusProgressBar";
-            lblStatusProgressBar.Size = new System.Drawing.Size(100, 21);
+            pbrStatusCapacity.Margin = new System.Windows.Forms.Padding(0, 3, 4, 2);
+            pbrStatusCapacity.Name = "pbrStatusCapacity";
+            pbrStatusCapacity.Size = new System.Drawing.Size(100, 21);
             // 
             // lblStatusSize
             // 
+            lblStatusSize.BackColor = System.Drawing.Color.Transparent;
             lblStatusSize.Name = "lblStatusSize";
             lblStatusSize.Size = new System.Drawing.Size(0, 21);
             // 
             // lbStatusPath
             // 
+            lbStatusPath.BackColor = System.Drawing.Color.Transparent;
             lbStatusPath.Name = "lbStatusPath";
             lbStatusPath.Size = new System.Drawing.Size(0, 21);
             // 
@@ -1513,7 +1517,7 @@ namespace TotalImage
         private System.Windows.Forms.ToolStripMenuItem hexViewToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader clmAttributes;
         private System.Windows.Forms.ToolStripStatusLabel lblStatusFreeCapacity;
-        private System.Windows.Forms.ToolStripProgressBar lblStatusProgressBar;
+        private System.Windows.Forms.ToolStripProgressBar pbrStatusCapacity;
         private System.Windows.Forms.ToolStripButton lblNotifications;
         internal System.Windows.Forms.ImageList imgFilesSmall;
         internal System.Windows.Forms.ImageList imgFilesLarge;
