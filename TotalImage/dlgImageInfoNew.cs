@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -98,12 +99,37 @@ namespace TotalImage
             lstPropertiesFS.FindItemWithText("Total storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             lstPropertiesFS.FindItemWithText("Free space").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.TotalFreeSpace, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
 
-            if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.FAT.FatFileSystem fs)
+            if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.FAT.FatFileSystem fatFS)
             {
-                if (fs.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)
+                if (fatFS.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)
                     lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"{ebpb.VolumeSerialNumber:X}";
-                else if (fs.BiosParameterBlock is FileSystems.BPB.Fat32BiosParameterBlock f32bpb)
+                else if (fatFS.BiosParameterBlock is FileSystems.BPB.Fat32BiosParameterBlock f32bpb)
                     lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = f32bpb.VolumeSerialNumber == 0 ? "N/A" : $"{f32bpb.VolumeSerialNumber:X}";
+            }
+            else if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.ISO.Iso9660FileSystem isoFS)
+            {
+                //First remove some items that don't apply to ISO9660 or have specific alternatives
+                lstPropertiesFS.Items.Remove(lstPropertiesFS.FindItemWithText("Volume label"));
+                lstPropertiesFS.Items.Remove(lstPropertiesFS.FindItemWithText("Free space"));
+                lstPropertiesFS.Items.Remove(lstPropertiesFS.FindItemWithText("Volume serial number"));
+                lstPropertiesFS.FindItemWithText("Total storage capacity").Text = "Volume size";
+
+                //Then add the ISO9660-specific items
+                lstPropertiesFS.Items.Add(new ListViewItem("System identifier")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.SystemIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.SystemIdentifier);
+                lstPropertiesFS.Items.Add(new ListViewItem("Volume identifier")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeIdentifier);
+                lstPropertiesFS.Items.Add(new ListViewItem("Volume set size")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeSetSize.ToString()) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeSetSize.ToString());
+                lstPropertiesFS.Items.Add(new ListViewItem("Volume sequence no.")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeSequenceNumber.ToString()) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeSequenceNumber.ToString());
+                lstPropertiesFS.Items.Add(new ListViewItem("Volume set identifier")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeSetIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeSetIdentifier);
+                lstPropertiesFS.Items.Add(new ListViewItem("Publisher")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.PublisherIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.PublisherIdentifier);
+                lstPropertiesFS.Items.Add(new ListViewItem("Data preparer")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.DataPreparerIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.DataPreparerIdentifier);
+                lstPropertiesFS.Items.Add(new ListViewItem("Application identifier")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.ApplicationIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.ApplicationIdentifier);
+                lstPropertiesFS.Items.Add(new ListViewItem("Copyright file")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.CopyrightFileIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.CopyrightFileIdentifier);
+                lstPropertiesFS.Items.Add(new ListViewItem("Abstract file")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.AbstractFileIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.AbstractFileIdentifier);
+                lstPropertiesFS.Items.Add(new ListViewItem("Bibliographic file")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.BibliographicFileIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.BibliographicFileIdentifier);
+                lstPropertiesFS.Items.Add(new ListViewItem("Creation time")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeCreationTime.ToString()) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeCreationTime.ToString());
+                lstPropertiesFS.Items.Add(new ListViewItem("Modification time")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeModificationTime.ToString()) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeModificationTime.ToString());
+                lstPropertiesFS.Items.Add(new ListViewItem("Expiration time")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeExpirationTime.ToString()) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeExpirationTime.ToString());
+                lstPropertiesFS.Items.Add(new ListViewItem("Effective time")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeEffectiveTime.ToString()) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeEffectiveTime.ToString());
             }
 
             lstPropertiesFile.FindItemWithText("MD5 hash").SubItems[1].Text = "Please wait...";
@@ -237,7 +263,7 @@ namespace TotalImage
                 try
                 {
                     lstPropertiesFile.FindItemWithText("MD5 hash").SubItems[1].Text = await md5;
-                    lstPropertiesFile.FindItemWithText("SHA-1 hash").SubItems[1].Text = await sha1;       
+                    lstPropertiesFile.FindItemWithText("SHA-1 hash").SubItems[1].Text = await sha1;
                 }
 
                 catch (Exception ex) when (ex is TaskCanceledException || ex is OperationCanceledException)
@@ -268,7 +294,7 @@ namespace TotalImage
 
             if (lst is not null && lst.SelectedItems.Count == 1)
             {
-                if (lst.SelectedItems[0].SubItems[1].Text == "N/A" || (lst == lstPropertiesFile && 
+                if (lst.SelectedItems[0].SubItems[1].Text == "N/A" || string.IsNullOrWhiteSpace(lst.SelectedItems[0].SubItems[1].Text) || (lst == lstPropertiesFile &&
                     !hashesDone && (lst.SelectedItems[0].Tag.ToString() == "md5" || lst.SelectedItems[0].Tag.ToString() == "sha1")))
                     copyValueToolStripMenuItem.Enabled = false;
                 else
