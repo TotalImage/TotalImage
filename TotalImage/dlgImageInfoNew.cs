@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,7 +17,6 @@ namespace TotalImage
         private bool hashesDone = false;
         private frmMain mainForm;
 
-        //TODO: Obtain actual data from the main form/relevant classes and display it
         public dlgImageInfoNew()
         {
             InitializeComponent();
@@ -256,28 +254,30 @@ namespace TotalImage
 
         private void copyValueToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Need to modify this to work with multiple target listviews...
+            //Obtain the listView that triggered the context menu
+            ListView lst = cmsCopy.SourceControl as ListView;
 
-            /*if (lstProperties.SelectedItems.Count == 1)
-                Clipboard.SetText(lstProperties.SelectedItems[0].SubItems[1].Text);*/
+            if (lst is not null && lst.SelectedItems.Count == 1)
+                Clipboard.SetText(lst.SelectedItems[0].SubItems[1].Text);
         }
 
         private void cmsCopy_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //Need to modify this to work with multiple target listviews...
+            //Obtain the listView that triggered the context menu
+            ListView lst = cmsCopy.SourceControl as ListView;
 
-            /*if (lstProperties.SelectedItems.Count == 1)
+            if (lst is not null && lst.SelectedItems.Count == 1)
             {
-                if (lstProperties.SelectedItems[0].SubItems[1].Text == "N/A" || (
-                    !hashesDone && (lstProperties.SelectedItems[0].Tag.ToString() == "md5" || lstProperties.SelectedItems[0].Tag.ToString() == "sha1")))
+                if (lst.SelectedItems[0].SubItems[1].Text == "N/A" || (lst == lstPropertiesFile && 
+                    !hashesDone && (lst.SelectedItems[0].Tag.ToString() == "md5" || lst.SelectedItems[0].Tag.ToString() == "sha1")))
                     copyValueToolStripMenuItem.Enabled = false;
                 else
                     copyValueToolStripMenuItem.Enabled = true;
             }
             else
             {
-                e.Cancel = true;
-            }*/
+                e.Cancel = true; //Cancel the context menu opening event if multiple items are somehow selected or the source control is null
+            }
         }
     }
 }
