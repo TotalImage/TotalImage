@@ -17,7 +17,7 @@
             <RowDefinition Height="64" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="Select a partition to load:" />
-        <DataGrid Grid.Row="1" Items="{Binding Entries}" SelectedItem="{Binding SelectedPartition}" IsReadOnly="True">
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Entries}" SelectedItem="{Binding SelectedPartition}" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Volume Label" Binding="{Binding FileSystem.VolumeLabel, Mode=OneWay}" />
                 <DataGridTextColumn Header="Type" Binding="{Binding FileSystem.DisplayName, Mode=OneWay}" />

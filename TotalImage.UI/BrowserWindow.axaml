@@ -41,14 +41,14 @@
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
         <NativeMenuBar Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
-        <TreeView Name="DirectoryTree" Grid.Row="1" Grid.Column="0" Items="{Binding Directories}" SelectedItem="{Binding SelectedDirectory}" SelectionMode="Single">
+        <TreeView Name="DirectoryTree" Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Directories}" SelectedItem="{Binding SelectedDirectory}" SelectionMode="Single">
             <TreeView.ItemTemplate>
                 <TreeDataTemplate ItemsSource="{Binding Directories}">
                     <TextBlock Text="{Binding Name}" />
                 </TreeDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
-        <DataGrid Name="FolderItems" Grid.Row="1" Grid.Column="1" Items="{Binding SelectedDirectory.Objects}" IsReadOnly="True" SelectionMode="Extended">
+        <DataGrid Name="FolderItems" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding SelectedDirectory.Objects}" IsReadOnly="True" SelectionMode="Extended">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                 <DataGridTextColumn Header="Size" Binding="{Binding Length, Converter={StaticResource SizeConverter}, Mode=OneWay}" />
