@@ -26,7 +26,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish
-      run: dotnet publish --no-build
+      run: dotnet publish --no-build -c Debug
     - uses: actions/upload-artifact@v2
       with:
         path: TotalImage/bin/Debug/net8.0-windows/publish/
