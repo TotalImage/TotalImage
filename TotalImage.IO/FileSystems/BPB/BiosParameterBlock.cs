@@ -86,6 +86,11 @@ namespace TotalImage.FileSystems.BPB
         public uint HiddenSectors { get; private set; }
 
         /// <summary>
+        /// Whether this disk uses 86-DOS 0.x directory format
+        /// </summary>
+        public bool IsSmall { get; private set; }
+
+        /// <summary>
         /// Create a new, empty BIOS Parameter Block
         /// </summary>
         protected BiosParameterBlock()
@@ -114,6 +119,7 @@ namespace TotalImage.FileSystems.BPB
             PhysicalSectorsPerTrack = bpb.PhysicalSectorsPerTrack;
             NumberOfHeads = bpb.NumberOfHeads;
             HiddenSectors = bpb.HiddenSectors;
+            IsSmall = bpb.IsSmall;
         }
 
         /// <summary>
@@ -154,7 +160,8 @@ namespace TotalImage.FileSystems.BPB
                 RootDirectoryEntries = reader.ReadUInt16(),
                 TotalLogicalSectors = reader.ReadUInt16(),
                 MediaDescriptor = reader.ReadByte(),
-                LogicalSectorsPerFAT = reader.ReadUInt16()
+                LogicalSectorsPerFAT = reader.ReadUInt16(),
+                IsSmall = false
             };
 
             //Parsing a standard BPB
@@ -172,6 +179,63 @@ namespace TotalImage.FileSystems.BPB
                 {
                     bpb.HiddenSectors = reader.ReadUInt32();
                     bpb.TotalLogicalSectors = reader.ReadUInt32();
+                }
+
+                // Check for SMALLDIR (86-DOS 0.x directory format)
+                // Only 8" 256.25K, 5.25" 90K and 5.25" 160K disks are known
+                // to have used SMALLDIR before
+                // In addition, those disks can have SMALLDIR only if they
+                // have the reserved system area (eg MS-DOS 1.25 disks cannot
+                // have SMALLDIR at all)
+
+                var oldpos = reader.BaseStream.Position;
+                var len = reader.BaseStream.Length;
+                if (len == 256256 || len == 163840 || len == 92160)
+                {
+                    try
+                    {
+                        switch (bpb.TotalLogicalSectors)
+                        {
+                            case 2002:
+                                if (bpb.BytesPerLogicalSector == 128 && bpb.ReservedLogicalSectors == 52)
+                                {
+                                    reader.BaseStream.Seek(bpb.ReservedLogicalSectors * 128, SeekOrigin.Begin);
+                                    if (reader.ReadByte() == 0xFF)
+                                    {
+                                        bpb.IsSmall = true;
+                                    }
+                                }
+                                break;
+                            case 720:
+                                if (bpb.BytesPerLogicalSector == 128 && bpb.ReservedLogicalSectors == 54)
+                                {
+                                    reader.BaseStream.Seek(bpb.ReservedLogicalSectors * 128, SeekOrigin.Begin);
+                                    if (reader.ReadByte() == 0xFF)
+                                    {
+                                        bpb.IsSmall = true;
+                                    }
+                                }
+                                break;
+                            case 320:
+                                if (bpb.BytesPerLogicalSector == 512 && bpb.ReservedLogicalSectors == 16)
+                                {
+                                    reader.BaseStream.Seek(bpb.ReservedLogicalSectors * 512, SeekOrigin.Begin);
+                                    if (reader.ReadByte() == 0xFF)
+                                    {
+                                        bpb.IsSmall = true;
+                                    }
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        reader.BaseStream.Position = oldpos;
+                    }
+                    catch (System.Exception)
+                    {
+                        reader.BaseStream.Position = oldpos;
+                        throw new InvalidDataException("BPB paramaters invalid (invalid values)");
+                    }
                 }
             }
 
@@ -248,7 +312,8 @@ namespace TotalImage.FileSystems.BPB
                 PhysicalSectorsPerTrack = geometry.SPT,
                 ReservedLogicalSectors = geometry.ReservedSectors,
                 RootDirectoryEntries = geometry.RootDirectoryEntries,
-                TotalLogicalSectors = (uint)(geometry.Tracks * geometry.SPT * geometry.Sides)
+                TotalLogicalSectors = (uint)(geometry.Tracks * geometry.SPT * geometry.Sides),
+                IsSmall = false
             };
 
 
@@ -257,6 +322,158 @@ namespace TotalImage.FileSystems.BPB
         /// Get default BPB for a given size. This is typically used for DOS 1.0 images that don't include a BPB.
         /// </summary>
         public static readonly IReadOnlyDictionary<long, BiosParameterBlock> DefaultParametersForSize;
+
+        /// <summary>
+        /// Get the default BPB for an 86-DOS 0.x 8" SSSD disk that doesn't include its own BPB.
+        /// </summary>
+        public static readonly BiosParameterBlock Default86DOS8InchSSSDSmallDirParameters = new BiosParameterBlock
+        {
+            BytesPerLogicalSector = 128,
+            LogicalSectorsPerCluster = 4,
+            ReservedLogicalSectors = 52,
+            NumberOfFATs = 2,
+            LogicalSectorsPerFAT = 6,
+            RootDirectoryEntries = 64,
+            PhysicalSectorsPerTrack = 26,
+            NumberOfHeads = 1,
+            TotalLogicalSectors = 2002,
+            MediaDescriptor = 0xFE,
+            HiddenSectors = 0,
+            IsSmall = true
+        };
+
+        /// <summary>
+        /// Get the default BPB for an 86-DOS 0.x Cromemco 5.25" SSSD disk that doesn't include its own BPB.
+        /// </summary>
+        public static readonly BiosParameterBlock Default86DOSCromemco5InchSSSDSmallDirParameters = new BiosParameterBlock
+        {
+            BytesPerLogicalSector = 128,
+            LogicalSectorsPerCluster = 2,
+            ReservedLogicalSectors = 54,
+            NumberOfFATs = 2,
+            LogicalSectorsPerFAT = 4,
+            RootDirectoryEntries = 64,
+            PhysicalSectorsPerTrack = 18,
+            NumberOfHeads = 1,
+            TotalLogicalSectors = 720,
+            MediaDescriptor = 0xFE,
+            HiddenSectors = 0,
+            IsSmall = true
+        };
+
+        /// <summary>
+        /// Get the default BPB for an 86-DOS 0.x IBM PC 5.25" SSDD disk that doesn't include its own BPB.
+        /// </summary>
+        public static readonly BiosParameterBlock Default86DOSIBMPC5InchSSDDSmallDirParameters = new BiosParameterBlock
+        {
+            BytesPerLogicalSector = 512,
+            LogicalSectorsPerCluster = 1,
+            ReservedLogicalSectors = 16,
+            NumberOfFATs = 2,
+            LogicalSectorsPerFAT = 1,
+            RootDirectoryEntries = 64,
+            PhysicalSectorsPerTrack = 8,
+            NumberOfHeads = 1,
+            TotalLogicalSectors = 320,
+            MediaDescriptor = 0xFE,
+            HiddenSectors = 0,
+            IsSmall = true
+        };
+
+        /// <summary>
+        /// Get the default BPB for an 86-DOS 1.x 8" SSSD disk that doesn't include its own BPB.
+        /// </summary>
+        public static readonly BiosParameterBlock Default86DOS8InchSSSDParameters = new BiosParameterBlock
+        {
+            BytesPerLogicalSector = 128,
+            LogicalSectorsPerCluster = 4,
+            ReservedLogicalSectors = 52,
+            NumberOfFATs = 2,
+            LogicalSectorsPerFAT = 6,
+            RootDirectoryEntries = 64,
+            PhysicalSectorsPerTrack = 26,
+            NumberOfHeads = 1,
+            TotalLogicalSectors = 2002,
+            MediaDescriptor = 0xFE,
+            HiddenSectors = 0,
+            IsSmall = false
+        };
+
+        /// <summary>
+        /// Get the default BPB for an 86-DOS 1.x 8" DSDD disk that doesn't include its own BPB.
+        /// </summary>
+        public static readonly BiosParameterBlock Default86DOS8InchDSDDParameters = new BiosParameterBlock
+        {
+            BytesPerLogicalSector = 1024,
+            LogicalSectorsPerCluster = 1,
+            ReservedLogicalSectors = 1,
+            NumberOfFATs = 2,
+            LogicalSectorsPerFAT = 2,
+            RootDirectoryEntries = 128,
+            PhysicalSectorsPerTrack = 8,
+            NumberOfHeads = 2,
+            TotalLogicalSectors = 1232,
+            MediaDescriptor = 0xFE,
+            HiddenSectors = 0,
+            IsSmall = false
+        };
+
+        /// <summary>
+        /// Get the default BPB for an 86-DOS 1.x Cromemco 5.25" SSSD disk that doesn't include its own BPB.
+        /// </summary>
+        public static readonly BiosParameterBlock Default86DOSCromemco5InchSSSDParameters = new BiosParameterBlock
+        {
+            BytesPerLogicalSector = 128,
+            LogicalSectorsPerCluster = 2,
+            ReservedLogicalSectors = 54,
+            NumberOfFATs = 2,
+            LogicalSectorsPerFAT = 4,
+            RootDirectoryEntries = 64,
+            PhysicalSectorsPerTrack = 18,
+            NumberOfHeads = 1,
+            TotalLogicalSectors = 720,
+            MediaDescriptor = 0xFE,
+            HiddenSectors = 0,
+            IsSmall = false
+        };
+
+        /// <summary>
+        /// Get the default BPB for an 86-DOS 1.x NorthStar 5.25" SSSD disk that doesn't include its own BPB.
+        /// </summary>
+        public static readonly BiosParameterBlock Default86DOSNorthStar5InchSSSDParameters = new BiosParameterBlock
+        {
+            BytesPerLogicalSector = 256,
+            LogicalSectorsPerCluster = 1,
+            ReservedLogicalSectors = 30,
+            NumberOfFATs = 2,
+            LogicalSectorsPerFAT = 2,
+            RootDirectoryEntries = 64,
+            PhysicalSectorsPerTrack = 10,
+            NumberOfHeads = 1,
+            TotalLogicalSectors = 350,
+            MediaDescriptor = 0xFE,
+            HiddenSectors = 0,
+            IsSmall = false
+        };
+
+        /// <summary>
+        /// Get the default BPB for an 86-DOS 1.x IBM PC 5.25" SSDD disk that doesn't include its own BPB.
+        /// </summary>
+        public static readonly BiosParameterBlock Default86DOSIBMPC5InchSSDDParameters = new BiosParameterBlock
+        {
+            BytesPerLogicalSector = 512,
+            LogicalSectorsPerCluster = 1,
+            ReservedLogicalSectors = 16,
+            NumberOfFATs = 2,
+            LogicalSectorsPerFAT = 1,
+            RootDirectoryEntries = 64,
+            PhysicalSectorsPerTrack = 8,
+            NumberOfHeads = 1,
+            TotalLogicalSectors = 320,
+            MediaDescriptor = 0xFE,
+            HiddenSectors = 0,
+            IsSmall = false
+        };
 
         /// <summary>
         /// Get the default BPB for an Acorn 800k disk that doesn't include its own BPB.
@@ -273,7 +490,8 @@ namespace TotalImage.FileSystems.BPB
             NumberOfHeads = 2,
             TotalLogicalSectors = 800,
             MediaDescriptor = 0xFD,
-            HiddenSectors = 0
+            HiddenSectors = 0,
+            IsSmall = false
         };
 
         /// <summary>
@@ -291,7 +509,8 @@ namespace TotalImage.FileSystems.BPB
             NumberOfHeads = 1,
             TotalLogicalSectors = 1224,
             MediaDescriptor = 0xF8,
-            HiddenSectors = 0
+            HiddenSectors = 0,
+            IsSmall = false
         };
 
         /// <summary>
@@ -309,7 +528,8 @@ namespace TotalImage.FileSystems.BPB
             NumberOfHeads = 2,
             TotalLogicalSectors = 2391,
             MediaDescriptor = 0xF8,
-            HiddenSectors = 0
+            HiddenSectors = 0,
+            IsSmall = false
         };
 
         static BiosParameterBlock()
@@ -330,7 +550,8 @@ namespace TotalImage.FileSystems.BPB
                         NumberOfHeads = 1,
                         TotalLogicalSectors = 320,
                         MediaDescriptor = 0xFE,
-                        HiddenSectors = 0
+                        HiddenSectors = 0,
+                        IsSmall = false
                     }
                 },
                 {
@@ -347,7 +568,8 @@ namespace TotalImage.FileSystems.BPB
                         NumberOfHeads = 1,
                         TotalLogicalSectors = 360,
                         MediaDescriptor = 0xFC,
-                        HiddenSectors = 0
+                        HiddenSectors = 0,
+                        IsSmall = false
                     }
                 },
                 {
@@ -364,7 +586,8 @@ namespace TotalImage.FileSystems.BPB
                         NumberOfHeads = 2,
                         TotalLogicalSectors = 640,
                         MediaDescriptor = 0xFF,
-                        HiddenSectors = 0
+                        HiddenSectors = 0,
+                        IsSmall = false
                     }
                 },
                 {
@@ -381,7 +604,8 @@ namespace TotalImage.FileSystems.BPB
                         NumberOfHeads = 2,
                         TotalLogicalSectors = 720,
                         MediaDescriptor = 0xFD,
-                        HiddenSectors = 0
+                        HiddenSectors = 0,
+                        IsSmall = false
                     }
                 },
                 {
@@ -398,7 +622,26 @@ namespace TotalImage.FileSystems.BPB
                         NumberOfHeads = 1,
                         TotalLogicalSectors = 2002,
                         MediaDescriptor = 0xFE,
-                        HiddenSectors = 0
+                        HiddenSectors = 0,
+                        IsSmall = false
+                    }
+                },
+                {
+                    630784, //8" 616 KiB
+                    new BiosParameterBlock
+                    {
+                        BytesPerLogicalSector = 1024,
+                        LogicalSectorsPerCluster = 1,
+                        ReservedLogicalSectors = 1,
+                        NumberOfFATs = 2,
+                        LogicalSectorsPerFAT = 1,
+                        RootDirectoryEntries = 96,
+                        PhysicalSectorsPerTrack = 8,
+                        NumberOfHeads = 1,
+                        TotalLogicalSectors = 616,
+                        MediaDescriptor = 0xFE,
+                        HiddenSectors = 0,
+                        IsSmall = false
                     }
                 },
                 {
@@ -415,7 +658,26 @@ namespace TotalImage.FileSystems.BPB
                         NumberOfHeads = 2,
                         TotalLogicalSectors = 1232,
                         MediaDescriptor = 0xFE,
-                        HiddenSectors = 0
+                        HiddenSectors = 0,
+                        IsSmall = false
+                    }
+                },
+                {
+                    89600, //5.25" 87.5 KiB
+                    new BiosParameterBlock
+                    {
+                        BytesPerLogicalSector = 256,
+                        LogicalSectorsPerCluster = 1,
+                        ReservedLogicalSectors = 1,
+                        NumberOfFATs = 2,
+                        LogicalSectorsPerFAT = 2,
+                        RootDirectoryEntries = 64,
+                        PhysicalSectorsPerTrack = 10,
+                        NumberOfHeads = 1,
+                        TotalLogicalSectors = 350,
+                        MediaDescriptor = 0xFE,
+                        HiddenSectors = 0,
+                        IsSmall = false
                     }
                 }
             };
