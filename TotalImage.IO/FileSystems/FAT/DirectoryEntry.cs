@@ -74,7 +74,7 @@ namespace TotalImage.FileSystems.FAT
         /// </summary>
         uint fileSize;
 
-        public DirectoryEntry(ReadOnlySpan<byte> entry)
+        public DirectoryEntry(FatFileSystem fileSystem, ReadOnlySpan<byte> entry)
         {
             fileName = entry[0..11].ToImmutableArray();
             attributes = (FatAttributes)entry[11];
@@ -83,7 +83,8 @@ namespace TotalImage.FileSystems.FAT
             creationTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[14..16]);
             creationDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[16..18]);
             lastAccessDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[18..20]);
-            firstClusterOfFileHi = BinaryPrimitives.ReadUInt16LittleEndian(entry[20..22]);
+            //The high word of first cluster is only used on FAT32, while on FAT12 and FAT16 other data might be stored there that should not be used here!
+            firstClusterOfFileHi = fileSystem is Fat32FileSystem ? BinaryPrimitives.ReadUInt16LittleEndian(entry[20..22]) : (ushort)0;
             lastWriteTime = BinaryPrimitives.ReadUInt16LittleEndian(entry[22..24]);
             lastWriteDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[24..26]);
             firstClusterOfFile = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
@@ -118,7 +119,7 @@ namespace TotalImage.FileSystems.FAT
             stream.Position = (fat.ReservedSectors + fat.ClusterMapsSectors) * fat.BiosParameterBlock.BytesPerLogicalSector;
             stream.Read(buffer);
 
-            return EnumerateDirectory(buffer, includeDeleted);
+            return EnumerateDirectory(fat, buffer, includeDeleted);
         }
 
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, DirectoryEntry entry, bool includeDeleted = false) =>
@@ -131,10 +132,10 @@ namespace TotalImage.FileSystems.FAT
 
             stream.Read(buffer);
 
-            return EnumerateDirectory(buffer, includeDeleted);
+            return EnumerateDirectory(fat, buffer, includeDeleted);
         }
 
-        private static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateDirectory(ReadOnlyMemory<byte> buffer, bool includeDeleted)
+        private static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateDirectory(FatFileSystem fat, ReadOnlyMemory<byte> buffer, bool includeDeleted)
         {
             var lfnStack = new Stack<LongDirectoryEntry>();
 
@@ -216,7 +217,7 @@ namespace TotalImage.FileSystems.FAT
                     lfnStack.Clear();
                 }
 
-                yield return (new DirectoryEntry(entry), lfnStack.ToArray());
+                yield return (new DirectoryEntry(fat, entry), lfnStack.ToArray());
 
                 lfnStack.Clear();
             }
