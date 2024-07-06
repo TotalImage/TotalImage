@@ -57,6 +57,17 @@ namespace TotalImage.FileSystems.ISO
             set => throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Create a file on an ISO 9660 file system from a file record
+        /// </summary>
+        /// <param name="fso">The file system record</param>
+        /// <param name="fileSystem">The file system containing the file</param>
+        /// <param name="parent">The parent directory</param>
+        public IsoFile(IsoFileSystemObject fso, FileSystem fileSystem, Directory parent) : base(fileSystem, parent)
+        {
+            Record = fso;
+        }
+
         /// <inheritdoc />
         public override void Delete()
         {
@@ -75,17 +86,6 @@ namespace TotalImage.FileSystems.ISO
             long offset = ((Iso9660FileSystem)FileSystem).PrimaryVolumeDescriptor.LogicalBlockSize * Record.ExtentOffset;
             PartialStream fileStream = new PartialStream(FileSystem.GetStream(), offset, Record.DataLength);
             return fileStream;
-        }
-
-        /// <summary>
-        /// Create a file on an ISO 9660 file system from a file record
-        /// </summary>
-        /// <param name="fso">The file system record</param>
-        /// <param name="fileSystem">The file system containing the file</param>
-        /// <param name="parent">The parent directory</param>
-        public IsoFile(IsoFileSystemObject fso, FileSystem fileSystem, Directory parent) : base(fileSystem, parent)
-        {
-            Record = fso;
         }
     }
 }

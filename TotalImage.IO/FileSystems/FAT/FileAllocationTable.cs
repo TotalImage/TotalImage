@@ -14,15 +14,6 @@ public abstract class FileAllocationTable : IEnumerable<uint>
     public abstract uint this[uint index] { get; set; }
 
     /// <summary>
-    /// Access the value stored at a given index.
-    /// </summary>
-    public uint this[int index]
-    {
-        get => this[(uint)index];
-        set => this[(uint)index] = value;
-    }
-
-    /// <summary>
     /// Retrieves the number of entries in the allocation table.
     /// </summary>
     public abstract uint Length { get; }
@@ -31,6 +22,15 @@ public abstract class FileAllocationTable : IEnumerable<uint>
     /// Cluster number bit mask. This is also the maximum cluster map value.
     /// </summary>
     protected abstract uint Mask { get; }
+
+    /// <summary>
+    /// Access the value stored at a given index.
+    /// </summary>
+    public uint this[int index]
+    {
+        get => this[(uint)index];
+        set => this[(uint)index] = value;
+    }
 
     /// <summary>
     /// Determines the type of a cluster map value.

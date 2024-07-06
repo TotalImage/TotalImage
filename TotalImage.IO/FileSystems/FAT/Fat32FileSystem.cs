@@ -12,6 +12,16 @@ namespace TotalImage.FileSystems.FAT
     {
         private FsInfo _fsInfo;
 
+        /// <inheritdoc />
+        public override string DisplayName => "FAT32";
+
+        /// <inheritdoc />
+        public override uint TotalFreeClusters
+            => _fsInfo.IsValid && _fsInfo.freeCount <= ClusterCount ? _fsInfo.freeCount : base.TotalFreeClusters;
+
+        /// <inheritdoc />
+        public override FAT.FileAllocationTable[] Fats { get; }
+
         public Fat32FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
             Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
@@ -26,20 +36,11 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
-        /// <inheritdoc />
-        public override string DisplayName => "FAT32";
-
-        /// <inheritdoc />
-        public override uint TotalFreeClusters
-            => _fsInfo.IsValid && _fsInfo.freeCount <= ClusterCount ? _fsInfo.freeCount : base.TotalFreeClusters;
-
-        /// <inheritdoc />
-        public override FAT.FileAllocationTable[] Fats { get; }
-
         private class FileAllocationTable : FAT.FileAllocationTable
         {
             Fat32FileSystem _fat32;
             int _fatIndex;
+
             internal FileAllocationTable(Fat32FileSystem fat32, int fatIndex)
             {
                 if (fatIndex >= fat32._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();

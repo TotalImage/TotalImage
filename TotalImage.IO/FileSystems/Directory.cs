@@ -12,14 +12,12 @@ namespace TotalImage.FileSystems
         private readonly Directory? _parent;
 
         /// <summary>
-        /// Create a directory on a filesystem
+        /// Get full path of directory on the file system
         /// </summary>
-        /// <param name="fileSystem">The file system containing the directory</param>
-        /// <param name="parent">The parent directory, if it exists</param>
-        protected Directory(FileSystem fileSystem, Directory? parent) : base(fileSystem)
-        {
-            _parent = parent;
-        }
+        public override string FullName
+            => _parent == null
+                ? Path.DirectorySeparatorChar.ToString()
+                : Path.Combine(_parent.FullName, Name);
 
         /// <summary>
         /// Get the parent directory, if it exists
@@ -30,6 +28,16 @@ namespace TotalImage.FileSystems
         /// Get the root directory of the file system
         /// </summary>
         public Directory Root => FileSystem.RootDirectory;
+
+        /// <summary>
+        /// Create a directory on a filesystem
+        /// </summary>
+        /// <param name="fileSystem">The file system containing the directory</param>
+        /// <param name="parent">The parent directory, if it exists</param>
+        protected Directory(FileSystem fileSystem, Directory? parent) : base(fileSystem)
+        {
+            _parent = parent;
+        }
 
         /// <summary>
         /// Get the contents of a directory
@@ -89,14 +97,6 @@ namespace TotalImage.FileSystems
                 }
             }
         }
-
-        /// <summary>
-        /// Get full path of directory on the file system
-        /// </summary>
-        public override string FullName
-            => _parent == null
-                ? Path.DirectorySeparatorChar.ToString()
-                : Path.Combine(_parent.FullName, Name);
 
         /// <summary>
         /// Create a subdirectory within the directory

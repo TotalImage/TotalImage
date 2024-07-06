@@ -1,12 +1,17 @@
-using System;
-using System.Linq;
-using System.Text;
-
 namespace TotalImage.FileSystems.FAT
 {
+    /// <summary>
+    /// A simple FAT helper class.
+    /// </summary>
     internal static class Helper
     {
-        public static string UseAsLabel(string label, int length = 8)
+        /// <summary>
+        /// Converts the given string to a FAT-style volume label.
+        /// </summary>
+        /// <param name="label">The string to use as the volume label</param>
+        /// <param name="length">Maximum length of the result volume label</param>
+        /// <returns></returns>
+        public static string UseAsLabel(string label, int length = 11)
         {
             if (label.Length > length)
             {

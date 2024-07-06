@@ -2,8 +2,6 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using TotalImage.FileSystems.BPB;
 
@@ -14,65 +12,68 @@ namespace TotalImage.FileSystems.FAT
     /// </summary>
     public struct DirectoryEntry
     {
-        /// <summary>
-        /// “Short” file name limited to 11 characters.
-        /// </summary>
-        ImmutableArray<byte> fileName;
+        private ImmutableArray<byte> fileName;
+        private FatAttributes attributes;
+        private byte ntByte; //Reserved. Must be set to 0.
+        private byte creationMSec; //Component of the file creation time. Count of tenths of a second.
+        private ushort creationTime; //Granularity is 2 seconds.
+        private ushort creationDate;
+        private ushort lastAccessDate;
+        private ushort firstClusterOfFileHi; //High word of first data cluster number for file/directory described by this entry.Only valid for volumes formatted FAT32.Must be set to 0 on volumes formatted FAT12/FAT16.
+        private ushort lastWriteTime;
+        private ushort lastWriteDate;
+        private ushort firstClusterOfFile; //Low word of first data cluster number for file/directory described by this entry.
+        private uint fileSize;
 
         /// <summary>
-        /// File attributes.
+        /// File name without extension (8 characters max).
         /// </summary>
-        FatAttributes attributes;
+        public string BaseName => Encoding.ASCII.GetString(fileName.AsSpan()[0..8]).Trim();
 
         /// <summary>
-        /// Reserved. Must be set to 0.
+        /// File extension (3 characters max).
         /// </summary>
-        byte ntByte;
+        public string Extension => Encoding.ASCII.GetString(fileName.AsSpan()[8..11]).Trim();
 
         /// <summary>
-        /// Component of the file creation time. Count of tenths of a second.
+        /// File name with extension (11 characters max).
         /// </summary>
-        byte creationMSec;
+        public string FileName => $"{BaseName}{(!string.IsNullOrWhiteSpace(Extension) ? "." : "")}{Extension}";
 
         /// <summary>
-        /// Creation time. Granularity is 2 seconds.
+        /// Returns the filename with extension as a byte span.
         /// </summary>
-        ushort creationTime;
+        public ReadOnlySpan<byte> FileNameBytes => fileName.AsSpan();
 
         /// <summary>
-        /// Creation date.
+        /// Creation date and time.
         /// </summary>
-        ushort creationDate;
+        public DateTime? CreationTime => FatDateTime.ToDateTime(creationDate, creationTime, creationMSec);
 
         /// <summary>
         /// Last access date. Last access is defined as a read or write operation performed on the file/directory described by this entry
         /// </summary>
-        ushort lastAccessDate;
+        public DateTime? LastAccessTime => FatDateTime.ToDateTime(lastAccessDate);
 
         /// <summary>
-        /// High word of first data cluster number for file/directory described by this entry. Only valid for volumes formatted FAT32. Must be set to 0 on volumes formatted FAT12/FAT16.
+        /// Last modification (write) date and time.
         /// </summary>
-        ushort firstClusterOfFileHi;
+        public DateTime? LastWriteTime => FatDateTime.ToDateTime(lastWriteDate, lastWriteTime);
 
         /// <summary>
-        /// Last modification (write) time.
+        /// File attributes.
         /// </summary>
-        ushort lastWriteTime;
+        public FatAttributes Attributes => attributes;
 
         /// <summary>
-        /// Last modification (write) date.
+        /// First data cluster number for file/directory described by this entry.
         /// </summary>
-        ushort lastWriteDate;
-
-        /// <summary>
-        /// Low word of first data cluster number for file/directory described by this entry.
-        /// </summary>
-        ushort firstClusterOfFile;
+        public uint FirstClusterOfFile => (uint)(firstClusterOfFileHi << 16) | firstClusterOfFile;
 
         /// <summary>
         /// 32-bit quantity containing size in bytes of file/directory described by this entry.
         /// </summary>
-        uint fileSize;
+        public uint FileSize => fileSize;
 
         public DirectoryEntry(FatFileSystem fileSystem, ReadOnlySpan<byte> entry)
         {
@@ -90,21 +91,6 @@ namespace TotalImage.FileSystems.FAT
             firstClusterOfFile = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
             fileSize = BinaryPrimitives.ReadUInt32LittleEndian(entry[28..32]);
         }
-
-        public string BaseName => Encoding.ASCII.GetString(fileName.AsSpan()[0..8]).Trim();
-        public string Extension => Encoding.ASCII.GetString(fileName.AsSpan()[8..11]).Trim();
-
-        public string FileName => $"{BaseName}{(!string.IsNullOrWhiteSpace(Extension) ? "." : "")}{Extension}";
-        public ReadOnlySpan<byte> FileNameBytes => fileName.AsSpan();
-
-        public DateTime? CreationTime => FatDateTime.ToDateTime(creationDate, creationTime, creationMSec);
-        public DateTime? LastAccessTime => FatDateTime.ToDateTime(lastAccessDate);
-        public DateTime? LastWriteTime => FatDateTime.ToDateTime(lastWriteDate, lastWriteTime);
-
-        public FatAttributes Attributes => attributes;
-
-        public uint FirstClusterOfFile => (uint)(firstClusterOfFileHi << 16) | firstClusterOfFile;
-        public uint FileSize => fileSize;
 
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateRootDirectory(FatFileSystem fat, bool includeDeleted = false)
         {

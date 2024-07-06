@@ -35,16 +35,6 @@ namespace TotalImage.FileSystems.ISO
         public byte Version { get; }
 
         /// <summary>
-        /// Check whether the specified record is valid
-        /// </summary>
-        /// <returns>Whether the record is valid</returns>
-        public virtual bool IsValid()
-        {
-            return (Type <= IsoVolumeDescriptorType.VolumePartitionDescriptor || Type == IsoVolumeDescriptorType.VolumeDescriptorSetTerminator)
-                && (Identifier.SequenceEqual(IsoStandardIdentifier) || Identifier.SequenceEqual(HsfStandardIdentifier));
-        }
-
-        /// <summary>
         /// Create a volume descriptor record - this should be used by inheriting types to construct the base object.
         /// </summary>
         /// <param name="type">The type of the volume descriptor</param>
@@ -91,6 +81,16 @@ namespace TotalImage.FileSystems.ISO
                 IsoVolumeDescriptorType.VolumeDescriptorSetTerminator => new IsoSetTerminatorVolumeDescriptor(type, identifier, version),
                 _ => new IsoUnknownVolumeDescriptor(record, type, identifier, version),
             };
+        }
+
+        /// <summary>
+        /// Check whether the specified record is valid
+        /// </summary>
+        /// <returns>Whether the record is valid</returns>
+        public virtual bool IsValid()
+        {
+            return (Type <= IsoVolumeDescriptorType.VolumePartitionDescriptor || Type == IsoVolumeDescriptorType.VolumeDescriptorSetTerminator)
+                && (Identifier.SequenceEqual(IsoStandardIdentifier) || Identifier.SequenceEqual(HsfStandardIdentifier));
         }
     }
 }

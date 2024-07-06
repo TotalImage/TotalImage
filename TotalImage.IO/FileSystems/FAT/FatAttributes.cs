@@ -19,7 +19,7 @@ namespace TotalImage.FileSystems.FAT
         Hidden = 0x02,
 
         /// <summary>
-        /// This is an operating system file.
+        /// This is an operating system file and should not be moved (e.g. during defragmentation).
         /// </summary>
         System = 0x04,
 

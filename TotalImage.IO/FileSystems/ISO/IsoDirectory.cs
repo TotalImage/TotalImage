@@ -39,6 +39,17 @@ namespace TotalImage.FileSystems.ISO
         /// <inheritdoc />
         public override ulong Length { get => Record.DataLength; set => throw new NotImplementedException(); }
 
+        /// <summary>
+        /// Create a directory on an ISO 9660 file system from a file record
+        /// </summary>
+        /// <param name="fso">The file system record</param>
+        /// <param name="fileSystem">The file system containing the directory</param>
+        /// <param name="parent">The parent directory, if any</param>
+        public IsoDirectory(IsoFileSystemObject fso, FileSystem fileSystem, Directory? parent = null) : base(fileSystem, parent)
+        {
+            Record = fso;
+        }
+
         /// <inheritdoc />
         public override Directory CreateSubdirectory(string path)
         {
@@ -97,17 +108,6 @@ namespace TotalImage.FileSystems.ISO
         public override void MoveTo(string path)
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Create a directory on an ISO 9660 file system from a file record
-        /// </summary>
-        /// <param name="fso">The file system record</param>
-        /// <param name="fileSystem">The file system containing the directory</param>
-        /// <param name="parent">The parent directory, if any</param>
-        public IsoDirectory(IsoFileSystemObject fso, FileSystem fileSystem, Directory? parent = null) : base(fileSystem, parent)
-        {
-            Record = fso;
         }
     }
 }

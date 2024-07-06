@@ -13,13 +13,12 @@ namespace TotalImage.FileSystems.ISO
     public class IsoPrimaryVolumeDescriptor : IsoVolumeDescriptor
     {
         private static readonly char[] trimCharacters = new char[] { '\0', ' ' };
-
-        private static readonly byte[][] jolietEscapeSequences = new byte[][]
-        {
-            new byte[] { 0x25, 0x2f, 0x40 }, // Level 1
-            new byte[] { 0x25, 0x2f, 0x43 }, // Level 2
-            new byte[] { 0x25, 0x2f, 0x45 } // Level 3
-        };
+        private static readonly byte[][] jolietEscapeSequences =
+        [
+            [0x25, 0x2f, 0x40], // Level 1
+            [0x25, 0x2f, 0x43], // Level 2
+            [0x25, 0x2f, 0x45] // Level 3
+        ];
 
         /// <summary>
         /// The system that can read the first 16 sectors of the image

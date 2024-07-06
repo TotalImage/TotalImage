@@ -10,14 +10,8 @@ namespace TotalImage.FileSystems
     {
         private readonly FileSystem _fileSystem;
 
-        /// <summary>
-        /// Create an object on a file system
-        /// </summary>
-        /// <param name="fileSystem">The file system that contains the object</param>
-        protected FileSystemObject(FileSystem fileSystem)
-        {
-            _fileSystem = fileSystem;
-        }
+        /// <inheritdoc />
+        public override string ToString() => FullName;
 
         /// <summary>
         /// The name of the object on the file system
@@ -50,11 +44,6 @@ namespace TotalImage.FileSystems
         public abstract DateTime? CreationTime { get; set; }
 
         /// <summary>
-        /// The file system that contains the file system object
-        /// </summary>
-        public FileSystem FileSystem => _fileSystem;
-
-        /// <summary>
         /// The length of the file system object
         /// </summary>
         public abstract ulong Length { get; set; }
@@ -63,6 +52,29 @@ namespace TotalImage.FileSystems
         /// The length of the file system object as represented on the disk
         /// </summary>
         public virtual ulong LengthOnDisk => ((Length / FileSystem.AllocationUnitSize) + 1) * FileSystem.AllocationUnitSize;
+
+        /// <summary>
+        /// The file system that contains the file system object
+        /// </summary>       
+        public FileSystem FileSystem => _fileSystem;
+
+        /// <summary>
+        /// Indicates if the file system object is read only
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get => (Attributes & FileAttributes.ReadOnly) > 0;
+            set => Attributes |= value ? FileAttributes.ReadOnly : 0;
+        }
+
+        /// <summary>
+        /// Create an object on a file system
+        /// </summary>
+        /// <param name="fileSystem">The file system that contains the object</param>
+        protected FileSystemObject(FileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
 
         /// <summary>
         /// Delete a file system object
@@ -80,17 +92,5 @@ namespace TotalImage.FileSystems
         /// </summary>
         /// <param name="name">The new name of the file system object</param>
         public void Rename(string name) => Name = name;
-
-        /// <summary>
-        /// Indicates if the file system object is read only
-        /// </summary>
-        public bool IsReadOnly
-        {
-            get => (Attributes & FileAttributes.ReadOnly) > 0;
-            set => Attributes |= value ? FileAttributes.ReadOnly : 0;
-        }
-
-        /// <inheritdoc />
-        public override string ToString() => FullName;
     }
 }

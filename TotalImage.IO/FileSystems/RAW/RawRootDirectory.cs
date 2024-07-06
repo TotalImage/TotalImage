@@ -9,14 +9,6 @@ namespace TotalImage.FileSystems.RAW
     /// </summary>
     public class RawRootDirectory : Directory
     {
-        /// <summary>
-        /// Create a placeholder root directory for a RAW file system
-        /// </summary>
-        /// <param name="fileSystem">The RAW file system</param>
-        public RawRootDirectory(RawFileSystem fileSystem) : base(fileSystem, null)
-        {
-        }
-
         /// <inheritdoc />
         public override string Name
         {
@@ -58,6 +50,12 @@ namespace TotalImage.FileSystems.RAW
             get => 0;
             set { return; }
         }
+
+        /// <summary>
+        /// Create a placeholder root directory for a RAW file system
+        /// </summary>
+        /// <param name="fileSystem">The RAW file system</param>
+        public RawRootDirectory(RawFileSystem fileSystem) : base(fileSystem, null) { }    
 
         /// <inheritdoc />
         public override Directory CreateSubdirectory(string path)

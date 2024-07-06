@@ -12,10 +12,8 @@ namespace TotalImage.FileSystems.FAT
         private static FileSystem? GetFatFromBiosParameterBlock(Stream stream, BiosParameterBlock bpb)
         {
             uint rootDirSectors = (((uint)bpb.RootDirectoryEntries * 32) + ((uint)bpb.BytesPerLogicalSector - 1)) / (uint)bpb.BytesPerLogicalSector;
-
             uint fatSectors = bpb.LogicalSectorsPerFAT;
             uint totalSectors = bpb.TotalLogicalSectors;
-
             uint dataSectors = totalSectors - (bpb.ReservedLogicalSectors + (bpb.NumberOfFATs * fatSectors) + rootDirSectors);
             uint clusterCount = dataSectors / bpb.LogicalSectorsPerCluster;
 

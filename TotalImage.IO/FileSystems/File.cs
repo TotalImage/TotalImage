@@ -10,14 +10,9 @@ namespace TotalImage.FileSystems
         private readonly Directory _directory;
 
         /// <summary>
-        /// Create a file within a file system
+        /// The full path to the file
         /// </summary>
-        /// <param name="fileSystem">The file system containing the file</param>
-        /// <param name="directory">The directory that contains the file</param>
-        protected File(FileSystem fileSystem, Directory directory) : base(fileSystem)
-        {
-            _directory = directory;
-        }
+        public override string FullName => Path.Combine(DirectoryName, Name);
 
         /// <summary>
         /// The extension of the file
@@ -35,9 +30,14 @@ namespace TotalImage.FileSystems
         public string DirectoryName => Directory.FullName;
 
         /// <summary>
-        /// The full path to the file
+        /// Create a file within a file system
         /// </summary>
-        public override string FullName => Path.Combine(DirectoryName, Name);
+        /// <param name="fileSystem">The file system containing the file</param>
+        /// <param name="directory">The directory that contains the file</param>
+        protected File(FileSystem fileSystem, Directory directory) : base(fileSystem)
+        {
+            _directory = directory;
+        }
 
         /// <summary>
         /// Retrieves a stream of the file contents.

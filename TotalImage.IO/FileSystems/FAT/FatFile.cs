@@ -4,21 +4,13 @@ using System.Text;
 
 namespace TotalImage.FileSystems.FAT
 {
-    /*
-     * FAT12/FAT16/FAT32 file entry class.
-     *
-     * Just for looks atm
-     */
+    /// <summary>
+    /// A file in a FAT file system.
+    /// </summary>
     public class FatFile : File, IFatFileSystemObject
     {
         private DirectoryEntry entry;
         private LongDirectoryEntry[] lfnEntries;
-
-        public FatFile(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[] lfnEntries, Directory dir) : base(fat, dir)
-        {
-            this.entry = entry;
-            this.lfnEntries = lfnEntries;
-        }
 
         /// <inheritdoc />
         public string ShortName
@@ -84,6 +76,12 @@ namespace TotalImage.FileSystems.FAT
         {
             get => entry.FirstClusterOfFile;
             set => throw new NotImplementedException();
+        }
+
+        public FatFile(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[] lfnEntries, Directory dir) : base(fat, dir)
+        {
+            this.entry = entry;
+            this.lfnEntries = lfnEntries;
         }
 
         /// <inheritdoc />

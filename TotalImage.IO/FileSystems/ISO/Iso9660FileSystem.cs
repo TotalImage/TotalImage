@@ -20,6 +20,24 @@ namespace TotalImage.FileSystems.ISO
     /// </summary>
     public class Iso9660FileSystem : FileSystem
     {
+        /// <inheritdoc />
+        public override string DisplayName => PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier) ? "High Sierra" : PrimaryVolumeDescriptor.IsJolietVolumeDescriptor ? "ISO 9660 + Joliet" : "ISO 9660";
+
+        /// <inheritdoc />
+        public override string VolumeLabel { get; set; }
+
+        /// <inheritdoc />
+        public override Directory RootDirectory { get; }
+
+        /// <inheritdoc />
+        public override long TotalFreeSpace => 0;
+
+        /// <inheritdoc />
+        public override long TotalSize { get; }
+
+        /// <inheritdoc />
+        public override uint AllocationUnitSize => PrimaryVolumeDescriptor.LogicalBlockSize;
+
         /// <summary>
         /// The volume descriptors for the ISO 9660 or High Sierra file system
         /// </summary>
@@ -84,23 +102,5 @@ namespace TotalImage.FileSystems.ISO
             RootDirectory = new IsoDirectory(primaryDescriptor.RootDirectory, this);
             TotalSize = primaryDescriptor.LogicalBlockSize * primaryDescriptor.VolumeSpace;
         }
-
-        /// <inheritdoc />
-        public override string DisplayName => PrimaryVolumeDescriptor.Identifier.SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier) ? "High Sierra" : PrimaryVolumeDescriptor.IsJolietVolumeDescriptor ? "ISO 9660 + Joliet" : "ISO 9660";
-
-        /// <inheritdoc />
-        public override string VolumeLabel { get; set; }
-
-        /// <inheritdoc />
-        public override Directory RootDirectory { get; }
-
-        /// <inheritdoc />
-        public override long TotalFreeSpace => 0;
-
-        /// <inheritdoc />
-        public override long TotalSize { get; }
-
-        /// <inheritdoc />
-        public override uint AllocationUnitSize => PrimaryVolumeDescriptor.LogicalBlockSize;
     }
 }

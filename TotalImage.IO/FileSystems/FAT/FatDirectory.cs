@@ -5,24 +5,13 @@ using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
 {
-    /*
-     * FAT12/FAT16/FAT32 directory class. Implements directory entry enumeration.
-     */
+    /// <summary>
+    /// A directory containing other directories and files in a FAT file system.
+    /// </summary>
     public class FatDirectory : Directory, IFatFileSystemObject
     {
         private DirectoryEntry? entry = null;
         private LongDirectoryEntry[]? lfnEntries = null;
-
-        public FatDirectory(FatFileSystem fat) : base(fat, null)
-        {
-
-        }
-
-        public FatDirectory(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[]? lfnEntries, Directory parent) : base(fat, parent)
-        {
-            this.entry = entry;
-            this.lfnEntries = lfnEntries;
-        }
 
         /// <inheritdoc />
         public string ShortName
@@ -100,6 +89,14 @@ namespace TotalImage.FileSystems.FAT
                 (((FatFileSystem)FileSystem).BiosParameterBlock as Fat32BiosParameterBlock)?.RootDirectoryCluster ??
                 throw new InvalidOperationException();
             set => throw new NotImplementedException();
+        }
+
+        public FatDirectory(FatFileSystem fat) : base(fat, null) { }
+
+        public FatDirectory(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[]? lfnEntries, Directory parent) : base(fat, parent)
+        {
+            this.entry = entry;
+            this.lfnEntries = lfnEntries;
         }
 
         /// <inheritdoc />

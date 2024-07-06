@@ -17,45 +17,9 @@ namespace TotalImage.FileSystems
         );
 
         /// <summary>
-        /// Attempt to detect the file system of a stream using known file system types
-        /// </summary>
-        /// <param name="stream">The stream containing a file system</param>
-        /// <returns>A file system if detection was successful, null if not.</returns>
-        public static FileSystem AttemptDetection(Stream stream)
-        {
-            foreach (var factory in _knownFactories)
-            {
-                var result = factory.TryLoadFileSystem(stream);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-
-            return new RawFileSystem(stream);
-        }
-
-        /// <summary>
         /// The stream containing the file system
         /// </summary>
         protected readonly Stream _stream;
-
-        /// <summary>
-        /// Create a representation of the file system
-        /// </summary>
-        /// <param name="containerStream">The stream containing the file system</param>
-        protected FileSystem(Stream containerStream)
-        {
-            _stream = containerStream;
-        }
-
-        /// <summary>
-        /// Retrieves a stream of the file system contents
-        /// </summary>
-        public Stream GetStream()
-        {
-            return _stream;
-        }
 
         /// <summary>
         /// A display name for the format of the file system
@@ -86,5 +50,41 @@ namespace TotalImage.FileSystems
         /// The minimum allocatable unit size on the file system
         /// </summary>
         public abstract uint AllocationUnitSize { get; }
+
+        /// <summary>
+        /// Create a representation of the file system
+        /// </summary>
+        /// <param name="containerStream">The stream containing the file system</param>
+        protected FileSystem(Stream containerStream)
+        {
+            _stream = containerStream;
+        }
+
+        /// <summary>
+        /// Attempt to detect the file system of a stream using known file system types
+        /// </summary>
+        /// <param name="stream">The stream containing a file system</param>
+        /// <returns>A file system if detection was successful, null if not.</returns>
+        public static FileSystem AttemptDetection(Stream stream)
+        {
+            foreach (var factory in _knownFactories)
+            {
+                var result = factory.TryLoadFileSystem(stream);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return new RawFileSystem(stream);
+        }
+
+        /// <summary>
+        /// Retrieves a stream of the file system contents
+        /// </summary>
+        public Stream GetStream()
+        {
+            return _stream;
+        }
     }
 }

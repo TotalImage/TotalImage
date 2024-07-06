@@ -7,11 +7,24 @@ namespace TotalImage.FileSystems.FAT
     {
         private readonly FatFileSystem _fat;
         private readonly Stream _base;
-
         private readonly uint[] _clusters;
         private readonly uint _length;
-
         private uint _position = 0;
+
+        /// <inheritdoc />
+        public override bool CanRead => _base.CanRead;
+
+        /// <inheritdoc />
+        public override bool CanSeek => _base.CanSeek;
+
+        /// <inheritdoc />
+        public override bool CanWrite => _base.CanWrite;
+
+        /// <inheritdoc />
+        public override long Length => _length;
+
+        /// <inheritdoc />
+        public override long Position { get => _position; set => Seek(value, SeekOrigin.Begin); }
 
         public FatDataStream(FatFileSystem fat, uint firstCluster)
         {
@@ -29,25 +42,7 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
-        public FatDataStream(FatFileSystem fat, DirectoryEntry entry) : this(fat, entry, false)
-        {
-
-        }
-
-        /// <inheritdoc />
-        public override bool CanRead => _base.CanRead;
-
-        /// <inheritdoc />
-        public override bool CanSeek => _base.CanSeek;
-
-        /// <inheritdoc />
-        public override bool CanWrite => _base.CanWrite;
-
-        /// <inheritdoc />
-        public override long Length => _length;
-
-        /// <inheritdoc />
-        public override long Position { get => _position; set => Seek(value, SeekOrigin.Begin); }
+        public FatDataStream(FatFileSystem fat, DirectoryEntry entry) : this(fat, entry, false) { }
 
         /// <inheritdoc />
         public override void Flush() => _base.Flush();

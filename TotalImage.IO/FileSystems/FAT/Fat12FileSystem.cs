@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using TotalImage.FileSystems.BPB;
@@ -13,6 +13,9 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override string DisplayName => "FAT12";
 
+        /// <inheritdoc />
+        public override FAT.FileAllocationTable[] Fats { get; }
+
         public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
             Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
@@ -20,7 +23,15 @@ namespace TotalImage.FileSystems.FAT
                 Fats[i] = new FileAllocationTable(this, i);
         }
 
-        //Formats a volume with FAT12 file system - currently assumes it's a floppy disk...
+        /// <summary>
+        /// Creates a new FAT12 file system based on the provided BIOS Parameter Block. Currently assumes a floppy disk.
+        /// </summary>
+        /// <param name="stream">The stream containing the file system</param>
+        /// <param name="bpb">The BIOS Parameter Block to use for creating the file system</param>
+        /// <param name="writeBPB">Should the provided BPB be written at the start of the stream</param>
+        /// <returns>FAT12 file system</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="InvalidDataException"></exception>
         public static Fat12FileSystem Create(Stream stream, BiosParameterBlock bpb, bool writeBPB)
         {
             if (stream == null)
@@ -124,13 +135,11 @@ namespace TotalImage.FileSystems.FAT
             return fat;
         }
 
-        /// <inheritdoc />
-        public override FAT.FileAllocationTable[] Fats { get; }
-
         private class FileAllocationTable : FAT.FileAllocationTable
         {
             Fat12FileSystem _fat12;
             int _fatIndex;
+
             internal FileAllocationTable(Fat12FileSystem fat12, int fatIndex)
             {
                 if (fatIndex >= fat12._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();

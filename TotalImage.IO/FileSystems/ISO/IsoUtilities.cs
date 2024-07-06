@@ -9,11 +9,11 @@ namespace TotalImage.FileSystems.ISO
     /// </summary>
     public static class IsoUtilities
     {
-        private static readonly char[][] _blacklistedDates = new char[][]
-        {
+        private static readonly char[][] _blacklistedDates =
+        [
             "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000".ToCharArray(),
             "00000000000000000".ToCharArray()
-        };
+        ];
 
         /// <summary>
         /// Converts an ISO-9660 or High Sierra date format to a DateTimeOffset

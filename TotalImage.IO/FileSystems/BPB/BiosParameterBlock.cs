@@ -6,7 +6,6 @@ using TotalImage.FileSystems.FAT;
 
 namespace TotalImage.FileSystems.BPB
 {
-
     /// <summary>
     /// BIOS Parameter Block for FAT12 and FAT16 file systems versions 2.0-3.31.
     /// </summary>

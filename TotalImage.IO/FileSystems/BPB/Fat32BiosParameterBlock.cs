@@ -1,8 +1,10 @@
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace TotalImage.FileSystems.BPB
 {
+    /// <summary>
+    /// A FAT32-specific version of the Extended BIOS Parameter Block.
+    /// </summary>
     public class Fat32BiosParameterBlock : ExtendedBiosParameterBlock
     {
         public override BiosParameterBlockVersion Version => BiosParameterBlockVersion.Fat32;
@@ -11,6 +13,9 @@ namespace TotalImage.FileSystems.BPB
 
         public ushort FileSystemVersion { get; private set; }
 
+        /// <summary>
+        /// The first cluster of the root directory.
+        /// </summary>
         public uint RootDirectoryCluster { get; private set; }
 
         public ushort FsInfo { get; private set; }
@@ -19,10 +24,7 @@ namespace TotalImage.FileSystems.BPB
 
         public byte[] Reserved { get; private set; } = new byte[11];
 
-        public Fat32BiosParameterBlock(BiosParameterBlock bpb) : base(bpb)
-        {
-            
-        }
+        public Fat32BiosParameterBlock(BiosParameterBlock bpb) : base(bpb) { }
 
         public new static Fat32BiosParameterBlock? ContinueParsing(BiosParameterBlock bpb, BinaryReader reader)
         {

@@ -10,6 +10,12 @@ namespace TotalImage.FileSystems.FAT
     /// </summary>
     public class Fat16FileSystem : FatFileSystem
     {
+        /// <inheritdoc />
+        public override string DisplayName => "FAT16";
+
+        /// <inheritdoc />
+        public override FAT.FileAllocationTable[] Fats { get; }
+
         public Fat16FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
             Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
@@ -17,16 +23,11 @@ namespace TotalImage.FileSystems.FAT
                 Fats[i] = new FileAllocationTable(this, i);
         }
 
-        /// <inheritdoc />
-        public override string DisplayName => "FAT16";
-
-        /// <inheritdoc />
-        public override FAT.FileAllocationTable[] Fats { get; }
-
         private class FileAllocationTable : FAT.FileAllocationTable
         {
             Fat16FileSystem _fat16;
             int _fatIndex;
+
             internal FileAllocationTable(Fat16FileSystem fat16, int fatIndex)
             {
                 if (fatIndex >= fat16._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();

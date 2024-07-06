@@ -1,5 +1,6 @@
 using System.IO;
 
+//We might want to reconsider this name to avoid confusion with other uses of "raw"...
 namespace TotalImage.FileSystems.RAW
 {
     /// <summary>
@@ -7,14 +8,6 @@ namespace TotalImage.FileSystems.RAW
     /// </summary>
     public class RawFileSystem : FileSystem
     {
-        /// <summary>
-        /// Create an empty RAW file system
-        /// </summary>
-        /// <param name="containerStream">The underlying stream</param>
-        public RawFileSystem(Stream containerStream) : base(containerStream)
-        {
-        }
-
         /// <inheritdoc />
         public override string DisplayName => "RAW";
 
@@ -36,5 +29,11 @@ namespace TotalImage.FileSystems.RAW
 
         /// <inheritdoc />
         public override uint AllocationUnitSize => 512;
+
+        /// <summary>
+        /// Create an empty RAW file system
+        /// </summary>
+        /// <param name="containerStream">The underlying stream</param>
+        public RawFileSystem(Stream containerStream) : base(containerStream) { }
     }
 }
