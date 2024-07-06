@@ -150,7 +150,7 @@ namespace TotalImage
                  * Once the PC98 partition table is supported, that would have to be taken into account, since it can co-exist with MBR... */
                 else if (image is NhdContainer nhd)
                 {
-                    ulong sectors = nhd.Header.Cylinders * nhd.Header.Heads * nhd.Header.Sectors;
+                    ulong sectors = nhd.Header.Cylinders * nhd.Header.Heads * nhd.Header.SectorsPerTrack;
                     lblDiskTotalSectors1.Text = $"{sectors:N0}";
                     lblDiskTotalSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(sectors * nhd.Header.SectorSize)}";
                     lblDiskUsableSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(sectors * nhd.Header.SectorSize - nhd.Header.SectorSize)}";

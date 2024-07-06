@@ -48,26 +48,6 @@ namespace TotalImage.Containers.NHD
         public ushort SectorSize { get; }
 
         /// <summary>
-        /// Get the bytes of the NHD header for writing
-        /// </summary>
-        public byte[] GetBytes()
-        {
-            byte[] bytes = new byte[512];
-            Array.Copy(Encoding.ASCII.GetBytes(COOKIE_VALUE), 0, bytes, 0, 14);
-            //Two reserved bytes here, must be 0
-            if (Comment != null)
-                Array.Copy(Encoding.ASCII.GetBytes(Comment), 0, bytes, 16, 256);
-            BinaryPrimitives.WriteUInt32LittleEndian(bytes[272..276], HeaderSize);
-            BinaryPrimitives.WriteUInt32LittleEndian(bytes[276..280], Cylinders);
-            BinaryPrimitives.WriteUInt16LittleEndian(bytes[280..282], Heads);
-            BinaryPrimitives.WriteUInt16LittleEndian(bytes[282..284], SectorsPerTrack);
-            BinaryPrimitives.WriteUInt16LittleEndian(bytes[284..286], SectorSize);
-            //226 reserved bytes from here to the end of the header, must be 0
-
-            return bytes;
-        }
-
-        /// <summary>
         /// Create an empty new NHD header for a specified disk size
         /// </summary>
         /// <param name="size">Size of disk in bytes</param>
@@ -98,6 +78,26 @@ namespace TotalImage.Containers.NHD
             Heads = BinaryPrimitives.ReadUInt16LittleEndian(bytes[280..282]);
             SectorsPerTrack = BinaryPrimitives.ReadUInt16LittleEndian(bytes[282..284]);
             SectorSize = BinaryPrimitives.ReadUInt16LittleEndian(bytes[284..286]);
+        }
+
+        /// <summary>
+        /// Get the bytes of the NHD header for writing
+        /// </summary>
+        public byte[] GetBytes()
+        {
+            byte[] bytes = new byte[512];
+            Array.Copy(Encoding.ASCII.GetBytes(COOKIE_VALUE), 0, bytes, 0, 14);
+            //Two reserved bytes here, must be 0
+            if (Comment != null)
+                Array.Copy(Encoding.ASCII.GetBytes(Comment), 0, bytes, 16, 256);
+            BinaryPrimitives.WriteUInt32LittleEndian(bytes[272..276], HeaderSize);
+            BinaryPrimitives.WriteUInt32LittleEndian(bytes[276..280], Cylinders);
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes[280..282], Heads);
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes[282..284], SectorsPerTrack);
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes[284..286], SectorSize);
+            //226 reserved bytes from here to the end of the header, must be 0
+
+            return bytes;
         }
     }
 }

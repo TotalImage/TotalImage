@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 namespace TotalImage.Containers.VHD;
@@ -13,6 +12,12 @@ public class VhdContainer : Container
     private readonly VhdFooter? _footerCopy; //The backup copy of the footer at the start of the file, sometimes called "header"
     private readonly VhdDynamicHeader? _dynamicHeader; //A separate header structure for dynamic and differencing disks, following the footer copy
     private readonly VhdBlockAllocationTable? _bat; //Block Allocation Table for dynamic and differencing disks
+
+    /// <inheritdoc />
+    public override Stream Content => _contentStream;
+
+    /// <inheritdoc />
+    public override string DisplayName => "Microsoft VHD";
 
     /// <summary>
     /// The footer structure of this VHD
@@ -77,10 +82,4 @@ public class VhdContainer : Container
             _contentStream = new PartialStream(containerStream, 0, containerStream.Length - 512);
         }
     }
-
-    /// <inheritdoc />
-    public override Stream Content => _contentStream;
-
-    /// <inheritdoc />
-    public override string DisplayName => "Microsoft VHD";
 }

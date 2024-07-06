@@ -7,14 +7,7 @@ internal class VhdStream : Stream
 {
     private readonly VhdContainer _vhd;
     private readonly Stream _base;
-
     private long _position = 0;
-
-    internal VhdStream(VhdContainer vhd, Stream baseStream)
-    {
-        _vhd = vhd;
-        _base = baseStream;
-    }
 
     public override bool CanRead => _base.CanRead;
 
@@ -28,6 +21,12 @@ internal class VhdStream : Stream
     {
         get => _position;
         set => Seek(value, SeekOrigin.Begin);
+    }
+
+    internal VhdStream(VhdContainer vhd, Stream baseStream)
+    {
+        _vhd = vhd;
+        _base = baseStream;
     }
 
     public override void Flush()

@@ -109,6 +109,50 @@ public class VhdDynamicHeader
     public VhdPlatformLocatorEntry ParentLocatorEntry8 { get; }
 
     /// <summary>
+    /// Read a VHD dynamic disk header record from a span of bytes
+    /// </summary>
+    /// <param name="bytes">The span of bytes containing the dynamic header record</param>
+    internal VhdDynamicHeader(ReadOnlySpan<byte> bytes)
+    {
+        Cookie = Encoding.ASCII.GetString(bytes[0..8]);
+        if (!string.Equals(COOKIE_VALUE, Cookie, StringComparison.InvariantCulture))
+        {
+            throw new InvalidDataException("Could not find a valid VHD dynamic disk header");
+        }
+
+        DataOffset = BinaryPrimitives.ReadUInt64BigEndian(bytes[8..16]);
+        if (DataOffset != ulong.MaxValue)
+        {
+            throw new NotImplementedException("Found invalid data while parsing the VHD dynamic disk header");
+        }
+
+        TableOffset = BinaryPrimitives.ReadUInt64BigEndian(bytes[16..24]);
+        HeaderVersionMajor = BinaryPrimitives.ReadUInt16BigEndian(bytes[24..26]);
+        HeaderVersionMinor = BinaryPrimitives.ReadUInt16BigEndian(bytes[26..28]);
+        MaxTableEntries = BinaryPrimitives.ReadUInt32BigEndian(bytes[28..32]);
+        BlockSize = BinaryPrimitives.ReadUInt32BigEndian(bytes[32..36]);
+        Checksum = BinaryPrimitives.ReadUInt32BigEndian(bytes[36..40]);
+
+        ParentUniqueId = new Guid(
+            BinaryPrimitives.ReadInt32BigEndian(bytes[40..44]),
+            BinaryPrimitives.ReadInt16BigEndian(bytes[44..46]),
+            BinaryPrimitives.ReadInt16BigEndian(bytes[46..48]),
+            bytes[48..56].ToArray());
+
+        ParentModificationTime = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero).AddSeconds(BinaryPrimitives.ReadUInt32BigEndian(bytes[56..60]));
+        ParentUnicodeName = Encoding.Unicode.GetString(bytes[64..576]).TrimEnd();
+
+        ParentLocatorEntry1 = new VhdPlatformLocatorEntry(bytes[576..600]);
+        ParentLocatorEntry2 = new VhdPlatformLocatorEntry(bytes[600..624]);
+        ParentLocatorEntry3 = new VhdPlatformLocatorEntry(bytes[624..648]);
+        ParentLocatorEntry4 = new VhdPlatformLocatorEntry(bytes[648..672]);
+        ParentLocatorEntry5 = new VhdPlatformLocatorEntry(bytes[672..696]);
+        ParentLocatorEntry6 = new VhdPlatformLocatorEntry(bytes[696..720]);
+        ParentLocatorEntry7 = new VhdPlatformLocatorEntry(bytes[720..744]);
+        ParentLocatorEntry8 = new VhdPlatformLocatorEntry(bytes[744..768]);
+    }
+
+    /// <summary>
     /// Calculates the VHD footer checksum field from the bytes of a footer record
     /// </summary>
     /// <param name="record">The bytes containing the VHD footer record</param>
@@ -181,50 +225,6 @@ public class VhdDynamicHeader
     }
 
     /// <summary>
-    /// Read a VHD dynamic disk header record from a span of bytes
-    /// </summary>
-    /// <param name="bytes">The span of bytes containing the dynamic header record</param>
-    internal VhdDynamicHeader(ReadOnlySpan<byte> bytes)
-    {
-        Cookie = Encoding.ASCII.GetString(bytes[0..8]);
-        if (!string.Equals(COOKIE_VALUE, Cookie, StringComparison.InvariantCulture))
-        {
-            throw new InvalidDataException("Could not find a valid VHD dynamic disk header");
-        }
-
-        DataOffset = BinaryPrimitives.ReadUInt64BigEndian(bytes[8..16]);
-        if (DataOffset != ulong.MaxValue)
-        {
-            throw new NotImplementedException("Found invalid data while parsing the VHD dynamic disk header");
-        }
-
-        TableOffset = BinaryPrimitives.ReadUInt64BigEndian(bytes[16..24]);
-        HeaderVersionMajor = BinaryPrimitives.ReadUInt16BigEndian(bytes[24..26]);
-        HeaderVersionMinor = BinaryPrimitives.ReadUInt16BigEndian(bytes[26..28]);
-        MaxTableEntries = BinaryPrimitives.ReadUInt32BigEndian(bytes[28..32]);
-        BlockSize = BinaryPrimitives.ReadUInt32BigEndian(bytes[32..36]);
-        Checksum = BinaryPrimitives.ReadUInt32BigEndian(bytes[36..40]);
-
-        ParentUniqueId = new Guid(
-            BinaryPrimitives.ReadInt32BigEndian(bytes[40..44]),
-            BinaryPrimitives.ReadInt16BigEndian(bytes[44..46]),
-            BinaryPrimitives.ReadInt16BigEndian(bytes[46..48]),
-            bytes[48..56].ToArray());
-
-        ParentModificationTime = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero).AddSeconds(BinaryPrimitives.ReadUInt32BigEndian(bytes[56..60]));
-        ParentUnicodeName = Encoding.Unicode.GetString(bytes[64..576]).TrimEnd();
-
-        ParentLocatorEntry1 = new VhdPlatformLocatorEntry(bytes[576..600]);
-        ParentLocatorEntry2 = new VhdPlatformLocatorEntry(bytes[600..624]);
-        ParentLocatorEntry3 = new VhdPlatformLocatorEntry(bytes[624..648]);
-        ParentLocatorEntry4 = new VhdPlatformLocatorEntry(bytes[648..672]);
-        ParentLocatorEntry5 = new VhdPlatformLocatorEntry(bytes[672..696]);
-        ParentLocatorEntry6 = new VhdPlatformLocatorEntry(bytes[696..720]);
-        ParentLocatorEntry7 = new VhdPlatformLocatorEntry(bytes[720..744]);
-        ParentLocatorEntry8 = new VhdPlatformLocatorEntry(bytes[744..768]);
-    }
-
-    /// <summary>
     /// An entry in the dynamic disk header that stores an absolute byte offset in the file where the parent locator for a differencing hard disk 
     /// is stored
     /// </summary>
@@ -259,6 +259,21 @@ public class VhdDynamicHeader
             PlatformDataSpace = BinaryPrimitives.ReadUInt32BigEndian(bytes[4..8]);
             PlatformDataLength = BinaryPrimitives.ReadUInt32BigEndian(bytes[8..12]);
             PlatformDataOffset = BinaryPrimitives.ReadUInt64BigEndian(bytes[16..24]);
+        }
+
+        /// <summary>
+        /// Gets the raw bytes representing this platform locator entry
+        /// </summary>
+        public Span<byte> GetByteSpan()
+        {
+            var bytes = new byte[24];
+
+            BinaryPrimitives.WriteUInt32BigEndian(bytes[0..4], (uint)PlatformCode);
+            BinaryPrimitives.WriteUInt32BigEndian(bytes[4..8], PlatformDataSpace);
+            BinaryPrimitives.WriteUInt32BigEndian(bytes[8..12], PlatformDataLength);
+            BinaryPrimitives.WriteUInt64BigEndian(bytes[16..24], PlatformDataOffset);
+
+            return bytes.AsSpan();
         }
 
         /// <summary>
@@ -300,21 +315,6 @@ public class VhdDynamicHeader
             /// A file URL with UTF-8 encoding conforming to RFC 2396
             /// </summary>
             MacX = 0x4D616358
-        }
-
-        /// <summary>
-        /// Gets the raw bytes representing this platform locator entry
-        /// </summary>
-        public Span<byte> GetByteSpan()
-        {
-            var bytes = new byte[24];
-
-            BinaryPrimitives.WriteUInt32BigEndian(bytes[0..4], (uint)PlatformCode);
-            BinaryPrimitives.WriteUInt32BigEndian(bytes[4..8], PlatformDataSpace);
-            BinaryPrimitives.WriteUInt32BigEndian(bytes[8..12], PlatformDataLength);
-            BinaryPrimitives.WriteUInt64BigEndian(bytes[16..24], PlatformDataOffset);
-
-            return bytes.AsSpan();
         }
     }
 }

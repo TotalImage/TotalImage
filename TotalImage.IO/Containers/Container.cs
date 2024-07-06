@@ -1,5 +1,4 @@
 using System;
-using System.Buffers.Binary;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Security.Cryptography;
@@ -14,6 +13,8 @@ namespace TotalImage.Containers
     /// </summary>
     public abstract class Container : IDisposable
     {
+        private PartitionTable? _partitionTable;
+
         /// <summary>
         /// The backing file containing the image, opened as a memory-mapped file
         /// </summary>
@@ -24,7 +25,20 @@ namespace TotalImage.Containers
         /// </summary>
         protected Stream containerStream;
 
-        private PartitionTable? _partitionTable;
+        /// <summary>
+        /// A stream exposing the content of the container file
+        /// </summary>
+        public abstract Stream Content { get; }
+
+        /// <summary>
+        /// The display name of the container.
+        /// </summary>
+        public abstract string DisplayName { get; }
+
+        /// <summary>
+        /// The length of the container file
+        /// </summary>
+        public long Length => Content.Length;
 
         /// <summary>
         /// Returns the partition table contained within the image
@@ -43,16 +57,6 @@ namespace TotalImage.Containers
                 return _partitionTable;
             }
         }
-
-        /// <summary>
-        /// A stream exposing the content of the container file
-        /// </summary>
-        public abstract Stream Content { get; }
-
-        /// <summary>
-        /// The length of the container file
-        /// </summary>
-        public long Length => Content.Length;//containerStream.Length;
 
         /// <summary>
         /// Create a container file from an existing file
@@ -130,11 +134,6 @@ namespace TotalImage.Containers
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        /// <summary>
-        /// The display name of the container.
-        /// </summary>
-        public abstract string DisplayName { get; }
 
         SemaphoreSlim hashMutex = new SemaphoreSlim(1, 1);
 

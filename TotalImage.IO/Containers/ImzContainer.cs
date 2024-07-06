@@ -13,10 +13,10 @@ namespace TotalImage.Containers
         public override Stream Content { get; }
 
         /// <inheritdoc />
-        public string? Comment { get; }
+        public override string DisplayName => "WinImage compressed image";
 
         /// <inheritdoc />
-        public override string DisplayName => "WinImage compressed image";
+        public string? Comment { get; }
 
         /// <inheritdoc />
         public ImzContainer(string path, bool memoryMapping) : base(path, memoryMapping)

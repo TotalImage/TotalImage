@@ -43,6 +43,20 @@ namespace TotalImage.Containers.Anex86
         /// </summary>
         public int Cylinders { get; }
 
+        /// <summary>
+        /// Read an FDI/HDI header from a span of bytes
+        /// </summary>
+        /// <param name="bytes">The span of bytes containing the header</param>
+        public Anex86Header(ReadOnlySpan<byte> bytes)
+        {
+            DiskType = BinaryPrimitives.ReadInt32LittleEndian(bytes[4..8]);
+            HeaderSize = BinaryPrimitives.ReadInt32LittleEndian(bytes[8..12]);
+            DataSize = BinaryPrimitives.ReadInt32LittleEndian(bytes[12..16]);
+            SectorSize = BinaryPrimitives.ReadInt32LittleEndian(bytes[16..20]);
+            Sectors = BinaryPrimitives.ReadInt32LittleEndian(bytes[20..24]);
+            Heads = BinaryPrimitives.ReadInt32LittleEndian(bytes[24..28]);
+            Cylinders = BinaryPrimitives.ReadInt32LittleEndian(bytes[28..32]);
+        }
 
         /// <summary>
         /// Get the bytes of the FDI/HDI header for writing
@@ -61,21 +75,6 @@ namespace TotalImage.Containers.Anex86
             //Reserved bytes until the start of the data area, must be 0.
 
             return bytes;
-        }
-
-        /// <summary>
-        /// Read an FDI/HDI header from a span of bytes
-        /// </summary>
-        /// <param name="bytes">The span of bytes containing the header</param>
-        public Anex86Header(ReadOnlySpan<byte> bytes)
-        {
-            DiskType = BinaryPrimitives.ReadInt32LittleEndian(bytes[4..8]);
-            HeaderSize = BinaryPrimitives.ReadInt32LittleEndian(bytes[8..12]);
-            DataSize = BinaryPrimitives.ReadInt32LittleEndian(bytes[12..16]);
-            SectorSize = BinaryPrimitives.ReadInt32LittleEndian(bytes[16..20]);
-            Sectors = BinaryPrimitives.ReadInt32LittleEndian(bytes[20..24]);
-            Heads = BinaryPrimitives.ReadInt32LittleEndian(bytes[24..28]);
-            Cylinders = BinaryPrimitives.ReadInt32LittleEndian(bytes[28..32]);
         }
     }
 }

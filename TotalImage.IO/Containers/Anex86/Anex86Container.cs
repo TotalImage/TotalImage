@@ -1,4 +1,3 @@
-using System;
 using System.Buffers.Binary;
 using System.IO;
 
@@ -15,13 +14,13 @@ namespace TotalImage.Containers.Anex86
         /// <inheritdoc />
         public override Stream Content => _contentStream;
 
+        /// <inheritdoc />
+        public override string DisplayName => "Anex86 disk image";
+
         /// <summary>
         /// The header structure of this FDI/HDI image
         /// </summary>
         public Anex86Header Header => _header;
-
-        /// <inheritdoc />
-        public override string DisplayName => "Anex86 disk image";
 
         /// <inheritdoc />
         public Anex86Container(string path, bool memoryMapping) : base(path, memoryMapping)
