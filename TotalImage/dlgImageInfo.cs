@@ -250,6 +250,7 @@ namespace TotalImage
             if (mainForm.image is IContainerComment containerComment)
             {
                 txtComment.Text = containerComment.Comment;
+                txtComment.ReadOnly = false;
             }
 
             //Fixes the column width on high DPI screens
@@ -488,6 +489,15 @@ namespace TotalImage
                     else
                         lvi2.ForeColor = SystemColors.WindowText;
                 }
+            }
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            if (mainForm.image is IContainerComment containerComment)
+            {
+                containerComment.Comment = txtComment.Text;
+                containerComment.WriteComment(txtComment.Text);
             }
         }
     }

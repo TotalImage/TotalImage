@@ -8,5 +8,11 @@ public interface IContainerComment
     /// <summary>
     /// The comment for this image.
     /// </summary>
-    string? Comment { get; }
+    public string? Comment { get; set; }
+
+    /// <summary>
+    /// Writes the provided comment to the image.
+    /// </summary>
+    /// <param name="comment">The comment to write</param>
+    public abstract void WriteComment(string comment);
 }
