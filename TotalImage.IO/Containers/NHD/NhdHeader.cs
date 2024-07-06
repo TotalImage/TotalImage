@@ -38,9 +38,9 @@ namespace TotalImage.Containers.NHD
         public ushort Heads { get; }
 
         /// <summary>
-        /// The number of sectors of the disk represented by this NHD
+        /// The number of sectors per track represented by this NHD
         /// </summary>
-        public ushort Sectors { get; }
+        public ushort SectorsPerTrack { get; }
 
         /// <summary>
         /// The size of a sector in bytes
@@ -60,7 +60,7 @@ namespace TotalImage.Containers.NHD
             BinaryPrimitives.WriteUInt32LittleEndian(bytes[272..276], HeaderSize);
             BinaryPrimitives.WriteUInt32LittleEndian(bytes[276..280], Cylinders);
             BinaryPrimitives.WriteUInt16LittleEndian(bytes[280..282], Heads);
-            BinaryPrimitives.WriteUInt16LittleEndian(bytes[282..284], Sectors);
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes[282..284], SectorsPerTrack);
             BinaryPrimitives.WriteUInt16LittleEndian(bytes[284..286], SectorSize);
             //226 reserved bytes from here to the end of the header, must be 0
 
@@ -77,7 +77,7 @@ namespace TotalImage.Containers.NHD
             Comment = "Created by TotalImage 1.0";
             HeaderSize = 512;
             SectorSize = 512;
-            (Cylinders, Heads, Sectors) = CHSAddress.GetGeometryFromSize(size);
+            (Cylinders, Heads, SectorsPerTrack) = CHSAddress.GetGeometryFromSize(size);
         }
 
         /// <summary>
@@ -92,11 +92,11 @@ namespace TotalImage.Containers.NHD
                 throw new InvalidDataException("Could not find a valid NHD header");
             }
 
-            Comment = Encoding.ASCII.GetString(bytes[16..256]).TrimEnd().TrimEnd('\0'); //Also clear the trailing null bytes just in case
+            Comment = Encoding.ASCII.GetString(bytes[16..272]).TrimEnd().TrimEnd('\0'); //Also clear the trailing null bytes just in case
             HeaderSize = BinaryPrimitives.ReadUInt32LittleEndian(bytes[272..276]);
             Cylinders = BinaryPrimitives.ReadUInt32LittleEndian(bytes[276..280]);
             Heads = BinaryPrimitives.ReadUInt16LittleEndian(bytes[280..282]);
-            Sectors = BinaryPrimitives.ReadUInt16LittleEndian(bytes[282..284]);
+            SectorsPerTrack = BinaryPrimitives.ReadUInt16LittleEndian(bytes[282..284]);
             SectorSize = BinaryPrimitives.ReadUInt16LittleEndian(bytes[284..286]);
         }
     }
