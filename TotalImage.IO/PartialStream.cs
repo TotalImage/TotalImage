@@ -13,20 +13,6 @@ namespace TotalImage
         private readonly long _offsetStart;
         private readonly long _offsetEnd;
 
-        /// <summary>
-        /// Creates a partial stream from
-        /// </summary>
-        /// <param name="stream">The underlying stream</param>
-        /// <param name="offset">The start of the partial stream</param>
-        /// <param name="length">The length of the partial stream</param>
-        public PartialStream(Stream stream, long offset, long length)
-        {
-            _base = stream;
-            _length = length;
-            _offsetStart = offset;
-            _offsetEnd = offset + length;
-        }
-
         /// <inheritdoc />
         public override bool CanRead => _base.CanRead;
 
@@ -52,6 +38,20 @@ namespace TotalImage
 
                 _base.Position = value + _offsetStart;
             }
+        }
+
+        /// <summary>
+        /// Creates a partial stream from
+        /// </summary>
+        /// <param name="stream">The underlying stream</param>
+        /// <param name="offset">The start of the partial stream</param>
+        /// <param name="length">The length of the partial stream</param>
+        public PartialStream(Stream stream, long offset, long length)
+        {
+            _base = stream;
+            _length = length;
+            _offsetStart = offset;
+            _offsetEnd = offset + length;
         }
 
         /// <inheritdoc />

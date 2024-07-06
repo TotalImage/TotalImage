@@ -59,7 +59,7 @@ namespace TotalImage.Partitions
         }
 
         /// <summary>
-        /// Checks if the boot sector is immediately followed by a FAT12 file allocation table, which would make this a floppy image.
+        /// Checks if the boot sector is immediately followed by a FAT12 file allocation table, which would make this an unpartitioned disk.
         /// </summary>
         /// <param name="Content">Content stream to check</param>
         /// <returns></returns>

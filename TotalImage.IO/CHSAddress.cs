@@ -90,7 +90,6 @@ namespace TotalImage
             cylinders = (ushort)(cylinderTimesHeads / heads);
 
             return (cylinders, heads, sectorsPerTrack);
-
         }
     }
 }

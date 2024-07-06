@@ -47,15 +47,6 @@ namespace TotalImage.Partitions
         }
 
         /// <summary>
-        /// Load the file system from the partition
-        /// </summary>
-        /// <returns>The file system from the partition</returns>
-        private FileSystem? LoadFileSystem()
-        {
-            return FileSystem.AttemptDetection(_stream);
-        }
-
-        /// <summary>
         /// Create a partition entry record from a stream and its position within a parent container
         /// </summary>
         /// <param name="offset">The offset of the partition in it's container file</param>
@@ -66,6 +57,15 @@ namespace TotalImage.Partitions
             Offset = offset;
             Length = length;
             _stream = stream;
+        }
+
+        /// <summary>
+        /// Load the file system from the partition
+        /// </summary>
+        /// <returns>The file system from the partition</returns>
+        private FileSystem? LoadFileSystem()
+        {
+            return FileSystem.AttemptDetection(_stream);
         }
     }
 }

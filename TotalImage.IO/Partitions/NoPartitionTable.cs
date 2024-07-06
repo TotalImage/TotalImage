@@ -11,12 +11,10 @@ namespace TotalImage.Partitions
     public class NoPartitionTable : PartitionTable
     {
         /// <inheritdoc />
-        public NoPartitionTable(Container container) : base(container)
-        {
-        }
+        public override string DisplayName => "Unpartitioned";
 
         /// <inheritdoc />
-        public override string DisplayName => "Unpartitioned";
+        public NoPartitionTable(Container container) : base(container) { }
 
         /// <inheritdoc />
         protected override IEnumerable<PartitionEntry> LoadPartitions()
