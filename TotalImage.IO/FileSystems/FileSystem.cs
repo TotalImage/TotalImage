@@ -52,6 +52,11 @@ namespace TotalImage.FileSystems
         public abstract uint AllocationUnitSize { get; }
 
         /// <summary>
+        /// Does the file system support subdirectories
+        /// </summary>
+        public abstract bool SupportsSubdirectories { get; }
+
+        /// <summary>
         /// Create a representation of the file system
         /// </summary>
         /// <param name="containerStream">The stream containing the file system</param>

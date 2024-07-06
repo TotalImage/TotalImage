@@ -17,13 +17,10 @@ namespace TotalImage.Containers
         public override string DisplayName => "Raw sector image";
 
         /// <inheritdoc />
-        public RawContainer(string path, bool memoryMapping) : base(path, memoryMapping)
-        {
-        }
+        public RawContainer(string path, bool memoryMapping) : base(path, memoryMapping) { }
 
-        private RawContainer(MemoryStream stream) : base(stream)
-        {
-        }
+        /// <inheritdoc />
+        private RawContainer(MemoryStream stream) : base(stream) { }
 
         /// <summary>
         /// Create a new raw image with the provided parameters

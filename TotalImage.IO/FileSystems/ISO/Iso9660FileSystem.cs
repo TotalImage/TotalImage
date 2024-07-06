@@ -38,6 +38,9 @@ namespace TotalImage.FileSystems.ISO
         /// <inheritdoc />
         public override uint AllocationUnitSize => PrimaryVolumeDescriptor.LogicalBlockSize;
 
+        /// <inheritdoc />
+        public override bool SupportsSubdirectories => true;
+
         /// <summary>
         /// The volume descriptors for the ISO 9660 or High Sierra file system
         /// </summary>

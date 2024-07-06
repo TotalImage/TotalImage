@@ -16,6 +16,9 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override FAT.FileAllocationTable[] Fats { get; }
 
+        /// <inheritdoc />
+        public override bool SupportsSubdirectories => true;
+
         public Fat16FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
             Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];

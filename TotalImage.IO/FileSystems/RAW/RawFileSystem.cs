@@ -12,6 +12,9 @@ namespace TotalImage.FileSystems.RAW
         public override string DisplayName => "RAW";
 
         /// <inheritdoc />
+        public override bool SupportsSubdirectories => false;
+
+        /// <inheritdoc />
         public override string VolumeLabel
         {
             get => "";
