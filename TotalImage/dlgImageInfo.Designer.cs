@@ -102,6 +102,7 @@ namespace TotalImage
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 1;
             btnOK.Text = "OK";
+            btnOK.Click += btnOK_Click;
             // 
             // pnlBottom
             // 

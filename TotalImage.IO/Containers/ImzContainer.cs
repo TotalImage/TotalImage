@@ -16,7 +16,7 @@ namespace TotalImage.Containers
         public override string DisplayName => "WinImage compressed image";
 
         /// <inheritdoc />
-        public string? Comment { get; }
+        public string? Comment { get; set; }
 
         /// <inheritdoc />
         public ImzContainer(string path, bool memoryMapping) : base(path, memoryMapping)
@@ -30,6 +30,14 @@ namespace TotalImage.Containers
             imageStream.CopyTo(Content);
 
             Comment = zip.Comment;
+        }
+
+        /// <inheritdoc />
+        public void WriteComment(string comment)
+        {
+            using var zip = new ZipArchive(containerStream, ZipArchiveMode.Update, true);
+            zip.Comment = comment;
+            zip.Dispose();
         }
     }
 }

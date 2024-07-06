@@ -20,7 +20,7 @@ namespace TotalImage.Containers.NHD
         /// <summary>
         /// Optional image comment, up to 256 ASCII characters
         /// </summary>
-        public string? Comment { get; }
+        public string? Comment { get; set; }
 
         /// <summary>
         /// The size of this header in bytes
