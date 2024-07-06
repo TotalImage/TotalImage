@@ -1,4 +1,5 @@
 using System.IO;
+using System.IO.Compression;
 
 namespace TotalImage.Containers.NHD
 {
@@ -17,7 +18,11 @@ namespace TotalImage.Containers.NHD
         public override string DisplayName => "T98-Next HD";
 
         /// <inheritdoc />
-        public string? Comment => Header.Comment;
+        public string? Comment
+        {
+            get => Header.Comment;
+            set => Header.Comment = value;  
+        } 
 
         /// <summary>
         /// The header structure of this NHD image
@@ -33,6 +38,12 @@ namespace TotalImage.Containers.NHD
             containerStream.Seek(0, SeekOrigin.Begin);
             containerStream.Read(header, 0, 512);
             _header = new NhdHeader(header);
+        }
+
+        /// <inheritdoc />
+        public void WriteComment(string comment)
+        {
+
         }
     }
 }
