@@ -83,6 +83,7 @@ namespace TotalImage
             btnOK.TabIndex = 3;
             btnOK.Text = "OK";
             btnOK.UseVisualStyleBackColor = true;
+            btnOK.Click += btnOK_Click;
             // 
             // pnlBottom
             // 

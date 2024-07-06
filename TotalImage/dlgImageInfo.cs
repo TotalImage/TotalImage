@@ -108,6 +108,7 @@ namespace TotalImage
             if (mainForm.image is IContainerComment containerComment)
             {
                 txtComment.Text = containerComment.Comment;
+                txtComment.ReadOnly = false;
             }
         }
 
@@ -253,6 +254,15 @@ namespace TotalImage
             else
             {
                 e.Cancel = true;
+            }
+        }
+
+        private void btnOK_Click(object sender, EventArgs e)
+        {
+            if (mainForm.image is IContainerComment containerComment)
+            {
+                containerComment.Comment = txtComment.Text;
+                containerComment.WriteComment(txtComment.Text);
             }
         }
     }
