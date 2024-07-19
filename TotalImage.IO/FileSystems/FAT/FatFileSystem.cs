@@ -121,7 +121,11 @@ namespace TotalImage.FileSystems.FAT
         /// </summary>
         public override string VolumeLabel
         {
-            get => RootDirectoryVolumeLabel is not null ? RootDirectoryVolumeLabel : BpbVolumeLabel is not null && BpbVolumeLabel.ToUpper() != "NO NAME    " ? BpbVolumeLabel : "";
+            /* "NO NAME" is a placeholder used for the BPB volume label by some versions of DOS if no label is specified when formatting the disk.
+             * We therefore treat it as if there is no volume label in the BPB either and show our own placeholder instead. */
+            get => !string.IsNullOrWhiteSpace(RootDirectoryVolumeLabel) ? 
+                RootDirectoryVolumeLabel : !string.IsNullOrWhiteSpace(BpbVolumeLabel) && !BpbVolumeLabel.Equals("NO NAME", StringComparison.OrdinalIgnoreCase) ? 
+                BpbVolumeLabel : "<No label>";
             set => throw new NotImplementedException();
         }
 
