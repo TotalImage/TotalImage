@@ -2011,13 +2011,13 @@ namespace TotalImage
                         ".720" or ".12" or ".144" or ".288" or ".dsk" or ".hdm" => new RawContainer(path, memoryMapping),
                         ".json" => new PCjsContainer(path, memoryMapping),
                         _ => throw new InvalidDataException("This container format is not recognized and cannot be opened."),
-                    }; ;
+                    };
                 }
                 catch (FileNotFoundException)
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"The file \"{filename}\" could not be opened because it no longer exists. It may have been moved or deleted in the mean time. Make sure the file exists and is accessible and try again.{Environment.NewLine}{Environment.NewLine}" +
+                        Text = $"The file \"{filename}\" could not be opened because it no longer exists. It may have been moved or deleted in the mean time. Make sure the file exists and is accessible, then try again.{Environment.NewLine}{Environment.NewLine}" +
                                 $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "File not found",
                         Caption = "Error",
@@ -2055,7 +2055,7 @@ namespace TotalImage
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"The file \"{filename}\" could not be opened because access was denied. Make sure you have the required permissions and that the file is not marked as read-only.{Environment.NewLine}{Environment.NewLine}" +
+                        Text = $"The file \"{filename}\" could not be opened because access was denied. Make sure you have the required permissions and that the file is not marked as read-only, then try again.{Environment.NewLine}{Environment.NewLine}" +
                                 $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "Access denied",
                         Caption = "Error",
@@ -2103,7 +2103,7 @@ namespace TotalImage
                 {
                     TaskDialog.ShowDialog(this, new TaskDialogPage()
                     {
-                        Text = $"We attempted to open this file as the {image.DisplayName} container, but found no supported partition table or any supported file systems inside, so this image cannot be loaded. " +
+                        Text = $"We attempted to open this file as the {image.DisplayName} container, but found no supported partition table and no supported file systems inside, so this image cannot be loaded. " +
                                 $"It's also possible this container format might not be correct for this file.{Environment.NewLine}{Environment.NewLine}" +
                                 $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
                         Heading = "Cannot open file",
