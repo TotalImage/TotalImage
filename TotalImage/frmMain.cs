@@ -370,19 +370,22 @@ namespace TotalImage
                             Text = "Do not ask for confirmation again"
                         }
                     };
+
+                    //This line needed so the program doesn't implode (ie. passes the keypress to the listview and trigger something random...)
+                    ActiveControl = null;
+
                     TaskDialogButton result = TaskDialog.ShowDialog(this, page);
 
                     if (page.Verification.Checked)
                         Settings.CurrentSettings.ConfirmDeletion = false;
 
-                    if (result == TaskDialogButton.No)
-                        return;
-                }
-
-                //Delete all the selected items
-                foreach (var entry in SelectedItems)
-                {
-                    entry.Delete();
+                    if (result == TaskDialogButton.Yes)
+                    {
+                        foreach (var entry in SelectedItems)
+                        {
+                            entry.Delete();
+                        }
+                    }
                 }
             }
             else if (lstDirectories.Focused)
@@ -638,7 +641,7 @@ namespace TotalImage
                     Caption = "Warning",
                     Buttons =
                         {
-                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
+                            new TaskDialogCommandLinkButton("&Save") { Tag = 1 },
                             new TaskDialogCommandLinkButton("&Discard"),
                             TaskDialogButton.Cancel
                         },
@@ -852,7 +855,7 @@ namespace TotalImage
             List<TiFileSystemObject> entries = new();
             if (lstDirectories.Focused)
             {
-                if(lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
+                if (lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
                     entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
             }
             else if (lstFiles.Focused)
@@ -1426,28 +1429,28 @@ namespace TotalImage
             }
             /*else
             {*/
-                /* Searches the currently displayed items for the first one that starts with the character of the pressed key.
-                 * Currently this is very rudimentary, as it only works for English letters and digits, and the first item that is found.
-                 * Could be improved to continue the search further etc. */
-               /* string character = e.KeyCode.ToString();
+            /* Searches the currently displayed items for the first one that starts with the character of the pressed key.
+             * Currently this is very rudimentary, as it only works for English letters and digits, and the first item that is found.
+             * Could be improved to continue the search further etc. */
+            /* string character = e.KeyCode.ToString();
 
-                //This crap is done so numeric keys also work...
-                if ((byte)e.KeyCode > 0x30 && (byte)e.KeyCode < 0x39)
-                    character = ((int)e.KeyCode - 0x30).ToString();
-                else if ((byte)e.KeyCode > 0x60 && (byte)e.KeyCode < 0x69)
-                    character = ((int)e.KeyCode - 0x60).ToString();
+             //This crap is done so numeric keys also work...
+             if ((byte)e.KeyCode > 0x30 && (byte)e.KeyCode < 0x39)
+                 character = ((int)e.KeyCode - 0x30).ToString();
+             else if ((byte)e.KeyCode > 0x60 && (byte)e.KeyCode < 0x69)
+                 character = ((int)e.KeyCode - 0x60).ToString();
 
-                foreach (ListViewItem lvi in currentFolderView)
-                {
-                    if (lvi.Text.ToLower().StartsWith(character.ToLower()))
-                    {
-                        lstFiles.SelectedIndices.Clear();
-                        lvi.Focused = true;
-                        lvi.Selected = true;
-                        return;
-                    }
-                }
-            }*/
+             foreach (ListViewItem lvi in currentFolderView)
+             {
+                 if (lvi.Text.ToLower().StartsWith(character.ToLower()))
+                 {
+                     lstFiles.SelectedIndices.Clear();
+                     lvi.Focused = true;
+                     lvi.Selected = true;
+                     return;
+                 }
+             }
+         }*/
         }
 
         private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -2160,13 +2163,13 @@ namespace TotalImage
                     //If there's multiple partitions in a supported partition table, and they're all unsupported types, for now we just back out.
                     //Once we implement partition management (soon™), we can offer that to the user.
                     int rawCount = 0;
-                    foreach(Partitions.PartitionEntry entry in image.PartitionTable.Partitions)
+                    foreach (Partitions.PartitionEntry entry in image.PartitionTable.Partitions)
                     {
-                        if(entry.FileSystem is FileSystems.RAW.RawFileSystem)
+                        if (entry.FileSystem is FileSystems.RAW.RawFileSystem)
                             rawCount++;
                     }
 
-                    if(rawCount == image.PartitionTable.Partitions.Count)
+                    if (rawCount == image.PartitionTable.Partitions.Count)
                     {
                         TaskDialog.ShowDialog(this, new TaskDialogPage()
                         {
