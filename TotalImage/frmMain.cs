@@ -2192,9 +2192,7 @@ namespace TotalImage
                         if (image.PartitionTable.Partitions[i].FileSystem is FileSystems.RAW.RawFileSystem)
                             continue;
 
-                        var label = image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ');
-                        if (string.IsNullOrWhiteSpace(label))
-                            label = "<no label>";
+                        var label = image.PartitionTable.Partitions[i].FileSystem.VolumeLabel;
                         var fs = image.PartitionTable.Partitions[i].FileSystem.DisplayName;
                         var length = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length);
 
