@@ -199,7 +199,42 @@ namespace TotalImage.FileSystems.FAT
 
                 set
                 {
-                    throw new NotImplementedException();
+                    if (index >= Length) throw new ArgumentOutOfRangeException();
+
+                    var stream = _fat12.GetStream();
+                    using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+                    using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+
+                    // Seek to the beginning of the cluster map.
+                    stream.Position = _fat12._bpb.ReservedLogicalSectors * _fat12._bpb.BytesPerLogicalSector;
+
+                    if (_fatIndex > 0)
+                    {
+                        // Reading from a backup FAT, so seek to the beginning of that.
+                        var fatOffset = _fatIndex * _fat12._bpb.LogicalSectorsPerFAT * _fat12._bpb.BytesPerLogicalSector;
+                        writer.BaseStream.Seek(fatOffset, SeekOrigin.Current);
+                    }
+
+                    // FAT12 uses 12-bit cluster indices, therefore it's time for some
+                    // crazy maths! Let's first seek further to the nearest even index.
+                    writer.BaseStream.Seek(index / 2 * 3, SeekOrigin.Current);
+                    var pair = reader.ReadUInt32() & 0xFFFFFF;
+
+                    // Right now, `pair` has the value of 0x00123ABC, bits 0-11 contain
+                    // the value of the even index and bits 12-23 contain the value of
+                    // the odd index. All we need to do is return the relevant part.
+                    if (index % 2 == 0)
+                    {
+                        var newValue = value & 0xFFF;
+                        writer.BaseStream.Seek(-4, SeekOrigin.Current);
+                        writer.Write(pair & 0xFFF000 | value);
+                    }
+                    else
+                    {
+                        var newValue = (value & 0xFFF) << 12;
+                        writer.BaseStream.Seek(-4, SeekOrigin.Current);
+                        writer.Write(pair & 0xFFF | value);
+                    }
                 }
             }
         }

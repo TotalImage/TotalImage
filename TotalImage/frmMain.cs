@@ -340,7 +340,11 @@ namespace TotalImage
                         return;
                 }
 
-                throw new NotImplementedException("This feature is not implemented yet");
+                //Delete all the selected items
+                foreach (var entry in SelectedItems)
+                {
+                    entry.Delete();
+                }
             }
             else if (lstDirectories.Focused)
             {
