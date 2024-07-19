@@ -77,7 +77,6 @@ namespace TotalImage.FileSystems.FAT
 
                     var stream = _fat16.GetStream();
                     using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
-                    using var reader = new BinaryReader(stream, Encoding.ASCII, true);
 
                     // Seek to the beginning of the cluster map.
                     stream.Position = _fat16._bpb.ReservedLogicalSectors * _fat16._bpb.BytesPerLogicalSector;
@@ -91,8 +90,7 @@ namespace TotalImage.FileSystems.FAT
 
                     //Write the new value to the cluster map
                     writer.BaseStream.Seek(index * 2, SeekOrigin.Current);
-                    var newValue = value & 0xFFFF;
-                    writer.Write(newValue);
+                    writer.Write(value & Mask);
                 }
             }
         }
