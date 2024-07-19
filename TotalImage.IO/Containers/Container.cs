@@ -105,14 +105,14 @@ namespace TotalImage.Containers
         /// <param name="path">The path to save out the image to</param>
         public void SaveImage(string path)
         {
-            string? tempPath = Path.ChangeExtension(path, ".tmp");
+            /*string? tempPath = Path.ChangeExtension(path, ".tmp");
             using FileStream outStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
             containerStream.Position = 0;
             containerStream.CopyTo(outStream);
             outStream.Flush();
             outStream.Dispose();
             Dispose();
-            File.Move(tempPath, path, true);
+            File.Move(tempPath, path, true);*/
         }
 
         /// <summary>
