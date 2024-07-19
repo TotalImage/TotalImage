@@ -75,6 +75,11 @@ namespace TotalImage.FileSystems.FAT
         /// </summary>
         public uint FileSize => fileSize;
 
+        /// <summary>
+        /// Creates a new DirectoryEntry instance based on the provided file system and entry byte span.
+        /// </summary>
+        /// <param name="fileSystem">The file system that contains this entry</param>
+        /// <param name="entry">The byte span holding the data of this entry</param>
         public DirectoryEntry(FatFileSystem fileSystem, ReadOnlySpan<byte> entry)
         {
             fileName = entry[0..11].ToImmutableArray();
@@ -90,6 +95,30 @@ namespace TotalImage.FileSystems.FAT
             lastWriteDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[24..26]);
             firstClusterOfFile = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
             fileSize = BinaryPrimitives.ReadUInt32LittleEndian(entry[28..32]);
+        }
+
+        /// <summary>
+        /// Returns this directory entry as a byte array.
+        /// </summary>
+        /// <returns>The byte array representing this directory entry</returns>
+        public byte[] GetBytes()
+        {
+            byte[] bytes = new byte[32];
+
+            Array.Copy(FileNameBytes.ToArray(), 0, bytes, 0, 11);
+            bytes[11] = (byte)Attributes;
+            bytes[12] = ntByte;
+            bytes[13] = creationMSec;
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan()[14..16], creationTime);
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan()[16..18], creationDate);
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan()[18..20], lastAccessDate);
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan()[20..22], firstClusterOfFileHi);
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan()[22..24], lastWriteTime);
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan()[24..26], lastWriteDate);
+            BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan()[26..28], firstClusterOfFile);
+            BinaryPrimitives.WriteUInt32LittleEndian(bytes.AsSpan()[28..32], FileSize);
+
+            return bytes;
         }
 
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateRootDirectory(FatFileSystem fat, bool includeDeleted = false)
