@@ -11,6 +11,7 @@ namespace TotalImage.FileSystems.FAT
     {
         private DirectoryEntry entry;
         private LongDirectoryEntry[] lfnEntries;
+        private FatFileSystem fat;
 
         /// <inheritdoc />
         public string ShortName
@@ -82,12 +83,23 @@ namespace TotalImage.FileSystems.FAT
         {
             this.entry = entry;
             this.lfnEntries = lfnEntries;
+            this.fat = fat;
         }
 
         /// <inheritdoc />
         public override void Delete()
         {
-            throw new NotImplementedException();
+            //TODO: Currently this only marks the file's clusters in all FATs as free. However, we still need to mark the directory entry as deleted as well.
+            uint[] clusters = fat.MainFat.GetClusterChain(FirstCluster); //Should we first check FAT integrity here just to be sure?
+
+            //Perform the change in all the present FATs
+            foreach (FileAllocationTable table in fat.Fats)
+            {
+                foreach (uint cluster in clusters)
+                {
+                    table[cluster] = 0;
+                }
+            }
         }
 
         /// <inheritdoc />
