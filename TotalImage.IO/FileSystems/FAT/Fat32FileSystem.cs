@@ -85,7 +85,26 @@ namespace TotalImage.FileSystems.FAT
 
                 set
                 {
-                    throw new NotImplementedException();
+                    index &= Mask;
+
+                    if (index >= Length) throw new ArgumentOutOfRangeException();
+
+                    var stream = _fat32.GetStream();
+                    using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+
+                    // Seek to the beginning of the cluster map.
+                    stream.Position = _fat32._bpb.ReservedLogicalSectors * _fat32._bpb.BytesPerLogicalSector;
+
+                    if (_fatIndex > 0)
+                    {
+                        // Reading from a backup FAT, so seek to the beginning of that.
+                        var fatOffset = _fatIndex * _fat32._bpb.LogicalSectorsPerFAT * _fat32._bpb.BytesPerLogicalSector;
+                        writer.BaseStream.Seek(fatOffset, SeekOrigin.Current);
+                    }
+
+                    // 32-bit cluster map values. Nothing to see here
+                    writer.BaseStream.Seek(index * 4, SeekOrigin.Current);
+                    writer.Write(value & Mask);
                 }
             }
         }
