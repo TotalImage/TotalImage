@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
@@ -12,6 +13,7 @@ namespace TotalImage.FileSystems.FAT
     {
         private DirectoryEntry? entry = null;
         private LongDirectoryEntry[]? lfnEntries = null;
+        private FatFileSystem fat;
 
         /// <inheritdoc />
         public string ShortName
@@ -97,6 +99,7 @@ namespace TotalImage.FileSystems.FAT
         {
             this.entry = entry;
             this.lfnEntries = lfnEntries;
+            this.fat = fat;
         }
 
         /// <inheritdoc />
@@ -108,15 +111,30 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override void Delete()
         {
-            throw new NotImplementedException();
-            /* When deleting a directory, the first character of the name needs to be changed to 0xE5.
-            * The directory's directory entry can then be reused, and its clusters are marked as free until they're
-            * overwritten. The same must then be done for all files and subdirectories inside.
-            * This code is untested until this class is hooked up to the UI... */
+            //TODO: Currently this only marks the clusters in all FATs as free. However, we still need to mark the directory entries as deleted as well.
 
-            //entry.name[0] = 0xE5;
+            //First enumerate all the extant objects in this directory
+            IEnumerable<FileSystemObject> objects = EnumerateFileSystemObjects(false, false);
 
-            //And then mark all clusters in the chain as free, and do the same for all files and subdirectories inside.
+            //If this directory is not empty, recursively call Delete() on everything inside
+            if (objects.Any())
+            {
+                foreach (FileSystemObject obj in objects)
+                {
+                    obj.Delete();
+                } 
+            }
+
+            uint[] clusters = fat.MainFat.GetClusterChain(FirstCluster); //Should we first check FAT integrity here just to be sure?
+
+            //Finally, delete the directory itself as well
+            foreach (FileAllocationTable table in fat.Fats)
+            {
+                foreach (uint cluster in clusters)
+                {
+                    table[cluster] = 0;
+                }
+            }
         }
 
         /// <inheritdoc />
