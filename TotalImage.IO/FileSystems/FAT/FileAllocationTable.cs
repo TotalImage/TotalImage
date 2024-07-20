@@ -41,34 +41,22 @@ public abstract class FileAllocationTable : IEnumerable<uint>
         if (cluster > Mask - 0x10)
         {
             if ((cluster & 0xF) == 7)
-            {
-                Debug.WriteLine("Cluster type: BAD");
                 return ClusterType.Bad;
-            }
-            if ((cluster & 0xF) > 7)
-            {
-                Debug.WriteLine("Cluster type: END OF CHAIN");
-                return ClusterType.EndOfChain;
-            }
 
-            Debug.WriteLine("Cluster type: RESERVED");
+            if ((cluster & 0xF) > 7)
+                return ClusterType.EndOfChain;
+
             return ClusterType.Reserved;
         }
         else if (cluster < 2)
         {
             if (cluster == 0)
-            {
-                Debug.WriteLine("Cluster type: FREE");
                 return ClusterType.Free;
-            }
+
             if (cluster == 1)
-            {
-                Debug.WriteLine("Cluster type: NON-FREE");
                 return ClusterType.NonFree;
-            }
         }
 
-        Debug.WriteLine("Cluster type: DATA");
         return ClusterType.Data;
     }
 
@@ -98,7 +86,6 @@ public abstract class FileAllocationTable : IEnumerable<uint>
     /// <param name="firstCluster">First cluster in the chain.</param>
     public uint[] GetClusterChain(uint firstCluster)
     {
-        Debug.WriteLine($"First cluster: {firstCluster}");
         var clusters = new List<uint>();
         var cluster = (uint?)firstCluster;
 
@@ -106,7 +93,6 @@ public abstract class FileAllocationTable : IEnumerable<uint>
         {
             clusters.Add(cluster.Value);
             cluster = GetNextCluster(cluster.Value);
-            Debug.WriteLine($"Next cluster: {cluster}");
         }
 
         return clusters.ToArray();
