@@ -212,14 +212,11 @@ namespace TotalImage.FileSystems.FAT
                         writer.BaseStream.Seek(fatOffset, SeekOrigin.Current);
                     }
 
-                    // FAT12 uses 12-bit cluster indices, therefore it's time for some
-                    // crazy maths! Let's first seek further to the nearest even index.
+                    // First seek further to the nearest even index. Then read the original values.
                     writer.BaseStream.Seek(index / 2 * 3, SeekOrigin.Current);
                     var pair = reader.ReadUInt32() & 0xFFFFFF;
 
-                    // Right now, `pair` has the value of 0x00123ABC, bits 0-11 contain
-                    // the value of the even index and bits 12-23 contain the value of
-                    // the odd index. All we need to do is return the relevant part.
+                    // Write the new value for the given cluster, while keeping the value of the other cluster in the pair intact.
                     if (index % 2 == 0)
                     {
                         var newValue = value & 0xFFF;
