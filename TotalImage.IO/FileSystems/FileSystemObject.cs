@@ -77,6 +77,11 @@ namespace TotalImage.FileSystems
         }
 
         /// <summary>
+        /// Delete a file system object and zeroe out its clusters to prevent data recovery
+        /// </summary>
+        public abstract void Erase();
+
+        /// <summary>
         /// Delete a file system object
         /// </summary>
         public abstract void Delete();

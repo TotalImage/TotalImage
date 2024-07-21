@@ -109,6 +109,12 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
+        public override void Erase()
+        { 
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
         public override void Delete()
         {
             //TODO: Currently this only marks the clusters in all FATs as free. However, we still need to mark the directory entries as deleted as well.

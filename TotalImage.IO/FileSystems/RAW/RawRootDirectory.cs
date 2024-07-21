@@ -64,6 +64,12 @@ namespace TotalImage.FileSystems.RAW
         }
 
         /// <inheritdoc />
+        public override void Erase()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <inheritdoc />
         public override void Delete()
         {
             throw new NotSupportedException();
