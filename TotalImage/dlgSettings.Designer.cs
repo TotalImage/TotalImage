@@ -278,7 +278,6 @@ namespace TotalImage
             // cbxConfirmDeletion
             // 
             cbxConfirmDeletion.AutoSize = true;
-            cbxConfirmDeletion.Enabled = false;
             cbxConfirmDeletion.Location = new System.Drawing.Point(11, 49);
             cbxConfirmDeletion.Name = "cbxConfirmDeletion";
             cbxConfirmDeletion.Size = new System.Drawing.Size(116, 19);
