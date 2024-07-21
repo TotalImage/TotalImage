@@ -330,7 +330,6 @@ namespace TotalImage
             // cbxConfirmDeletion
             // 
             cbxConfirmDeletion.AutoSize = true;
-            cbxConfirmDeletion.Enabled = false;
             cbxConfirmDeletion.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxConfirmDeletion.Location = new System.Drawing.Point(11, 49);
             cbxConfirmDeletion.Name = "cbxConfirmDeletion";
