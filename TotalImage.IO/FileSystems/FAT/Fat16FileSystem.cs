@@ -90,7 +90,7 @@ namespace TotalImage.FileSystems.FAT
 
                     //Write the new value to the cluster map
                     writer.BaseStream.Seek(index * 2, SeekOrigin.Current);
-                    writer.Write(value & Mask);
+                    writer.Write((ushort)(value & Mask));
                 }
             }
         }

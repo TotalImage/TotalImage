@@ -222,13 +222,13 @@ namespace TotalImage.FileSystems.FAT
                     // Write the new value for the given cluster, while keeping the value of the other cluster in the pair intact.
                     if (index % 2 == 0)
                     {
-                        var newValue = value & 0xFFF;
+                        var newValue = value & Mask;
                         writer.BaseStream.Seek(-4, SeekOrigin.Current);
                         writer.Write(pair & 0xFFFFF000 | newValue);
                     }
                     else
                     {
-                        var newValue = (value & 0xFFF) << 12;
+                        var newValue = (value & Mask) << 12;
                         writer.BaseStream.Seek(-4, SeekOrigin.Current);
                         writer.Write(pair & 0xFF000FFF | newValue);
                     }
