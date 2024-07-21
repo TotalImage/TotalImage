@@ -316,24 +316,54 @@ namespace TotalImage
         //TODO: Implement deletion here and in the FS/container
         private void delete_Click(object sender, EventArgs e)
         {
-            if (lstFiles.Focused)
+            if (lstFiles.Focused && SelectedItems.Any())
             {
                 var selectedSize = 0ul;
-                foreach (var entry in SelectedItems) selectedSize += entry.Length;
+                var fileCount = 0;
+                var dirCount = 0;
+
+                foreach (var entry in SelectedItems)
+                {
+                    if (entry is TiDirectory)
+                    {
+                        dirCount++;
+                        selectedSize += ((TiDirectory)entry).GetSize(true, false); //For directories, calculate the total size of everything inside
+                    }
+                    else
+                    {
+                        fileCount++;
+                        selectedSize += entry.Length;
+                    }
+                }
+
+                //Build a fancy string for showing the item count
+                string itemCount = "";
+                if(dirCount > 0)
+                {
+                    itemCount += $"{dirCount} director{(dirCount == 1 ? "y" : "ies")}";
+                    if (fileCount > 0)
+                        itemCount += $" and {fileCount} file{(fileCount == 1 ? "" : "s")}";
+                }
+                else
+                {
+                    itemCount += $"{fileCount} file{(fileCount == 1 ? "" : "s")}";
+                }
 
                 if (Settings.CurrentSettings.ConfirmDeletion)
                 {
                     TaskDialogPage page = new()
                     {
-                        Text = $"Are you sure you want to delete {SelectedItems.Count()} item(s) occupying {Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)}?{Environment.NewLine}" +
+                        Text = $"Are you sure you want to delete {itemCount} occupying {Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)}?{Environment.NewLine}" +
                         $"You might still be able to undo this operation later.",
-                        Heading = $"{SelectedItems.Count()} item(s) will be deleted",
+                        Heading = $"{SelectedItems.Count()} item{(SelectedItems.Count() > 1 ? "s" : "")} will be deleted",
                         Caption = "Deletion",
                         Buttons =
                         {
                             TaskDialogButton.Yes,
                             TaskDialogButton.No
                         },
+                        DefaultButton = TaskDialogButton.Yes,
+                        SizeToContent = true,
                         Icon = TaskDialogIcon.Warning,
                         Verification = new TaskDialogVerificationCheckBox()
                         {
