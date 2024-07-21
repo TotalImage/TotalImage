@@ -87,6 +87,14 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
+        public override void Erase()
+        {
+            Delete();
+
+            //Here we zero out every cluster of the file
+        }
+
+        /// <inheritdoc />
         public override void Delete()
         {
             //TODO: Currently this only marks the file's clusters in all FATs as free. However, we still need to mark the directory entry as deleted as well.
