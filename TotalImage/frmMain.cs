@@ -387,7 +387,7 @@ namespace TotalImage
                     entry.Delete();
                 }
             }
-            else if (lstDirectories.Focused)
+            else if (lstDirectories.Focused && ((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is not null)
             {
                 var dirSize = ((TiDirectory)lstDirectories.SelectedNode.Tag).GetSize(true, false); //Get total directory size
 
