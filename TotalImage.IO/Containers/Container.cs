@@ -76,7 +76,7 @@ namespace TotalImage.Containers
             }
             else
             {
-                containerStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                containerStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
             }
         }
 
