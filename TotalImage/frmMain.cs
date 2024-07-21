@@ -273,8 +273,118 @@ namespace TotalImage
             Settings.CurrentSettings.FilesView = View.Details;
         }
 
-        //Deletes a file or folder
-        //TODO: Implement deletion here and in the FS/container
+        private void erase_Click(object sender, EventArgs e)
+        {
+            if (lstFiles.Focused && SelectedItems.Any())
+            {
+                var selectedSize = 0ul;
+                var fileCount = 0ul;
+                var dirCount = 0ul;
+
+                foreach (var entry in SelectedItems)
+                {
+                    if (entry is TiDirectory)
+                    {
+                        dirCount++;
+                        selectedSize += ((TiDirectory)entry).GetSize(true, false); //For directories, calculate the total size of everything inside
+                    }
+                    else
+                    {
+                        fileCount++;
+                        selectedSize += entry.Length;
+                    }
+                }
+
+                //Build a fancy string for showing the item count
+                string itemCount = "";
+                if (dirCount > 0)
+                {
+                    itemCount += $"{dirCount} director{(dirCount == 1 ? "y" : "ies")}";
+                    if (fileCount > 0)
+                        itemCount += $" and {fileCount} file{(fileCount == 1 ? "" : "s")}";
+                }
+                else
+                    itemCount += $"{fileCount} file{(fileCount == 1 ? "" : "s")}";
+
+                if (Settings.CurrentSettings.ConfirmDeletion)
+                {
+                    TaskDialogPage page = new()
+                    {
+                        Text = $"Are you sure you want to erase {itemCount} occupying {Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)}?{Environment.NewLine}" +
+                        $"This operation not only deletes the selected items, but also zeroes out their clusters to prevent data recovery. You will NOT be able to undo this operation later.",
+                        Heading = $"{SelectedItems.Count()} item{(SelectedItems.Count() > 1 ? "s" : "")} will be deleted",
+                        Caption = "Warning",
+                        Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                        DefaultButton = TaskDialogButton.Yes,
+                        SizeToContent = true,
+                        Icon = TaskDialogIcon.Warning,
+                        Verification = new TaskDialogVerificationCheckBox()
+                        {
+                            Text = "Do not ask for confirmation again"
+                        }
+                    };
+
+                    //This line needed so the program doesn't implode (ie. passes the keypress to the listview and trigger something random...)
+                    ActiveControl = null;
+
+                    TaskDialogButton result = TaskDialog.ShowDialog(this, page);
+
+                    if (page.Verification.Checked)
+                        Settings.CurrentSettings.ConfirmDeletion = false;
+
+                    if (result == TaskDialogButton.No)
+                        return;
+                }
+
+                //This will recursively delete all selected items, ie. any selected directory contents are enumerated and deleted as well
+                foreach (var entry in SelectedItems)
+                {
+                    entry.Erase();
+                }
+            }
+            else if (lstDirectories.Focused && ((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is not null)
+            {
+                var dirSize = ((TiDirectory)lstDirectories.SelectedNode.Tag).GetSize(true, false); //Get total directory size
+
+                if (Settings.CurrentSettings.ConfirmDeletion)
+                {
+                    TaskDialogPage page = new()
+                    {
+                        Text = $"Are you sure you want to erase this directory occupying {Settings.CurrentSettings.SizeUnit.FormatSize(dirSize)}?{Environment.NewLine}" +
+                        $"This operation not only deletes the selected directory, but also zeroes out its clusters to prevent data recovery. You will NOT be able to undo this operation later.",
+                        Heading = $"Directory will be deleted",
+                        Caption = "Warning",
+                        Buttons =
+                        {
+                            TaskDialogButton.Yes,
+                            TaskDialogButton.No
+                        },
+                        DefaultButton = TaskDialogButton.Yes,
+                        SizeToContent = true,
+                        Icon = TaskDialogIcon.Warning,
+                        Verification = new TaskDialogVerificationCheckBox()
+                        {
+                            Text = "Do not ask for confirmation again"
+                        }
+                    };
+
+                    TaskDialogButton result = TaskDialog.ShowDialog(this, page);
+
+                    if (page.Verification.Checked)
+                        Settings.CurrentSettings.ConfirmDeletion = false;
+
+                    if (result == TaskDialogButton.No)
+                        return;
+                }
+
+                ((TiDirectory)lstDirectories.SelectedNode.Tag).Erase();
+            }
+        }
+
         private void delete_Click(object sender, EventArgs e)
         {
             if (lstFiles.Focused && SelectedItems.Any())
@@ -299,7 +409,7 @@ namespace TotalImage
 
                 //Build a fancy string for showing the item count
                 string itemCount = "";
-                if(dirCount > 0)
+                if (dirCount > 0)
                 {
                     itemCount += $"{dirCount} director{(dirCount == 1 ? "y" : "ies")}";
                     if (fileCount > 0)
