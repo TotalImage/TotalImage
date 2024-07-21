@@ -69,6 +69,12 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc />
+        public override void Erase()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
         public override void Delete()
         {
             throw new NotImplementedException();
