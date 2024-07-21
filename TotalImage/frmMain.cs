@@ -280,8 +280,8 @@ namespace TotalImage
             if (lstFiles.Focused && SelectedItems.Any())
             {
                 var selectedSize = 0ul;
-                var fileCount = 0;
-                var dirCount = 0;
+                var fileCount = 0ul;
+                var dirCount = 0ul;
 
                 foreach (var entry in SelectedItems)
                 {
@@ -306,9 +306,7 @@ namespace TotalImage
                         itemCount += $" and {fileCount} file{(fileCount == 1 ? "" : "s")}";
                 }
                 else
-                {
                     itemCount += $"{fileCount} file{(fileCount == 1 ? "" : "s")}";
-                }
 
                 if (Settings.CurrentSettings.ConfirmDeletion)
                 {
@@ -317,7 +315,7 @@ namespace TotalImage
                         Text = $"Are you sure you want to delete {itemCount} occupying {Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)}?{Environment.NewLine}" +
                         $"You might still be able to undo this operation later.",
                         Heading = $"{SelectedItems.Count()} item{(SelectedItems.Count() > 1 ? "s" : "")} will be deleted",
-                        Caption = "Deletion",
+                        Caption = "Warning",
                         Buttons =
                         {
                             TaskDialogButton.Yes,
@@ -340,22 +338,25 @@ namespace TotalImage
                     if (page.Verification.Checked)
                         Settings.CurrentSettings.ConfirmDeletion = false;
 
-                    if (result == TaskDialogButton.Yes)
-                    {
-                        foreach (var entry in SelectedItems)
-                        {
-                            entry.Delete();
-                        }
-                    }
+                    if (result == TaskDialogButton.No)
+                        return;
+                }
+
+                //This will recursively delete all selected items, ie. any selected directory contents are enumerated and deleted as well
+                foreach (var entry in SelectedItems)
+                {
+                    entry.Delete();
                 }
             }
             else if (lstDirectories.Focused)
             {
+                var dirSize = ((TiDirectory)lstDirectories.SelectedNode.Tag).GetSize(true, false); //Get total directory size
+
                 if (Settings.CurrentSettings.ConfirmDeletion)
                 {
                     TaskDialogPage page = new()
                     {
-                        Text = $"Are you sure you want to delete this directory and all its contents?{Environment.NewLine}" +
+                        Text = $"Are you sure you want to delete this directory occupying {Settings.CurrentSettings.SizeUnit.FormatSize(dirSize)}?{Environment.NewLine}" +
                         $"You might still be able to undo this operation later.",
                         Heading = $"Directory will be deleted",
                         Caption = "Warning",
@@ -364,12 +365,15 @@ namespace TotalImage
                             TaskDialogButton.Yes,
                             TaskDialogButton.No
                         },
+                        DefaultButton = TaskDialogButton.Yes,
+                        SizeToContent = true,
                         Icon = TaskDialogIcon.Warning,
                         Verification = new TaskDialogVerificationCheckBox()
                         {
                             Text = "Do not ask for confirmation again"
                         }
                     };
+
                     TaskDialogButton result = TaskDialog.ShowDialog(this, page);
 
                     if (page.Verification.Checked)
@@ -379,7 +383,7 @@ namespace TotalImage
                         return;
                 }
 
-                throw new NotImplementedException("This feature is not implemented yet");
+                ((TiDirectory)lstDirectories.SelectedNode.Tag).Delete();
             }
         }
 
