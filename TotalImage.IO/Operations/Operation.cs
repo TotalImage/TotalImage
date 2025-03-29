@@ -9,6 +9,6 @@ namespace TotalImage.Operations
         /// <summary>
         /// The object that was the target of the operation.
         /// </summary>
-        public object TargetObject = targetObject;
+        public object TargetObject { get; } = targetObject;
     }
 }

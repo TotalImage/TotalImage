@@ -12,6 +12,6 @@ namespace TotalImage.Operations
         /// <summary>
         /// The first character of the object's name after undeletion in FAT file systems.
         /// </summary>
-        public char FirstCharacter = firstChar;
+        public char? FirstCharacter { get; } = firstChar;
     }
 }
