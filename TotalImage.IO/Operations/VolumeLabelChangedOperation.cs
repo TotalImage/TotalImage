@@ -5,7 +5,7 @@ namespace TotalImage.Operations
     /// <summary>
     /// An operation for changing the volume label.
     /// </summary>
-    /// <param name="targetObject">The partition whose volume label is to be changed.</param>
+    /// <param name="targetObject">The partition entry of the partition whose volume label is to be changed.</param>
     /// <param name="oldLabel">Old volume label.</param>
     /// <param name="newLabel">New volume label.</param>
     /// <param name="labelToChange">Which volume label is to be changed for FAT file systems.</param>
@@ -22,9 +22,9 @@ namespace TotalImage.Operations
         public string NewLabel { get; } = newLabel;
 
         /// <summary>
-        /// Indicates which volume label was changed in a FAT file system.
+        /// Indicates which volume label is to be changedd in a FAT file system.
         /// </summary>
-        public VolumeLabel VolumeLabelChanged { get; } = labelToChange;
+        public VolumeLabel? LabelToChange { get; } = labelToChange;
 
         /// <summary>
         /// Which volume label is to be changed in a FAT file system.
