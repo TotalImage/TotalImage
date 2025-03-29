@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using TotalImage.Partitions;
+using TotalImage.Operations;
 
 namespace TotalImage.Containers
 {
@@ -39,6 +40,11 @@ namespace TotalImage.Containers
         /// The length of the container file
         /// </summary>
         public long Length => Content.Length;
+
+        /// <summary>
+        /// The stack of changes made to this image that are still pending and may be either applied or discarded.
+        /// </summary>
+        public OperationsStack PendingChanges = new();
 
         /// <summary>
         /// Returns the partition table contained within the image
@@ -105,6 +111,9 @@ namespace TotalImage.Containers
         /// <param name="path">The path to save out the image to</param>
         public void SaveImage(string path)
         {
+            //Here, we need to iterate through the stack from the bottom up and apply the individual operations to the image's stream
+
+            //Some old experimental code below...
             /*string? tempPath = Path.ChangeExtension(path, ".tmp");
             using FileStream outStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
             containerStream.Position = 0;
