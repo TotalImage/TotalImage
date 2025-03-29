@@ -12,13 +12,13 @@ namespace TotalImage.Operations
     public class PartitionFormattedOperation(PartitionEntry targetObject, FileSystem oldFileSystem, FileSystem newFileSystem) : Operation(targetObject) 
     {
         /// <summary>
-        /// The file system of this partition before this operation.
+        /// The file system of this partition before the operation.
         /// </summary>
-        FileSystem OldFileSystem { get;  } = oldFileSystem;
+        public FileSystem OldFileSystem { get;  } = oldFileSystem;
 
         /// <summary>
-        /// The file system of this partition after this operation.
+        /// The file system of this partition after the operation.
         /// </summary>
-        FileSystem NewFileSystem { get; } = newFileSystem;
+        public FileSystem NewFileSystem { get; } = newFileSystem;
     }
 }
