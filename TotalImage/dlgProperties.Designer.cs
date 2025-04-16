@@ -308,9 +308,9 @@ namespace TotalImage
             cbxDateModified.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxDateModified.Location = new System.Drawing.Point(12, 280);
             cbxDateModified.Name = "cbxDateModified";
-            cbxDateModified.Size = new System.Drawing.Size(80, 20);
+            cbxDateModified.Size = new System.Drawing.Size(83, 20);
             cbxDateModified.TabIndex = 25;
-            cbxDateModified.Text = "Modified";
+            cbxDateModified.Text = "Modified:";
             toolTip.SetToolTip(cbxDateModified, "This is the date and time when the file or directory was last\r\nwritten to.");
             cbxDateModified.UseVisualStyleBackColor = true;
             cbxDateModified.CheckedChanged += cbxDateModified_CheckedChanged;
@@ -471,6 +471,7 @@ namespace TotalImage
             BackColor = System.Drawing.SystemColors.Window;
             CancelButton = btnCancel;
             ClientSize = new System.Drawing.Size(384, 430);
+            Controls.Add(dtpModified);
             Controls.Add(lblMultipleObjectsCount);
             Controls.Add(txtFirstCluster1);
             Controls.Add(lblFirstCluster);
@@ -494,7 +495,6 @@ namespace TotalImage
             Controls.Add(cbxReadOnly);
             Controls.Add(lblSeparator2);
             Controls.Add(lblType);
-            Controls.Add(dtpModified);
             Controls.Add(lblSeparator1);
             Controls.Add(pnlBottom);
             Controls.Add(lblShortFilename);
