@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -101,10 +101,10 @@ namespace TotalImage
 
             if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.FAT.FatFileSystem fatFS)
             {
-                if (fatFS.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)
-                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"{ebpb.VolumeSerialNumber:X}";
+                if (fatFS.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)              
+                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"{ebpb.VolumeSerialNumber:X}";               
                 else if (fatFS.BiosParameterBlock is FileSystems.BPB.Fat32BiosParameterBlock f32bpb)
-                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = f32bpb.VolumeSerialNumber == 0 ? "N/A" : $"{f32bpb.VolumeSerialNumber:X}";
+                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = f32bpb.VolumeSerialNumber == 0 ? "N/A" : $"{f32bpb.VolumeSerialNumber:X}";     
             }
             else if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.ISO.Iso9660FileSystem isoFS)
             {
@@ -114,7 +114,7 @@ namespace TotalImage
                 lstPropertiesFS.Items.Remove(lstPropertiesFS.FindItemWithText("Volume serial number"));
                 lstPropertiesFS.FindItemWithText("Total storage capacity").Text = "Volume size";
 
-                //Then add the ISO9660-specific items
+                //Then add the ISO9660-specific items and style them
                 lstPropertiesFS.Items.Add(new ListViewItem("System identifier")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.SystemIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.SystemIdentifier);
                 lstPropertiesFS.Items.Add(new ListViewItem("Volume identifier")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeIdentifier) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeIdentifier);
                 lstPropertiesFS.Items.Add(new ListViewItem("Volume set size")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeSetSize.ToString()) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeSetSize.ToString());
@@ -140,6 +140,9 @@ namespace TotalImage
             {
                 txtComment.Text = containerComment.Comment;
             }
+
+            //Apply the appropriate styling to all items
+            StyleListViewItems();
         }
 
         private void btnSave_Click(object sender, System.EventArgs e)
@@ -200,7 +203,7 @@ namespace TotalImage
 
                 //Iterate over all the displayed listview items for each listview
                 sw.WriteLine("** File information **");
-                foreach(ListViewItem lvi in lstPropertiesFile.Items)
+                foreach (ListViewItem lvi in lstPropertiesFile.Items)
                 {
                     //Skip the file hashes if they're not done yet
                     if (!hashesDone && (lvi.Text == "MD5 hash" || lvi.Text == "SHA-1 hash"))
@@ -303,6 +306,72 @@ namespace TotalImage
             else
             {
                 e.Cancel = true; //Cancel the context menu opening event if multiple items are somehow selected or the source control is null
+            }
+        }
+
+        //Iterates through all the items and subitems of every listview and sets appropriate styling for subitems with "N/A" text
+        private void StyleListViewItems()
+        {
+            foreach (ListViewItem lvi in lstPropertiesFile.Items)
+            {
+                lvi.UseItemStyleForSubItems = false;
+                foreach (ListViewItem.ListViewSubItem lvi2 in lvi.SubItems)
+                {
+                    
+                    if (lvi2.Text == "N/A")
+                        lvi2.ForeColor = SystemColors.ControlDark;
+                    else
+                        lvi2.ForeColor = SystemColors.WindowText;
+                }
+            }
+
+            foreach (ListViewItem lvi in lstPropertiesContainer.Items)
+            {
+                lvi.UseItemStyleForSubItems = false;
+                foreach (ListViewItem.ListViewSubItem lvi2 in lvi.SubItems)
+                {
+                    
+                    if (lvi2.Text == "N/A")
+                        lvi2.ForeColor = SystemColors.ControlDark;
+                    else
+                        lvi2.ForeColor = SystemColors.WindowText;
+                }
+            }
+
+            foreach (ListViewItem lvi in lstPropertiesPT.Items)
+            {
+                lvi.UseItemStyleForSubItems = false;
+                foreach (ListViewItem.ListViewSubItem lvi2 in lvi.SubItems)
+                {                    
+                    if (lvi2.Text == "N/A")
+                        lvi2.ForeColor = SystemColors.ControlDark;
+                    else
+                        lvi2.ForeColor = SystemColors.WindowText;
+                }
+            }
+
+            foreach (ListViewItem lvi in lstPropertiesPartition.Items)
+            {
+                lvi.UseItemStyleForSubItems = false;
+                foreach (ListViewItem.ListViewSubItem lvi2 in lvi.SubItems)
+                {                    
+                    if (lvi2.Text == "N/A")
+                        lvi2.ForeColor = SystemColors.ControlDark;
+                    else
+                        lvi2.ForeColor = SystemColors.WindowText;
+                }
+            }
+
+            foreach (ListViewItem lvi in lstPropertiesFS.Items)
+            {
+                lvi.UseItemStyleForSubItems = false;
+                foreach (ListViewItem.ListViewSubItem lvi2 in lvi.SubItems)
+                {            
+                    if (lvi2.Text == "N/A")
+                        lvi2.ForeColor = SystemColors.ControlDark;
+                    else
+                        lvi2.ForeColor = SystemColors.WindowText;
+                }
             }
         }
     }
