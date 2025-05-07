@@ -39,6 +39,7 @@ namespace TotalImage
             lstPropertiesFS.Columns[1].Width = lstPropertiesFS.ClientRectangle.Width - lstPropertiesFS.Columns[0].Width;
 
             lstPropertiesFile.FindItemWithText("Filename").SubItems[1].Text = mainForm.filename;
+            lstPropertiesFile.FindItemWithText("Path").SubItems[1].Text = mainForm.filepath;
             lstPropertiesFile.FindItemWithText("Size").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)fileInfo.Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             lstPropertiesFile.FindItemWithText("Created").SubItems[1].Text = fileInfo.CreationTime.ToString();
             lstPropertiesFile.FindItemWithText("Modified").SubItems[1].Text = fileInfo.LastWriteTime.ToString();
@@ -101,10 +102,10 @@ namespace TotalImage
 
             if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.FAT.FatFileSystem fatFS)
             {
-                if (fatFS.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)              
-                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"{ebpb.VolumeSerialNumber:X}";               
+                if (fatFS.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)
+                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"{ebpb.VolumeSerialNumber:X}";
                 else if (fatFS.BiosParameterBlock is FileSystems.BPB.Fat32BiosParameterBlock f32bpb)
-                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = f32bpb.VolumeSerialNumber == 0 ? "N/A" : $"{f32bpb.VolumeSerialNumber:X}";     
+                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = f32bpb.VolumeSerialNumber == 0 ? "N/A" : $"{f32bpb.VolumeSerialNumber:X}";
             }
             else if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.ISO.Iso9660FileSystem isoFS)
             {
@@ -317,7 +318,7 @@ namespace TotalImage
                 lvi.UseItemStyleForSubItems = false;
                 foreach (ListViewItem.ListViewSubItem lvi2 in lvi.SubItems)
                 {
-                    
+
                     if (lvi2.Text == "N/A")
                         lvi2.ForeColor = SystemColors.ControlDark;
                     else
@@ -330,7 +331,7 @@ namespace TotalImage
                 lvi.UseItemStyleForSubItems = false;
                 foreach (ListViewItem.ListViewSubItem lvi2 in lvi.SubItems)
                 {
-                    
+
                     if (lvi2.Text == "N/A")
                         lvi2.ForeColor = SystemColors.ControlDark;
                     else
@@ -342,7 +343,7 @@ namespace TotalImage
             {
                 lvi.UseItemStyleForSubItems = false;
                 foreach (ListViewItem.ListViewSubItem lvi2 in lvi.SubItems)
-                {                    
+                {
                     if (lvi2.Text == "N/A")
                         lvi2.ForeColor = SystemColors.ControlDark;
                     else
@@ -354,7 +355,7 @@ namespace TotalImage
             {
                 lvi.UseItemStyleForSubItems = false;
                 foreach (ListViewItem.ListViewSubItem lvi2 in lvi.SubItems)
-                {                    
+                {
                     if (lvi2.Text == "N/A")
                         lvi2.ForeColor = SystemColors.ControlDark;
                     else
@@ -366,7 +367,7 @@ namespace TotalImage
             {
                 lvi.UseItemStyleForSubItems = false;
                 foreach (ListViewItem.ListViewSubItem lvi2 in lvi.SubItems)
-                {            
+                {
                     if (lvi2.Text == "N/A")
                         lvi2.ForeColor = SystemColors.ControlDark;
                     else
