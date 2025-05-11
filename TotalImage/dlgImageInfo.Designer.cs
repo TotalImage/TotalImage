@@ -51,7 +51,7 @@ namespace TotalImage
             System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] { "Volume label", "N/A" }, -1);
             System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] { "Volume serial number", "N/A" }, -1);
             System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[] { "Total storage capacity", "<capacity>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem(new string[] { "Free space", "<freespace>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem(new string[] { "Free storage capacity", "<freespace>" }, -1);
             System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem(new string[] { "Files", "<nofiles>" }, -1);
             System.Windows.Forms.ListViewItem listViewItem25 = new System.Windows.Forms.ListViewItem(new string[] { "Subdirectories", "<subdirectories>" }, -1);
             btnOK = new System.Windows.Forms.Button();
@@ -443,7 +443,7 @@ namespace TotalImage
             clmValue5.Text = "Value";
             clmValue5.Width = 250;
             // 
-            // dlgImageInfoNew
+            // dlgImageInfo
             // 
             AcceptButton = btnOK;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -455,7 +455,7 @@ namespace TotalImage
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "dlgImageInfoNew";
+            Name = "dlgImageInfo";
             ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

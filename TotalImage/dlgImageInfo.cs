@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Containers;
 using TotalImage.Containers.VHD;
+using TotalImage.FileSystems.BPB;
+using TotalImage.FileSystems.FAT;
+using TotalImage.FileSystems.ISO;
 using TotalImage.Partitions;
 
 namespace TotalImage
@@ -98,20 +101,53 @@ namespace TotalImage
             lstPropertiesFS.FindItemWithText("Files").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.CountFiles(true).ToString();
             lstPropertiesFS.FindItemWithText("Subdirectories").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.CountSubdirectories(true).ToString();
             lstPropertiesFS.FindItemWithText("Total storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
-            lstPropertiesFS.FindItemWithText("Free space").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.TotalFreeSpace, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+            lstPropertiesFS.FindItemWithText("Free storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.TotalFreeSpace, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
 
-            if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.FAT.FatFileSystem fatFS)
+            //FAT specifics
+            if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FatFileSystem fatFS)
             {
-                if (fatFS.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)
-                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"{ebpb.VolumeSerialNumber:X}";
-                else if (fatFS.BiosParameterBlock is FileSystems.BPB.Fat32BiosParameterBlock f32bpb)
-                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = f32bpb.VolumeSerialNumber == 0 ? "N/A" : $"{f32bpb.VolumeSerialNumber:X}";
+                //We're using insert here because Add only appends the item collection, whereas insert, well, inserts items at the specified index...
+                BiosParameterBlock bpb = fatFS.BiosParameterBlock;
+
+                lstPropertiesFS.Items.Insert(1, new ListViewItem("Jump instruction")).SubItems.Add($"0x{bpb.BootJump[0]:X2}{bpb.BootJump[1]:X2}{bpb.BootJump[2]:X2}");
+                lstPropertiesFS.Items.Insert(2, new ListViewItem("OEM ID")).SubItems.Add(string.IsNullOrWhiteSpace(fatFS.BiosParameterBlock.OemId) ? "N/A" : fatFS.BiosParameterBlock.OemId);
+                lstPropertiesFS.Items.Insert(3, new ListViewItem("Sector size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(bpb.BytesPerLogicalSector, false)}");
+                lstPropertiesFS.Items.Insert(4, new ListViewItem("Sectors per cluster")).SubItems.Add($"{bpb.LogicalSectorsPerCluster}");
+                lstPropertiesFS.Items.Insert(5, new ListViewItem("Reserved sectors")).SubItems.Add($"{bpb.ReservedLogicalSectors}");
+                lstPropertiesFS.Items.Insert(6, new ListViewItem("Number of FATs")).SubItems.Add($"{bpb.NumberOfFATs}");
+                lstPropertiesFS.Items.Insert(7, new ListViewItem("Root directory entries")).SubItems.Add(fatFS is Fat32FileSystem ? "N/A" : $"{bpb.RootDirectoryEntries}");
+                lstPropertiesFS.Items.Insert(8, new ListViewItem("Total sectors")).SubItems.Add($"{bpb.TotalLogicalSectors}");
+                lstPropertiesFS.Items.Insert(9, new ListViewItem("Media descriptor")).SubItems.Add($"0x{bpb.MediaDescriptor:X2}");
+                lstPropertiesFS.Items.Insert(10, new ListViewItem("Sectors per FAT")).SubItems.Add($"{bpb.LogicalSectorsPerFAT}");
+                lstPropertiesFS.Items.Insert(11, new ListViewItem("Sectors per track")).SubItems.Add($"{bpb.PhysicalSectorsPerTrack}");
+                lstPropertiesFS.Items.Insert(12, new ListViewItem("Heads/sides")).SubItems.Add($"{bpb.NumberOfHeads}");
+                lstPropertiesFS.Items.Insert(13, new ListViewItem("Hidden sectors")).SubItems.Add($"{bpb.HiddenSectors}");
+
+                //These fields only exist in an extended BPB (either DOS 3.4/4.0 or FAT32).
+                if (bpb is ExtendedBiosParameterBlock ebpb)
+                {
+                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"0x{ebpb.VolumeSerialNumber:X}";
+                    lstPropertiesFS.Items.Insert(14, new ListViewItem("Physical drive number")).SubItems.Add($"0x{ebpb.PhysicalDriveNumber:X2}");
+                    lstPropertiesFS.Items.Insert(15, new ListViewItem("Flags")).SubItems.Add($"0x{ebpb.Flags:X2}");
+                    lstPropertiesFS.Items.Insert(16, new ListViewItem("Boot signature")).SubItems.Add($"0x{(byte)ebpb.ExtendedBootSignature:X2}");
+                    lstPropertiesFS.Items.Insert(17, new ListViewItem("File system type string")).SubItems.Add($"{ebpb.FileSystemType}");
+                }
+
+                //Root directory is relocatable in FAT32. We add these fields last to keep proper order of items.
+                if (bpb is Fat32BiosParameterBlock f32bpb)
+                {  
+                    lstPropertiesFS.Items.Insert(8, new ListViewItem("Root directory cluster")).SubItems.Add($"{f32bpb.RootDirectoryCluster}");
+                    lstPropertiesFS.Items.Insert(18, new ListViewItem("Extended flags")).SubItems.Add($"0x{f32bpb.ExtFlags:X2}");
+                    lstPropertiesFS.Items.Insert(19, new ListViewItem("Version")).SubItems.Add($"0x{f32bpb.FileSystemVersion:X2}");
+                    lstPropertiesFS.Items.Insert(20, new ListViewItem("FSInfo sector")).SubItems.Add($"{f32bpb.FsInfo}");
+                    lstPropertiesFS.Items.Insert(21, new ListViewItem("Backup boot sector")).SubItems.Add($"{f32bpb.BackupBootSector}");
+                }
             }
-            else if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FileSystems.ISO.Iso9660FileSystem isoFS)
+            else if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is Iso9660FileSystem isoFS)
             {
                 //First remove some items that don't apply to ISO9660 or have specific alternatives
                 lstPropertiesFS.Items.Remove(lstPropertiesFS.FindItemWithText("Volume label"));
-                lstPropertiesFS.Items.Remove(lstPropertiesFS.FindItemWithText("Free space"));
+                lstPropertiesFS.Items.Remove(lstPropertiesFS.FindItemWithText("Free storage capacity"));
                 lstPropertiesFS.Items.Remove(lstPropertiesFS.FindItemWithText("Volume serial number"));
                 lstPropertiesFS.FindItemWithText("Total storage capacity").Text = "Volume size";
 
