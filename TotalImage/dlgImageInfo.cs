@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Containers;
+using TotalImage.Containers.Anex86;
+using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
@@ -64,6 +66,25 @@ namespace TotalImage
                 string creatorVersion = $"{vhd.Footer.CreatorVersionMajor}.{vhd.Footer.CreatorVersionMinor}";
                 if (creatorVersion != "0.0")
                     lstPropertiesContainer.FindItemWithText("Creator version").SubItems[1].Text = creatorVersion;
+            }
+            //NHD specifics
+            else if (mainForm.image is NhdContainer nhd)
+            {
+                lstPropertiesContainer.Items.Add(new ListViewItem("Header size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(nhd.Header.HeaderSize, false)}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Cylinders")).SubItems.Add($"{nhd.Header.Cylinders}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Heads")).SubItems.Add($"{nhd.Header.Heads}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Sectors per track")).SubItems.Add($"{nhd.Header.SectorsPerTrack}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Sector size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(nhd.Header.SectorSize, false)}");
+            }
+            else if (mainForm.image is Anex86Container anex86)
+            {
+                lstPropertiesContainer.Items.Add(new ListViewItem("Disk type")).SubItems.Add($"0x{anex86.Header.DiskType:X8}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Header size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize((ulong)anex86.Header.HeaderSize, false)}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Data area size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize((ulong)anex86.Header.DataSize, false)}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Sector size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize((ulong)anex86.Header.SectorSize, false)}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Cylinders")).SubItems.Add($"{anex86.Header.Cylinders}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Heads")).SubItems.Add($"{anex86.Header.Heads}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Sectors per track")).SubItems.Add($"{anex86.Header.Sectors}");
             }
 
             //Partition table
