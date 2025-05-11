@@ -52,7 +52,7 @@ namespace TotalImage
                     }
                     catch (Exception) { }
 
-                    lblPartitionType1.Text = $"0x{entry.Type:X} {entryType}";
+                    lblPartitionType1.Text = $"0x{entry.Type:X} - {entryType}";
                     lblPartitionGuid1.Text = "N/A";
                     lblPartitionFirstLba1.Text = $"{entry.LbaStart:N0}";
                     lblPartitionLastLba1.Text = $"{entry.LbaStart + entry.LbaLength - 1:N0}";
@@ -64,9 +64,9 @@ namespace TotalImage
                     if (entry.FileSystem is FileSystems.FAT.FatFileSystem fs)
                     {
                         if (fs.BiosParameterBlock is FileSystems.BPB.ExtendedBiosParameterBlock ebpb)
-                            lblPartitionSerial1.Text = $"{ebpb.VolumeSerialNumber:X}";
+                            lblPartitionSerial1.Text = $"{ebpb.VolumeSerialNumber:X8}";
                         else if (fs.BiosParameterBlock is FileSystems.BPB.Fat32BiosParameterBlock f32bpb)
-                            lblPartitionSerial1.Text = $"{f32bpb.VolumeSerialNumber:X}";
+                            lblPartitionSerial1.Text = $"{f32bpb.VolumeSerialNumber:X8}";
                     }
                 }
             }

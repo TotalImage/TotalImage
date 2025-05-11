@@ -158,8 +158,11 @@ namespace TotalImage.Partitions
             public ulong TableLBA { get; }
 
             /// <summary>
-            /// The number of entries in the partition table
+            /// The number of entries in the partition table.
             /// </summary>
+            /// <remarks>
+            /// Although this value is practically unlimited, some implementations limit it to 128 (Windows) or 256 (Linxux).
+            /// </remarks>
             public uint PartitionEntries { get; }
 
             /// <summary>

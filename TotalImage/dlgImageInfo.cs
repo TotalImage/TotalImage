@@ -34,6 +34,7 @@ namespace TotalImage
             if (mainForm.image is null)
                 return;
 
+            //File
             lstPropertiesFile.FindItemWithText("Filename").SubItems[1].Text = mainForm.filename;
             lstPropertiesFile.FindItemWithText("Path").SubItems[1].Text = mainForm.filepath;
             lstPropertiesFile.FindItemWithText("Size").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)fileInfo.Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
@@ -41,6 +42,10 @@ namespace TotalImage
             lstPropertiesFile.FindItemWithText("Modified").SubItems[1].Text = fileInfo.LastWriteTime.ToString();
             lstPropertiesFile.FindItemWithText("Accessed").SubItems[1].Text = fileInfo.LastAccessTime.ToString();
             lstPropertiesFile.FindItemWithText("Attributes").SubItems[1].Text = fileInfo.Attributes.ToString();
+            lstPropertiesFile.FindItemWithText("MD5 hash").SubItems[1].Text = "Please wait...";
+            lstPropertiesFile.FindItemWithText("SHA-1 hash").SubItems[1].Text = "Please wait...";
+
+            //Container
             lstPropertiesContainer.FindItemWithText("Container type").SubItems[1].Text = mainForm.image.DisplayName;
 
             //VHD specifics
@@ -61,30 +66,17 @@ namespace TotalImage
                     lstPropertiesContainer.FindItemWithText("Creator version").SubItems[1].Text = creatorVersion;
             }
 
-            lstPropertiesFS.FindItemWithText("File system").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.DisplayName;
-
-            var volLabel = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.VolumeLabel;
-            if (!string.IsNullOrWhiteSpace(volLabel))
-                lstPropertiesFS.FindItemWithText("Volume label").SubItems[1].Text = volLabel;
-
+            //Partition table
             lstPropertiesPT.FindItemWithText("Partitioning scheme").SubItems[1].Text = mainForm.image.PartitionTable.DisplayName;
             lstPropertiesPT.FindItemWithText("Number of partitions").SubItems[1].Text = mainForm.image.PartitionTable.Partitions.Count.ToString();
             lstPropertiesPT.FindItemWithText("Selected partition").SubItems[1].Text = mainForm.CurrentPartitionIndex.ToString();
 
-            //We might want to prettify this once the image-loading branchis merged in
+            //MBR specifics
             if (mainForm.image.PartitionTable is MbrPartitionTable mbr)
             {
                 MbrPartitionTable.MbrPartitionEntry entry = (MbrPartitionTable.MbrPartitionEntry)mbr.Partitions[mainForm.CurrentPartitionIndex];
 
-                string entryType = "Unknown";
-                try
-                {
-                    entryType = (Attribute.GetCustomAttribute(entry.Type.GetType().GetField(entry.Type.ToString()), typeof(DisplayAttribute)) as DisplayAttribute).Name;
-                }
-                catch (Exception) { }
-
-                lstPropertiesPartition.FindItemWithText("Partition ID/type").SubItems[1].Text = $"0x{(byte)entry.Type:X2} - {entryType}";
-
+                //First we go over the MBR fields
                 lstPropertiesPT.Items.Insert(1, new ListViewItem("Physical drive number")).SubItems.Add($"0x{mbr.DriveNumber:X2}");
                 lstPropertiesPT.Items.Insert(2, new ListViewItem("Disk timestamp"));
 
@@ -99,12 +91,28 @@ namespace TotalImage
                     lstPropertiesPT.FindItemWithText("Disk serial number").SubItems.Add($"0x{mbr.SerialNumber:X8}");
                 else
                     lstPropertiesPT.FindItemWithText("Disk serial number").SubItems.Add("N/A");
+
+                //And then for the selected MBR partition entry as well
+                string entryType = "Unknown";
+                try
+                {
+                    entryType = (Attribute.GetCustomAttribute(entry.Type.GetType().GetField(entry.Type.ToString()), typeof(DisplayAttribute)) as DisplayAttribute).Name;
+                }
+                catch (Exception) { }
+                lstPropertiesPartition.FindItemWithText("Partition ID/type").SubItems[1].Text = $"0x{(byte)entry.Type:X2} - {entryType}";
+                lstPropertiesPartition.Items.Add("Active").SubItems.Add(entry.Active ? "Yes" : "No");
+                lstPropertiesPartition.Items.Add("First sector CHS").SubItems.Add($"({entry.ChsStart.Cylinder},{entry.ChsStart.Head},{entry.ChsStart.Sector})");
+                lstPropertiesPartition.Items.Add("Last sector CHS").SubItems.Add($"({entry.ChsEnd.Cylinder},{entry.ChsEnd.Head},{entry.ChsEnd.Sector})");
+                lstPropertiesPartition.Items.Add("First sector LBA").SubItems.Add($"{entry.LbaStart}");
+                lstPropertiesPartition.Items.Add("Total sectors").SubItems.Add($"{entry.LbaLength}");
+                lstPropertiesPartition.Items.Add("Total size").SubItems.Add($"{Settings.CurrentSettings.SizeUnit.FormatSize(entry.LbaLength * 512, true)}");
             }
+            //GPT specifics
             else if (mainForm.image.PartitionTable is GptPartitionTable gpt)
             {
                 GptPartitionTable.GptPartitionEntry entry = (GptPartitionTable.GptPartitionEntry)gpt.Partitions[mainForm.CurrentPartitionIndex];
-                lstPropertiesPartition.FindItemWithText("Partition ID/type").SubItems[1].Text = GptPartitionTable.GptPartitionTypes[entry.TypeId];
 
+                //Likewise we first go over GPT fields
                 lstPropertiesPT.Items.Insert(1, new ListViewItem("Major version")).SubItems.Add($"0x{gpt.Header.VersionMajor:X4}");
                 lstPropertiesPT.Items.Insert(2, new ListViewItem("Minor version")).SubItems.Add($"0x{gpt.Header.VersionMinor:X4}");
                 lstPropertiesPT.Items.Insert(3, new ListViewItem("Header size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(gpt.Header.HeaderSize, false)}");
@@ -117,12 +125,27 @@ namespace TotalImage
                 lstPropertiesPT.Items.Insert(10, new ListViewItem("First partition table LBA")).SubItems.Add($"{gpt.Header.TableLBA}");
                 lstPropertiesPT.Items.Insert(11, new ListViewItem("Partition entry size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(gpt.Header.SizeOfPartitionEntry, false)}");
                 lstPropertiesPT.Items.Insert(12, new ListViewItem("Partition table CRC32 hash")).SubItems.Add($"0x{gpt.Header.TableHash:X8}");
+
+                //And then for the selected GPT partition entry as well
+                lstPropertiesPartition.FindItemWithText("Partition ID/type").SubItems[1].Text = GptPartitionTable.GptPartitionTypes[entry.TypeId];
+                lstPropertiesPartition.Items.Add("Partition type GUID").SubItems.Add($"{entry.TypeId}");
+                lstPropertiesPartition.Items.Add("Partition GUID").SubItems.Add($"{entry.EntryId}");
+                lstPropertiesPartition.Items.Add("First LBA").SubItems.Add($"{entry.FirstLBA}");
+                lstPropertiesPartition.Items.Add("Last LBA").SubItems.Add($"{entry.LastLBA}");
+                lstPropertiesPartition.Items.Add("Attribute flags").SubItems.Add($"0x{(ulong)entry.Flags:X16}");
+                lstPropertiesPartition.Items.Add("Partition name").SubItems.Add($"{entry.Name}");
             }
 
+            //File system
+            lstPropertiesFS.FindItemWithText("File system").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.DisplayName;
             lstPropertiesFS.FindItemWithText("Files").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.CountFiles(true).ToString();
             lstPropertiesFS.FindItemWithText("Subdirectories").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.CountSubdirectories(true).ToString();
             lstPropertiesFS.FindItemWithText("Total storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
             lstPropertiesFS.FindItemWithText("Free storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.TotalFreeSpace, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+
+            var volLabel = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.VolumeLabel;
+            if (!string.IsNullOrWhiteSpace(volLabel))
+                lstPropertiesFS.FindItemWithText("Volume label").SubItems[1].Text = volLabel;
 
             //FAT specifics
             if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FatFileSystem fatFS)
@@ -156,7 +179,7 @@ namespace TotalImage
 
                 //Root directory is relocatable in FAT32. We add these fields last to keep proper order of items.
                 if (bpb is Fat32BiosParameterBlock f32bpb)
-                {  
+                {
                     lstPropertiesFS.Items.Insert(8, new ListViewItem("Root directory cluster")).SubItems.Add($"{f32bpb.RootDirectoryCluster}");
                     lstPropertiesFS.Items.Insert(18, new ListViewItem("Extended flags")).SubItems.Add($"0x{f32bpb.ExtFlags:X2}");
                     lstPropertiesFS.Items.Insert(19, new ListViewItem("Version")).SubItems.Add($"0x{f32bpb.FileSystemVersion:X2}");
@@ -164,6 +187,7 @@ namespace TotalImage
                     lstPropertiesFS.Items.Insert(21, new ListViewItem("Backup boot sector")).SubItems.Add($"{f32bpb.BackupBootSector}");
                 }
             }
+            //ISO9660 specifics
             else if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is Iso9660FileSystem isoFS)
             {
                 //First remove some items that don't apply to ISO9660 or have specific alternatives
@@ -189,9 +213,6 @@ namespace TotalImage
                 lstPropertiesFS.Items.Add(new ListViewItem("Expiration time")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeExpirationTime.ToString()) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeExpirationTime.ToString());
                 lstPropertiesFS.Items.Add(new ListViewItem("Effective time")).SubItems.Add(string.IsNullOrWhiteSpace(isoFS.PrimaryVolumeDescriptor.VolumeEffectiveTime.ToString()) ? "N/A" : isoFS.PrimaryVolumeDescriptor.VolumeEffectiveTime.ToString());
             }
-
-            lstPropertiesFile.FindItemWithText("MD5 hash").SubItems[1].Text = "Please wait...";
-            lstPropertiesFile.FindItemWithText("SHA-1 hash").SubItems[1].Text = "Please wait...";
 
             //TODO: This needs to be editeable (ReadOnly = false) once we have write support
             if (mainForm.image is IContainerComment containerComment)
