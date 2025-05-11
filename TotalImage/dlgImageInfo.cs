@@ -90,7 +90,22 @@ namespace TotalImage
                 }
                 catch (Exception) { }
 
-                lstPropertiesPartition.FindItemWithText("Partition ID/type").SubItems[1].Text = $"0x{entry.Type:X} - {entryType}";
+                lstPropertiesPartition.FindItemWithText("Partition ID/type").SubItems[1].Text = $"0x{(byte)entry.Type:X2} - {entryType}";
+
+                lstPropertiesPT.Items.Insert(1, new ListViewItem("Physical drive number")).SubItems.Add($"0x{mbr.DriveNumber:X2}");
+                lstPropertiesPT.Items.Insert(2, new ListViewItem("Disk timestamp"));
+
+                if (mbr.TimestampMinutes < 60 && mbr.TimestampSeconds < 60 && mbr.TimestampHours < 24)
+                    lstPropertiesPT.FindItemWithText("Disk timestamp").SubItems.Add($"{mbr.TimestampHours:D2}:{mbr.TimestampMinutes:D2}:{mbr.TimestampSeconds:D2}");
+                else
+                    lstPropertiesPT.FindItemWithText("Disk timestamp").SubItems.Add("N/A");
+
+                lstPropertiesPT.Items.Insert(3, new ListViewItem("Disk serial number"));
+
+                if (mbr.SerialNumber > 0)
+                    lstPropertiesPT.FindItemWithText("Disk serial number").SubItems.Add($"0x{mbr.SerialNumber:X8}");
+                else
+                    lstPropertiesPT.FindItemWithText("Disk serial number").SubItems.Add("N/A");
             }
             else if (mainForm.image.PartitionTable is GptPartitionTable gpt)
             {
@@ -109,7 +124,7 @@ namespace TotalImage
                 //We're using insert here because Add only appends the item collection, whereas insert, well, inserts items at the specified index...
                 BiosParameterBlock bpb = fatFS.BiosParameterBlock;
 
-                lstPropertiesFS.Items.Insert(1, new ListViewItem("Jump instruction")).SubItems.Add($"0x{bpb.BootJump[0]:X2}{bpb.BootJump[1]:X2}{bpb.BootJump[2]:X2}");
+                lstPropertiesFS.Items.Insert(1, new ListViewItem("Jump instruction")).SubItems.Add($"0x{bpb.BootJump[0]:X2} 0x{bpb.BootJump[1]:X2} 0x{bpb.BootJump[2]:X2}");
                 lstPropertiesFS.Items.Insert(2, new ListViewItem("OEM ID")).SubItems.Add(string.IsNullOrWhiteSpace(fatFS.BiosParameterBlock.OemId) ? "N/A" : fatFS.BiosParameterBlock.OemId);
                 lstPropertiesFS.Items.Insert(3, new ListViewItem("Sector size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(bpb.BytesPerLogicalSector, false)}");
                 lstPropertiesFS.Items.Insert(4, new ListViewItem("Sectors per cluster")).SubItems.Add($"{bpb.LogicalSectorsPerCluster}");
@@ -126,7 +141,7 @@ namespace TotalImage
                 //These fields only exist in an extended BPB (either DOS 3.4/4.0 or FAT32).
                 if (bpb is ExtendedBiosParameterBlock ebpb)
                 {
-                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"0x{ebpb.VolumeSerialNumber:X}";
+                    lstPropertiesFS.FindItemWithText("Volume serial number").SubItems[1].Text = ebpb.VolumeSerialNumber == 0 ? "N/A" : $"0x{ebpb.VolumeSerialNumber:X8}";
                     lstPropertiesFS.Items.Insert(14, new ListViewItem("Physical drive number")).SubItems.Add($"0x{ebpb.PhysicalDriveNumber:X2}");
                     lstPropertiesFS.Items.Insert(15, new ListViewItem("Flags")).SubItems.Add($"0x{ebpb.Flags:X2}");
                     lstPropertiesFS.Items.Insert(16, new ListViewItem("Boot signature")).SubItems.Add($"0x{(byte)ebpb.ExtendedBootSignature:X2}");

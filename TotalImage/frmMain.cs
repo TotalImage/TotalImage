@@ -2092,7 +2092,7 @@ namespace TotalImage
 
                 var label = image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ');
                 if (string.IsNullOrWhiteSpace(label))
-                    label = "<no label>";
+                    label = "<N/A>";
                 var fs = image.PartitionTable.Partitions[0].FileSystem.DisplayName;
                 var length = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length);
 
@@ -2196,7 +2196,7 @@ namespace TotalImage
 
                         var label = image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ');
                         if (string.IsNullOrWhiteSpace(label))
-                            label = "<no label>";
+                            label = "<N/A>";
                         var fs = image.PartitionTable.Partitions[i].FileSystem.DisplayName;
                         var length = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length);
 

@@ -166,7 +166,7 @@ namespace TotalImage
                 try
                 {
                     lvi.SubItems.Add(entry.FileSystem.DisplayName);
-                    lvi.SubItems.Add(entry.FileSystem.VolumeLabel);
+                    lvi.SubItems.Add(string.IsNullOrWhiteSpace(entry.FileSystem.VolumeLabel) ? "<N/A>" : entry.FileSystem.VolumeLabel);
                 }
                 catch (InvalidDataException)
                 {
