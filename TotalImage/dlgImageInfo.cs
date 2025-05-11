@@ -34,13 +34,6 @@ namespace TotalImage
             if (mainForm.image is null)
                 return;
 
-            //Fixes the column width on high DPI screens
-            lstPropertiesFile.Columns[1].Width = lstPropertiesFile.ClientRectangle.Width - lstPropertiesFile.Columns[0].Width;
-            lstPropertiesContainer.Columns[1].Width = lstPropertiesContainer.ClientRectangle.Width - lstPropertiesContainer.Columns[0].Width;
-            lstPropertiesPT.Columns[1].Width = lstPropertiesPT.ClientRectangle.Width - lstPropertiesPT.Columns[0].Width;
-            lstPropertiesPartition.Columns[1].Width = lstPropertiesPartition.ClientRectangle.Width - lstPropertiesPartition.Columns[0].Width;
-            lstPropertiesFS.Columns[1].Width = lstPropertiesFS.ClientRectangle.Width - lstPropertiesFS.Columns[0].Width;
-
             lstPropertiesFile.FindItemWithText("Filename").SubItems[1].Text = mainForm.filename;
             lstPropertiesFile.FindItemWithText("Path").SubItems[1].Text = mainForm.filepath;
             lstPropertiesFile.FindItemWithText("Size").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)fileInfo.Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
@@ -75,7 +68,7 @@ namespace TotalImage
                 lstPropertiesFS.FindItemWithText("Volume label").SubItems[1].Text = volLabel;
 
             lstPropertiesPT.FindItemWithText("Partitioning scheme").SubItems[1].Text = mainForm.image.PartitionTable.DisplayName;
-            lstPropertiesPT.FindItemWithText("No. of partitions").SubItems[1].Text = mainForm.image.PartitionTable.Partitions.Count.ToString();
+            lstPropertiesPT.FindItemWithText("Number of partitions").SubItems[1].Text = mainForm.image.PartitionTable.Partitions.Count.ToString();
             lstPropertiesPT.FindItemWithText("Selected partition").SubItems[1].Text = mainForm.CurrentPartitionIndex.ToString();
 
             //We might want to prettify this once the image-loading branchis merged in
@@ -111,6 +104,19 @@ namespace TotalImage
             {
                 GptPartitionTable.GptPartitionEntry entry = (GptPartitionTable.GptPartitionEntry)gpt.Partitions[mainForm.CurrentPartitionIndex];
                 lstPropertiesPartition.FindItemWithText("Partition ID/type").SubItems[1].Text = GptPartitionTable.GptPartitionTypes[entry.TypeId];
+
+                lstPropertiesPT.Items.Insert(1, new ListViewItem("Major version")).SubItems.Add($"0x{gpt.Header.VersionMajor:X4}");
+                lstPropertiesPT.Items.Insert(2, new ListViewItem("Minor version")).SubItems.Add($"0x{gpt.Header.VersionMinor:X4}");
+                lstPropertiesPT.Items.Insert(3, new ListViewItem("Header size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(gpt.Header.HeaderSize, false)}");
+                lstPropertiesPT.Items.Insert(4, new ListViewItem("Header CRC32 hash")).SubItems.Add($"0x{gpt.Header.HeaderHash:X8}");
+                lstPropertiesPT.Items.Insert(5, new ListViewItem("Current header LBA")).SubItems.Add($"{gpt.Header.CurrentLBA}");
+                lstPropertiesPT.Items.Insert(6, new ListViewItem("Backup header LBA")).SubItems.Add($"{gpt.Header.BackupLBA}");
+                lstPropertiesPT.Items.Insert(7, new ListViewItem("First usable LBA")).SubItems.Add($"{gpt.Header.FirstUsableLBA}");
+                lstPropertiesPT.Items.Insert(8, new ListViewItem("Last usable LBA")).SubItems.Add($"{gpt.Header.LastUsableLBA}");
+                lstPropertiesPT.Items.Insert(9, new ListViewItem("Disk GUID")).SubItems.Add($"{gpt.Header.DiskGuid}");
+                lstPropertiesPT.Items.Insert(10, new ListViewItem("First partition table LBA")).SubItems.Add($"{gpt.Header.TableLBA}");
+                lstPropertiesPT.Items.Insert(11, new ListViewItem("Partition entry size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(gpt.Header.SizeOfPartitionEntry, false)}");
+                lstPropertiesPT.Items.Insert(12, new ListViewItem("Partition table CRC32 hash")).SubItems.Add($"0x{gpt.Header.TableHash:X8}");
             }
 
             lstPropertiesFS.FindItemWithText("Files").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.CountFiles(true).ToString();
@@ -192,6 +198,13 @@ namespace TotalImage
             {
                 txtComment.Text = containerComment.Comment;
             }
+
+            //Fixes the column width on high DPI screens
+            lstPropertiesFile.Columns[1].Width = lstPropertiesFile.ClientRectangle.Width - lstPropertiesFile.Columns[0].Width;
+            lstPropertiesContainer.Columns[1].Width = lstPropertiesContainer.ClientRectangle.Width - lstPropertiesContainer.Columns[0].Width;
+            lstPropertiesPT.Columns[1].Width = lstPropertiesPT.ClientRectangle.Width - lstPropertiesPT.Columns[0].Width;
+            lstPropertiesPartition.Columns[1].Width = lstPropertiesPartition.ClientRectangle.Width - lstPropertiesPartition.Columns[0].Width;
+            lstPropertiesFS.Columns[1].Width = lstPropertiesFS.ClientRectangle.Width - lstPropertiesFS.Columns[0].Width;
 
             //Apply the appropriate styling to all items
             StyleListViewItems();
