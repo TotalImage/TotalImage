@@ -187,7 +187,7 @@ namespace TotalImage
         //Shows current image information
         private void imageInformation_Click(object sender, EventArgs e)
         {
-            using dlgImageInfoNew dlg = new();
+            using dlgImageInfo dlg = new();
             dlg.ShowDialog();
         }
 
