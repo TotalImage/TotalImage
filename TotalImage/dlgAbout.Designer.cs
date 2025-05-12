@@ -56,7 +56,7 @@ namespace TotalImage
             // lblTitle
             // 
             lblTitle.AutoSize = true;
-            lblTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            lblTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             lblTitle.Location = new System.Drawing.Point(66, 12);
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new System.Drawing.Size(96, 21);
@@ -88,7 +88,7 @@ namespace TotalImage
             lblCopyright.Name = "lblCopyright";
             lblCopyright.Size = new System.Drawing.Size(244, 15);
             lblCopyright.TabIndex = 4;
-            lblCopyright.Text = "Copyright © 2020-2024 The TotalImage Team";
+            lblCopyright.Text = "Copyright © 2020-2025 The TotalImage Team";
             // 
             // pnlBottom
             // 
