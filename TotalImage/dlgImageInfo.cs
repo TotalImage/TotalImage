@@ -66,15 +66,26 @@ namespace TotalImage
                 string creatorVersion = $"{vhd.Footer.CreatorVersionMajor}.{vhd.Footer.CreatorVersionMinor}";
                 if (creatorVersion != "0.0")
                     lstPropertiesContainer.FindItemWithText("Creator version").SubItems[1].Text = creatorVersion;
+
+                lstPropertiesContainer.Items.Add("Disk GUID").SubItems.Add($"{vhd.Footer.UniqueId}");
+                lstPropertiesContainer.Items.Add("Features").SubItems.Add($"{vhd.Footer.Features}");
+                lstPropertiesContainer.Items.Add("Creation time").SubItems.Add($"{vhd.Footer.CreationTime.DateTime}");
+                lstPropertiesContainer.Items.Add("Original size").SubItems.Add($"{Settings.CurrentSettings.SizeUnit.FormatSize(vhd.Footer.OriginalSize, true)}");
+                lstPropertiesContainer.Items.Add("Current size").SubItems.Add($"{Settings.CurrentSettings.SizeUnit.FormatSize(vhd.Footer.CurrentSize, true)}");
+                lstPropertiesContainer.Items.Add("Cylinders").SubItems.Add($"{vhd.Footer.DiskCylinders:N0}");
+                lstPropertiesContainer.Items.Add("Heads").SubItems.Add($"{vhd.Footer.DiskHeads:N0}");
+                lstPropertiesContainer.Items.Add("Sectors per track").SubItems.Add($"{vhd.Footer.DiskSectorsPerCylinder:N0}");
+                lstPropertiesContainer.Items.Add("Checksum").SubItems.Add($"0x{vhd.Footer.Checksum:X8}");               
+                lstPropertiesContainer.Items.Add("Saved state").SubItems.Add(vhd.Footer.SavedState ? "Yes" : "No");
             }
             //NHD specifics
             else if (mainForm.image is NhdContainer nhd)
             {
                 lstPropertiesContainer.Items.Add(new ListViewItem("Header size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(nhd.Header.HeaderSize, false)}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Sector size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(nhd.Header.SectorSize, false)}");
                 lstPropertiesContainer.Items.Add(new ListViewItem("Cylinders")).SubItems.Add($"{nhd.Header.Cylinders:N0}");
                 lstPropertiesContainer.Items.Add(new ListViewItem("Heads")).SubItems.Add($"{nhd.Header.Heads:N0}");
-                lstPropertiesContainer.Items.Add(new ListViewItem("Sectors per track")).SubItems.Add($"{nhd.Header.SectorsPerTrack:N0}");
-                lstPropertiesContainer.Items.Add(new ListViewItem("Sector size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(nhd.Header.SectorSize, false)}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Sectors per track")).SubItems.Add($"{nhd.Header.SectorsPerTrack:N0}");                
             }
             else if (mainForm.image is Anex86Container anex86)
             {
