@@ -19,7 +19,7 @@ Read and Create functionality is limited to supported features below.
 | Name | Common file extensions | Read | Write | Create |
 | --- | --- | --- | --- | --- |
 | Raw sector image | IMG, ISO, IMA, FLP, VFD, DSK | ✔ Yes | ❌ No | ✔ Yes |
-| Microsoft VHD | VHD | ⚠ Partial | ❌ No | ❌ No |
+| Microsoft VHD | VHD | ⚠ Partial<sup>1</sup> | ❌ No | ❌ No |
 | T98-Next HD | NHD | ✔ Yes | ❌ No | ❌ No |
 | WinImage compressed image | IMZ | ✔ Yes | ❌ No | ❌ No |
 | Anex86 disk image | FDI, HDI | ✔ Yes | ❌ No | ❌ No |
@@ -27,7 +27,7 @@ Read and Create functionality is limited to supported features below.
 
 Read and Create functionality is limited to supported features below.
 
-Differencing VHDs are not supported yet.
+<sup>1</sup> Differencing VHDs are not supported yet.
 
 ## Disk geometries
 | Name | Read | Write | Create |
@@ -40,14 +40,14 @@ Differencing VHDs are not supported yet.
 | Alphatronic PC-16 400k | ✔ Yes | ❌ No | ✔ Yes |
 | Eagle 1600 800k | ✔ Yes | ❌ No | ✔ Yes |
 | Tandy 2000 720k | ✔ Yes | ❌ No | ✔ Yes |
-| Acorn 800k | ✔ Yes | ❌ No | ⚠ Partial |
+| Acorn 800k | ✔ Yes | ❌ No | ⚠ Partial<sup>1</sup> |
 | Apricot 315k/720k | ✔ Yes | ❌ No | ❌ No |
 | Victor 9000 612k/1196k | ✔ Yes | ❌ No | ❌ No |
 | Hard disks with 512-byte sectors | ✔ Yes | ❌ No | ❌ No |
 
 These disk formats are only supported when formatted with a supported file system (depends on media type) and contained in a supported container.
 
-Acorn 800k Create functionality currently incorrectly writes a broken bootsector.
+<sup>1</sup> Acorn 800k Create functionality currently incorrectly writes a broken bootsector.
 
 ## Partitioning schemes
 | Name | Read | Write | Create |
