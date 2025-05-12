@@ -71,20 +71,20 @@ namespace TotalImage
             else if (mainForm.image is NhdContainer nhd)
             {
                 lstPropertiesContainer.Items.Add(new ListViewItem("Header size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(nhd.Header.HeaderSize, false)}");
-                lstPropertiesContainer.Items.Add(new ListViewItem("Cylinders")).SubItems.Add($"{nhd.Header.Cylinders}");
-                lstPropertiesContainer.Items.Add(new ListViewItem("Heads")).SubItems.Add($"{nhd.Header.Heads}");
-                lstPropertiesContainer.Items.Add(new ListViewItem("Sectors per track")).SubItems.Add($"{nhd.Header.SectorsPerTrack}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Cylinders")).SubItems.Add($"{nhd.Header.Cylinders:N0}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Heads")).SubItems.Add($"{nhd.Header.Heads:N0}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Sectors per track")).SubItems.Add($"{nhd.Header.SectorsPerTrack:N0}");
                 lstPropertiesContainer.Items.Add(new ListViewItem("Sector size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(nhd.Header.SectorSize, false)}");
             }
             else if (mainForm.image is Anex86Container anex86)
             {
-                lstPropertiesContainer.Items.Add(new ListViewItem("Disk type")).SubItems.Add($"0x{anex86.Header.DiskType:X8}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Disk type")).SubItems.Add($"0x{anex86.Header.DiskType:X4}");
                 lstPropertiesContainer.Items.Add(new ListViewItem("Header size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize((ulong)anex86.Header.HeaderSize, false)}");
                 lstPropertiesContainer.Items.Add(new ListViewItem("Data area size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize((ulong)anex86.Header.DataSize, false)}");
                 lstPropertiesContainer.Items.Add(new ListViewItem("Sector size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize((ulong)anex86.Header.SectorSize, false)}");
-                lstPropertiesContainer.Items.Add(new ListViewItem("Cylinders")).SubItems.Add($"{anex86.Header.Cylinders}");
-                lstPropertiesContainer.Items.Add(new ListViewItem("Heads")).SubItems.Add($"{anex86.Header.Heads}");
-                lstPropertiesContainer.Items.Add(new ListViewItem("Sectors per track")).SubItems.Add($"{anex86.Header.Sectors}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Cylinders")).SubItems.Add($"{anex86.Header.Cylinders:N0}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Heads")).SubItems.Add($"{anex86.Header.Heads:N0}");
+                lstPropertiesContainer.Items.Add(new ListViewItem("Sectors per track")).SubItems.Add($"{anex86.Header.Sectors:N0}");
             }
 
             //Partition table
@@ -124,8 +124,8 @@ namespace TotalImage
                 lstPropertiesPartition.Items.Add("Active").SubItems.Add(entry.Active ? "Yes" : "No");
                 lstPropertiesPartition.Items.Add("First sector CHS").SubItems.Add($"({entry.ChsStart.Cylinder},{entry.ChsStart.Head},{entry.ChsStart.Sector})");
                 lstPropertiesPartition.Items.Add("Last sector CHS").SubItems.Add($"({entry.ChsEnd.Cylinder},{entry.ChsEnd.Head},{entry.ChsEnd.Sector})");
-                lstPropertiesPartition.Items.Add("First sector LBA").SubItems.Add($"{entry.LbaStart}");
-                lstPropertiesPartition.Items.Add("Total sectors").SubItems.Add($"{entry.LbaLength}");
+                lstPropertiesPartition.Items.Add("First sector LBA").SubItems.Add($"{entry.LbaStart:N0}");
+                lstPropertiesPartition.Items.Add("Total sectors").SubItems.Add($"{entry.LbaLength:N0}");
                 lstPropertiesPartition.Items.Add("Total size").SubItems.Add($"{Settings.CurrentSettings.SizeUnit.FormatSize(entry.LbaLength * 512, true)}");
             }
             //GPT specifics
@@ -138,12 +138,12 @@ namespace TotalImage
                 lstPropertiesPT.Items.Insert(2, new ListViewItem("Minor version")).SubItems.Add($"0x{gpt.Header.VersionMinor:X4}");
                 lstPropertiesPT.Items.Insert(3, new ListViewItem("Header size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(gpt.Header.HeaderSize, false)}");
                 lstPropertiesPT.Items.Insert(4, new ListViewItem("Header CRC32 hash")).SubItems.Add($"0x{gpt.Header.HeaderHash:X8}");
-                lstPropertiesPT.Items.Insert(5, new ListViewItem("Current header LBA")).SubItems.Add($"{gpt.Header.CurrentLBA}");
-                lstPropertiesPT.Items.Insert(6, new ListViewItem("Backup header LBA")).SubItems.Add($"{gpt.Header.BackupLBA}");
-                lstPropertiesPT.Items.Insert(7, new ListViewItem("First usable LBA")).SubItems.Add($"{gpt.Header.FirstUsableLBA}");
-                lstPropertiesPT.Items.Insert(8, new ListViewItem("Last usable LBA")).SubItems.Add($"{gpt.Header.LastUsableLBA}");
+                lstPropertiesPT.Items.Insert(5, new ListViewItem("Current header LBA")).SubItems.Add($"{gpt.Header.CurrentLBA:N0}");
+                lstPropertiesPT.Items.Insert(6, new ListViewItem("Backup header LBA")).SubItems.Add($"{gpt.Header.BackupLBA:N0}");
+                lstPropertiesPT.Items.Insert(7, new ListViewItem("First usable LBA")).SubItems.Add($"{gpt.Header.FirstUsableLBA:N0}");
+                lstPropertiesPT.Items.Insert(8, new ListViewItem("Last usable LBA")).SubItems.Add($"{gpt.Header.LastUsableLBA:N0}");
                 lstPropertiesPT.Items.Insert(9, new ListViewItem("Disk GUID")).SubItems.Add($"{gpt.Header.DiskGuid}");
-                lstPropertiesPT.Items.Insert(10, new ListViewItem("First partition table LBA")).SubItems.Add($"{gpt.Header.TableLBA}");
+                lstPropertiesPT.Items.Insert(10, new ListViewItem("First partition table LBA")).SubItems.Add($"{gpt.Header.TableLBA:N0}");
                 lstPropertiesPT.Items.Insert(11, new ListViewItem("Partition entry size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(gpt.Header.SizeOfPartitionEntry, false)}");
                 lstPropertiesPT.Items.Insert(12, new ListViewItem("Partition table CRC32 hash")).SubItems.Add($"0x{gpt.Header.TableHash:X8}");
 
@@ -151,8 +151,8 @@ namespace TotalImage
                 lstPropertiesPartition.FindItemWithText("Partition ID/type").SubItems[1].Text = GptPartitionTable.GptPartitionTypes[entry.TypeId];
                 lstPropertiesPartition.Items.Add("Partition type GUID").SubItems.Add($"{entry.TypeId}");
                 lstPropertiesPartition.Items.Add("Partition GUID").SubItems.Add($"{entry.EntryId}");
-                lstPropertiesPartition.Items.Add("First LBA").SubItems.Add($"{entry.FirstLBA}");
-                lstPropertiesPartition.Items.Add("Last LBA").SubItems.Add($"{entry.LastLBA}");
+                lstPropertiesPartition.Items.Add("First LBA").SubItems.Add($"{entry.FirstLBA:N0}");
+                lstPropertiesPartition.Items.Add("Last LBA").SubItems.Add($"{entry.LastLBA:N0}");
                 lstPropertiesPartition.Items.Add("Attribute flags").SubItems.Add($"0x{(ulong)entry.Flags:X16}");
                 lstPropertiesPartition.Items.Add("Partition name").SubItems.Add($"{entry.Name}");
             }
@@ -177,16 +177,16 @@ namespace TotalImage
                 lstPropertiesFS.Items.Insert(1, new ListViewItem("Jump instruction")).SubItems.Add($"0x{bpb.BootJump[0]:X2} 0x{bpb.BootJump[1]:X2} 0x{bpb.BootJump[2]:X2}");
                 lstPropertiesFS.Items.Insert(2, new ListViewItem("OEM ID")).SubItems.Add(string.IsNullOrWhiteSpace(fatFS.BiosParameterBlock.OemId) ? "N/A" : fatFS.BiosParameterBlock.OemId);
                 lstPropertiesFS.Items.Insert(3, new ListViewItem("Sector size")).SubItems.Add($"{SizeUnit.Bytes.FormatSize(bpb.BytesPerLogicalSector, false)}");
-                lstPropertiesFS.Items.Insert(4, new ListViewItem("Sectors per cluster")).SubItems.Add($"{bpb.LogicalSectorsPerCluster}");
-                lstPropertiesFS.Items.Insert(5, new ListViewItem("Reserved sectors")).SubItems.Add($"{bpb.ReservedLogicalSectors}");
-                lstPropertiesFS.Items.Insert(6, new ListViewItem("Number of FATs")).SubItems.Add($"{bpb.NumberOfFATs}");
+                lstPropertiesFS.Items.Insert(4, new ListViewItem("Sectors per cluster")).SubItems.Add($"{bpb.LogicalSectorsPerCluster:N0}");
+                lstPropertiesFS.Items.Insert(5, new ListViewItem("Reserved sectors")).SubItems.Add($"{bpb.ReservedLogicalSectors:N0}");
+                lstPropertiesFS.Items.Insert(6, new ListViewItem("Number of FATs")).SubItems.Add($"{bpb.NumberOfFATs:N0}");
                 lstPropertiesFS.Items.Insert(7, new ListViewItem("Root directory entries")).SubItems.Add(fatFS is Fat32FileSystem ? "N/A" : $"{bpb.RootDirectoryEntries}");
-                lstPropertiesFS.Items.Insert(8, new ListViewItem("Total sectors")).SubItems.Add($"{bpb.TotalLogicalSectors}");
+                lstPropertiesFS.Items.Insert(8, new ListViewItem("Total sectors")).SubItems.Add($"{bpb.TotalLogicalSectors:N0}");
                 lstPropertiesFS.Items.Insert(9, new ListViewItem("Media descriptor")).SubItems.Add($"0x{bpb.MediaDescriptor:X2}");
-                lstPropertiesFS.Items.Insert(10, new ListViewItem("Sectors per FAT")).SubItems.Add($"{bpb.LogicalSectorsPerFAT}");
-                lstPropertiesFS.Items.Insert(11, new ListViewItem("Sectors per track")).SubItems.Add($"{bpb.PhysicalSectorsPerTrack}");
-                lstPropertiesFS.Items.Insert(12, new ListViewItem("Heads/sides")).SubItems.Add($"{bpb.NumberOfHeads}");
-                lstPropertiesFS.Items.Insert(13, new ListViewItem("Hidden sectors")).SubItems.Add($"{bpb.HiddenSectors}");
+                lstPropertiesFS.Items.Insert(10, new ListViewItem("Sectors per FAT")).SubItems.Add($"{bpb.LogicalSectorsPerFAT:N0}");
+                lstPropertiesFS.Items.Insert(11, new ListViewItem("Sectors per track")).SubItems.Add($"{bpb.PhysicalSectorsPerTrack:N0}");
+                lstPropertiesFS.Items.Insert(12, new ListViewItem("Heads/sides")).SubItems.Add($"{bpb.NumberOfHeads:N0}");
+                lstPropertiesFS.Items.Insert(13, new ListViewItem("Hidden sectors")).SubItems.Add($"{bpb.HiddenSectors:N0}");
 
                 //These fields only exist in an extended BPB (either DOS 3.4/4.0 or FAT32).
                 if (bpb is ExtendedBiosParameterBlock ebpb)
@@ -201,11 +201,11 @@ namespace TotalImage
                 //Root directory is relocatable in FAT32. We add these fields last to keep proper order of items.
                 if (bpb is Fat32BiosParameterBlock f32bpb)
                 {
-                    lstPropertiesFS.Items.Insert(8, new ListViewItem("Root directory cluster")).SubItems.Add($"{f32bpb.RootDirectoryCluster}");
+                    lstPropertiesFS.Items.Insert(8, new ListViewItem("Root directory cluster")).SubItems.Add($"{f32bpb.RootDirectoryCluster:N0}");
                     lstPropertiesFS.Items.Insert(18, new ListViewItem("Extended flags")).SubItems.Add($"0x{f32bpb.ExtFlags:X2}");
                     lstPropertiesFS.Items.Insert(19, new ListViewItem("Version")).SubItems.Add($"0x{f32bpb.FileSystemVersion:X2}");
-                    lstPropertiesFS.Items.Insert(20, new ListViewItem("FSInfo sector")).SubItems.Add($"{f32bpb.FsInfo}");
-                    lstPropertiesFS.Items.Insert(21, new ListViewItem("Backup boot sector")).SubItems.Add($"{f32bpb.BackupBootSector}");
+                    lstPropertiesFS.Items.Insert(20, new ListViewItem("FSInfo sector")).SubItems.Add($"{f32bpb.FsInfo:N0}");
+                    lstPropertiesFS.Items.Insert(21, new ListViewItem("Backup boot sector")).SubItems.Add($"{f32bpb.BackupBootSector:N0}");
                 }
             }
             //ISO9660 specifics
