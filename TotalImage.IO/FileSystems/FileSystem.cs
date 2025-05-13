@@ -51,7 +51,7 @@ namespace TotalImage.FileSystems
         /// <summary>
         /// The minimum allocatable unit size on the file system
         /// </summary>
-        public abstract uint AllocationUnitSize { get; }
+        public abstract long AllocationUnitSize { get; }
 
         /// <summary>
         /// Does the file system support subdirectories

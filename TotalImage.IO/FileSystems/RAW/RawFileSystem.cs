@@ -31,7 +31,7 @@ namespace TotalImage.FileSystems.RAW
         public override long TotalSize => _stream.Length;
 
         /// <inheritdoc />
-        public override uint AllocationUnitSize => 512;
+        public override long AllocationUnitSize => 512;
 
         /// <summary>
         /// Create an empty RAW file system
