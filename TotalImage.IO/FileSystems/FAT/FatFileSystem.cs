@@ -19,7 +19,7 @@ namespace TotalImage.FileSystems.FAT
         public override long TotalFreeSpace => TotalFreeClusters * BytesPerCluster;
 
         /// <inheritdoc />
-        public override uint AllocationUnitSize => BytesPerCluster;
+        public override long AllocationUnitSize => BytesPerCluster;
 
         /// <summary>
         /// The BIOS Parameter Block for this FAT file system.

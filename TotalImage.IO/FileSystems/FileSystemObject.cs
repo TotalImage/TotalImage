@@ -51,7 +51,7 @@ namespace TotalImage.FileSystems
         /// <summary>
         /// The length of the file system object as represented on the disk
         /// </summary>
-        public virtual ulong LengthOnDisk => ((Length / FileSystem.AllocationUnitSize) + 1) * FileSystem.AllocationUnitSize;
+        public virtual ulong LengthOnDisk => ((Length / (ulong)FileSystem.AllocationUnitSize) + 1) * (ulong)FileSystem.AllocationUnitSize;
 
         /// <summary>
         /// The file system that contains the file system object
