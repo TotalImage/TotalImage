@@ -14,6 +14,9 @@ public class ExFatFileSystem : FileSystem
     public ExFatFileAllocationTable ActiveFat =>
         Fats[BootSector.VolumeFlags & 0x01];
 
+    /// <inheritdoc />
+    public override bool SupportsSubdirectories => true;
+
     public ExFatFileSystem(Stream stream) : base(stream)
     {
         var sector = new byte[512];
