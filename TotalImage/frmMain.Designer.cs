@@ -98,6 +98,7 @@ namespace TotalImage
             directoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             statusBarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            viewDeletedObjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             hexViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             imageInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
@@ -163,7 +164,6 @@ namespace TotalImage
             propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             selectAllToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             imgFilesLarge = new System.Windows.Forms.ImageList(components);
-            viewDeletedObjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             cmsDirTree.SuspendLayout();
             menuBar.SuspendLayout();
             cmsToolbars.SuspendLayout();
@@ -704,6 +704,13 @@ namespace TotalImage
             toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             toolsToolStripMenuItem.Text = "Tools";
             toolsToolStripMenuItem.DropDownOpening += toolsToolStripMenuItem_DropDownOpening;
+            // 
+            // viewDeletedObjectsToolStripMenuItem
+            // 
+            viewDeletedObjectsToolStripMenuItem.Name = "viewDeletedObjectsToolStripMenuItem";
+            viewDeletedObjectsToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            viewDeletedObjectsToolStripMenuItem.Text = "View deleted objects...";
+            viewDeletedObjectsToolStripMenuItem.Click += viewDeletedObjectsToolStripMenuItem_Click;
             // 
             // hexViewToolStripMenuItem
             // 
@@ -1306,12 +1313,6 @@ namespace TotalImage
             imgFilesLarge.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
             imgFilesLarge.ImageSize = new System.Drawing.Size(32, 32);
             imgFilesLarge.TransparentColor = System.Drawing.Color.Transparent;
-            // 
-            // viewDeletedObjectsToolStripMenuItem
-            // 
-            viewDeletedObjectsToolStripMenuItem.Name = "viewDeletedObjectsToolStripMenuItem";
-            viewDeletedObjectsToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            viewDeletedObjectsToolStripMenuItem.Text = "View deleted objects...";
             // 
             // frmMain
             // 

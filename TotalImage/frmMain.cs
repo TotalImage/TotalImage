@@ -273,6 +273,12 @@ namespace TotalImage
             Settings.CurrentSettings.FilesView = View.Details;
         }
 
+        private void viewDeletedObjectsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using dlgDeletedObjects dlg = new();
+            dlg.ShowDialog();
+        }
+
         //Deletes a file or folder
         //TODO: Implement deletion here and in the FS/container
         private void delete_Click(object sender, EventArgs e)
@@ -299,7 +305,7 @@ namespace TotalImage
 
                 //Build a fancy string for showing the item count
                 string itemCount = "";
-                if(dirCount > 0)
+                if (dirCount > 0)
                 {
                     itemCount += $"{dirCount} director{(dirCount == 1 ? "y" : "ies")}";
                     if (fileCount > 0)
@@ -804,7 +810,7 @@ namespace TotalImage
             List<TiFileSystemObject> entries = new();
             if (lstDirectories.Focused)
             {
-                if(lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
+                if (lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
                     entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
             }
             else if (lstFiles.Focused)
@@ -1366,28 +1372,28 @@ namespace TotalImage
             }
             /*else
             {*/
-                /* Searches the currently displayed items for the first one that starts with the character of the pressed key.
-                 * Currently this is very rudimentary, as it only works for English letters and digits, and the first item that is found.
-                 * Could be improved to continue the search further etc. */
-               /* string character = e.KeyCode.ToString();
+            /* Searches the currently displayed items for the first one that starts with the character of the pressed key.
+             * Currently this is very rudimentary, as it only works for English letters and digits, and the first item that is found.
+             * Could be improved to continue the search further etc. */
+            /* string character = e.KeyCode.ToString();
 
-                //This crap is done so numeric keys also work...
-                if ((byte)e.KeyCode > 0x30 && (byte)e.KeyCode < 0x39)
-                    character = ((int)e.KeyCode - 0x30).ToString();
-                else if ((byte)e.KeyCode > 0x60 && (byte)e.KeyCode < 0x69)
-                    character = ((int)e.KeyCode - 0x60).ToString();
+             //This crap is done so numeric keys also work...
+             if ((byte)e.KeyCode > 0x30 && (byte)e.KeyCode < 0x39)
+                 character = ((int)e.KeyCode - 0x30).ToString();
+             else if ((byte)e.KeyCode > 0x60 && (byte)e.KeyCode < 0x69)
+                 character = ((int)e.KeyCode - 0x60).ToString();
 
-                foreach (ListViewItem lvi in currentFolderView)
-                {
-                    if (lvi.Text.ToLower().StartsWith(character.ToLower()))
-                    {
-                        lstFiles.SelectedIndices.Clear();
-                        lvi.Focused = true;
-                        lvi.Selected = true;
-                        return;
-                    }
-                }
-            }*/
+             foreach (ListViewItem lvi in currentFolderView)
+             {
+                 if (lvi.Text.ToLower().StartsWith(character.ToLower()))
+                 {
+                     lstFiles.SelectedIndices.Clear();
+                     lvi.Focused = true;
+                     lvi.Selected = true;
+                     return;
+                 }
+             }
+         }*/
         }
 
         private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -2092,13 +2098,13 @@ namespace TotalImage
                     //If there's multiple partitions in a supported partition table, and they're all unsupported types, for now we just back out.
                     //Once we implement partition management (soon™), we can offer that to the user.
                     int rawCount = 0;
-                    foreach(Partitions.PartitionEntry entry in image.PartitionTable.Partitions)
+                    foreach (Partitions.PartitionEntry entry in image.PartitionTable.Partitions)
                     {
-                        if(entry.FileSystem is FileSystems.RAW.RawFileSystem)
+                        if (entry.FileSystem is FileSystems.RAW.RawFileSystem)
                             rawCount++;
                     }
 
-                    if(rawCount == image.PartitionTable.Partitions.Count)
+                    if (rawCount == image.PartitionTable.Partitions.Count)
                     {
                         TaskDialog.ShowDialog(this, new TaskDialogPage()
                         {
@@ -2405,6 +2411,7 @@ namespace TotalImage
             pbrStatusCapacity.Visible = false;
             parentDirectoryToolStripMenuItem.Enabled = false;
             parentDirectoryToolStripButton.Enabled = false;
+            viewDeletedObjectsToolStripMenuItem.Enabled = false;
 
             // Change border sides for status bar children to remove seperator-like looks.
             lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.None;
