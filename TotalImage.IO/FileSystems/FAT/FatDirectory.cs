@@ -120,13 +120,13 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <inheritdoc />
-        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false)
+        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden)
         {
             var fat = (FatFileSystem)FileSystem;
             var entries = entry switch
             {
-                null => DirectoryEntry.EnumerateRootDirectory(fat, showDeleted),
-                _ => DirectoryEntry.EnumerateSubdirectory(fat, entry.Value, showDeleted)
+                null => DirectoryEntry.EnumerateRootDirectory(fat),
+                _ => DirectoryEntry.EnumerateSubdirectory(fat, entry.Value)
             };
 
             foreach (var (entry, lfnEntries) in entries)

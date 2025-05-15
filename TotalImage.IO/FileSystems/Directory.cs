@@ -45,12 +45,13 @@ namespace TotalImage.FileSystems
         /// <param name="showHidden">Whether to show hidden objects</param>
         /// <param name="showDeleted">Whether to show deleted objects</param>
         /// <returns>An enumerable of file system objects contained within the directory</returns>
-        public abstract IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false);
+
+        public abstract IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden);
 
         // For lack of a better name
         private IEnumerable<FileSystemObject> EnumerateFileSystemObjectsInternal(bool recursive)
         {
-            foreach (var item in EnumerateFileSystemObjects(true, false))
+            foreach (var item in EnumerateFileSystemObjects(true))
             {
                 yield return item;
 
@@ -68,11 +69,11 @@ namespace TotalImage.FileSystems
         /// Get directories contained within a directory
         /// </summary>
         /// <param name="showHidden">Whether to show hidden directories</param>
-        /// <param name="showDeleted">Whether to show deleted directories</param>
         /// <returns>An enumerable of directories contained within the directory</returns>
-        public IEnumerable<Directory> EnumerateDirectories(bool showHidden, bool showDeleted = false)
+
+        public IEnumerable<Directory> EnumerateDirectories(bool showHidden)
         {
-            foreach (var obj in EnumerateFileSystemObjects(showHidden, showDeleted))
+            foreach (var obj in EnumerateFileSystemObjects(showHidden))
             {
                 if (obj is Directory dObj)
                 {
@@ -85,11 +86,11 @@ namespace TotalImage.FileSystems
         /// Get files contained within a directory
         /// </summary>
         /// <param name="showHidden">Whether to show hidden files</param>
-        /// <param name="showDeleted">Whether to show deleted files</param>
         /// <returns>An enumerable of files contained within the directory</returns>
-        public IEnumerable<File> EnumerateFiles(bool showHidden, bool showDeleted = false)
+
+        public IEnumerable<File> EnumerateFiles(bool showHidden)
         {
-            foreach (var obj in EnumerateFileSystemObjects(showHidden, showDeleted))
+            foreach (var obj in EnumerateFileSystemObjects(showHidden))
             {
                 if (obj is File fObj)
                 {

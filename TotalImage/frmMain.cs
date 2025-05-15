@@ -1160,7 +1160,7 @@ namespace TotalImage
                 {
                     /* Add the root dir contents (non-recursively) to the list instead of the tempdir itself, so Explorer doesn't end up moving it
                      * instead of the contents. */
-                    foreach (var fso in draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false))
+                    foreach (var fso in draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems))
                     {
                         items.Add(Path.Combine(tempDir, fso.Name));
                     }
@@ -1608,7 +1608,7 @@ namespace TotalImage
                     else if (sender is TreeView && draggedDir is not null)
                     {
                         if (draggedDir.Parent is null) //Root dir needs to be treated separately
-                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), DirectoryExtractionMode.Preserve);
+                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems), DirectoryExtractionMode.Preserve);
                         else
                             extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, new TiFileSystemObject[] { draggedDir }, DirectoryExtractionMode.Preserve);
                     }
@@ -1731,7 +1731,7 @@ namespace TotalImage
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
-            foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems, false))
+            foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems))
             {
                 var subnode = new TreeNode(subdir.Name);
 
@@ -1802,7 +1802,7 @@ namespace TotalImage
                 parentDirectoryToolStripButton.Enabled = false;
             }
 
-            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false))
+            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems))
             {
                 var item = new ListViewItem();
                 item.Text = fso.Name;

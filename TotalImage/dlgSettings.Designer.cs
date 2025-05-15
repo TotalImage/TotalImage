@@ -369,7 +369,7 @@ namespace TotalImage
             gbxSizeUnits.Controls.Add(lblSizeUnitsPreview);
             gbxSizeUnits.Controls.Add(lblSizeUnits);
             gbxSizeUnits.Controls.Add(lstSizeUnits);
-            gbxSizeUnits.Location = new System.Drawing.Point(6, 251);
+            gbxSizeUnits.Location = new System.Drawing.Point(6, 224);
             gbxSizeUnits.Name = "gbxSizeUnits";
             gbxSizeUnits.Size = new System.Drawing.Size(442, 116);
             gbxSizeUnits.TabIndex = 23;
@@ -424,7 +424,7 @@ namespace TotalImage
             gbxFileList.Controls.Add(lblSortOrder);
             gbxFileList.Controls.Add(lblSortBy);
             gbxFileList.Controls.Add(lstSortBy);
-            gbxFileList.Location = new System.Drawing.Point(6, 119);
+            gbxFileList.Location = new System.Drawing.Point(6, 92);
             gbxFileList.Name = "gbxFileList";
             gbxFileList.Size = new System.Drawing.Size(442, 126);
             gbxFileList.TabIndex = 22;
@@ -510,7 +510,7 @@ namespace TotalImage
             gbxMainWindow.Controls.Add(cbxShowHiddenItems);
             gbxMainWindow.Location = new System.Drawing.Point(6, 6);
             gbxMainWindow.Name = "gbxMainWindow";
-            gbxMainWindow.Size = new System.Drawing.Size(442, 106);
+            gbxMainWindow.Size = new System.Drawing.Size(442, 80);
             gbxMainWindow.TabIndex = 21;
             gbxMainWindow.TabStop = false;
             gbxMainWindow.Text = "Main window";
