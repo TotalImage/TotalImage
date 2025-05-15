@@ -789,7 +789,6 @@ namespace TotalImage
                 deleteToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 propertiesToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 renameToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                undeleteToolStripMenuItem2.Enabled = false;
             }
             else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
             {
@@ -803,7 +802,6 @@ namespace TotalImage
                 extractToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
                 propertiesToolStripMenuItem2.Enabled = true;
                 renameToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-                undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
             }
             else
             {
@@ -811,9 +809,6 @@ namespace TotalImage
                 extractToolStripMenuItem2.Enabled = true;
                 propertiesToolStripMenuItem2.Enabled = true;
                 renameToolStripMenuItem2.Enabled = false;
-
-                //Should be determined if there are any deleted entries in the selection and possibly enable this?
-                undeleteToolStripMenuItem2.Enabled = false;
             }
         }
 
@@ -1474,7 +1469,6 @@ namespace TotalImage
                 extractToolStripMenuItem.Enabled = false;
                 renameToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem.Enabled = false;
-                undeleteToolStripMenuItem.Enabled = false;
                 propertiesToolStripMenuItem.Enabled = false;
                 selectAllToolStripMenuItem.Enabled = false;
                 newFolderToolStripMenuItem.Enabled = false;
@@ -1504,7 +1498,6 @@ namespace TotalImage
 
             if (lstDirectories.Focused)
             {
-                undeleteToolStripMenuItem.Enabled = false;
                 renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 propertiesToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
@@ -1516,13 +1509,11 @@ namespace TotalImage
                     deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                     propertiesToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                     renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                    undeleteToolStripMenuItem.Enabled = false;
                 }
                 else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
                 {
                     renameToolStripMenuItem.Enabled = false;
                     deleteToolStripMenuItem.Enabled = false;
-                    undeleteToolStripMenuItem.Enabled = false;
                     propertiesToolStripMenuItem.Enabled = false;
                 }
                 else if (lstFiles.SelectedIndices.Count == 1)
@@ -1532,14 +1523,12 @@ namespace TotalImage
                     extractToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
                     propertiesToolStripMenuItem.Enabled = true;
                     renameToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                    undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
                 }
                 else
                 {
                     deleteToolStripMenuItem.Enabled = true;
                     propertiesToolStripMenuItem.Enabled = true;
                     renameToolStripMenuItem.Enabled = false;
-                    undeleteToolStripMenuItem.Enabled = false;
                 }
             }
         }
