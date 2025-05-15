@@ -106,7 +106,7 @@ public static class FileExtraction
             foreach (var dir in dirs)
             {
                 var children = EnumerateFilesForExtractionAsync(
-                    dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false),
+                    dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems),
                     mode switch
                     {
                         DirectoryExtractionMode.Merge => path,

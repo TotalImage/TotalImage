@@ -70,7 +70,7 @@ namespace TotalImage.FileSystems.RAW
         }
 
         /// <inheritdoc />
-        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false)
+        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden)
             => Array.Empty<FileSystemObject>();
 
         /// <inheritdoc />
