@@ -762,7 +762,7 @@ namespace TotalImage
                 deleteToolStripMenuItem2.Enabled = true;
                 extractToolStripMenuItem2.Enabled = true;
                 propertiesToolStripMenuItem2.Enabled = true;
-                renameToolStripMenuItem2.Enabled = true;
+                renameToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
             }
             else
             {
