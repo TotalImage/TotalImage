@@ -82,7 +82,6 @@ namespace TotalImage
             collapseDirectoryTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             showHiddenItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            showDeletedItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             largeIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             smallIconsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -136,7 +135,6 @@ namespace TotalImage
             parentDirectoryToolStripButton = new System.Windows.Forms.ToolStripButton();
             viewToolStripButton = new System.Windows.Forms.ToolStripDropDownButton();
             showHiddenItemsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            showDeletedItemsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             largeIconsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             smallIconsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -249,7 +247,7 @@ namespace TotalImage
             // 
             propertiesToolStripMenuItem1.Image = Properties.Resources.page_white_edit;
             propertiesToolStripMenuItem1.Name = "propertiesToolStripMenuItem1";
-            propertiesToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return;
+            propertiesToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Enter;
             propertiesToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             propertiesToolStripMenuItem1.Text = "Properties...";
             propertiesToolStripMenuItem1.Click += properties_Click;
@@ -458,7 +456,7 @@ namespace TotalImage
             // 
             propertiesToolStripMenuItem.Image = Properties.Resources.page_white_edit;
             propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
-            propertiesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return;
+            propertiesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Enter;
             propertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             propertiesToolStripMenuItem.Text = "Properties...";
             propertiesToolStripMenuItem.Click += properties_Click;
@@ -537,7 +535,7 @@ namespace TotalImage
             // 
             // viewToolStripMenuItem
             // 
-            viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { parentDirectoryToolStripMenuItem, toolStripSeparator4, expandDirectoryTreeToolStripMenuItem, collapseDirectoryTreeToolStripMenuItem, toolStripSeparator16, showHiddenItemsToolStripMenuItem, showDeletedItemsToolStripMenuItem, toolStripSeparator13, largeIconsToolStripMenuItem, smallIconsToolStripMenuItem, listToolStripMenuItem, detailsToolStripMenuItem, toolStripSeparator6, sortByToolStripMenuItem, toolbarsToolStripMenuItem });
+            viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { parentDirectoryToolStripMenuItem, toolStripSeparator4, expandDirectoryTreeToolStripMenuItem, collapseDirectoryTreeToolStripMenuItem, toolStripSeparator16, showHiddenItemsToolStripMenuItem, toolStripSeparator13, largeIconsToolStripMenuItem, smallIconsToolStripMenuItem, listToolStripMenuItem, detailsToolStripMenuItem, toolStripSeparator6, sortByToolStripMenuItem, toolbarsToolStripMenuItem });
             viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             viewToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.V;
             viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -585,14 +583,6 @@ namespace TotalImage
             showHiddenItemsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             showHiddenItemsToolStripMenuItem.Text = "Show hidden objects";
             showHiddenItemsToolStripMenuItem.Click += showHiddenItems_Click;
-            // 
-            // showDeletedItemsToolStripMenuItem
-            // 
-            showDeletedItemsToolStripMenuItem.CheckOnClick = true;
-            showDeletedItemsToolStripMenuItem.Name = "showDeletedItemsToolStripMenuItem";
-            showDeletedItemsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
-            showDeletedItemsToolStripMenuItem.Text = "Show deleted objects";
-            showDeletedItemsToolStripMenuItem.Click += showDeletedItems_Click;
             // 
             // toolStripSeparator13
             // 
@@ -1030,7 +1020,7 @@ namespace TotalImage
             // viewToolStripButton
             // 
             viewToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            viewToolStripButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { showHiddenItemsToolStripMenuItem1, showDeletedItemsToolStripMenuItem1, toolStripSeparator14, largeIconsToolStripMenuItem1, smallIconsToolStripMenuItem1, listToolStripMenuItem1, detailsToolStripMenuItem1 });
+            viewToolStripButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { showHiddenItemsToolStripMenuItem1, toolStripSeparator14, largeIconsToolStripMenuItem1, smallIconsToolStripMenuItem1, listToolStripMenuItem1, detailsToolStripMenuItem1 });
             viewToolStripButton.Image = Properties.Resources.application_view_tile;
             viewToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             viewToolStripButton.Name = "viewToolStripButton";
@@ -1045,14 +1035,6 @@ namespace TotalImage
             showHiddenItemsToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
             showHiddenItemsToolStripMenuItem1.Text = "Show hidden objects";
             showHiddenItemsToolStripMenuItem1.Click += showHiddenItems_Click;
-            // 
-            // showDeletedItemsToolStripMenuItem1
-            // 
-            showDeletedItemsToolStripMenuItem1.CheckOnClick = true;
-            showDeletedItemsToolStripMenuItem1.Name = "showDeletedItemsToolStripMenuItem1";
-            showDeletedItemsToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
-            showDeletedItemsToolStripMenuItem1.Text = "Show deleted objects";
-            showDeletedItemsToolStripMenuItem1.Click += showDeletedItems_Click;
             // 
             // toolStripSeparator14
             // 
@@ -1332,7 +1314,7 @@ namespace TotalImage
             // 
             propertiesToolStripMenuItem2.Image = Properties.Resources.page_white_edit;
             propertiesToolStripMenuItem2.Name = "propertiesToolStripMenuItem2";
-            propertiesToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Return;
+            propertiesToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Enter;
             propertiesToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             propertiesToolStripMenuItem2.Text = "Properties...";
             propertiesToolStripMenuItem2.Click += properties_Click;
@@ -1494,10 +1476,8 @@ namespace TotalImage
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
         private System.Windows.Forms.ToolStripMenuItem showHiddenItemsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
-        private System.Windows.Forms.ToolStripMenuItem showDeletedItemsToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel lblStatusSize;
         private System.Windows.Forms.ToolStripStatusLabel lbStatusPath;
-        private System.Windows.Forms.ToolStripMenuItem showDeletedItemsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem undeleteToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem1;
