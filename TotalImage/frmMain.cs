@@ -16,6 +16,7 @@ using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using TiDirectory = TotalImage.FileSystems.Directory;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
+using TotalImage.Operations;
 
 namespace TotalImage
 {
@@ -28,17 +29,19 @@ namespace TotalImage
 
     public partial class frmMain : Form
     {
-        public string filename = "";
-        public string filepath = "";
-        public bool unsavedChanges = false;
-        public Container? image;
-        public int CurrentPartitionIndex;
+        private string? lastSavedFilename;
         private int sortColumn;
         private SortOrder sortOrder;
         private TiDirectory? lastViewedDir;
-        private string? lastSavedFilename;
         private TiDirectory? draggedDir;
+
+        public string filename = "";
+        public string filepath = "";
         public string tempDir;
+        public bool unsavedChanges = false;
+        public int CurrentPartitionIndex;
+        public Container? image;
+        public OperationsStack operations;
 
         private ListViewItem upOneFolderListViewItem = new()
         {
@@ -64,6 +67,8 @@ namespace TotalImage
             //This fixes the problem of certain settings values not being returned correctly when using high DPI. Go figure...
             Settings.ReloadSettings();
             Settings.ReloadUIState();
+
+            operations = new OperationsStack();
 
             SyncUIOptions();
             SyncWindowState();
