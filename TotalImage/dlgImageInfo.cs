@@ -14,6 +14,7 @@ using TotalImage.Containers.VHD;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using TotalImage.FileSystems.ISO;
+using TotalImage.Operations;
 using TotalImage.Partitions;
 
 namespace TotalImage
@@ -494,10 +495,11 @@ namespace TotalImage
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            if (mainForm.image is IContainerComment containerComment)
+            if (mainForm.image is IContainerComment containerComment && !txtComment.Text.Equals(containerComment.Comment))
             {
-                containerComment.Comment = txtComment.Text;
-                containerComment.WriteComment(txtComment.Text);
+                mainForm.operations.Push(new ImageCommentChangedOperation(mainForm.image, containerComment.Comment, txtComment.Text));
+                mainForm.unsavedChanges = true;
+                mainForm.Text = mainForm.filename + "* - TotalImage";
             }
         }
     }
