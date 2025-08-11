@@ -1,6 +1,7 @@
 using System;
 using System.Buffers.Binary;
 using System.IO;
+using System.Text;
 
 namespace TotalImage.FileSystems.ExFAT;
 
@@ -20,12 +21,17 @@ public class ExFatFactory : IFileSystemFactory
         stream.Position = bootRegion.Length;
         stream.Read(checksum);
 
-        if (CalculateBootChecksum(bootRegion) == BinaryPrimitives.ReadUInt32LittleEndian(checksum))
+        if (CalculateBootChecksum(bootRegion) != BinaryPrimitives.ReadUInt32LittleEndian(checksum))
         {
-            return new ExFatFileSystem(stream);
+            return null;
         }
 
-        return null;
+        if (Encoding.ASCII.GetString(bootRegion[3..11]) != "EXFAT   ")
+        {
+            return null;
+        }
+
+        return new ExFatFileSystem(stream);
     }
 
     private uint CalculateBootChecksum(in ReadOnlySpan<byte> sectors)

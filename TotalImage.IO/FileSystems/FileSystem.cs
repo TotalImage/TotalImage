@@ -12,11 +12,12 @@ namespace TotalImage.FileSystems
     /// </summary>
     public abstract class FileSystem
     {
-        private static readonly ImmutableArray<IFileSystemFactory> _knownFactories = ImmutableArray.Create<IFileSystemFactory>(
+        private static readonly ImmutableArray<IFileSystemFactory> _knownFactories =
+        [
             new FatFactory(),
-            new ExFatFactory(),
-            new IsoFactory()
-        );
+            new IsoFactory(),
+            new ExFatFactory()
+        ];
 
         /// <summary>
         /// The stream containing the file system
