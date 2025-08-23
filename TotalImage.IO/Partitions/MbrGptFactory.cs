@@ -1,5 +1,7 @@
+using System;
 using System.Buffers.Binary;
 using System.IO;
+using System.Text;
 using TotalImage.Containers;
 
 namespace TotalImage.Partitions
@@ -24,7 +26,25 @@ namespace TotalImage.Partitions
                 return null;
             }
 
-            MbrPartitionTable mbrPartition = new MbrPartitionTable(container);
+            uint sectorSize = 512;
+
+            // Discover sector size on MS Flash images
+            uint attemptedFlashSectorSize = 512;
+            Span<byte> flashSignatureBuffer = new byte[8];
+            while (attemptedFlashSectorSize <= 65536 && (attemptedFlashSectorSize + 8) <= Content.Length)
+            {
+                Content.Seek(attemptedFlashSectorSize, SeekOrigin.Begin);
+                Content.Read(flashSignatureBuffer);
+                if (Encoding.ASCII.GetString(flashSignatureBuffer) == "MSFLSH50")
+                {
+                    sectorSize = attemptedFlashSectorSize;
+                    break;
+                }
+
+                attemptedFlashSectorSize *= 2;
+            }
+
+            MbrPartitionTable mbrPartition = new MbrPartitionTable(container, sectorSize);
             if (mbrPartition.Partitions.Count >= 1)
             {
                 //GPT, return and let the GPT factory handle this

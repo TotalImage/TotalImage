@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.IO;
 using TotalImage.FileSystems.ExFAT;
 using TotalImage.FileSystems.FAT;
+using TotalImage.FileSystems.IMGFS;
 using TotalImage.FileSystems.ISO;
 using TotalImage.FileSystems.RAW;
 
@@ -16,7 +17,8 @@ namespace TotalImage.FileSystems
         [
             new FatFactory(),
             new IsoFactory(),
-            new ExFatFactory()
+            new ExFatFactory(),
+            new ImgfsFactory()
         ];
 
         /// <summary>
