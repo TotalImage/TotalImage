@@ -9,7 +9,8 @@ namespace TotalImage.Operations
     /// <param name="targetObject">The file system object whose last access time is to be changed.</param>
     /// <param name="oldTime">Old last access time of the file system object.</param>
     /// <param name="newTime">New last access time of the file system object.</param>
-    public class ObjectLastAccessTimeChangedOperation(TiFileSystemObject targetObject, DateTime oldTime, DateTime newTime) : Operation(targetObject)
+    /// <param name="timestamp">The date and time when the file system object last access time was modified.</param>
+    public class ObjectLastAccessTimeChangedOperation(TiFileSystemObject targetObject, DateTime oldTime, DateTime newTime, DateTime timestamp) : Operation(targetObject, timestamp)
     {
         /// <summary>
         /// The last access time of the target object before this operation.
