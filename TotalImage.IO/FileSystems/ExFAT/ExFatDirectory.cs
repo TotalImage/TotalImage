@@ -93,6 +93,11 @@ public class ExFatDirectory : Directory
         throw new NotImplementedException();
     }
 
+    public override void Erase()
+    {
+        throw new NotImplementedException();
+    }
+
     public override void Delete()
     {
         throw new NotImplementedException();
