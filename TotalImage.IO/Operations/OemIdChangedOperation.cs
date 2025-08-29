@@ -1,3 +1,4 @@
+using System;
 using TotalImage.Partitions;
 
 namespace TotalImage.Operations
@@ -8,7 +9,8 @@ namespace TotalImage.Operations
     /// <param name="targetObject">The partition entry of the partition whose OEM ID is to be changed.</param>
     /// <param name="oldOemId">Old OEM ID.</param>
     /// <param name="newOemId">New OEM ID.</param>
-    public class OemIdChangedOperation(PartitionEntry targetObject, string oldOemId, string newOemId) : Operation(targetObject)
+    /// <param name="timestamp">The date and time when the OEM ID was modified.</param>
+    public class OemIdChangedOperation(PartitionEntry targetObject, string oldOemId, string newOemId, DateTime timestamp) : Operation(targetObject, timestamp)
     {
         /// <summary>
         /// The OEM ID before this operation.

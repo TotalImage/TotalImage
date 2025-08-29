@@ -1,3 +1,4 @@
+using System;
 using TotalImage.Partitions;
 
 namespace TotalImage.Operations
@@ -9,7 +10,8 @@ namespace TotalImage.Operations
     /// <param name="oldLabel">Old volume label.</param>
     /// <param name="newLabel">New volume label.</param>
     /// <param name="labelToChange">Which volume label is to be changed for FAT file systems.</param>
-    public class VolumeLabelChangedOperation(PartitionEntry targetObject, string oldLabel, string newLabel, VolumeLabelChangedOperation.VolumeLabel labelToChange) : Operation(targetObject) 
+    /// <param name="timestamp">The date and time when the volume label was changed.</param>
+    public class VolumeLabelChangedOperation(PartitionEntry targetObject, string oldLabel, string newLabel, VolumeLabelChangedOperation.VolumeLabel labelToChange, DateTime timestamp) : Operation(targetObject, timestamp) 
     { 
         /// <summary>
         /// The volume label before this operation.

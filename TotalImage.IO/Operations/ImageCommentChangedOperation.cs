@@ -1,3 +1,4 @@
+using System;
 using TotalImage.Containers;
 
 namespace TotalImage.Operations
@@ -8,7 +9,8 @@ namespace TotalImage.Operations
     /// <param name="targetObject">The image whose comment will be changed.</param>
     /// <param name="oldComment">Old comment of the image.</param>
     /// <param name="newComment">New comment of the image.</param>
-    public class ImageCommentChangedOperation(Container targetObject, string oldComment, string newComment) : Operation(targetObject)
+    /// <param name="timestamp">The date and time when the comment was changed.</param>
+    public class ImageCommentChangedOperation(Container targetObject, string oldComment, string newComment, DateTime timestamp) : Operation(targetObject, timestamp)
     {
         /// <summary>
         /// The image comment before this operation.

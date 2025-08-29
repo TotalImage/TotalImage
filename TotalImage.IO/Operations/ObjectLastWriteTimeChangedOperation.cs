@@ -9,7 +9,8 @@ namespace TotalImage.Operations
     /// <param name="targetObject">The file system object whose last write time is to be changed.</param>
     /// <param name="oldTime">Old last write time of the file system object.</param>
     /// <param name="newTime">New last write time of the file system object.</param>
-    public class ObjectLastWriteTimeChangedOperation(TiFileSystemObject targetObject, DateTime oldTime, DateTime newTime) : Operation(targetObject)
+    /// <param name="timestamp">The date and time when the file system object last write time was modified.</param>
+    public class ObjectLastWriteTimeChangedOperation(TiFileSystemObject targetObject, DateTime oldTime, DateTime newTime, DateTime timestamp) : Operation(targetObject, timestamp)
     {
         /// <summary>
         /// The last write time of the target object before this operation.
