@@ -497,7 +497,7 @@ namespace TotalImage
         {
             if (mainForm.image is IContainerComment containerComment && !txtComment.Text.Equals(containerComment.Comment))
             {
-                mainForm.operations.Push(new ImageCommentChangedOperation(mainForm.image, containerComment.Comment, txtComment.Text));
+                mainForm.operations.Push(new ImageCommentChangedOperation(mainForm.image, containerComment.Comment, txtComment.Text, DateTime.Now));
                 mainForm.unsavedChanges = true;
                 mainForm.Text = mainForm.filename + "* - TotalImage";
             }
