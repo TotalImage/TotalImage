@@ -9,7 +9,8 @@ namespace TotalImage.Operations
     /// <param name="targetObject">The file system object whose creation time is to be changed.</param>
     /// <param name="oldTime">Old creation time of the file system object.</param>
     /// <param name="newTime">New creation time of the file system object.</param>
-    public class ObjectCreationTimeChangedOperation(TiFileSystemObject targetObject, DateTime oldTime, DateTime newTime) : Operation(targetObject)
+    /// <param name="timestamp">The date and time when the file system object creation time was modified.</param>
+    public class ObjectCreationTimeChangedOperation(TiFileSystemObject targetObject, DateTime oldTime, DateTime newTime, DateTime timestamp) : Operation(targetObject, timestamp)
     {
         /// <summary>
         /// The creation time of the target object before this operation.

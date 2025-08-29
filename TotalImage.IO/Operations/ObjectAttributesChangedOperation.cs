@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
@@ -9,7 +10,8 @@ namespace TotalImage.Operations
     /// <param name="targetObject">The file system object whose attributes are to be changed.</param>
     /// <param name="oldAttributes">Old attributes of the file system object.</param>
     /// <param name="newAttributes">New attributes of the file system object.</param>
-    public class ObjectAttributesChangedOperation(TiFileSystemObject targetObject, FileAttributes oldAttributes, FileAttributes newAttributes) : Operation(targetObject)
+    /// <param name="timestamp">The date and time when the file system object attributes were changed.</param>
+    public class ObjectAttributesChangedOperation(TiFileSystemObject targetObject, FileAttributes oldAttributes, FileAttributes newAttributes, DateTime timestamp) : Operation(targetObject, timestamp)
     {
         /// <summary>
         /// The attributes of the target object before this operation.

@@ -1,3 +1,4 @@
+using System;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
 namespace TotalImage.Operations
@@ -7,7 +8,8 @@ namespace TotalImage.Operations
     /// </summary>
     /// <param name="targetObject">The file system object to be undeleted.</param>
     /// <param name="firstChar">The first character of the object's name after undeletion in FAT file systems.</param>
-    public class ObjectUndeletedOperation(TiFileSystemObject targetObject, char firstChar) : Operation(targetObject)
+    /// <param name="timestamp">The date and time when the file system object was deleted.</param>
+    public class ObjectUndeletedOperation(TiFileSystemObject targetObject, char firstChar, DateTime timestamp) : Operation(targetObject, timestamp)
     {
         /// <summary>
         /// The first character of the object's name after undeletion in FAT file systems.

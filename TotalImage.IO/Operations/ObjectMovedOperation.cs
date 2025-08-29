@@ -1,3 +1,4 @@
+using System;
 using TiDirectory = TotalImage.FileSystems.Directory;
 
 namespace TotalImage.Operations
@@ -8,7 +9,8 @@ namespace TotalImage.Operations
     /// <param name="targetObject">The file system object to be moved.</param>
     /// <param name="oldParentDir">Old parent directory of the object to be moved.</param>
     /// <param name="newParentDir">New parent directory of the object to be moved.</param>
-    public class ObjectMovedOperation(FileSystems.FileSystemObject targetObject, TiDirectory oldParentDir, TiDirectory newParentDir) : Operation(targetObject)
+    /// <param name="timestamp">The date and time when the file system object was moved.</param>
+    public class ObjectMovedOperation(FileSystems.FileSystemObject targetObject, TiDirectory oldParentDir, TiDirectory newParentDir, DateTime timestamp) : Operation(targetObject, timestamp)
     {
         /// <summary>
         /// The target object's parent directory before this operation.

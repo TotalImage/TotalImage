@@ -1,3 +1,4 @@
+using System;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
 namespace TotalImage.Operations
@@ -8,7 +9,8 @@ namespace TotalImage.Operations
     /// <param name="targetObject">The file system object to be renamed.</param>
     /// <param name="oldName">Old name of the file system object.</param>
     /// <param name="newName">New name of the file system object.</param>
-    public class ObjectRenamedOperation(TiFileSystemObject targetObject, string oldName, string newName) : Operation(targetObject)
+    /// <param name="timestamp">The date and time when the file system object was renamed.</param>
+    public class ObjectRenamedOperation(TiFileSystemObject targetObject, string oldName, string newName, DateTime timestamp) : Operation(targetObject, timestamp)
     {
         /// <summary>
         /// The name of the target object before this operation.
