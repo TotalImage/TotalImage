@@ -123,6 +123,12 @@ public class ExFatDirectory : Directory
     }
 
     /// <inheritdoc />
+    public override void Erase()
+    {
+        throw new NotImplementedException();
+    }
+
+	/// <inheritdoc />
     public override void Delete()
     {
         throw new NotImplementedException();
