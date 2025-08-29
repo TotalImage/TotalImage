@@ -65,6 +65,12 @@ public class ExFatFile : File
         get => StreamExtensionDirectoryEntry.ValidDataLength;
         set => throw new NotImplementedException();
     }
+    public override void Erase()
+    {
+        Delete();
+
+        //Here we zero out every cluster of the file
+    }
 
     public override void Delete()
     {
