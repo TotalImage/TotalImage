@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace TotalImage
 {
-    public partial class dlgChangeVolLabel : Form
+    public partial class dlgChangeVolumeLabel : Form
     {
         private readonly string oldRDLabel;
         private readonly string oldBPBLabel;
@@ -12,7 +12,7 @@ namespace TotalImage
         public string NewBPBLabel { get; private set; } = "";
         public bool WriteBPBLabel { get; private set; }
 
-        public dlgChangeVolLabel(string rdLabel, string bpbLabel)
+        public dlgChangeVolumeLabel(string rdLabel, string bpbLabel)
         {
             InitializeComponent();
             oldRDLabel = rdLabel;

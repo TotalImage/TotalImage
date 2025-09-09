@@ -1,6 +1,6 @@
 namespace TotalImage
 {
-    partial class dlgChangeVolLabel
+    partial class dlgChangeVolumeLabel
     {
         /// <summary>
         /// Required designer variable.

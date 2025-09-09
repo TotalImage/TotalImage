@@ -152,7 +152,7 @@ namespace TotalImage
                 return;
             }
 
-            using dlgChangeVolLabel dlg = new(fs.RootDirectoryVolumeLabel, fs.BpbVolumeLabel);
+            using dlgChangeVolumeLabel dlg = new(fs.RootDirectoryVolumeLabel, fs.BpbVolumeLabel);
             dlg.ShowDialog();
         }
 
