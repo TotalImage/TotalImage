@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace TotalImage.Operations
 {
@@ -18,5 +19,18 @@ namespace TotalImage.Operations
         /// The date and time when this operation was made.
         /// </summary>
         public DateTime Timestamp { get; } = timestamp;
+
+        /// <summary>
+        /// Apply this operation to the disk image stream to write the byte-level changes.
+        /// </summary>
+        /// <param name="imageStream">The stream representing the disk image content.</param>
+        /// <remarks>
+        /// Default implementation performs no action. Override in derived classes to implement specific operation logic.
+        /// </remarks>
+        public virtual void Apply(Stream imageStream)
+        {
+            // Default implementation: no action
+            // Override in derived classes to implement specific byte-level changes
+        }
     }
 }

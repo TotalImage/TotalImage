@@ -111,17 +111,49 @@ namespace TotalImage.Containers
         /// <param name="path">The path to save out the image to</param>
         public void SaveImage(string path)
         {
-            //Here, we need to iterate through the stack from the bottom up and apply the individual operations to the image's stream
+            // First, check if we can write to the current stream
+            if (!containerStream.CanWrite)
+            {
+                throw new InvalidOperationException("Cannot save changes: the container stream is not writable. " +
+                    "This may be because the container was opened with memory mapping enabled. " +
+                    "Try opening the container without memory mapping to save changes.");
+            }
 
-            //Some old experimental code below...
-            /*string? tempPath = Path.ChangeExtension(path, ".tmp");
-            using FileStream outStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
-            containerStream.Position = 0;
-            containerStream.CopyTo(outStream);
-            outStream.Flush();
-            outStream.Dispose();
-            Dispose();
-            File.Move(tempPath, path, true);*/
+            try
+            {
+                // Apply all pending operations to the container stream from bottom to top (oldest to newest)
+                for (int i = 0; i < PendingChanges.Count(); i++)
+                {
+                    var operation = PendingChanges.PeekAt(i);
+                    if (operation != null)
+                    {
+                        operation.Apply(containerStream);
+                    }
+                }
+
+                // Create the output file by copying the updated container stream
+                string? tempPath = Path.ChangeExtension(path, ".tmp");
+                using FileStream outStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
+                
+                containerStream.Position = 0;
+                containerStream.CopyTo(outStream);
+                outStream.Flush();
+                outStream.Close();
+                
+                // Replace the target file with the temporary file
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
+                File.Move(tempPath, path);
+
+                // Clear the pending changes since they have been applied
+                PendingChanges.Discard();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to save image to '{path}': {ex.Message}", ex);
+            }
         }
 
         /// <summary>
