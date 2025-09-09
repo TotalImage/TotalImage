@@ -30,13 +30,15 @@ namespace TotalImage
         {
             btnOK = new System.Windows.Forms.Button();
             btnCancel = new System.Windows.Forms.Button();
-            txtRootDirLabel = new System.Windows.Forms.TextBox();
-            lblRootDirLabel = new System.Windows.Forms.Label();
-            txtBPBLabel = new System.Windows.Forms.TextBox();
-            cbxBPBLabel = new System.Windows.Forms.CheckBox();
+            txtNewLabel = new System.Windows.Forms.TextBox();
+            lblNewLabel = new System.Windows.Forms.Label();
             pnlBottom = new System.Windows.Forms.Panel();
+            gbxFatOptions = new System.Windows.Forms.GroupBox();
             cbxSync = new System.Windows.Forms.CheckBox();
+            cbxBPBLabel = new System.Windows.Forms.CheckBox();
+            txtBPBLabel = new System.Windows.Forms.TextBox();
             pnlBottom.SuspendLayout();
+            gbxFatOptions.SuspendLayout();
             SuspendLayout();
             // 
             // btnOK
@@ -64,46 +66,23 @@ namespace TotalImage
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             // 
-            // txtRootDirLabel
+            // txtNewLabel
             // 
-            txtRootDirLabel.Location = new System.Drawing.Point(12, 58);
-            txtRootDirLabel.MaxLength = 11;
-            txtRootDirLabel.Name = "txtRootDirLabel";
-            txtRootDirLabel.Size = new System.Drawing.Size(250, 23);
-            txtRootDirLabel.TabIndex = 0;
-            txtRootDirLabel.TextChanged += txtRootDirLabel_TextChanged;
+            txtNewLabel.Location = new System.Drawing.Point(12, 27);
+            txtNewLabel.MaxLength = 11;
+            txtNewLabel.Name = "txtNewLabel";
+            txtNewLabel.Size = new System.Drawing.Size(250, 23);
+            txtNewLabel.TabIndex = 0;
+            txtNewLabel.TextChanged += txtRootDirLabel_TextChanged;
             // 
-            // lblRootDirLabel
+            // lblNewLabel
             // 
-            lblRootDirLabel.AutoSize = true;
-            lblRootDirLabel.Location = new System.Drawing.Point(9, 9);
-            lblRootDirLabel.Name = "lblRootDirLabel";
-            lblRootDirLabel.Size = new System.Drawing.Size(253, 45);
-            lblRootDirLabel.TabIndex = 4;
-            lblRootDirLabel.Text = "Enter a new volume label (up to 11 characters).\r\n\r\nRoot directory volume label:";
-            // 
-            // txtBPBLabel
-            // 
-            txtBPBLabel.Location = new System.Drawing.Point(12, 139);
-            txtBPBLabel.MaxLength = 11;
-            txtBPBLabel.Name = "txtBPBLabel";
-            txtBPBLabel.ReadOnly = true;
-            txtBPBLabel.Size = new System.Drawing.Size(250, 23);
-            txtBPBLabel.TabIndex = 2;
-            // 
-            // cbxBPBLabel
-            // 
-            cbxBPBLabel.AutoSize = true;
-            cbxBPBLabel.Checked = true;
-            cbxBPBLabel.CheckState = System.Windows.Forms.CheckState.Checked;
-            cbxBPBLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxBPBLabel.Location = new System.Drawing.Point(12, 87);
-            cbxBPBLabel.Name = "cbxBPBLabel";
-            cbxBPBLabel.Size = new System.Drawing.Size(233, 20);
-            cbxBPBLabel.TabIndex = 1;
-            cbxBPBLabel.Text = "Also write the volume label to the BPB";
-            cbxBPBLabel.UseVisualStyleBackColor = true;
-            cbxBPBLabel.CheckedChanged += cbxBPBLabel_CheckedChanged;
+            lblNewLabel.AutoSize = true;
+            lblNewLabel.Location = new System.Drawing.Point(9, 9);
+            lblNewLabel.Name = "lblNewLabel";
+            lblNewLabel.Size = new System.Drawing.Size(142, 15);
+            lblNewLabel.TabIndex = 4;
+            lblNewLabel.Text = "Enter a new volume label:";
             // 
             // pnlBottom
             // 
@@ -116,21 +95,56 @@ namespace TotalImage
             pnlBottom.Size = new System.Drawing.Size(274, 50);
             pnlBottom.TabIndex = 5;
             // 
+            // gbxFatOptions
+            // 
+            gbxFatOptions.Controls.Add(cbxSync);
+            gbxFatOptions.Controls.Add(cbxBPBLabel);
+            gbxFatOptions.Controls.Add(txtBPBLabel);
+            gbxFatOptions.Location = new System.Drawing.Point(12, 56);
+            gbxFatOptions.Name = "gbxFatOptions";
+            gbxFatOptions.Size = new System.Drawing.Size(250, 110);
+            gbxFatOptions.TabIndex = 7;
+            gbxFatOptions.TabStop = false;
+            gbxFatOptions.Text = "FAT options";
+            // 
             // cbxSync
             // 
             cbxSync.AutoSize = true;
             cbxSync.Checked = true;
             cbxSync.CheckState = System.Windows.Forms.CheckState.Checked;
             cbxSync.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxSync.Location = new System.Drawing.Point(12, 113);
+            cbxSync.Location = new System.Drawing.Point(11, 48);
             cbxSync.Name = "cbxSync";
             cbxSync.Size = new System.Drawing.Size(241, 20);
-            cbxSync.TabIndex = 6;
+            cbxSync.TabIndex = 9;
             cbxSync.Text = "Write the same label as in root directory";
             cbxSync.UseVisualStyleBackColor = true;
             cbxSync.CheckedChanged += cbxSync_CheckedChanged;
             // 
-            // dlgChangeVolLabel
+            // cbxBPBLabel
+            // 
+            cbxBPBLabel.AutoSize = true;
+            cbxBPBLabel.Checked = true;
+            cbxBPBLabel.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbxBPBLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            cbxBPBLabel.Location = new System.Drawing.Point(11, 22);
+            cbxBPBLabel.Name = "cbxBPBLabel";
+            cbxBPBLabel.Size = new System.Drawing.Size(233, 20);
+            cbxBPBLabel.TabIndex = 7;
+            cbxBPBLabel.Text = "Also write the volume label to the BPB";
+            cbxBPBLabel.UseVisualStyleBackColor = true;
+            cbxBPBLabel.CheckedChanged += cbxBPBLabel_CheckedChanged;
+            // 
+            // txtBPBLabel
+            // 
+            txtBPBLabel.Location = new System.Drawing.Point(11, 74);
+            txtBPBLabel.MaxLength = 11;
+            txtBPBLabel.Name = "txtBPBLabel";
+            txtBPBLabel.ReadOnly = true;
+            txtBPBLabel.Size = new System.Drawing.Size(233, 23);
+            txtBPBLabel.TabIndex = 8;
+            // 
+            // dlgChangeVolumeLabel
             // 
             AcceptButton = btnOK;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -138,22 +152,22 @@ namespace TotalImage
             BackColor = System.Drawing.SystemColors.Window;
             CancelButton = btnCancel;
             ClientSize = new System.Drawing.Size(274, 222);
-            Controls.Add(cbxSync);
             Controls.Add(pnlBottom);
-            Controls.Add(cbxBPBLabel);
-            Controls.Add(txtBPBLabel);
-            Controls.Add(txtRootDirLabel);
-            Controls.Add(lblRootDirLabel);
+            Controls.Add(txtNewLabel);
+            Controls.Add(lblNewLabel);
+            Controls.Add(gbxFatOptions);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "dlgChangeVolLabel";
+            Name = "dlgChangeVolumeLabel";
             ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Change volume label";
             Load += dlgChangeVolLabel_Load;
             pnlBottom.ResumeLayout(false);
+            gbxFatOptions.ResumeLayout(false);
+            gbxFatOptions.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -162,11 +176,12 @@ namespace TotalImage
 
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.TextBox txtRootDirLabel;
-        private System.Windows.Forms.Label lblRootDirLabel;
-        private System.Windows.Forms.TextBox txtBPBLabel;
-        private System.Windows.Forms.CheckBox cbxBPBLabel;
+        private System.Windows.Forms.TextBox txtNewLabel;
+        private System.Windows.Forms.Label lblNewLabel;
         private System.Windows.Forms.Panel pnlBottom;
+        private System.Windows.Forms.GroupBox gbxFatOptions;
         private System.Windows.Forms.CheckBox cbxSync;
+        private System.Windows.Forms.CheckBox cbxBPBLabel;
+        private System.Windows.Forms.TextBox txtBPBLabel;
     }
 }

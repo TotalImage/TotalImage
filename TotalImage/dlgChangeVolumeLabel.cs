@@ -5,23 +5,23 @@ namespace TotalImage
 {
     public partial class dlgChangeVolumeLabel : Form
     {
-        private readonly string oldRDLabel;
+        private readonly string oldLabel;
         private readonly string oldBPBLabel;
 
-        public string NewRDLabel { get; private set; } = "";
+        public string NewLabel { get; private set; } = "";
         public string NewBPBLabel { get; private set; } = "";
         public bool WriteBPBLabel { get; private set; }
 
         public dlgChangeVolumeLabel(string rdLabel, string bpbLabel)
         {
             InitializeComponent();
-            oldRDLabel = rdLabel;
+            oldLabel = rdLabel;
             oldBPBLabel = bpbLabel;
         }
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            NewRDLabel = txtRootDirLabel.Text.ToUpper().PadRight(11, ' ');
+            NewLabel = txtNewLabel.Text.ToUpper().PadRight(11, ' ');
             WriteBPBLabel = cbxBPBLabel.Checked;
             NewBPBLabel = txtBPBLabel.Text.ToUpper().PadRight(11, ' ');
         }
@@ -37,27 +37,27 @@ namespace TotalImage
             }
             else
             {
-                txtBPBLabel.Text = txtRootDirLabel.Text;
+                txtBPBLabel.Text = txtNewLabel.Text;
             }
         }
 
         private void txtRootDirLabel_TextChanged(object sender, EventArgs e)
         {
             if (cbxBPBLabel.Checked && cbxSync.Checked)
-                txtBPBLabel.Text = txtRootDirLabel.Text;
+                txtBPBLabel.Text = txtNewLabel.Text;
         }
 
         private void dlgChangeVolLabel_Load(object sender, EventArgs e)
         {
             txtBPBLabel.Text = oldBPBLabel;
-            txtRootDirLabel.Text = oldRDLabel;
+            txtNewLabel.Text = oldLabel;
         }
 
         private void cbxSync_CheckedChanged(object sender, EventArgs e)
         {
             if (cbxSync.Checked)
             {
-                txtBPBLabel.Text = txtRootDirLabel.Text;
+                txtBPBLabel.Text = txtNewLabel.Text;
                 txtBPBLabel.ReadOnly = true;
             }
             else
