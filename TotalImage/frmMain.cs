@@ -84,45 +84,6 @@ namespace TotalImage
                 upOneFolderListViewItem.SubItems.Add(string.Empty);
         }
 
-        //Injects a folder into the image
-        private void injectFolder_Click(object sender, EventArgs e)
-        {
-            using FolderBrowserDialog fbd = new();
-            fbd.ShowNewFolderButton = true;
-
-            if (fbd.ShowDialog() == DialogResult.OK)
-            {
-                if (Settings.CurrentSettings.ConfirmInjection)
-                {
-                    TaskDialogPage page = new()
-                    {
-                        Text = $"Are you sure you want to inject this folder into the image?",
-                        Heading = $"A folder will be injected",
-                        Caption = "Injection",
-                        Buttons =
-                        {
-                            TaskDialogButton.Yes,
-                            TaskDialogButton.No
-                        },
-                        Icon = TaskDialogIcon.Warning,
-                        Verification = new TaskDialogVerificationCheckBox()
-                        {
-                            Text = "Do not ask for confirmation again"
-                        }
-                    };
-                    TaskDialogButton result = TaskDialog.ShowDialog(this, page);
-
-                    if (page.Verification.Checked)
-                        Settings.CurrentSettings.ConfirmInjection = false;
-
-                    if (result == TaskDialogButton.No)
-                        return;
-                }
-
-                throw new NotImplementedException("This feature is not implemented yet");
-            }
-        }
-
         //Shows a hex view of the current image
         private void hexView_Click(object sender, EventArgs e)
         {
@@ -1464,7 +1425,6 @@ namespace TotalImage
         {
             if (image is null)
             {
-                injectAFolderToolStripMenuItem.Enabled = false;
                 injectFilesToolStripMenuItem.Enabled = false;
                 extractToolStripMenuItem.Enabled = false;
                 renameToolStripMenuItem.Enabled = false;
@@ -1490,7 +1450,6 @@ namespace TotalImage
             changeVolumeLabelToolStripMenuItem.Enabled = true;
             formatDiskToolStripMenuItem.Enabled = true;
             defragmentToolStripMenuItem.Enabled = true;
-            injectAFolderToolStripMenuItem.Enabled = true;
             injectFilesToolStripMenuItem.Enabled = true;
             extractToolStripMenuItem.Enabled = true;
             selectAllToolStripMenuItem.Enabled = true;

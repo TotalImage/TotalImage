@@ -58,7 +58,6 @@ namespace TotalImage
             exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             injectFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            injectAFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             extractToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -382,7 +381,7 @@ namespace TotalImage
             // 
             // editToolStripMenuItem
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { injectFilesToolStripMenuItem, injectAFolderToolStripMenuItem, extractToolStripMenuItem, newFolderToolStripMenuItem, deleteToolStripMenuItem, renameToolStripMenuItem, propertiesToolStripMenuItem, selectAllToolStripMenuItem, toolStripSeparator3, changeVolumeLabelToolStripMenuItem, changeGeometryToolStripMenuItem, defragmentToolStripMenuItem, formatDiskToolStripMenuItem, bootSectorPropertiesToolStripMenuItem, toolStripSeparator17, selectPartitionToolStripMenuItem, managePartitionsToolStripMenuItem });
+            editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { injectFilesToolStripMenuItem, extractToolStripMenuItem, newFolderToolStripMenuItem, deleteToolStripMenuItem, renameToolStripMenuItem, propertiesToolStripMenuItem, selectAllToolStripMenuItem, toolStripSeparator3, changeVolumeLabelToolStripMenuItem, changeGeometryToolStripMenuItem, defragmentToolStripMenuItem, formatDiskToolStripMenuItem, bootSectorPropertiesToolStripMenuItem, toolStripSeparator17, selectPartitionToolStripMenuItem, managePartitionsToolStripMenuItem });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
             editToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.E;
             editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
@@ -394,24 +393,16 @@ namespace TotalImage
             injectFilesToolStripMenuItem.Image = Properties.Resources.page_white_add;
             injectFilesToolStripMenuItem.Name = "injectFilesToolStripMenuItem";
             injectFilesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Insert;
-            injectFilesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            injectFilesToolStripMenuItem.Text = "Inject files...";
+            injectFilesToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            injectFilesToolStripMenuItem.Text = "Inject files or folders...";
             injectFilesToolStripMenuItem.Click += injectFiles_Click;
-            // 
-            // injectAFolderToolStripMenuItem
-            // 
-            injectAFolderToolStripMenuItem.Image = Properties.Resources.folder_add;
-            injectAFolderToolStripMenuItem.Name = "injectAFolderToolStripMenuItem";
-            injectAFolderToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            injectAFolderToolStripMenuItem.Text = "Inject a folder...";
-            injectAFolderToolStripMenuItem.Click += injectFolder_Click;
             // 
             // extractToolStripMenuItem
             // 
             extractToolStripMenuItem.Image = Properties.Resources.redo;
             extractToolStripMenuItem.Name = "extractToolStripMenuItem";
             extractToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X;
-            extractToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            extractToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             extractToolStripMenuItem.Text = "Extract...";
             extractToolStripMenuItem.Click += extract_Click;
             // 
@@ -420,7 +411,7 @@ namespace TotalImage
             newFolderToolStripMenuItem.Image = Properties.Resources.folder_new;
             newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
             newFolderToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.N;
-            newFolderToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            newFolderToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             newFolderToolStripMenuItem.Text = "New folder...";
             newFolderToolStripMenuItem.Click += newFolder_Click;
             // 
@@ -429,7 +420,7 @@ namespace TotalImage
             deleteToolStripMenuItem.Image = Properties.Resources.bin_empty;
             deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            deleteToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            deleteToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             deleteToolStripMenuItem.Text = "Delete";
             deleteToolStripMenuItem.Click += delete_Click;
             // 
@@ -438,7 +429,7 @@ namespace TotalImage
             renameToolStripMenuItem.Image = Properties.Resources.textfield_rename;
             renameToolStripMenuItem.Name = "renameToolStripMenuItem";
             renameToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            renameToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            renameToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             renameToolStripMenuItem.Text = "Rename...";
             renameToolStripMenuItem.Click += rename_Click;
             // 
@@ -447,7 +438,7 @@ namespace TotalImage
             propertiesToolStripMenuItem.Image = Properties.Resources.page_white_edit;
             propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
             propertiesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Enter;
-            propertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            propertiesToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             propertiesToolStripMenuItem.Text = "Properties...";
             propertiesToolStripMenuItem.Click += properties_Click;
             // 
@@ -455,27 +446,27 @@ namespace TotalImage
             // 
             selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             selectAllToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
-            selectAllToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            selectAllToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             selectAllToolStripMenuItem.Text = "Select all";
             selectAllToolStripMenuItem.Click += selectAll_Click;
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new System.Drawing.Size(213, 6);
+            toolStripSeparator3.Size = new System.Drawing.Size(222, 6);
             // 
             // changeVolumeLabelToolStripMenuItem
             // 
             changeVolumeLabelToolStripMenuItem.Image = Properties.Resources.drive_rename;
             changeVolumeLabelToolStripMenuItem.Name = "changeVolumeLabelToolStripMenuItem";
-            changeVolumeLabelToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            changeVolumeLabelToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             changeVolumeLabelToolStripMenuItem.Text = "Change volume label...";
             changeVolumeLabelToolStripMenuItem.Click += changeVolumeLabel_Click;
             // 
             // changeGeometryToolStripMenuItem
             // 
             changeGeometryToolStripMenuItem.Name = "changeGeometryToolStripMenuItem";
-            changeGeometryToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            changeGeometryToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             changeGeometryToolStripMenuItem.Text = "Change floppy geometry...";
             changeGeometryToolStripMenuItem.Click += changeFormat_Click;
             // 
@@ -483,14 +474,14 @@ namespace TotalImage
             // 
             defragmentToolStripMenuItem.Image = Properties.Resources.module;
             defragmentToolStripMenuItem.Name = "defragmentToolStripMenuItem";
-            defragmentToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            defragmentToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             defragmentToolStripMenuItem.Text = "Defragment...";
             defragmentToolStripMenuItem.Click += defragment_Click;
             // 
             // formatDiskToolStripMenuItem
             // 
             formatDiskToolStripMenuItem.Name = "formatDiskToolStripMenuItem";
-            formatDiskToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            formatDiskToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             formatDiskToolStripMenuItem.Text = "Format disk/partition...";
             formatDiskToolStripMenuItem.Click += format_Click;
             // 
@@ -498,20 +489,20 @@ namespace TotalImage
             // 
             bootSectorPropertiesToolStripMenuItem.Image = Properties.Resources.application_xp_terminal;
             bootSectorPropertiesToolStripMenuItem.Name = "bootSectorPropertiesToolStripMenuItem";
-            bootSectorPropertiesToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            bootSectorPropertiesToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             bootSectorPropertiesToolStripMenuItem.Text = "Boot sector properties...";
             bootSectorPropertiesToolStripMenuItem.Click += bootSectorProperties_Click;
             // 
             // toolStripSeparator17
             // 
             toolStripSeparator17.Name = "toolStripSeparator17";
-            toolStripSeparator17.Size = new System.Drawing.Size(213, 6);
+            toolStripSeparator17.Size = new System.Drawing.Size(222, 6);
             // 
             // selectPartitionToolStripMenuItem
             // 
             selectPartitionToolStripMenuItem.Image = Properties.Resources.drive_go;
             selectPartitionToolStripMenuItem.Name = "selectPartitionToolStripMenuItem";
-            selectPartitionToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            selectPartitionToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             selectPartitionToolStripMenuItem.Text = "Select partition...";
             selectPartitionToolStripMenuItem.Click += selectPartitionToolStripMenuItem_Click;
             // 
@@ -519,7 +510,7 @@ namespace TotalImage
             // 
             managePartitionsToolStripMenuItem.Image = Properties.Resources.drive_edit;
             managePartitionsToolStripMenuItem.Name = "managePartitionsToolStripMenuItem";
-            managePartitionsToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            managePartitionsToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             managePartitionsToolStripMenuItem.Text = "Manage partitions...";
             managePartitionsToolStripMenuItem.Click += managePartitions_Click;
             // 
@@ -1075,35 +1066,35 @@ namespace TotalImage
             // nameToolStripMenuItem1
             // 
             nameToolStripMenuItem1.Name = "nameToolStripMenuItem1";
-            nameToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            nameToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             nameToolStripMenuItem1.Text = "Name";
             nameToolStripMenuItem1.Click += sortByName_Click;
             // 
             // typeToolStripMenuItem1
             // 
             typeToolStripMenuItem1.Name = "typeToolStripMenuItem1";
-            typeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            typeToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             typeToolStripMenuItem1.Text = "Type";
             typeToolStripMenuItem1.Click += sortByType_Click;
             // 
             // sizeToolStripMenuItem1
             // 
             sizeToolStripMenuItem1.Name = "sizeToolStripMenuItem1";
-            sizeToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            sizeToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             sizeToolStripMenuItem1.Text = "Size";
             sizeToolStripMenuItem1.Click += sortBySize_Click;
             // 
             // modifiedToolStripMenuItem1
             // 
             modifiedToolStripMenuItem1.Name = "modifiedToolStripMenuItem1";
-            modifiedToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            modifiedToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             modifiedToolStripMenuItem1.Text = "Modified";
             modifiedToolStripMenuItem1.Click += sortByModified_Click;
             // 
             // attributesToolStripMenuItem1
             // 
             attributesToolStripMenuItem1.Name = "attributesToolStripMenuItem1";
-            attributesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            attributesToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             attributesToolStripMenuItem1.Text = "Attributes";
             attributesToolStripMenuItem1.Click += sortByAttributes_Click;
             // 
@@ -1445,7 +1436,6 @@ namespace TotalImage
         private System.Windows.Forms.ToolStripMenuItem modifiedToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem closeImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton closeToolStripButton;
-        private System.Windows.Forms.ToolStripMenuItem injectAFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem formatDiskToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem defragmentToolStripMenuItem;
         private TreeViewEx lstDirectories;
