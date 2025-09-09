@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using TotalImage.Containers;
 
 namespace TotalImage.Operations
@@ -20,5 +21,16 @@ namespace TotalImage.Operations
         /// The size of the image after this operation.
         /// </summary>
         public ulong NewSize { get; } = newSize;
+
+        /// <summary>
+        /// Apply this operation to resize the image.
+        /// </summary>
+        /// <param name="imageStream">The stream representing the disk image content.</param>
+        public override void Apply(Stream imageStream)
+        {
+            // Resize the stream to the new size
+            imageStream.SetLength((long)NewSize);
+            imageStream.Flush();
+        }
     }
 }
