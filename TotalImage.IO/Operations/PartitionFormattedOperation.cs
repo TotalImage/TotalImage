@@ -16,11 +16,11 @@ namespace TotalImage.Operations
         /// <summary>
         /// The file system of this partition before the operation.
         /// </summary>
-        public FileSystem OldFileSystem { get;  } = oldFileSystem;
+        public FileSystem OldFileSystem { get;  } = oldFileSystem ?? throw new ArgumentNullException("Old file system cannot be null!", nameof(oldFileSystem));
 
         /// <summary>
         /// The file system of this partition after the operation.
         /// </summary>
-        public FileSystem NewFileSystem { get; } = newFileSystem;
+        public FileSystem NewFileSystem { get; } = newFileSystem ?? throw new ArgumentNullException("New file system cannot be null!", nameof(newFileSystem));
     }
 }

@@ -8,5 +8,8 @@ namespace TotalImage.Operations
     /// </summary>
     /// <param name="targetObject">The file system object to be deleted.</param>
     /// <param name="timestamp">The date and time when this object was deleted.</param>
-    public class ObjectDeletedOperation(TiFileSystemObject targetObject, DateTime timestamp) : Operation(targetObject, timestamp) { }
+    public class ObjectDeletedOperation(TiFileSystemObject targetObject, DateTime timestamp) : Operation(targetObject, timestamp)
+    {
+
+    }
 }
