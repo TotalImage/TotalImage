@@ -12,7 +12,7 @@ namespace TotalImage.Operations
         /// <summary>
         /// The object that was the target of the operation.
         /// </summary>
-        public object TargetObject { get; } = targetObject;
+        public object TargetObject { get; } = targetObject ?? throw new ArgumentNullException("Target object cannot be null!", nameof(targetObject));
 
         /// <summary>
         /// The date and time when this operation was made.
