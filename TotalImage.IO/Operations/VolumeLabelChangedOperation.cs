@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text;
 using TotalImage.Partitions;
 
 namespace TotalImage.Operations
@@ -27,6 +29,27 @@ namespace TotalImage.Operations
         /// Indicates which volume label is to be changedd in a FAT file system.
         /// </summary>
         public VolumeLabel? LabelToChange { get; } = labelToChange;
+
+        /// <summary>
+        /// Apply this operation to change the volume label in the disk image.
+        /// </summary>
+        /// <param name="imageStream">The stream representing the disk image content.</param>
+        /// <remarks>
+        /// This operation requires file system-specific logic to modify the volume label in BPB and/or root directory.
+        /// Currently implemented as a placeholder that performs no action.
+        /// </remarks>
+        public override void Apply(Stream imageStream)
+        {
+            // TODO: Implement file system-specific volume label change logic
+            // For FAT file systems, this would involve:
+            // 1. For BPB label: updating the volume label field at offset 0x2B (FAT12/16) or 0x47 (FAT32) in the boot sector
+            // 2. For root directory label: finding/creating the volume label entry in root directory and updating it
+            // 3. Writing the changes to the appropriate sectors
+            
+            // For now, this is a placeholder that documents what needs to be done
+            var partition = (PartitionEntry)TargetObject;
+            // Would need to determine file system type and apply the appropriate changes
+        }
 
         /// <summary>
         /// Which volume label is to be changed in a FAT file system.
