@@ -568,7 +568,7 @@ namespace TotalImage
             gbxLoadOptions.Size = new System.Drawing.Size(466, 54);
             gbxLoadOptions.TabIndex = 13;
             gbxLoadOptions.TabStop = false;
-            gbxLoadOptions.Text = "Load options";
+            gbxLoadOptions.Text = "Options";
             // 
             // dlgSelectPartition
             // 

@@ -208,14 +208,14 @@ namespace TotalImage
             Controls.Add(btnCreate);
             Controls.Add(lstPartitions);
             Controls.Add(pnlBottom);
-            Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            Font = new System.Drawing.Font("Segoe UI", 9F);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "dlgManagePartitions";
             ShowIcon = false;
             ShowInTaskbar = false;
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Manage partitions";
             pnlBottom.ResumeLayout(false);
             ResumeLayout(false);

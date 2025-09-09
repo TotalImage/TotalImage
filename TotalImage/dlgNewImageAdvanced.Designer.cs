@@ -103,7 +103,6 @@ namespace TotalImage
             txtFloppyTracks.Name = "txtFloppyTracks";
             txtFloppyTracks.Size = new System.Drawing.Size(84, 23);
             txtFloppyTracks.TabIndex = 9;
-            txtFloppyTracks.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             toolTip.SetToolTip(txtFloppyTracks, "The number of tracks on one side of the disk.");
             txtFloppyTracks.Value = new decimal(new int[] { 80, 0, 0, 0 });
             // 
@@ -124,7 +123,6 @@ namespace TotalImage
             txtFloppyReservedSect.Name = "txtFloppyReservedSect";
             txtFloppyReservedSect.Size = new System.Drawing.Size(84, 23);
             txtFloppyReservedSect.TabIndex = 3;
-            txtFloppyReservedSect.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             toolTip.SetToolTip(txtFloppyReservedSect, "The number of sectors before the first file allocation table (FAT).\r\nFor most FAT12-formatted floppies, there is only one reserved\r\nsector - the boot sector.\r\n");
             txtFloppyReservedSect.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -136,7 +134,6 @@ namespace TotalImage
             txtFloppyNumFATs.Name = "txtFloppyNumFATs";
             txtFloppyNumFATs.Size = new System.Drawing.Size(113, 23);
             txtFloppyNumFATs.TabIndex = 6;
-            txtFloppyNumFATs.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             toolTip.SetToolTip(txtFloppyNumFATs, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, this value is basically always 2.\r\n");
             txtFloppyNumFATs.Value = new decimal(new int[] { 2, 0, 0, 0 });
             // 
@@ -209,7 +206,6 @@ namespace TotalImage
             txtFloppySPT.Name = "txtFloppySPT";
             txtFloppySPT.Size = new System.Drawing.Size(113, 23);
             txtFloppySPT.TabIndex = 12;
-            txtFloppySPT.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             toolTip.SetToolTip(txtFloppySPT, "The number of sectors in one track.");
             txtFloppySPT.Value = new decimal(new int[] { 18, 0, 0, 0 });
             // 
@@ -231,7 +227,6 @@ namespace TotalImage
             txtFloppySPF.Name = "txtFloppySPF";
             txtFloppySPF.Size = new System.Drawing.Size(84, 23);
             txtFloppySPF.TabIndex = 1;
-            txtFloppySPF.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             toolTip.SetToolTip(txtFloppySPF, "Defines the number of sectors occupied by each file\r\nallocation table (FAT).");
             txtFloppySPF.Value = new decimal(new int[] { 9, 0, 0, 0 });
             // 
@@ -254,7 +249,6 @@ namespace TotalImage
             txtFloppyMediaDesc.Name = "txtFloppyMediaDesc";
             txtFloppyMediaDesc.Size = new System.Drawing.Size(84, 23);
             txtFloppyMediaDesc.TabIndex = 11;
-            txtFloppyMediaDesc.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             toolTip.SetToolTip(txtFloppyMediaDesc, resources.GetString("txtFloppyMediaDesc.ToolTip"));
             txtFloppyMediaDesc.Value = new decimal(new int[] { 240, 0, 0, 0 });
             // 
@@ -276,7 +270,6 @@ namespace TotalImage
             txtFloppyTotalSect.Name = "txtFloppyTotalSect";
             txtFloppyTotalSect.Size = new System.Drawing.Size(84, 23);
             txtFloppyTotalSect.TabIndex = 5;
-            txtFloppyTotalSect.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             toolTip.SetToolTip(txtFloppyTotalSect, "This field specifies the total number of sectors on a disk. The number\r\nis calculated by multiplying the number of tracks, sectors per track and\r\nnumber of sides (tracks * SPT * sides).\r\n");
             txtFloppyTotalSect.Value = new decimal(new int[] { 2880, 0, 0, 0 });
             // 
@@ -299,7 +292,6 @@ namespace TotalImage
             txtFloppyRootDir.Name = "txtFloppyRootDir";
             txtFloppyRootDir.Size = new System.Drawing.Size(84, 23);
             txtFloppyRootDir.TabIndex = 7;
-            txtFloppyRootDir.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             toolTip.SetToolTip(txtFloppyRootDir, "This is the maximum number of files that can be located in the\r\nroot directory of the disk. ");
             txtFloppyRootDir.Value = new decimal(new int[] { 224, 0, 0, 0 });
             // 
@@ -341,7 +333,6 @@ namespace TotalImage
             txtFloppySPC.Name = "txtFloppySPC";
             txtFloppySPC.Size = new System.Drawing.Size(113, 23);
             txtFloppySPC.TabIndex = 10;
-            txtFloppySPC.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             toolTip.SetToolTip(txtFloppySPC, "This field determines the number of sectors that make up one cluster.\r\n");
             txtFloppySPC.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -364,7 +355,6 @@ namespace TotalImage
             txtFloppyBPS.Name = "txtFloppyBPS";
             txtFloppyBPS.Size = new System.Drawing.Size(113, 23);
             txtFloppyBPS.TabIndex = 8;
-            txtFloppyBPS.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             toolTip.SetToolTip(txtFloppyBPS, "This field determines the size of a sector in bytes.");
             txtFloppyBPS.Value = new decimal(new int[] { 512, 0, 0, 0 });
             // 
