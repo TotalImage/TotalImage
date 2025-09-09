@@ -28,11 +28,13 @@ namespace TotalImage.Operations
         /// <param name="timestamp">The date and time when the comment was changed.</param>
         public ImageCommentChangedOperation(Container targetObject, string oldComment, string newComment, DateTime timestamp) : base(targetObject, timestamp)
         {
+            //Container doesn't support comments, so this operation can't be performed...
             if(targetObject is not IContainerComment)
             {
                 throw new InvalidOperationException("This container type does not support comments!");
             }
 
+            //We allow NewComment to be null, empty or whitespace here, since this effectively means the comment was removed.
             OldComment = oldComment;
             NewComment = newComment;
         }

@@ -28,6 +28,11 @@ namespace TotalImage.Operations
                 throw new InvalidOperationException("This file system does not support subdirectories!");
             }
 
+            if (string.IsNullOrWhiteSpace(dirName))
+            {
+                throw new ArgumentException("Directory name cannot be null, empty or whitespace!", nameof(dirName));
+            }
+
             DirectoryName = dirName;
         }
     }
