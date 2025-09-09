@@ -45,7 +45,7 @@ namespace TotalImage.FileSystems
         /// <param name="showHidden">Whether to show hidden objects</param>
         /// <param name="showDeleted">Whether to show deleted objects</param>
         /// <returns>An enumerable of file system objects contained within the directory</returns>
-        public abstract IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted);
+        public abstract IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false);
 
         // For lack of a better name
         private IEnumerable<FileSystemObject> EnumerateFileSystemObjectsInternal(bool recursive)
@@ -70,7 +70,7 @@ namespace TotalImage.FileSystems
         /// <param name="showHidden">Whether to show hidden directories</param>
         /// <param name="showDeleted">Whether to show deleted directories</param>
         /// <returns>An enumerable of directories contained within the directory</returns>
-        public IEnumerable<Directory> EnumerateDirectories(bool showHidden, bool showDeleted)
+        public IEnumerable<Directory> EnumerateDirectories(bool showHidden, bool showDeleted = false)
         {
             foreach (var obj in EnumerateFileSystemObjects(showHidden, showDeleted))
             {
@@ -87,7 +87,7 @@ namespace TotalImage.FileSystems
         /// <param name="showHidden">Whether to show hidden files</param>
         /// <param name="showDeleted">Whether to show deleted files</param>
         /// <returns>An enumerable of files contained within the directory</returns>
-        public IEnumerable<File> EnumerateFiles(bool showHidden, bool showDeleted)
+        public IEnumerable<File> EnumerateFiles(bool showHidden, bool showDeleted = false)
         {
             foreach (var obj in EnumerateFileSystemObjects(showHidden, showDeleted))
             {

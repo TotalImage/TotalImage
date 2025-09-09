@@ -789,7 +789,6 @@ namespace TotalImage
                 deleteToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 propertiesToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 renameToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                undeleteToolStripMenuItem2.Enabled = false;
             }
             else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
             {
@@ -799,11 +798,10 @@ namespace TotalImage
             else if (lstFiles.SelectedIndices.Count == 1)
             {
                 TiFileSystemObject entry = GetSelectedItemData(0);
-                deleteToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-                extractToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
+                deleteToolStripMenuItem2.Enabled = true;
+                extractToolStripMenuItem2.Enabled = true;
                 propertiesToolStripMenuItem2.Enabled = true;
-                renameToolStripMenuItem2.Enabled = !entry.Name.StartsWith("?");
-                undeleteToolStripMenuItem2.Enabled = entry.Name.StartsWith("?");
+                renameToolStripMenuItem2.Enabled = true;
             }
             else
             {
@@ -811,9 +809,6 @@ namespace TotalImage
                 extractToolStripMenuItem2.Enabled = true;
                 propertiesToolStripMenuItem2.Enabled = true;
                 renameToolStripMenuItem2.Enabled = false;
-
-                //Should be determined if there are any deleted entries in the selection and possibly enable this?
-                undeleteToolStripMenuItem2.Enabled = false;
             }
         }
 
@@ -1153,16 +1148,6 @@ namespace TotalImage
             ResetView();
         }
 
-        private void showDeletedItems_Click(object sender, EventArgs e)
-        {
-            Settings.CurrentSettings.ShowDeletedItems = !Settings.CurrentSettings.ShowDeletedItems;
-
-            showDeletedItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowDeletedItems;
-            showDeletedItemsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowDeletedItems;
-
-            ResetView();
-        }
-
         /* Fires when the user starts dragging a ListViewItem around. String array is needed for Explorer to perform the move operation once
          * the drop is performed. */
         private void lstFiles_ItemDrag(object sender, ItemDragEventArgs e)
@@ -1307,7 +1292,6 @@ namespace TotalImage
             statusBarToolStripMenuItem.Checked = statusBar.Visible;
 
             showHiddenItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
-            showDeletedItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowDeletedItems;
 
             expandDirectoryTreeToolStripMenuItem.Enabled = image is not null && lstDirectories.Nodes[0].Nodes.Count > 0;
             collapseDirectoryTreeToolStripMenuItem.Enabled = image is not null && lstDirectories.Nodes[0].Nodes.Count > 0;
@@ -1332,7 +1316,6 @@ namespace TotalImage
             }
 
             showHiddenItemsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowHiddenItems;
-            showDeletedItemsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowDeletedItems;
         }
 
         private void sortMenu_DropDownOpening(object sender, EventArgs e)
@@ -1486,27 +1469,26 @@ namespace TotalImage
                 extractToolStripMenuItem.Enabled = false;
                 renameToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem.Enabled = false;
-                undeleteToolStripMenuItem.Enabled = false;
                 propertiesToolStripMenuItem.Enabled = false;
                 selectAllToolStripMenuItem.Enabled = false;
                 newFolderToolStripMenuItem.Enabled = false;
-                changeFormatToolStripMenuItem.Enabled = false;
+                changeGeometryToolStripMenuItem.Enabled = false;
                 selectPartitionToolStripMenuItem.Enabled = false;
                 managePartitionsToolStripMenuItem.Enabled = false;
                 bootSectorPropertiesToolStripMenuItem.Enabled = false;
-                formatToolStripMenuItem.Enabled = false;
+                formatDiskToolStripMenuItem.Enabled = false;
                 defragmentToolStripMenuItem.Enabled = false;
                 changeVolumeLabelToolStripMenuItem.Enabled = false;
 
                 return;
             }
 
-            changeFormatToolStripMenuItem.Enabled = true;
+            changeGeometryToolStripMenuItem.Enabled = true;
             selectPartitionToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable; ;
             managePartitionsToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable; ;
             bootSectorPropertiesToolStripMenuItem.Enabled = true;
             changeVolumeLabelToolStripMenuItem.Enabled = true;
-            formatToolStripMenuItem.Enabled = true;
+            formatDiskToolStripMenuItem.Enabled = true;
             defragmentToolStripMenuItem.Enabled = true;
             injectAFolderToolStripMenuItem.Enabled = true;
             injectFilesToolStripMenuItem.Enabled = true;
@@ -1516,7 +1498,6 @@ namespace TotalImage
 
             if (lstDirectories.Focused)
             {
-                undeleteToolStripMenuItem.Enabled = false;
                 renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 propertiesToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
@@ -1528,13 +1509,11 @@ namespace TotalImage
                     deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                     propertiesToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                     renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                    undeleteToolStripMenuItem.Enabled = false;
                 }
                 else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
                 {
                     renameToolStripMenuItem.Enabled = false;
                     deleteToolStripMenuItem.Enabled = false;
-                    undeleteToolStripMenuItem.Enabled = false;
                     propertiesToolStripMenuItem.Enabled = false;
                 }
                 else if (lstFiles.SelectedIndices.Count == 1)
@@ -1544,14 +1523,12 @@ namespace TotalImage
                     extractToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
                     propertiesToolStripMenuItem.Enabled = true;
                     renameToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                    undeleteToolStripMenuItem.Enabled = entry.Name.StartsWith("?");
                 }
                 else
                 {
                     deleteToolStripMenuItem.Enabled = true;
                     propertiesToolStripMenuItem.Enabled = true;
                     renameToolStripMenuItem.Enabled = false;
-                    undeleteToolStripMenuItem.Enabled = false;
                 }
             }
         }
@@ -1795,7 +1772,7 @@ namespace TotalImage
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
-            foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems))
+            foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems, false))
             {
                 var subnode = new TreeNode(subdir.Name);
 
@@ -1866,7 +1843,7 @@ namespace TotalImage
                 parentDirectoryToolStripButton.Enabled = false;
             }
 
-            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, Settings.CurrentSettings.ShowDeletedItems))
+            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false))
             {
                 var item = new ListViewItem();
                 item.Text = fso.Name;

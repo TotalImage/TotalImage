@@ -98,7 +98,7 @@ public class ExFatDirectory : Directory
         throw new NotImplementedException();
     }
 
-    public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted)
+    public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false)
     {
         var fileSystem = (ExFatFileSystem)FileSystem;
         var stream = StreamExtensionDirectoryEntry?.GetStream(fileSystem) ??

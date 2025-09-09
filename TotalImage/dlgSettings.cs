@@ -82,7 +82,6 @@ namespace TotalImage
             cbxShowStatusBar.Checked = Settings.CurrentSettings.ShowStatusBar;
             cbxShowDirectoryTree.Checked = Settings.CurrentSettings.ShowDirectoryTree;
             cbxShowHiddenItems.Checked = Settings.CurrentSettings.ShowHiddenItems;
-            cbxShowDeletedItems.Checked = Settings.CurrentSettings.ShowDeletedItems;
             lstSortBy.SelectedIndex = Settings.CurrentSettings.FilesSortingColumn;
             lstSortOrder.SelectedIndex = (int)Settings.CurrentSettings.FilesSortOrder - 1;
             cbxExtractAsk.Checked = Settings.CurrentSettings.ExtractAlwaysAsk;
@@ -139,7 +138,6 @@ namespace TotalImage
             Settings.CurrentSettings.FilesSortOrder = (SortOrder)(lstSortOrder.SelectedIndex + 1);
             Settings.CurrentSettings.OpenFolderAfterExtract = cbxOpenDir.Checked;
             Settings.CurrentSettings.ShowCommandBar = cbxShowCommandBar.Checked;
-            Settings.CurrentSettings.ShowDeletedItems = cbxShowDeletedItems.Checked;
             Settings.CurrentSettings.ShowDirectoryTree = cbxShowDirectoryTree.Checked;
             Settings.CurrentSettings.ShowHiddenItems = cbxShowHiddenItems.Checked;
             Settings.CurrentSettings.ShowStatusBar = cbxShowStatusBar.Checked;

@@ -71,11 +71,6 @@ namespace TotalImage
             /// <remarks>May not apply to all supported file systems.</remarks>
             public bool ShowHiddenItems { get; set; } = true;
             /// <summary>
-            /// Parse deleted file system objects in all directories and show them in the directory tree and file list.
-            /// </summary>
-            /// <remarks>May not apply to all supported file systems.</remarks>
-            public bool ShowDeletedItems { get; set; } = false;
-            /// <summary>
             /// Show the command bar in the main window.
             /// </summary>
             public bool ShowCommandBar { get; set; } = true;
@@ -305,7 +300,6 @@ namespace TotalImage
             CurrentSettings.DefaultExtractPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             CurrentSettings.SizeUnit = SizeUnit.Bytes;
             CurrentSettings.ShowCommandBar = true;
-            CurrentSettings.ShowDeletedItems = false;
             CurrentSettings.ShowDirectoryTree = true;
             CurrentSettings.ShowHiddenItems = true;
             CurrentSettings.ShowStatusBar = true;

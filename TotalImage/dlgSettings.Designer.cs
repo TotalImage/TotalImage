@@ -67,7 +67,6 @@ namespace TotalImage
             cbxShowCommandBar = new System.Windows.Forms.CheckBox();
             cbxShowStatusBar = new System.Windows.Forms.CheckBox();
             cbxShowDirectoryTree = new System.Windows.Forms.CheckBox();
-            cbxShowDeletedItems = new System.Windows.Forms.CheckBox();
             cbxShowHiddenItems = new System.Windows.Forms.CheckBox();
             tabExtraction = new System.Windows.Forms.TabPage();
             gbxExtractionPreserve = new System.Windows.Forms.GroupBox();
@@ -508,7 +507,6 @@ namespace TotalImage
             gbxMainWindow.Controls.Add(cbxShowCommandBar);
             gbxMainWindow.Controls.Add(cbxShowStatusBar);
             gbxMainWindow.Controls.Add(cbxShowDirectoryTree);
-            gbxMainWindow.Controls.Add(cbxShowDeletedItems);
             gbxMainWindow.Controls.Add(cbxShowHiddenItems);
             gbxMainWindow.Location = new System.Drawing.Point(6, 6);
             gbxMainWindow.Name = "gbxMainWindow";
@@ -532,7 +530,7 @@ namespace TotalImage
             // 
             cbxShowStatusBar.AutoSize = true;
             cbxShowStatusBar.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxShowStatusBar.Location = new System.Drawing.Point(11, 75);
+            cbxShowStatusBar.Location = new System.Drawing.Point(221, 22);
             cbxShowStatusBar.Name = "cbxShowStatusBar";
             cbxShowStatusBar.Size = new System.Drawing.Size(115, 20);
             cbxShowStatusBar.TabIndex = 16;
@@ -549,17 +547,6 @@ namespace TotalImage
             cbxShowDirectoryTree.TabIndex = 15;
             cbxShowDirectoryTree.Text = "Show directory tree";
             cbxShowDirectoryTree.UseVisualStyleBackColor = true;
-            // 
-            // cbxShowDeletedItems
-            // 
-            cbxShowDeletedItems.AutoSize = true;
-            cbxShowDeletedItems.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxShowDeletedItems.Location = new System.Drawing.Point(221, 22);
-            cbxShowDeletedItems.Name = "cbxShowDeletedItems";
-            cbxShowDeletedItems.Size = new System.Drawing.Size(144, 20);
-            cbxShowDeletedItems.TabIndex = 17;
-            cbxShowDeletedItems.Text = "Show deleted objects";
-            cbxShowDeletedItems.UseVisualStyleBackColor = true;
             // 
             // cbxShowHiddenItems
             // 
@@ -874,7 +861,6 @@ namespace TotalImage
         private System.Windows.Forms.CheckBox cbxShowHiddenItems;
         private System.Windows.Forms.CheckBox cbxShowDirectoryTree;
         private System.Windows.Forms.CheckBox cbxShowStatusBar;
-        private System.Windows.Forms.CheckBox cbxShowDeletedItems;
         private System.Windows.Forms.Label lblSortOrder;
         private System.Windows.Forms.ComboBox lstSortOrder;
         private System.Windows.Forms.GroupBox gbxBehavior;
