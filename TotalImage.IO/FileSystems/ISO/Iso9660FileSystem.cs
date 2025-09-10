@@ -41,6 +41,10 @@ namespace TotalImage.FileSystems.ISO
         /// <inheritdoc />
         public override bool SupportsSubdirectories => true;
 
+        /// <inheritdoc />
+        // For now let's make this read-only. Eventually we might support file replacement in ISO?
+        public override bool IsReadOnly => true;
+
         /// <summary>
         /// The volume descriptors for the ISO 9660 or High Sierra file system
         /// </summary>

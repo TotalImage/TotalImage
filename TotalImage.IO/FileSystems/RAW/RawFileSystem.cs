@@ -15,6 +15,10 @@ namespace TotalImage.FileSystems.RAW
         public override bool SupportsSubdirectories => false;
 
         /// <inheritdoc />
+        // This is not really a file system as such, but just to be sure let's make it read-only as well...
+        public override bool IsReadOnly => true;
+
+        /// <inheritdoc />
         public override string VolumeLabel
         {
             get => "";

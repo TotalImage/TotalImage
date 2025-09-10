@@ -17,6 +17,9 @@ public class ExFatFileSystem : FileSystem
     /// <inheritdoc />
     public override bool SupportsSubdirectories => true;
 
+    /// <inheritdoc />
+    public override bool IsReadOnly => false;
+
     public ExFatFileSystem(Stream stream) : base(stream)
     {
         var sector = new byte[512];

@@ -25,6 +25,9 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override bool SupportsSubdirectories => true;
 
+        /// <inheritdoc />
+        public override bool IsReadOnly => false;
+
         public Fat32FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
             Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];

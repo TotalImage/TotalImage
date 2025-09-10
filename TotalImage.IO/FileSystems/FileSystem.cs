@@ -60,6 +60,11 @@ namespace TotalImage.FileSystems
         public abstract bool SupportsSubdirectories { get; }
 
         /// <summary>
+        /// Is this file system read-only
+        /// </summary>
+        public abstract bool IsReadOnly { get; }
+
+        /// <summary>
         /// Create a representation of the file system
         /// </summary>
         /// <param name="containerStream">The stream containing the file system</param>
