@@ -17,6 +17,9 @@ namespace TotalImage.Containers.Anex86
         /// <inheritdoc />
         public override string DisplayName => "Anex86 disk image";
 
+        /// <inheritdoc />
+        public override bool IsReadOnly => false;
+
         /// <summary>
         /// The header structure of this FDI/HDI image
         /// </summary>

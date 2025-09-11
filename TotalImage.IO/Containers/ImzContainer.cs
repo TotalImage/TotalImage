@@ -16,6 +16,9 @@ namespace TotalImage.Containers
         public override string DisplayName => "WinImage compressed image";
 
         /// <inheritdoc />
+        public override bool IsReadOnly => false;
+
+        /// <inheritdoc />
         public string? Comment { get; }
 
         /// <inheritdoc />

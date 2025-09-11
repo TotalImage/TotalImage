@@ -18,6 +18,9 @@ public class PCjsContainer : Container
     public override string DisplayName => "PCjs Disk Image";
 
     /// <inheritdoc />
+    public override bool IsReadOnly => false;
+
+    /// <inheritdoc />
     public PCjsContainer(string path, bool memoryMapping) : base(path, memoryMapping)
     {
         var root = JsonDocument.Parse(containerStream).RootElement;

@@ -17,6 +17,9 @@ namespace TotalImage.Containers.NHD
         public override string DisplayName => "T98-Next HD";
 
         /// <inheritdoc />
+        public override bool IsReadOnly => false;
+
+        /// <inheritdoc />
         public string? Comment => Header.Comment;
 
         /// <summary>
