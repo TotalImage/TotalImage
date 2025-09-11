@@ -41,6 +41,11 @@ namespace TotalImage.Containers
         public long Length => Content.Length;
 
         /// <summary>
+        /// Can this container be written to
+        /// </summary>
+        public abstract bool IsReadOnly { get; }
+
+        /// <summary>
         /// Returns the partition table contained within the image
         /// </summary>
         /// <exception cref="InvalidDataException">Thrown if no partition table could be found within the image</exception>

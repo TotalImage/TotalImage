@@ -19,6 +19,9 @@ public class VhdContainer : Container
     /// <inheritdoc />
     public override string DisplayName => "Microsoft VHD";
 
+    /// <inheritdoc />
+    public override bool IsReadOnly => false;
+
     /// <summary>
     /// The footer structure of this VHD
     /// </summary>

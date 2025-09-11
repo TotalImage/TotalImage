@@ -17,6 +17,9 @@ namespace TotalImage.Containers
         public override string DisplayName => "Raw sector image";
 
         /// <inheritdoc />
+        public override bool IsReadOnly => false;
+
+        /// <inheritdoc />
         public RawContainer(string path, bool memoryMapping) : base(path, memoryMapping) { }
 
         /// <inheritdoc />
