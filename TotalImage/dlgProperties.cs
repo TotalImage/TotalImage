@@ -64,31 +64,42 @@ namespace TotalImage
         {
             if (entries.Count == 1) //Single object is straightforward
             {
-                txtFilename.Text = entries[0].Name;
-                if (entries[0] is IFatFileSystemObject fatObj)
+                if (entries[0] is TotalImage.FileSystems.File)
                 {
-                    txtShortFilename1.Text = fatObj.ShortName;
-                    txtFirstCluster1.Text = fatObj.FirstCluster.ToString();
+                    txtHashMD5.Enabled = txtHashSHA1.Enabled = true;
+                    txtHashMD5.Text = txtHashSHA1.Text = "Click to calculate";
                 }
                 else
                 {
-                    txtShortFilename1.Text = "N/A"; //For now. We might want to always generate this anyway even for other file systems?
-                    txtFirstCluster1.Text = "N/A";
+                    txtHashMD5.Enabled = txtHashSHA1.Enabled = false;
+                    txtHashMD5.Text = txtHashSHA1.Text = "N/A";
+                }
+
+                txtFilename.Text = entries[0].Name;
+                if (entries[0] is IFatFileSystemObject fatObj)
+                {
+                    txtShortFilename.Text = fatObj.ShortName;
+                    txtFirstCluster.Text = fatObj.FirstCluster.ToString();
+                }
+                else
+                {
+                    txtShortFilename.Text = "N/A"; //For now. We might want to always generate this anyway even for other file systems?
+                    txtFirstCluster.Text = "N/A";
                 }
 
                 if (entries[0] is FileSystems.File file)
                 {
-                    txtLocation1.Text = file.DirectoryName;
-                    txtContains1.Text = "N/A";
-                    txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entries[0].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
-                    txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entries[0].LengthOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                    txtLocation.Text = file.DirectoryName;
+                    txtContains.Text = "N/A";
+                    txtSize.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entries[0].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                    txtSizeOnDisk.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entries[0].LengthOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
                 }
                 else if (entries[0] is FileSystems.Directory dir)
                 {
-                    txtLocation1.Text = dir.Parent?.FullName;
-                    txtContains1.Text = $"Files: {dir.CountFiles(true)}, subdirectories: {dir.CountSubdirectories(true)}";
-                    txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, false), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
-                    txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, true), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                    txtLocation.Text = dir.Parent?.FullName;
+                    txtContains.Text = $"Files: {dir.CountFiles(true)}, subdirectories: {dir.CountSubdirectories(true)}";
+                    txtSize.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, false), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                    txtSizeOnDisk.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, true), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
                 }
 
                 // These are indeed supposed to be assignments in the conditions.
@@ -137,7 +148,7 @@ namespace TotalImage
                 {
                     imgIcon.SizeMode = PictureBoxSizeMode.Normal;
                     imgIcon.Image = ShellInterop.GetFileTypeIcon(entries[0].Name, entries[0].Attributes).ToBitmap();
-                    txtType1.Text = ShellInterop.GetFileTypeName(entries[0].Name, entries[0].Attributes);
+                    txtType.Text = ShellInterop.GetFileTypeName(entries[0].Name, entries[0].Attributes);
                 }
                 else
                 {
@@ -149,11 +160,11 @@ namespace TotalImage
                     var extension = Path.GetExtension(entries[0].Name);
 
                     if (entries[0].Attributes.HasFlag(FileAttributes.Directory))
-                        txtType1.Text = "File folder";
+                        txtType.Text = "File folder";
                     else if (extension.Length > 0)
-                        txtType1.Text = $"{extension[1..].ToUpper()} File";
+                        txtType.Text = $"{extension[1..].ToUpper()} File";
                     else
-                        txtType1.Text = "File";
+                        txtType.Text = "File";
                 }
 
                 //Prevent any changes to deleted items as well as ISO file system objects
@@ -221,22 +232,22 @@ namespace TotalImage
 
                 if (differentTypes)
                 {
-                    txtType1.Text = "Multiple types";
+                    txtType.Text = "Multiple types";
                 }
                 else
                 {
                     if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
                     {
-                        txtType1.Text = ShellInterop.GetFileTypeName(entries[0].Name, entries[0].Attributes);
+                        txtType.Text = ShellInterop.GetFileTypeName(entries[0].Name, entries[0].Attributes);
                     }
                     else
                     {
                         if (entries[0].Attributes.HasFlag(FileAttributes.Directory))
-                            txtType1.Text = "File folder";
+                            txtType.Text = "File folder";
                         else if (foExt.Length > 0)
-                            txtType1.Text = $"{foExt[1..].ToUpper()} File";
+                            txtType.Text = $"{foExt[1..].ToUpper()} File";
                         else
-                            txtType1.Text = "File";
+                            txtType.Text = "File";
                     }
                 }
 
@@ -265,27 +276,20 @@ namespace TotalImage
                 }
 
                 lblMultipleObjectsCount.Text = $"Files: {files}, directories: {dirs}";
-                txtSize1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(size, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
-                txtSizeOnDisk1.Text = Settings.CurrentSettings.SizeUnit.FormatSize(sizeOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                txtSize.Text = Settings.CurrentSettings.SizeUnit.FormatSize(size, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                txtSizeOnDisk.Text = Settings.CurrentSettings.SizeUnit.FormatSize(sizeOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
 
                 if (entries[0] is FileSystems.File file)
-                    txtLocation1.Text = file.DirectoryName;
+                    txtLocation.Text = file.DirectoryName;
                 else if (entries[0] is FileSystems.Directory dir)
-                    txtLocation1.Text = dir.Parent?.FullName;
+                    txtLocation.Text = dir.Parent?.FullName;
 
-                txtShortFilename1.Text = txtFirstCluster1.Text = txtContains1.Text = "N/A";
-                cbxDateCreated.Enabled = false;
-                cbxDateAccessed.Enabled = false;
-                cbxDateModified.Enabled = false;
-                dtpAccessed.Enabled = false;
-                dtpAccessed.Text = "";
-                dtpAccessed.CustomFormat = " ";
-                dtpCreated.Enabled = false;
-                dtpCreated.Text = "";
-                dtpCreated.CustomFormat = " ";
-                dtpModified.Enabled = false;
-                dtpModified.Text = "";
-                dtpModified.CustomFormat = " ";
+                txtShortFilename.Enabled = txtFirstCluster.Enabled = txtContains.Enabled = txtHashMD5.Enabled = txtHashSHA1.Enabled = false;
+                txtShortFilename.Text = txtFirstCluster.Text = txtContains.Text = txtHashMD5.Text = txtHashSHA1.Text = "N/A";
+                cbxDateCreated.Enabled = cbxDateAccessed.Enabled = cbxDateModified.Enabled = false;
+                dtpAccessed.Enabled = dtpCreated.Enabled = dtpModified.Enabled = false;
+                dtpAccessed.Text = dtpCreated.Text = dtpModified.Text = "";
+                dtpAccessed.CustomFormat = dtpCreated.CustomFormat = dtpModified.CustomFormat = " ";
 
                 imgIcon.Image = Resources.page_white_stack;
                 imgIcon.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -347,6 +351,16 @@ namespace TotalImage
                     dtpAccessed.CustomFormat = " ";
                 }
             }
+        }
+
+        private void txtHashMD5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtHashSHA1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

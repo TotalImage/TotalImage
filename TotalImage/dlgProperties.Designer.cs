@@ -45,16 +45,20 @@ namespace TotalImage
             dtpAccessed = new System.Windows.Forms.DateTimePicker();
             dtpCreated = new System.Windows.Forms.DateTimePicker();
             dtpModified = new System.Windows.Forms.DateTimePicker();
-            txtSize1 = new System.Windows.Forms.TextBox();
-            txtSizeOnDisk1 = new System.Windows.Forms.TextBox();
-            txtShortFilename1 = new System.Windows.Forms.TextBox();
-            txtContains1 = new System.Windows.Forms.TextBox();
+            txtSize = new System.Windows.Forms.TextBox();
+            txtSizeOnDisk = new System.Windows.Forms.TextBox();
+            txtShortFilename = new System.Windows.Forms.TextBox();
+            txtContains = new System.Windows.Forms.TextBox();
             lblContains = new System.Windows.Forms.Label();
             cbxDateCreated = new System.Windows.Forms.CheckBox();
             cbxDateModified = new System.Windows.Forms.CheckBox();
             cbxDateAccessed = new System.Windows.Forms.CheckBox();
-            txtFirstCluster1 = new System.Windows.Forms.TextBox();
+            txtFirstCluster = new System.Windows.Forms.TextBox();
             lblFirstCluster = new System.Windows.Forms.Label();
+            txtHashSHA1 = new System.Windows.Forms.TextBox();
+            lblHashSHA1 = new System.Windows.Forms.Label();
+            txtHashMD5 = new System.Windows.Forms.TextBox();
+            lblHashMD5 = new System.Windows.Forms.Label();
             btnCancel = new System.Windows.Forms.Button();
             btnOK = new System.Windows.Forms.Button();
             pnlBottom = new System.Windows.Forms.Panel();
@@ -62,8 +66,8 @@ namespace TotalImage
             lblSeparator2 = new System.Windows.Forms.Label();
             lblSeparator3 = new System.Windows.Forms.Label();
             lblAttributes = new System.Windows.Forms.Label();
-            txtType1 = new System.Windows.Forms.TextBox();
-            txtLocation1 = new System.Windows.Forms.TextBox();
+            txtType = new System.Windows.Forms.TextBox();
+            txtLocation = new System.Windows.Forms.TextBox();
             lblMultipleObjectsCount = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)imgIcon).BeginInit();
             pnlBottom.SuspendLayout();
@@ -147,7 +151,7 @@ namespace TotalImage
             // 
             cbxReadOnly.AutoSize = true;
             cbxReadOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxReadOnly.Location = new System.Drawing.Point(80, 351);
+            cbxReadOnly.Location = new System.Drawing.Point(83, 399);
             cbxReadOnly.Name = "cbxReadOnly";
             cbxReadOnly.Size = new System.Drawing.Size(86, 20);
             cbxReadOnly.TabIndex = 4;
@@ -159,7 +163,7 @@ namespace TotalImage
             // 
             cbxHidden.AutoSize = true;
             cbxHidden.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxHidden.Location = new System.Drawing.Point(166, 351);
+            cbxHidden.Location = new System.Drawing.Point(169, 399);
             cbxHidden.Name = "cbxHidden";
             cbxHidden.Size = new System.Drawing.Size(71, 20);
             cbxHidden.TabIndex = 5;
@@ -171,7 +175,7 @@ namespace TotalImage
             // 
             cbxSystem.AutoSize = true;
             cbxSystem.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxSystem.Location = new System.Drawing.Point(240, 351);
+            cbxSystem.Location = new System.Drawing.Point(243, 399);
             cbxSystem.Name = "cbxSystem";
             cbxSystem.Size = new System.Drawing.Size(70, 20);
             cbxSystem.TabIndex = 6;
@@ -183,7 +187,7 @@ namespace TotalImage
             // 
             cbxArchive.AutoSize = true;
             cbxArchive.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxArchive.Location = new System.Drawing.Point(312, 351);
+            cbxArchive.Location = new System.Drawing.Point(315, 399);
             cbxArchive.Name = "cbxArchive";
             cbxArchive.Size = new System.Drawing.Size(72, 20);
             cbxArchive.TabIndex = 7;
@@ -195,7 +199,7 @@ namespace TotalImage
             // 
             dtpAccessed.CustomFormat = "yyyy-MM-dd";
             dtpAccessed.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            dtpAccessed.Location = new System.Drawing.Point(94, 307);
+            dtpAccessed.Location = new System.Drawing.Point(97, 355);
             dtpAccessed.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             dtpAccessed.Name = "dtpAccessed";
             dtpAccessed.ShowUpDown = true;
@@ -207,7 +211,7 @@ namespace TotalImage
             // 
             dtpCreated.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             dtpCreated.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            dtpCreated.Location = new System.Drawing.Point(94, 249);
+            dtpCreated.Location = new System.Drawing.Point(97, 297);
             dtpCreated.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             dtpCreated.Name = "dtpCreated";
             dtpCreated.ShowUpDown = true;
@@ -219,7 +223,7 @@ namespace TotalImage
             // 
             dtpModified.CustomFormat = "yyyy-MM-dd HH:mm:ss";
             dtpModified.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            dtpModified.Location = new System.Drawing.Point(94, 278);
+            dtpModified.Location = new System.Drawing.Point(97, 326);
             dtpModified.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             dtpModified.Name = "dtpModified";
             dtpModified.ShowUpDown = true;
@@ -227,57 +231,57 @@ namespace TotalImage
             dtpModified.TabIndex = 2;
             toolTip.SetToolTip(dtpModified, "This is the date and time when the file or directory was last\r\nwritten to.");
             // 
-            // txtSize1
+            // txtSize
             // 
-            txtSize1.BackColor = System.Drawing.Color.White;
-            txtSize1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            txtSize1.Location = new System.Drawing.Point(115, 110);
-            txtSize1.Name = "txtSize1";
-            txtSize1.ReadOnly = true;
-            txtSize1.Size = new System.Drawing.Size(255, 16);
-            txtSize1.TabIndex = 29;
-            txtSize1.TabStop = false;
-            txtSize1.Text = "<size>";
-            toolTip.SetToolTip(txtSize1, "This is the actual size of the file or directory.");
+            txtSize.BackColor = System.Drawing.Color.White;
+            txtSize.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            txtSize.Location = new System.Drawing.Point(115, 110);
+            txtSize.Name = "txtSize";
+            txtSize.ReadOnly = true;
+            txtSize.Size = new System.Drawing.Size(255, 16);
+            txtSize.TabIndex = 29;
+            txtSize.TabStop = false;
+            txtSize.Text = "<size>";
+            toolTip.SetToolTip(txtSize, "This is the actual size of the file or directory.");
             // 
-            // txtSizeOnDisk1
+            // txtSizeOnDisk
             // 
-            txtSizeOnDisk1.BackColor = System.Drawing.Color.White;
-            txtSizeOnDisk1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            txtSizeOnDisk1.Location = new System.Drawing.Point(115, 134);
-            txtSizeOnDisk1.Name = "txtSizeOnDisk1";
-            txtSizeOnDisk1.ReadOnly = true;
-            txtSizeOnDisk1.Size = new System.Drawing.Size(255, 16);
-            txtSizeOnDisk1.TabIndex = 30;
-            txtSizeOnDisk1.TabStop = false;
-            txtSizeOnDisk1.Text = "<sizeondisk>";
-            toolTip.SetToolTip(txtSizeOnDisk1, "This is the space occupied by the file or directory on the disk\r\ndue to cluster size.");
+            txtSizeOnDisk.BackColor = System.Drawing.Color.White;
+            txtSizeOnDisk.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            txtSizeOnDisk.Location = new System.Drawing.Point(115, 134);
+            txtSizeOnDisk.Name = "txtSizeOnDisk";
+            txtSizeOnDisk.ReadOnly = true;
+            txtSizeOnDisk.Size = new System.Drawing.Size(255, 16);
+            txtSizeOnDisk.TabIndex = 30;
+            txtSizeOnDisk.TabStop = false;
+            txtSizeOnDisk.Text = "<sizeondisk>";
+            toolTip.SetToolTip(txtSizeOnDisk, "This is the space occupied by the file or directory on the disk\r\ndue to cluster size.");
             // 
-            // txtShortFilename1
+            // txtShortFilename
             // 
-            txtShortFilename1.BackColor = System.Drawing.Color.White;
-            txtShortFilename1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            txtShortFilename1.Location = new System.Drawing.Point(115, 158);
-            txtShortFilename1.Name = "txtShortFilename1";
-            txtShortFilename1.ReadOnly = true;
-            txtShortFilename1.Size = new System.Drawing.Size(255, 16);
-            txtShortFilename1.TabIndex = 31;
-            txtShortFilename1.TabStop = false;
-            txtShortFilename1.Text = "<shortname>";
-            toolTip.SetToolTip(txtShortFilename1, resources.GetString("txtShortFilename1.ToolTip"));
+            txtShortFilename.BackColor = System.Drawing.Color.White;
+            txtShortFilename.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            txtShortFilename.Location = new System.Drawing.Point(115, 158);
+            txtShortFilename.Name = "txtShortFilename";
+            txtShortFilename.ReadOnly = true;
+            txtShortFilename.Size = new System.Drawing.Size(255, 16);
+            txtShortFilename.TabIndex = 31;
+            txtShortFilename.TabStop = false;
+            txtShortFilename.Text = "<shortname>";
+            toolTip.SetToolTip(txtShortFilename, resources.GetString("txtShortFilename.ToolTip"));
             // 
-            // txtContains1
+            // txtContains
             // 
-            txtContains1.BackColor = System.Drawing.Color.White;
-            txtContains1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            txtContains1.Location = new System.Drawing.Point(115, 182);
-            txtContains1.Name = "txtContains1";
-            txtContains1.ReadOnly = true;
-            txtContains1.Size = new System.Drawing.Size(255, 16);
-            txtContains1.TabIndex = 33;
-            txtContains1.TabStop = false;
-            txtContains1.Text = "<contains>";
-            toolTip.SetToolTip(txtContains1, "The number of files and subdirectories contained in this directory.\r\n");
+            txtContains.BackColor = System.Drawing.Color.White;
+            txtContains.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            txtContains.Location = new System.Drawing.Point(115, 182);
+            txtContains.Name = "txtContains";
+            txtContains.ReadOnly = true;
+            txtContains.Size = new System.Drawing.Size(255, 16);
+            txtContains.TabIndex = 33;
+            txtContains.TabStop = false;
+            txtContains.Text = "<contains>";
+            toolTip.SetToolTip(txtContains, "The number of files and subdirectories contained in this directory.\r\n");
             // 
             // lblContains
             // 
@@ -293,7 +297,7 @@ namespace TotalImage
             // 
             cbxDateCreated.AutoSize = true;
             cbxDateCreated.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxDateCreated.Location = new System.Drawing.Point(12, 251);
+            cbxDateCreated.Location = new System.Drawing.Point(15, 299);
             cbxDateCreated.Name = "cbxDateCreated";
             cbxDateCreated.Size = new System.Drawing.Size(76, 20);
             cbxDateCreated.TabIndex = 24;
@@ -306,7 +310,7 @@ namespace TotalImage
             // 
             cbxDateModified.AutoSize = true;
             cbxDateModified.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxDateModified.Location = new System.Drawing.Point(12, 280);
+            cbxDateModified.Location = new System.Drawing.Point(15, 328);
             cbxDateModified.Name = "cbxDateModified";
             cbxDateModified.Size = new System.Drawing.Size(83, 20);
             cbxDateModified.TabIndex = 25;
@@ -319,7 +323,7 @@ namespace TotalImage
             // 
             cbxDateAccessed.AutoSize = true;
             cbxDateAccessed.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxDateAccessed.Location = new System.Drawing.Point(12, 309);
+            cbxDateAccessed.Location = new System.Drawing.Point(15, 357);
             cbxDateAccessed.Name = "cbxDateAccessed";
             cbxDateAccessed.Size = new System.Drawing.Size(84, 20);
             cbxDateAccessed.TabIndex = 26;
@@ -328,18 +332,18 @@ namespace TotalImage
             cbxDateAccessed.UseVisualStyleBackColor = true;
             cbxDateAccessed.CheckedChanged += cbxDateAccessed_CheckedChanged;
             // 
-            // txtFirstCluster1
+            // txtFirstCluster
             // 
-            txtFirstCluster1.BackColor = System.Drawing.Color.White;
-            txtFirstCluster1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            txtFirstCluster1.Location = new System.Drawing.Point(115, 206);
-            txtFirstCluster1.Name = "txtFirstCluster1";
-            txtFirstCluster1.ReadOnly = true;
-            txtFirstCluster1.Size = new System.Drawing.Size(255, 16);
-            txtFirstCluster1.TabIndex = 35;
-            txtFirstCluster1.TabStop = false;
-            txtFirstCluster1.Text = "<firstcluster>";
-            toolTip.SetToolTip(txtFirstCluster1, "The starting cluster in the cluster chain of this object.\r\n");
+            txtFirstCluster.BackColor = System.Drawing.Color.White;
+            txtFirstCluster.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            txtFirstCluster.Location = new System.Drawing.Point(115, 206);
+            txtFirstCluster.Name = "txtFirstCluster";
+            txtFirstCluster.ReadOnly = true;
+            txtFirstCluster.Size = new System.Drawing.Size(255, 16);
+            txtFirstCluster.TabIndex = 35;
+            txtFirstCluster.TabStop = false;
+            txtFirstCluster.Text = "<firstcluster>";
+            toolTip.SetToolTip(txtFirstCluster, "The starting cluster in the cluster chain of this object.\r\n");
             // 
             // lblFirstCluster
             // 
@@ -350,6 +354,54 @@ namespace TotalImage
             lblFirstCluster.TabIndex = 34;
             lblFirstCluster.Text = "First cluster:";
             toolTip.SetToolTip(lblFirstCluster, "The starting cluster in the cluster chain of this object.\r\n");
+            // 
+            // txtHashSHA1
+            // 
+            txtHashSHA1.BackColor = System.Drawing.Color.White;
+            txtHashSHA1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            txtHashSHA1.Location = new System.Drawing.Point(115, 254);
+            txtHashSHA1.Name = "txtHashSHA1";
+            txtHashSHA1.ReadOnly = true;
+            txtHashSHA1.Size = new System.Drawing.Size(255, 16);
+            txtHashSHA1.TabIndex = 40;
+            txtHashSHA1.TabStop = false;
+            txtHashSHA1.Text = "<SHA1 hash>";
+            toolTip.SetToolTip(txtHashSHA1, "The SHA-1 hash of this file.\r\n");
+            txtHashSHA1.Click += txtHashSHA1_Click;
+            // 
+            // lblHashSHA1
+            // 
+            lblHashSHA1.AutoSize = true;
+            lblHashSHA1.Location = new System.Drawing.Point(12, 254);
+            lblHashSHA1.Name = "lblHashSHA1";
+            lblHashSHA1.Size = new System.Drawing.Size(72, 15);
+            lblHashSHA1.TabIndex = 39;
+            lblHashSHA1.Text = "SHA-1 hash:";
+            toolTip.SetToolTip(lblHashSHA1, "The SHA-1 hash of this file.");
+            // 
+            // txtHashMD5
+            // 
+            txtHashMD5.BackColor = System.Drawing.Color.White;
+            txtHashMD5.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            txtHashMD5.Location = new System.Drawing.Point(115, 230);
+            txtHashMD5.Name = "txtHashMD5";
+            txtHashMD5.ReadOnly = true;
+            txtHashMD5.Size = new System.Drawing.Size(255, 16);
+            txtHashMD5.TabIndex = 38;
+            txtHashMD5.TabStop = false;
+            txtHashMD5.Text = "<MD5 hash>";
+            toolTip.SetToolTip(txtHashMD5, "The MD5 hash of this file.\r\n");
+            txtHashMD5.Click += txtHashMD5_Click;
+            // 
+            // lblHashMD5
+            // 
+            lblHashMD5.AutoSize = true;
+            lblHashMD5.Location = new System.Drawing.Point(12, 230);
+            lblHashMD5.Name = "lblHashMD5";
+            lblHashMD5.Size = new System.Drawing.Size(63, 15);
+            lblHashMD5.TabIndex = 37;
+            lblHashMD5.Text = "MD5 hash:";
+            toolTip.SetToolTip(lblHashMD5, "The MD5 hash of this file.\r\n");
             // 
             // btnCancel
             // 
@@ -382,7 +434,7 @@ namespace TotalImage
             pnlBottom.Controls.Add(btnCancel);
             pnlBottom.Controls.Add(btnOK);
             pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 380);
+            pnlBottom.Location = new System.Drawing.Point(0, 425);
             pnlBottom.Name = "pnlBottom";
             pnlBottom.Size = new System.Drawing.Size(384, 50);
             pnlBottom.TabIndex = 10;
@@ -404,7 +456,7 @@ namespace TotalImage
             lblSeparator2.Enabled = false;
             lblSeparator2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             lblSeparator2.ForeColor = System.Drawing.SystemColors.ControlDark;
-            lblSeparator2.Location = new System.Drawing.Point(12, 236);
+            lblSeparator2.Location = new System.Drawing.Point(15, 284);
             lblSeparator2.Name = "lblSeparator2";
             lblSeparator2.Size = new System.Drawing.Size(360, 1);
             lblSeparator2.TabIndex = 18;
@@ -415,7 +467,7 @@ namespace TotalImage
             lblSeparator3.Enabled = false;
             lblSeparator3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             lblSeparator3.ForeColor = System.Drawing.SystemColors.ControlDark;
-            lblSeparator3.Location = new System.Drawing.Point(12, 341);
+            lblSeparator3.Location = new System.Drawing.Point(15, 389);
             lblSeparator3.Name = "lblSeparator3";
             lblSeparator3.Size = new System.Drawing.Size(360, 1);
             lblSeparator3.TabIndex = 19;
@@ -423,35 +475,35 @@ namespace TotalImage
             // lblAttributes
             // 
             lblAttributes.AutoSize = true;
-            lblAttributes.Location = new System.Drawing.Point(12, 353);
+            lblAttributes.Location = new System.Drawing.Point(15, 401);
             lblAttributes.Name = "lblAttributes";
             lblAttributes.Size = new System.Drawing.Size(62, 15);
             lblAttributes.TabIndex = 23;
             lblAttributes.Text = "Attributes:";
             // 
-            // txtType1
+            // txtType
             // 
-            txtType1.BackColor = System.Drawing.Color.White;
-            txtType1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            txtType1.Location = new System.Drawing.Point(115, 62);
-            txtType1.Name = "txtType1";
-            txtType1.ReadOnly = true;
-            txtType1.Size = new System.Drawing.Size(255, 16);
-            txtType1.TabIndex = 27;
-            txtType1.TabStop = false;
-            txtType1.Text = "<type>";
+            txtType.BackColor = System.Drawing.Color.White;
+            txtType.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            txtType.Location = new System.Drawing.Point(115, 62);
+            txtType.Name = "txtType";
+            txtType.ReadOnly = true;
+            txtType.Size = new System.Drawing.Size(255, 16);
+            txtType.TabIndex = 27;
+            txtType.TabStop = false;
+            txtType.Text = "<type>";
             // 
-            // txtLocation1
+            // txtLocation
             // 
-            txtLocation1.BackColor = System.Drawing.Color.White;
-            txtLocation1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            txtLocation1.Location = new System.Drawing.Point(115, 85);
-            txtLocation1.Name = "txtLocation1";
-            txtLocation1.ReadOnly = true;
-            txtLocation1.Size = new System.Drawing.Size(255, 16);
-            txtLocation1.TabIndex = 28;
-            txtLocation1.TabStop = false;
-            txtLocation1.Text = "<location>";
+            txtLocation.BackColor = System.Drawing.Color.White;
+            txtLocation.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            txtLocation.Location = new System.Drawing.Point(115, 85);
+            txtLocation.Name = "txtLocation";
+            txtLocation.ReadOnly = true;
+            txtLocation.Size = new System.Drawing.Size(255, 16);
+            txtLocation.TabIndex = 28;
+            txtLocation.TabStop = false;
+            txtLocation.Text = "<location>";
             // 
             // lblMultipleObjectsCount
             // 
@@ -470,18 +522,22 @@ namespace TotalImage
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.SystemColors.Window;
             CancelButton = btnCancel;
-            ClientSize = new System.Drawing.Size(384, 430);
+            ClientSize = new System.Drawing.Size(384, 475);
+            Controls.Add(txtHashSHA1);
+            Controls.Add(lblHashSHA1);
+            Controls.Add(txtHashMD5);
+            Controls.Add(lblHashMD5);
             Controls.Add(dtpModified);
             Controls.Add(lblMultipleObjectsCount);
-            Controls.Add(txtFirstCluster1);
+            Controls.Add(txtFirstCluster);
             Controls.Add(lblFirstCluster);
-            Controls.Add(txtContains1);
+            Controls.Add(txtContains);
             Controls.Add(lblContains);
-            Controls.Add(txtShortFilename1);
-            Controls.Add(txtSizeOnDisk1);
-            Controls.Add(txtSize1);
-            Controls.Add(txtLocation1);
-            Controls.Add(txtType1);
+            Controls.Add(txtShortFilename);
+            Controls.Add(txtSizeOnDisk);
+            Controls.Add(txtSize);
+            Controls.Add(txtLocation);
+            Controls.Add(txtType);
             Controls.Add(cbxArchive);
             Controls.Add(cbxSystem);
             Controls.Add(cbxHidden);
@@ -544,15 +600,19 @@ namespace TotalImage
         private System.Windows.Forms.CheckBox cbxDateCreated;
         private System.Windows.Forms.CheckBox cbxDateModified;
         private System.Windows.Forms.CheckBox cbxDateAccessed;
-        private System.Windows.Forms.TextBox txtType1;
-        private System.Windows.Forms.TextBox txtLocation1;
-        private System.Windows.Forms.TextBox txtSize1;
-        private System.Windows.Forms.TextBox txtSizeOnDisk1;
-        private System.Windows.Forms.TextBox txtShortFilename1;
-        private System.Windows.Forms.TextBox txtContains1;
+        private System.Windows.Forms.TextBox txtType;
+        private System.Windows.Forms.TextBox txtLocation;
+        private System.Windows.Forms.TextBox txtSize;
+        private System.Windows.Forms.TextBox txtSizeOnDisk;
+        private System.Windows.Forms.TextBox txtShortFilename;
+        private System.Windows.Forms.TextBox txtContains;
         private System.Windows.Forms.Label lblContains;
-        private System.Windows.Forms.TextBox txtFirstCluster1;
+        private System.Windows.Forms.TextBox txtFirstCluster;
         private System.Windows.Forms.Label lblFirstCluster;
         private System.Windows.Forms.Label lblMultipleObjectsCount;
+        private System.Windows.Forms.TextBox txtHashSHA1;
+        private System.Windows.Forms.Label lblHashSHA1;
+        private System.Windows.Forms.TextBox txtHashMD5;
+        private System.Windows.Forms.Label lblHashMD5;
     }
 }

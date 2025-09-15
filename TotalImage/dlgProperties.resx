@@ -139,7 +139,7 @@ of this can vary significantly from system to system. For FAT file systems,
 only software supporting the VFAT extensions uses this value.
 </value>
   </data>
-  <data name="txtShortFilename1.ToolTip" xml:space="preserve">
+  <data name="txtShortFilename.ToolTip" xml:space="preserve">
     <value>Short names are used for backwards compatibility with systems that 
 don't support longer file names. It is automatically generated
 based on the long name (see above). For FAT file systems, software
