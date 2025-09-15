@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -8,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
 using TotalImage.Properties;
-using static System.Net.WebRequestMethods;
 
 namespace TotalImage
 {
@@ -33,7 +31,7 @@ namespace TotalImage
 
         public dlgProperties(List<FileSystemObject> entries) : this()
         {
-            if (entries is null || !entries.Any())
+            if (entries is null || entries.Count == 0)
                 throw new ArgumentNullException(nameof(entries), "Entries list cannot be null or have 0 items!");
 
             this.entries = entries;
@@ -172,19 +170,11 @@ namespace TotalImage
                 }
 
                 //Prevent any changes to deleted items as well as ISO file system objects
-                if (entries[0].Name.StartsWith("?") || entries[0] is FileSystems.ISO.IsoFile || entries[0] is FileSystems.ISO.IsoDirectory)
+                if (entries[0] is FileSystems.ISO.IsoFile || entries[0] is FileSystems.ISO.IsoDirectory)
                 {
-                    txtFilename.Enabled = false;
-                    cbxArchive.Enabled = false;
-                    cbxHidden.Enabled = false;
-                    cbxReadOnly.Enabled = false;
-                    cbxSystem.Enabled = false;
-                    cbxDateCreated.Enabled = false;
-                    cbxDateAccessed.Enabled = false;
-                    cbxDateModified.Enabled = false;
-                    dtpAccessed.Enabled = false;
-                    dtpCreated.Enabled = false;
-                    dtpModified.Enabled = false;
+                    txtFilename.Enabled = cbxArchive.Enabled = cbxHidden.Enabled = cbxReadOnly.Enabled = cbxSystem.Enabled =
+                    cbxDateCreated.Enabled = cbxDateAccessed.Enabled = cbxDateModified.Enabled = dtpAccessed.Enabled =
+                    dtpCreated.Enabled = dtpModified.Enabled = false;
                 }
             }
             else //If we're showing info for multiple objects, it needs to be treated separately
@@ -383,7 +373,7 @@ namespace TotalImage
             }
         }
 
-        private void dlgProperties_FormClosing(object sender, FormClosingEventArgs e) 
+        private void dlgProperties_FormClosing(object sender, FormClosingEventArgs e)
             => cts.Cancel(); // Cancel the background work if it's still in progress
     }
 }
