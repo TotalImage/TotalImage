@@ -68,7 +68,7 @@ namespace TotalImage
         {
             if (entries.Count == 1) //Single object is straightforward
             {
-                if (entries[0] is TotalImage.FileSystems.File)
+                if (entries[0] is FileSystems.File)
                 {
                     txtHashMD5.Enabled = txtHashSHA1.Enabled = true;
                     txtHashMD5.Text = txtHashSHA1.Text = "Click to calculate";
@@ -361,10 +361,12 @@ namespace TotalImage
 
         private async void txtHash_Click(object sender, EventArgs e)
         {
-            if (!hashesDone)
+            if (!hashesDone && entries.Count == 1)
             {
-                var md5 = Task.Run(async () => await HashCalculator.CalculateMd5HashAsync(new MemoryStream(), cts.Token));
-                var sha1 = Task.Run(async () => await HashCalculator.CalculateSha1HashAsync(new MemoryStream(), cts.Token));
+                var fileStream = ((FileSystems.File)entries[0]).GetStream();
+
+                var md5 = Task.Run(async () => await HashCalculator.CalculateMd5HashAsync(fileStream, cts.Token));
+                var sha1 = Task.Run(async () => await HashCalculator.CalculateSha1HashAsync(fileStream, cts.Token));
 
                 try
                 {
