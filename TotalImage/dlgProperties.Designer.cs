@@ -367,7 +367,7 @@ namespace TotalImage
             txtHashSHA1.TabStop = false;
             txtHashSHA1.Text = "<SHA1 hash>";
             toolTip.SetToolTip(txtHashSHA1, "The SHA-1 hash of this file.\r\n");
-            txtHashSHA1.Click += txtHashSHA1_Click;
+            txtHashSHA1.Click += txtHash_Click;
             // 
             // lblHashSHA1
             // 
@@ -391,7 +391,7 @@ namespace TotalImage
             txtHashMD5.TabStop = false;
             txtHashMD5.Text = "<MD5 hash>";
             toolTip.SetToolTip(txtHashMD5, "The MD5 hash of this file.\r\n");
-            txtHashMD5.Click += txtHashMD5_Click;
+            txtHashMD5.Click += txtHash_Click;
             // 
             // lblHashMD5
             // 
@@ -567,6 +567,7 @@ namespace TotalImage
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Properties";
+            FormClosing += dlgProperties_FormClosing;
             Load += dlgProperties_Load;
             ((System.ComponentModel.ISupportInitialize)imgIcon).EndInit();
             pnlBottom.ResumeLayout(false);
