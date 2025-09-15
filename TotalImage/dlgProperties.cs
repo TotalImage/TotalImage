@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.FileSystems;
 using TotalImage.Properties;
@@ -12,7 +14,9 @@ namespace TotalImage
 {
     public partial class dlgProperties : Form
     {
-        private List<FileSystemObject> entries;
+        private List<FileSystemObject> entries; //The file system objects to show the properties of
+        private bool hashesDone = false; //Have the MD5 and SHA-1 hashes been calculated yet?
+
         public string? NewName { get; private set; }
         public DateTime? DateModified { get; private set; }
         public DateTime? DateCreated { get; private set; }
@@ -353,14 +357,31 @@ namespace TotalImage
             }
         }
 
-        private void txtHashMD5_Click(object sender, EventArgs e)
-        {
+        private CancellationTokenSource cts = new();
 
+        private async void txtHash_Click(object sender, EventArgs e)
+        {
+            if (!hashesDone)
+            {
+                var md5 = Task.Run(async () => await HashCalculator.CalculateMd5HashAsync(new MemoryStream(), cts.Token));
+                var sha1 = Task.Run(async () => await HashCalculator.CalculateSha1HashAsync(new MemoryStream(), cts.Token));
+
+                try
+                {
+                    txtHashMD5.Text = await md5;
+                    txtHashSHA1.Text = await sha1;
+                }
+
+                catch (Exception ex) when (ex is TaskCanceledException || ex is OperationCanceledException)
+                {
+                    // Hash calculation was canceled, carry on
+                }
+
+                hashesDone = true;
+            }
         }
 
-        private void txtHashSHA1_Click(object sender, EventArgs e)
-        {
-
-        }
+        private void dlgProperties_FormClosing(object sender, FormClosingEventArgs e) 
+            => cts.Cancel(); // Cancel the background work if it's still in progress
     }
 }
