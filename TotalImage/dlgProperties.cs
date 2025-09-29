@@ -14,6 +14,7 @@ namespace TotalImage
     {
         private List<FileSystemObject> entries; //The file system objects to show the properties of
         private bool hashesDone = false; //Have the MD5 and SHA-1 hashes been calculated yet?
+        private bool hashesCalculating = false; //Are the MD5 and SHA-1 hashes currently being calculated?
 
         public string? NewName { get; private set; }
         public DateTime? DateModified { get; private set; }
@@ -351,8 +352,11 @@ namespace TotalImage
 
         private async void txtHash_Click(object sender, EventArgs e)
         {
-            if (!hashesDone && entries.Count == 1)
+            if (!hashesDone && !hashesCalculating && entries.Count == 1)
             {
+                hashesCalculating = true;
+                txtHashMD5.Text = txtHashSHA1.Text = "Please wait...";
+
                 var fileStream = ((FileSystems.File)entries[0]).GetStream();
 
                 var md5 = Task.Run(async () => await HashCalculator.CalculateMd5HashAsync(fileStream, cts.Token));
@@ -370,6 +374,7 @@ namespace TotalImage
                 }
 
                 hashesDone = true;
+                hashesCalculating = false;
             }
         }
 
