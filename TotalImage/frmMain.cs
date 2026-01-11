@@ -615,9 +615,9 @@ namespace TotalImage
             //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
             //ofd.ShowReadOnly = true;
             ofd.Filter =
-                "All supported containers (*.*)|*.nhd;*.vhd;*.iso;*.imz;*.fdi;*.hdi;*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360;*.json|" +
+                "All supported containers (*.*)|*.nhd;*.vhd;*.iso;*.imz;*.fdi;*.hdi;*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360;*.json;*.zip|" +
                 "Plain sector image (*.img,*.ima,*.vfd,*.flp,*.dsk,*.hdm,*.288,*.144,*.12,*.720,*.360,*.json)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360;*.json|" +
-                "WinImage compressed image (*.imz)|*.imz|" +
+                "Compressed plain sector image (*.imz,*.zip)|*.imz;*.zip|" +
                 "Anex86 disk image (*.fdi,*.hdi)|*.fdi;*.hdi|" +
                 "ISO image (*.iso)|*.iso|" +
                 "Microsoft VHD (*.vhd)|*.vhd|" +
@@ -1941,7 +1941,7 @@ namespace TotalImage
                     {
                         ".vhd" => new VhdContainer(path, memoryMapping),
                         ".nhd" => new NhdContainer(path, memoryMapping),
-                        ".imz" => new ImzContainer(path, memoryMapping),
+                        ".imz" or ".zip" => new ImzContainer(path, memoryMapping),
                         ".hdi" or ".fdi" => new Anex86Container(path, memoryMapping),
                         ".img" or ".ima" or ".iso" or ".vfd" or ".flp" or ".360" or
                         ".720" or ".12" or ".144" or ".288" or ".dsk" or ".hdm" => new RawContainer(path, memoryMapping),
