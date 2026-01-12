@@ -44,6 +44,7 @@ namespace TotalImage
             lstPropertiesFile.FindItemWithText("Modified").SubItems[1].Text = fileInfo.LastWriteTime.ToString();
             lstPropertiesFile.FindItemWithText("Accessed").SubItems[1].Text = fileInfo.LastAccessTime.ToString();
             lstPropertiesFile.FindItemWithText("Attributes").SubItems[1].Text = fileInfo.Attributes.ToString();
+            lstPropertiesFile.FindItemWithText("CRC-32 hash").SubItems[1].Text = "Please wait...";
             lstPropertiesFile.FindItemWithText("MD5 hash").SubItems[1].Text = "Please wait...";
             lstPropertiesFile.FindItemWithText("SHA-1 hash").SubItems[1].Text = "Please wait...";
 
@@ -324,7 +325,7 @@ namespace TotalImage
                 foreach (ListViewItem lvi in lstPropertiesFile.Items)
                 {
                     //Skip the file hashes if they're not done yet
-                    if (!hashesDone && (lvi.Text == "MD5 hash" || lvi.Text == "SHA-1 hash"))
+                    if (!hashesDone && (lvi.Text == "CRC-32 hash" || lvi.Text == "MD5 hash" || lvi.Text == "SHA-1 hash"))
                         continue;
 
                     sw.WriteLine($"-{lvi.Text}: {lvi.SubItems[1].Text}");
@@ -378,11 +379,13 @@ namespace TotalImage
         {
             if (Application.OpenForms["frmMain"] is frmMain mainForm && mainForm.image is not null)
             {
+                var crc32 = Task.Run(async () => await HashCalculator.CalculateCrc32HashAsync(mainForm.image.Content, cts.Token));
                 var md5 = Task.Run(async () => await HashCalculator.CalculateMd5HashAsync(mainForm.image.Content, cts.Token));
                 var sha1 = Task.Run(async () => await HashCalculator.CalculateSha1HashAsync(mainForm.image.Content, cts.Token));
 
                 try
                 {
+                    lstPropertiesFile.FindItemWithText("CRC-32 hash").SubItems[1].Text = await crc32;
                     lstPropertiesFile.FindItemWithText("MD5 hash").SubItems[1].Text = await md5;
                     lstPropertiesFile.FindItemWithText("SHA-1 hash").SubItems[1].Text = await sha1;
                 }
@@ -416,7 +419,7 @@ namespace TotalImage
             if (lst is not null && lst.SelectedItems.Count == 1)
             {
                 if (lst.SelectedItems[0].SubItems[1].Text == "N/A" || string.IsNullOrWhiteSpace(lst.SelectedItems[0].SubItems[1].Text) || (lst == lstPropertiesFile &&
-                    !hashesDone && (lst.SelectedItems[0].Tag.ToString() == "md5" || lst.SelectedItems[0].Tag.ToString() == "sha1")))
+                    !hashesDone && (lst.SelectedItems[0].Tag.ToString() == "crc32" || lst.SelectedItems[0].Tag.ToString() == "md5" || lst.SelectedItems[0].Tag.ToString() == "sha1")))
                     copyValueToolStripMenuItem.Enabled = false;
                 else
                     copyValueToolStripMenuItem.Enabled = true;

@@ -32,6 +32,13 @@ namespace TotalImage
         }
 
         /// <summary>
+        /// Asynchronously calculates the CRC-32 hash of the provided stream.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous hash calculation operation and wraps the string containing the hexadecimal representation of the CRC-32 hash.</returns>
+        public static async Task<string> CalculateCrc32HashAsync(Stream stream, CancellationToken cancellationToken = default)
+            => await CalculateHashAsyncCore(stream, CRC32.Create(), cancellationToken);
+
+        /// <summary>
         /// Asynchronously calculates the MD5 hash of the provided stream.
         /// </summary>
         /// <returns>A task that represents the asynchronous hash calculation operation and wraps the string containing the hexadecimal representation of the MD5 hash.</returns>

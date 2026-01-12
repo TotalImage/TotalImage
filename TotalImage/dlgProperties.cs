@@ -69,13 +69,13 @@ namespace TotalImage
             {
                 if (entries[0] is FileSystems.File)
                 {
-                    txtHashMD5.Enabled = txtHashSHA1.Enabled = true;
-                    txtHashMD5.Text = txtHashSHA1.Text = "Click to calculate";
+                    txtHashCRC32.Enabled = txtHashMD5.Enabled = txtHashSHA1.Enabled = true;
+                    txtHashCRC32.Text = txtHashMD5.Text = txtHashSHA1.Text = "Click to calculate";
                 }
                 else
                 {
-                    txtHashMD5.Enabled = txtHashSHA1.Enabled = false;
-                    txtHashMD5.Text = txtHashSHA1.Text = "N/A";
+                    txtHashCRC32.Enabled = txtHashMD5.Enabled = txtHashSHA1.Enabled = false;
+                    txtHashCRC32.Text = txtHashMD5.Text = txtHashSHA1.Text = "N/A";
                 }
 
                 txtFilename.Text = entries[0].Name;
@@ -281,8 +281,8 @@ namespace TotalImage
                 else if (entries[0] is FileSystems.Directory dir)
                     txtLocation.Text = dir.Parent?.FullName;
 
-                txtShortFilename.Enabled = txtFirstCluster.Enabled = txtContains.Enabled = txtHashMD5.Enabled = txtHashSHA1.Enabled = false;
-                txtShortFilename.Text = txtFirstCluster.Text = txtContains.Text = txtHashMD5.Text = txtHashSHA1.Text = "N/A";
+                txtShortFilename.Enabled = txtFirstCluster.Enabled = txtContains.Enabled = txtHashCRC32.Enabled = txtHashMD5.Enabled = txtHashSHA1.Enabled = false;
+                txtShortFilename.Text = txtFirstCluster.Text = txtContains.Text = txtHashCRC32.Text = txtHashMD5.Text = txtHashSHA1.Text = "N/A";
                 cbxDateCreated.Enabled = cbxDateAccessed.Enabled = cbxDateModified.Enabled = false;
                 dtpAccessed.Enabled = dtpCreated.Enabled = dtpModified.Enabled = false;
                 dtpAccessed.Text = dtpCreated.Text = dtpModified.Text = "";
@@ -357,16 +357,18 @@ namespace TotalImage
             if (!hashesDone && !hashesCalculating && entries.Count == 1)
             {
                 hashesCalculating = true;
-                txtHashMD5.Text = txtHashSHA1.Text = "Please wait...";
-                txtHashMD5.Enabled = txtHashSHA1.Enabled = true;
+                txtHashCRC32.Text = txtHashMD5.Text = txtHashSHA1.Text = "Please wait...";
+                txtHashCRC32.Enabled = txtHashMD5.Enabled = txtHashSHA1.Enabled = true;
 
                 var fileStream = ((FileSystems.File)entries[0]).GetStream();
 
+                var crc32 = Task.Run(async () => await HashCalculator.CalculateCrc32HashAsync(fileStream, cts.Token));
                 var md5 = Task.Run(async () => await HashCalculator.CalculateMd5HashAsync(fileStream, cts.Token));
                 var sha1 = Task.Run(async () => await HashCalculator.CalculateSha1HashAsync(fileStream, cts.Token));
 
                 try
                 {
+                    txtHashCRC32.Text = await crc32;
                     txtHashMD5.Text = await md5;
                     txtHashSHA1.Text = await sha1;
                 }
