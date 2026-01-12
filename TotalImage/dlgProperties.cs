@@ -86,14 +86,16 @@ namespace TotalImage
                 }
                 else
                 {
-                    txtShortFilename.Text = "N/A"; //For now. We might want to always generate this anyway even for other file systems?
-                    txtFirstCluster.Text = "N/A";
+                    //For now. We might want to always generate this anyway even for other file systems?
+                    txtShortFilename.Text = txtFirstCluster.Text = "N/A"; 
+                    txtShortFilename.Enabled = txtFirstCluster.Enabled = false;
                 }
 
                 if (entries[0] is FileSystems.File file)
                 {
                     txtLocation.Text = file.DirectoryName;
                     txtContains.Text = "N/A";
+                    txtContains.Enabled = false;
                     txtSize.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entries[0].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
                     txtSizeOnDisk.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entries[0].LengthOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
                 }
@@ -356,6 +358,7 @@ namespace TotalImage
             {
                 hashesCalculating = true;
                 txtHashMD5.Text = txtHashSHA1.Text = "Please wait...";
+                txtHashMD5.Enabled = txtHashSHA1.Enabled = true;
 
                 var fileStream = ((FileSystems.File)entries[0]).GetStream();
 
