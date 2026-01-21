@@ -34,7 +34,7 @@ namespace TotalImage
             btnCancel = new System.Windows.Forms.Button();
             btnOK = new System.Windows.Forms.Button();
             cbxReadOnly = new System.Windows.Forms.CheckBox();
-            lstPartitions = new System.Windows.Forms.ListView();
+            lstPartitions = new ListViewEx();
             clmNumber = new System.Windows.Forms.ColumnHeader();
             clmFileSystem = new System.Windows.Forms.ColumnHeader();
             clmVolumeLabel = new System.Windows.Forms.ColumnHeader();
@@ -45,6 +45,7 @@ namespace TotalImage
             lblDiskTotalSize1 = new System.Windows.Forms.Label();
             gbxDiskInfo = new System.Windows.Forms.GroupBox();
             lblDiskGuid1 = new System.Windows.Forms.Label();
+            lblDiskTotalSectors = new System.Windows.Forms.Label();
             lblDiskGuid = new System.Windows.Forms.Label();
             lblDiskSerial1 = new System.Windows.Forms.Label();
             lblDiskSerial = new System.Windows.Forms.Label();
@@ -54,7 +55,6 @@ namespace TotalImage
             lblDiskUsableSize1 = new System.Windows.Forms.Label();
             lblDiskUsableSize = new System.Windows.Forms.Label();
             lblDiskTotalSectors1 = new System.Windows.Forms.Label();
-            lblDiskTotalSectors = new System.Windows.Forms.Label();
             lblDiskType1 = new System.Windows.Forms.Label();
             lblDiskType = new System.Windows.Forms.Label();
             gbxPartitionInfo = new System.Windows.Forms.GroupBox();
@@ -105,39 +105,33 @@ namespace TotalImage
             // 
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnCancel.Location = new System.Drawing.Point(395, 14);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(80, 26);
             btnCancel.TabIndex = 1;
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
             // 
             // btnOK
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             btnOK.Enabled = false;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOK.Location = new System.Drawing.Point(309, 14);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 0;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
             // 
             // cbxReadOnly
             // 
             cbxReadOnly.AutoSize = true;
             cbxReadOnly.Enabled = false;
-            cbxReadOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxReadOnly.Location = new System.Drawing.Point(9, 23);
             cbxReadOnly.Name = "cbxReadOnly";
-            cbxReadOnly.Size = new System.Drawing.Size(126, 20);
+            cbxReadOnly.Size = new System.Drawing.Size(120, 19);
             cbxReadOnly.TabIndex = 5;
             cbxReadOnly.Text = "Load as read-only";
-            cbxReadOnly.UseVisualStyleBackColor = true;
             // 
             // lstPartitions
             // 
@@ -164,22 +158,22 @@ namespace TotalImage
             // clmFileSystem
             // 
             clmFileSystem.Text = "File system";
-            clmFileSystem.Width = 120;
+            clmFileSystem.Width = 110;
             // 
             // clmVolumeLabel
             // 
             clmVolumeLabel.Text = "Volume label";
-            clmVolumeLabel.Width = 150;
+            clmVolumeLabel.Width = 140;
             // 
             // clmSize
             // 
             clmSize.Text = "Size";
-            clmSize.Width = 100;
+            clmSize.Width = 110;
             // 
             // clmActive
             // 
             clmActive.Text = "Active";
-            clmActive.Width = 120;
+            clmActive.Width = 65;
             // 
             // lblPartionTable
             // 
@@ -197,7 +191,7 @@ namespace TotalImage
             lblDiskTotalSize.Location = new System.Drawing.Point(5, 129);
             lblDiskTotalSize.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblDiskTotalSize.Name = "lblDiskTotalSize";
-            lblDiskTotalSize.Size = new System.Drawing.Size(57, 15);
+            lblDiskTotalSize.Size = new System.Drawing.Size(58, 15);
             lblDiskTotalSize.TabIndex = 9;
             lblDiskTotalSize.Text = "Total size:";
             // 
@@ -214,6 +208,7 @@ namespace TotalImage
             // gbxDiskInfo
             // 
             gbxDiskInfo.Controls.Add(lblDiskGuid1);
+            gbxDiskInfo.Controls.Add(lblDiskTotalSectors);
             gbxDiskInfo.Controls.Add(lblDiskGuid);
             gbxDiskInfo.Controls.Add(lblDiskSerial1);
             gbxDiskInfo.Controls.Add(lblDiskSerial);
@@ -223,13 +218,11 @@ namespace TotalImage
             gbxDiskInfo.Controls.Add(lblDiskUsableSize1);
             gbxDiskInfo.Controls.Add(lblDiskUsableSize);
             gbxDiskInfo.Controls.Add(lblDiskTotalSectors1);
-            gbxDiskInfo.Controls.Add(lblDiskTotalSectors);
             gbxDiskInfo.Controls.Add(lblDiskType1);
             gbxDiskInfo.Controls.Add(lblDiskType);
             gbxDiskInfo.Controls.Add(lblPartionTable);
             gbxDiskInfo.Controls.Add(lblDiskTotalSize1);
             gbxDiskInfo.Controls.Add(lblDiskTotalSize);
-            gbxDiskInfo.FlatStyle = System.Windows.Forms.FlatStyle.System;
             gbxDiskInfo.Location = new System.Drawing.Point(10, 176);
             gbxDiskInfo.Margin = new System.Windows.Forms.Padding(2);
             gbxDiskInfo.Name = "gbxDiskInfo";
@@ -249,13 +242,23 @@ namespace TotalImage
             lblDiskGuid1.TabIndex = 26;
             lblDiskGuid1.Text = "<gpt guid>";
             // 
+            // lblDiskTotalSectors
+            // 
+            lblDiskTotalSectors.AutoSize = true;
+            lblDiskTotalSectors.Location = new System.Drawing.Point(5, 148);
+            lblDiskTotalSectors.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            lblDiskTotalSectors.Name = "lblDiskTotalSectors";
+            lblDiskTotalSectors.Size = new System.Drawing.Size(76, 15);
+            lblDiskTotalSectors.TabIndex = 17;
+            lblDiskTotalSectors.Text = "Total sectors:";
+            // 
             // lblDiskGuid
             // 
             lblDiskGuid.AutoSize = true;
             lblDiskGuid.Location = new System.Drawing.Point(5, 92);
             lblDiskGuid.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblDiskGuid.Name = "lblDiskGuid";
-            lblDiskGuid.Size = new System.Drawing.Size(61, 15);
+            lblDiskGuid.Size = new System.Drawing.Size(62, 15);
             lblDiskGuid.TabIndex = 25;
             lblDiskGuid.Text = "GPT GUID:";
             // 
@@ -295,7 +298,7 @@ namespace TotalImage
             lblDiskTimestamp.Location = new System.Drawing.Point(5, 55);
             lblDiskTimestamp.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblDiskTimestamp.Name = "lblDiskTimestamp";
-            lblDiskTimestamp.Size = new System.Drawing.Size(69, 15);
+            lblDiskTimestamp.Size = new System.Drawing.Size(70, 15);
             lblDiskTimestamp.TabIndex = 21;
             lblDiskTimestamp.Text = "Timestamp:";
             // 
@@ -332,22 +335,12 @@ namespace TotalImage
             // lblDiskTotalSectors1
             // 
             lblDiskTotalSectors1.AutoEllipsis = true;
-            lblDiskTotalSectors1.Location = new System.Drawing.Point(94, 147);
+            lblDiskTotalSectors1.Location = new System.Drawing.Point(94, 148);
             lblDiskTotalSectors1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblDiskTotalSectors1.Name = "lblDiskTotalSectors1";
             lblDiskTotalSectors1.Size = new System.Drawing.Size(132, 16);
             lblDiskTotalSectors1.TabIndex = 16;
             lblDiskTotalSectors1.Text = "<total sectors>";
-            // 
-            // lblDiskTotalSectors
-            // 
-            lblDiskTotalSectors.AutoSize = true;
-            lblDiskTotalSectors.Location = new System.Drawing.Point(5, 147);
-            lblDiskTotalSectors.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            lblDiskTotalSectors.Name = "lblDiskTotalSectors";
-            lblDiskTotalSectors.Size = new System.Drawing.Size(75, 15);
-            lblDiskTotalSectors.TabIndex = 17;
-            lblDiskTotalSectors.Text = "Total sectors:";
             // 
             // lblDiskType1
             // 
@@ -387,7 +380,6 @@ namespace TotalImage
             gbxPartitionInfo.Controls.Add(lblPartitionFirstLba);
             gbxPartitionInfo.Controls.Add(lblPartitionType);
             gbxPartitionInfo.Controls.Add(lblPartitionType1);
-            gbxPartitionInfo.FlatStyle = System.Windows.Forms.FlatStyle.System;
             gbxPartitionInfo.Location = new System.Drawing.Point(245, 176);
             gbxPartitionInfo.Margin = new System.Windows.Forms.Padding(2);
             gbxPartitionInfo.Name = "gbxPartitionInfo";
@@ -453,14 +445,14 @@ namespace TotalImage
             lblPartitionGuid.Location = new System.Drawing.Point(5, 55);
             lblPartitionGuid.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblPartitionGuid.Name = "lblPartitionGuid";
-            lblPartitionGuid.Size = new System.Drawing.Size(61, 15);
+            lblPartitionGuid.Size = new System.Drawing.Size(62, 15);
             lblPartitionGuid.TabIndex = 23;
             lblPartitionGuid.Text = "GPT GUID:";
             // 
             // lblPartitionTotalSectors1
             // 
             lblPartitionTotalSectors1.AutoEllipsis = true;
-            lblPartitionTotalSectors1.Location = new System.Drawing.Point(93, 147);
+            lblPartitionTotalSectors1.Location = new System.Drawing.Point(93, 148);
             lblPartitionTotalSectors1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblPartitionTotalSectors1.Name = "lblPartitionTotalSectors1";
             lblPartitionTotalSectors1.Size = new System.Drawing.Size(134, 16);
@@ -470,10 +462,10 @@ namespace TotalImage
             // lblPartitionTotalSectors
             // 
             lblPartitionTotalSectors.AutoSize = true;
-            lblPartitionTotalSectors.Location = new System.Drawing.Point(5, 147);
+            lblPartitionTotalSectors.Location = new System.Drawing.Point(5, 148);
             lblPartitionTotalSectors.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblPartitionTotalSectors.Name = "lblPartitionTotalSectors";
-            lblPartitionTotalSectors.Size = new System.Drawing.Size(75, 15);
+            lblPartitionTotalSectors.Size = new System.Drawing.Size(76, 15);
             lblPartitionTotalSectors.TabIndex = 21;
             lblPartitionTotalSectors.Text = "Total sectors:";
             // 
@@ -560,7 +552,6 @@ namespace TotalImage
             // gbxLoadOptions
             // 
             gbxLoadOptions.Controls.Add(cbxReadOnly);
-            gbxLoadOptions.FlatStyle = System.Windows.Forms.FlatStyle.System;
             gbxLoadOptions.Location = new System.Drawing.Point(10, 353);
             gbxLoadOptions.Margin = new System.Windows.Forms.Padding(2);
             gbxLoadOptions.Name = "gbxLoadOptions";
@@ -611,7 +602,7 @@ namespace TotalImage
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.CheckBox cbxReadOnly;
-        private System.Windows.Forms.ListView lstPartitions;
+        private ListViewEx lstPartitions;
         private System.Windows.Forms.ColumnHeader clmNumber;
         private System.Windows.Forms.ColumnHeader clmActive;
         private System.Windows.Forms.ColumnHeader clmSize;

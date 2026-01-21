@@ -53,25 +53,21 @@ namespace TotalImage
             // 
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnCancel.Location = new System.Drawing.Point(392, 12);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(80, 26);
             btnCancel.TabIndex = 1;
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
             // 
             // btnOK
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOK.Location = new System.Drawing.Point(306, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 0;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
             // 
             // lblDesc
@@ -85,6 +81,7 @@ namespace TotalImage
             // 
             // txtName
             // 
+            txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtName.Location = new System.Drawing.Point(12, 36);
             txtName.Name = "txtName";
             txtName.Size = new System.Drawing.Size(460, 23);

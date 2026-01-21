@@ -45,38 +45,35 @@ namespace TotalImage
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOK.Location = new System.Drawing.Point(395, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 6;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
             // 
             // btnCancel
             // 
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnCancel.Location = new System.Drawing.Point(482, 12);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(80, 26);
             btnCancel.TabIndex = 7;
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
             // 
             // lblPath
             // 
             lblPath.AutoSize = true;
             lblPath.Location = new System.Drawing.Point(9, 17);
             lblPath.Name = "lblPath";
-            lblPath.Size = new System.Drawing.Size(253, 15);
+            lblPath.Size = new System.Drawing.Size(252, 15);
             lblPath.TabIndex = 10;
             lblPath.Text = "Extract selected item(s) to the following folder:";
             // 
             // txtPath
             // 
+            txtPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtPath.Location = new System.Drawing.Point(12, 36);
             txtPath.Name = "txtPath";
             txtPath.Size = new System.Drawing.Size(464, 23);
@@ -85,50 +82,42 @@ namespace TotalImage
             // cbxOpenFolder
             // 
             cbxOpenFolder.AutoSize = true;
-            cbxOpenFolder.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxOpenFolder.Location = new System.Drawing.Point(12, 100);
             cbxOpenFolder.Name = "cbxOpenFolder";
-            cbxOpenFolder.Size = new System.Drawing.Size(240, 20);
+            cbxOpenFolder.Size = new System.Drawing.Size(233, 19);
             cbxOpenFolder.TabIndex = 5;
             cbxOpenFolder.Text = "Open destination folder after extraction";
-            cbxOpenFolder.UseVisualStyleBackColor = true;
             // 
             // rbnIgnoreFolders
             // 
             rbnIgnoreFolders.AutoSize = true;
             rbnIgnoreFolders.Checked = true;
-            rbnIgnoreFolders.FlatStyle = System.Windows.Forms.FlatStyle.System;
             rbnIgnoreFolders.Location = new System.Drawing.Point(12, 74);
             rbnIgnoreFolders.Name = "rbnIgnoreFolders";
-            rbnIgnoreFolders.Size = new System.Drawing.Size(104, 20);
+            rbnIgnoreFolders.Size = new System.Drawing.Size(98, 19);
             rbnIgnoreFolders.TabIndex = 2;
             rbnIgnoreFolders.TabStop = true;
             rbnIgnoreFolders.Text = "Ignore folders";
-            rbnIgnoreFolders.UseVisualStyleBackColor = true;
             // 
             // rbnExtractSameFolder
             // 
             rbnExtractSameFolder.AutoSize = true;
-            rbnExtractSameFolder.FlatStyle = System.Windows.Forms.FlatStyle.System;
             rbnExtractSameFolder.Location = new System.Drawing.Point(122, 74);
             rbnExtractSameFolder.Name = "rbnExtractSameFolder";
-            rbnExtractSameFolder.Size = new System.Drawing.Size(215, 20);
+            rbnExtractSameFolder.Size = new System.Drawing.Size(208, 19);
             rbnExtractSameFolder.TabIndex = 3;
             rbnExtractSameFolder.TabStop = true;
             rbnExtractSameFolder.Text = "Extract all files into the same folder";
-            rbnExtractSameFolder.UseVisualStyleBackColor = true;
             // 
             // rbnPreserveDirs
             // 
             rbnPreserveDirs.AutoSize = true;
-            rbnPreserveDirs.FlatStyle = System.Windows.Forms.FlatStyle.System;
             rbnPreserveDirs.Location = new System.Drawing.Point(343, 74);
             rbnPreserveDirs.Name = "rbnPreserveDirs";
-            rbnPreserveDirs.Size = new System.Drawing.Size(218, 20);
+            rbnPreserveDirs.Size = new System.Drawing.Size(212, 19);
             rbnPreserveDirs.TabIndex = 4;
             rbnPreserveDirs.TabStop = true;
             rbnPreserveDirs.Text = "Preserve original directory structure";
-            rbnPreserveDirs.UseVisualStyleBackColor = true;
             // 
             // btnBrowse
             // 

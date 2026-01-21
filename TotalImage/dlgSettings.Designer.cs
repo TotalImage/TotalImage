@@ -110,25 +110,21 @@ namespace TotalImage
             // 
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnCancel.Location = new System.Drawing.Point(393, 12);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(80, 26);
             btnCancel.TabIndex = 1;
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
             // 
             // btnOK
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOK.Location = new System.Drawing.Point(307, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 0;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
             // 
             // pnlBottom
@@ -157,6 +153,7 @@ namespace TotalImage
             // 
             // tabGeneral
             // 
+            tabGeneral.BackColor = System.Drawing.SystemColors.Window;
             tabGeneral.Controls.Add(gbxMisc);
             tabGeneral.Controls.Add(gbxBehavior);
             tabGeneral.Location = new System.Drawing.Point(4, 24);
@@ -165,7 +162,6 @@ namespace TotalImage
             tabGeneral.Size = new System.Drawing.Size(453, 454);
             tabGeneral.TabIndex = 0;
             tabGeneral.Text = "General";
-            tabGeneral.UseVisualStyleBackColor = true;
             // 
             // gbxMisc
             // 
@@ -185,7 +181,6 @@ namespace TotalImage
             // 
             // btnOpenTemp
             // 
-            btnOpenTemp.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOpenTemp.Location = new System.Drawing.Point(355, 123);
             btnOpenTemp.Name = "btnOpenTemp";
             btnOpenTemp.Size = new System.Drawing.Size(80, 26);
@@ -200,7 +195,7 @@ namespace TotalImage
             lblClearTemp.Location = new System.Drawing.Point(9, 96);
             lblClearTemp.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblClearTemp.Name = "lblClearTemp";
-            lblClearTemp.Size = new System.Drawing.Size(327, 15);
+            lblClearTemp.Size = new System.Drawing.Size(328, 15);
             lblClearTemp.TabIndex = 9;
             lblClearTemp.Text = "Clear TotalImage's temporary folder in local application data.";
             // 
@@ -220,13 +215,12 @@ namespace TotalImage
             lblResetSettings.Location = new System.Drawing.Point(9, 24);
             lblResetSettings.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblResetSettings.Name = "lblResetSettings";
-            lblResetSettings.Size = new System.Drawing.Size(275, 15);
+            lblResetSettings.Size = new System.Drawing.Size(276, 15);
             lblResetSettings.TabIndex = 7;
             lblResetSettings.Text = "Reset all TotalImage settings to their default values.";
             // 
             // btnClearTemp
             // 
-            btnClearTemp.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnClearTemp.Location = new System.Drawing.Point(355, 91);
             btnClearTemp.Name = "btnClearTemp";
             btnClearTemp.Size = new System.Drawing.Size(80, 26);
@@ -237,7 +231,6 @@ namespace TotalImage
             // 
             // btnClearRecent
             // 
-            btnClearRecent.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnClearRecent.Location = new System.Drawing.Point(355, 56);
             btnClearRecent.Name = "btnClearRecent";
             btnClearRecent.Size = new System.Drawing.Size(80, 26);
@@ -248,7 +241,6 @@ namespace TotalImage
             // 
             // btnResetSettings
             // 
-            btnResetSettings.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnResetSettings.Location = new System.Drawing.Point(355, 19);
             btnResetSettings.Name = "btnResetSettings";
             btnResetSettings.Size = new System.Drawing.Size(80, 26);
@@ -286,12 +278,11 @@ namespace TotalImage
             // txtMemoryMapping
             // 
             txtMemoryMapping.Enabled = false;
-            txtMemoryMapping.Location = new System.Drawing.Point(242, 129);
+            txtMemoryMapping.Location = new System.Drawing.Point(243, 127);
             txtMemoryMapping.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
             txtMemoryMapping.Name = "txtMemoryMapping";
             txtMemoryMapping.Size = new System.Drawing.Size(100, 23);
             txtMemoryMapping.TabIndex = 20;
-            txtMemoryMapping.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lblMemoryMapping
             // 
@@ -299,7 +290,7 @@ namespace TotalImage
             lblMemoryMapping.Enabled = false;
             lblMemoryMapping.Location = new System.Drawing.Point(9, 130);
             lblMemoryMapping.Name = "lblMemoryMapping";
-            lblMemoryMapping.Size = new System.Drawing.Size(227, 15);
+            lblMemoryMapping.Size = new System.Drawing.Size(228, 15);
             lblMemoryMapping.TabIndex = 19;
             lblMemoryMapping.Text = "Threshold for mapping files into memory:";
             // 
@@ -307,51 +298,44 @@ namespace TotalImage
             // 
             cbxAutoincrementFilename.AutoSize = true;
             cbxAutoincrementFilename.Enabled = false;
-            cbxAutoincrementFilename.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxAutoincrementFilename.Location = new System.Drawing.Point(11, 102);
             cbxAutoincrementFilename.Name = "cbxAutoincrementFilename";
-            cbxAutoincrementFilename.Size = new System.Drawing.Size(337, 20);
+            cbxAutoincrementFilename.Size = new System.Drawing.Size(331, 19);
             cbxAutoincrementFilename.TabIndex = 18;
             cbxAutoincrementFilename.Text = "When saving, auto-increment last filename when possible";
-            cbxAutoincrementFilename.UseVisualStyleBackColor = true;
             // 
             // cbxConfirmOverwriteExtract
             // 
             cbxConfirmOverwriteExtract.AutoSize = true;
-            cbxConfirmOverwriteExtract.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxConfirmOverwriteExtract.Location = new System.Drawing.Point(11, 22);
             cbxConfirmOverwriteExtract.Name = "cbxConfirmOverwriteExtract";
-            cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(222, 20);
+            cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(215, 19);
             cbxConfirmOverwriteExtract.TabIndex = 17;
             cbxConfirmOverwriteExtract.Text = "Confirm overwrite during extraction";
-            cbxConfirmOverwriteExtract.UseVisualStyleBackColor = true;
             // 
             // cbxConfirmDeletion
             // 
             cbxConfirmDeletion.AutoSize = true;
             cbxConfirmDeletion.Enabled = false;
-            cbxConfirmDeletion.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxConfirmDeletion.Location = new System.Drawing.Point(11, 49);
             cbxConfirmDeletion.Name = "cbxConfirmDeletion";
-            cbxConfirmDeletion.Size = new System.Drawing.Size(122, 20);
+            cbxConfirmDeletion.Size = new System.Drawing.Size(116, 19);
             cbxConfirmDeletion.TabIndex = 16;
             cbxConfirmDeletion.Text = "Confirm deletion";
-            cbxConfirmDeletion.UseVisualStyleBackColor = true;
             // 
             // cbxConfirmInjection
             // 
             cbxConfirmInjection.AutoSize = true;
             cbxConfirmInjection.Enabled = false;
-            cbxConfirmInjection.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxConfirmInjection.Location = new System.Drawing.Point(11, 75);
             cbxConfirmInjection.Name = "cbxConfirmInjection";
-            cbxConfirmInjection.Size = new System.Drawing.Size(125, 20);
+            cbxConfirmInjection.Size = new System.Drawing.Size(119, 19);
             cbxConfirmInjection.TabIndex = 15;
             cbxConfirmInjection.Text = "Confirm injection";
-            cbxConfirmInjection.UseVisualStyleBackColor = true;
             // 
             // tabView
             // 
+            tabView.BackColor = System.Drawing.SystemColors.Window;
             tabView.Controls.Add(gbxSizeUnits);
             tabView.Controls.Add(gbxFileList);
             tabView.Controls.Add(gbxMainWindow);
@@ -361,7 +345,6 @@ namespace TotalImage
             tabView.Size = new System.Drawing.Size(453, 454);
             tabView.TabIndex = 2;
             tabView.Text = "View";
-            tabView.UseVisualStyleBackColor = true;
             // 
             // gbxSizeUnits
             // 
@@ -381,7 +364,7 @@ namespace TotalImage
             lblSizeUnitsTip.AutoSize = true;
             lblSizeUnitsTip.Location = new System.Drawing.Point(219, 19);
             lblSizeUnitsTip.Name = "lblSizeUnitsTip";
-            lblSizeUnitsTip.Size = new System.Drawing.Size(213, 45);
+            lblSizeUnitsTip.Size = new System.Drawing.Size(214, 45);
             lblSizeUnitsTip.TabIndex = 22;
             lblSizeUnitsTip.Text = "For binary and decimal, TotalImage will\r\nautomatically determine the most\r\nappropriate unit and convert to it.";
             // 
@@ -406,7 +389,6 @@ namespace TotalImage
             // lstSizeUnits
             // 
             lstSizeUnits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstSizeUnits.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstSizeUnits.FormattingEnabled = true;
             lstSizeUnits.Items.AddRange(new object[] { "Bytes", "Decimal units (factor 1000)", "Binary units (factor 1024)" });
             lstSizeUnits.Location = new System.Drawing.Point(12, 37);
@@ -434,13 +416,11 @@ namespace TotalImage
             // cbxShowDirSizes
             // 
             cbxShowDirSizes.AutoSize = true;
-            cbxShowDirSizes.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxShowDirSizes.Location = new System.Drawing.Point(221, 88);
             cbxShowDirSizes.Name = "cbxShowDirSizes";
-            cbxShowDirSizes.Size = new System.Drawing.Size(188, 20);
+            cbxShowDirSizes.Size = new System.Drawing.Size(182, 19);
             cbxShowDirSizes.TabIndex = 20;
             cbxShowDirSizes.Text = "Show directory sizes in file list";
-            cbxShowDirSizes.UseVisualStyleBackColor = true;
             // 
             // lblViewType
             // 
@@ -454,7 +434,6 @@ namespace TotalImage
             // lstSortOrder
             // 
             lstSortOrder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstSortOrder.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstSortOrder.FormattingEnabled = true;
             lstSortOrder.Items.AddRange(new object[] { "Ascending", "Descending" });
             lstSortOrder.Location = new System.Drawing.Point(11, 88);
@@ -465,7 +444,6 @@ namespace TotalImage
             // lstViewType
             // 
             lstViewType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstViewType.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstViewType.FormattingEnabled = true;
             lstViewType.Items.AddRange(new object[] { "Large icons", "Small icons", "List", "Details" });
             lstViewType.Location = new System.Drawing.Point(11, 37);
@@ -494,7 +472,6 @@ namespace TotalImage
             // lstSortBy
             // 
             lstSortBy.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstSortBy.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstSortBy.FormattingEnabled = true;
             lstSortBy.Items.AddRange(new object[] { "Name", "Type", "Size", "Modified", "Attributes" });
             lstSortBy.Location = new System.Drawing.Point(221, 37);
@@ -518,49 +495,42 @@ namespace TotalImage
             // cbxShowCommandBar
             // 
             cbxShowCommandBar.AutoSize = true;
-            cbxShowCommandBar.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxShowCommandBar.Location = new System.Drawing.Point(11, 22);
             cbxShowCommandBar.Name = "cbxShowCommandBar";
-            cbxShowCommandBar.Size = new System.Drawing.Size(139, 20);
+            cbxShowCommandBar.Size = new System.Drawing.Size(133, 19);
             cbxShowCommandBar.TabIndex = 12;
             cbxShowCommandBar.Text = "Show command bar";
-            cbxShowCommandBar.UseVisualStyleBackColor = true;
             // 
             // cbxShowStatusBar
             // 
             cbxShowStatusBar.AutoSize = true;
-            cbxShowStatusBar.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxShowStatusBar.Location = new System.Drawing.Point(221, 22);
             cbxShowStatusBar.Name = "cbxShowStatusBar";
-            cbxShowStatusBar.Size = new System.Drawing.Size(115, 20);
+            cbxShowStatusBar.Size = new System.Drawing.Size(109, 19);
             cbxShowStatusBar.TabIndex = 16;
             cbxShowStatusBar.Text = "Show status bar";
-            cbxShowStatusBar.UseVisualStyleBackColor = true;
             // 
             // cbxShowDirectoryTree
             // 
             cbxShowDirectoryTree.AutoSize = true;
-            cbxShowDirectoryTree.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxShowDirectoryTree.Location = new System.Drawing.Point(11, 49);
             cbxShowDirectoryTree.Name = "cbxShowDirectoryTree";
-            cbxShowDirectoryTree.Size = new System.Drawing.Size(134, 20);
+            cbxShowDirectoryTree.Size = new System.Drawing.Size(128, 19);
             cbxShowDirectoryTree.TabIndex = 15;
             cbxShowDirectoryTree.Text = "Show directory tree";
-            cbxShowDirectoryTree.UseVisualStyleBackColor = true;
             // 
             // cbxShowHiddenItems
             // 
             cbxShowHiddenItems.AutoSize = true;
-            cbxShowHiddenItems.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxShowHiddenItems.Location = new System.Drawing.Point(221, 48);
             cbxShowHiddenItems.Name = "cbxShowHiddenItems";
-            cbxShowHiddenItems.Size = new System.Drawing.Size(142, 20);
+            cbxShowHiddenItems.Size = new System.Drawing.Size(136, 19);
             cbxShowHiddenItems.TabIndex = 14;
             cbxShowHiddenItems.Text = "Show hidden objects";
-            cbxShowHiddenItems.UseVisualStyleBackColor = true;
             // 
             // tabExtraction
             // 
+            tabExtraction.BackColor = System.Drawing.SystemColors.Window;
             tabExtraction.Controls.Add(gbxExtractionPreserve);
             tabExtraction.Controls.Add(gbxExtractionDefaults);
             tabExtraction.Location = new System.Drawing.Point(4, 24);
@@ -569,7 +539,6 @@ namespace TotalImage
             tabExtraction.Size = new System.Drawing.Size(453, 454);
             tabExtraction.TabIndex = 3;
             tabExtraction.Text = "Extraction";
-            tabExtraction.UseVisualStyleBackColor = true;
             // 
             // gbxExtractionPreserve
             // 
@@ -585,24 +554,20 @@ namespace TotalImage
             // cbxPreserveDates
             // 
             cbxPreserveDates.AutoSize = true;
-            cbxPreserveDates.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxPreserveDates.Location = new System.Drawing.Point(11, 22);
             cbxPreserveDates.Name = "cbxPreserveDates";
-            cbxPreserveDates.Size = new System.Drawing.Size(214, 20);
+            cbxPreserveDates.Size = new System.Drawing.Size(207, 19);
             cbxPreserveDates.TabIndex = 8;
             cbxPreserveDates.Text = "Preserve file dates when extracting";
-            cbxPreserveDates.UseVisualStyleBackColor = true;
             // 
             // cbxPreserveAttributes
             // 
             cbxPreserveAttributes.AutoSize = true;
-            cbxPreserveAttributes.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxPreserveAttributes.Location = new System.Drawing.Point(11, 49);
             cbxPreserveAttributes.Name = "cbxPreserveAttributes";
-            cbxPreserveAttributes.Size = new System.Drawing.Size(236, 20);
+            cbxPreserveAttributes.Size = new System.Drawing.Size(229, 19);
             cbxPreserveAttributes.TabIndex = 9;
             cbxPreserveAttributes.Text = "Preserve file attributes when extracting";
-            cbxPreserveAttributes.UseVisualStyleBackColor = true;
             // 
             // gbxExtractionDefaults
             // 
@@ -624,13 +589,11 @@ namespace TotalImage
             // cbxExtractAsk
             // 
             cbxExtractAsk.AutoSize = true;
-            cbxExtractAsk.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxExtractAsk.Location = new System.Drawing.Point(11, 22);
             cbxExtractAsk.Name = "cbxExtractAsk";
-            cbxExtractAsk.Size = new System.Drawing.Size(330, 20);
+            cbxExtractAsk.Size = new System.Drawing.Size(322, 19);
             cbxExtractAsk.TabIndex = 0;
             cbxExtractAsk.Text = "Always ask for these extraction options before extracting";
-            cbxExtractAsk.UseVisualStyleBackColor = true;
             cbxExtractAsk.CheckedChanged += cbxExtractAsk_CheckedChanged;
             // 
             // lblExtractPath
@@ -638,12 +601,13 @@ namespace TotalImage
             lblExtractPath.AutoSize = true;
             lblExtractPath.Location = new System.Drawing.Point(8, 50);
             lblExtractPath.Name = "lblExtractPath";
-            lblExtractPath.Size = new System.Drawing.Size(269, 15);
+            lblExtractPath.Size = new System.Drawing.Size(268, 15);
             lblExtractPath.TabIndex = 1;
             lblExtractPath.Text = "Extract selected item(s) to the following directory:";
             // 
             // txtExtractPath
             // 
+            txtExtractPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtExtractPath.Location = new System.Drawing.Point(11, 68);
             txtExtractPath.Name = "txtExtractPath";
             txtExtractPath.Size = new System.Drawing.Size(338, 23);
@@ -652,17 +616,14 @@ namespace TotalImage
             // cbxOpenDir
             // 
             cbxOpenDir.AutoSize = true;
-            cbxOpenDir.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxOpenDir.Location = new System.Drawing.Point(11, 179);
             cbxOpenDir.Name = "cbxOpenDir";
-            cbxOpenDir.Size = new System.Drawing.Size(256, 20);
+            cbxOpenDir.Size = new System.Drawing.Size(249, 19);
             cbxOpenDir.TabIndex = 7;
             cbxOpenDir.Text = "Open destination directory after extraction";
-            cbxOpenDir.UseVisualStyleBackColor = true;
             // 
             // btnBrowse
             // 
-            btnBrowse.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnBrowse.Location = new System.Drawing.Point(355, 66);
             btnBrowse.Name = "btnBrowse";
             btnBrowse.Size = new System.Drawing.Size(80, 26);
@@ -674,41 +635,36 @@ namespace TotalImage
             // rbnExtractPreserve
             // 
             rbnExtractPreserve.AutoSize = true;
-            rbnExtractPreserve.FlatStyle = System.Windows.Forms.FlatStyle.System;
             rbnExtractPreserve.Location = new System.Drawing.Point(11, 153);
             rbnExtractPreserve.Name = "rbnExtractPreserve";
-            rbnExtractPreserve.Size = new System.Drawing.Size(218, 20);
+            rbnExtractPreserve.Size = new System.Drawing.Size(212, 19);
             rbnExtractPreserve.TabIndex = 6;
             rbnExtractPreserve.TabStop = true;
             rbnExtractPreserve.Text = "Preserve original directory structure";
-            rbnExtractPreserve.UseVisualStyleBackColor = true;
             // 
             // rbnIgnoreFolders
             // 
             rbnIgnoreFolders.AutoSize = true;
-            rbnIgnoreFolders.FlatStyle = System.Windows.Forms.FlatStyle.System;
             rbnIgnoreFolders.Location = new System.Drawing.Point(11, 103);
             rbnIgnoreFolders.Name = "rbnIgnoreFolders";
-            rbnIgnoreFolders.Size = new System.Drawing.Size(223, 20);
+            rbnIgnoreFolders.Size = new System.Drawing.Size(217, 19);
             rbnIgnoreFolders.TabIndex = 4;
             rbnIgnoreFolders.TabStop = true;
             rbnIgnoreFolders.Text = "Ignore directories and subdirectories";
-            rbnIgnoreFolders.UseVisualStyleBackColor = true;
             // 
             // rbnExtractFlat
             // 
             rbnExtractFlat.AutoSize = true;
-            rbnExtractFlat.FlatStyle = System.Windows.Forms.FlatStyle.System;
             rbnExtractFlat.Location = new System.Drawing.Point(11, 128);
             rbnExtractFlat.Name = "rbnExtractFlat";
-            rbnExtractFlat.Size = new System.Drawing.Size(231, 20);
+            rbnExtractFlat.Size = new System.Drawing.Size(224, 19);
             rbnExtractFlat.TabIndex = 5;
             rbnExtractFlat.TabStop = true;
             rbnExtractFlat.Text = "Extract all files into the same directory";
-            rbnExtractFlat.UseVisualStyleBackColor = true;
             // 
             // tabIntegration
             // 
+            tabIntegration.BackColor = System.Drawing.SystemColors.Window;
             tabIntegration.Controls.Add(gbxFileAssociations);
             tabIntegration.Controls.Add(gbxIntegrationMisc);
             tabIntegration.Location = new System.Drawing.Point(4, 24);
@@ -717,7 +673,6 @@ namespace TotalImage
             tabIntegration.Size = new System.Drawing.Size(453, 454);
             tabIntegration.TabIndex = 1;
             tabIntegration.Text = "Integration";
-            tabIntegration.UseVisualStyleBackColor = true;
             // 
             // gbxFileAssociations
             // 
@@ -736,13 +691,12 @@ namespace TotalImage
             lblFileAssoc.Location = new System.Drawing.Point(9, 21);
             lblFileAssoc.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblFileAssoc.Name = "lblFileAssoc";
-            lblFileAssoc.Size = new System.Drawing.Size(308, 30);
+            lblFileAssoc.Size = new System.Drawing.Size(309, 30);
             lblFileAssoc.TabIndex = 4;
             lblFileAssoc.Text = "File associations for TotalImage can be managed through\r\nControl Panel/Windows Settings.";
             // 
             // btnFileAssoc
             // 
-            btnFileAssoc.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnFileAssoc.Location = new System.Drawing.Point(357, 21);
             btnFileAssoc.Margin = new System.Windows.Forms.Padding(2);
             btnFileAssoc.Name = "btnFileAssoc";
@@ -771,20 +725,18 @@ namespace TotalImage
             lblSystemIcons.Location = new System.Drawing.Point(9, 51);
             lblSystemIcons.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             lblSystemIcons.Name = "lblSystemIcons";
-            lblSystemIcons.Size = new System.Drawing.Size(412, 45);
+            lblSystemIcons.Size = new System.Drawing.Size(413, 45);
             lblSystemIcons.TabIndex = 6;
             lblSystemIcons.Text = "If this option is enabled, TotalImage will obtain icons and names for file types\r\nfrom Windows, which can be slower in some situations. If disabled, generic\r\nicons and names will be used instead.";
             // 
             // cbxShellFileIcons
             // 
             cbxShellFileIcons.AutoSize = true;
-            cbxShellFileIcons.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxShellFileIcons.Location = new System.Drawing.Point(11, 22);
             cbxShellFileIcons.Name = "cbxShellFileIcons";
-            cbxShellFileIcons.Size = new System.Drawing.Size(297, 20);
+            cbxShellFileIcons.Size = new System.Drawing.Size(291, 19);
             cbxShellFileIcons.TabIndex = 3;
             cbxShellFileIcons.Text = "Display system icons and file type names in file list";
-            cbxShellFileIcons.UseVisualStyleBackColor = true;
             // 
             // dlgSettings
             // 

@@ -45,7 +45,6 @@ namespace TotalImage
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOK.Location = new System.Drawing.Point(177, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
@@ -86,7 +85,7 @@ namespace TotalImage
             lblCopyright.AutoSize = true;
             lblCopyright.Location = new System.Drawing.Point(9, 97);
             lblCopyright.Name = "lblCopyright";
-            lblCopyright.Size = new System.Drawing.Size(244, 15);
+            lblCopyright.Size = new System.Drawing.Size(247, 15);
             lblCopyright.TabIndex = 4;
             lblCopyright.Text = "Copyright © 2020-2025 The TotalImage Team";
             // 
@@ -122,9 +121,10 @@ namespace TotalImage
             // lnkGitHub
             // 
             lnkGitHub.AutoSize = true;
+            lnkGitHub.LinkColor = System.Drawing.SystemColors.HotTrack;
             lnkGitHub.Location = new System.Drawing.Point(9, 175);
             lnkGitHub.Name = "lnkGitHub";
-            lnkGitHub.Size = new System.Drawing.Size(235, 15);
+            lnkGitHub.Size = new System.Drawing.Size(237, 15);
             lnkGitHub.TabIndex = 8;
             lnkGitHub.TabStop = true;
             lnkGitHub.Text = "https://github.com/TotalImage/TotalImage";

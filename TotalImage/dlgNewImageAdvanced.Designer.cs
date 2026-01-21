@@ -78,13 +78,11 @@ namespace TotalImage
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOK.Location = new System.Drawing.Point(422, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 14;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
             // 
             // toolTip
@@ -111,7 +109,7 @@ namespace TotalImage
             lblFloppyTracks.AutoSize = true;
             lblFloppyTracks.Location = new System.Drawing.Point(269, 133);
             lblFloppyTracks.Name = "lblFloppyTracks";
-            lblFloppyTracks.Size = new System.Drawing.Size(86, 15);
+            lblFloppyTracks.Size = new System.Drawing.Size(87, 15);
             lblFloppyTracks.TabIndex = 60;
             lblFloppyTracks.Text = "Tracks per side:";
             toolTip.SetToolTip(lblFloppyTracks, "The number of tracks on one side of the disk.");
@@ -139,6 +137,7 @@ namespace TotalImage
             // 
             // txtFloppyFSType
             // 
+            txtFloppyFSType.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtFloppyFSType.Location = new System.Drawing.Point(143, 73);
             txtFloppyFSType.MaxLength = 8;
             txtFloppyFSType.Name = "txtFloppyFSType";
@@ -159,6 +158,7 @@ namespace TotalImage
             // 
             // txtFloppySerial
             // 
+            txtFloppySerial.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtFloppySerial.Location = new System.Drawing.Point(143, 44);
             txtFloppySerial.MaxLength = 8;
             txtFloppySerial.Name = "txtFloppySerial";
@@ -179,7 +179,6 @@ namespace TotalImage
             // lstFloppySides
             // 
             lstFloppySides.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstFloppySides.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstFloppySides.FormattingEnabled = true;
             lstFloppySides.Items.AddRange(new object[] { "1", "2" });
             lstFloppySides.Location = new System.Drawing.Point(411, 189);
@@ -235,7 +234,7 @@ namespace TotalImage
             lblFloppySPF.AutoSize = true;
             lblFloppySPF.Location = new System.Drawing.Point(269, 17);
             lblFloppySPF.Name = "lblFloppySPF";
-            lblFloppySPF.Size = new System.Drawing.Size(89, 15);
+            lblFloppySPF.Size = new System.Drawing.Size(90, 15);
             lblFloppySPF.TabIndex = 53;
             lblFloppySPF.Text = "Sectors per FAT:";
             toolTip.SetToolTip(lblFloppySPF, "Defines the number of sectors occupied by each file\r\nallocation table (FAT).");
@@ -278,7 +277,7 @@ namespace TotalImage
             lblFloppyTotalSect.AutoSize = true;
             lblFloppyTotalSect.Location = new System.Drawing.Point(269, 75);
             lblFloppyTotalSect.Name = "lblFloppyTotalSect";
-            lblFloppyTotalSect.Size = new System.Drawing.Size(134, 15);
+            lblFloppyTotalSect.Size = new System.Drawing.Size(135, 15);
             lblFloppyTotalSect.TabIndex = 49;
             lblFloppyTotalSect.Text = "Total number of sectors:";
             toolTip.SetToolTip(lblFloppyTotalSect, "This field specifies the total number of sectors on a disk. The number\r\nis calculated by multiplying the number of tracks, sectors per track and\r\nnumber of sides (tracks * SPT * sides).");
@@ -310,7 +309,7 @@ namespace TotalImage
             lblFloppyNumFATs.AutoSize = true;
             lblFloppyNumFATs.Location = new System.Drawing.Point(12, 104);
             lblFloppyNumFATs.Name = "lblFloppyNumFATs";
-            lblFloppyNumFATs.Size = new System.Drawing.Size(93, 15);
+            lblFloppyNumFATs.Size = new System.Drawing.Size(94, 15);
             lblFloppyNumFATs.TabIndex = 45;
             lblFloppyNumFATs.Text = "Number of FATs:";
             toolTip.SetToolTip(lblFloppyNumFATs, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, this value is basically always 2.");
@@ -370,6 +369,7 @@ namespace TotalImage
             // 
             // txtFloppyOEMID
             // 
+            txtFloppyOEMID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtFloppyOEMID.Location = new System.Drawing.Point(143, 14);
             txtFloppyOEMID.MaxLength = 8;
             txtFloppyOEMID.Name = "txtFloppyOEMID";

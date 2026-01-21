@@ -47,25 +47,21 @@ namespace TotalImage
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOK.Location = new System.Drawing.Point(388, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 0;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             // 
             // btnCancel
             // 
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnCancel.Location = new System.Drawing.Point(474, 12);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(80, 26);
             btnCancel.TabIndex = 1;
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
             // 
             // pnlBottom
             // 
@@ -81,7 +77,6 @@ namespace TotalImage
             // btnLoad
             // 
             btnLoad.Enabled = false;
-            btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnLoad.Location = new System.Drawing.Point(10, 34);
             btnLoad.Margin = new System.Windows.Forms.Padding(2);
             btnLoad.Name = "btnLoad";
@@ -93,7 +88,6 @@ namespace TotalImage
             // 
             // btnSave
             // 
-            btnSave.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnSave.Location = new System.Drawing.Point(94, 34);
             btnSave.Margin = new System.Windows.Forms.Padding(2);
             btnSave.Name = "btnSave";
@@ -118,7 +112,6 @@ namespace TotalImage
             // 
             lstPresets.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             lstPresets.Enabled = false;
-            lstPresets.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstPresets.FormattingEnabled = true;
             lstPresets.Location = new System.Drawing.Point(230, 36);
             lstPresets.Margin = new System.Windows.Forms.Padding(2);
@@ -129,7 +122,6 @@ namespace TotalImage
             // btnApply
             // 
             btnApply.Enabled = false;
-            btnApply.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnApply.Location = new System.Drawing.Point(477, 34);
             btnApply.Margin = new System.Windows.Forms.Padding(2);
             btnApply.Name = "btnApply";
@@ -140,7 +132,8 @@ namespace TotalImage
             // 
             // txtBootSector
             // 
-            txtBootSector.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            txtBootSector.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            txtBootSector.Font = new System.Drawing.Font("Consolas", 9.75F);
             txtBootSector.Location = new System.Drawing.Point(10, 75);
             txtBootSector.Margin = new System.Windows.Forms.Padding(2);
             txtBootSector.Name = "txtBootSector";
@@ -152,15 +145,13 @@ namespace TotalImage
             // rbnMBR
             // 
             rbnMBR.AutoSize = true;
-            rbnMBR.FlatStyle = System.Windows.Forms.FlatStyle.System;
             rbnMBR.Location = new System.Drawing.Point(130, 8);
             rbnMBR.Margin = new System.Windows.Forms.Padding(2);
             rbnMBR.Name = "rbnMBR";
-            rbnMBR.Size = new System.Drawing.Size(89, 20);
+            rbnMBR.Size = new System.Drawing.Size(83, 19);
             rbnMBR.TabIndex = 17;
             rbnMBR.TabStop = true;
             rbnMBR.Text = "Disk (MBR)";
-            rbnMBR.UseVisualStyleBackColor = true;
             rbnMBR.CheckedChanged += rbnMBR_CheckedChanged;
             // 
             // lblShow
@@ -176,15 +167,13 @@ namespace TotalImage
             // rbnVBR
             // 
             rbnVBR.AutoSize = true;
-            rbnVBR.FlatStyle = System.Windows.Forms.FlatStyle.System;
             rbnVBR.Location = new System.Drawing.Point(230, 8);
             rbnVBR.Margin = new System.Windows.Forms.Padding(2);
             rbnVBR.Name = "rbnVBR";
-            rbnVBR.Size = new System.Drawing.Size(155, 20);
+            rbnVBR.Size = new System.Drawing.Size(149, 19);
             rbnVBR.TabIndex = 19;
             rbnVBR.TabStop = true;
             rbnVBR.Text = "Selected partition (VBR)";
-            rbnVBR.UseVisualStyleBackColor = true;
             rbnVBR.CheckedChanged += rbnVBR_CheckedChanged;
             // 
             // dlgBootSector
@@ -205,7 +194,7 @@ namespace TotalImage
             Controls.Add(btnSave);
             Controls.Add(btnLoad);
             Controls.Add(pnlBottom);
-            Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            Font = new System.Drawing.Font("Segoe UI", 9F);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;

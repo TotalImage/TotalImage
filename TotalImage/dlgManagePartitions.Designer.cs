@@ -31,7 +31,7 @@ namespace TotalImage
             btnOK = new System.Windows.Forms.Button();
             btnCancel = new System.Windows.Forms.Button();
             pnlBottom = new System.Windows.Forms.Panel();
-            lstPartitions = new System.Windows.Forms.ListView();
+            lstPartitions = new ListViewEx();
             clmNumber = new System.Windows.Forms.ColumnHeader();
             clmLabel = new System.Windows.Forms.ColumnHeader();
             clmType = new System.Windows.Forms.ColumnHeader();
@@ -51,25 +51,21 @@ namespace TotalImage
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOK.Location = new System.Drawing.Point(406, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 0;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             // 
             // btnCancel
             // 
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnCancel.Location = new System.Drawing.Point(492, 12);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(80, 26);
             btnCancel.TabIndex = 1;
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
             // 
             // pnlBottom
             // 
@@ -102,42 +98,41 @@ namespace TotalImage
             // clmNumber
             // 
             clmNumber.Text = "No.";
-            clmNumber.Width = 31;
+            clmNumber.Width = 35;
             // 
             // clmLabel
             // 
             clmLabel.Text = "Volume label";
-            clmLabel.Width = 88;
+            clmLabel.Width = 100;
             // 
             // clmType
             // 
             clmType.Text = "Type";
-            clmType.Width = 79;
+            clmType.Width = 90;
             // 
             // clmStart
             // 
             clmStart.Text = "Start";
-            clmStart.Width = 78;
+            clmStart.Width = 80;
             // 
             // clmEnd
             // 
             clmEnd.Text = "End";
-            clmEnd.Width = 92;
+            clmEnd.Width = 95;
             // 
             // clmSize
             // 
             clmSize.Text = "Size";
-            clmSize.Width = 87;
+            clmSize.Width = 90;
             // 
             // clmActive
             // 
             clmActive.Text = "Active";
-            clmActive.Width = 49;
+            clmActive.Width = 55;
             // 
             // btnCreate
             // 
             btnCreate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            btnCreate.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnCreate.Location = new System.Drawing.Point(12, 199);
             btnCreate.Name = "btnCreate";
             btnCreate.Size = new System.Drawing.Size(80, 26);
@@ -149,7 +144,6 @@ namespace TotalImage
             // 
             btnFormat.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             btnFormat.Enabled = false;
-            btnFormat.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnFormat.Location = new System.Drawing.Point(184, 199);
             btnFormat.Name = "btnFormat";
             btnFormat.Size = new System.Drawing.Size(80, 26);
@@ -161,7 +155,6 @@ namespace TotalImage
             // 
             btnResize.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             btnResize.Enabled = false;
-            btnResize.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnResize.Location = new System.Drawing.Point(270, 199);
             btnResize.Name = "btnResize";
             btnResize.Size = new System.Drawing.Size(80, 26);
@@ -173,7 +166,6 @@ namespace TotalImage
             // 
             btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             btnDelete.Enabled = false;
-            btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnDelete.Location = new System.Drawing.Point(356, 199);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new System.Drawing.Size(80, 26);
@@ -185,7 +177,6 @@ namespace TotalImage
             // 
             btnActive.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             btnActive.Enabled = false;
-            btnActive.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnActive.Location = new System.Drawing.Point(98, 199);
             btnActive.Name = "btnActive";
             btnActive.Size = new System.Drawing.Size(80, 26);
@@ -226,7 +217,7 @@ namespace TotalImage
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Panel pnlBottom;
-        private System.Windows.Forms.ListView lstPartitions;
+        private ListViewEx lstPartitions;
         private System.Windows.Forms.ColumnHeader clmNumber;
         private System.Windows.Forms.ColumnHeader clmLabel;
         private System.Windows.Forms.ColumnHeader clmType;

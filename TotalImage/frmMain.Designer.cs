@@ -700,7 +700,7 @@ namespace TotalImage
             // 
             toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { hexViewToolStripMenuItem, imageInformationToolStripMenuItem, toolStripSeparator5, settingsToolStripMenuItem1 });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             toolsToolStripMenuItem.Text = "Tools";
             toolsToolStripMenuItem.DropDownOpening += toolsToolStripMenuItem_DropDownOpening;
             // 
@@ -927,7 +927,7 @@ namespace TotalImage
             selectPartitionToolStripComboBox.DropDownHeight = 200;
             selectPartitionToolStripComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             selectPartitionToolStripComboBox.DropDownWidth = 250;
-            selectPartitionToolStripComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            selectPartitionToolStripComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             selectPartitionToolStripComboBox.IntegralHeight = false;
             selectPartitionToolStripComboBox.MaxDropDownItems = 64;
             selectPartitionToolStripComboBox.Name = "selectPartitionToolStripComboBox";

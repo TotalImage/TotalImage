@@ -79,6 +79,7 @@ namespace TotalImage
             // 
             // txtFilename
             // 
+            txtFilename.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtFilename.Location = new System.Drawing.Point(50, 16);
             txtFilename.Name = "txtFilename";
             txtFilename.Size = new System.Drawing.Size(322, 23);
@@ -92,7 +93,7 @@ namespace TotalImage
             lblType.AutoSize = true;
             lblType.Location = new System.Drawing.Point(12, 62);
             lblType.Name = "lblType";
-            lblType.Size = new System.Drawing.Size(34, 15);
+            lblType.Size = new System.Drawing.Size(35, 15);
             lblType.TabIndex = 8;
             lblType.Text = "Type:";
             // 
@@ -146,50 +147,42 @@ namespace TotalImage
             // cbxReadOnly
             // 
             cbxReadOnly.AutoSize = true;
-            cbxReadOnly.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxReadOnly.Location = new System.Drawing.Point(80, 351);
             cbxReadOnly.Name = "cbxReadOnly";
-            cbxReadOnly.Size = new System.Drawing.Size(86, 20);
+            cbxReadOnly.Size = new System.Drawing.Size(80, 19);
             cbxReadOnly.TabIndex = 4;
             cbxReadOnly.Text = "Read-only";
             toolTip.SetToolTip(cbxReadOnly, "Read-only files cannot be written to until this attribute\r\nis cleared.");
-            cbxReadOnly.UseVisualStyleBackColor = true;
             // 
             // cbxHidden
             // 
             cbxHidden.AutoSize = true;
-            cbxHidden.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxHidden.Location = new System.Drawing.Point(166, 351);
             cbxHidden.Name = "cbxHidden";
-            cbxHidden.Size = new System.Drawing.Size(71, 20);
+            cbxHidden.Size = new System.Drawing.Size(65, 19);
             cbxHidden.TabIndex = 5;
             cbxHidden.Text = "Hidden";
             toolTip.SetToolTip(cbxHidden, "Hidden files do not show up in regular directory listings and\r\ncannot be moved, deleted, etc. until this attribute is cleared.");
-            cbxHidden.UseVisualStyleBackColor = true;
             // 
             // cbxSystem
             // 
             cbxSystem.AutoSize = true;
-            cbxSystem.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxSystem.Location = new System.Drawing.Point(240, 351);
             cbxSystem.Name = "cbxSystem";
-            cbxSystem.Size = new System.Drawing.Size(70, 20);
+            cbxSystem.Size = new System.Drawing.Size(64, 19);
             cbxSystem.TabIndex = 6;
             cbxSystem.Text = "System";
             toolTip.SetToolTip(cbxSystem, "System files will not be physically relocated, for example\r\nduring disk defragmentation.");
-            cbxSystem.UseVisualStyleBackColor = true;
             // 
             // cbxArchive
             // 
             cbxArchive.AutoSize = true;
-            cbxArchive.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxArchive.Location = new System.Drawing.Point(312, 351);
             cbxArchive.Name = "cbxArchive";
-            cbxArchive.Size = new System.Drawing.Size(72, 20);
+            cbxArchive.Size = new System.Drawing.Size(66, 19);
             cbxArchive.TabIndex = 7;
             cbxArchive.Text = "Archive";
             toolTip.SetToolTip(cbxArchive, "Archive files are marked as ready to be backed up by a backup\r\nutility. In practice, this attribute is obsolete.");
-            cbxArchive.UseVisualStyleBackColor = true;
             // 
             // dtpAccessed
             // 
@@ -198,7 +191,6 @@ namespace TotalImage
             dtpAccessed.Location = new System.Drawing.Point(94, 307);
             dtpAccessed.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             dtpAccessed.Name = "dtpAccessed";
-            dtpAccessed.ShowUpDown = true;
             dtpAccessed.Size = new System.Drawing.Size(278, 23);
             dtpAccessed.TabIndex = 3;
             toolTip.SetToolTip(dtpAccessed, resources.GetString("dtpAccessed.ToolTip"));
@@ -210,7 +202,6 @@ namespace TotalImage
             dtpCreated.Location = new System.Drawing.Point(94, 249);
             dtpCreated.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             dtpCreated.Name = "dtpCreated";
-            dtpCreated.ShowUpDown = true;
             dtpCreated.Size = new System.Drawing.Size(278, 23);
             dtpCreated.TabIndex = 1;
             toolTip.SetToolTip(dtpCreated, "This is the date and time when the file or directory was originally\r\ncreated. For FAT file systems, only software supporting the VFAT\r\nextensions uses this value.");
@@ -222,14 +213,13 @@ namespace TotalImage
             dtpModified.Location = new System.Drawing.Point(94, 278);
             dtpModified.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             dtpModified.Name = "dtpModified";
-            dtpModified.ShowUpDown = true;
             dtpModified.Size = new System.Drawing.Size(278, 23);
             dtpModified.TabIndex = 2;
             toolTip.SetToolTip(dtpModified, "This is the date and time when the file or directory was last\r\nwritten to.");
             // 
             // txtSize1
             // 
-            txtSize1.BackColor = System.Drawing.Color.White;
+            txtSize1.BackColor = System.Drawing.SystemColors.Window;
             txtSize1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             txtSize1.Location = new System.Drawing.Point(115, 110);
             txtSize1.Name = "txtSize1";
@@ -242,7 +232,7 @@ namespace TotalImage
             // 
             // txtSizeOnDisk1
             // 
-            txtSizeOnDisk1.BackColor = System.Drawing.Color.White;
+            txtSizeOnDisk1.BackColor = System.Drawing.SystemColors.Window;
             txtSizeOnDisk1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             txtSizeOnDisk1.Location = new System.Drawing.Point(115, 134);
             txtSizeOnDisk1.Name = "txtSizeOnDisk1";
@@ -255,7 +245,7 @@ namespace TotalImage
             // 
             // txtShortFilename1
             // 
-            txtShortFilename1.BackColor = System.Drawing.Color.White;
+            txtShortFilename1.BackColor = System.Drawing.SystemColors.Window;
             txtShortFilename1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             txtShortFilename1.Location = new System.Drawing.Point(115, 158);
             txtShortFilename1.Name = "txtShortFilename1";
@@ -268,7 +258,7 @@ namespace TotalImage
             // 
             // txtContains1
             // 
-            txtContains1.BackColor = System.Drawing.Color.White;
+            txtContains1.BackColor = System.Drawing.SystemColors.Window;
             txtContains1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             txtContains1.Location = new System.Drawing.Point(115, 182);
             txtContains1.Name = "txtContains1";
@@ -292,45 +282,39 @@ namespace TotalImage
             // cbxDateCreated
             // 
             cbxDateCreated.AutoSize = true;
-            cbxDateCreated.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxDateCreated.Location = new System.Drawing.Point(12, 251);
             cbxDateCreated.Name = "cbxDateCreated";
-            cbxDateCreated.Size = new System.Drawing.Size(76, 20);
+            cbxDateCreated.Size = new System.Drawing.Size(70, 19);
             cbxDateCreated.TabIndex = 24;
             cbxDateCreated.Text = "Created:";
             toolTip.SetToolTip(cbxDateCreated, "This is the date and time when the file or directory was originally\r\ncreated. For FAT file systems, only software supporting the VFAT\r\nextensions uses this value.");
-            cbxDateCreated.UseVisualStyleBackColor = true;
             cbxDateCreated.CheckedChanged += cbxDateCreated_CheckedChanged;
             // 
             // cbxDateModified
             // 
             cbxDateModified.AutoSize = true;
-            cbxDateModified.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxDateModified.Location = new System.Drawing.Point(12, 280);
             cbxDateModified.Name = "cbxDateModified";
-            cbxDateModified.Size = new System.Drawing.Size(83, 20);
+            cbxDateModified.Size = new System.Drawing.Size(77, 19);
             cbxDateModified.TabIndex = 25;
             cbxDateModified.Text = "Modified:";
             toolTip.SetToolTip(cbxDateModified, "This is the date and time when the file or directory was last\r\nwritten to.");
-            cbxDateModified.UseVisualStyleBackColor = true;
             cbxDateModified.CheckedChanged += cbxDateModified_CheckedChanged;
             // 
             // cbxDateAccessed
             // 
             cbxDateAccessed.AutoSize = true;
-            cbxDateAccessed.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxDateAccessed.Location = new System.Drawing.Point(12, 309);
             cbxDateAccessed.Name = "cbxDateAccessed";
-            cbxDateAccessed.Size = new System.Drawing.Size(84, 20);
+            cbxDateAccessed.Size = new System.Drawing.Size(78, 19);
             cbxDateAccessed.TabIndex = 26;
             cbxDateAccessed.Text = "Accessed:";
             toolTip.SetToolTip(cbxDateAccessed, resources.GetString("cbxDateAccessed.ToolTip"));
-            cbxDateAccessed.UseVisualStyleBackColor = true;
             cbxDateAccessed.CheckedChanged += cbxDateAccessed_CheckedChanged;
             // 
             // txtFirstCluster1
             // 
-            txtFirstCluster1.BackColor = System.Drawing.Color.White;
+            txtFirstCluster1.BackColor = System.Drawing.SystemColors.Window;
             txtFirstCluster1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             txtFirstCluster1.Location = new System.Drawing.Point(115, 206);
             txtFirstCluster1.Name = "txtFirstCluster1";
@@ -355,25 +339,21 @@ namespace TotalImage
             // 
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnCancel.Location = new System.Drawing.Point(292, 12);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(80, 26);
             btnCancel.TabIndex = 9;
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
             // 
             // btnOK
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOK.Location = new System.Drawing.Point(206, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 8;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
             // 
             // pnlBottom
@@ -431,7 +411,7 @@ namespace TotalImage
             // 
             // txtType1
             // 
-            txtType1.BackColor = System.Drawing.Color.White;
+            txtType1.BackColor = System.Drawing.SystemColors.Window;
             txtType1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             txtType1.Location = new System.Drawing.Point(115, 62);
             txtType1.Name = "txtType1";
@@ -443,7 +423,7 @@ namespace TotalImage
             // 
             // txtLocation1
             // 
-            txtLocation1.BackColor = System.Drawing.Color.White;
+            txtLocation1.BackColor = System.Drawing.SystemColors.Window;
             txtLocation1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             txtLocation1.Location = new System.Drawing.Point(115, 85);
             txtLocation1.Name = "txtLocation1";

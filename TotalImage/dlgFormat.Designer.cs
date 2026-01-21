@@ -56,25 +56,21 @@ namespace TotalImage
             // 
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnCancel.Location = new System.Drawing.Point(192, 12);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(80, 26);
             btnCancel.TabIndex = 6;
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
             // 
             // btnOK
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
             btnOK.Location = new System.Drawing.Point(106, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 5;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
             // 
             // lblFileSystem
@@ -89,7 +85,6 @@ namespace TotalImage
             // lstFileSystem
             // 
             lstFileSystem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstFileSystem.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstFileSystem.FormattingEnabled = true;
             lstFileSystem.Location = new System.Drawing.Point(15, 27);
             lstFileSystem.Name = "lstFileSystem";
@@ -99,7 +94,6 @@ namespace TotalImage
             // lstClusterSize
             // 
             lstClusterSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstClusterSize.FlatStyle = System.Windows.Forms.FlatStyle.System;
             lstClusterSize.FormattingEnabled = true;
             lstClusterSize.Location = new System.Drawing.Point(15, 80);
             lstClusterSize.Name = "lstClusterSize";
@@ -126,6 +120,7 @@ namespace TotalImage
             // 
             // txtVolumeLabel
             // 
+            txtVolumeLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtVolumeLabel.Location = new System.Drawing.Point(15, 133);
             txtVolumeLabel.MaxLength = 11;
             txtVolumeLabel.Name = "txtVolumeLabel";
@@ -137,13 +132,11 @@ namespace TotalImage
             cbxQuickFormat.AutoSize = true;
             cbxQuickFormat.Checked = true;
             cbxQuickFormat.CheckState = System.Windows.Forms.CheckState.Checked;
-            cbxQuickFormat.FlatStyle = System.Windows.Forms.FlatStyle.System;
             cbxQuickFormat.Location = new System.Drawing.Point(15, 171);
             cbxQuickFormat.Name = "cbxQuickFormat";
-            cbxQuickFormat.Size = new System.Drawing.Size(102, 20);
+            cbxQuickFormat.Size = new System.Drawing.Size(96, 19);
             cbxQuickFormat.TabIndex = 4;
             cbxQuickFormat.Text = "Quick format";
-            cbxQuickFormat.UseVisualStyleBackColor = true;
             // 
             // dlgFormat
             // 

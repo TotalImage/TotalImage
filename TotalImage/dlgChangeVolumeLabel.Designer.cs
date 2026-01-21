@@ -45,33 +45,30 @@ namespace TotalImage
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnOK.Location = new System.Drawing.Point(96, 12);
+            btnOK.Location = new System.Drawing.Point(106, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 3;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             btnOK.Click += btnOK_Click;
             // 
             // btnCancel
             // 
             btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnCancel.Location = new System.Drawing.Point(182, 12);
+            btnCancel.Location = new System.Drawing.Point(192, 12);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(80, 26);
             btnCancel.TabIndex = 4;
             btnCancel.Text = "Cancel";
-            btnCancel.UseVisualStyleBackColor = true;
             // 
             // txtNewLabel
             // 
+            txtNewLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtNewLabel.Location = new System.Drawing.Point(12, 27);
             txtNewLabel.MaxLength = 11;
             txtNewLabel.Name = "txtNewLabel";
-            txtNewLabel.Size = new System.Drawing.Size(250, 23);
+            txtNewLabel.Size = new System.Drawing.Size(260, 23);
             txtNewLabel.TabIndex = 0;
             txtNewLabel.TextChanged += txtRootDirLabel_TextChanged;
             // 
@@ -90,9 +87,9 @@ namespace TotalImage
             pnlBottom.Controls.Add(btnOK);
             pnlBottom.Controls.Add(btnCancel);
             pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 172);
+            pnlBottom.Location = new System.Drawing.Point(0, 171);
             pnlBottom.Name = "pnlBottom";
-            pnlBottom.Size = new System.Drawing.Size(274, 50);
+            pnlBottom.Size = new System.Drawing.Size(284, 50);
             pnlBottom.TabIndex = 5;
             // 
             // gbxFatOptions
@@ -102,7 +99,7 @@ namespace TotalImage
             gbxFatOptions.Controls.Add(txtBPBLabel);
             gbxFatOptions.Location = new System.Drawing.Point(12, 56);
             gbxFatOptions.Name = "gbxFatOptions";
-            gbxFatOptions.Size = new System.Drawing.Size(250, 110);
+            gbxFatOptions.Size = new System.Drawing.Size(260, 109);
             gbxFatOptions.TabIndex = 7;
             gbxFatOptions.TabStop = false;
             gbxFatOptions.Text = "FAT options";
@@ -113,12 +110,11 @@ namespace TotalImage
             cbxSync.Checked = true;
             cbxSync.CheckState = System.Windows.Forms.CheckState.Checked;
             cbxSync.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxSync.Location = new System.Drawing.Point(11, 48);
+            cbxSync.Location = new System.Drawing.Point(6, 48);
             cbxSync.Name = "cbxSync";
             cbxSync.Size = new System.Drawing.Size(241, 20);
             cbxSync.TabIndex = 9;
             cbxSync.Text = "Write the same label as in root directory";
-            cbxSync.UseVisualStyleBackColor = true;
             cbxSync.CheckedChanged += cbxSync_CheckedChanged;
             // 
             // cbxBPBLabel
@@ -127,21 +123,21 @@ namespace TotalImage
             cbxBPBLabel.Checked = true;
             cbxBPBLabel.CheckState = System.Windows.Forms.CheckState.Checked;
             cbxBPBLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxBPBLabel.Location = new System.Drawing.Point(11, 22);
+            cbxBPBLabel.Location = new System.Drawing.Point(6, 22);
             cbxBPBLabel.Name = "cbxBPBLabel";
             cbxBPBLabel.Size = new System.Drawing.Size(233, 20);
             cbxBPBLabel.TabIndex = 7;
             cbxBPBLabel.Text = "Also write the volume label to the BPB";
-            cbxBPBLabel.UseVisualStyleBackColor = true;
             cbxBPBLabel.CheckedChanged += cbxBPBLabel_CheckedChanged;
             // 
             // txtBPBLabel
             // 
-            txtBPBLabel.Location = new System.Drawing.Point(11, 74);
+            txtBPBLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            txtBPBLabel.Location = new System.Drawing.Point(6, 74);
             txtBPBLabel.MaxLength = 11;
             txtBPBLabel.Name = "txtBPBLabel";
             txtBPBLabel.ReadOnly = true;
-            txtBPBLabel.Size = new System.Drawing.Size(233, 23);
+            txtBPBLabel.Size = new System.Drawing.Size(248, 23);
             txtBPBLabel.TabIndex = 8;
             // 
             // dlgChangeVolumeLabel
@@ -151,7 +147,7 @@ namespace TotalImage
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.SystemColors.Window;
             CancelButton = btnCancel;
-            ClientSize = new System.Drawing.Size(274, 222);
+            ClientSize = new System.Drawing.Size(284, 221);
             Controls.Add(pnlBottom);
             Controls.Add(txtNewLabel);
             Controls.Add(lblNewLabel);

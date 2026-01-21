@@ -29,31 +29,31 @@ namespace TotalImage
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] { "Filename", "<filename>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] { "Path", "<path>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] { "Size", "<filesize>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] { "Created", "<created>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(new string[] { "Modified", "<modified>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem(new string[] { "Accessed", "<accessed>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem(new string[] { "Attributes", "<attributes>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem(new string[] { "MD5 hash", "<md5hash>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] { "SHA-1 hash", "<sha1hash>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] { "Container type", "<containertype>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] { "Container subtype", "N/A" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] { "Container version", "N/A" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] { "Created by", "N/A" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] { "Creator version", "N/A" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] { "Partitioning scheme", "<partitionscheme>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new string[] { "Number of partitions", "<nopartitions>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] { "Selected partition", "<selectedpartition>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] { "Partition ID/type", "N/A" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem(new System.Windows.Forms.ListViewItem.ListViewSubItem[] { new System.Windows.Forms.ListViewItem.ListViewSubItem(null, "File system", System.Drawing.SystemColors.WindowText, System.Drawing.SystemColors.Window, new System.Drawing.Font("Segoe UI", 9F)), new System.Windows.Forms.ListViewItem.ListViewSubItem(null, "<filesystem>", System.Drawing.SystemColors.WindowText, System.Drawing.SystemColors.Window, new System.Drawing.Font("Segoe UI", 9F)) }, -1);
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] { "Volume label", "N/A" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] { "Volume serial number", "N/A" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[] { "Total storage capacity", "<capacity>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem(new string[] { "Free storage capacity", "<freespace>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem(new string[] { "Files", "<nofiles>" }, -1);
-            System.Windows.Forms.ListViewItem listViewItem25 = new System.Windows.Forms.ListViewItem(new string[] { "Subdirectories", "<subdirectories>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem(new string[] { "Filename", "<filename>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem(new string[] { "Path", "<path>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem(new string[] { "Size", "<filesize>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem(new string[] { "Created", "<created>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem(new string[] { "Modified", "<modified>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem(new string[] { "Accessed", "<accessed>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem(new string[] { "Attributes", "<attributes>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem(new string[] { "MD5 hash", "<md5hash>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem25 = new System.Windows.Forms.ListViewItem(new string[] { "SHA-1 hash", "<sha1hash>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem(new string[] { "Container type", "<containertype>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem27 = new System.Windows.Forms.ListViewItem(new string[] { "Container subtype", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem28 = new System.Windows.Forms.ListViewItem(new string[] { "Container version", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem29 = new System.Windows.Forms.ListViewItem(new string[] { "Created by", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem(new string[] { "Creator version", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] { "Partitioning scheme", "<partitionscheme>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem(new string[] { "Number of partitions", "<nopartitions>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem(new string[] { "Selected partition", "<selectedpartition>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem(new string[] { "Partition ID/type", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem(new System.Windows.Forms.ListViewItem.ListViewSubItem[] { new System.Windows.Forms.ListViewItem.ListViewSubItem(null, "File system", System.Drawing.SystemColors.WindowText, System.Drawing.SystemColors.Window, new System.Drawing.Font("Segoe UI", 9F)), new System.Windows.Forms.ListViewItem.ListViewSubItem(null, "<filesystem>", System.Drawing.SystemColors.WindowText, System.Drawing.SystemColors.Window, new System.Drawing.Font("Segoe UI", 9F)) }, -1);
+            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem(new string[] { "Volume label", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem(new string[] { "Volume serial number", "N/A" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem(new string[] { "Total storage capacity", "<capacity>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem(new string[] { "Free storage capacity", "<freespace>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem(new string[] { "Files", "<nofiles>" }, -1);
+            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem(new string[] { "Subdirectories", "<subdirectories>" }, -1);
             btnOK = new System.Windows.Forms.Button();
             pnlBottom = new System.Windows.Forms.Panel();
             btnSave = new System.Windows.Forms.Button();
@@ -96,13 +96,11 @@ namespace TotalImage
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btnOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnOK.Location = new System.Drawing.Point(382, 14);
+            btnOK.Location = new System.Drawing.Point(381, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
             btnOK.TabIndex = 3;
             btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
             // 
             // pnlBottom
             // 
@@ -118,13 +116,11 @@ namespace TotalImage
             // btnSave
             // 
             btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnSave.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            btnSave.Location = new System.Drawing.Point(10, 14);
+            btnSave.Location = new System.Drawing.Point(12, 12);
             btnSave.Name = "btnSave";
             btnSave.Size = new System.Drawing.Size(80, 26);
             btnSave.TabIndex = 2;
             btnSave.Text = "Save...";
-            btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 
             // lblComment
@@ -138,6 +134,7 @@ namespace TotalImage
             // 
             // txtComment
             // 
+            txtComment.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtComment.Location = new System.Drawing.Point(6, 250);
             txtComment.Multiline = true;
             txtComment.Name = "txtComment";
@@ -177,6 +174,7 @@ namespace TotalImage
             // 
             // tabFileInfo
             // 
+            tabFileInfo.BackColor = System.Drawing.SystemColors.Window;
             tabFileInfo.Controls.Add(lstPropertiesFile);
             tabFileInfo.Location = new System.Drawing.Point(4, 24);
             tabFileInfo.Name = "tabFileInfo";
@@ -184,7 +182,6 @@ namespace TotalImage
             tabFileInfo.Size = new System.Drawing.Size(441, 347);
             tabFileInfo.TabIndex = 0;
             tabFileInfo.Text = "File";
-            tabFileInfo.UseVisualStyleBackColor = true;
             // 
             // lstPropertiesFile
             // 
@@ -192,30 +189,30 @@ namespace TotalImage
             lstPropertiesFile.ContextMenuStrip = cmsCopy;
             lstPropertiesFile.FullRowSelect = true;
             lstPropertiesFile.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            listViewItem1.StateImageIndex = 0;
-            listViewItem1.Tag = "Filename";
-            listViewItem1.UseItemStyleForSubItems = false;
-            listViewItem2.StateImageIndex = 0;
-            listViewItem2.Tag = "Path";
-            listViewItem2.UseItemStyleForSubItems = false;
-            listViewItem3.StateImageIndex = 0;
-            listViewItem3.Tag = "Filesize";
-            listViewItem3.UseItemStyleForSubItems = false;
-            listViewItem4.StateImageIndex = 0;
-            listViewItem4.Tag = "Filecreated";
-            listViewItem4.UseItemStyleForSubItems = false;
-            listViewItem5.StateImageIndex = 0;
-            listViewItem5.Tag = "Filemodified";
-            listViewItem5.UseItemStyleForSubItems = false;
-            listViewItem6.Tag = "Fileaccessed";
-            listViewItem6.UseItemStyleForSubItems = false;
-            listViewItem7.Tag = "Fileattrib";
-            listViewItem7.UseItemStyleForSubItems = false;
-            listViewItem8.Tag = "md5";
-            listViewItem8.UseItemStyleForSubItems = false;
-            listViewItem9.Tag = "sha1";
+            listViewItem9.StateImageIndex = 0;
+            listViewItem9.Tag = "Filename";
             listViewItem9.UseItemStyleForSubItems = false;
-            lstPropertiesFile.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem1, listViewItem2, listViewItem3, listViewItem4, listViewItem5, listViewItem6, listViewItem7, listViewItem8, listViewItem9 });
+            listViewItem10.StateImageIndex = 0;
+            listViewItem10.Tag = "Path";
+            listViewItem10.UseItemStyleForSubItems = false;
+            listViewItem11.StateImageIndex = 0;
+            listViewItem11.Tag = "Filesize";
+            listViewItem11.UseItemStyleForSubItems = false;
+            listViewItem12.StateImageIndex = 0;
+            listViewItem12.Tag = "Filecreated";
+            listViewItem12.UseItemStyleForSubItems = false;
+            listViewItem13.StateImageIndex = 0;
+            listViewItem13.Tag = "Filemodified";
+            listViewItem13.UseItemStyleForSubItems = false;
+            listViewItem14.Tag = "Fileaccessed";
+            listViewItem14.UseItemStyleForSubItems = false;
+            listViewItem15.Tag = "Fileattrib";
+            listViewItem15.UseItemStyleForSubItems = false;
+            listViewItem24.Tag = "md5";
+            listViewItem24.UseItemStyleForSubItems = false;
+            listViewItem25.Tag = "sha1";
+            listViewItem25.UseItemStyleForSubItems = false;
+            lstPropertiesFile.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem9, listViewItem10, listViewItem11, listViewItem12, listViewItem13, listViewItem14, listViewItem15, listViewItem24, listViewItem25 });
             lstPropertiesFile.LabelWrap = false;
             lstPropertiesFile.Location = new System.Drawing.Point(6, 6);
             lstPropertiesFile.MultiSelect = false;
@@ -239,6 +236,7 @@ namespace TotalImage
             // 
             // tabContainer
             // 
+            tabContainer.BackColor = System.Drawing.SystemColors.Window;
             tabContainer.Controls.Add(lstPropertiesContainer);
             tabContainer.Controls.Add(lblComment);
             tabContainer.Controls.Add(txtComment);
@@ -248,7 +246,6 @@ namespace TotalImage
             tabContainer.Size = new System.Drawing.Size(441, 347);
             tabContainer.TabIndex = 1;
             tabContainer.Text = "Container";
-            tabContainer.UseVisualStyleBackColor = true;
             // 
             // lstPropertiesContainer
             // 
@@ -256,22 +253,22 @@ namespace TotalImage
             lstPropertiesContainer.ContextMenuStrip = cmsCopy;
             lstPropertiesContainer.FullRowSelect = true;
             lstPropertiesContainer.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            listViewItem10.StateImageIndex = 0;
-            listViewItem10.Tag = "Container";
-            listViewItem10.UseItemStyleForSubItems = false;
-            listViewItem11.StateImageIndex = 0;
-            listViewItem11.Tag = "Containersubtype";
-            listViewItem11.UseItemStyleForSubItems = false;
-            listViewItem12.StateImageIndex = 0;
-            listViewItem12.Tag = "Containerver";
-            listViewItem12.UseItemStyleForSubItems = false;
-            listViewItem13.StateImageIndex = 0;
-            listViewItem13.Tag = "Creator";
-            listViewItem13.UseItemStyleForSubItems = false;
-            listViewItem14.StateImageIndex = 0;
-            listViewItem14.Tag = "Creatorver";
-            listViewItem14.UseItemStyleForSubItems = false;
-            lstPropertiesContainer.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem10, listViewItem11, listViewItem12, listViewItem13, listViewItem14 });
+            listViewItem18.StateImageIndex = 0;
+            listViewItem18.Tag = "Container";
+            listViewItem18.UseItemStyleForSubItems = false;
+            listViewItem27.StateImageIndex = 0;
+            listViewItem27.Tag = "Containersubtype";
+            listViewItem27.UseItemStyleForSubItems = false;
+            listViewItem28.StateImageIndex = 0;
+            listViewItem28.Tag = "Containerver";
+            listViewItem28.UseItemStyleForSubItems = false;
+            listViewItem29.StateImageIndex = 0;
+            listViewItem29.Tag = "Creator";
+            listViewItem29.UseItemStyleForSubItems = false;
+            listViewItem30.StateImageIndex = 0;
+            listViewItem30.Tag = "Creatorver";
+            listViewItem30.UseItemStyleForSubItems = false;
+            lstPropertiesContainer.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem18, listViewItem27, listViewItem28, listViewItem29, listViewItem30 });
             lstPropertiesContainer.LabelWrap = false;
             lstPropertiesContainer.Location = new System.Drawing.Point(6, 6);
             lstPropertiesContainer.MultiSelect = false;
@@ -295,6 +292,7 @@ namespace TotalImage
             // 
             // tabPartitionTable
             // 
+            tabPartitionTable.BackColor = System.Drawing.SystemColors.Window;
             tabPartitionTable.Controls.Add(lstPropertiesPT);
             tabPartitionTable.Location = new System.Drawing.Point(4, 24);
             tabPartitionTable.Name = "tabPartitionTable";
@@ -302,7 +300,6 @@ namespace TotalImage
             tabPartitionTable.Size = new System.Drawing.Size(441, 347);
             tabPartitionTable.TabIndex = 2;
             tabPartitionTable.Text = "Partition table";
-            tabPartitionTable.UseVisualStyleBackColor = true;
             // 
             // lstPropertiesPT
             // 
@@ -310,16 +307,16 @@ namespace TotalImage
             lstPropertiesPT.ContextMenuStrip = cmsCopy;
             lstPropertiesPT.FullRowSelect = true;
             lstPropertiesPT.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            listViewItem15.StateImageIndex = 0;
-            listViewItem15.Tag = "Partscheme";
-            listViewItem15.UseItemStyleForSubItems = false;
-            listViewItem16.StateImageIndex = 0;
-            listViewItem16.Tag = "Partcount";
-            listViewItem16.UseItemStyleForSubItems = false;
-            listViewItem17.StateImageIndex = 0;
-            listViewItem17.Tag = "Selpart";
-            listViewItem17.UseItemStyleForSubItems = false;
-            lstPropertiesPT.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem15, listViewItem16, listViewItem17 });
+            listViewItem1.StateImageIndex = 0;
+            listViewItem1.Tag = "Partscheme";
+            listViewItem1.UseItemStyleForSubItems = false;
+            listViewItem2.StateImageIndex = 0;
+            listViewItem2.Tag = "Partcount";
+            listViewItem2.UseItemStyleForSubItems = false;
+            listViewItem3.StateImageIndex = 0;
+            listViewItem3.Tag = "Selpart";
+            listViewItem3.UseItemStyleForSubItems = false;
+            lstPropertiesPT.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem1, listViewItem2, listViewItem3 });
             lstPropertiesPT.LabelWrap = false;
             lstPropertiesPT.Location = new System.Drawing.Point(6, 6);
             lstPropertiesPT.MultiSelect = false;
@@ -334,7 +331,7 @@ namespace TotalImage
             // clmPropery3
             // 
             clmPropery3.Text = "Property";
-            clmPropery3.Width = 200;
+            clmPropery3.Width = 170;
             // 
             // clmValue3
             // 
@@ -343,6 +340,7 @@ namespace TotalImage
             // 
             // tabPartition
             // 
+            tabPartition.BackColor = System.Drawing.SystemColors.Window;
             tabPartition.Controls.Add(lstPropertiesPartition);
             tabPartition.Location = new System.Drawing.Point(4, 24);
             tabPartition.Name = "tabPartition";
@@ -350,7 +348,6 @@ namespace TotalImage
             tabPartition.Size = new System.Drawing.Size(441, 347);
             tabPartition.TabIndex = 3;
             tabPartition.Text = "Selected partition";
-            tabPartition.UseVisualStyleBackColor = true;
             // 
             // lstPropertiesPartition
             // 
@@ -358,10 +355,10 @@ namespace TotalImage
             lstPropertiesPartition.ContextMenuStrip = cmsCopy;
             lstPropertiesPartition.FullRowSelect = true;
             lstPropertiesPartition.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            listViewItem18.StateImageIndex = 0;
-            listViewItem18.Tag = "PartID";
-            listViewItem18.UseItemStyleForSubItems = false;
-            lstPropertiesPartition.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem18 });
+            listViewItem4.StateImageIndex = 0;
+            listViewItem4.Tag = "PartID";
+            listViewItem4.UseItemStyleForSubItems = false;
+            lstPropertiesPartition.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem4 });
             lstPropertiesPartition.LabelWrap = false;
             lstPropertiesPartition.Location = new System.Drawing.Point(6, 6);
             lstPropertiesPartition.MultiSelect = false;
@@ -385,6 +382,7 @@ namespace TotalImage
             // 
             // tabFileSystem
             // 
+            tabFileSystem.BackColor = System.Drawing.SystemColors.Window;
             tabFileSystem.Controls.Add(lstPropertiesFS);
             tabFileSystem.Location = new System.Drawing.Point(4, 24);
             tabFileSystem.Name = "tabFileSystem";
@@ -392,7 +390,6 @@ namespace TotalImage
             tabFileSystem.Size = new System.Drawing.Size(441, 347);
             tabFileSystem.TabIndex = 4;
             tabFileSystem.Text = "File system";
-            tabFileSystem.UseVisualStyleBackColor = true;
             // 
             // lstPropertiesFS
             // 
@@ -400,28 +397,28 @@ namespace TotalImage
             lstPropertiesFS.ContextMenuStrip = cmsCopy;
             lstPropertiesFS.FullRowSelect = true;
             lstPropertiesFS.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewItem16.StateImageIndex = 0;
+            listViewItem16.Tag = "Fs";
+            listViewItem16.UseItemStyleForSubItems = false;
+            listViewItem17.StateImageIndex = 0;
+            listViewItem17.Tag = "VolLabel";
+            listViewItem17.UseItemStyleForSubItems = false;
             listViewItem19.StateImageIndex = 0;
-            listViewItem19.Tag = "Fs";
+            listViewItem19.Tag = "VolSerial";
             listViewItem19.UseItemStyleForSubItems = false;
             listViewItem20.StateImageIndex = 0;
-            listViewItem20.Tag = "VolLabel";
+            listViewItem20.Tag = "Capacity";
             listViewItem20.UseItemStyleForSubItems = false;
             listViewItem21.StateImageIndex = 0;
-            listViewItem21.Tag = "VolSerial";
+            listViewItem21.Tag = "Freespace";
             listViewItem21.UseItemStyleForSubItems = false;
             listViewItem22.StateImageIndex = 0;
-            listViewItem22.Tag = "Capacity";
+            listViewItem22.Tag = "Filecount";
             listViewItem22.UseItemStyleForSubItems = false;
             listViewItem23.StateImageIndex = 0;
-            listViewItem23.Tag = "Freespace";
+            listViewItem23.Tag = "Dircount";
             listViewItem23.UseItemStyleForSubItems = false;
-            listViewItem24.StateImageIndex = 0;
-            listViewItem24.Tag = "Filecount";
-            listViewItem24.UseItemStyleForSubItems = false;
-            listViewItem25.StateImageIndex = 0;
-            listViewItem25.Tag = "Dircount";
-            listViewItem25.UseItemStyleForSubItems = false;
-            lstPropertiesFS.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem19, listViewItem20, listViewItem21, listViewItem22, listViewItem23, listViewItem24, listViewItem25 });
+            lstPropertiesFS.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem16, listViewItem17, listViewItem19, listViewItem20, listViewItem21, listViewItem22, listViewItem23 });
             lstPropertiesFS.LabelWrap = false;
             lstPropertiesFS.Location = new System.Drawing.Point(6, 6);
             lstPropertiesFS.MultiSelect = false;
