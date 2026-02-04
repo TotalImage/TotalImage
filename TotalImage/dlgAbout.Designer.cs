@@ -87,7 +87,7 @@ namespace TotalImage
             lblCopyright.Name = "lblCopyright";
             lblCopyright.Size = new System.Drawing.Size(247, 15);
             lblCopyright.TabIndex = 4;
-            lblCopyright.Text = "Copyright © 2020-2025 The TotalImage Team";
+            lblCopyright.Text = "Copyright © 2020-2026 The TotalImage Team";
             // 
             // pnlBottom
             // 
