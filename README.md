@@ -54,9 +54,11 @@ Below is a non-exhaustive list of things we plan to support. Please note that th
 * And more...
 
 ## Development
-To develop TotalImage, we recommend you install [Microsoft Visual Studio 2022](https://visualstudio.microsoft.com/vs/). This will give you the designer for Windows Forms, which makes it easier to work with the frontend.
+To develop TotalImage, we recommend you install [Microsoft Visual Studio 2026](https://visualstudio.microsoft.com/vs/). This includes the designer for Windows Forms, which makes it easier to work with the frontend.
 
-Alternatively, you can also just build the solution with [.NET CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/), which is included in the [.NET SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
+Alternatively, you can also build the solution with [.NET CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/), which is included in the [.NET SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
+
+You will also need to install [git](https://git-scm.com/) in both cases (required for displaying git commit hash in the About dialog).
 
 ## Support
 Please open an issue on this repo for any bug reports and suggestions you may have. If you wish to talk to us directly, visit the official TotalImage Discord server:
