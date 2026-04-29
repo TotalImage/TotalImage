@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TotalImage.FileSystems.FAT
 {
@@ -17,21 +18,21 @@ namespace TotalImage.FileSystems.FAT
         public string ShortName
         {
             get => entry.FileName;
-            set => throw new NotImplementedException();
+            set; // => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public string? LongName
         {
             get => lfnEntries.Length > 0 ? LongDirectoryEntry.CombineEntries(lfnEntries) : null;
-            set => throw new NotImplementedException();
+            set; // => throw new NotImplementedException();
         }
 
         /// <inheritdoc />
         public override string Name
         {
             get => LongName ?? ShortName;
-            set => throw new NotImplementedException();
+            set => ShortName = value;//throw new NotImplementedException();
         }
 
         /// <inheritdoc />
@@ -120,6 +121,25 @@ namespace TotalImage.FileSystems.FAT
         public override Stream GetStream()
         {
             return new FatDataStream((FatFileSystem)FileSystem, entry);
+        }
+
+        /// <inheritdoc/>
+        public override void Rename(string name)
+        {
+            Name = name;
+
+            //Get the stream, make a new directory entry for the volume label with new name, replace the old entry and write it to the stream
+            var stream = fat.GetStream();
+            var offset = 0xB40; //Get the actual dir entry offset here!!!
+
+            var newEntry = entry.GetBytes();
+
+            Encoding.ASCII.GetBytes(name, 0, 11, newEntry, 0);
+
+            entry = new DirectoryEntry(fat, newEntry.AsSpan());
+
+            stream.Seek(offset, SeekOrigin.Begin);
+            stream.Write(newEntry, 0, newEntry.Length);
         }
     }
 }

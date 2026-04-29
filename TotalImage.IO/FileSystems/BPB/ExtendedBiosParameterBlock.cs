@@ -65,7 +65,7 @@ namespace TotalImage.FileSystems.BPB
         public string? VolumeLabel
         {
             get => ExtendedBootSignature == ExtendedBootSignature.Dos40 ? Encoding.ASCII.GetString(volLab).TrimEnd() : null;
-            private set
+            set
             {
                 if (ExtendedBootSignature == ExtendedBootSignature.Dos40 && value != null)
                 {

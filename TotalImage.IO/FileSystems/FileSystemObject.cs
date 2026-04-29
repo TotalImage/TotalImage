@@ -96,6 +96,6 @@ namespace TotalImage.FileSystems
         /// Rename a file system object
         /// </summary>
         /// <param name="name">The new name of the file system object</param>
-        public void Rename(string name) => Name = name;
+        public virtual void Rename(string name) => Name = name;
     }
 }

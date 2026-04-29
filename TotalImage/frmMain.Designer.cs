@@ -163,12 +163,12 @@ namespace TotalImage
             extractToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             newFolderToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             deleteToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            eraseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             undeleteToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             renameToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             selectAllToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             imgFilesLarge = new System.Windows.Forms.ImageList(components);
-            eraseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             cmsDirTree.SuspendLayout();
             menuBar.SuspendLayout();
             cmsToolbars.SuspendLayout();
@@ -348,7 +348,7 @@ namespace TotalImage
             saveAsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.S;
             saveAsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             saveAsToolStripMenuItem.Text = "Save as...";
-            saveAsToolStripMenuItem.Click += save_Click;
+            saveAsToolStripMenuItem.Click += saveAs_Click;
             // 
             // closeImageToolStripMenuItem
             // 
@@ -730,7 +730,7 @@ namespace TotalImage
             // 
             toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { hexViewToolStripMenuItem, imageInformationToolStripMenuItem, toolStripSeparator5, settingsToolStripMenuItem1 });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             toolsToolStripMenuItem.Text = "Tools";
             toolsToolStripMenuItem.DropDownOpening += toolsToolStripMenuItem_DropDownOpening;
             // 
@@ -1282,7 +1282,7 @@ namespace TotalImage
             cmsFileList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { extractToolStripMenuItem2, newFolderToolStripMenuItem2, deleteToolStripMenuItem2, eraseToolStripMenuItem, undeleteToolStripMenuItem2, renameToolStripMenuItem2, propertiesToolStripMenuItem2, selectAllToolStripMenuItem1 });
             cmsFileList.Name = "cmsFileList";
             cmsFileList.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            cmsFileList.Size = new System.Drawing.Size(217, 202);
+            cmsFileList.Size = new System.Drawing.Size(217, 180);
             cmsFileList.Opening += cmsFileList_Opening;
             // 
             // extractToolStripMenuItem2
@@ -1311,6 +1311,13 @@ namespace TotalImage
             deleteToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             deleteToolStripMenuItem2.Text = "Delete";
             deleteToolStripMenuItem2.Click += delete_Click;
+            // 
+            // eraseToolStripMenuItem
+            // 
+            eraseToolStripMenuItem.Name = "eraseToolStripMenuItem";
+            eraseToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            eraseToolStripMenuItem.Text = "Erase";
+            eraseToolStripMenuItem.Click += erase_Click;
             // 
             // undeleteToolStripMenuItem2
             // 
@@ -1351,13 +1358,6 @@ namespace TotalImage
             imgFilesLarge.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
             imgFilesLarge.ImageSize = new System.Drawing.Size(32, 32);
             imgFilesLarge.TransparentColor = System.Drawing.Color.Transparent;
-            // 
-            // eraseToolStripMenuItem
-            // 
-            eraseToolStripMenuItem.Name = "eraseToolStripMenuItem";
-            eraseToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            eraseToolStripMenuItem.Text = "Erase";
-            eraseToolStripMenuItem.Click += erase_Click;
             // 
             // frmMain
             // 

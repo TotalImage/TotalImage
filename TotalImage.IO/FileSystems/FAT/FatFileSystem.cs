@@ -126,7 +126,7 @@ namespace TotalImage.FileSystems.FAT
             get => !string.IsNullOrWhiteSpace(RootDirectoryVolumeLabel) ? 
                 RootDirectoryVolumeLabel : !string.IsNullOrWhiteSpace(BpbVolumeLabel) && !BpbVolumeLabel.Equals("NO NAME", StringComparison.OrdinalIgnoreCase) ? 
                 BpbVolumeLabel : "<No label>";
-            set => throw new NotImplementedException();
+            set => RootDirectoryVolumeLabel = value;
         }
 
         /// <summary>
@@ -154,8 +154,20 @@ namespace TotalImage.FileSystems.FAT
                 }
                 return null;
             }
-            set => throw new NotImplementedException();
+            set
+            {
+                foreach (var (entry, _) in DirectoryEntry.EnumerateRootDirectory(this))
+                {
+                    if (entry.Attributes.HasFlag(FatAttributes.VolumeId) && !entry.Attributes.HasFlag(FatAttributes.LongName))
+                    {
+                        var file = new FatFile(this, entry, null, RootDirectory);
+                        file.Rename(value);
+                    }
+                }
+            }
         }
+
+        private 
 
         protected FatFileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
         {

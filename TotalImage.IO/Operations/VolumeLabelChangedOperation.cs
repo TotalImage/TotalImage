@@ -49,6 +49,9 @@ namespace TotalImage.Operations
             // For now, this is a placeholder that documents what needs to be done
             var partition = (PartitionEntry)TargetObject;
             // Would need to determine file system type and apply the appropriate changes
+
+            partition.FileSystem.VolumeLabel = NewLabel;
+
         }
 
         /// <summary>

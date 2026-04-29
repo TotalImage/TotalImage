@@ -9,14 +9,14 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using TotalImage.Containers;
+using TotalImage.Containers.Anex86;
 using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
-using TotalImage.Containers.Anex86;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
+using TotalImage.Operations;
 using TiDirectory = TotalImage.FileSystems.Directory;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
-using TotalImage.Operations;
 
 namespace TotalImage
 {
@@ -158,7 +158,30 @@ namespace TotalImage
             }
 
             using dlgChangeVolLabel dlg = new(fs.RootDirectoryVolumeLabel, fs.BpbVolumeLabel);
-            dlg.ShowDialog();
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+                var volLabelOpRD = new VolumeLabelChangedOperation(image?.PartitionTable.Partitions[0], fs.RootDirectoryVolumeLabel, dlg.NewRDLabel, 
+                    VolumeLabelChangedOperation.VolumeLabel.RootDirectory, DateTime.Now);
+                image?.PendingChanges.Push(volLabelOpRD);
+
+                if (dlg.WriteBPBLabel)
+                {
+                    var volLabelOpBPB = new VolumeLabelChangedOperation(image?.PartitionTable.Partitions[0], fs.BpbVolumeLabel, dlg.NewBPBLabel,
+                        VolumeLabelChangedOperation.VolumeLabel.BiosParameterBlock, DateTime.Now);
+                    image?.PendingChanges.Push(volLabelOpBPB);
+                }
+
+                unsavedChanges = true;
+               
+                saveToolStripButton.Enabled = true;
+                saveToolStripMenuItem.Enabled = true;
+
+                /*fs.RootDirectoryVolumeLabel = dlg.NewRDLabel;
+                if (dlg.WriteBPBLabel)
+                    fs.BpbVolumeLabel = dlg.NewBPBLabel;
+                */
+
+            }
         }
 
         /* Allows viewing and editing bootsector properties
@@ -275,14 +298,17 @@ namespace TotalImage
         {
             if (image is not null)
             {
-                if (string.IsNullOrEmpty(filename) || (ToolStripMenuItem)sender == saveAsToolStripMenuItem) //File hasn't been saved yet
-                {
-                    saveFileAs();
-                }
-                else
+                if (!string.IsNullOrEmpty(filename))
                 {
                     saveFile();
                 }
+            }
+        }
+        private void saveAs_Click(object sender, EventArgs e)
+        {
+            if (image is not null)
+            {
+                saveFileAs();
             }
         }
 
@@ -613,7 +639,9 @@ namespace TotalImage
             }
 
             image.SaveImage(filepath);
-            OpenImage(filepath); //Reload the image
+            string f = filepath;
+            CloseImage();
+            OpenImage(f); //Reload the image
 
             /*saveToolStripButton.Enabled = false;
             saveToolStripMenuItem.Enabled = false;

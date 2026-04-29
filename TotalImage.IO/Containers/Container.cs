@@ -82,7 +82,7 @@ namespace TotalImage.Containers
             }
             else
             {
-                containerStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+                containerStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             }
         }
 
@@ -131,8 +131,11 @@ namespace TotalImage.Containers
                     }
                 }
 
+                containerStream.Flush();
+
+
                 // Create the output file by copying the updated container stream
-                string? tempPath = Path.ChangeExtension(path, ".tmp");
+                /*string? tempPath = Path.ChangeExtension(path, ".tmp");
                 using FileStream outStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
                 
                 containerStream.Position = 0;
@@ -145,7 +148,7 @@ namespace TotalImage.Containers
                 {
                     File.Delete(path);
                 }
-                File.Move(tempPath, path);
+                File.Move(tempPath, path);*/
 
                 // Clear the pending changes since they have been applied
                 PendingChanges.Discard();
