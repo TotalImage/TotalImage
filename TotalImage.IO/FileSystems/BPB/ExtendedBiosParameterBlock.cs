@@ -38,6 +38,9 @@ namespace TotalImage.FileSystems.BPB
         /// </summary>
         public byte PhysicalDriveNumber { get => drvNum; private set => drvNum = value; }
 
+        /// <summary>
+        /// Reserved flags byte in the extended BIOS parameter block.
+        /// </summary>
         public byte Flags { get => reserved1; private set => reserved1 = value; }
 
         /// <summary>
@@ -143,6 +146,12 @@ namespace TotalImage.FileSystems.BPB
             return bpb;
         }
 
+        /// <summary>
+        /// Continues parsing an extended BIOS parameter block from a stream.
+        /// </summary>
+        /// <param name="bpb">The base BIOS parameter block that was already parsed.</param>
+        /// <param name="reader">The reader positioned at the extended fields.</param>
+        /// <returns>The parsed extended BIOS parameter block, or <see langword="null"/> if the extended fields are invalid.</returns>
         public static ExtendedBiosParameterBlock? ContinueParsing(BiosParameterBlock bpb, BinaryReader reader)
         {
             var ebpb = new ExtendedBiosParameterBlock(bpb);

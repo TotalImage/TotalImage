@@ -75,7 +75,7 @@ namespace TotalImage.FileSystems.ISO
             {
                 containerStream.Read(recordBytes);
 
-                IsoVolumeDescriptor record = IsoVolumeDescriptor.ReadVolumeDescriptor(recordBytes, this);
+                IsoVolumeDescriptor? record = IsoVolumeDescriptor.ReadVolumeDescriptor(recordBytes, this);
                 if (record == null)
                 {
                     break;

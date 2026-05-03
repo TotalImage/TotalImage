@@ -22,6 +22,11 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override bool IsReadOnly => false;
 
+        /// <summary>
+        /// Opens a FAT16 file system from an existing stream and BIOS parameter block.
+        /// </summary>
+        /// <param name="stream">The stream containing the file system.</param>
+        /// <param name="bpb">The parsed BIOS parameter block.</param>
         public Fat16FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
             Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];

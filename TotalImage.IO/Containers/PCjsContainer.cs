@@ -50,7 +50,8 @@ public class PCjsContainer : Container
 
                         var offset = ((c * heads + h) * trackDefault + s - 1) * sectorDefault;
 
-                        var d = sector.GetProperty("d").Deserialize<int[]>();
+                        var d = sector.GetProperty("d").Deserialize<int[]>()
+                            ?? throw new InvalidDataException("The JSON document is not a valid PCjs disk image.");
 
                         var bytes = new byte[l];
 

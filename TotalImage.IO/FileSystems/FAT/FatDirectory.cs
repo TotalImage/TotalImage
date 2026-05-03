@@ -91,8 +91,19 @@ namespace TotalImage.FileSystems.FAT
             set => throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Creates the root directory for a FAT file system.
+        /// </summary>
+        /// <param name="fat">The file system that owns the directory.</param>
         public FatDirectory(FatFileSystem fat) : base(fat, null) { }
 
+        /// <summary>
+        /// Creates a FAT directory from a directory entry.
+        /// </summary>
+        /// <param name="fat">The file system that owns the directory.</param>
+        /// <param name="entry">The directory entry describing the directory.</param>
+        /// <param name="lfnEntries">The long file name entries associated with <paramref name="entry"/>.</param>
+        /// <param name="parent">The parent directory.</param>
         public FatDirectory(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[]? lfnEntries, Directory parent) : base(fat, parent)
         {
             this.entry = entry;

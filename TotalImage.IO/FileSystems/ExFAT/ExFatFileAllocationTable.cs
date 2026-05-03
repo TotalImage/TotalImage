@@ -51,6 +51,11 @@ public class ExFatFileAllocationTable : IEnumerable<uint>
     /// </summary>
     public uint Length { get; }
 
+    /// <summary>
+    /// Creates an exFAT allocation table reader.
+    /// </summary>
+    /// <param name="fileSystem">The file system that owns the allocation table.</param>
+    /// <param name="fatIndex">The zero-based FAT index.</param>
     public ExFatFileAllocationTable(ExFatFileSystem fileSystem, int fatIndex)
     {
         _fileSystem = fileSystem;
@@ -95,6 +100,9 @@ public class ExFatFileAllocationTable : IEnumerable<uint>
         return clusters.ToArray();
     }
 
+    /// <summary>
+    /// Enumerates allocation table values.
+    /// </summary>
     public class Enumerator : IEnumerator<uint>
     {
         uint _currentIndex = 0;

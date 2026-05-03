@@ -3,6 +3,9 @@ using System.IO;
 
 namespace TotalImage.FileSystems.ExFAT
 {
+    /// <summary>
+    /// Provides stream access to data stored in an exFAT cluster chain.
+    /// </summary>
     public class ExFatDataStream : Stream
     {
         private readonly ExFatFileSystem _fileSystem;
@@ -13,6 +16,11 @@ namespace TotalImage.FileSystems.ExFAT
 
         private uint _position = 0;
 
+        /// <summary>
+        /// Creates a stream over an exFAT cluster chain.
+        /// </summary>
+        /// <param name="fileSystem">The file system that owns the cluster chain.</param>
+        /// <param name="firstCluster">The first cluster in the chain.</param>
         public ExFatDataStream(ExFatFileSystem fileSystem, uint firstCluster)
         {
             _fileSystem = fileSystem;
@@ -39,6 +47,7 @@ namespace TotalImage.FileSystems.ExFAT
         /// <inheritdoc />
         public override void Flush() => _base.Flush();
 
+        /// <inheritdoc />
         public override int Read(byte[] buffer, int offset, int count)
         {
             count = Math.Min(count, (int)(_length - _position));
@@ -67,6 +76,7 @@ namespace TotalImage.FileSystems.ExFAT
             return totalRead;
         }
 
+        /// <inheritdoc />
         public override long Seek(long offset, SeekOrigin origin)
         {
             var target = origin switch
@@ -90,11 +100,13 @@ namespace TotalImage.FileSystems.ExFAT
             return target;
         }
 
+        /// <inheritdoc />
         public override void SetLength(long value)
         {
             throw new System.NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override void Write(byte[] buffer, int offset, int count)
         {
             throw new System.NotImplementedException();

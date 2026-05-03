@@ -22,6 +22,11 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override bool IsReadOnly => false;
 
+        /// <summary>
+        /// Opens a FAT12 file system from an existing stream and BIOS parameter block.
+        /// </summary>
+        /// <param name="stream">The stream containing the file system.</param>
+        /// <param name="bpb">The parsed BIOS parameter block.</param>
         public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
             Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
@@ -97,7 +102,7 @@ namespace TotalImage.FileSystems.FAT
                         writer.Write(ebpb.PhysicalDriveNumber);
                         writer.Write(ebpb.Flags);
                         writer.Write((byte)ebpb.ExtendedBootSignature);
-                        writer.Write(ebpb.VolumeSerialNumber.Value);
+                        writer.Write(ebpb.VolumeSerialNumber ?? throw new InvalidDataException("Extended BIOS Parameter Block is missing a volume serial number."));
 
                         //DOS 4.0 adds volume label and FS type as well
                         if (bpb.Version == BiosParameterBlockVersion.Dos40)
@@ -106,7 +111,7 @@ namespace TotalImage.FileSystems.FAT
                                 writer.Write("NO NAME    ".ToCharArray());
                             else
                                 writer.Write(ebpb.VolumeLabel.PadRight(11, ' ').ToCharArray());
-                            writer.Write(ebpb.FileSystemType.PadRight(8, ' ').ToCharArray());
+                            writer.Write((ebpb.FileSystemType ?? string.Empty).PadRight(8, ' ').ToCharArray());
                         }
                     }
                 }

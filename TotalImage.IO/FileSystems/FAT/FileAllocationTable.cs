@@ -95,6 +95,9 @@ public abstract class FileAllocationTable : IEnumerable<uint>
         return clusters.ToArray();
     }
 
+    /// <summary>
+    /// Enumerates allocation table values.
+    /// </summary>
     public class Enumerator : IEnumerator<uint>
     {
         uint _currentIndex = 0;

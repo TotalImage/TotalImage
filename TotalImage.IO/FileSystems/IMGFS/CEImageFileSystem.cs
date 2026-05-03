@@ -136,7 +136,7 @@ namespace TotalImage.FileSystems.IMGFS
 
         private void BuildDirectoryTree(IReadOnlyList<ImgfsFileRecord> files)
         {
-            if (TryLoadProvisioningOverlay(files, out ProvisioningOverlay? overlay))
+            if (TryLoadProvisioningOverlay(files, out ProvisioningOverlay? overlay) && overlay is not null)
             {
                 BuildProvisionedDirectoryTree(files, overlay);
                 return;
@@ -194,7 +194,7 @@ namespace TotalImage.FileSystems.IMGFS
                     continue;
                 }
 
-                if (!TryResolveProvisionedSource(sourcePath, filesByPath, filesByName, out ImgfsFileRecord? sourceFile))
+                if (!TryResolveProvisionedSource(sourcePath, filesByPath, filesByName, out ImgfsFileRecord? sourceFile) || sourceFile is null)
                 {
                     continue;
                 }

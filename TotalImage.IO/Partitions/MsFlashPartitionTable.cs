@@ -7,15 +7,24 @@ using TotalImage.Containers;
 
 namespace TotalImage.Partitions
 {
+    /// <summary>
+    /// Represents a Microsoft Flash partition table.
+    /// </summary>
     public class MsFlashPartitionTable : PartitionTable
     {
+        /// <summary>
+        /// Creates a Microsoft Flash partition table from a container.
+        /// </summary>
+        /// <param name="container">The container that holds the partition table.</param>
         public MsFlashPartitionTable(Container container)
             : base(container)
         {
         }
 
+        /// <inheritdoc />
         public override string DisplayName => "Microsoft Flash";
 
+        /// <inheritdoc />
         protected override IEnumerable<PartitionEntry> LoadPartitions()
         {
             _container.Content.Seek(0x808, SeekOrigin.Begin);
@@ -52,8 +61,17 @@ namespace TotalImage.Partitions
             return entries.ToImmutableList();
         }
 
+        /// <summary>
+        /// Represents a Microsoft Flash region partition entry.
+        /// </summary>
         public class MsFlashRegionPartitionEntry : PartitionEntry
         {
+            /// <summary>
+            /// Creates a Microsoft Flash region partition entry.
+            /// </summary>
+            /// <param name="offset">The byte offset of the partition.</param>
+            /// <param name="length">The length of the partition in bytes.</param>
+            /// <param name="stream">The stream containing the partition data.</param>
             public MsFlashRegionPartitionEntry(long offset, long length, Stream stream)
                 : base(offset, length, stream)
             {

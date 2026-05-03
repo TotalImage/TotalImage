@@ -75,6 +75,11 @@ namespace TotalImage.FileSystems.FAT
         /// </summary>
         public uint FileSize => fileSize;
 
+        /// <summary>
+        /// Creates a FAT directory entry from a raw 32-byte entry buffer.
+        /// </summary>
+        /// <param name="fileSystem">The file system that owns the directory entry.</param>
+        /// <param name="entry">The raw 32-byte directory entry buffer.</param>
         public DirectoryEntry(FatFileSystem fileSystem, ReadOnlySpan<byte> entry)
         {
             fileName = entry[0..11].ToImmutableArray();
@@ -92,6 +97,12 @@ namespace TotalImage.FileSystems.FAT
             fileSize = BinaryPrimitives.ReadUInt32LittleEndian(entry[28..32]);
         }
 
+        /// <summary>
+        /// Enumerates entries from the FAT root directory.
+        /// </summary>
+        /// <param name="fat">The file system that owns the root directory.</param>
+        /// <param name="includeDeleted"><see langword="true"/> to include deleted entries.</param>
+        /// <returns>The parsed directory entries and any associated long file name entries.</returns>
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateRootDirectory(FatFileSystem fat, bool includeDeleted = false)
         {
             if (fat.BiosParameterBlock is Fat32BiosParameterBlock { RootDirectoryEntries: 0, RootDirectoryCluster: var firstCluster })
@@ -108,9 +119,23 @@ namespace TotalImage.FileSystems.FAT
             return EnumerateDirectory(fat, buffer, includeDeleted);
         }
 
+        /// <summary>
+        /// Enumerates entries from a FAT subdirectory.
+        /// </summary>
+        /// <param name="fat">The file system that owns the directory.</param>
+        /// <param name="entry">The directory entry that identifies the subdirectory.</param>
+        /// <param name="includeDeleted"><see langword="true"/> to include deleted entries.</param>
+        /// <returns>The parsed directory entries and any associated long file name entries.</returns>
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, DirectoryEntry entry, bool includeDeleted = false) =>
             EnumerateSubdirectory(fat, entry.FirstClusterOfFile, includeDeleted);
 
+        /// <summary>
+        /// Enumerates entries from a FAT subdirectory starting at a cluster.
+        /// </summary>
+        /// <param name="fat">The file system that owns the directory.</param>
+        /// <param name="firstCluster">The first cluster of the subdirectory.</param>
+        /// <param name="includeDeleted"><see langword="true"/> to include deleted entries.</param>
+        /// <returns>The parsed directory entries and any associated long file name entries.</returns>
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, uint firstCluster, bool includeDeleted = false)
         {
             var stream = new FatDataStream(fat, firstCluster);

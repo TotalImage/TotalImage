@@ -5,8 +5,14 @@ using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
 {
-    public abstract class FatFileSystem : FileSystem
-    {
+/// <summary>
+/// Base class for FAT12, FAT16, and FAT32 file systems.
+/// </summary>
+public abstract class FatFileSystem : FileSystem
+{
+        /// <summary>
+        /// The BIOS parameter block that describes the volume layout.
+        /// </summary>
         protected readonly BiosParameterBlock _bpb;
 
         /// <inheritdoc />
@@ -153,6 +159,11 @@ namespace TotalImage.FileSystems.FAT
             set => throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Creates a FAT file system from a stream and BIOS parameter block.
+        /// </summary>
+        /// <param name="stream">The stream containing the file system.</param>
+        /// <param name="bpb">The BIOS parameter block for the volume.</param>
         protected FatFileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
         {
             _bpb = bpb;

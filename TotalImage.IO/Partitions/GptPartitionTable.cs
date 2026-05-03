@@ -243,6 +243,8 @@ namespace TotalImage.Partitions
             /// <param name="name">The name of the partition</param>
             /// <param name="offset">The offset of the partition in it's container file</param>
             /// <param name="length">The length of the partition</param>
+            /// <param name="firstLba">The first logical block address of the partition.</param>
+            /// <param name="lastLba">The last logical block address of the partition.</param>
             /// <param name="stream">The stream containing the partition data</param>
             public GptPartitionEntry(Guid typeId, Guid entryId, GptPartitionFlags flags, string name, long offset, long length, ulong firstLba, ulong lastLba, Stream stream) : base(offset, length, stream)
             {

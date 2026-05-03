@@ -78,6 +78,13 @@ namespace TotalImage.FileSystems.FAT
             set => throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Creates a FAT file from a directory entry.
+        /// </summary>
+        /// <param name="fat">The file system that owns the file.</param>
+        /// <param name="entry">The directory entry describing the file.</param>
+        /// <param name="lfnEntries">The long file name entries associated with <paramref name="entry"/>.</param>
+        /// <param name="dir">The parent directory.</param>
         public FatFile(FatFileSystem fat, DirectoryEntry entry, LongDirectoryEntry[] lfnEntries, Directory dir) : base(fat, dir)
         {
             this.entry = entry;

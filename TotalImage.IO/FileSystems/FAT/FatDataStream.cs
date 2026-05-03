@@ -3,6 +3,9 @@ using System.IO;
 
 namespace TotalImage.FileSystems.FAT
 {
+    /// <summary>
+    /// Provides stream access to data stored in a FAT cluster chain.
+    /// </summary>
     public class FatDataStream : Stream
     {
         private readonly FatFileSystem _fat;
@@ -26,6 +29,11 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override long Position { get => _position; set => Seek(value, SeekOrigin.Begin); }
 
+        /// <summary>
+        /// Creates a stream over a FAT cluster chain.
+        /// </summary>
+        /// <param name="fat">The file system that owns the cluster chain.</param>
+        /// <param name="firstCluster">The first cluster in the chain.</param>
         public FatDataStream(FatFileSystem fat, uint firstCluster)
         {
             _fat = fat;
@@ -34,6 +42,12 @@ namespace TotalImage.FileSystems.FAT
             _length = (uint)_clusters.Length * fat.BytesPerCluster;
         }
 
+        /// <summary>
+        /// Creates a stream over the data referenced by a FAT directory entry.
+        /// </summary>
+        /// <param name="fat">The file system that owns the entry.</param>
+        /// <param name="entry">The directory entry that identifies the data stream.</param>
+        /// <param name="ignoreSize"><see langword="true"/> to expose the full cluster chain length instead of the file size.</param>
         public FatDataStream(FatFileSystem fat, DirectoryEntry entry, bool ignoreSize) : this(fat, entry.FirstClusterOfFile)
         {
             if (!ignoreSize)
@@ -42,11 +56,17 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
+        /// <summary>
+        /// Creates a stream over the data referenced by a FAT directory entry.
+        /// </summary>
+        /// <param name="fat">The file system that owns the entry.</param>
+        /// <param name="entry">The directory entry that identifies the data stream.</param>
         public FatDataStream(FatFileSystem fat, DirectoryEntry entry) : this(fat, entry, false) { }
 
         /// <inheritdoc />
         public override void Flush() => _base.Flush();
 
+        /// <inheritdoc />
         public override int Read(byte[] buffer, int offset, int count)
         {
             count = Math.Min(count, (int)(_length - _position));
@@ -75,6 +95,7 @@ namespace TotalImage.FileSystems.FAT
             return totalRead;
         }
 
+        /// <inheritdoc />
         public override long Seek(long offset, SeekOrigin origin)
         {
             var target = origin switch
@@ -98,11 +119,13 @@ namespace TotalImage.FileSystems.FAT
             return target;
         }
 
+        /// <inheritdoc />
         public override void SetLength(long value)
         {
             throw new System.NotImplementedException();
         }
 
+        /// <inheritdoc />
         public override void Write(byte[] buffer, int offset, int count)
         {
             throw new System.NotImplementedException();

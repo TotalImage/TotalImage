@@ -4,8 +4,12 @@ using TotalImage.Containers;
 
 namespace TotalImage.Partitions
 {
+    /// <summary>
+    /// Creates Microsoft Flash partition table instances.
+    /// </summary>
     public class MsFlashFactory : IPartitionTableFactory
     {
+        /// <inheritdoc />
         public PartitionTable? TryLoadPartitionTable(Container container)
         {
             container.Content.Seek(0x800, SeekOrigin.Begin);

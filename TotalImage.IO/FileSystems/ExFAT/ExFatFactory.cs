@@ -5,8 +5,12 @@ using System.Text;
 
 namespace TotalImage.FileSystems.ExFAT;
 
+/// <summary>
+/// Creates exFAT file system instances from streams.
+/// </summary>
 public class ExFatFactory : IFileSystemFactory
 {
+    /// <inheritdoc />
     public FileSystem? TryLoadFileSystem(Stream stream)
     {
         stream.Position = 108; // Bytes Per Sector Shift
