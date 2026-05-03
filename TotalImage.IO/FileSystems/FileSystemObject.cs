@@ -91,5 +91,18 @@ namespace TotalImage.FileSystems
         /// </summary>
         /// <param name="path">The new location of the file system object</param>
         public abstract void MoveTo(string path);
+
+        /// <summary>
+        /// Renames the current object to the specified name
+        /// </summary>
+        /// <param name="name">The new name to assign to the object</param>
+        protected abstract void Rename(string name);
+
+        /// <summary>
+        /// Modifies the attributes of the current object
+        /// </summary>
+        /// <param name="attributes">The new attributes to assign to the object</param>
+
+        protected abstract void ChangeAttributes(FileAttributes attributes);
     }
 }

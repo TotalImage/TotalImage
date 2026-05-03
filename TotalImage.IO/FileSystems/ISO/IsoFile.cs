@@ -93,5 +93,17 @@ namespace TotalImage.FileSystems.ISO
             PartialStream fileStream = new PartialStream(FileSystem.GetStream(), offset, Record.DataLength);
             return fileStream;
         }
+
+        /// <inheritdoc />
+        protected override void Rename(string name)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <inheritdoc />
+        protected override void ChangeAttributes(FileAttributes attributes)
+        {
+            throw new NotSupportedException();
+        }
     }
 }

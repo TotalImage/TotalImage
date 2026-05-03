@@ -38,7 +38,7 @@ namespace TotalImage.FileSystems.FAT
         public override FileAttributes Attributes
         {
             get => (FileAttributes)entry.Attributes;
-            set => throw new NotImplementedException();
+            set => ChangeAttributes(value);
         }
 
         /// <inheritdoc />
@@ -142,7 +142,8 @@ namespace TotalImage.FileSystems.FAT
             return new FatDataStream((FatFileSystem)FileSystem, entry);
         }
 
-        private void Rename(string name)
+        /// <inheritdoc />
+        protected override void Rename(string name)
         {
             //First, check if the file is already deleted, just in case
             if (entry.FileNameBytes[0] == 0xE5)
@@ -159,6 +160,28 @@ namespace TotalImage.FileSystems.FAT
             var entryOffset = 0xB40; //TODO: Get the actual dir entry offset here!!!
             var newEntry = entry.GetBytes();
             Encoding.ASCII.GetBytes(name, 0, 11, newEntry, 0);
+            entry = new DirectoryEntry(fat, newEntry.AsSpan());
+
+            stream.Seek(entryOffset, SeekOrigin.Begin);
+            stream.Write(newEntry, 0, newEntry.Length);
+        }
+
+        /// <inheritdoc />
+        protected override void ChangeAttributes(FileAttributes attributes)
+        {
+            //First, check if the directory is already deleted, just in case
+            if (entry.FileNameBytes[0] == 0xE5)
+            {
+                throw new InvalidOperationException("File is deleted and its attributes cannot be changed.");
+            }
+
+            var stream = fat.GetStream();
+
+            //Not sure if this is the way to do it - what about ShortName and LongName?
+            Attributes = attributes;
+            var entryOffset = 0xB40; //TODO: Get the actual dir entry offset here!!!
+            var newEntry = entry.GetBytes();
+            newEntry[11] = (byte)attributes;
             entry = new DirectoryEntry(fat, newEntry.AsSpan());
 
             stream.Seek(entryOffset, SeekOrigin.Begin);

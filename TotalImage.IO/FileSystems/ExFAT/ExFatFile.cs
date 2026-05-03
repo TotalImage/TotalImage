@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Text;
-using TotalImage.FileSystems.FAT;
 
 namespace TotalImage.FileSystems.ExFAT;
 
@@ -81,6 +80,18 @@ public class ExFatFile : File
         StreamExtensionDirectoryEntry.GetStream((ExFatFileSystem)FileSystem);
 
     public override void MoveTo(string path)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    protected override void Rename(string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    protected override void ChangeAttributes(FileAttributes attributes)
     {
         throw new NotImplementedException();
     }

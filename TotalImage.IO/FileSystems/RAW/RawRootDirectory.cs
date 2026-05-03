@@ -84,5 +84,17 @@ namespace TotalImage.FileSystems.RAW
         {
             throw new NotSupportedException();
         }
+
+        /// <inheritdoc />
+        protected override void Rename(string name)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <inheritdoc />
+        protected override void ChangeAttributes(FileAttributes attributes)
+        {
+            throw new NotSupportedException();
+        }
     }
 }

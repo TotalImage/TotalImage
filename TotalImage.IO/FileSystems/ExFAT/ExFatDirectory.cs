@@ -160,4 +160,14 @@ public class ExFatDirectory : Directory
     {
         throw new NotImplementedException();
     }
+
+    protected override void Rename(string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override void ChangeAttributes(FileAttributes attributes)
+    {
+        throw new NotImplementedException();
+    }
 }
