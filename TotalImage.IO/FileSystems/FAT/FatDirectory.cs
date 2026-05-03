@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using TotalImage.FileSystems.BPB;
 
 namespace TotalImage.FileSystems.FAT
@@ -19,21 +20,21 @@ namespace TotalImage.FileSystems.FAT
         public string ShortName
         {
             get => entry?.FileName ?? string.Empty;
-            set => throw new NotImplementedException();
+            set => Rename(value); //Is this the right way to do it?
         }
 
         /// <inheritdoc />
         public string? LongName
         {
             get => lfnEntries?.Length > 0 ? LongDirectoryEntry.CombineEntries(lfnEntries) : null;
-            set => throw new NotImplementedException();
+            set => Rename(value); //Is this the right way to do it?
         }
 
         /// <inheritdoc />
         public override string Name
         {
             get => LongName ?? ShortName;
-            set => throw new NotImplementedException();
+            set => Rename(value); //Is this the right way to do it?
         }
 
         /// <inheritdoc />
@@ -117,7 +118,13 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override void Delete()
         {
-            //TODO: Currently this only marks the clusters in all FATs as free. However, we still need to mark the directory entries as deleted as well.
+            //First, check if the directory is already deleted, just in case
+            if (entry.Value.FileNameBytes[0] == 0xE5)
+            {
+                throw new InvalidOperationException("Directory is already deleted.");
+            }
+
+            var stream = fat.GetStream();
 
             //First enumerate all the extant objects in this directory
             IEnumerable<FileSystemObject> objects = EnumerateFileSystemObjects(false, false);
@@ -128,7 +135,7 @@ namespace TotalImage.FileSystems.FAT
                 foreach (FileSystemObject obj in objects)
                 {
                     obj.Delete();
-                } 
+                }
             }
 
             uint[] clusters = fat.MainFat.GetClusterChain(FirstCluster); //Should we first check FAT integrity here just to be sure?
@@ -141,6 +148,19 @@ namespace TotalImage.FileSystems.FAT
                     table[cluster] = 0;
                 }
             }
+
+            //TODO: Here, we need to write the FAT cluster changes to the stream as well, not just in memory
+
+            var entryOffset = 0xB40; //Get the actual dir entry offset here!!!
+
+            //Change the first character of the file name in the directory entry to 0xE5 to mark it as deleted
+            var newEntry = entry.Value.GetBytes();
+            newEntry[0] = 0xE5;
+            entry = new DirectoryEntry(fat, newEntry.AsSpan());
+
+            //Write the directory entry change to the stream
+            stream.Seek(entryOffset, SeekOrigin.Begin);
+            stream.Write(newEntry, 0, newEntry.Length);
         }
 
         /// <inheritdoc />
@@ -182,6 +202,29 @@ namespace TotalImage.FileSystems.FAT
         public override void MoveTo(string path)
         {
             throw new NotImplementedException();
+        }
+
+        public override void Rename(string name)
+        {
+            //First, check if the directory is already deleted, just in case
+            if (entry.Value.FileNameBytes[0] == 0xE5)
+            {
+                throw new InvalidOperationException("Directory is deleted and cannot be renamed.");
+            }
+
+            //Get the stream, make a new directory entry for the directory with new name, replace the old entry and write it to the stream
+            var stream = fat.GetStream();
+
+            //Not sure if this is the way to do it - what about ShortName and LongName?
+            Name = name;
+
+            var entryOffset = 0xB40; //TODO: Get the actual dir entry offset here!!!
+            var newEntry = entry.Value.GetBytes();
+            Encoding.ASCII.GetBytes(name, 0, 11, newEntry, 0);
+            entry = new DirectoryEntry(fat, newEntry.AsSpan());
+
+            stream.Seek(entryOffset, SeekOrigin.Begin);
+            stream.Write(newEntry, 0, newEntry.Length);
         }
     }
 }
