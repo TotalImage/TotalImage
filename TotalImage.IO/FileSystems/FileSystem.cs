@@ -4,6 +4,7 @@ using TotalImage.FileSystems.ExFAT;
 using TotalImage.FileSystems.FAT;
 using TotalImage.FileSystems.IMGFS;
 using TotalImage.FileSystems.ISO;
+using TotalImage.FileSystems.NTFS;
 using TotalImage.FileSystems.RAW;
 using TotalImage.FileSystems.UDF;
 
@@ -16,6 +17,7 @@ namespace TotalImage.FileSystems
     {
         private static readonly ImmutableArray<IFileSystemFactory> _knownFactories =
         [
+            new NtfsFactory(),
             new FatFactory(),
             new IsoFactory(),
             new UdfFactory(),
