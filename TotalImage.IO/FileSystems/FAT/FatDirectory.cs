@@ -204,7 +204,7 @@ namespace TotalImage.FileSystems.FAT
             throw new NotImplementedException();
         }
 
-        public override void Rename(string name)
+        private void Rename(string name)
         {
             //First, check if the directory is already deleted, just in case
             if (entry.Value.FileNameBytes[0] == 0xE5)

@@ -123,8 +123,8 @@ namespace TotalImage.FileSystems.FAT
         {
             /* "NO NAME" is a placeholder used for the BPB volume label by some versions of DOS if no label is specified when formatting the disk.
              * We therefore treat it as if there is no volume label in the BPB either and show our own placeholder instead. */
-            get => !string.IsNullOrWhiteSpace(RootDirectoryVolumeLabel) ? 
-                RootDirectoryVolumeLabel : !string.IsNullOrWhiteSpace(BpbVolumeLabel) && !BpbVolumeLabel.Equals("NO NAME", StringComparison.OrdinalIgnoreCase) ? 
+            get => !string.IsNullOrWhiteSpace(RootDirectoryVolumeLabel) ?
+                RootDirectoryVolumeLabel : !string.IsNullOrWhiteSpace(BpbVolumeLabel) && !BpbVolumeLabel.Equals("NO NAME", StringComparison.OrdinalIgnoreCase) ?
                 BpbVolumeLabel : "<No label>";
             set => RootDirectoryVolumeLabel = value;
         }
@@ -156,23 +156,24 @@ namespace TotalImage.FileSystems.FAT
             }
             set
             {
+                //Is this stupid? Probably. We could possibly skip creating the FatFile object and work with its directory entry directly
                 foreach (var (entry, _) in DirectoryEntry.EnumerateRootDirectory(this))
                 {
                     if (entry.Attributes.HasFlag(FatAttributes.VolumeId) && !entry.Attributes.HasFlag(FatAttributes.LongName))
                     {
-                        var file = new FatFile(this, entry, null, RootDirectory);
-                        file.Rename(value);
+                        var file = new FatFile(this, entry, null, RootDirectory)
+                        {
+                            Name = value
+                        };
                     }
                 }
             }
         }
 
-        private 
-
-        protected FatFileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
+        private protected FatFileSystem(Stream stream, BiosParameterBlock bpb) : base(stream)
         {
             _bpb = bpb;
             RootDirectory = new FatDirectory(this);
-        }        
+        }
     }
 }

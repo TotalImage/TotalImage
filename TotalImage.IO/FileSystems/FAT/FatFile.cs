@@ -142,8 +142,7 @@ namespace TotalImage.FileSystems.FAT
             return new FatDataStream((FatFileSystem)FileSystem, entry);
         }
 
-        /// <inheritdoc/>
-        public override void Rename(string name)
+        private void Rename(string name)
         {
             //First, check if the file is already deleted, just in case
             if (entry.FileNameBytes[0] == 0xE5)
