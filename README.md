@@ -45,6 +45,7 @@ Below is a non-exhaustive list of things we plan to support. Please note that th
 * FAT12, FAT16, FAT32
 * HPFS, NTFS
 * High Sierra, ISO9660, UDF
+* IMGFS
 * And more...
 
 ### Partitioning schemes

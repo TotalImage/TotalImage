@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TotalImage", "TotalImage\To
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TotalImage.IO", "TotalImage.IO\TotalImage.IO.csproj", "{AC7B1659-31F2-42F4-A071-B3AE9EF7BDB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotalImage.IO.Tests", "TotalImage.IO.Tests\TotalImage.IO.Tests.csproj", "{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{494B8CDA-A576-44A4-86D2-BDBFF8F0EFA8}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -46,6 +48,18 @@ Global
 		{AC7B1659-31F2-42F4-A071-B3AE9EF7BDB6}.Release|x64.Build.0 = Release|Any CPU
 		{AC7B1659-31F2-42F4-A071-B3AE9EF7BDB6}.Release|x86.ActiveCfg = Release|Any CPU
 		{AC7B1659-31F2-42F4-A071-B3AE9EF7BDB6}.Release|x86.Build.0 = Release|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Debug|x64.Build.0 = Debug|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Debug|x86.Build.0 = Debug|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Release|x64.ActiveCfg = Release|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Release|x64.Build.0 = Release|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Release|x86.ActiveCfg = Release|Any CPU
+		{975A95D1-C5DF-4C30-B3A8-6FA5766A5EC9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
