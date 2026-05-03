@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using TotalImage.FileSystems.UDF;
 
 namespace TotalImage.FileSystems.ISO
 {
@@ -9,6 +10,8 @@ namespace TotalImage.FileSystems.ISO
     /// </summary>
     public class IsoFactory : IFileSystemFactory
     {
+        private readonly UdfFactory _udfFactory = new();
+
         /// <inheritdoc />
         public FileSystem? TryLoadFileSystem(Stream stream)
         {
@@ -26,12 +29,22 @@ namespace TotalImage.FileSystems.ISO
                 //First check if this might be ISO 9660 or High Sierra
                 if (identifierBytes[0..5].SequenceEqual(IsoVolumeDescriptor.IsoStandardIdentifier) || identifierBytes[8..13].SequenceEqual(IsoVolumeDescriptor.HsfStandardIdentifier))
                 {
+                    // Hybrid optical media commonly contains both ISO 9660 and UDF metadata.
+                    // Prefer UDF when present because it exposes the richer file system view.
+                    FileSystem? udfFileSystem = _udfFactory.TryLoadFileSystem(stream);
+                    if (udfFileSystem != null)
+                    {
+                        return udfFileSystem;
+                    }
+
                     // trim off any leading blocks in this image - e.g. if there's more than 32 KiB of system area before the primary volume descriptor,
                     // ditch them because that's out of spec and probably the result of a bad dump
                     long partialStreamStart = nextOffset - 0x8001;
-                    return partialStreamStart == 0
-                        ? new Iso9660FileSystem(stream)
-                        : new Iso9660FileSystem(new PartialStream(stream, partialStreamStart, stream.Length - partialStreamStart));
+                    Stream candidateStream = partialStreamStart == 0
+                        ? stream
+                        : new PartialStream(stream, partialStreamStart, stream.Length - partialStreamStart);
+
+                    return new Iso9660FileSystem(candidateStream);
                 }
 
                 nextOffset += 0x800; //If it's neither, just seek to the next sector and try again
