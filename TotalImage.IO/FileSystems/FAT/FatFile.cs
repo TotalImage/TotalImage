@@ -118,7 +118,7 @@ namespace TotalImage.FileSystems.FAT
 
             //TODO: Here, we need to write the FAT cluster changes to the stream as well, not just in memory
 
-            var entryOffset = 0xB40; //Get the actual dir entry offset here!!!
+            var entryOffset = 0x4100A0; //Get the actual dir entry offset here!!!
 
             //Change the first character of the file name in the directory entry to 0xE5 to mark it as deleted
             var newEntry = entry.GetBytes();
@@ -126,8 +126,8 @@ namespace TotalImage.FileSystems.FAT
             entry = new DirectoryEntry(fat, newEntry.AsSpan());
 
             //Write the directory entry change to the stream
-            stream.Seek(entryOffset, SeekOrigin.Begin);
-            stream.Write(newEntry, 0, newEntry.Length);
+            /*stream.Seek(entryOffset, SeekOrigin.Begin);
+            stream.Write(newEntry, 0, newEntry.Length);*/
         }
 
         /// <inheritdoc />

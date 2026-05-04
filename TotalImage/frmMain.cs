@@ -158,9 +158,9 @@ namespace TotalImage
             }
 
             using dlgChangeVolLabel dlg = new(fs.RootDirectoryVolumeLabel, fs.BpbVolumeLabel);
-            if(dlg.ShowDialog() == DialogResult.OK)
+            if (dlg.ShowDialog() == DialogResult.OK)
             {
-                var volLabelOpRD = new VolumeLabelChangedOperation(image?.PartitionTable.Partitions[0], fs.RootDirectoryVolumeLabel, dlg.NewRDLabel, 
+                var volLabelOpRD = new VolumeLabelChangedOperation(image?.PartitionTable.Partitions[0], fs.RootDirectoryVolumeLabel, dlg.NewRDLabel,
                     VolumeLabelChangedOperation.VolumeLabel.RootDirectory, DateTime.Now);
                 image?.PendingChanges.Push(volLabelOpRD);
 
@@ -172,7 +172,7 @@ namespace TotalImage
                 }
 
                 unsavedChanges = true;
-               
+
                 saveToolStripButton.Enabled = true;
                 saveToolStripMenuItem.Enabled = true;
 
@@ -526,11 +526,15 @@ namespace TotalImage
                 foreach (var entry in SelectedItems)
                 {
                     entry.Delete();
+
+                    var deleteOp = new ObjectDeletedOperation(entry, DateTime.Now);
+                    image?.PendingChanges.Push(deleteOp);
                 }
             }
             else if (lstDirectories.Focused && ((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is not null)
             {
-                var dirSize = ((TiDirectory)lstDirectories.SelectedNode.Tag).GetSize(true, false); //Get total directory size
+                var directory = (TiDirectory)lstDirectories.SelectedNode.Tag;
+                var dirSize = directory.GetSize(true, false); //Get total directory size
 
                 if (Settings.CurrentSettings.ConfirmDeletion)
                 {
@@ -563,8 +567,16 @@ namespace TotalImage
                         return;
                 }
 
-                ((TiDirectory)lstDirectories.SelectedNode.Tag).Delete();
+                directory.Delete();
+
+                var deleteOp = new ObjectDeletedOperation(directory, DateTime.Now);
+                image?.PendingChanges.Push(deleteOp);
             }
+
+            unsavedChanges = true;
+
+            saveToolStripButton.Enabled = true;
+            saveToolStripMenuItem.Enabled = true;
         }
 
         //Undeletes a delete file or folder
@@ -2563,21 +2575,21 @@ namespace TotalImage
                 return startNode;
             }
             else foreach (TreeNode node in startNode.Nodes)
+            {
+                // hack
+                if (((TiDirectory)node.Tag).FullName == dir.FullName)
                 {
-                    // hack
-                    if (((TiDirectory)node.Tag).FullName == dir.FullName)
+                    return node;
+                }
+                else
+                {
+                    TreeNode? nodeChild = FindNode(node, dir);
+                    if (nodeChild is not null)
                     {
-                        return node;
-                    }
-                    else
-                    {
-                        TreeNode? nodeChild = FindNode(node, dir);
-                        if (nodeChild is not null)
-                        {
-                            return nodeChild;
-                        }
+                        return nodeChild;
                     }
                 }
+            }
 
             return null;
         }
