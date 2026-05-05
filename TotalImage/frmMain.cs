@@ -623,6 +623,7 @@ namespace TotalImage
                 "Microsoft VHD (*.vhd)|*.vhd|" +
                 "T98-Next HD (*.nhd)|*.nhd|" +
                 "PCjs disk images (*.json)|*.json|" +
+                "DiskDupe disk image (*.ddi)|*.ddi|" +
                 "All files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -1943,11 +1944,12 @@ namespace TotalImage
                         ".nhd" => new NhdContainer(path, memoryMapping),
                         ".imz" or ".zip" => new ImzContainer(path, memoryMapping),
                         ".hdi" or ".fdi" => new Anex86Container(path, memoryMapping),
+                        ".ddi" => new DiskDupeContainer(path, memoryMapping),
                         ".img" or ".ima" or ".iso" or ".vfd" or ".flp" or ".360" or
                         ".720" or ".12" or ".144" or ".288" or ".dsk" or ".hdm" => new RawContainer(path, memoryMapping),
                         ".json" => new PCjsContainer(path, memoryMapping),
                         _ => throw new InvalidDataException("This container format is not recognized and cannot be opened."),
-                    }; ;
+                    };
                 }
                 catch (FileNotFoundException)
                 {
@@ -2525,6 +2527,7 @@ namespace TotalImage
                         pbrStatusCapacity.ProgressBar.SetState(ProgressBarState.Normal); // Set the progress bar colour to green.
 
                     // Set progress bar value with a bit of a hack to disable the glow.
+                    //TODO: this should guard against setting to a negative value...
                     pbrStatusCapacity.Minimum = 100 - (int)freeSpacePercentage;
                     pbrStatusCapacity.Value = 100 - (int)freeSpacePercentage;
                     pbrStatusCapacity.Minimum = 0;
