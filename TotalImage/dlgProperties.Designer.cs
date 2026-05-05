@@ -85,8 +85,8 @@ namespace TotalImage
             // 
             // txtFilename
             // 
-            txtFilename.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtFilename.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            txtFilename.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             txtFilename.Location = new System.Drawing.Point(50, 16);
             txtFilename.Name = "txtFilename";
             txtFilename.Size = new System.Drawing.Size(337, 23);
@@ -357,7 +357,7 @@ namespace TotalImage
             // 
             // txtHashSHA1
             // 
-            txtHashSHA1.BackColor = System.Drawing.Color.White;
+            txtHashSHA1.BackColor = System.Drawing.SystemColors.Window;
             txtHashSHA1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             txtHashSHA1.Location = new System.Drawing.Point(115, 278);
             txtHashSHA1.Name = "txtHashSHA1";
@@ -381,7 +381,7 @@ namespace TotalImage
             // 
             // txtHashMD5
             // 
-            txtHashMD5.BackColor = System.Drawing.Color.White;
+            txtHashMD5.BackColor = System.Drawing.SystemColors.Window;
             txtHashMD5.BorderStyle = System.Windows.Forms.BorderStyle.None;
             txtHashMD5.Location = new System.Drawing.Point(115, 254);
             txtHashMD5.Name = "txtHashMD5";
@@ -405,7 +405,7 @@ namespace TotalImage
             // 
             // txtHashCRC32
             // 
-            txtHashCRC32.BackColor = System.Drawing.Color.White;
+            txtHashCRC32.BackColor = System.Drawing.SystemColors.Window;
             txtHashCRC32.BorderStyle = System.Windows.Forms.BorderStyle.None;
             txtHashCRC32.Location = new System.Drawing.Point(115, 230);
             txtHashCRC32.Name = "txtHashCRC32";
