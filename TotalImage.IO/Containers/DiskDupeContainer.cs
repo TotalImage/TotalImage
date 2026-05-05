@@ -1,4 +1,3 @@
-using System.Buffers.Binary;
 using System.IO;
 
 namespace TotalImage.Containers
@@ -33,7 +32,7 @@ namespace TotalImage.Containers
                 dataOffset = 0x1E00;
             else if (magicBytes[10] == 0x04)
                 dataOffset = 0x2400;
-            else //It's none of the above, so just search for the first occurrence of the jump instruction (0xEB) in the first 0x3000 bytes of the file
+            else //It's none of the above, so just search for the first occurrence of the jump instruction in the first 0x3000 bytes of the file
             {
                 for(int i = 0; i < 0x3000; i += 0x10)
                 {
