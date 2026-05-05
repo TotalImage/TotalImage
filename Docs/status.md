@@ -72,7 +72,10 @@ Only partitions formatted with supported file systems are currently supported (s
 | FAT16 | ✔ Yes | ❌ No | ❌ No |
 | FAT32 | ✔ Yes | ❌ No | ❌ No |
 | VFAT extensions | ✔ Yes | ❌ No | ❌ No |
+| NTFS | ✔ Yes | ❌ No | ❌ No |
 | exFAT | ✔ Yes | ❌ No | ❌ No |
+| Windows CE IMGFS | ✔ Yes | ❌ No | ❌ No |
 | ISO-9660 | ✔ Yes | ❌ No | ❌ No |
+| UDF | ✔ Yes | ❌ No | ❌ No |
 | High Sierra Format | ✔ Yes | ❌ No | ❌ No |
 | Joliet extensions for ISO-9660 | ✔ Yes | ❌ No | ❌ No |
