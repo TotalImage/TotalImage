@@ -44,7 +44,7 @@ namespace TotalImage
             // btnOK
             // 
             btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnOK.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             btnOK.Location = new System.Drawing.Point(177, 12);
             btnOK.Name = "btnOK";
             btnOK.Size = new System.Drawing.Size(80, 26);
@@ -136,6 +136,7 @@ namespace TotalImage
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.SystemColors.Window;
+            CancelButton = btnOK;
             ClientSize = new System.Drawing.Size(269, 256);
             Controls.Add(lnkGitHub);
             Controls.Add(lblLicense);
