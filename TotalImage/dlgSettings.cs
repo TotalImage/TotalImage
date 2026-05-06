@@ -94,6 +94,7 @@ namespace TotalImage
             cbxConfirmOverwriteExtract.Checked = Settings.CurrentSettings.ConfirmOverwriteExtraction;
             txtMemoryMapping.Value = Settings.CurrentSettings.MemoryMappingThreshold / 1048576;
             cbxShowDirSizes.Checked = Settings.CurrentSettings.FileListShowDirSize;
+            lstColorMode.SelectedIndex = (int)Settings.CurrentSettings.ColorMode;
 
             switch (Settings.CurrentSettings.FilesView)
             {
@@ -151,6 +152,7 @@ namespace TotalImage
             Settings.CurrentSettings.ConfirmOverwriteExtraction = cbxConfirmOverwriteExtract.Checked;
             Settings.CurrentSettings.MemoryMappingThreshold = (long)txtMemoryMapping.Value * 1048576;
             Settings.CurrentSettings.FileListShowDirSize = cbxShowDirSizes.Checked;
+            Settings.CurrentSettings.ColorMode = (SystemColorMode)lstColorMode.SelectedIndex;
 
             switch (lstSizeUnits.SelectedIndex)
             {
