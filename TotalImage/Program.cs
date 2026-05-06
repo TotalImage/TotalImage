@@ -9,7 +9,7 @@ namespace TotalImage
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            Application.SetColorMode(SystemColorMode.System);
+            Application.SetColorMode(Settings.CurrentSettings.ColorMode);
             Application.Run(new frmMain());
         }
     }

@@ -142,6 +142,10 @@ namespace TotalImage
             /// Calculate and display the total size of every directory shown in the file list.
             /// </summary>
             public bool FileListShowDirSize { get; set; } = false;
+            /// <summary>
+            /// Color mode for the application. Choosing System will follow the system theme, Light and Dark force the respective theme regardless of the system theme.
+            /// </summary>
+            public SystemColorMode ColorMode { get; set; } = SystemColorMode.System;
         }
 
         /// <summary>
@@ -245,6 +249,7 @@ namespace TotalImage
                     CurrentSettings.ConfirmOverwriteExtraction = settings.ConfirmOverwriteExtraction;
                     CurrentSettings.MemoryMappingThreshold = settings.MemoryMappingThreshold;
                     CurrentSettings.FileListShowDirSize = settings.FileListShowDirSize;
+                    CurrentSettings.ColorMode = settings.ColorMode;
                 }
             }
             catch (IOException)
@@ -316,6 +321,7 @@ namespace TotalImage
             CurrentSettings.ConfirmOverwriteExtraction = true;
             CurrentSettings.MemoryMappingThreshold = 1048576;
             CurrentSettings.FileListShowDirSize = false;
+            CurrentSettings.ColorMode = SystemColorMode.System;
         }
 
         /// <summary>
