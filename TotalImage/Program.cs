@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 namespace TotalImage
@@ -9,6 +9,7 @@ namespace TotalImage
         static void Main()
         {
             ApplicationConfiguration.Initialize();
+            Application.SetColorMode(SystemColorMode.System);
             Application.Run(new frmMain());
         }
     }

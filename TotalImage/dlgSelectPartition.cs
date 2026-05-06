@@ -12,8 +12,8 @@ namespace TotalImage
 {
     public partial class dlgSelectPartition : Form
     {
+        [System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
         public PartitionTable PartitionTable { get; set; }
-
         public bool ReadOnly { get; private set; }
         public int SelectedEntry { get; private set; }
 
