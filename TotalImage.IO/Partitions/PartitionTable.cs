@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -66,10 +67,17 @@ namespace TotalImage.Partitions
         {
             foreach (var factory in _knownFactories)
             {
-                var result = factory.TryLoadPartitionTable(container);
-                if (result != null)
+                try
                 {
-                    return result;
+                    var result = factory.TryLoadPartitionTable(container);
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Partition table detection failed for {factory.GetType().Name}: {ex.Message}");
                 }
             }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.IO;
 using TotalImage.FileSystems.ExFAT;
@@ -88,10 +89,17 @@ namespace TotalImage.FileSystems
         {
             foreach (var factory in _knownFactories)
             {
-                var result = factory.TryLoadFileSystem(stream);
-                if (result != null)
+                try
                 {
-                    return result;
+                    var result = factory.TryLoadFileSystem(stream);
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"File system detection failed for {factory.GetType().Name}: {ex.Message}");
                 }
             }
 
