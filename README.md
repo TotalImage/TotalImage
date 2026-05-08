@@ -2,21 +2,19 @@
 **TotalImage** is a free and open source disk image editor licensed under the MIT license. For more information, see the `LICENSE` file. It is written in C# and uses Windows Forms for the UI.
 
 ### Downloads
-Currently, the project is still in early stages of development (alpha-level), and as such is not quite ready for everyday use yet. We will provide official builds once we reach that stage, in the mean time you can build it yourself or ask us to provide binaries for you (see the *Development* and *Support* sections below).
+Currently, the project is still in early stages of development (alpha-level), and as such is not quite ready for everyday use yet. We will provide official builds for major pre-release milestones and stable releases only, in the mean time you can build it yourself or ask us to provide binaries for you (see the *Development* and *Support* sections below).
 
 ### System requirements
 * [.NET 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) Desktop Runtime
-* Windows 7 SP1 <sup>1</sup>, 8.1, 10 or 11
+* Windows 10 or 11 (latest version recommended)
 
-Support for other operating systems will be considered within the limitations of .NET.
-
-<sup>1</sup> Windows 7 is no longer officially supported by .NET, but is not actively blocked by the installer. However, we may not be able to fix all issues on Windows 7 if it turns out it's a .NET problem specific to that version of Windows.
+Please see [this page](https://github.com/TotalImage/TotalImage/blob/master/Docs/oldwin.md) if you're using Windows 7 or 8.1.
 
 ## Current status
 See the [Status page](https://github.com/TotalImage/TotalImage/blob/master/Docs/status.md) for details about currently implemented features.
 
 ## Planned features
-Below is a non-exhaustive list of things we plan to support. Please note that this list may change over time. We're open to adding support for more stuff in the future, but we have to start with the basics. For currently supported features, see the link in the section above.
+Below is a non-exhaustive list of things we plan to support. Please note that this list may change over time. We're open to adding support for more stuff in the future, but we have to start with the basics. For currently supported features, see the linked status page in the section above.
 
 ### Media types
 * Floppy disks
@@ -55,11 +53,11 @@ Below is a non-exhaustive list of things we plan to support. Please note that th
 * And more...
 
 ## Development
-To develop TotalImage, we recommend you install [Microsoft Visual Studio 2026](https://visualstudio.microsoft.com/vs/). This includes the designer for Windows Forms, which makes it easier to work with the frontend.
+To work on TotalImage, we suggest you install [Microsoft Visual Studio 2026](https://visualstudio.microsoft.com/vs/). This includes the designer for Windows Forms, which makes it easier to work with the frontend.
 
 Alternatively, you can also build the solution with [.NET CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/), which is included in the [.NET SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
 
-You will also need to install [git](https://git-scm.com/) in both cases (required for displaying git commit hash in the About dialog).
+You will also need to install [git](https://git-scm.com/) in both cases and make sure the `git.exe` executable is included in the `PATH` environment variable (required for displaying git commit hash in the About dialog).
 
 ## Support
 Please open an issue on this repo for any bug reports and suggestions you may have. If you wish to talk to us directly, visit the official TotalImage Discord server:
