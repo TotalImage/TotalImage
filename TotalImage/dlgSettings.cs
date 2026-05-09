@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using static Interop.UxTheme;
 
 namespace TotalImage
 {
@@ -71,6 +72,11 @@ namespace TotalImage
         private void dlgSettings_Load(object sender, System.EventArgs e)
         {
             SyncUIWithSettings();
+
+            /* lstColorMode's Win32 handle is created eagerly because it lives on the initially-visible
+             * tab, so it misses the dark mode theming that is applied lazily to handles on other tabs.
+             * Explicitly set the theme based on the active color mode to work around this. */
+            SetWindowTheme(lstColorMode.Handle, Application.ColorMode == SystemColorMode.Dark || Application.IsDarkModeEnabled ? "DarkMode_CFD" : "", null);
         }
 
         //Syncs the dialog UI with CurrentSettings
@@ -94,6 +100,7 @@ namespace TotalImage
             cbxConfirmOverwriteExtract.Checked = Settings.CurrentSettings.ConfirmOverwriteExtraction;
             txtMemoryMapping.Value = Settings.CurrentSettings.MemoryMappingThreshold / 1048576;
             cbxShowDirSizes.Checked = Settings.CurrentSettings.FileListShowDirSize;
+            lstColorMode.SelectedIndex = (int)Settings.CurrentSettings.ColorMode;
 
             switch (Settings.CurrentSettings.FilesView)
             {
@@ -151,6 +158,7 @@ namespace TotalImage
             Settings.CurrentSettings.ConfirmOverwriteExtraction = cbxConfirmOverwriteExtract.Checked;
             Settings.CurrentSettings.MemoryMappingThreshold = (long)txtMemoryMapping.Value * 1048576;
             Settings.CurrentSettings.FileListShowDirSize = cbxShowDirSizes.Checked;
+            Settings.CurrentSettings.ColorMode = (SystemColorMode)lstColorMode.SelectedIndex;
 
             switch (lstSizeUnits.SelectedIndex)
             {

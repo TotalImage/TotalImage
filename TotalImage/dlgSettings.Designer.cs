@@ -33,14 +33,10 @@ namespace TotalImage
             pnlBottom = new System.Windows.Forms.Panel();
             tabs = new System.Windows.Forms.TabControl();
             tabGeneral = new System.Windows.Forms.TabPage();
-            gbxMisc = new System.Windows.Forms.GroupBox();
-            btnOpenTemp = new System.Windows.Forms.Button();
-            lblClearTemp = new System.Windows.Forms.Label();
-            lblClearRecent = new System.Windows.Forms.Label();
-            lblResetSettings = new System.Windows.Forms.Label();
-            btnClearTemp = new System.Windows.Forms.Button();
-            btnClearRecent = new System.Windows.Forms.Button();
-            btnResetSettings = new System.Windows.Forms.Button();
+            gbxColorMode = new System.Windows.Forms.GroupBox();
+            lstColorMode = new System.Windows.Forms.ComboBox();
+            lblColorMode1 = new System.Windows.Forms.Label();
+            lblColorMode = new System.Windows.Forms.Label();
             gbxBehavior = new System.Windows.Forms.GroupBox();
             lblMemoryMapping1 = new System.Windows.Forms.Label();
             txtMemoryMapping = new System.Windows.Forms.NumericUpDown();
@@ -49,12 +45,20 @@ namespace TotalImage
             cbxConfirmOverwriteExtract = new System.Windows.Forms.CheckBox();
             cbxConfirmDeletion = new System.Windows.Forms.CheckBox();
             cbxConfirmInjection = new System.Windows.Forms.CheckBox();
+            gbxMisc = new System.Windows.Forms.GroupBox();
+            btnOpenTemp = new System.Windows.Forms.Button();
+            lblClearTemp = new System.Windows.Forms.Label();
+            lblClearRecent = new System.Windows.Forms.Label();
+            lblResetSettings = new System.Windows.Forms.Label();
+            btnClearTemp = new System.Windows.Forms.Button();
+            btnClearRecent = new System.Windows.Forms.Button();
+            btnResetSettings = new System.Windows.Forms.Button();
             tabView = new System.Windows.Forms.TabPage();
-            gbxSizeUnits = new System.Windows.Forms.GroupBox();
-            lblSizeUnitsTip = new System.Windows.Forms.Label();
-            lblSizeUnitsPreview = new System.Windows.Forms.Label();
-            lblSizeUnits = new System.Windows.Forms.Label();
-            lstSizeUnits = new System.Windows.Forms.ComboBox();
+            gbxMainWindow = new System.Windows.Forms.GroupBox();
+            cbxShowCommandBar = new System.Windows.Forms.CheckBox();
+            cbxShowStatusBar = new System.Windows.Forms.CheckBox();
+            cbxShowDirectoryTree = new System.Windows.Forms.CheckBox();
+            cbxShowHiddenItems = new System.Windows.Forms.CheckBox();
             gbxFileList = new System.Windows.Forms.GroupBox();
             cbxShowDirSizes = new System.Windows.Forms.CheckBox();
             lblViewType = new System.Windows.Forms.Label();
@@ -63,15 +67,12 @@ namespace TotalImage
             lblSortOrder = new System.Windows.Forms.Label();
             lblSortBy = new System.Windows.Forms.Label();
             lstSortBy = new System.Windows.Forms.ComboBox();
-            gbxMainWindow = new System.Windows.Forms.GroupBox();
-            cbxShowCommandBar = new System.Windows.Forms.CheckBox();
-            cbxShowStatusBar = new System.Windows.Forms.CheckBox();
-            cbxShowDirectoryTree = new System.Windows.Forms.CheckBox();
-            cbxShowHiddenItems = new System.Windows.Forms.CheckBox();
+            gbxSizeUnits = new System.Windows.Forms.GroupBox();
+            lblSizeUnitsTip = new System.Windows.Forms.Label();
+            lblSizeUnitsPreview = new System.Windows.Forms.Label();
+            lblSizeUnits = new System.Windows.Forms.Label();
+            lstSizeUnits = new System.Windows.Forms.ComboBox();
             tabExtraction = new System.Windows.Forms.TabPage();
-            gbxExtractionPreserve = new System.Windows.Forms.GroupBox();
-            cbxPreserveDates = new System.Windows.Forms.CheckBox();
-            cbxPreserveAttributes = new System.Windows.Forms.CheckBox();
             gbxExtractionDefaults = new System.Windows.Forms.GroupBox();
             cbxExtractAsk = new System.Windows.Forms.CheckBox();
             lblExtractPath = new System.Windows.Forms.Label();
@@ -81,6 +82,9 @@ namespace TotalImage
             rbnExtractPreserve = new System.Windows.Forms.RadioButton();
             rbnIgnoreFolders = new System.Windows.Forms.RadioButton();
             rbnExtractFlat = new System.Windows.Forms.RadioButton();
+            gbxExtractionPreserve = new System.Windows.Forms.GroupBox();
+            cbxPreserveDates = new System.Windows.Forms.CheckBox();
+            cbxPreserveAttributes = new System.Windows.Forms.CheckBox();
             tabIntegration = new System.Windows.Forms.TabPage();
             gbxFileAssociations = new System.Windows.Forms.GroupBox();
             lblFileAssoc = new System.Windows.Forms.Label();
@@ -91,16 +95,17 @@ namespace TotalImage
             pnlBottom.SuspendLayout();
             tabs.SuspendLayout();
             tabGeneral.SuspendLayout();
-            gbxMisc.SuspendLayout();
+            gbxColorMode.SuspendLayout();
             gbxBehavior.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)txtMemoryMapping).BeginInit();
+            gbxMisc.SuspendLayout();
             tabView.SuspendLayout();
-            gbxSizeUnits.SuspendLayout();
-            gbxFileList.SuspendLayout();
             gbxMainWindow.SuspendLayout();
+            gbxFileList.SuspendLayout();
+            gbxSizeUnits.SuspendLayout();
             tabExtraction.SuspendLayout();
-            gbxExtractionPreserve.SuspendLayout();
             gbxExtractionDefaults.SuspendLayout();
+            gbxExtractionPreserve.SuspendLayout();
             tabIntegration.SuspendLayout();
             gbxFileAssociations.SuspendLayout();
             gbxIntegrationMisc.SuspendLayout();
@@ -154,14 +159,141 @@ namespace TotalImage
             // tabGeneral
             // 
             tabGeneral.BackColor = System.Drawing.SystemColors.Window;
-            tabGeneral.Controls.Add(gbxMisc);
+            tabGeneral.Controls.Add(gbxColorMode);
             tabGeneral.Controls.Add(gbxBehavior);
+            tabGeneral.Controls.Add(gbxMisc);
             tabGeneral.Location = new System.Drawing.Point(4, 24);
             tabGeneral.Name = "tabGeneral";
             tabGeneral.Padding = new System.Windows.Forms.Padding(3);
             tabGeneral.Size = new System.Drawing.Size(453, 454);
             tabGeneral.TabIndex = 0;
             tabGeneral.Text = "General";
+            // 
+            // gbxColorMode
+            // 
+            gbxColorMode.Controls.Add(lstColorMode);
+            gbxColorMode.Controls.Add(lblColorMode1);
+            gbxColorMode.Controls.Add(lblColorMode);
+            gbxColorMode.Location = new System.Drawing.Point(6, 172);
+            gbxColorMode.Name = "gbxColorMode";
+            gbxColorMode.Size = new System.Drawing.Size(441, 82);
+            gbxColorMode.TabIndex = 3;
+            gbxColorMode.TabStop = false;
+            gbxColorMode.Text = "Color mode";
+            // 
+            // lstColorMode
+            // 
+            lstColorMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            lstColorMode.FormattingEnabled = true;
+            lstColorMode.Items.AddRange(new object[] { "Light", "System-defined", "Dark" });
+            lstColorMode.Location = new System.Drawing.Point(149, 19);
+            lstColorMode.Name = "lstColorMode";
+            lstColorMode.Size = new System.Drawing.Size(175, 23);
+            lstColorMode.TabIndex = 16;
+            // 
+            // lblColorMode1
+            // 
+            lblColorMode1.AutoSize = true;
+            lblColorMode1.Location = new System.Drawing.Point(9, 54);
+            lblColorMode1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            lblColorMode1.Name = "lblColorMode1";
+            lblColorMode1.Size = new System.Drawing.Size(315, 15);
+            lblColorMode1.TabIndex = 15;
+            lblColorMode1.Text = "TotalImage must be restarted for this setting to take effect.";
+            // 
+            // lblColorMode
+            // 
+            lblColorMode.AutoSize = true;
+            lblColorMode.Location = new System.Drawing.Point(9, 22);
+            lblColorMode.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            lblColorMode.Name = "lblColorMode";
+            lblColorMode.Size = new System.Drawing.Size(135, 15);
+            lblColorMode.TabIndex = 14;
+            lblColorMode.Text = "Application color mode:";
+            // 
+            // gbxBehavior
+            // 
+            gbxBehavior.Controls.Add(lblMemoryMapping1);
+            gbxBehavior.Controls.Add(txtMemoryMapping);
+            gbxBehavior.Controls.Add(lblMemoryMapping);
+            gbxBehavior.Controls.Add(cbxAutoincrementFilename);
+            gbxBehavior.Controls.Add(cbxConfirmOverwriteExtract);
+            gbxBehavior.Controls.Add(cbxConfirmDeletion);
+            gbxBehavior.Controls.Add(cbxConfirmInjection);
+            gbxBehavior.Location = new System.Drawing.Point(6, 6);
+            gbxBehavior.Name = "gbxBehavior";
+            gbxBehavior.Size = new System.Drawing.Size(441, 160);
+            gbxBehavior.TabIndex = 2;
+            gbxBehavior.TabStop = false;
+            gbxBehavior.Text = "Behavior";
+            // 
+            // lblMemoryMapping1
+            // 
+            lblMemoryMapping1.AutoSize = true;
+            lblMemoryMapping1.Enabled = false;
+            lblMemoryMapping1.Location = new System.Drawing.Point(349, 130);
+            lblMemoryMapping1.Name = "lblMemoryMapping1";
+            lblMemoryMapping1.Size = new System.Drawing.Size(28, 15);
+            lblMemoryMapping1.TabIndex = 21;
+            lblMemoryMapping1.Text = "MiB";
+            // 
+            // txtMemoryMapping
+            // 
+            txtMemoryMapping.Enabled = false;
+            txtMemoryMapping.Location = new System.Drawing.Point(243, 127);
+            txtMemoryMapping.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
+            txtMemoryMapping.Name = "txtMemoryMapping";
+            txtMemoryMapping.Size = new System.Drawing.Size(100, 23);
+            txtMemoryMapping.TabIndex = 5;
+            // 
+            // lblMemoryMapping
+            // 
+            lblMemoryMapping.AutoSize = true;
+            lblMemoryMapping.Enabled = false;
+            lblMemoryMapping.Location = new System.Drawing.Point(9, 130);
+            lblMemoryMapping.Name = "lblMemoryMapping";
+            lblMemoryMapping.Size = new System.Drawing.Size(228, 15);
+            lblMemoryMapping.TabIndex = 19;
+            lblMemoryMapping.Text = "Threshold for mapping files into memory:";
+            // 
+            // cbxAutoincrementFilename
+            // 
+            cbxAutoincrementFilename.AutoSize = true;
+            cbxAutoincrementFilename.Enabled = false;
+            cbxAutoincrementFilename.Location = new System.Drawing.Point(11, 102);
+            cbxAutoincrementFilename.Name = "cbxAutoincrementFilename";
+            cbxAutoincrementFilename.Size = new System.Drawing.Size(331, 19);
+            cbxAutoincrementFilename.TabIndex = 4;
+            cbxAutoincrementFilename.Text = "When saving, auto-increment last filename when possible";
+            // 
+            // cbxConfirmOverwriteExtract
+            // 
+            cbxConfirmOverwriteExtract.AutoSize = true;
+            cbxConfirmOverwriteExtract.Location = new System.Drawing.Point(11, 22);
+            cbxConfirmOverwriteExtract.Name = "cbxConfirmOverwriteExtract";
+            cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(215, 19);
+            cbxConfirmOverwriteExtract.TabIndex = 1;
+            cbxConfirmOverwriteExtract.Text = "Confirm overwrite during extraction";
+            // 
+            // cbxConfirmDeletion
+            // 
+            cbxConfirmDeletion.AutoSize = true;
+            cbxConfirmDeletion.Enabled = false;
+            cbxConfirmDeletion.Location = new System.Drawing.Point(11, 49);
+            cbxConfirmDeletion.Name = "cbxConfirmDeletion";
+            cbxConfirmDeletion.Size = new System.Drawing.Size(116, 19);
+            cbxConfirmDeletion.TabIndex = 2;
+            cbxConfirmDeletion.Text = "Confirm deletion";
+            // 
+            // cbxConfirmInjection
+            // 
+            cbxConfirmInjection.AutoSize = true;
+            cbxConfirmInjection.Enabled = false;
+            cbxConfirmInjection.Location = new System.Drawing.Point(11, 75);
+            cbxConfirmInjection.Name = "cbxConfirmInjection";
+            cbxConfirmInjection.Size = new System.Drawing.Size(119, 19);
+            cbxConfirmInjection.TabIndex = 3;
+            cbxConfirmInjection.Text = "Confirm injection";
             // 
             // gbxMisc
             // 
@@ -172,9 +304,9 @@ namespace TotalImage
             gbxMisc.Controls.Add(btnClearTemp);
             gbxMisc.Controls.Add(btnClearRecent);
             gbxMisc.Controls.Add(btnResetSettings);
-            gbxMisc.Location = new System.Drawing.Point(6, 173);
+            gbxMisc.Location = new System.Drawing.Point(6, 260);
             gbxMisc.Name = "gbxMisc";
-            gbxMisc.Size = new System.Drawing.Size(442, 160);
+            gbxMisc.Size = new System.Drawing.Size(441, 160);
             gbxMisc.TabIndex = 1;
             gbxMisc.TabStop = false;
             gbxMisc.Text = "Advanced options";
@@ -224,7 +356,7 @@ namespace TotalImage
             btnClearTemp.Location = new System.Drawing.Point(355, 91);
             btnClearTemp.Name = "btnClearTemp";
             btnClearTemp.Size = new System.Drawing.Size(80, 26);
-            btnClearTemp.TabIndex = 6;
+            btnClearTemp.TabIndex = 9;
             btnClearTemp.Text = "Clear";
             btnClearTemp.UseVisualStyleBackColor = true;
             btnClearTemp.Click += btnClearTemp_Click;
@@ -234,7 +366,7 @@ namespace TotalImage
             btnClearRecent.Location = new System.Drawing.Point(355, 56);
             btnClearRecent.Name = "btnClearRecent";
             btnClearRecent.Size = new System.Drawing.Size(80, 26);
-            btnClearRecent.TabIndex = 5;
+            btnClearRecent.TabIndex = 8;
             btnClearRecent.Text = "Clear";
             btnClearRecent.UseVisualStyleBackColor = true;
             btnClearRecent.Click += btnClearRecent_Click;
@@ -244,101 +376,17 @@ namespace TotalImage
             btnResetSettings.Location = new System.Drawing.Point(355, 19);
             btnResetSettings.Name = "btnResetSettings";
             btnResetSettings.Size = new System.Drawing.Size(80, 26);
-            btnResetSettings.TabIndex = 4;
+            btnResetSettings.TabIndex = 7;
             btnResetSettings.Text = "Reset";
             btnResetSettings.UseVisualStyleBackColor = true;
             btnResetSettings.Click += btnReset_Click;
             // 
-            // gbxBehavior
-            // 
-            gbxBehavior.Controls.Add(lblMemoryMapping1);
-            gbxBehavior.Controls.Add(txtMemoryMapping);
-            gbxBehavior.Controls.Add(lblMemoryMapping);
-            gbxBehavior.Controls.Add(cbxAutoincrementFilename);
-            gbxBehavior.Controls.Add(cbxConfirmOverwriteExtract);
-            gbxBehavior.Controls.Add(cbxConfirmDeletion);
-            gbxBehavior.Controls.Add(cbxConfirmInjection);
-            gbxBehavior.Location = new System.Drawing.Point(6, 6);
-            gbxBehavior.Name = "gbxBehavior";
-            gbxBehavior.Size = new System.Drawing.Size(442, 160);
-            gbxBehavior.TabIndex = 0;
-            gbxBehavior.TabStop = false;
-            gbxBehavior.Text = "Behavior";
-            // 
-            // lblMemoryMapping1
-            // 
-            lblMemoryMapping1.AutoSize = true;
-            lblMemoryMapping1.Enabled = false;
-            lblMemoryMapping1.Location = new System.Drawing.Point(349, 130);
-            lblMemoryMapping1.Name = "lblMemoryMapping1";
-            lblMemoryMapping1.Size = new System.Drawing.Size(28, 15);
-            lblMemoryMapping1.TabIndex = 21;
-            lblMemoryMapping1.Text = "MiB";
-            // 
-            // txtMemoryMapping
-            // 
-            txtMemoryMapping.Enabled = false;
-            txtMemoryMapping.Location = new System.Drawing.Point(243, 127);
-            txtMemoryMapping.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
-            txtMemoryMapping.Name = "txtMemoryMapping";
-            txtMemoryMapping.Size = new System.Drawing.Size(100, 23);
-            txtMemoryMapping.TabIndex = 20;
-            // 
-            // lblMemoryMapping
-            // 
-            lblMemoryMapping.AutoSize = true;
-            lblMemoryMapping.Enabled = false;
-            lblMemoryMapping.Location = new System.Drawing.Point(9, 130);
-            lblMemoryMapping.Name = "lblMemoryMapping";
-            lblMemoryMapping.Size = new System.Drawing.Size(228, 15);
-            lblMemoryMapping.TabIndex = 19;
-            lblMemoryMapping.Text = "Threshold for mapping files into memory:";
-            // 
-            // cbxAutoincrementFilename
-            // 
-            cbxAutoincrementFilename.AutoSize = true;
-            cbxAutoincrementFilename.Enabled = false;
-            cbxAutoincrementFilename.Location = new System.Drawing.Point(11, 102);
-            cbxAutoincrementFilename.Name = "cbxAutoincrementFilename";
-            cbxAutoincrementFilename.Size = new System.Drawing.Size(331, 19);
-            cbxAutoincrementFilename.TabIndex = 18;
-            cbxAutoincrementFilename.Text = "When saving, auto-increment last filename when possible";
-            // 
-            // cbxConfirmOverwriteExtract
-            // 
-            cbxConfirmOverwriteExtract.AutoSize = true;
-            cbxConfirmOverwriteExtract.Location = new System.Drawing.Point(11, 22);
-            cbxConfirmOverwriteExtract.Name = "cbxConfirmOverwriteExtract";
-            cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(215, 19);
-            cbxConfirmOverwriteExtract.TabIndex = 17;
-            cbxConfirmOverwriteExtract.Text = "Confirm overwrite during extraction";
-            // 
-            // cbxConfirmDeletion
-            // 
-            cbxConfirmDeletion.AutoSize = true;
-            cbxConfirmDeletion.Enabled = false;
-            cbxConfirmDeletion.Location = new System.Drawing.Point(11, 49);
-            cbxConfirmDeletion.Name = "cbxConfirmDeletion";
-            cbxConfirmDeletion.Size = new System.Drawing.Size(116, 19);
-            cbxConfirmDeletion.TabIndex = 16;
-            cbxConfirmDeletion.Text = "Confirm deletion";
-            // 
-            // cbxConfirmInjection
-            // 
-            cbxConfirmInjection.AutoSize = true;
-            cbxConfirmInjection.Enabled = false;
-            cbxConfirmInjection.Location = new System.Drawing.Point(11, 75);
-            cbxConfirmInjection.Name = "cbxConfirmInjection";
-            cbxConfirmInjection.Size = new System.Drawing.Size(119, 19);
-            cbxConfirmInjection.TabIndex = 15;
-            cbxConfirmInjection.Text = "Confirm injection";
-            // 
             // tabView
             // 
             tabView.BackColor = System.Drawing.SystemColors.Window;
-            tabView.Controls.Add(gbxSizeUnits);
-            tabView.Controls.Add(gbxFileList);
             tabView.Controls.Add(gbxMainWindow);
+            tabView.Controls.Add(gbxFileList);
+            tabView.Controls.Add(gbxSizeUnits);
             tabView.Location = new System.Drawing.Point(4, 24);
             tabView.Name = "tabView";
             tabView.Padding = new System.Windows.Forms.Padding(3);
@@ -346,56 +394,54 @@ namespace TotalImage
             tabView.TabIndex = 2;
             tabView.Text = "View";
             // 
-            // gbxSizeUnits
+            // gbxMainWindow
             // 
-            gbxSizeUnits.Controls.Add(lblSizeUnitsTip);
-            gbxSizeUnits.Controls.Add(lblSizeUnitsPreview);
-            gbxSizeUnits.Controls.Add(lblSizeUnits);
-            gbxSizeUnits.Controls.Add(lstSizeUnits);
-            gbxSizeUnits.Location = new System.Drawing.Point(6, 251);
-            gbxSizeUnits.Name = "gbxSizeUnits";
-            gbxSizeUnits.Size = new System.Drawing.Size(442, 116);
-            gbxSizeUnits.TabIndex = 23;
-            gbxSizeUnits.TabStop = false;
-            gbxSizeUnits.Text = "Size units";
+            gbxMainWindow.Controls.Add(cbxShowCommandBar);
+            gbxMainWindow.Controls.Add(cbxShowStatusBar);
+            gbxMainWindow.Controls.Add(cbxShowDirectoryTree);
+            gbxMainWindow.Controls.Add(cbxShowHiddenItems);
+            gbxMainWindow.Location = new System.Drawing.Point(6, 6);
+            gbxMainWindow.Name = "gbxMainWindow";
+            gbxMainWindow.Size = new System.Drawing.Size(441, 106);
+            gbxMainWindow.TabIndex = 21;
+            gbxMainWindow.TabStop = false;
+            gbxMainWindow.Text = "Main window";
             // 
-            // lblSizeUnitsTip
+            // cbxShowCommandBar
             // 
-            lblSizeUnitsTip.AutoSize = true;
-            lblSizeUnitsTip.Location = new System.Drawing.Point(219, 19);
-            lblSizeUnitsTip.Name = "lblSizeUnitsTip";
-            lblSizeUnitsTip.Size = new System.Drawing.Size(214, 45);
-            lblSizeUnitsTip.TabIndex = 22;
-            lblSizeUnitsTip.Text = "For binary and decimal, TotalImage will\r\nautomatically determine the most\r\nappropriate unit and convert to it.";
+            cbxShowCommandBar.AutoSize = true;
+            cbxShowCommandBar.Location = new System.Drawing.Point(11, 22);
+            cbxShowCommandBar.Name = "cbxShowCommandBar";
+            cbxShowCommandBar.Size = new System.Drawing.Size(133, 19);
+            cbxShowCommandBar.TabIndex = 12;
+            cbxShowCommandBar.Text = "Show command bar";
             // 
-            // lblSizeUnitsPreview
+            // cbxShowStatusBar
             // 
-            lblSizeUnitsPreview.AutoSize = true;
-            lblSizeUnitsPreview.Location = new System.Drawing.Point(9, 73);
-            lblSizeUnitsPreview.Name = "lblSizeUnitsPreview";
-            lblSizeUnitsPreview.Size = new System.Drawing.Size(303, 30);
-            lblSizeUnitsPreview.TabIndex = 21;
-            lblSizeUnitsPreview.Text = "Preview:\r\n234 B | 2345 B | 234567 B | 234567890 B | 2345678901234 B";
+            cbxShowStatusBar.AutoSize = true;
+            cbxShowStatusBar.Location = new System.Drawing.Point(221, 22);
+            cbxShowStatusBar.Name = "cbxShowStatusBar";
+            cbxShowStatusBar.Size = new System.Drawing.Size(109, 19);
+            cbxShowStatusBar.TabIndex = 16;
+            cbxShowStatusBar.Text = "Show status bar";
             // 
-            // lblSizeUnits
+            // cbxShowDirectoryTree
             // 
-            lblSizeUnits.AutoSize = true;
-            lblSizeUnits.Location = new System.Drawing.Point(9, 19);
-            lblSizeUnits.Name = "lblSizeUnits";
-            lblSizeUnits.Size = new System.Drawing.Size(80, 15);
-            lblSizeUnits.TabIndex = 10;
-            lblSizeUnits.Text = "Show sizes as:";
+            cbxShowDirectoryTree.AutoSize = true;
+            cbxShowDirectoryTree.Location = new System.Drawing.Point(11, 49);
+            cbxShowDirectoryTree.Name = "cbxShowDirectoryTree";
+            cbxShowDirectoryTree.Size = new System.Drawing.Size(128, 19);
+            cbxShowDirectoryTree.TabIndex = 15;
+            cbxShowDirectoryTree.Text = "Show directory tree";
             // 
-            // lstSizeUnits
+            // cbxShowHiddenItems
             // 
-            lstSizeUnits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstSizeUnits.FormattingEnabled = true;
-            lstSizeUnits.Items.AddRange(new object[] { "Bytes", "Decimal units (factor 1000)", "Binary units (factor 1024)" });
-            lstSizeUnits.Location = new System.Drawing.Point(12, 37);
-            lstSizeUnits.Name = "lstSizeUnits";
-            lstSizeUnits.Size = new System.Drawing.Size(170, 23);
-            lstSizeUnits.TabIndex = 11;
-            lstSizeUnits.SelectedIndexChanged += lstSizeUnits_SelectedIndexChanged;
+            cbxShowHiddenItems.AutoSize = true;
+            cbxShowHiddenItems.Location = new System.Drawing.Point(221, 48);
+            cbxShowHiddenItems.Name = "cbxShowHiddenItems";
+            cbxShowHiddenItems.Size = new System.Drawing.Size(136, 19);
+            cbxShowHiddenItems.TabIndex = 14;
+            cbxShowHiddenItems.Text = "Show hidden objects";
             // 
             // gbxFileList
             // 
@@ -406,9 +452,9 @@ namespace TotalImage
             gbxFileList.Controls.Add(lblSortOrder);
             gbxFileList.Controls.Add(lblSortBy);
             gbxFileList.Controls.Add(lstSortBy);
-            gbxFileList.Location = new System.Drawing.Point(6, 119);
+            gbxFileList.Location = new System.Drawing.Point(6, 118);
             gbxFileList.Name = "gbxFileList";
-            gbxFileList.Size = new System.Drawing.Size(442, 126);
+            gbxFileList.Size = new System.Drawing.Size(441, 126);
             gbxFileList.TabIndex = 22;
             gbxFileList.TabStop = false;
             gbxFileList.Text = "File list";
@@ -479,95 +525,68 @@ namespace TotalImage
             lstSortBy.Size = new System.Drawing.Size(170, 23);
             lstSortBy.TabIndex = 9;
             // 
-            // gbxMainWindow
+            // gbxSizeUnits
             // 
-            gbxMainWindow.Controls.Add(cbxShowCommandBar);
-            gbxMainWindow.Controls.Add(cbxShowStatusBar);
-            gbxMainWindow.Controls.Add(cbxShowDirectoryTree);
-            gbxMainWindow.Controls.Add(cbxShowHiddenItems);
-            gbxMainWindow.Location = new System.Drawing.Point(6, 6);
-            gbxMainWindow.Name = "gbxMainWindow";
-            gbxMainWindow.Size = new System.Drawing.Size(442, 106);
-            gbxMainWindow.TabIndex = 21;
-            gbxMainWindow.TabStop = false;
-            gbxMainWindow.Text = "Main window";
+            gbxSizeUnits.Controls.Add(lblSizeUnitsTip);
+            gbxSizeUnits.Controls.Add(lblSizeUnitsPreview);
+            gbxSizeUnits.Controls.Add(lblSizeUnits);
+            gbxSizeUnits.Controls.Add(lstSizeUnits);
+            gbxSizeUnits.Location = new System.Drawing.Point(6, 250);
+            gbxSizeUnits.Name = "gbxSizeUnits";
+            gbxSizeUnits.Size = new System.Drawing.Size(441, 116);
+            gbxSizeUnits.TabIndex = 23;
+            gbxSizeUnits.TabStop = false;
+            gbxSizeUnits.Text = "Size units";
             // 
-            // cbxShowCommandBar
+            // lblSizeUnitsTip
             // 
-            cbxShowCommandBar.AutoSize = true;
-            cbxShowCommandBar.Location = new System.Drawing.Point(11, 22);
-            cbxShowCommandBar.Name = "cbxShowCommandBar";
-            cbxShowCommandBar.Size = new System.Drawing.Size(133, 19);
-            cbxShowCommandBar.TabIndex = 12;
-            cbxShowCommandBar.Text = "Show command bar";
+            lblSizeUnitsTip.AutoSize = true;
+            lblSizeUnitsTip.Location = new System.Drawing.Point(219, 19);
+            lblSizeUnitsTip.Name = "lblSizeUnitsTip";
+            lblSizeUnitsTip.Size = new System.Drawing.Size(214, 45);
+            lblSizeUnitsTip.TabIndex = 22;
+            lblSizeUnitsTip.Text = "For binary and decimal, TotalImage will\r\nautomatically determine the most\r\nappropriate unit and convert to it.";
             // 
-            // cbxShowStatusBar
+            // lblSizeUnitsPreview
             // 
-            cbxShowStatusBar.AutoSize = true;
-            cbxShowStatusBar.Location = new System.Drawing.Point(221, 22);
-            cbxShowStatusBar.Name = "cbxShowStatusBar";
-            cbxShowStatusBar.Size = new System.Drawing.Size(109, 19);
-            cbxShowStatusBar.TabIndex = 16;
-            cbxShowStatusBar.Text = "Show status bar";
+            lblSizeUnitsPreview.AutoSize = true;
+            lblSizeUnitsPreview.Location = new System.Drawing.Point(9, 73);
+            lblSizeUnitsPreview.Name = "lblSizeUnitsPreview";
+            lblSizeUnitsPreview.Size = new System.Drawing.Size(303, 30);
+            lblSizeUnitsPreview.TabIndex = 21;
+            lblSizeUnitsPreview.Text = "Preview:\r\n234 B | 2345 B | 234567 B | 234567890 B | 2345678901234 B";
             // 
-            // cbxShowDirectoryTree
+            // lblSizeUnits
             // 
-            cbxShowDirectoryTree.AutoSize = true;
-            cbxShowDirectoryTree.Location = new System.Drawing.Point(11, 49);
-            cbxShowDirectoryTree.Name = "cbxShowDirectoryTree";
-            cbxShowDirectoryTree.Size = new System.Drawing.Size(128, 19);
-            cbxShowDirectoryTree.TabIndex = 15;
-            cbxShowDirectoryTree.Text = "Show directory tree";
+            lblSizeUnits.AutoSize = true;
+            lblSizeUnits.Location = new System.Drawing.Point(9, 19);
+            lblSizeUnits.Name = "lblSizeUnits";
+            lblSizeUnits.Size = new System.Drawing.Size(80, 15);
+            lblSizeUnits.TabIndex = 10;
+            lblSizeUnits.Text = "Show sizes as:";
             // 
-            // cbxShowHiddenItems
+            // lstSizeUnits
             // 
-            cbxShowHiddenItems.AutoSize = true;
-            cbxShowHiddenItems.Location = new System.Drawing.Point(221, 48);
-            cbxShowHiddenItems.Name = "cbxShowHiddenItems";
-            cbxShowHiddenItems.Size = new System.Drawing.Size(136, 19);
-            cbxShowHiddenItems.TabIndex = 14;
-            cbxShowHiddenItems.Text = "Show hidden objects";
+            lstSizeUnits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            lstSizeUnits.FormattingEnabled = true;
+            lstSizeUnits.Items.AddRange(new object[] { "Bytes", "Decimal units (factor 1000)", "Binary units (factor 1024)" });
+            lstSizeUnits.Location = new System.Drawing.Point(12, 37);
+            lstSizeUnits.Name = "lstSizeUnits";
+            lstSizeUnits.Size = new System.Drawing.Size(170, 23);
+            lstSizeUnits.TabIndex = 11;
+            lstSizeUnits.SelectedIndexChanged += lstSizeUnits_SelectedIndexChanged;
             // 
             // tabExtraction
             // 
             tabExtraction.BackColor = System.Drawing.SystemColors.Window;
-            tabExtraction.Controls.Add(gbxExtractionPreserve);
             tabExtraction.Controls.Add(gbxExtractionDefaults);
+            tabExtraction.Controls.Add(gbxExtractionPreserve);
             tabExtraction.Location = new System.Drawing.Point(4, 24);
             tabExtraction.Name = "tabExtraction";
             tabExtraction.Padding = new System.Windows.Forms.Padding(3);
             tabExtraction.Size = new System.Drawing.Size(453, 454);
             tabExtraction.TabIndex = 3;
             tabExtraction.Text = "Extraction";
-            // 
-            // gbxExtractionPreserve
-            // 
-            gbxExtractionPreserve.Controls.Add(cbxPreserveDates);
-            gbxExtractionPreserve.Controls.Add(cbxPreserveAttributes);
-            gbxExtractionPreserve.Location = new System.Drawing.Point(6, 221);
-            gbxExtractionPreserve.Name = "gbxExtractionPreserve";
-            gbxExtractionPreserve.Size = new System.Drawing.Size(442, 80);
-            gbxExtractionPreserve.TabIndex = 23;
-            gbxExtractionPreserve.TabStop = false;
-            gbxExtractionPreserve.Text = "Preserve information";
-            // 
-            // cbxPreserveDates
-            // 
-            cbxPreserveDates.AutoSize = true;
-            cbxPreserveDates.Location = new System.Drawing.Point(11, 22);
-            cbxPreserveDates.Name = "cbxPreserveDates";
-            cbxPreserveDates.Size = new System.Drawing.Size(207, 19);
-            cbxPreserveDates.TabIndex = 8;
-            cbxPreserveDates.Text = "Preserve file dates when extracting";
-            // 
-            // cbxPreserveAttributes
-            // 
-            cbxPreserveAttributes.AutoSize = true;
-            cbxPreserveAttributes.Location = new System.Drawing.Point(11, 49);
-            cbxPreserveAttributes.Name = "cbxPreserveAttributes";
-            cbxPreserveAttributes.Size = new System.Drawing.Size(229, 19);
-            cbxPreserveAttributes.TabIndex = 9;
-            cbxPreserveAttributes.Text = "Preserve file attributes when extracting";
             // 
             // gbxExtractionDefaults
             // 
@@ -581,7 +600,7 @@ namespace TotalImage
             gbxExtractionDefaults.Controls.Add(rbnExtractFlat);
             gbxExtractionDefaults.Location = new System.Drawing.Point(6, 6);
             gbxExtractionDefaults.Name = "gbxExtractionDefaults";
-            gbxExtractionDefaults.Size = new System.Drawing.Size(442, 208);
+            gbxExtractionDefaults.Size = new System.Drawing.Size(441, 208);
             gbxExtractionDefaults.TabIndex = 22;
             gbxExtractionDefaults.TabStop = false;
             gbxExtractionDefaults.Text = "Default options";
@@ -662,6 +681,35 @@ namespace TotalImage
             rbnExtractFlat.TabStop = true;
             rbnExtractFlat.Text = "Extract all files into the same directory";
             // 
+            // gbxExtractionPreserve
+            // 
+            gbxExtractionPreserve.Controls.Add(cbxPreserveDates);
+            gbxExtractionPreserve.Controls.Add(cbxPreserveAttributes);
+            gbxExtractionPreserve.Location = new System.Drawing.Point(6, 220);
+            gbxExtractionPreserve.Name = "gbxExtractionPreserve";
+            gbxExtractionPreserve.Size = new System.Drawing.Size(441, 80);
+            gbxExtractionPreserve.TabIndex = 23;
+            gbxExtractionPreserve.TabStop = false;
+            gbxExtractionPreserve.Text = "Preserve information";
+            // 
+            // cbxPreserveDates
+            // 
+            cbxPreserveDates.AutoSize = true;
+            cbxPreserveDates.Location = new System.Drawing.Point(11, 22);
+            cbxPreserveDates.Name = "cbxPreserveDates";
+            cbxPreserveDates.Size = new System.Drawing.Size(207, 19);
+            cbxPreserveDates.TabIndex = 8;
+            cbxPreserveDates.Text = "Preserve file dates when extracting";
+            // 
+            // cbxPreserveAttributes
+            // 
+            cbxPreserveAttributes.AutoSize = true;
+            cbxPreserveAttributes.Location = new System.Drawing.Point(11, 49);
+            cbxPreserveAttributes.Name = "cbxPreserveAttributes";
+            cbxPreserveAttributes.Size = new System.Drawing.Size(229, 19);
+            cbxPreserveAttributes.TabIndex = 9;
+            cbxPreserveAttributes.Text = "Preserve file attributes when extracting";
+            // 
             // tabIntegration
             // 
             tabIntegration.BackColor = System.Drawing.SystemColors.Window;
@@ -680,7 +728,7 @@ namespace TotalImage
             gbxFileAssociations.Controls.Add(btnFileAssoc);
             gbxFileAssociations.Location = new System.Drawing.Point(6, 6);
             gbxFileAssociations.Name = "gbxFileAssociations";
-            gbxFileAssociations.Size = new System.Drawing.Size(442, 68);
+            gbxFileAssociations.Size = new System.Drawing.Size(441, 68);
             gbxFileAssociations.TabIndex = 8;
             gbxFileAssociations.TabStop = false;
             gbxFileAssociations.Text = "File associations";
@@ -697,7 +745,7 @@ namespace TotalImage
             // 
             // btnFileAssoc
             // 
-            btnFileAssoc.Location = new System.Drawing.Point(357, 21);
+            btnFileAssoc.Location = new System.Drawing.Point(356, 21);
             btnFileAssoc.Margin = new System.Windows.Forms.Padding(2);
             btnFileAssoc.Name = "btnFileAssoc";
             btnFileAssoc.Size = new System.Drawing.Size(80, 26);
@@ -714,7 +762,7 @@ namespace TotalImage
             gbxIntegrationMisc.Margin = new System.Windows.Forms.Padding(2);
             gbxIntegrationMisc.Name = "gbxIntegrationMisc";
             gbxIntegrationMisc.Padding = new System.Windows.Forms.Padding(2);
-            gbxIntegrationMisc.Size = new System.Drawing.Size(442, 120);
+            gbxIntegrationMisc.Size = new System.Drawing.Size(441, 120);
             gbxIntegrationMisc.TabIndex = 7;
             gbxIntegrationMisc.TabStop = false;
             gbxIntegrationMisc.Text = "Other options";
@@ -760,23 +808,25 @@ namespace TotalImage
             pnlBottom.ResumeLayout(false);
             tabs.ResumeLayout(false);
             tabGeneral.ResumeLayout(false);
-            gbxMisc.ResumeLayout(false);
-            gbxMisc.PerformLayout();
+            gbxColorMode.ResumeLayout(false);
+            gbxColorMode.PerformLayout();
             gbxBehavior.ResumeLayout(false);
             gbxBehavior.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)txtMemoryMapping).EndInit();
+            gbxMisc.ResumeLayout(false);
+            gbxMisc.PerformLayout();
             tabView.ResumeLayout(false);
-            gbxSizeUnits.ResumeLayout(false);
-            gbxSizeUnits.PerformLayout();
-            gbxFileList.ResumeLayout(false);
-            gbxFileList.PerformLayout();
             gbxMainWindow.ResumeLayout(false);
             gbxMainWindow.PerformLayout();
+            gbxFileList.ResumeLayout(false);
+            gbxFileList.PerformLayout();
+            gbxSizeUnits.ResumeLayout(false);
+            gbxSizeUnits.PerformLayout();
             tabExtraction.ResumeLayout(false);
-            gbxExtractionPreserve.ResumeLayout(false);
-            gbxExtractionPreserve.PerformLayout();
             gbxExtractionDefaults.ResumeLayout(false);
             gbxExtractionDefaults.PerformLayout();
+            gbxExtractionPreserve.ResumeLayout(false);
+            gbxExtractionPreserve.PerformLayout();
             tabIntegration.ResumeLayout(false);
             gbxFileAssociations.ResumeLayout(false);
             gbxFileAssociations.PerformLayout();
@@ -847,5 +897,9 @@ namespace TotalImage
         private System.Windows.Forms.GroupBox gbxExtractionDefaults;
         private System.Windows.Forms.GroupBox gbxExtractionPreserve;
         private System.Windows.Forms.Button btnOpenTemp;
+        private System.Windows.Forms.GroupBox gbxColorMode;
+        private System.Windows.Forms.ComboBox lstColorMode;
+        private System.Windows.Forms.Label lblColorMode1;
+        private System.Windows.Forms.Label lblColorMode;
     }
 }
