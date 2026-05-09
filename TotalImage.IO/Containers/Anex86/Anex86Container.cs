@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.IO;
+using TotalImage.Containers;
 
 namespace TotalImage.Containers.Anex86
 {
@@ -16,6 +17,9 @@ namespace TotalImage.Containers.Anex86
 
         /// <inheritdoc />
         public override string DisplayName => "Anex86 disk image";
+
+        /// <inheritdoc />
+        public override bool SupportsWriting => true;
 
         /// <summary>
         /// The header structure of this FDI/HDI image
@@ -36,5 +40,8 @@ namespace TotalImage.Containers.Anex86
             containerStream.Read(header, 0, headerSize);
             _header = new Anex86Header(header);
         }
+
+        /// <inheritdoc />
+        protected override Container CloneWriteable(Stream stream) => new RawContainer(stream);
     }
 }

@@ -25,6 +25,9 @@ namespace TotalImage.Partitions
         public override string DisplayName => "Microsoft Flash";
 
         /// <inheritdoc />
+        public override bool SupportsWriting => true;
+
+        /// <inheritdoc />
         protected override IEnumerable<PartitionEntry> LoadPartitions()
         {
             _container.Content.Seek(0x808, SeekOrigin.Begin);
@@ -53,7 +56,7 @@ namespace TotalImage.Partitions
                 uint bytblk = BinaryPrimitives.ReadUInt32LittleEndian(buffer[20..24]);
                 uint compact = BinaryPrimitives.ReadUInt32LittleEndian(buffer[24..28]);
 
-                entries.Add(new MsFlashRegionPartitionEntry(pstart, lsize == uint.MaxValue ? 0 : lsize * bytblk, _container.Content));
+                entries.Add(new MsFlashRegionPartitionEntry(pstart, lsize == uint.MaxValue ? 0 : lsize * bytblk, _container.Content, _container));
             }
 
             MbrPartitionTable mbr = new MbrPartitionTable(_container, 2048);
@@ -72,8 +75,9 @@ namespace TotalImage.Partitions
             /// <param name="offset">The byte offset of the partition.</param>
             /// <param name="length">The length of the partition in bytes.</param>
             /// <param name="stream">The stream containing the partition data.</param>
-            public MsFlashRegionPartitionEntry(long offset, long length, Stream stream)
-                : base(offset, length, stream)
+            /// <param name="owningContainer">The container that owns this partition.</param>
+            public MsFlashRegionPartitionEntry(long offset, long length, Stream stream, Container? owningContainer = null)
+                : base(offset, length, stream, owningContainer)
             {
             }
         }

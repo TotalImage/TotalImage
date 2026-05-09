@@ -17,10 +17,27 @@ namespace TotalImage.Containers
         public override string DisplayName => "Raw sector image";
 
         /// <inheritdoc />
+        public override bool SupportsWriting => true;
+
+        /// <inheritdoc />
         public RawContainer(string path, bool memoryMapping) : base(path, memoryMapping) { }
 
         /// <inheritdoc />
         private RawContainer(MemoryStream stream) : base(stream) { }
+
+        /// <summary>
+        /// Creates a writable <see cref="RawContainer"/> backed by the given stream.
+        /// Used internally by <see cref="Container.CommitChanges"/>.
+        /// </summary>
+        private RawContainer(Stream stream, bool writable) : base(stream) { }
+
+        /// <summary>
+        /// Creates a <see cref="RawContainer"/> directly from a stream.
+        /// </summary>
+        internal RawContainer(Stream stream) : base(stream) { }
+
+        /// <inheritdoc />
+        protected override Container CloneWriteable(Stream stream) => new RawContainer(stream, writable: true);
 
         /// <summary>
         /// Create a new raw image with the provided parameters

@@ -16,6 +16,9 @@ namespace TotalImage.Containers
         public override string DisplayName => "WinImage compressed image";
 
         /// <inheritdoc />
+        public override bool SupportsWriting => true;
+
+        /// <inheritdoc />
         public string? Comment { get; }
 
         /// <inheritdoc />
@@ -31,5 +34,8 @@ namespace TotalImage.Containers
 
             Comment = zip.Comment;
         }
+
+        /// <inheritdoc />
+        protected override Container CloneWriteable(Stream stream) => new RawContainer(stream);
     }
 }

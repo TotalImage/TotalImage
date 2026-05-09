@@ -78,7 +78,15 @@ namespace TotalImage.FileSystems.FAT
 
                 set
                 {
-                    throw new NotImplementedException();
+                    if (index >= Length) throw new ArgumentOutOfRangeException();
+
+                    var stream = _fat16.GetStream();
+                    using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+
+                    stream.Position = (_fat16._bpb.ReservedLogicalSectors + _fatIndex * _fat16._bpb.LogicalSectorsPerFAT)
+                                      * _fat16._bpb.BytesPerLogicalSector;
+                    stream.Seek(index * 2, SeekOrigin.Current);
+                    writer.Write((ushort)(value & 0xFFFF));
                 }
             }
         }

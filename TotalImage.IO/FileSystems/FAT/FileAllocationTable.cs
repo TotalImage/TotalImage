@@ -24,6 +24,11 @@ public abstract class FileAllocationTable : IEnumerable<uint>
     protected abstract uint Mask { get; }
 
     /// <summary>
+    /// The end-of-chain marker value for this FAT type (the highest valid EOC value).
+    /// </summary>
+    public uint EndOfChainMarker => Mask;
+
+    /// <summary>
     /// Access the value stored at a given index.
     /// </summary>
     public uint this[int index]

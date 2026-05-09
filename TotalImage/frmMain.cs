@@ -7,7 +7,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using TotalImage.Changes;
 using TotalImage.Containers;
 using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
@@ -132,7 +134,10 @@ namespace TotalImage
             }
 
             using dlgChangeVolumeLabel dlg = new(fs.RootDirectoryVolumeLabel, fs.BpbVolumeLabel);
-            dlg.ShowDialog();
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                fs.EnqueueSetVolumeLabel(dlg.NewLabel);
+            }
         }
 
         /* Allows viewing and editing bootsector properties
@@ -245,17 +250,17 @@ namespace TotalImage
         /* The Save button/menu item acts as either:
          * -"Save" when the file is already saved and there are unsaved changes
          * -"Save as" when the file has not been saved yet */
-        private void save_Click(object sender, EventArgs e)
+        private async void save_Click(object sender, EventArgs e)
         {
             if (image is not null)
             {
-                if (string.IsNullOrEmpty(filename) || (ToolStripMenuItem)sender == saveAsToolStripMenuItem) //File hasn't been saved yet
+                if (string.IsNullOrEmpty(filename) || sender == saveAsToolStripMenuItem) //File hasn't been saved yet
                 {
                     saveFileAs();
                 }
                 else
                 {
-                    saveFile();
+                    await saveFile();
                 }
             }
         }
@@ -264,7 +269,21 @@ namespace TotalImage
         private void newFolder_Click(object sender, EventArgs e)
         {
             using dlgNewFolder dlg = new();
-            dlg.ShowDialog();
+            if (dlg.ShowDialog() != DialogResult.OK) return;
+            if (image is null || lstDirectories.SelectedNode is null) return;
+
+            var nodeTag = lstDirectories.SelectedNode.Tag;
+            if (nodeTag is FatDirectory fatDir)
+            {
+                fatDir.EnqueueCreateSubdirectory(dlg.NewName);
+            }
+            else if (nodeTag is PendingDirectory pendingDir)
+            {
+                // Build path components from the pending directory's FullName + new name
+                var path = FullNameToPathComponents(pendingDir.FullName)
+                    .Append(dlg.NewName).ToArray();
+                image.PendingChanges.Add(new Changes.CreateDirectoryChange(path));
+            }
         }
 
         private void viewLargeIcons_Click(object sender, EventArgs e)
@@ -362,7 +381,13 @@ namespace TotalImage
                         return;
                 }
 
-                throw new NotImplementedException("This feature is not implemented yet");
+                foreach (var entry in SelectedItems)
+                {
+                    if (entry is FatFile fatFile)
+                        fatFile.EnqueueDelete();
+                    else if (entry is FatDirectory fatDir)
+                        fatDir.EnqueueDelete();
+                }
             }
             else if (lstDirectories.Focused && ((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is not null)
             {
@@ -398,7 +423,8 @@ namespace TotalImage
                         return;
                 }
 
-                throw new NotImplementedException("This feature is not implemented yet");
+                if (lstDirectories.SelectedNode?.Tag is FatDirectory selectedFatDir)
+                    selectedFatDir.EnqueueDelete();
             }
         }
 
@@ -412,28 +438,20 @@ namespace TotalImage
         }
 
         //Renames a file or folder
-        //TODO: Implement this here and in FS/container.
         private void rename_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
-
-            /* Below is old code that used the Rename dialog. However, I now think it's more intuitive if we use the ListView LabelEdit events
-             * instead. Example:
-             * currentFolderView[lstFiles.SelectedIndices[0]].BeginEdit(); */
-
-
-            /*
-            string oldname = "";
-            if (lstFiles.Focused)
-                oldname = currentFolderView[lstFiles.SelectedIndices[0]].Text;
-            else if (lstDirectories.Focused)
-                oldname = lstDirectories.SelectedNode.Text;
-
-            using dlgRename dlg = new dlgRename(oldname);
-            dlg.ShowDialog();
-
-            string newname = dlg.NewName;
-            */
+            if (lstFiles.Focused && lstFiles.SelectedIndices.Count == 1)
+            {
+                // Trigger inline label edit in the file list
+                int idx = lstFiles.SelectedIndices[0];
+                if (idx >= IndexShift)
+                    currentFolderView[idx - IndexShift].BeginEdit();
+            }
+            else if (lstDirectories.Focused && lstDirectories.SelectedNode != null
+                     && lstDirectories.SelectedNode != lstDirectories.Nodes[0])
+            {
+                lstDirectories.SelectedNode.BeginEdit();
+            }
         }
 
         //Changes image format
@@ -465,8 +483,7 @@ namespace TotalImage
         }
 
         //Save the changes made to the current image since the last save or since it was opened
-        //TODO: Perhaps this needs some rethinking too, depending on recent changes to the container?
-        private void saveFile()
+        private async Task saveFile()
         {
             if (image is null)
             {
@@ -482,11 +499,42 @@ namespace TotalImage
                 return;
             }
 
-            image.SaveImage(filepath);
-            OpenImage(filepath); //Reload the image
+            // Unsubscribe before dispose so the Dispose-triggered ChangeSet.Clear() does not
+            // fire ResetView() against an already-disposed container stream.
+            image.PendingChanges.Changed -= OnPendingChangesChanged;
+
+            if (image.PendingChanges.IsDirty)
+            {
+                try
+                {
+                    await image.CommitChanges(filepath);
+                }
+                catch (IOException ex)
+                {
+                    // Re-subscribe on failure — the container is still alive
+                    image.PendingChanges.Changed += OnPendingChangesChanged;
+                    TaskDialog.ShowDialog(this, new TaskDialogPage()
+                    {
+                        Text = ex.Message,
+                        Heading = "Save failed",
+                        Caption = "Error",
+                        Buttons = { TaskDialogButton.OK },
+                        Icon = TaskDialogIcon.Error,
+                        SizeToContent = true,
+                    });
+                    return;
+                }
+                OpenImage(filepath); // Reload after commit (image was disposed by CommitChanges)
+            }
+            else
+            {
+                image.SaveImage(filepath);
+                OpenImage(filepath); // Reload the image
+            }
 
             saveToolStripButton.Enabled = false;
             saveToolStripMenuItem.Enabled = false;
+            Text = $"{filename} - TotalImage";
             unsavedChanges = false;
         }
 
@@ -538,6 +586,10 @@ namespace TotalImage
                     sfd.FileName.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase) ||
                     sfd.FileName.EndsWith(".hdm", StringComparison.OrdinalIgnoreCase))
                 {
+                    // Unsubscribe before SaveImage disposes the container so the
+                    // Dispose-triggered ChangeSet.Clear() does not fire ResetView()
+                    // against an already-disposed stream.
+                    image.PendingChanges.Changed -= OnPendingChangesChanged;
                     image.SaveImage(sfd.FileName);
 
                     if (System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(sfd.FileName), @"\d+$").Success && Settings.CurrentSettings.AutoIncrementFilename)
@@ -551,12 +603,13 @@ namespace TotalImage
 
                     filepath = sfd.FileName;
                     filename = Path.GetFileName(filepath);
-                    Text = $"{filename} - TotalImage";
 
                     Settings.AddRecentImage(filepath);
                     PopulateRecentList();
                     unsavedChanges = false;
                     saveToolStripButton.Enabled = false;
+
+                    OpenImage(filepath); // Reload so the container stream is live and the handler is resubscribed
                 }
 
                 return true;
@@ -570,7 +623,7 @@ namespace TotalImage
         }
 
         //Closes the application
-        private void exit_Click(object sender, EventArgs e)
+        private async void exit_Click(object sender, EventArgs e)
         {
             if (unsavedChanges)
             {
@@ -599,7 +652,7 @@ namespace TotalImage
                     }
                     else
                     {
-                        saveFile();
+                        await saveFile();
                     }
                 }
                 else if (result == TaskDialogButton.Cancel) return;
@@ -755,10 +808,12 @@ namespace TotalImage
                 else if (lstFiles.SelectedIndices.Count == 1)
                 {
                     //Check if selected item is a deleted entry and enable the UI accordingly
-                    TiFileSystemObject entry = GetSelectedItemData(0);
-                    deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
-                    extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
-                    propertiesToolStripButton.Enabled = true;
+                    TiFileSystemObject? entry = GetSelectedItemData(0);
+                    // Pending synthetic items (not yet on disk) — disable destructive actions
+                    bool isPending = entry is PendingFile or PendingDirectory;
+                    deleteToolStripButton.Enabled = !isPending && !entry!.Name.StartsWith("?");
+                    extractToolStripButton.Enabled = !isPending && !entry!.Name.StartsWith("?");
+                    propertiesToolStripButton.Enabled = !isPending;
 
                     UpdateStatusBar(false);
                 }
@@ -797,11 +852,12 @@ namespace TotalImage
             }
             else if (lstFiles.SelectedIndices.Count == 1)
             {
-                TiFileSystemObject entry = GetSelectedItemData(0);
-                deleteToolStripMenuItem2.Enabled = true;
-                extractToolStripMenuItem2.Enabled = true;
-                propertiesToolStripMenuItem2.Enabled = true;
-                renameToolStripMenuItem2.Enabled = true;
+                TiFileSystemObject? entry = GetSelectedItemData(0);
+                bool isPending = entry is PendingFile or PendingDirectory;
+                deleteToolStripMenuItem2.Enabled = !isPending;
+                extractToolStripMenuItem2.Enabled = !isPending;
+                propertiesToolStripMenuItem2.Enabled = !isPending;
+                renameToolStripMenuItem2.Enabled = !isPending;
             }
             else
             {
@@ -849,14 +905,14 @@ namespace TotalImage
             else if (lstFiles.Focused)
             {
                 for (int i = 0; i < lstFiles.SelectedIndices.Count; i++)
-                    entries.Add(GetSelectedItemData(i));
+                    entries.Add(GetSelectedItemData(i)!);
             }
             else
             {
                 if (lstFiles.SelectedIndices.Count > 0)
                 {
                     for (int i = 0; i < lstFiles.SelectedIndices.Count; i++)
-                        entries.Add(GetSelectedItemData(i));
+                        entries.Add(GetSelectedItemData(i)!);
                 }
                 else if (lstDirectories.SelectedNode != null && lstDirectories.SelectedNode.Text != "\\")
                     entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
@@ -881,12 +937,20 @@ namespace TotalImage
             //TODO: Get the count and total size of seleted items to inject before showing the dialog
             if (ofd.ShowDialog() == DialogResult.OK)
             {
+                int fileCount = ofd.FileNames.Length;
+                ulong totalSize = 0;
+                foreach (string path in ofd.FileNames)
+                {
+                    try { totalSize += (ulong)new FileInfo(path).Length; }
+                    catch { /* best effort */ }
+                }
+
                 if (Settings.CurrentSettings.ConfirmInjection)
                 {
                     TaskDialogPage page = new()
                     {
-                        Text = $"Are you sure you want to inject {SelectedItems.Count()} item(s) occupying {Settings.CurrentSettings.SizeUnit.FormatSize(0)} into the image?",
-                        Heading = $"{SelectedItems.Count()} item(s) will be injected",
+                        Text = $"Are you sure you want to inject {fileCount} file{(fileCount == 1 ? "" : "s")} occupying {Settings.CurrentSettings.SizeUnit.FormatSize(totalSize)} into the image?",
+                        Heading = $"{fileCount} file{(fileCount == 1 ? "" : "s")} will be injected",
                         Caption = "Injection",
                         Buttons =
                         {
@@ -908,7 +972,30 @@ namespace TotalImage
                         return;
                 }
 
-                throw new NotImplementedException("This feature is not implemented yet");
+                if (lstDirectories.SelectedNode?.Tag is FatDirectory targetFatDir)
+                {
+                    foreach (string hostPath in ofd.FileNames)
+                    {
+                        using var stream = new FileStream(hostPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                        var source = FileDataSource.Create(stream, Settings.TempDir, Settings.CurrentSettings.MemoryMappingThreshold);
+                        var now = DateTime.Now;
+                        var attrs = FatAttributes.Archive;
+                        targetFatDir.EnqueueAddFile(Path.GetFileName(hostPath), source, attrs, now, now, now);
+                    }
+                }
+                else if (lstDirectories.SelectedNode?.Tag is PendingDirectory pendingDir && image is not null)
+                {
+                    var dirComponents = FullNameToPathComponents(pendingDir.FullName);
+                    foreach (string hostPath in ofd.FileNames)
+                    {
+                        using var stream = new FileStream(hostPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                        var source = FileDataSource.Create(stream, Settings.TempDir, Settings.CurrentSettings.MemoryMappingThreshold);
+                        var now = DateTime.Now;
+                        var destPath = dirComponents.Append(Path.GetFileName(hostPath)).ToArray();
+                        image.PendingChanges.Add(new Changes.AddFileChange(
+                            destPath, source, FatAttributes.Archive, now, now, now));
+                    }
+                }
             }
         }
 
@@ -1386,7 +1473,7 @@ namespace TotalImage
             {
                 if (lstFiles.SelectedIndices.Count == 1)
                 {
-                    TiFileSystemObject fso = GetSelectedItemData(0);
+                    TiFileSystemObject? fso = GetSelectedItemData(0);
                     if (fso is TiDirectory dir)
                     {
                         var node = FindNode(lstDirectories.Nodes[0], dir);
@@ -1398,6 +1485,10 @@ namespace TotalImage
                         {
                             throw new Exception("Associated treeview node was not found");
                         }
+                    }
+                    else if (fso is PendingFile)
+                    {
+                        // Pending files are not yet on disk — cannot open
                     }
                     else
                     {
@@ -1501,7 +1592,7 @@ namespace TotalImage
             changeVolumeLabelToolStripMenuItem.Enabled = true;
             formatDiskToolStripMenuItem.Enabled = true;
             defragmentToolStripMenuItem.Enabled = true;
-            injectFilesToolStripMenuItem.Enabled = true;
+            injectFilesToolStripMenuItem.Enabled = InjectionSupported;
             extractToolStripMenuItem.Enabled = true;
             selectAllToolStripMenuItem.Enabled = true;
             newFolderToolStripMenuItem.Enabled = true;
@@ -1528,11 +1619,12 @@ namespace TotalImage
                 }
                 else if (lstFiles.SelectedIndices.Count == 1)
                 {
-                    TiFileSystemObject entry = GetSelectedItemData(0);
-                    deleteToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                    extractToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
-                    propertiesToolStripMenuItem.Enabled = true;
-                    renameToolStripMenuItem.Enabled = !entry.Name.StartsWith("?");
+                    TiFileSystemObject? entry = GetSelectedItemData(0);
+                    bool isPending = entry is PendingFile or PendingDirectory;
+                    deleteToolStripMenuItem.Enabled = !isPending && !entry!.Name.StartsWith("?");
+                    extractToolStripMenuItem.Enabled = !isPending && !entry!.Name.StartsWith("?");
+                    propertiesToolStripMenuItem.Enabled = !isPending;
+                    renameToolStripMenuItem.Enabled = !isPending && !entry!.Name.StartsWith("?");
                 }
                 else
                 {
@@ -1568,10 +1660,11 @@ namespace TotalImage
                 else if (lstFiles.SelectedIndices.Count == 1)
                 {
                     //Check if selected item is a deleted entry and enable the UI accordingly
-                    TiFileSystemObject entry = GetSelectedItemData(0);
-                    deleteToolStripButton.Enabled = !entry.Name.StartsWith("?");
-                    extractToolStripButton.Enabled = !entry.Name.StartsWith("?");
-                    propertiesToolStripButton.Enabled = true;
+                    TiFileSystemObject? entry = GetSelectedItemData(0);
+                    bool isPending = entry is PendingFile or PendingDirectory;
+                    deleteToolStripButton.Enabled = !isPending && !entry!.Name.StartsWith("?");
+                    extractToolStripButton.Enabled = !isPending && !entry!.Name.StartsWith("?");
+                    propertiesToolStripButton.Enabled = !isPending;
                 }
                 else
                 {
@@ -1607,7 +1700,23 @@ namespace TotalImage
         //From here the name change should propagate to the associated FileSystemObject and to the stream
         private void lstFiles_AfterLabelEdit(object sender, LabelEditEventArgs e)
         {
+            if (e.Label is null)
+                return; // user cancelled
 
+            int idx = e.Item + IndexShift;
+            if (idx < IndexShift || idx - IndexShift >= currentFolderView.Count)
+            {
+                e.CancelEdit = true;
+                return;
+            }
+
+            var fso = currentFolderView[e.Item].Tag as TiFileSystemObject;
+            if (fso is FatFile fatFile)
+                fatFile.EnqueueRename(e.Label);
+            else if (fso is FatDirectory fatDir)
+                fatDir.EnqueueRename(e.Label);
+            else
+                e.CancelEdit = true;
         }
 
         //Before an item's label (=Text property) will be changed - for renaming objects.
@@ -1621,7 +1730,13 @@ namespace TotalImage
         //From here the name change should propagate to the associated FileSystemObject and to the stream
         private void lstDirectories_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
+            if (e.Label is null)
+                return; // user cancelled
 
+            if (e.Node?.Tag is FatDirectory fatDir)
+                fatDir.EnqueueRename(e.Label);
+            else
+                e.CancelEdit = true;
         }
 
         //Before a node's label (=Text property) will be changed - for renaming objects.
@@ -1716,6 +1831,114 @@ namespace TotalImage
                where x >= IndexShift && currentFolderView[x - IndexShift].Tag is TiFileSystemObject
                select (TiFileSystemObject)currentFolderView[x - IndexShift].Tag;
 
+        /// <summary>Returns true when the current partition's filesystem supports file injection.</summary>
+        private bool InjectionSupported
+            => image?.PartitionTable.Partitions[CurrentPartitionIndex].SupportsWriting ?? false;
+
+        /// <summary>
+        /// Classifies the pending-change state of a file-system entry in the UI.
+        /// </summary>
+        private enum PendingItemState { None, Added, Deleted, Renamed }
+
+        /// <summary>
+        /// Walks the directory's parent chain to build a path-component array matching the
+        /// convention used by <see cref="TotalImage.Changes.PendingChange"/> path fields.
+        /// The root directory returns an empty array.
+        /// For <see cref="PendingDirectory"/> (which has no live parent chain), the FullName
+        /// is split instead.
+        /// </summary>
+        private static string[] GetDirectoryPathComponents(TiDirectory dir)
+        {
+            if (dir is PendingDirectory)
+                return FullNameToPathComponents(dir.FullName);
+
+            var parts = new List<string>();
+            var current = dir;
+            while (current.Parent is not null)
+            {
+                parts.Add(current.Name);
+                current = current.Parent;
+            }
+            parts.Reverse();
+            return parts.ToArray();
+        }
+
+        /// <summary>
+        /// Splits a FullName like "\SUB\CHILD" into ["SUB", "CHILD"].
+        /// The root ("\") returns an empty array.
+        /// </summary>
+        private static string[] FullNameToPathComponents(string fullName)
+            => fullName.Split(System.IO.Path.DirectorySeparatorChar,
+                              StringSplitOptions.RemoveEmptyEntries);
+
+        /// <summary>
+        /// Returns the pending-change state of a named entry (file or directory) that lives
+        /// inside <paramref name="dirPath"/>. The last-wins rule is applied so that e.g. a
+        /// renamed-then-deleted entry resolves to <see cref="PendingItemState.Deleted"/>.
+        /// </summary>
+        private PendingItemState GetPendingState(string name, string[] dirPath)
+        {
+            if (image is null) return PendingItemState.None;
+
+            var state = PendingItemState.None;
+
+            foreach (var change in image.PendingChanges.Changes)
+            {
+                switch (change)
+                {
+                    case AddFileChange add:
+                    {
+                        if (add.DestinationPath.Length == 0) break;
+                        var addDir = add.DestinationPath[..^1];
+                        var addName = add.DestinationPath[^1];
+                        if (PathsEqualOrdinalIgnoreCase(addDir, dirPath) && NamesEqual(addName, name))
+                            state = PendingItemState.Added;
+                        break;
+                    }
+                    case CreateDirectoryChange create:
+                    {
+                        if (create.Path.Length == 0) break;
+                        var createDir = create.Path[..^1];
+                        var createName = create.Path[^1];
+                        if (PathsEqualOrdinalIgnoreCase(createDir, dirPath) && NamesEqual(createName, name))
+                            state = PendingItemState.Added;
+                        break;
+                    }
+                    case DeleteEntryChange delete:
+                    {
+                        if (delete.Path.Length == 0) break;
+                        var deleteDir = delete.Path[..^1];
+                        var deleteName = delete.Path[^1];
+                        if (PathsEqualOrdinalIgnoreCase(deleteDir, dirPath) && NamesEqual(deleteName, name))
+                            state = PendingItemState.Deleted;
+                        break;
+                    }
+                    case RenameChange rename:
+                    {
+                        if (rename.OldPath.Length == 0) break;
+                        var renameDir = rename.OldPath[..^1];
+                        var renameName = rename.OldPath[^1];
+                        if (PathsEqualOrdinalIgnoreCase(renameDir, dirPath) && NamesEqual(renameName, name))
+                            state = PendingItemState.Renamed;
+                        break;
+                    }
+                }
+            }
+
+            return state;
+
+            static bool NamesEqual(string a, string b)
+                => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool PathsEqualOrdinalIgnoreCase(string[] a, string[] b)
+        {
+            if (a.Length != b.Length) return false;
+            for (int i = 0; i < a.Length; i++)
+                if (!string.Equals(a[i], b[i], StringComparison.OrdinalIgnoreCase)) return false;
+            return true;
+        }
+
         StatusBarState StatusBarState
             => lstFiles.SelectedIndices.Cast<int>().Where(x => x >= IndexShift).Count() switch
             {
@@ -1782,6 +2005,8 @@ namespace TotalImage
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
+            var dirPathComponents = GetDirectoryPathComponents(dir);
+
             foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems, false))
             {
                 var subnode = new TreeNode(subdir.Name);
@@ -1797,10 +2022,69 @@ namespace TotalImage
                     subnode.ImageIndex = _smallFolderIndex;
                 }
 
+<<<<<<< HEAD
+=======
+                //Deleted folders have strikethrough fontstyle
+                if (subdir.Name.StartsWith("?"))
+                {
+                    Font font = new("Segoe UI", 9f, FontStyle.Strikeout);
+                    subnode.NodeFont = font;
+                }
+
+                //Highlight pending changes on directory nodes
+                switch (GetPendingState(subdir.Name, dirPathComponents))
+                {
+                    case PendingItemState.Added:
+                        subnode.BackColor = Color.FromArgb(198, 239, 206);
+                        subnode.ForeColor = Color.FromArgb(0, 97, 0);
+                        break;
+                    case PendingItemState.Deleted:
+                        subnode.BackColor = Color.FromArgb(255, 199, 206);
+                        subnode.ForeColor = Color.FromArgb(156, 0, 6);
+                        break;
+                    case PendingItemState.Renamed:
+                        subnode.BackColor = Color.FromArgb(255, 235, 156);
+                        subnode.ForeColor = Color.FromArgb(156, 87, 0);
+                        break;
+                }
+
+>>>>>>> 73ba9ed (Add write support for FAT filesystems and raw container images.)
                 subnode.Tag = subdir;
                 node.Nodes.Add(subnode);
 
                 PopulateTreeView(subnode, subdir);
+            }
+
+            // Synthesise tree nodes for pending CreateDirectoryChange entries in this directory
+            if (image is not null)
+            {
+                foreach (var change in image.PendingChanges.Changes)
+                {
+                    if (change is not CreateDirectoryChange create || create.Path.Length == 0) continue;
+
+                    // Parent path components must match this directory
+                    var pendingParentComponents = create.Path[..^1];
+                    if (!PathsEqualOrdinalIgnoreCase(pendingParentComponents, dirPathComponents)) continue;
+
+                    var pendingName = create.Path[^1];
+
+                    // Skip if a real subdir with this name is already shown
+                    if (node.Nodes.Cast<TreeNode>().Any(n =>
+                            string.Equals(((TiDirectory)n.Tag).Name, pendingName,
+                                StringComparison.OrdinalIgnoreCase)))
+                        continue;
+
+                    var pendingDir = new PendingDirectory(pendingName, dir.FullName);
+                    var pendingNode = new TreeNode(pendingName)
+                    {
+                        ImageIndex = imgFilesSmall.Images.IndexOfKey("folder"),
+                        BackColor = Color.FromArgb(198, 239, 206),
+                        ForeColor = Color.FromArgb(0, 97, 0),
+                        Tag = pendingDir
+                    };
+                    node.Nodes.Add(pendingNode);
+                    // Pending dirs start empty — no recursive PopulateTreeView needed
+                }
             }
         }
 
@@ -1849,6 +2133,8 @@ namespace TotalImage
                 parentDirectoryToolStripButton.Enabled = false;
             }
 
+            var dirPathComponents = GetDirectoryPathComponents(dir);
+
             foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false))
             {
                 var item = new ListViewItem();
@@ -1891,11 +2177,88 @@ namespace TotalImage
                     item.SubItems[4].ForeColor = Color.Gray;
                 }
 
+                //Highlight pending changes: green = added, red = pending delete, orange = renamed
+                switch (GetPendingState(fso.Name, dirPathComponents))
+                {
+                    case PendingItemState.Added:
+                        item.BackColor = Color.FromArgb(198, 239, 206);   // light green
+                        item.ForeColor = Color.FromArgb(0, 97, 0);
+                        break;
+                    case PendingItemState.Deleted:
+                        item.BackColor = Color.FromArgb(255, 199, 206);   // light red
+                        item.ForeColor = Color.FromArgb(156, 0, 6);
+                        break;
+                    case PendingItemState.Renamed:
+                        item.BackColor = Color.FromArgb(255, 235, 156);   // light orange
+                        item.ForeColor = Color.FromArgb(156, 87, 0);
+                        break;
+                }
+
                 item.ToolTipText = $"Type: {item.SubItems[1].Text}{Environment.NewLine}Size: {size}{Environment.NewLine}Modified: {item.SubItems[3].Text}";
 
                 item.Tag = fso;
                 currentFolderView.Add(item);
                 count++;
+            }
+
+            // Synthesise list items for pending additions that don't yet exist on disk
+            if (image is not null)
+            {
+                foreach (var change in image.PendingChanges.Changes)
+                {
+                    string[]? pendingDir = null;
+                    string? pendingName = null;
+                    bool isDirectory = false;
+                    string sizeText = string.Empty;
+                    DateTime lastWrite = DateTime.Now;
+                    ulong pendingLength = 0;
+
+                    if (change is AddFileChange add && add.DestinationPath.Length > 0)
+                    {
+                        pendingDir = add.DestinationPath[..^1];
+                        pendingName = add.DestinationPath[^1];
+                        pendingLength = (ulong)add.Source.Length;
+                        sizeText = Settings.CurrentSettings.SizeUnit.FormatSize(pendingLength);
+                        lastWrite = add.LastWriteTime;
+                    }
+                    else if (change is CreateDirectoryChange create && create.Path.Length > 0)
+                    {
+                        pendingDir = create.Path[..^1];
+                        pendingName = create.Path[^1];
+                        isDirectory = true;
+                    }
+
+                    if (pendingDir is null || pendingName is null) continue;
+
+                    // Only show in the current directory
+                    if (!PathsEqualOrdinalIgnoreCase(pendingDir, dirPathComponents)) continue;
+
+                    // Skip if the name is already shown as a real FSO (e.g. re-injecting after a save)
+                    if (currentFolderView.Any(i => string.Equals(
+                            (i.Tag as TiFileSystemObject)?.Name, pendingName,
+                            StringComparison.OrdinalIgnoreCase)))
+                        continue;
+
+                    var attrs = isDirectory ? FileAttributes.Directory : FileAttributes.Normal;
+                    var pendingItem = new ListViewItem();
+                    pendingItem.Text = pendingName;
+                    pendingItem.SubItems.Add(GetFileTypeName(pendingName, attrs));
+                    pendingItem.SubItems.Add(sizeText);
+                    pendingItem.ImageIndex = GetFileTypeIconIndex(pendingName, attrs);
+                    pendingItem.SubItems.Add(lastWrite.ToString());
+                    pendingItem.SubItems.Add(isDirectory ? "D----" : "-A---");
+                    pendingItem.UseItemStyleForSubItems = false;
+                    pendingItem.SubItems[4].Font = new(FontFamily.GenericMonospace, 9);
+                    pendingItem.BackColor = Color.FromArgb(198, 239, 206);
+                    pendingItem.ForeColor = Color.FromArgb(0, 97, 0);
+                    pendingItem.ToolTipText = $"Type: {pendingItem.SubItems[1].Text}{Environment.NewLine}Size: {sizeText}{Environment.NewLine}Modified: {lastWrite}";
+                    pendingItem.Tag = isDirectory
+                        ? (TiFileSystemObject)new PendingDirectory(pendingName, dir.FullName)
+                        : new PendingFile(pendingName, pendingLength, lastWrite);
+
+                    currentFolderView.Add(pendingItem);
+                    count++;
+                }
             }
 
             SortListView();
@@ -2258,10 +2621,48 @@ namespace TotalImage
 
             PopulateListView(image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
 
+            // Subscribe to change tracking so the save button stays in sync
+            image.PendingChanges.Changed += OnPendingChangesChanged;
+
             EnableUI();
             UpdateStatusBar(true);
         }
 
+<<<<<<< HEAD
+=======
+        /* Returns size of directory
+         * TODO: Move to this to the appropriate file system class and implement support for subdirectories */
+        private ulong CalculateDirSize()
+        {
+            var dirSize = 0ul;
+
+            foreach (ListViewItem lvi in currentFolderView)
+            {
+                if (lvi.Tag is not TiFileSystemObject entry) continue;
+                if (entry is not TiDirectory)
+                    dirSize += entry.Length;
+            }
+
+            return dirSize;
+        }
+
+        /* Returns the number of files in a directory
+         * TODO: Move to this to the appropriate file system class and implement support for subdirectories */
+        private uint GetFileCount()
+        {
+            uint fileCount = 0;
+
+            foreach (ListViewItem lvi in currentFolderView)
+            {
+                if (lvi.Tag is not TiFileSystemObject entry) continue;
+                if (entry is not TiDirectory)
+                    fileCount++;
+            }
+
+            return fileCount;
+        }
+
+>>>>>>> 73ba9ed (Add write support for FAT filesystems and raw container images.)
         private string GetFileTypeName(string filename, FileAttributes attributes)
         {
             var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
@@ -2387,7 +2788,7 @@ namespace TotalImage
         public void EnableUI()
         {
             closeToolStripButton.Enabled = true;
-            injectToolStripButton.Enabled = true;
+            injectToolStripButton.Enabled = InjectionSupported;
             newFolderToolStripButton.Enabled = true;
             labelToolStripMenuButton.Enabled = true;
             bootsectToolStripButton.Enabled = true;
@@ -2404,6 +2805,23 @@ namespace TotalImage
             //Enabling this now since we have rudimentary HDD support.
             managePartitionsToolStripButton.Enabled = image is not null && image.PartitionTable is not Partitions.NoPartitionTable;
             selectPartitionToolStripComboBox.Enabled = true;
+        }
+
+        // Called whenever a pending change is added or the change set is cleared.
+        private void OnPendingChangesChanged(object? sender, EventArgs e)
+        {
+            bool dirty = image?.PendingChanges.IsDirty ?? false;
+            unsavedChanges = dirty;
+            saveToolStripButton.Enabled = dirty;
+            saveToolStripMenuItem.Enabled = dirty;
+            if (!dirty)
+                Text = $"{(string.IsNullOrEmpty(filename) ? "(Untitled)" : filename)} - TotalImage";
+            else
+                Text = $"*{(string.IsNullOrEmpty(filename) ? "(Untitled)" : filename)} - TotalImage";
+
+            // Refresh the tree and file list so pending-change highlights are updated
+            if (image is not null)
+                ResetView();
         }
 
         //Disables various UI elements after an image is loaded
@@ -2461,8 +2879,12 @@ namespace TotalImage
             Text = "TotalImage";
             filename = "";
             filepath = "";
-            image?.Dispose();
-            image = null;
+            if (image is not null)
+            {
+                image.PendingChanges.Changed -= OnPendingChangesChanged;
+                image.Dispose();
+                image = null;
+            }
             lstDirectories.Nodes.Clear();
             currentFolderView.Clear();
             lstFiles.VirtualListSize = 0;
@@ -2472,11 +2894,11 @@ namespace TotalImage
             UpdateStatusBar(false);
         }
 
-        private TiFileSystemObject GetSelectedItemData(int idx)
+        private TiFileSystemObject? GetSelectedItemData(int idx)
         {
             if (lstFiles.SelectedIndices[idx] < IndexShift)
                 return (TiFileSystemObject)upOneFolderListViewItem.Tag;
-            return (TiFileSystemObject)currentFolderView[lstFiles.SelectedIndices[idx] - IndexShift].Tag;
+            return currentFolderView[lstFiles.SelectedIndices[idx] - IndexShift].Tag as TiFileSystemObject;
         }
 
         private static IComparer<ListViewItem> GetListViewItemSorter(int sortColumn, SortOrder sortOrder)
@@ -2608,6 +3030,7 @@ namespace TotalImage
                     case StatusBarState.OneSelected:
                         {
                             var item = GetSelectedItemData(0);
+                            if (item is null) break;
                             lbStatusPath.Text = item.FullName;
                             if (item is TiDirectory dir)
                                 lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, false))} in 1 item";

@@ -2,6 +2,7 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Text;
 using TotalImage.FileSystems.BPB;
 
@@ -95,6 +96,69 @@ namespace TotalImage.FileSystems.FAT
             lastWriteDate = BinaryPrimitives.ReadUInt16LittleEndian(entry[24..26]);
             firstClusterOfFile = BinaryPrimitives.ReadUInt16LittleEndian(entry[26..28]);
             fileSize = BinaryPrimitives.ReadUInt32LittleEndian(entry[28..32]);
+        }
+
+        /// <summary>
+        /// Creates a new FAT directory entry with explicit field values (for creating new entries).
+        /// </summary>
+        public DirectoryEntry(
+            ReadOnlySpan<byte> shortName,
+            FatAttributes attributes,
+            uint firstCluster,
+            uint fileSize,
+            DateTime? creationTime,
+            DateTime? lastWriteTime,
+            DateTime? lastAccessTime)
+        {
+            var nameBytes = new byte[11];
+            shortName[..Math.Min(11, shortName.Length)].CopyTo(nameBytes);
+            fileName = nameBytes.ToImmutableArray();
+            this.attributes = attributes;
+            ntByte = 0;
+            this.fileSize = fileSize;
+            firstClusterOfFile = (ushort)(firstCluster & 0xFFFF);
+            firstClusterOfFileHi = (ushort)((firstCluster >> 16) & 0xFFFF);
+
+            if (creationTime.HasValue)
+            {
+                var (cd, ct, cm) = creationTime.Value.ToFatDateTime();
+                creationDate = cd;
+                this.creationTime = ct;
+                creationMSec = cm;
+            }
+            if (lastWriteTime.HasValue)
+            {
+                var (wd, wt, _) = lastWriteTime.Value.ToFatDateTime();
+                lastWriteDate = wd;
+                this.lastWriteTime = wt;
+            }
+            if (lastAccessTime.HasValue)
+            {
+                var (ad, _, _) = lastAccessTime.Value.ToFatDateTime();
+                lastAccessDate = ad;
+            }
+        }
+
+        /// <summary>
+        /// Writes this directory entry as 32 bytes to the stream at the current position.
+        /// </summary>
+        public void WriteTo(Stream stream)
+        {
+            using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+            // File name (11 bytes)
+            foreach (var b in fileName)
+                writer.Write(b);
+            writer.Write((byte)attributes);
+            writer.Write(ntByte);
+            writer.Write(creationMSec);
+            writer.Write(creationTime);
+            writer.Write(creationDate);
+            writer.Write(lastAccessDate);
+            writer.Write(firstClusterOfFileHi);
+            writer.Write(lastWriteTime);
+            writer.Write(lastWriteDate);
+            writer.Write(firstClusterOfFile);
+            writer.Write(fileSize);
         }
 
         /// <summary>

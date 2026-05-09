@@ -1,4 +1,5 @@
 using System.IO;
+using TotalImage.Containers;
 
 namespace TotalImage.Containers.NHD
 {
@@ -15,6 +16,9 @@ namespace TotalImage.Containers.NHD
 
         /// <inheritdoc />
         public override string DisplayName => "T98-Next HD";
+
+        /// <inheritdoc />
+        public override bool SupportsWriting => true;
 
         /// <inheritdoc />
         public string? Comment => Header.Comment;
@@ -34,5 +38,8 @@ namespace TotalImage.Containers.NHD
             containerStream.Read(header, 0, 512);
             _header = new NhdHeader(header);
         }
+
+        /// <inheritdoc />
+        protected override Container CloneWriteable(Stream stream) => new RawContainer(stream);
     }
 }

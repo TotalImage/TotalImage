@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Immutable;
 using System.IO;
+using TotalImage.Containers;
 using TotalImage.FileSystems.ExFAT;
 using TotalImage.FileSystems.FAT;
 using TotalImage.FileSystems.IMGFS;
@@ -30,6 +31,20 @@ namespace TotalImage.FileSystems
         /// The stream containing the file system
         /// </summary>
         protected readonly Stream _stream;
+
+        /// <summary>
+        /// The container that owns this file system. Set by <see cref="Partitions.PartitionEntry"/> after
+        /// detection so that mutation entry points can reach the container's <see cref="Container.PendingChanges"/>.
+        /// May be <see langword="null"/> for file systems not associated with a container
+        /// (e.g. when opened directly from a stream in tests).
+        /// </summary>
+        public Container? OwningContainer { get; internal set; }
+
+        /// <summary>
+        /// The zero-based index of this file system's partition within <see cref="OwningContainer"/>.
+        /// Set alongside <see cref="OwningContainer"/> by <see cref="Partitions.PartitionEntry"/>.
+        /// </summary>
+        public int PartitionIndex { get; internal set; }
 
         /// <summary>
         /// A display name for the format of the file system

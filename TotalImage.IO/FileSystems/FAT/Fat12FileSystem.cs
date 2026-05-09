@@ -204,7 +204,30 @@ namespace TotalImage.FileSystems.FAT
 
                 set
                 {
-                    throw new NotImplementedException();
+                    if (index >= Length) throw new ArgumentOutOfRangeException();
+
+                    var stream = _fat12.GetStream();
+                    using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+
+                    // Seek to the beginning of this FAT copy.
+                    stream.Position = (_fat12._bpb.ReservedLogicalSectors + _fatIndex * _fat12._bpb.LogicalSectorsPerFAT)
+                                      * _fat12._bpb.BytesPerLogicalSector;
+                    stream.Seek(index / 2 * 3, SeekOrigin.Current);
+
+                    // Read the existing 3-byte group so we can preserve the sibling nibble.
+                    using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+                    uint existing = reader.ReadUInt32() & 0xFFFFFF;
+                    stream.Seek(-3, SeekOrigin.Current);
+
+                    uint updated;
+                    if (index % 2 == 0)
+                        updated = (existing & 0xFFF000) | (value & 0xFFF);
+                    else
+                        updated = (existing & 0x000FFF) | ((value & 0xFFF) << 12);
+
+                    writer.Write((byte)(updated & 0xFF));
+                    writer.Write((byte)((updated >> 8) & 0xFF));
+                    writer.Write((byte)((updated >> 16) & 0xFF));
                 }
             }
         }

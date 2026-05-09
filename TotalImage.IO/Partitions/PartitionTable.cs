@@ -25,6 +25,12 @@ namespace TotalImage.Partitions
         public abstract string DisplayName { get; }
 
         /// <summary>
+        /// Whether this partition table supports writing. Always <see langword="true"/> on all concrete
+        /// types because <see cref="Changes.ChangeApplicator"/> never modifies partition table headers.
+        /// </summary>
+        public abstract bool SupportsWriting { get; }
+
+        /// <summary>
         /// A list of partitions contained within the partition table, to be validated and exposed by <see cref="Partitions" />
         ///
         /// </summary>

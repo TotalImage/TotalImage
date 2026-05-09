@@ -1,4 +1,5 @@
 using System.IO;
+using TotalImage.Containers;
 
 namespace TotalImage.Containers.VHD;
 
@@ -18,6 +19,9 @@ public class VhdContainer : Container
 
     /// <inheritdoc />
     public override string DisplayName => "Microsoft VHD";
+
+    /// <inheritdoc />
+    public override bool SupportsWriting => true;
 
     /// <summary>
     /// The footer structure of this VHD
@@ -82,4 +86,7 @@ public class VhdContainer : Container
             _contentStream = new PartialStream(containerStream, 0, containerStream.Length - 512);
         }
     }
+
+    /// <inheritdoc />
+    protected override Container CloneWriteable(Stream stream) => new RawContainer(stream);
 }

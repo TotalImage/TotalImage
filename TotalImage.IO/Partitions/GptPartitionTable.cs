@@ -52,6 +52,9 @@ namespace TotalImage.Partitions
         public override string DisplayName => "GUID Partition Table";
 
         /// <inheritdoc />
+        public override bool SupportsWriting => true;
+
+        /// <inheritdoc />
         public GptPartitionTable(Container container, uint sectorSize = 512) : base(container)
         {
             _sectorSize = sectorSize;
@@ -91,7 +94,7 @@ namespace TotalImage.Partitions
 
                 if (typeId != Guid.Empty)
                 {
-                    entries.Add(new GptPartitionEntry(typeId, entryId, flags, name, offset, length, firstLba, lastLba, new PartialStream(_container.Content, offset, length)));
+                    entries.Add(new GptPartitionEntry(typeId, entryId, flags, name, offset, length, firstLba, lastLba, new PartialStream(_container.Content, offset, length), _container));
                 }
             }
 
@@ -246,7 +249,8 @@ namespace TotalImage.Partitions
             /// <param name="firstLba">The first logical block address of the partition.</param>
             /// <param name="lastLba">The last logical block address of the partition.</param>
             /// <param name="stream">The stream containing the partition data</param>
-            public GptPartitionEntry(Guid typeId, Guid entryId, GptPartitionFlags flags, string name, long offset, long length, ulong firstLba, ulong lastLba, Stream stream) : base(offset, length, stream)
+            /// <param name="owningContainer">The container that owns this partition.</param>
+            public GptPartitionEntry(Guid typeId, Guid entryId, GptPartitionFlags flags, string name, long offset, long length, ulong firstLba, ulong lastLba, Stream stream, Container? owningContainer = null) : base(offset, length, stream, owningContainer)
             {
                 TypeId = typeId;
                 EntryId = entryId;

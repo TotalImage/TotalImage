@@ -69,6 +69,9 @@ namespace TotalImage.Partitions
         public override string DisplayName => "Master Boot Record";
 
         /// <inheritdoc />
+        public override bool SupportsWriting => true;
+
+        /// <inheritdoc />
         public MbrPartitionTable(Container container, uint sectorSize = 512) : base(container)
         {
             _sectorSize = sectorSize;
@@ -122,7 +125,7 @@ namespace TotalImage.Partitions
                 uint lbaLength = BinaryPrimitives.ReadUInt32LittleEndian(record[12..16]);
                 uint offset = lbaStart * _sectorSize;
                 uint length = lbaLength * _sectorSize;
-                MbrPartitionEntry entry = new MbrPartitionEntry((status & 0x80) != 0, type, chsStart, chsEnd, lbaStart, lbaLength, offset, length, new PartialStream(_container.Content, offset, length));
+                MbrPartitionEntry entry = new MbrPartitionEntry((status & 0x80) != 0, type, chsStart, chsEnd, lbaStart, lbaLength, offset, length, new PartialStream(_container.Content, offset, length), _container);
                 entries.Add(entry);
             }
 
@@ -219,8 +222,9 @@ namespace TotalImage.Partitions
             /// <param name="offset">The offset of the partition in it's container file</param>
             /// <param name="length">The length of the partition</param>
             /// <param name="stream">The stream containing the partition data</param>
-            public MbrPartitionEntry(bool active, MbrPartitionType type, CHSAddress chsStart, CHSAddress chsEnd, uint lbaStart, uint lbaLength, uint offset, uint length, Stream stream)
-                : base(offset, length, stream)
+            /// <param name="owningContainer">The container that owns this partition.</param>
+            public MbrPartitionEntry(bool active, MbrPartitionType type, CHSAddress chsStart, CHSAddress chsEnd, uint lbaStart, uint lbaLength, uint offset, uint length, Stream stream, Container? owningContainer = null)
+                : base(offset, length, stream, owningContainer)
             {
                 _active = active;
                 _type = type;

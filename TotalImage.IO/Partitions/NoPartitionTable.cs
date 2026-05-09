@@ -14,12 +14,15 @@ namespace TotalImage.Partitions
         public override string DisplayName => "Unpartitioned";
 
         /// <inheritdoc />
+        public override bool SupportsWriting => true;
+
+        /// <inheritdoc />
         public NoPartitionTable(Container container) : base(container) { }
 
         /// <inheritdoc />
         protected override IEnumerable<PartitionEntry> LoadPartitions()
         {
-            return ImmutableList.Create(new PartitionEntry(0, _container.Length, _container.Content));
+            return ImmutableList.Create(new PartitionEntry(0, _container.Length, _container.Content, _container));
         }
     }
 }

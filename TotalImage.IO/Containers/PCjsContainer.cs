@@ -18,6 +18,9 @@ public class PCjsContainer : Container
     public override string DisplayName => "PCjs Disk Image";
 
     /// <inheritdoc />
+    public override bool SupportsWriting => true;
+
+    /// <inheritdoc />
     public PCjsContainer(string path, bool memoryMapping) : base(path, memoryMapping)
     {
         var root = JsonDocument.Parse(containerStream).RootElement;
@@ -82,4 +85,7 @@ public class PCjsContainer : Container
             throw new InvalidDataException("The JSON document is not a valid PCjs disk image.", e);
         }
     }
+
+    /// <inheritdoc />
+    protected override Container CloneWriteable(Stream stream) => new RawContainer(stream);
 }

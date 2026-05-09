@@ -93,7 +93,21 @@ namespace TotalImage.FileSystems.FAT
 
                 set
                 {
-                    throw new NotImplementedException();
+                    index &= Mask;
+                    if (index >= Length) throw new ArgumentOutOfRangeException();
+
+                    var stream = _fat32.GetStream();
+                    using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+                    using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+
+                    stream.Position = (_fat32._bpb.ReservedLogicalSectors + _fatIndex * _fat32._bpb.LogicalSectorsPerFAT)
+                                      * _fat32._bpb.BytesPerLogicalSector;
+                    stream.Seek(index * 4, SeekOrigin.Current);
+
+                    // Preserve the top 4 reserved bits.
+                    uint existing = reader.ReadUInt32();
+                    stream.Seek(-4, SeekOrigin.Current);
+                    writer.Write((existing & 0xF0000000u) | (value & 0x0FFFFFFFu));
                 }
             }
         }
