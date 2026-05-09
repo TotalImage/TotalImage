@@ -1,0 +1,13 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="TotalImage.IO.Tests/TotalImage.IO.Tests.csproj" />
+  <Project Path="TotalImage.IO/TotalImage.IO.csproj" />
+  <Project Path="TotalImage/TotalImage.csproj" />
+</Solution>
