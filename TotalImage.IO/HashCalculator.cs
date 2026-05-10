@@ -15,20 +15,23 @@ namespace TotalImage
 
         private static async Task<string> CalculateHashAsyncCore(Stream stream, HashAlgorithm algorithm, CancellationToken cancellationToken)
         {
-            await hashMutex.WaitAsync(cancellationToken);
-            byte[] hash;
-
-            try
+            using (algorithm)
             {
-                stream.Position = 0;
-                hash = await algorithm.ComputeHashAsync(stream, cancellationToken);
-            }
-            finally
-            {
-                hashMutex.Release();
-            }
+                await hashMutex.WaitAsync(cancellationToken);
+                byte[] hash;
 
-            return BitConverter.ToString(hash).Replace("-", "").ToLower();
+                try
+                {
+                    stream.Position = 0;
+                    hash = await algorithm.ComputeHashAsync(stream, cancellationToken);
+                }
+                finally
+                {
+                    hashMutex.Release();
+                }
+
+                return BitConverter.ToString(hash).Replace("-", "").ToLower();
+            }
         }
 
         /// <summary>
