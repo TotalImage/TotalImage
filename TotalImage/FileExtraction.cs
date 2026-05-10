@@ -8,12 +8,11 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace TotalImage;
-
 using TiFile = TotalImage.FileSystems.File;
 using TiDirectory = TotalImage.FileSystems.Directory;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
+namespace TotalImage;
 /// <summary>
 /// The directory extraction mode that is used for extracting directories and their contents.
 /// </summary>

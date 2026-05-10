@@ -128,6 +128,9 @@ namespace TotalImage
 
                 Container image = ((frmMain)Application.OpenForms["frmMain"]).image;
 
+                //TODO: this code below is pretty hacky and needs to be reworked...
+                //TODO2: add Anex86 container specific path, if it's applicable
+
                 //For raw, there is no container metadata that could be used, so we just need to estimate based on file size and sector size (assumed 512 B)
                 if (image is RawContainer)
                 {

@@ -5,7 +5,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using static Interop.ComCtl32;
 using static Interop.Shell32;
-using static Interop.User32;
 
 namespace TotalImage;
 

@@ -1,5 +1,3 @@
-using System;
-
 /// <summary>
 /// Interface that describes file system object features that are specific
 /// to the FAT family (FAT12, FAT16, FAT32)
