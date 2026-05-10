@@ -53,12 +53,7 @@ namespace TotalImage.FileSystems.ISO
         /// <summary>
         /// The first primary volume descriptor
         /// </summary>
-        public IsoPrimaryVolumeDescriptor PrimaryVolumeDescriptor
-            => VolumeDescriptors
-                .OfType<IsoPrimaryVolumeDescriptor>()
-                .OrderByDescending(e => e.IsJolietVolumeDescriptor)
-                .ThenByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
-                .First();
+        public IsoPrimaryVolumeDescriptor PrimaryVolumeDescriptor { get; }
 
         /// <summary>
         /// Create an ISO 9660 or High Sierra file system
@@ -96,11 +91,13 @@ namespace TotalImage.FileSystems.ISO
                 .OfType<IsoPrimaryVolumeDescriptor>()
                 .OrderByDescending(e => e.IsJolietVolumeDescriptor)
                 .ThenByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
-                .FirstOrDefault();
+                .First();
             if (primaryDescriptor == null)
             {
                 throw new InvalidDataException("No primary volume descriptor");
             }
+
+            PrimaryVolumeDescriptor = primaryDescriptor;
 
             VolumeLabel = !string.IsNullOrEmpty(primaryDescriptor.VolumeIdentifier)
                 ? primaryDescriptor.VolumeIdentifier
