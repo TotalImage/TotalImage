@@ -362,9 +362,9 @@ namespace TotalImage
 
                 var fileStream = ((FileSystems.File)entries[0]).GetStream();
 
-                var crc32 = Task.Run(async () => await HashCalculator.CalculateCrc32HashAsync(fileStream, cts.Token));
-                var md5 = Task.Run(async () => await HashCalculator.CalculateMd5HashAsync(fileStream, cts.Token));
-                var sha1 = Task.Run(async () => await HashCalculator.CalculateSha1HashAsync(fileStream, cts.Token));
+                var crc32 = HashCalculator.CalculateCrc32HashAsync(fileStream, cts.Token);
+                var md5 = HashCalculator.CalculateMd5HashAsync(fileStream, cts.Token);
+                var sha1 = HashCalculator.CalculateSha1HashAsync(fileStream, cts.Token);
 
                 try
                 {

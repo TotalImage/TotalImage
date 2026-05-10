@@ -382,9 +382,9 @@ namespace TotalImage
 
             if (Application.OpenForms["frmMain"] is frmMain mainForm && mainForm.image is not null)
             {
-                var crc32 = Task.Run(async () => await HashCalculator.CalculateCrc32HashAsync(mainForm.image.Content, cts.Token));
-                var md5 = Task.Run(async () => await HashCalculator.CalculateMd5HashAsync(mainForm.image.Content, cts.Token));
-                var sha1 = Task.Run(async () => await HashCalculator.CalculateSha1HashAsync(mainForm.image.Content, cts.Token));
+                var crc32 = HashCalculator.CalculateCrc32HashAsync(mainForm.image.Content, cts.Token);
+                var md5 = HashCalculator.CalculateMd5HashAsync(mainForm.image.Content, cts.Token);
+                var sha1 = HashCalculator.CalculateSha1HashAsync(mainForm.image.Content, cts.Token);
 
                 try
                 {
