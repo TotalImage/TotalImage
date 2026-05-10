@@ -1137,7 +1137,10 @@ namespace TotalImage
 
                 DataObject data = new();
                 data.SetFileDropList(draggedItems); //Needed for Explorer
-                lstFiles.DoDragDrop(data, DragDropEffects.Move);
+                /* Set the preferred drop effect to Copy to prevent Explorer from defaulting to "Create a link" for filenames
+                 * that are registered under SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths. */
+                data.SetData("Preferred DropEffect", new MemoryStream(BitConverter.GetBytes((int)DragDropEffects.Copy)));
+                lstFiles.DoDragDrop(data, DragDropEffects.Copy);
             }
         }
 
@@ -1174,7 +1177,10 @@ namespace TotalImage
 
                 DataObject data = new();
                 data.SetFileDropList(draggedItems); //FileDrop is needed for Explorer
-                lstDirectories.DoDragDrop(data, DragDropEffects.Move);
+                /* Set the preferred drop effect to Copy to prevent Explorer from defaulting to "Create a link" for filenames
+                 * that are registered under SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths. */
+                data.SetData("Preferred DropEffect", new MemoryStream(BitConverter.GetBytes((int)DragDropEffects.Copy)));
+                lstDirectories.DoDragDrop(data, DragDropEffects.Copy);
             }
         }
 
