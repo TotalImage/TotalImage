@@ -2213,42 +2213,6 @@ namespace TotalImage
             UpdateStatusBar(true);
         }
 
-        /* Returns size of directory
-         * TODO: Move to this to the appropriate file system class and implement support for subdirectories */
-        private ulong CalculateDirSize()
-        {
-            var dirSize = 0ul;
-
-            foreach (ListViewItem lvi in currentFolderView)
-            {
-                TiFileSystemObject entry = (TiFileSystemObject)lvi.Tag;
-                if (!(entry is TiDirectory))
-                {
-                    dirSize += entry.Length;
-                }
-            }
-
-            return dirSize;
-        }
-
-        /* Returns the number of files in a directory
-         * TODO: Move to this to the appropriate file system class and implement support for subdirectories */
-        private uint GetFileCount()
-        {
-            uint fileCount = 0;
-
-            foreach (ListViewItem lvi in currentFolderView)
-            {
-                TiFileSystemObject entry = (TiFileSystemObject)lvi.Tag;
-                if (!(entry is TiDirectory))
-                {
-                    fileCount++;
-                }
-            }
-
-            return fileCount;
-        }
-
         private string GetFileTypeName(string filename, FileAttributes attributes)
         {
             var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
@@ -2572,7 +2536,7 @@ namespace TotalImage
                         {
                             var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
                             lbStatusPath.Text = dir.FullName;
-                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(CalculateDirSize())} in {GetFileCount()} item(s)";
+                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(false, false))} in {dir.CountFiles(false)} item(s)";
                             break;
                         }
                     case StatusBarState.OneSelected:
