@@ -5,7 +5,7 @@
 Currently, the project is still in early stages of development (alpha-level), and as such is not quite ready for everyday use yet. We will provide official builds for major pre-release milestones and stable releases only, in the mean time you can build it yourself or ask us to provide binaries for you (see the *Development* and *Support* sections below).
 
 ### System requirements
-* [.NET 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) Desktop Runtime
+* [.NET 10.0](https://dotnet.microsoft.com/download/dotnet/10.0) Desktop Runtime
 * Windows 10 or 11 (latest version recommended)
 
 Please see [this page](https://github.com/TotalImage/TotalImage/blob/master/Docs/oldwin.md) if you're using Windows 7 or 8.1.
@@ -53,9 +53,9 @@ Below is a non-exhaustive list of things we plan to support. Please note that th
 * And more...
 
 ## Development
-To work on TotalImage, we suggest you install [Microsoft Visual Studio 2026](https://visualstudio.microsoft.com/vs/). This includes the designer for Windows Forms, which makes it easier to work with the frontend.
+To work on TotalImage, we suggest you install [Microsoft Visual Studio](https://visualstudio.microsoft.com/vs/). This includes the designer for Windows Forms, which makes it easier to work with the frontend.
 
-Alternatively, you can also build the solution with [.NET CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/), which is included in the [.NET SDK](https://dotnet.microsoft.com/download/dotnet/8.0).
+Alternatively, you can also build the solution with [.NET CLI](https://docs.microsoft.com/en-us/dotnet/core/tools/), which is included in the [.NET SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
 
 You will also need to install [git](https://git-scm.com/) in both cases and make sure the `git.exe` executable is included in the `PATH` environment variable (required for displaying git commit hash in the About dialog).
 
