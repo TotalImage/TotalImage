@@ -128,6 +128,6 @@ namespace TotalImage.FileSystems
         /// <param name="sizeOnDisk">Whether to report actual file size or size on disk.</param>
         /// <returns>Combined size of files in a directory excluding subdirectories if recursive is false, otherwise combined size of files in a directory including subdirectories.</returns>
         public ulong GetSize(bool recursive, bool sizeOnDisk) =>
-            (ulong)EnumerateFileSystemObjectsInternal(recursive).Sum(x => sizeOnDisk ? (long)x.LengthOnDisk : (long)x.Length);
+            (ulong)EnumerateFileSystemObjectsInternal(recursive).Where(x => x is File).Sum(x => sizeOnDisk ? (long)x.LengthOnDisk : (long)x.Length);
     }
 }
