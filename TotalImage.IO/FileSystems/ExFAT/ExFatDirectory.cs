@@ -146,7 +146,11 @@ public class ExFatDirectory : Directory
             {
                 if (fileDirEntry != null && streamExtDirEntry != null && fileNameDirEntries.Count != 0)
                 {
-                    if (((FileAttributes)fileDirEntry.FileAttributes).HasFlag(FileAttributes.Directory))
+                    if (!showHidden && ((FileAttributes)fileDirEntry.FileAttributes).HasFlag(FileAttributes.Hidden))
+                    {
+                        // Skip hidden entries
+                    }
+                    else if (((FileAttributes)fileDirEntry.FileAttributes).HasFlag(FileAttributes.Directory))
                     {
                         yield return new ExFatDirectory(this, fileDirEntry, streamExtDirEntry, fileNameDirEntries);
                     }
@@ -172,7 +176,11 @@ public class ExFatDirectory : Directory
 
         if (fileDirEntry != null && streamExtDirEntry != null && fileNameDirEntries.Count != 0)
         {
-            if (((FileAttributes)fileDirEntry.FileAttributes).HasFlag(FileAttributes.Directory))
+            if (!showHidden && ((FileAttributes)fileDirEntry.FileAttributes).HasFlag(FileAttributes.Hidden))
+            {
+                // Skip hidden entries
+            }
+            else if (((FileAttributes)fileDirEntry.FileAttributes).HasFlag(FileAttributes.Directory))
             {
                 yield return new ExFatDirectory(this, fileDirEntry, streamExtDirEntry, fileNameDirEntries);
             }
