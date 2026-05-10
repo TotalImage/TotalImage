@@ -60,6 +60,21 @@ namespace TotalImage.Partitions
         }
 
         /// <summary>
+        /// Create a partition entry record from a stream, its position within a parent container, and a pre-loaded file system
+        /// </summary>
+        /// <param name="offset">The offset of the partition in it's container file</param>
+        /// <param name="length">The length of the partition</param>
+        /// <param name="stream">The stream containing the partition data</param>
+        /// <param name="fileSystem">A pre-loaded file system instance for this partition</param>
+        public PartitionEntry(long offset, long length, Stream stream, FileSystem fileSystem)
+        {
+            Offset = offset;
+            Length = length;
+            _stream = stream;
+            _fileSystem = fileSystem;
+        }
+
+        /// <summary>
         /// Load the file system from the partition
         /// </summary>
         /// <returns>The file system from the partition</returns>
