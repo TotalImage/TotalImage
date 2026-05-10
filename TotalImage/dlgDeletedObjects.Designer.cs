@@ -1,6 +1,6 @@
 namespace TotalImage
 {
-    partial class dlgUndelete
+    partial class dlgDeletedObjects
     {
         /// <summary>
         /// Required designer variable.
@@ -66,7 +66,7 @@ namespace TotalImage
             btnOK.Text = "OK";
             btnOK.Click += btnOK_Click;
             // 
-            // dlgUndelete
+            // dlgDeletedObjects
             // 
             AcceptButton = btnOK;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -78,11 +78,11 @@ namespace TotalImage
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "dlgUndelete";
+            Name = "dlgDeletedObjects";
             ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            Text = "Undelete objects";
+            Text = "Deleted objects";
             pnlBottom.ResumeLayout(false);
             ResumeLayout(false);
         }

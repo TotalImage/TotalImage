@@ -231,7 +231,7 @@ namespace TotalImage
         {
             if (image is not null)
             {
-                if (string.IsNullOrEmpty(filename) || (ToolStripMenuItem)sender == saveAsToolStripMenuItem) //File hasn't been saved yet
+                if (string.IsNullOrEmpty(filename) || sender == saveAsToolStripMenuItem || sender == saveAsToolStripButton) //File hasn't been saved yet
                 {
                     saveFileAs();
                 }
@@ -299,7 +299,7 @@ namespace TotalImage
 
                 //Build a fancy string for showing the item count
                 string itemCount = "";
-                if(dirCount > 0)
+                if (dirCount > 0)
                 {
                     itemCount += $"{dirCount} director{(dirCount == 1 ? "y" : "ies")}";
                     if (fileCount > 0)
@@ -381,7 +381,7 @@ namespace TotalImage
         //when it's not applicable, some additional checks here probably wouldn't hurt either...
         private void undelete_Click(object sender, EventArgs e)
         {
-            using dlgUndelete dlg = new();
+            using dlgDeletedObjects dlg = new();
             dlg.ShowDialog();
         }
 
@@ -742,6 +742,28 @@ namespace TotalImage
                 return;
             }
 
+            nameToolStripMenuItem2.Checked = typeToolStripMenuItem2.Checked = sizeToolStripMenuItem2.Checked =
+                modifiedToolStripMenuItem2.Checked = attributesToolStripMenuItem2.Checked = false;
+            switch (sortColumn)
+            {
+                case 0: nameToolStripMenuItem2.Checked = true; break;
+                case 1: typeToolStripMenuItem2.Checked = true; break;
+                case 2: sizeToolStripMenuItem2.Checked = true; break;
+                case 3: modifiedToolStripMenuItem2.Checked = true; break;
+                case 4: attributesToolStripMenuItem2.Checked = true; break;
+            }
+
+            largeIconsToolStripMenuItem2.Checked = smallIconsToolStripMenuItem2.Checked = detailsToolStripMenuItem2.Checked = listToolStripMenuItem2.Checked = false;
+            switch (Settings.CurrentSettings.FilesView)
+            {
+                case View.LargeIcon: largeIconsToolStripMenuItem2.Checked = true; break;
+                case View.SmallIcon: smallIconsToolStripMenuItem2.Checked = true; break;
+                case View.Details: detailsToolStripMenuItem2.Checked = true; break;
+                case View.List: listToolStripMenuItem2.Checked = true; break;
+            }
+
+            showHiddenObjectsToolStripMenuItem2.Checked = Settings.CurrentSettings.ShowHiddenItems;
+
             newFolderToolStripMenuItem2.Enabled = true;
             extractToolStripMenuItem2.Enabled = true;
 
@@ -804,7 +826,7 @@ namespace TotalImage
             List<TiFileSystemObject> entries = new();
             if (lstDirectories.Focused)
             {
-                if(lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
+                if (lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
                     entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
             }
             else if (lstFiles.Focused)
@@ -1103,8 +1125,9 @@ namespace TotalImage
         {
             Settings.CurrentSettings.ShowHiddenItems = !Settings.CurrentSettings.ShowHiddenItems;
 
-            showHiddenItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
-            showHiddenItemsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem2.Checked = Settings.CurrentSettings.ShowHiddenItems;
 
             ResetView();
         }
@@ -1252,7 +1275,7 @@ namespace TotalImage
             directoryTreeToolStripMenuItem.Checked = !splitContainer.Panel1Collapsed;
             statusBarToolStripMenuItem.Checked = statusBar.Visible;
 
-            showHiddenItemsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
 
             expandDirectoryTreeToolStripMenuItem.Enabled = image is not null && lstDirectories.Nodes[0].Nodes.Count > 0;
             collapseDirectoryTreeToolStripMenuItem.Enabled = image is not null && lstDirectories.Nodes[0].Nodes.Count > 0;
@@ -1276,7 +1299,7 @@ namespace TotalImage
                 case View.List: listToolStripMenuItem1.Checked = true; break;
             }
 
-            showHiddenItemsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowHiddenItems;
         }
 
         private void sortMenu_DropDownOpening(object sender, EventArgs e)
@@ -1366,28 +1389,28 @@ namespace TotalImage
             }
             /*else
             {*/
-                /* Searches the currently displayed items for the first one that starts with the character of the pressed key.
-                 * Currently this is very rudimentary, as it only works for English letters and digits, and the first item that is found.
-                 * Could be improved to continue the search further etc. */
-               /* string character = e.KeyCode.ToString();
+            /* Searches the currently displayed items for the first one that starts with the character of the pressed key.
+             * Currently this is very rudimentary, as it only works for English letters and digits, and the first item that is found.
+             * Could be improved to continue the search further etc. */
+            /* string character = e.KeyCode.ToString();
 
-                //This crap is done so numeric keys also work...
-                if ((byte)e.KeyCode > 0x30 && (byte)e.KeyCode < 0x39)
-                    character = ((int)e.KeyCode - 0x30).ToString();
-                else if ((byte)e.KeyCode > 0x60 && (byte)e.KeyCode < 0x69)
-                    character = ((int)e.KeyCode - 0x60).ToString();
+             //This crap is done so numeric keys also work...
+             if ((byte)e.KeyCode > 0x30 && (byte)e.KeyCode < 0x39)
+                 character = ((int)e.KeyCode - 0x30).ToString();
+             else if ((byte)e.KeyCode > 0x60 && (byte)e.KeyCode < 0x69)
+                 character = ((int)e.KeyCode - 0x60).ToString();
 
-                foreach (ListViewItem lvi in currentFolderView)
-                {
-                    if (lvi.Text.ToLower().StartsWith(character.ToLower()))
-                    {
-                        lstFiles.SelectedIndices.Clear();
-                        lvi.Focused = true;
-                        lvi.Selected = true;
-                        return;
-                    }
-                }
-            }*/
+             foreach (ListViewItem lvi in currentFolderView)
+             {
+                 if (lvi.Text.ToLower().StartsWith(character.ToLower()))
+                 {
+                     lstFiles.SelectedIndices.Clear();
+                     lvi.Focused = true;
+                     lvi.Selected = true;
+                     return;
+                 }
+             }
+         }*/
         }
 
         private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -1417,6 +1440,7 @@ namespace TotalImage
         private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
             closeImageToolStripMenuItem.Enabled = image is not null;
+            reloadImageToolStripMenuItem.Enabled = image is not null;
             saveToolStripMenuItem.Enabled = image is not null && unsavedChanges;
             saveAsToolStripMenuItem.Enabled = image is not null;
         }
@@ -1425,7 +1449,7 @@ namespace TotalImage
         {
             if (image is null)
             {
-                injectFilesToolStripMenuItem.Enabled = false;
+                injectToolStripMenuItem.Enabled = false;
                 extractToolStripMenuItem.Enabled = false;
                 renameToolStripMenuItem.Enabled = false;
                 deleteToolStripMenuItem.Enabled = false;
@@ -1450,7 +1474,7 @@ namespace TotalImage
             changeVolumeLabelToolStripMenuItem.Enabled = true;
             formatDiskToolStripMenuItem.Enabled = true;
             defragmentToolStripMenuItem.Enabled = true;
-            injectFilesToolStripMenuItem.Enabled = true;
+            injectToolStripMenuItem.Enabled = true;
             extractToolStripMenuItem.Enabled = true;
             selectAllToolStripMenuItem.Enabled = true;
             newFolderToolStripMenuItem.Enabled = true;
@@ -1648,6 +1672,14 @@ namespace TotalImage
             }
         }
 
+        private void parentDirectoryToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (lstDirectories.SelectedNode.Parent is not null)
+            {
+                lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
+            }
+        }
+
         private void frmMain_KeyUp(object sender, KeyEventArgs e)
         {
             //This is needed for whatever reason because otherwise CTRL+W doesn't work except when the menu is open...
@@ -1655,6 +1687,41 @@ namespace TotalImage
             {
                 closeImage_Click(sender, e);
             }
+        }
+        private void reloadImage_Click(object sender, EventArgs e)
+        {
+            if (image is null || string.IsNullOrEmpty(filepath))
+            {
+                throw new InvalidOperationException("No image is currently loaded");
+            }
+
+            if (unsavedChanges)
+            {
+                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = $"Would you like to save them before reloading the image?",
+                    Heading = "You have unsaved changes",
+                    Caption = "Warning",
+                    Buttons =
+                        {
+                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
+                            new TaskDialogCommandLinkButton("&Discard"),
+                            TaskDialogButton.Cancel
+                        },
+                    Icon = TaskDialogIcon.Warning,
+                });
+
+                if (result.Tag is not null) /* Save changes first... */ ;
+                else if (result == TaskDialogButton.Cancel) return;
+            }
+
+            ReloadImage();
+        }
+
+        private void deletedItemsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using dlgDeletedObjects dlg = new();
+            dlg.ShowDialog();
         }
         #endregion
 
@@ -1794,11 +1861,13 @@ namespace TotalImage
             {
                 count++;
                 parentDirectoryToolStripMenuItem.Enabled = true;
+                parentDirectoryToolStripMenuItem1.Enabled = true;
                 parentDirectoryToolStripButton.Enabled = true;
             }
             else
             {
                 parentDirectoryToolStripMenuItem.Enabled = false;
+                parentDirectoryToolStripMenuItem1.Enabled = false;
                 parentDirectoryToolStripButton.Enabled = false;
             }
 
@@ -2092,13 +2161,13 @@ namespace TotalImage
                     //If there's multiple partitions in a supported partition table, and they're all unsupported types, for now we just back out.
                     //Once we implement partition management (soon™), we can offer that to the user.
                     int rawCount = 0;
-                    foreach(Partitions.PartitionEntry entry in image.PartitionTable.Partitions)
+                    foreach (Partitions.PartitionEntry entry in image.PartitionTable.Partitions)
                     {
-                        if(entry.FileSystem is FileSystems.RAW.RawFileSystem)
+                        if (entry.FileSystem is FileSystems.RAW.RawFileSystem)
                             rawCount++;
                     }
 
-                    if(rawCount == image.PartitionTable.Partitions.Count)
+                    if (rawCount == image.PartitionTable.Partitions.Count)
                     {
                         TaskDialog.ShowDialog(this, new TaskDialogPage()
                         {
@@ -2345,21 +2414,21 @@ namespace TotalImage
                 return startNode;
             }
             else foreach (TreeNode node in startNode.Nodes)
+            {
+                // hack
+                if (((TiDirectory)node.Tag).FullName == dir.FullName)
                 {
-                    // hack
-                    if (((TiDirectory)node.Tag).FullName == dir.FullName)
+                    return node;
+                }
+                else
+                {
+                    TreeNode? nodeChild = FindNode(node, dir);
+                    if (nodeChild is not null)
                     {
-                        return node;
-                    }
-                    else
-                    {
-                        TreeNode? nodeChild = FindNode(node, dir);
-                        if (nodeChild is not null)
-                        {
-                            return nodeChild;
-                        }
+                        return nodeChild;
                     }
                 }
+            }
 
             return null;
         }
@@ -2367,7 +2436,8 @@ namespace TotalImage
         //Enables various UI elements after an image is loaded
         public void EnableUI()
         {
-            closeToolStripButton.Enabled = true;
+            closeImageToolStripButton.Enabled = true;
+            reloadImageToolStripButton.Enabled = true;
             injectToolStripButton.Enabled = true;
             newFolderToolStripButton.Enabled = true;
             labelToolStripMenuButton.Enabled = true;
@@ -2381,6 +2451,7 @@ namespace TotalImage
 
             if (unsavedChanges)
                 saveToolStripButton.Enabled = true;
+            saveAsToolStripButton.Enabled = true;
 
             //Enabling this now since we have rudimentary HDD support.
             managePartitionsToolStripButton.Enabled = image is not null && image.PartitionTable is not Partitions.NoPartitionTable;
@@ -2390,7 +2461,8 @@ namespace TotalImage
         //Disables various UI elements after an image is loaded
         private void DisableUI()
         {
-            closeToolStripButton.Enabled = false;
+            closeImageToolStripButton.Enabled = false;
+            reloadImageToolStripButton.Enabled = false;
             injectToolStripButton.Enabled = false;
             extractToolStripButton.Enabled = false;
             deleteToolStripButton.Enabled = false;
@@ -2400,6 +2472,7 @@ namespace TotalImage
             bootsectToolStripButton.Enabled = false;
             infoToolStripButton.Enabled = false;
             saveToolStripButton.Enabled = false;
+            saveAsToolStripButton.Enabled = false;
             managePartitionsToolStripButton.Enabled = false;
             selectPartitionToolStripComboBox.Enabled = false;
             pbrStatusCapacity.Visible = false;
@@ -2620,6 +2693,13 @@ namespace TotalImage
             }
 
             return sb.ToString();
+        }
+
+        private void ReloadImage()
+        {
+            string tempPath = filepath;
+            CloseImage();
+            OpenImage(tempPath);
         }
     }
 }
