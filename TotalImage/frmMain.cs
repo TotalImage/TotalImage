@@ -331,6 +331,10 @@ namespace TotalImage
                             Text = "Do not ask for confirmation again"
                         }
                     };
+
+                    //This prevents the enter keypress from being passed onto the listview and triggering file extraction and opening...
+                    ActiveControl = null;
+
                     TaskDialogButton result = TaskDialog.ShowDialog(this, page);
 
                     if (page.Verification.Checked)
@@ -363,6 +367,10 @@ namespace TotalImage
                             Text = "Do not ask for confirmation again"
                         }
                     };
+
+                    //This prevents the enter keypress from being passed onto the treeview and causing unexpected actions...
+                    ActiveControl = null;
+
                     TaskDialogButton result = TaskDialog.ShowDialog(this, page);
 
                     if (page.Verification.Checked)
