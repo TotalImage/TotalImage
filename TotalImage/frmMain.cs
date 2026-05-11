@@ -48,6 +48,10 @@ namespace TotalImage
         private int _smallFolderIndex = -1;
         private int _smallFolderHiddenIndex = -1;
 
+        // Shared ColorMatrix/ImageAttributes used by CreateHiddenIcon - constructed once
+        private static readonly ColorMatrix _hiddenIconColorMatrix = new() { Matrix33 = 0.65f };
+        private static readonly ImageAttributes _hiddenIconAttributes = CreateHiddenIconAttributes();
+
         private ListViewItem upOneFolderListViewItem = new()
         {
             Text = "..",
@@ -1796,13 +1800,15 @@ namespace TotalImage
             }
         }
 
+        private static ImageAttributes CreateHiddenIconAttributes()
+        {
+            var attrs = new ImageAttributes();
+            attrs.SetColorMatrix(_hiddenIconColorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+            return attrs;
+        }
+
         private Bitmap CreateHiddenIcon(Bitmap normalIcon)
         {
-            ColorMatrix cm = new();
-            cm.Matrix33 = 0.65f; //65% opacity
-            ImageAttributes attributes = new();
-            attributes.SetColorMatrix(cm, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-
             Point[] points = { new Point(0, 0),
                                new Point(normalIcon.Width, 0),
                                new Point(0, normalIcon.Height),
@@ -1812,7 +1818,7 @@ namespace TotalImage
             Bitmap bmp = new(normalIcon.Width, normalIcon.Height);
             using (Graphics gr = Graphics.FromImage(bmp))
             {
-                gr.DrawImage(normalIcon, points, rect, GraphicsUnit.Pixel, attributes);
+                gr.DrawImage(normalIcon, points, rect, GraphicsUnit.Pixel, _hiddenIconAttributes);
             }
 
             return bmp;
@@ -2619,19 +2625,6 @@ namespace TotalImage
 
         //Generates a random name for a subfolder in the temp folder, used during double-click, ENTER keypress and drag-n-drop extraction
         private static string GetRandomDirName()
-        {
-            string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            Random rand = new();
-            StringBuilder sb = new("~");
-            int index;
-
-            for (int i = 0; i < 10; i++)
-            {
-                index = rand.Next(chars.Length);
-                sb.Append(Convert.ToChar(chars[index]));
-            }
-
-            return sb.ToString();
-        }
+            => $"~{Path.GetFileNameWithoutExtension(Path.GetRandomFileName()).ToUpperInvariant()}";
     }
 }
