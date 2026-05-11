@@ -71,10 +71,10 @@ namespace TotalImage
             }
         }
 
-        public static FileListViewItemComparer Name => new FileListViewItemComparer(FileListViewColumn.Name);
-        public static FileListViewItemComparer Type => new FileListViewItemComparer(FileListViewColumn.Type);
-        public static FileListViewItemComparer Size => new FileListViewItemComparer(FileListViewColumn.Size);
-        public static FileListViewItemComparer Modified => new FileListViewItemComparer(FileListViewColumn.Modified);
-        public static FileListViewItemComparer Attributes => new FileListViewItemComparer(FileListViewColumn.Attributes);
+        public static readonly FileListViewItemComparer Name = new FileListViewItemComparer(FileListViewColumn.Name);
+        public static readonly FileListViewItemComparer Type = new FileListViewItemComparer(FileListViewColumn.Type);
+        public static readonly FileListViewItemComparer Size = new FileListViewItemComparer(FileListViewColumn.Size);
+        public static readonly FileListViewItemComparer Modified = new FileListViewItemComparer(FileListViewColumn.Modified);
+        public static readonly FileListViewItemComparer Attributes = new FileListViewItemComparer(FileListViewColumn.Attributes);
     }
 }
