@@ -48,6 +48,10 @@ namespace TotalImage
         private int _smallFolderIndex = -1;
         private int _smallFolderHiddenIndex = -1;
 
+        // Cache for the NoneSelected status bar size text to avoid a recursive GetSize() on every selection change
+        private TiDirectory? _cachedStatusBarDir;
+        private string _cachedStatusBarSizeText = string.Empty;
+
         // Shared ColorMatrix/ImageAttributes used by CreateHiddenIcon - constructed once
         private static readonly ColorMatrix _hiddenIconColorMatrix = new() { Matrix33 = 0.65f };
         private static readonly ImageAttributes _hiddenIconAttributes = CreateHiddenIconAttributes();
@@ -2463,6 +2467,7 @@ namespace TotalImage
             currentFolderView.Clear();
             lstFiles.VirtualListSize = 0;
             selectPartitionToolStripComboBox.Items.Clear();
+            _cachedStatusBarDir = null;
             DisableUI();
             UpdateStatusBar(false);
         }
@@ -2590,7 +2595,14 @@ namespace TotalImage
                         {
                             var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
                             lbStatusPath.Text = dir.FullName;
-                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(false, false))} in {dir.CountFiles(false)} item(s)";
+
+                            if (updateFreeSpace || !ReferenceEquals(dir, _cachedStatusBarDir))
+                            {
+                                _cachedStatusBarDir = dir;
+                                _cachedStatusBarSizeText = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(false, false))} in {dir.CountFiles(false)} item(s)";
+                            }
+
+                            lblStatusSize.Text = _cachedStatusBarSizeText;
                             break;
                         }
                     case StatusBarState.OneSelected:
