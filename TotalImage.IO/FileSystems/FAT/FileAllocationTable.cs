@@ -118,7 +118,7 @@ public abstract class FileAllocationTable : IEnumerable<uint>
         public void Dispose() { }
 
         /// <inheritdoc/>
-        public bool MoveNext() => ++_currentIndex < _fat.Length ? false : true;
+        public bool MoveNext() => ++_currentIndex < _fat.Length;
 
         /// <inheritdoc/>
         public void Reset() => _currentIndex = 0;
