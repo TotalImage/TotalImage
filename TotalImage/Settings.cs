@@ -319,7 +319,7 @@ namespace TotalImage
             CurrentSettings.ConfirmDeletion = true;
             CurrentSettings.ConfirmInjection = true;
             CurrentSettings.ConfirmOverwriteExtraction = true;
-            CurrentSettings.MemoryMappingThreshold = 1048576;
+            CurrentSettings.MemoryMappingThreshold = 104857600; //100 MiB
             CurrentSettings.FileListShowDirSize = false;
             CurrentSettings.ColorMode = SystemColorMode.System;
         }

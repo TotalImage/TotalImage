@@ -127,10 +127,17 @@ public abstract class FatFileSystem : FileSystem
         /// </summary>
         public override string VolumeLabel
         {
-            get => !string.IsNullOrWhiteSpace(RootDirectoryVolumeLabel) ? 
-                RootDirectoryVolumeLabel : !string.IsNullOrWhiteSpace(BpbVolumeLabel) && !BpbVolumeLabel.Equals("NO NAME", StringComparison.OrdinalIgnoreCase) ? 
-                BpbVolumeLabel : "<N/A>";
-            
+            get
+            {
+                var rootLabel = RootDirectoryVolumeLabel;
+                if (!string.IsNullOrWhiteSpace(rootLabel))
+                    return rootLabel;
+                var bpbLabel = BpbVolumeLabel;
+                if (!string.IsNullOrWhiteSpace(bpbLabel) && !bpbLabel.Equals("NO NAME", StringComparison.OrdinalIgnoreCase))
+                    return bpbLabel;
+                return "<N/A>";
+            }
+
             set => throw new NotImplementedException();
         }
 
