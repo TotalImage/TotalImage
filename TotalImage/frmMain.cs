@@ -346,7 +346,7 @@ namespace TotalImage
 
                 throw new NotImplementedException("This feature is not implemented yet");
             }
-            else if (lstDirectories.Focused)
+            else if (lstDirectories.Focused && ((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is not null)
             {
                 if (Settings.CurrentSettings.ConfirmDeletion)
                 {
