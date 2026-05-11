@@ -72,7 +72,9 @@ namespace TotalImage.FileSystems.FAT
                 sb.Append(entry.name3);
             }
 
-            return sb.ToString().Split('\0')[0];
+            var result = sb.ToString();
+            var nullIndex = result.IndexOf('\0');
+            return nullIndex >= 0 ? result[..nullIndex] : result;
         }
 
         /// <summary>
