@@ -203,7 +203,6 @@ namespace TotalImage
             dtpAccessed.Location = new System.Drawing.Point(97, 371);
             dtpAccessed.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             dtpAccessed.Name = "dtpAccessed";
-            dtpAccessed.ShowUpDown = true;
             dtpAccessed.Size = new System.Drawing.Size(293, 23);
             dtpAccessed.TabIndex = 3;
             toolTip.SetToolTip(dtpAccessed, resources.GetString("dtpAccessed.ToolTip"));
@@ -216,7 +215,6 @@ namespace TotalImage
             dtpCreated.Location = new System.Drawing.Point(97, 313);
             dtpCreated.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             dtpCreated.Name = "dtpCreated";
-            dtpCreated.ShowUpDown = true;
             dtpCreated.Size = new System.Drawing.Size(293, 23);
             dtpCreated.TabIndex = 1;
             toolTip.SetToolTip(dtpCreated, "This is the date and time when the file or directory was originally\r\ncreated. For FAT file systems, only software supporting the VFAT\r\nextensions uses this value.");
@@ -229,7 +227,6 @@ namespace TotalImage
             dtpModified.Location = new System.Drawing.Point(97, 342);
             dtpModified.MinDate = new System.DateTime(1980, 1, 1, 0, 0, 0, 0);
             dtpModified.Name = "dtpModified";
-            dtpModified.ShowUpDown = true;
             dtpModified.Size = new System.Drawing.Size(293, 23);
             dtpModified.TabIndex = 2;
             toolTip.SetToolTip(dtpModified, "This is the date and time when the file or directory was last\r\nwritten to.");
