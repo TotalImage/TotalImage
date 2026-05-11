@@ -19,6 +19,10 @@ namespace TotalImage
             {
                 components.Dispose();
             }
+            if (disposing)
+            {
+                _monoFont.Dispose();
+            }
             base.Dispose(disposing);
         }
 

@@ -40,6 +40,14 @@ namespace TotalImage
         private TiDirectory? draggedDir;
         public string tempDir;
 
+        // Cached fonts to avoid allocating a new GDI Font object per list item
+        private readonly Font _monoFont = new(FontFamily.GenericMonospace, 9);
+        //private readonly Font _strikeoutFont = new("Segoe UI", 9f, FontStyle.Strikeout);
+
+        // Cached image list indices, populated after icons are loaded
+        private int _smallFolderIndex = -1;
+        private int _smallFolderHiddenIndex = -1;
+
         private ListViewItem upOneFolderListViewItem = new()
         {
             Text = "..",
@@ -53,9 +61,11 @@ namespace TotalImage
             InitializeComponent();
 
             //Scale the ImageList images according to current Dpi scale
-            Graphics g = CreateGraphics();
-            imgFilesSmall.ImageSize = new SizeF(16 * (g.DpiX / 96f), 16 * (g.DpiY / 96f)).ToSize();
-            imgFilesLarge.ImageSize = new SizeF(32 * (g.DpiX / 96f), 32 * (g.DpiY / 96f)).ToSize();
+            using (Graphics g = CreateGraphics())
+            {
+                imgFilesSmall.ImageSize = new SizeF(16 * (g.DpiX / 96f), 16 * (g.DpiY / 96f)).ToSize();
+                imgFilesLarge.ImageSize = new SizeF(32 * (g.DpiX / 96f), 32 * (g.DpiY / 96f)).ToSize();
+            }
         }
 
         #region Event Handlers
@@ -1327,14 +1337,20 @@ namespace TotalImage
         {
             /* Note that we can't simply use the ComboBox.SelectedIndex, as unsupported partitions aren't added to the ComboBox and thus item
              * indices are shifted compared to actual partition indices. */
+            if (image is null)
+                return;
+
             if (image.PartitionTable.Partitions.Count > 1)
             {
-                int realIndex = int.Parse(selectPartitionToolStripComboBox.SelectedItem.ToString()[..1]);
-
-                if (realIndex != CurrentPartitionIndex)
+                string? itemText = selectPartitionToolStripComboBox.SelectedItem?.ToString();
+                int colonPos = itemText?.IndexOf(':') ?? -1;
+                if (colonPos > 0 && int.TryParse(itemText![..colonPos], out int realIndex))
                 {
-                    LoadPartitionInCurrentImage(realIndex);
-                    CurrentPartitionIndex = realIndex;
+                    if (realIndex != CurrentPartitionIndex)
+                    {
+                        LoadPartitionInCurrentImage(realIndex);
+                        CurrentPartitionIndex = realIndex;
+                    }
                 }
             }
         }
@@ -1458,8 +1474,8 @@ namespace TotalImage
             }
 
             changeGeometryToolStripMenuItem.Enabled = true;
-            selectPartitionToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable; ;
-            managePartitionsToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable; ;
+            selectPartitionToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable;
+            managePartitionsToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable;
             bootSectorPropertiesToolStripMenuItem.Enabled = true;
             changeVolumeLabelToolStripMenuItem.Enabled = true;
             formatDiskToolStripMenuItem.Enabled = true;
@@ -1714,8 +1730,8 @@ namespace TotalImage
                 lastViewedDir = (TiDirectory)lstDirectories.SelectedNode.Tag;
 
                 var root = new TreeNode(@"\");
-                root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-                root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                root.ImageIndex = _smallFolderIndex;
+                root.SelectedImageIndex = _smallFolderIndex;
                 root.Tag = image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.RootDirectory;
 
                 lstDirectories.BeginUpdate();
@@ -1752,20 +1768,14 @@ namespace TotalImage
                 //Hidden folders have a 50% opacity for the icon
                 if (subdir.Attributes.HasFlag(FileAttributes.Hidden))
                 {
-                    subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder (Hidden)");
+                    subnode.ImageIndex = _smallFolderHiddenIndex;
                     subnode.ForeColor = Color.Gray;
                 }
                 else
                 {
-                    subnode.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+                    subnode.ImageIndex = _smallFolderIndex;
                 }
 
-                //Deleted folders have strikethrough fontstyle
-                if (subdir.Name.StartsWith("?"))
-                {
-                    Font font = new("Segoe UI", 9f, FontStyle.Strikeout);
-                    subnode.NodeFont = font;
-                }
                 subnode.Tag = subdir;
                 node.Nodes.Add(subnode);
 
@@ -1825,12 +1835,15 @@ namespace TotalImage
                 string size = string.Empty;
                 if (fso is TiDirectory subdir)
                 {
-                    size = Settings.CurrentSettings.SizeUnit.FormatSize(subdir.GetSize(true, false));
-
                     if (Settings.CurrentSettings.FileListShowDirSize)
+                    {
+                        size = Settings.CurrentSettings.SizeUnit.FormatSize(subdir.GetSize(true, false));
                         item.SubItems.Add(size);
+                    }
                     else
+                    {
                         item.SubItems.Add(string.Empty);
+                    }
                 }
                 else
                 {
@@ -1843,7 +1856,7 @@ namespace TotalImage
                 item.SubItems.Add(fso.LastWriteTime.ToString());
                 item.SubItems.Add(FileAttributesToString(fso.Attributes));
                 item.UseItemStyleForSubItems = false;
-                item.SubItems[4].Font = new(FontFamily.GenericMonospace, 9);
+                item.SubItems[4].Font = _monoFont;
 
                 //Do some simple styling for hidden and deleted items
                 if (fso.Attributes.HasFlag(FileAttributes.Hidden))
@@ -1853,12 +1866,6 @@ namespace TotalImage
                     item.SubItems[2].ForeColor = Color.Gray;
                     item.SubItems[3].ForeColor = Color.Gray;
                     item.SubItems[4].ForeColor = Color.Gray;
-                }
-                if (fso.Name.StartsWith("?"))
-                {
-                    Font sfont = new("Segoe UI", 9f, FontStyle.Strikeout);
-                    item.UseItemStyleForSubItems = false;
-                    item.Font = sfont;
                 }
 
                 item.ToolTipText = $"Type: {item.SubItems[1].Text}{Environment.NewLine}Size: {size}{Environment.NewLine}Modified: {item.SubItems[3].Text}";
@@ -1909,9 +1916,18 @@ namespace TotalImage
         //Opens an image
         private void OpenImage(string? path)
         {
-            if (path is not null && (path == "" || path.Trim() == ""))
+            if (path is not null && string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentException("path must be either a valid path for existing files, or null when opening newly created files!");
+                TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = "The provided path is empty or whitespace and cannot be opened.",
+                    Heading = "Invalid path",
+                    Caption = "Error",
+                    Buttons = { TaskDialogButton.OK },
+                    Icon = TaskDialogIcon.Error,
+                    SizeToContent = true
+                });
+                return;
             }
 
             //Opening an existing file, otherwise it's a newly created image
@@ -2204,8 +2220,8 @@ namespace TotalImage
             }
 
             var root = new TreeNode(@"\");
-            root.ImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
-            root.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+            root.ImageIndex = _smallFolderIndex;
+            root.SelectedImageIndex = _smallFolderIndex;
 
             root.Tag = image.PartitionTable.Partitions[index].FileSystem.RootDirectory;
             PopulateTreeView(root, image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
@@ -2279,6 +2295,8 @@ namespace TotalImage
         //Adds small and large icons for generic file and folder in normal and hidden variants to the image lists for treeview and listview
         private void GetDefaultIcons()
         {
+            _smallFolderIndex = -1;
+            _smallFolderHiddenIndex = -1;
             //Clear any existing icons from the lists to make sure we're not adding duplicate keys
             imgFilesSmall.Images.RemoveByKey("folder");
             imgFilesSmall.Images.RemoveByKey("folder (Hidden)");
@@ -2309,6 +2327,10 @@ namespace TotalImage
             imgFilesSmall.Images.Add("up", Properties.Resources.folder_up);
             imgFilesLarge.Images.Add("up", Properties.Resources.folder_up_32);
             upOneFolderListViewItem.ImageIndex = imgFilesSmall.Images.IndexOfKey("up");
+
+            // Cache folder icon indices so callers don't need repeated O(n) key lookups
+            _smallFolderIndex = imgFilesSmall.Images.IndexOfKey("folder");
+            _smallFolderHiddenIndex = imgFilesSmall.Images.IndexOfKey("folder (Hidden)");
         }
 
         //Finds the node with the specified entry
