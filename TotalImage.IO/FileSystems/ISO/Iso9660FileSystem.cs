@@ -91,7 +91,7 @@ namespace TotalImage.FileSystems.ISO
                 .OfType<IsoPrimaryVolumeDescriptor>()
                 .OrderByDescending(e => e.IsJolietVolumeDescriptor)
                 .ThenByDescending(e => e.Type == IsoVolumeDescriptorType.PrimaryVolumeDescriptor)
-                .First();
+                .FirstOrDefault();
             if (primaryDescriptor == null)
             {
                 throw new InvalidDataException("No primary volume descriptor");

@@ -48,10 +48,15 @@ internal static class ShellInterop
     public static Icon GetFileTypeIcon(string fileName, FileAttributes attributes, bool large = true)
         => GetFileTypeIcon(GetFileTypeIconIndex(fileName, attributes), large);
 
-    public static Icon LargeFolderIcon => GetFileTypeIcon(GetFileTypeIconIndex("folder", FileAttributes.Directory), true);
-    public static Icon SmallFolderIcon => GetFileTypeIcon(GetFileTypeIconIndex("folder", FileAttributes.Directory), false);
-    public static Icon LargeFileIcon => GetFileTypeIcon(GetFileTypeIconIndex("file", 0), true);
-    public static Icon SmallFileIcon => GetFileTypeIcon(GetFileTypeIconIndex("file", 0), false);
+    private static readonly Lazy<Icon> _largeFolderIcon = new(() => GetFileTypeIcon(GetFileTypeIconIndex("folder", FileAttributes.Directory), true));
+    private static readonly Lazy<Icon> _smallFolderIcon = new(() => GetFileTypeIcon(GetFileTypeIconIndex("folder", FileAttributes.Directory), false));
+    private static readonly Lazy<Icon> _largeFileIcon = new(() => GetFileTypeIcon(GetFileTypeIconIndex("file", 0), true));
+    private static readonly Lazy<Icon> _smallFileIcon = new(() => GetFileTypeIcon(GetFileTypeIconIndex("file", 0), false));
+
+    public static Icon LargeFolderIcon => _largeFolderIcon.Value;
+    public static Icon SmallFolderIcon => _smallFolderIcon.Value;
+    public static Icon LargeFileIcon => _largeFileIcon.Value;
+    public static Icon SmallFileIcon => _smallFileIcon.Value;
 
     public static (Icon Small, Icon Large) GetGoUpIcons()
     {

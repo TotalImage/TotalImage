@@ -31,7 +31,7 @@ namespace TotalImage
             get => _base.Position - _offsetStart;
             set
             {
-                if (value != 0 && value >= _length)
+                if (value < 0 || value > _length)
                 {
                     throw new IOException();
                 }
