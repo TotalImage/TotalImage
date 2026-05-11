@@ -28,21 +28,21 @@ namespace TotalImage
 
     public partial class frmMain : Form
     {
-        public string filename = "";
-        public string filepath = "";
-        public bool unsavedChanges = false;
-        public Container? image;
-        public int CurrentPartitionIndex;
         private int sortColumn;
         private SortOrder sortOrder;
         private TiDirectory? lastViewedDir;
         private string? lastSavedFilename;
         private TiDirectory? draggedDir;
+
+        public string filename = "";
+        public string filepath = "";
+        public bool unsavedChanges = false;
+        public Container? image;
+        public int CurrentPartitionIndex;
         public string tempDir;
 
         // Cached fonts to avoid allocating a new GDI Font object per list item
         private readonly Font _monoFont = new(FontFamily.GenericMonospace, 9);
-        //private readonly Font _strikeoutFont = new("Segoe UI", 9f, FontStyle.Strikeout);
 
         // Cached image list indices, populated after icons are loaded
         private int _smallFolderIndex = -1;
@@ -105,7 +105,7 @@ namespace TotalImage
         //TODO: Actually change the volume labels
         private void changeVolumeLabel_Click(object sender, EventArgs e)
         {
-            if (image?.PartitionTable.Partitions[0].FileSystem is not FatFileSystem fs)
+            if (image?.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FatFileSystem fs)
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
@@ -165,7 +165,7 @@ namespace TotalImage
         //Click event handler for all menu items in the Recent images menu
         private void recentImage_Click(object sender, EventArgs e)
         {
-            string imagePath = ((ToolStripMenuItem)sender).Text[3..].Trim(' '); //Remove the leading index in the menuitem text
+            string imagePath = (string)((ToolStripMenuItem)sender).Tag;
             if (!File.Exists(imagePath))
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
@@ -309,7 +309,7 @@ namespace TotalImage
 
                 //Build a fancy string for showing the item count
                 string itemCount = "";
-                if(dirCount > 0)
+                if (dirCount > 0)
                 {
                     itemCount += $"{dirCount} director{(dirCount == 1 ? "y" : "ies")}";
                     if (fileCount > 0)
@@ -462,16 +462,24 @@ namespace TotalImage
         {
             if (image is null)
             {
-                throw new Exception("No image is currently loaded");
+                TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = "No image is currently loaded.",
+                    Heading = "Cannot save",
+                    Caption = "Error",
+                    Buttons = { TaskDialogButton.OK },
+                    Icon = TaskDialogIcon.Error,
+                    SizeToContent = true
+                });
+                return;
             }
 
             image.SaveImage(filepath);
             OpenImage(filepath); //Reload the image
 
-            /*saveToolStripButton.Enabled = false;
+            saveToolStripButton.Enabled = false;
             saveToolStripMenuItem.Enabled = false;
-            Text = $"{filename} - TotalImage";
-            unsavedChanges = false;*/
+            unsavedChanges = false;
         }
 
         //Saves the current image as a new file, along with any changes made to it since the last save
@@ -479,7 +487,16 @@ namespace TotalImage
         {
             if (image is null)
             {
-                throw new Exception("No image is currently loaded");
+                TaskDialog.ShowDialog(this, new TaskDialogPage()
+                {
+                    Text = "No image is currently loaded.",
+                    Heading = "Cannot save",
+                    Caption = "Error",
+                    Buttons = { TaskDialogButton.OK },
+                    Icon = TaskDialogIcon.Error,
+                    SizeToContent = true
+                });
+                return false;
             }
 
             using SaveFileDialog sfd = new();
@@ -743,10 +760,6 @@ namespace TotalImage
                     extractToolStripButton.Enabled = true;
                     propertiesToolStripButton.Enabled = true;
 
-                    var path = lstDirectories.SelectedNode.FullPath;
-                    if (!path.EndsWith(lstDirectories.PathSeparator))
-                        path += lstDirectories.PathSeparator;
-
                     UpdateStatusBar(false);
                 }
             }
@@ -822,7 +835,7 @@ namespace TotalImage
             List<TiFileSystemObject> entries = new();
             if (lstDirectories.Focused)
             {
-                if(lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
+                if (lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
                     entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
             }
             else if (lstFiles.Focused)
@@ -2120,13 +2133,13 @@ namespace TotalImage
                     //If there's multiple partitions in a supported partition table, and they're all unsupported types, for now we just back out.
                     //Once we implement partition management (soon™), we can offer that to the user.
                     int rawCount = 0;
-                    foreach(Partitions.PartitionEntry entry in image.PartitionTable.Partitions)
+                    foreach (Partitions.PartitionEntry entry in image.PartitionTable.Partitions)
                     {
-                        if(entry.FileSystem is FileSystems.RAW.RawFileSystem)
+                        if (entry.FileSystem is FileSystems.RAW.RawFileSystem)
                             rawCount++;
                     }
 
-                    if(rawCount == image.PartitionTable.Partitions.Count)
+                    if (rawCount == image.PartitionTable.Partitions.Count)
                     {
                         TaskDialog.ShowDialog(this, new TaskDialogPage()
                         {
@@ -2341,21 +2354,21 @@ namespace TotalImage
                 return startNode;
             }
             else foreach (TreeNode node in startNode.Nodes)
+            {
+                // hack
+                if (((TiDirectory)node.Tag).FullName == dir.FullName)
                 {
-                    // hack
-                    if (((TiDirectory)node.Tag).FullName == dir.FullName)
+                    return node;
+                }
+                else
+                {
+                    TreeNode? nodeChild = FindNode(node, dir);
+                    if (nodeChild is not null)
                     {
-                        return node;
-                    }
-                    else
-                    {
-                        TreeNode? nodeChild = FindNode(node, dir);
-                        if (nodeChild is not null)
-                        {
-                            return nodeChild;
-                        }
+                        return nodeChild;
                     }
                 }
+            }
 
             return null;
         }
@@ -2420,8 +2433,11 @@ namespace TotalImage
                     continue;
                 }
 
-                ToolStripMenuItem newItem = new();
-                newItem.Text = $"{(Settings.CurrentSettings.RecentImages.Count - i)}: {Settings.CurrentSettings.RecentImages[i]}";
+                ToolStripMenuItem newItem = new()
+                {
+                    Text = $"{Settings.CurrentSettings.RecentImages.Count - i}: {Settings.CurrentSettings.RecentImages[i]}",
+                    Tag = Settings.CurrentSettings.RecentImages[i]
+                };
                 newItem.Click += recentImage_Click;
                 recentFilesToolStripMenuItem.DropDownItems.Add(newItem);
             }
