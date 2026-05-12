@@ -2022,8 +2022,6 @@ namespace TotalImage
                     subnode.ImageIndex = _smallFolderIndex;
                 }
 
-<<<<<<< HEAD
-=======
                 //Deleted folders have strikethrough fontstyle
                 if (subdir.Name.StartsWith("?"))
                 {
@@ -2047,8 +2045,6 @@ namespace TotalImage
                         subnode.ForeColor = Color.FromArgb(156, 87, 0);
                         break;
                 }
-
->>>>>>> 73ba9ed (Add write support for FAT filesystems and raw container images.)
                 subnode.Tag = subdir;
                 node.Nodes.Add(subnode);
 
@@ -2628,8 +2624,6 @@ namespace TotalImage
             UpdateStatusBar(true);
         }
 
-<<<<<<< HEAD
-=======
         /* Returns size of directory
          * TODO: Move to this to the appropriate file system class and implement support for subdirectories */
         private ulong CalculateDirSize()
@@ -2661,8 +2655,6 @@ namespace TotalImage
 
             return fileCount;
         }
-
->>>>>>> 73ba9ed (Add write support for FAT filesystems and raw container images.)
         private string GetFileTypeName(string filename, FileAttributes attributes)
         {
             var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
