@@ -11,12 +11,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Changes;
 using TotalImage.Containers;
+using TotalImage.Containers.Anex86;
 using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
-using TotalImage.Containers.Anex86;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using TiDirectory = TotalImage.FileSystems.Directory;
+using TiFile = TotalImage.FileSystems.File;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
 namespace TotalImage
@@ -1146,27 +1147,138 @@ namespace TotalImage
                         throw new Exception("Associated treeview node was not found");
                     }
                 }
-                else //A file was double-clicked - extract to temp dir then open it
+                else //A file was double-clicked - perform the action defined in Settings
                 {
-                    tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
-                    string targetFile = Path.Combine(tempDir, SelectedItems.First().Name);
-
-                    FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
-
-                    try
+                    if (Settings.CurrentSettings.DefaultFileDoubleClickAction == Settings.FileDoubleClickAction.OpenRegistered ||
+                        Settings.CurrentSettings.DefaultFileDoubleClickAction == Settings.FileDoubleClickAction.OpenSpecified)
                     {
-                        Process.Start(new ProcessStartInfo
+                        tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
+                        string targetFile = Path.Combine(tempDir, SelectedItems.First().Name);
+
+                        FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
+
+                        try
                         {
-                            FileName = targetFile,
-                            UseShellExecute = true,
-                            ErrorDialog = true
-                        });
+                            ProcessStartInfo psi;
+                            if (Settings.CurrentSettings.DefaultFileDoubleClickAction == Settings.FileDoubleClickAction.OpenSpecified)
+                            {
+                                psi = new ProcessStartInfo
+                                {
+                                    FileName = Settings.CurrentSettings.FileOpenApplication,
+                                    Arguments = $"\"{targetFile}\"",
+                                    UseShellExecute = false,
+                                    ErrorDialog = true
+                                };
+                            }
+                            else
+                            {
+                                psi = new ProcessStartInfo
+                                {
+                                    FileName = targetFile,
+                                    UseShellExecute = true,
+                                    ErrorDialog = true
+                                };
+                            }
+
+                            Process.Start(psi);
+                        }
+                        catch (System.ComponentModel.Win32Exception ex)
+                        {
+                            // Throw if Process.Start fails with anything other than ERROR_CANCELLED
+                            if (ex.NativeErrorCode != 0x000004C7)
+                                throw;
+                        }
                     }
-                    catch (System.ComponentModel.Win32Exception ex)
+                    //Default action is to preview the file as text. Read all the bytes, replace non-printable characters with a dot and show it in the dialog.
+                    else if (Settings.CurrentSettings.DefaultFileDoubleClickAction == Settings.FileDoubleClickAction.Preview)
                     {
-                        // Throw if Process.Start fails with anything other than ERROR_CANCELLED
-                        if (ex.NativeErrorCode != 0x000004C7)
-                            throw;
+                        var selectedFile = (TiFile)SelectedItems.First();
+                        using var stream = selectedFile.GetStream();
+
+                        //If file is larger than 10 MiB, reject the preview because it can cause high memory usage and unresponsiveness.
+                        //Instead, offer to extract the file and open it with the registered or specified application.
+                        if (stream.Length > 10 * 1024 * 1024)
+                        {
+                            var btnOpenRegistered = new TaskDialogButton("Open with registered application");
+                            var btnOpenSpecified = new TaskDialogButton("Open with specified application");
+
+                            TaskDialogPage page = new()
+                            {
+                                Heading = "File too large to preview",
+                                Text = $"The file \"{selectedFile.Name}\" is too large to preview in TotalImage.{Environment.NewLine}{Environment.NewLine}" +
+                                $"You can instead choose to extract it to a temporary folder and open it with either the registered application for the given file type," +
+                                $"or the default application specified in the settings.",
+                                Caption = "Error",
+                                Icon = TaskDialogIcon.Error,
+                                Buttons =
+                                {
+                                    new  TaskDialogCommandLinkButton("&Open with registered application") { Tag = 1 },
+                                    new TaskDialogCommandLinkButton("Open with &specified application") { Tag = 2 },
+                                    TaskDialogButton.Cancel
+                                },
+                                SizeToContent = true,
+                            };
+
+                            var result = TaskDialog.ShowDialog(this, page);
+
+                            if (result.Tag is 1 || result.Tag is 2)
+                            {
+                                tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
+                                string targetFile = Path.Combine(tempDir, selectedFile.Name);
+                                FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
+
+                                try
+                                {
+                                    ProcessStartInfo psi;
+                                    if (result.Tag is 2)
+                                    {
+                                        psi = new ProcessStartInfo
+                                        {
+                                            FileName = Settings.CurrentSettings.FileOpenApplication,
+                                            Arguments = $"\"{targetFile}\"",
+                                            UseShellExecute = false,
+                                            ErrorDialog = true
+                                        };
+                                    }
+                                    else
+                                    {
+                                        psi = new ProcessStartInfo
+                                        {
+                                            FileName = targetFile,
+                                            UseShellExecute = true,
+                                            ErrorDialog = true
+                                        };
+                                    }
+                                    Process.Start(psi);
+                                }
+                                catch (System.ComponentModel.Win32Exception ex)
+                                {
+                                    if (ex.NativeErrorCode != 0x000004C7)
+                                        throw;
+                                }
+                            }
+
+                            //User chose cancel
+                            return;
+                        }
+
+                        byte[] bytes = new byte[stream.Length];
+                        stream.ReadExactly(bytes);
+                        string raw = Encoding.Latin1.GetString(bytes);
+                        string contents = string.Create(raw.Length, raw, static (span, src) =>
+                        {
+                            for (int i = 0; i < src.Length; i++)
+                            {
+                                char c = src[i];
+                                span[i] = (c < 0x20 && c != '\t' && c != '\n' && c != '\r') ? '·' : c;
+                            }
+                        });
+
+                        using dlgFilePreview dlg = new();
+                        dlg.txtContents.Text = contents;
+                        dlg.Text = $"{selectedFile.Name} - File preview";
+
+                        dlg.ShowDialog();
                     }
                 }
             }

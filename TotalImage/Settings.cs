@@ -14,6 +14,29 @@ namespace TotalImage
     public static class Settings
     {
         /// <summary>
+        /// Possible actions to perform when a file in the file list is double clicked or ENTER is pressed.
+        /// </summary>
+        public enum FileDoubleClickAction
+        {
+            /// <summary>
+            /// Extracts the file to a temporary directory and opens it with the registered application for the file type, if any.
+            /// If no application is registered for the file type, the user is prompted to select an application to open the file with.
+            /// </summary>
+            OpenRegistered,
+
+            /// <summary>
+            /// Extracts the file to a temporary directory and opens it with the specified application (e.g. a hex editor).
+            /// Path to the specified application must be valid.
+            /// </summary>
+            OpenSpecified,
+
+            /// <summary>
+            /// Reads the file into memory and displays its content as text in the File preview dialog.
+            /// </summary>
+            Preview
+        }
+
+        /// <summary>
         /// The UI state model for storing values related to the state of the main window and its child controls.
         /// </summary>
         public class UIStateModel
@@ -146,6 +169,17 @@ namespace TotalImage
             /// Color mode for the application. Choosing System will follow the system theme, Light and Dark force the respective theme regardless of the system theme.
             /// </summary>
             public SystemColorMode ColorMode { get; set; } = SystemColorMode.System;
+
+            /// <summary>
+            /// The action to perform when a file in the file list is double clicked or ENTER is pressed.
+            /// </summary>
+            public FileDoubleClickAction DefaultFileDoubleClickAction { get; set; } = FileDoubleClickAction.OpenRegistered;
+
+            /// <summary>
+            /// The default application for opening files from the file list when DefaultFileDoubleClickAction is set to OpenSpecified.
+            /// Path must be valid and the application must support being opened with a file path as an argument.
+            /// </summary>
+            public string FileOpenApplication { get; set; } = "notepad.exe";
         }
 
         /// <summary>
@@ -250,6 +284,8 @@ namespace TotalImage
                     CurrentSettings.MemoryMappingThreshold = settings.MemoryMappingThreshold;
                     CurrentSettings.FileListShowDirSize = settings.FileListShowDirSize;
                     CurrentSettings.ColorMode = settings.ColorMode;
+                    CurrentSettings.DefaultFileDoubleClickAction = settings.DefaultFileDoubleClickAction;
+                    CurrentSettings.FileOpenApplication = settings.FileOpenApplication;
                 }
             }
             catch (IOException)
@@ -322,6 +358,8 @@ namespace TotalImage
             CurrentSettings.MemoryMappingThreshold = 104857600; //100 MiB
             CurrentSettings.FileListShowDirSize = false;
             CurrentSettings.ColorMode = SystemColorMode.System;
+            CurrentSettings.DefaultFileDoubleClickAction = FileDoubleClickAction.OpenRegistered;
+            CurrentSettings.FileOpenApplication = "notepad.exe";
         }
 
         /// <summary>
