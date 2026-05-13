@@ -2595,37 +2595,6 @@ namespace TotalImage
             UpdateStatusBar(true);
         }
 
-        /* Returns size of directory
-         * TODO: Move to this to the appropriate file system class and implement support for subdirectories */
-        private ulong CalculateDirSize()
-        {
-            var dirSize = 0ul;
-
-            foreach (ListViewItem lvi in currentFolderView)
-            {
-                if (lvi.Tag is not TiFileSystemObject entry) continue;
-                if (entry is not TiDirectory)
-                    dirSize += entry.Length;
-            }
-
-            return dirSize;
-        }
-
-        /* Returns the number of files in a directory
-         * TODO: Move to this to the appropriate file system class and implement support for subdirectories */
-        private uint GetFileCount()
-        {
-            uint fileCount = 0;
-
-            foreach (ListViewItem lvi in currentFolderView)
-            {
-                if (lvi.Tag is not TiFileSystemObject entry) continue;
-                if (entry is not TiDirectory)
-                    fileCount++;
-            }
-
-            return fileCount;
-        }
         private string GetFileTypeName(string filename, FileAttributes attributes)
         {
             var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
