@@ -129,7 +129,7 @@ namespace TotalImage
 
         public override ulong LengthOnDisk => 0;
 
-        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false)
+        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden)
             => Array.Empty<FileSystemObject>();
 
         public override FileSystems.Directory CreateSubdirectory(string path)

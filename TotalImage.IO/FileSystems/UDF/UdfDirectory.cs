@@ -84,7 +84,7 @@ namespace TotalImage.FileSystems.UDF
         }
 
         /// <inheritdoc />
-        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false)
+        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden)
         {
             var fileSystem = (UdfFileSystem)FileSystem;
             foreach (UdfFileIdentifierDescriptorInfo child in fileSystem.EnumerateDirectoryEntries(_entry))
@@ -99,7 +99,7 @@ namespace TotalImage.FileSystems.UDF
                     continue;
                 }
 
-                if (!showDeleted && child.IsDeleted)
+                if (child.IsDeleted)
                 {
                     continue;
                 }

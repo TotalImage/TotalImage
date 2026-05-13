@@ -1120,7 +1120,7 @@ namespace TotalImage.FileSystems.IMGFS
 
             public void AddFile(ImgfsFile file) => _children.Add(file);
 
-            public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false)
+            public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden)
             {
                 return _children
                     .Where(child => showHidden || !child.Attributes.HasFlag(FileAttributes.Hidden))

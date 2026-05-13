@@ -165,13 +165,12 @@ namespace TotalImage.FileSystems.FAT
         /// Enumerates entries from the FAT root directory.
         /// </summary>
         /// <param name="fat">The file system that owns the root directory.</param>
-        /// <param name="includeDeleted"><see langword="true"/> to include deleted entries.</param>
         /// <returns>The parsed directory entries and any associated long file name entries.</returns>
-        public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateRootDirectory(FatFileSystem fat, bool includeDeleted = false)
+        public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateRootDirectory(FatFileSystem fat)
         {
             if (fat.BiosParameterBlock is Fat32BiosParameterBlock { RootDirectoryEntries: 0, RootDirectoryCluster: var firstCluster })
             {
-                return EnumerateSubdirectory(fat, firstCluster, includeDeleted);
+                return EnumerateSubdirectory(fat, firstCluster);
             }
 
             var stream = fat.GetStream();
@@ -180,7 +179,7 @@ namespace TotalImage.FileSystems.FAT
             stream.Position = (fat.ReservedSectors + fat.ClusterMapsSectors) * fat.BiosParameterBlock.BytesPerLogicalSector;
             stream.Read(buffer);
 
-            return EnumerateDirectory(fat, buffer, includeDeleted);
+            return EnumerateDirectory(fat, buffer);
         }
 
         /// <summary>
@@ -188,29 +187,27 @@ namespace TotalImage.FileSystems.FAT
         /// </summary>
         /// <param name="fat">The file system that owns the directory.</param>
         /// <param name="entry">The directory entry that identifies the subdirectory.</param>
-        /// <param name="includeDeleted"><see langword="true"/> to include deleted entries.</param>
         /// <returns>The parsed directory entries and any associated long file name entries.</returns>
-        public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, DirectoryEntry entry, bool includeDeleted = false) =>
-            EnumerateSubdirectory(fat, entry.FirstClusterOfFile, includeDeleted);
+        public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, DirectoryEntry entry) =>
+            EnumerateSubdirectory(fat, entry.FirstClusterOfFile);
 
         /// <summary>
         /// Enumerates entries from a FAT subdirectory starting at a cluster.
         /// </summary>
         /// <param name="fat">The file system that owns the directory.</param>
         /// <param name="firstCluster">The first cluster of the subdirectory.</param>
-        /// <param name="includeDeleted"><see langword="true"/> to include deleted entries.</param>
         /// <returns>The parsed directory entries and any associated long file name entries.</returns>
-        public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, uint firstCluster, bool includeDeleted = false)
+        public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, uint firstCluster)
         {
             var stream = new FatDataStream(fat, firstCluster);
             var buffer = new byte[stream.Length];
 
             stream.Read(buffer);
 
-            return EnumerateDirectory(fat, buffer, includeDeleted);
+            return EnumerateDirectory(fat, buffer);
         }
 
-        private static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateDirectory(FatFileSystem fat, ReadOnlyMemory<byte> buffer, bool includeDeleted)
+        private static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateDirectory(FatFileSystem fat, ReadOnlyMemory<byte> buffer)
         {
             var lfnStack = new Stack<LongDirectoryEntry>();
 
@@ -273,18 +270,14 @@ namespace TotalImage.FileSystems.FAT
 
                 if (entry[0] is 0xE5 or 0x05)
                 {
-                    // Deleted entries
-                    if (!includeDeleted)
-                    {
-                        continue;
-                    }
-
                     // Some old DOS 1.x disks don't mark unused entries with 0x00
                     // and instead use the deleted marker (0xE5)
                     if (BinaryPrimitives.ReadUInt32LittleEndian(entry[1..5]) == 0xF6F6F6F6)
                     {
                         break;
                     }
+
+                    continue;
                 }
 
                 if (lfnStack.TryPeek(out var topLfnEntry) && topLfnEntry.Checksum != LongDirectoryEntry.GetShortNameChecksum(entry[0..11]))

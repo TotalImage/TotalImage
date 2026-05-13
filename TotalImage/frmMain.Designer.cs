@@ -1156,7 +1156,6 @@ namespace TotalImage
             lstDirectories.BeforeLabelEdit += lstDirectories_BeforeLabelEdit;
             lstDirectories.AfterLabelEdit += lstDirectories_AfterLabelEdit;
             lstDirectories.ItemDrag += lstDirectories_ItemDrag;
-            lstDirectories.BeforeSelect += lstDirectories_BeforeSelect;
             lstDirectories.AfterSelect += lstDirectories_AfterSelect;
             lstDirectories.DragDrop += list_DragDrop;
             lstDirectories.DragEnter += list_DragEnter;

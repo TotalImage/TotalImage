@@ -807,12 +807,11 @@ namespace TotalImage
                 }
                 else if (lstFiles.SelectedIndices.Count == 1)
                 {
-                    //Check if selected item is a deleted entry and enable the UI accordingly
                     TiFileSystemObject? entry = GetSelectedItemData(0);
                     // Pending synthetic items (not yet on disk) — disable destructive actions
                     bool isPending = entry is PendingFile or PendingDirectory;
-                    deleteToolStripButton.Enabled = !isPending && !entry!.Name.StartsWith("?");
-                    extractToolStripButton.Enabled = !isPending && !entry!.Name.StartsWith("?");
+                    deleteToolStripButton.Enabled = !isPending;
+                    extractToolStripButton.Enabled = !isPending;
                     propertiesToolStripButton.Enabled = !isPending;
 
                     UpdateStatusBar(false);
@@ -1041,20 +1040,6 @@ namespace TotalImage
         private void sortByAttributes_Click(object sender, EventArgs e)
             => SortListViewBy(lstFiles.Columns.IndexOfKey("clmAttributes"));
 
-        private void lstDirectories_BeforeSelect(object sender, TreeViewCancelEventArgs e)
-        {
-            //This prevents the user from opening a deleted directory (since we don't even know yet if it's recoverable, or what was inside, etc.)
-            if (e.Node is null)
-                return;
-
-            TiDirectory dir = (TiDirectory)e.Node.Tag;
-            if (dir.Name.StartsWith("?"))
-            {
-                e.Cancel = true;
-                return;
-            }
-        }
-
         //TODO: Move that file count stuff elsewhere and just call it to get the number.
         private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
         {
@@ -1206,15 +1191,9 @@ namespace TotalImage
             {
                 TreeNode newNode = lstDirectories.GetNodeAt(e.X, e.Y);
 
-                //This prevents opening the menu on empty area of the TreeView, as well as on any deleted folders
+                //This prevents opening the menu on empty area of the TreeView
                 if (newNode is not null)
                 {
-                    TiFileSystemObject entry = (TiFileSystemObject)newNode.Tag;
-                    if (entry.Name.StartsWith("?"))
-                    {
-                        return;
-                    }
-
                     lstDirectories.SelectedNode = newNode;
                     cmsDirTree.Show(lstDirectories, e.Location);
                 }
@@ -1289,7 +1268,7 @@ namespace TotalImage
                 {
                     /* Add the root dir contents (non-recursively) to the list instead of the tempdir itself, so Explorer doesn't end up moving it
                      * instead of the contents. */
-                    foreach (var fso in draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false))
+                    foreach (var fso in draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems))
                     {
                         items.Add(Path.Combine(tempDir, fso.Name));
                     }
@@ -1621,10 +1600,10 @@ namespace TotalImage
                 {
                     TiFileSystemObject? entry = GetSelectedItemData(0);
                     bool isPending = entry is PendingFile or PendingDirectory;
-                    deleteToolStripMenuItem.Enabled = !isPending && !entry!.Name.StartsWith("?");
-                    extractToolStripMenuItem.Enabled = !isPending && !entry!.Name.StartsWith("?");
+                    deleteToolStripMenuItem.Enabled = !isPending;
+                    extractToolStripMenuItem.Enabled = !isPending;
                     propertiesToolStripMenuItem.Enabled = !isPending;
-                    renameToolStripMenuItem.Enabled = !isPending && !entry!.Name.StartsWith("?");
+                    renameToolStripMenuItem.Enabled = !isPending;
                 }
                 else
                 {
@@ -1659,11 +1638,10 @@ namespace TotalImage
                 }
                 else if (lstFiles.SelectedIndices.Count == 1)
                 {
-                    //Check if selected item is a deleted entry and enable the UI accordingly
                     TiFileSystemObject? entry = GetSelectedItemData(0);
                     bool isPending = entry is PendingFile or PendingDirectory;
-                    deleteToolStripButton.Enabled = !isPending && !entry!.Name.StartsWith("?");
-                    extractToolStripButton.Enabled = !isPending && !entry!.Name.StartsWith("?");
+                    deleteToolStripButton.Enabled = !isPending;
+                    extractToolStripButton.Enabled = !isPending;
                     propertiesToolStripButton.Enabled = !isPending;
                 }
                 else
@@ -1720,7 +1698,7 @@ namespace TotalImage
         }
 
         //Before an item's label (=Text property) will be changed - for renaming objects.
-        //Here we should probably perform some sanity checks (ie. make sure the user's not trying to rename a deleted object and such)
+        //Here we should probably perform some sanity checks
         private void lstFiles_BeforeLabelEdit(object sender, LabelEditEventArgs e)
         {
 
@@ -1740,7 +1718,7 @@ namespace TotalImage
         }
 
         //Before a node's label (=Text property) will be changed - for renaming objects.
-        //Here we should probably perform some sanity checks (ie. make sure the user's not trying to rename a deleted object and such)
+        //Here we should probably perform some sanity checks
         private void lstDirectories_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
 
@@ -1774,7 +1752,7 @@ namespace TotalImage
                     else if (sender is TreeView && draggedDir is not null)
                     {
                         if (draggedDir.Parent is null) //Root dir needs to be treated separately
-                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false), DirectoryExtractionMode.Preserve);
+                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems), DirectoryExtractionMode.Preserve);
                         else
                             extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, new TiFileSystemObject[] { draggedDir }, DirectoryExtractionMode.Preserve);
                     }
@@ -1966,7 +1944,7 @@ namespace TotalImage
             }
         }
 
-        // Used for events that require the current folder view to be updated (e.g. show hidden/deleted items toggled, etc.)
+        // Used for events that require the current folder view to be updated (e.g. show hidden items toggled, etc.)
         private void ResetView()
         {
             if (image is not null)
@@ -2007,7 +1985,7 @@ namespace TotalImage
         {
             var dirPathComponents = GetDirectoryPathComponents(dir);
 
-            foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems, false))
+            foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems))
             {
                 var subnode = new TreeNode(subdir.Name);
 
@@ -2020,13 +1998,6 @@ namespace TotalImage
                 else
                 {
                     subnode.ImageIndex = _smallFolderIndex;
-                }
-
-                //Deleted folders have strikethrough fontstyle
-                if (subdir.Name.StartsWith("?"))
-                {
-                    Font font = new("Segoe UI", 9f, FontStyle.Strikeout);
-                    subnode.NodeFont = font;
                 }
 
                 //Highlight pending changes on directory nodes
@@ -2131,7 +2102,7 @@ namespace TotalImage
 
             var dirPathComponents = GetDirectoryPathComponents(dir);
 
-            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems, false))
+            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems))
             {
                 var item = new ListViewItem();
                 item.Text = fso.Name;
@@ -2163,7 +2134,7 @@ namespace TotalImage
                 item.UseItemStyleForSubItems = false;
                 item.SubItems[4].Font = _monoFont;
 
-                //Do some simple styling for hidden and deleted items
+                //Do some simple styling for hidden items
                 if (fso.Attributes.HasFlag(FileAttributes.Hidden))
                 {
                     item.ForeColor = Color.Gray;

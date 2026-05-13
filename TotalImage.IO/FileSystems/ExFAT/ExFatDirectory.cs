@@ -129,7 +129,7 @@ public class ExFatDirectory : Directory
     }
 
     /// <inheritdoc />
-    public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false)
+    public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden)
     {
         var fileSystem = (ExFatFileSystem)FileSystem;
         var stream = StreamExtensionDirectoryEntry?.GetStream(fileSystem) ??

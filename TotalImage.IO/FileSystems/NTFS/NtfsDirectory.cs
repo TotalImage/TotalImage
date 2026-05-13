@@ -64,7 +64,7 @@ public class NtfsDirectory : Directory
     }
 
     /// <inheritdoc />
-    public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false)
+    public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden)
     {
         foreach ((NtfsFileRecord record, NtfsFileNameRecord fileName) in _fileSystem.EnumerateDirectoryEntries(_record))
         {
@@ -74,7 +74,7 @@ public class NtfsDirectory : Directory
                 continue;
             }
 
-            if (!showDeleted && !record.IsInUse)
+            if (!record.IsInUse)
             {
                 continue;
             }

@@ -63,7 +63,7 @@ namespace TotalImage.FileSystems.ISO
         }
 
         /// <inheritdoc />
-        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden, bool showDeleted = false)
+        public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden)
         {
             Iso9660FileSystem fileSystem = (Iso9660FileSystem)FileSystem;
             var stream = FileSystem.GetStream();
