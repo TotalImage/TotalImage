@@ -65,19 +65,28 @@ namespace TotalImage.FileSystems.FAT
                 }
                 else
                 {
-                    //Try parsing it at 0x50 in case it's an Apricot disk
+                    //Try parsing it at 0x04 in case it's a Zenith Z-100 disk
                     try
                     {
-                        bpbOffset = 0x50;
+                        bpbOffset = 0x04;
                         _bpb = BiosParameterBlock.Parse(reader, bpbOffset);
                     }
                     catch (InvalidDataException)
                     {
-                        //BPB still invalid, it may not even be there, try to figure out if it's a DOS 1.x disk by looking at file length
-                        //(we can do this for raw sector images) and the media descriptor byte
-                        if (!BiosParameterBlock.DefaultParametersForSize.TryGetValue(stream.Length, out _bpb))
+                        //Try parsing it at 0x50 in case it's an Apricot disk
+                        try
                         {
-                            return null;
+                            bpbOffset = 0x50;
+                            _bpb = BiosParameterBlock.Parse(reader, bpbOffset);
+                        }
+                        catch (InvalidDataException)
+                        {
+                            //BPB still invalid, it may not even be there, try to figure out if it's a DOS 1.x disk by looking at file length
+                            //(we can do this for raw sector images) and the media descriptor byte
+                            if (!BiosParameterBlock.DefaultParametersForSize.TryGetValue(stream.Length, out _bpb))
+                            {
+                                return null;
+                            }
                         }
                     }
                 }

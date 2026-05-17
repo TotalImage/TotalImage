@@ -189,6 +189,26 @@ namespace TotalImage.FileSystems.BPB
                 }
             }
 
+            //Zenith Z-100 (not PC-compatible) has the BPB at offset 0x04, but it doesn't include media descriptor or sectors per FAT.
+            //Therefore we assume some values to properly parse the file system.
+            else if(offset == 0x04)
+            {
+                bpb.NumberOfHeads = 2;
+
+                if (bpb.TotalLogicalSectors == 640)
+                {
+                    bpb.MediaDescriptor = 0xFF;
+                    bpb.LogicalSectorsPerFAT = 1;
+                    bpb.PhysicalSectorsPerTrack = 8;
+                }
+                else if (bpb.TotalLogicalSectors == 720)
+                {
+                    bpb.MediaDescriptor = 0xFD;
+                    bpb.LogicalSectorsPerFAT = 2;
+                    bpb.PhysicalSectorsPerTrack = 9;
+                }
+            }
+
             if (!bpb.Validate())
             {
                 throw new InvalidDataException("At least one of BPB parameters is 0");
