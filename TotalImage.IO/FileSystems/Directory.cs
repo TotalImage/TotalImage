@@ -111,7 +111,7 @@ namespace TotalImage.FileSystems
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <returns>File count in a directory excluding subdirectories if recursive is false, otherwise file count in a directory including subdirectories.</returns>
         public ulong CountFiles(bool recursive) =>
-            (ulong)EnumerateFileSystemObjectsInternal(recursive).Where(x => x is File).Count();
+            (ulong)EnumerateFileSystemObjectsInternal(recursive).Count(x => x is File);
 
         /// <summary>
         /// Get the subdirectory count in a directory.
@@ -119,7 +119,7 @@ namespace TotalImage.FileSystems
         /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
         /// <returns>Subdirectory count in a directory excluding subdirectory contents if recursive is false, otherwise subdirectory count in a directory including subdirectory contents.</returns>
         public ulong CountSubdirectories(bool recursive) =>
-            (ulong)EnumerateFileSystemObjectsInternal(recursive).Where(x => x is Directory).Count();
+            (ulong)EnumerateFileSystemObjectsInternal(recursive).Count(x => x is Directory);
 
         /// <summary>
         /// Get the combined size of files in a directory.
@@ -129,5 +129,28 @@ namespace TotalImage.FileSystems
         /// <returns>Combined size of files in a directory excluding subdirectories if recursive is false, otherwise combined size of files in a directory including subdirectories.</returns>
         public ulong GetSize(bool recursive, bool sizeOnDisk) =>
             (ulong)EnumerateFileSystemObjectsInternal(recursive).Sum(x => sizeOnDisk ? (long)x.LengthOnDisk : (long)x.Length);
+
+        /// <summary>
+        /// Get file count, subdirectory count, total size and total size on disk in a single traversal.
+        /// </summary>
+        /// <param name="recursive">Whether to enumerate subdirectories as well.</param>
+        /// <returns>A tuple of (fileCount, directoryCount, size, sizeOnDisk).</returns>
+        public (ulong FileCount, ulong DirectoryCount, ulong Size, ulong SizeOnDisk) GetStats(bool recursive)
+        {
+            ulong fileCount = 0, directoryCount = 0, size = 0, sizeOnDisk = 0;
+
+            foreach (var obj in EnumerateFileSystemObjectsInternal(recursive))
+            {
+                if (obj is File)
+                    fileCount++;
+                else if (obj is Directory)
+                    directoryCount++;
+
+                size += obj.Length;
+                sizeOnDisk += obj.LengthOnDisk;
+            }
+
+            return (fileCount, directoryCount, size, sizeOnDisk);
+        }
     }
 }

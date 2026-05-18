@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -102,9 +101,10 @@ namespace TotalImage
                 else if (entries[0] is FileSystems.Directory dir)
                 {
                     txtLocation.Text = dir.Parent?.FullName;
-                    txtContains.Text = $"Files: {dir.CountFiles(true)}, subdirectories: {dir.CountSubdirectories(true)}";
-                    txtSize.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, false), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
-                    txtSizeOnDisk.Text = Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, true), Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                    var stats = dir.GetStats(true);
+                    txtContains.Text = $"Files: {stats.FileCount}, subdirectories: {stats.DirectoryCount}";
+                    txtSize.Text = Settings.CurrentSettings.SizeUnit.FormatSize(stats.Size, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                    txtSizeOnDisk.Text = Settings.CurrentSettings.SizeUnit.FormatSize(stats.SizeOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
                 }
 
                 // These are indeed supposed to be assignments in the conditions.
@@ -201,8 +201,9 @@ namespace TotalImage
                     if (fso is FileSystems.Directory dir)
                     {
                         dirs++;
-                        size += dir.GetSize(true, false);
-                        sizeOnDisk += dir.GetSize(true, true);
+                        var stats = dir.GetStats(true);
+                        size += stats.Size;
+                        sizeOnDisk += stats.SizeOnDisk;
 
                         if (!foExt.Equals("folder"))
                             differentTypes = true;
