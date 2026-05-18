@@ -47,6 +47,7 @@ namespace TotalImage
         };
 
         private List<ListViewItem> currentFolderView = new();
+        private bool _updatingSelection = false;
 
         //For tracking which listviewitem was last selected by keypress
         private char _lastTypeAheadChar = '\0';
@@ -695,6 +696,17 @@ namespace TotalImage
 
         private void lstFiles_SelectedIndexChanged(object sender, EventArgs e) // This method will be used more than once, thus it is separated from the main event.
         {
+            if (_updatingSelection)
+                return;
+
+            //If the ".." item is selected alongside other items, deselect it immediately
+            if (lstFiles.SelectedIndices.Count > 1 && lstFiles.SelectedIndices.Contains(0) && IndexShift > 0)
+            {
+                _updatingSelection = true;
+                lstFiles.SelectedIndices.Remove(0);
+                _updatingSelection = false;
+            }
+
             if (image is not null)
             {
                 if (lstFiles.SelectedIndices.Count == 0)
@@ -831,24 +843,41 @@ namespace TotalImage
             if (lstDirectories.Focused)
             {
                 if (lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
+                {
                     entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
+                }
             }
             else if (lstFiles.Focused)
             {
                 for (int i = 0; i < lstFiles.SelectedIndices.Count; i++)
-                    entries.Add(GetSelectedItemData(i));
+                {
+                    if (lstFiles.SelectedIndices[i] >= IndexShift)
+                    {
+                        entries.Add(GetSelectedItemData(i));
+                    }
+                }
             }
             else
             {
                 if (lstFiles.SelectedIndices.Count > 0)
                 {
                     for (int i = 0; i < lstFiles.SelectedIndices.Count; i++)
-                        entries.Add(GetSelectedItemData(i));
+                    {
+                        if (lstFiles.SelectedIndices[i] >= IndexShift)
+                        {
+                            entries.Add(GetSelectedItemData(i));
+                        }
+                    }
                 }
                 else if (lstDirectories.SelectedNode != null && lstDirectories.SelectedNode.Text != "\\")
                     entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
                 else
                     return; //Can't show properties for whatever is selected, so let's just return
+            }
+
+            if (entries.Count == 0)
+            {
+                return;
             }
 
             using dlgProperties dlg = new(entries);
