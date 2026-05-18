@@ -377,14 +377,12 @@ namespace TotalImage
 
         private async void dlgImageInfo_Shown(object sender, EventArgs e)
         {
-            /* BUGBUG: For ImzContainer (and in the future probably other containers using compression?), this will currently calculate the hash of the 
-             * raw image _inside_ the ZIP, rather than of the whole ZIP file itself as one would expect. */
-
             if (Application.OpenForms["frmMain"] is frmMain mainForm && mainForm.image is not null)
             {
-                var crc32 = HashCalculator.CalculateCrc32HashAsync(mainForm.image.Content, cts.Token);
-                var md5 = HashCalculator.CalculateMd5HashAsync(mainForm.image.Content, cts.Token);
-                var sha1 = HashCalculator.CalculateSha1HashAsync(mainForm.image.Content, cts.Token);
+                //Use Container.ContainerFileStream instead of Container.Content to get the actual file stream
+                var crc32 = HashCalculator.CalculateCrc32HashAsync(mainForm.image.ContainerFileStream, cts.Token);
+                var md5 = HashCalculator.CalculateMd5HashAsync(mainForm.image.ContainerFileStream, cts.Token);
+                var sha1 = HashCalculator.CalculateSha1HashAsync(mainForm.image.ContainerFileStream, cts.Token);
 
                 try
                 {

@@ -32,6 +32,12 @@ namespace TotalImage.Containers
         public abstract Stream Content { get; }
 
         /// <summary>
+        /// A stream exposing the raw backing file (e.g. the ZIP archive for IMZ containers).
+        /// Use this for file-level hash calculations rather than <see cref="Content"/>.
+        /// </summary>
+        public Stream ContainerFileStream => containerStream;
+
+        /// <summary>
         /// The display name of the container.
         /// </summary>
         public abstract string DisplayName { get; }
