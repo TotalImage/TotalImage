@@ -1776,6 +1776,7 @@ namespace TotalImage
 
         private void openContainingFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //This opens the folder containing the currently opened image in File Explorer and selects the image file
             try
             {
                 Process.Start(new ProcessStartInfo
