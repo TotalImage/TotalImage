@@ -1281,6 +1281,7 @@ namespace TotalImage
             lstFiles.QueryContinueDrag += list_QueryContinueDrag;
             lstFiles.Enter += lstFiles_Enter;
             lstFiles.KeyUp += lstFiles_KeyUp;
+            lstFiles.KeyPress += lstFiles_KeyPress;
             lstFiles.MouseDoubleClick += lstFiles_MouseDoubleClick;
             // 
             // clmName

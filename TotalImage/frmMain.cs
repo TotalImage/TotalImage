@@ -48,6 +48,10 @@ namespace TotalImage
 
         private List<ListViewItem> currentFolderView = new();
 
+        //For tracking which listviewitem was last selected by keypress
+        private char _lastTypeAheadChar = '\0';
+        private int _lastTypeAheadIndex = -1;
+
         public frmMain()
         {
             InitializeComponent();
@@ -1387,30 +1391,46 @@ namespace TotalImage
                     }
                 }
             }
-            /*else
-            {*/
-            /* Searches the currently displayed items for the first one that starts with the character of the pressed key.
-             * Currently this is very rudimentary, as it only works for English letters and digits, and the first item that is found.
-             * Could be improved to continue the search further etc. */
-            /* string character = e.KeyCode.ToString();
+        }
 
-             //This crap is done so numeric keys also work...
-             if ((byte)e.KeyCode > 0x30 && (byte)e.KeyCode < 0x39)
-                 character = ((int)e.KeyCode - 0x30).ToString();
-             else if ((byte)e.KeyCode > 0x60 && (byte)e.KeyCode < 0x69)
-                 character = ((int)e.KeyCode - 0x60).ToString();
+        private void lstFiles_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //This selects the first listviewitem that has text starting with the character pressed, then the next one, etc.
 
-             foreach (ListViewItem lvi in currentFolderView)
-             {
-                 if (lvi.Text.ToLower().StartsWith(character.ToLower()))
-                 {
-                     lstFiles.SelectedIndices.Clear();
-                     lvi.Focused = true;
-                     lvi.Selected = true;
-                     return;
-                 }
-             }
-         }*/
+            char ch = char.ToLowerInvariant(e.KeyChar);
+            if (!char.IsLetterOrDigit(ch) && ch != '_' && ch != '-' && ch != '.')
+            {
+                return;
+            }
+
+            int startIndex = 0;
+            if (ch == _lastTypeAheadChar && _lastTypeAheadIndex >= 0)
+            {
+                startIndex = _lastTypeAheadIndex + 1;
+            }
+            else
+            {
+                _lastTypeAheadIndex = -1;
+            }
+
+            //Search from startIndex, wrapping around once if needed
+            int count = currentFolderView.Count;
+            for (int i = 0; i < count; i++)
+            {
+                int idx = (startIndex + i) % count;
+                if (currentFolderView[idx].Text.StartsWith(ch.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    int lvIndex = idx + IndexShift;
+                    lstFiles.SelectedIndices.Clear();
+                    lstFiles.FocusedItem = currentFolderView[idx];
+                    currentFolderView[idx].Selected = true;
+                    lstFiles.EnsureVisible(lvIndex);
+                    _lastTypeAheadChar = ch;
+                    _lastTypeAheadIndex = idx;
+                    e.Handled = true;
+                    return;
+                }
+            }
         }
 
         private void lstFiles_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -1853,6 +1873,8 @@ namespace TotalImage
             lstFiles.BeginUpdate();
             lstFiles.SelectedIndices.Clear();
             currentFolderView.Clear();
+            _lastTypeAheadChar = '\0';
+            _lastTypeAheadIndex = -1;
 
             upOneFolderListViewItem.Tag = dir.Parent;
 
