@@ -1492,6 +1492,7 @@ namespace TotalImage
             reloadImageToolStripMenuItem.Enabled = image is not null;
             saveToolStripMenuItem.Enabled = image is not null && unsavedChanges;
             saveAsToolStripMenuItem.Enabled = image is not null;
+            openContainingFolderToolStripMenuItem.Enabled = image is not null && !string.IsNullOrEmpty(filepath);
         }
 
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
@@ -1771,6 +1772,26 @@ namespace TotalImage
         {
             using dlgDeletedObjects dlg = new();
             dlg.ShowDialog();
+        }
+
+        private void openContainingFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"/select,\"{filepath}\"",
+                    UseShellExecute = true,
+                    ErrorDialog = true
+                });
+            }
+            catch (System.ComponentModel.Win32Exception ex)
+            {
+                // Throw if Process.Start fails with anything other than ERROR_CANCELLED
+                if (ex.NativeErrorCode != 0x000004C7)
+                    throw;
+            }
         }
         #endregion
 
