@@ -842,7 +842,7 @@ namespace TotalImage
             List<TiFileSystemObject> entries = new();
             if (lstDirectories.Focused)
             {
-                if (lstDirectories.SelectedNode.Text != "\\") //Can't show properties for the root node at this time
+                if (((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is null) //Can't show properties for the root node at this time
                 {
                     entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
                 }
@@ -869,7 +869,7 @@ namespace TotalImage
                         }
                     }
                 }
-                else if (lstDirectories.SelectedNode != null && lstDirectories.SelectedNode.Text != "\\")
+                else if (lstDirectories.SelectedNode != null && ((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is not null)
                     entries.Add((TiFileSystemObject)lstDirectories.SelectedNode.Tag);
                 else
                     return; //Can't show properties for whatever is selected, so let's just return
