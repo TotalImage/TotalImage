@@ -192,6 +192,7 @@ namespace TotalImage
             renameToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             imgFilesLarge = new System.Windows.Forms.ImageList(components);
+            openContainingFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             cmsDirTree.SuspendLayout();
             menuBar.SuspendLayout();
             cmsToolbars.SuspendLayout();
@@ -338,7 +339,7 @@ namespace TotalImage
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripMenuItem, openToolStripMenuItem, saveToolStripMenuItem, saveAsToolStripMenuItem, reloadImageToolStripMenuItem, closeImageToolStripMenuItem, toolStripSeparator2, recentFilesToolStripMenuItem, toolStripSeparator1, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripMenuItem, openToolStripMenuItem, openContainingFolderToolStripMenuItem, saveToolStripMenuItem, saveAsToolStripMenuItem, reloadImageToolStripMenuItem, closeImageToolStripMenuItem, toolStripSeparator2, recentFilesToolStripMenuItem, toolStripSeparator1, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F;
             fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -350,7 +351,7 @@ namespace TotalImage
             newToolStripMenuItem.Image = Properties.Resources.page_white;
             newToolStripMenuItem.Name = "newToolStripMenuItem";
             newToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N;
-            newToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            newToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             newToolStripMenuItem.Text = "New...";
             newToolStripMenuItem.Click += newImage_Click;
             // 
@@ -359,7 +360,7 @@ namespace TotalImage
             openToolStripMenuItem.Image = Properties.Resources.folder_go;
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O;
-            openToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            openToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             openToolStripMenuItem.Text = "Open...";
             openToolStripMenuItem.Click += openImage_Click;
             // 
@@ -368,7 +369,7 @@ namespace TotalImage
             saveToolStripMenuItem.Image = Properties.Resources.diskette;
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             saveToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
-            saveToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            saveToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             saveToolStripMenuItem.Text = "Save";
             saveToolStripMenuItem.Click += save_Click;
             // 
@@ -377,7 +378,7 @@ namespace TotalImage
             saveAsToolStripMenuItem.Image = Properties.Resources.disk_multiple;
             saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             saveAsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.S;
-            saveAsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            saveAsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             saveAsToolStripMenuItem.Text = "Save as...";
             saveAsToolStripMenuItem.Click += save_Click;
             // 
@@ -385,7 +386,7 @@ namespace TotalImage
             // 
             reloadImageToolStripMenuItem.Image = Properties.Resources.arrow_refresh;
             reloadImageToolStripMenuItem.Name = "reloadImageToolStripMenuItem";
-            reloadImageToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            reloadImageToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             reloadImageToolStripMenuItem.Text = "Reload image";
             reloadImageToolStripMenuItem.Click += reloadImage_Click;
             // 
@@ -394,33 +395,33 @@ namespace TotalImage
             closeImageToolStripMenuItem.Image = Properties.Resources.cross;
             closeImageToolStripMenuItem.Name = "closeImageToolStripMenuItem";
             closeImageToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W;
-            closeImageToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            closeImageToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             closeImageToolStripMenuItem.Text = "Close image";
             closeImageToolStripMenuItem.Click += closeImage_Click;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new System.Drawing.Size(190, 6);
+            toolStripSeparator2.Size = new System.Drawing.Size(203, 6);
             // 
             // recentFilesToolStripMenuItem
             // 
             recentFilesToolStripMenuItem.Image = Properties.Resources.clock_history_frame;
             recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
-            recentFilesToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            recentFilesToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             recentFilesToolStripMenuItem.Text = "Recent files";
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(190, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(203, 6);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Image = Properties.Resources.door_out;
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4;
-            exitToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exit_Click;
             // 
@@ -1283,6 +1284,7 @@ namespace TotalImage
             lstFiles.DragEnter += list_DragEnter;
             lstFiles.QueryContinueDrag += list_QueryContinueDrag;
             lstFiles.Enter += lstFiles_Enter;
+            lstFiles.KeyPress += lstFiles_KeyPress;
             lstFiles.KeyUp += lstFiles_KeyUp;
             lstFiles.MouseDoubleClick += lstFiles_MouseDoubleClick;
             // 
@@ -1511,6 +1513,13 @@ namespace TotalImage
             imgFilesLarge.ImageSize = new System.Drawing.Size(32, 32);
             imgFilesLarge.TransparentColor = System.Drawing.Color.Transparent;
             // 
+            // openContainingFolderToolStripMenuItem
+            // 
+            openContainingFolderToolStripMenuItem.Name = "openContainingFolderToolStripMenuItem";
+            openContainingFolderToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            openContainingFolderToolStripMenuItem.Text = "Open containing folder...";
+            openContainingFolderToolStripMenuItem.Click += openContainingFolderToolStripMenuItem_Click;
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1706,6 +1715,7 @@ namespace TotalImage
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator23;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator22;
         private System.Windows.Forms.ToolStripMenuItem onlineDocumentationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openContainingFolderToolStripMenuItem;
     }
 }
 
