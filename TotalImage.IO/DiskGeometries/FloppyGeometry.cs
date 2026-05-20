@@ -57,6 +57,16 @@ namespace TotalImage.DiskGeometries
         public enum FriendlyName
         {
             /// <summary>
+            /// A single-sided 8" NorthStar format with 87.50 KiB formatted capacity, supported by 86-DOS.
+            /// </summary>
+            [Display(Name = "87.50 KiB")]
+            SingleDensity87k,
+            /// <summary>
+            /// A single-sided 8" Cromemco FD1771 format with 90 KiB formatted capacity, supported by 86-DOS.
+            /// </summary>
+            [Display(Name = "90 KiB")]
+            SingleDensity90k,
+            /// <summary>
             /// A standard single-sided 5.25" PC-compatible format with 160 KiB formatted capacity.
             /// </summary>
             [Display(Name = "160 KiB")]
@@ -67,10 +77,15 @@ namespace TotalImage.DiskGeometries
             [Display(Name = "180 KiB")]
             DoubleDensity180k,
             /// <summary>
-            /// A standard single-sided 8" format with 250 KiB formatted capacity.
+            /// A standard single-sided 8" format with 250.25 KiB formatted capacity, supported by MS-DOS.
             /// </summary>
-            [Display(Name = "250 KiB")]
-            SingleDensity,
+            [Display(Name = "250.25 KiB (MS-DOS)")]
+            SingleDensity250kMS,
+            /// <summary>
+            /// A single-sided 8" Cromemco FD1771 format with 250.25 KiB formatted capacity, supported by 86-DOS.
+            /// </summary>
+            [Display(Name = "250.25 KiB (86-DOS)")]
+            SingleDensity250kSCP,
             /// <summary>
             /// A standard double-sided 5.25" PC-compatible format with 320 KiB formatted capacity.
             /// </summary>
@@ -87,15 +102,25 @@ namespace TotalImage.DiskGeometries
             [Display(Name = "400 KiB (Alphatronic PC-16)")]
             AlphatronicPC16,
             /// <summary>
+            /// A double-sided 8" format with 500.50 KiB formatted capacity.
+            /// </summary>
+            [Display(Name = "500.50 KiB")]
+            SingleDensity500k,
+            /// <summary>
             /// A proprietary single-sided 5.25" format with 612 KiB formatted capacity, used by Victor 9000/Sirius 1.
             /// </summary>
             [Display(Name = "612 KiB (Victor 9000)")]
             Victor9000SS,
             /// <summary>
+            /// A single-sided 8" format with 616 KiB formatted capacity.
+            /// </summary>
+            [Display(Name = "616 KiB")]
+            DoubleDensity616k,
+            /// <summary>
             /// A rare double-sided 5.25" or 3.5" format with 640 KiB formatted capacity.
             /// </summary>
             [Display(Name = "640 KiB")]
-            QuadDensity,
+            QuadDensity640k,
             /// <summary>
             /// A proprietary double-sided 5.25" format with 720 KiB formatted capacity, used by Tandy 2000.
             /// </summary>
@@ -134,8 +159,13 @@ namespace TotalImage.DiskGeometries
             /// <summary>
             /// A standard double-sided 8" or 5.25" or 3.5" format with 1232 KiB formatted capacity, mostly used by NEC PC-98.
             /// </summary>
-            [Display(Name = "1232 KiB")]
-            HighDensity1232k,
+            [Display(Name = "1232 KiB (PC-98)")]
+            HighDensity1232kPC98,
+            /// <summary>
+            /// A standard double-sided 8" format with 1232 KiB formatted capacity, supported by 86-DOS.
+            /// </summary>
+            [Display(Name = "1232 KiB (86-DOS)")]
+            HighDensity1232kSCP,
             /// <summary>
             /// A standard double-sided 3.5" PC-compatible format with 1440 KiB formatted capacity.
             /// </summary>
@@ -201,27 +231,33 @@ namespace TotalImage.DiskGeometries
         /// </summary>
         public static readonly IReadOnlyDictionary<FriendlyName, FloppyGeometry> KnownGeometries = new Dictionary<FriendlyName, FloppyGeometry>()
         {
-            { FriendlyName.DoubleDensity160k, new FloppyGeometry(1, 40,  8, 2, 0xFE, 1, 2,  1,  64, 1) },
-            { FriendlyName.DoubleDensity180k, new FloppyGeometry(1, 40,  9, 2, 0xFC, 1, 2,  1,  64, 1) },
-            { FriendlyName.SingleDensity,     new FloppyGeometry(1, 77, 26, 0, 0xFE, 4, 2,  6,  68, 1) },
-            { FriendlyName.DoubleDensity320k, new FloppyGeometry(2, 40,  8, 2, 0xFF, 2, 2,  1, 112, 1) },
-            { FriendlyName.DoubleDensity360k, new FloppyGeometry(2, 40,  9, 2, 0xFD, 2, 2,  2, 112, 1) },
-            { FriendlyName.AlphatronicPC16,   new FloppyGeometry(2, 40,  5, 3, 0xFF, 2, 2,  1, 128, 1) },
-            { FriendlyName.Victor9000SS,      new FloppyGeometry(1, 80,  0, 2, 0xF8, 4, 2,  1, 128, 1) },
-            { FriendlyName.QuadDensity,       new FloppyGeometry(2, 80,  8, 2, 0xFB, 2, 2,  2, 112, 1) },
-            { FriendlyName.Tandy2000,         new FloppyGeometry(2, 80,  9, 2, 0xFD, 4, 2,  2, 112, 1) },
-            { FriendlyName.SiemensPCD,        new FloppyGeometry(2, 80,  9, 2, 0xF9, 4, 2,  2, 144, 1) },
-            { FriendlyName.DoubleDensity720k, new FloppyGeometry(2, 80,  9, 2, 0xF9, 2, 2,  3, 112, 1) },
-            { FriendlyName.Eagle1600,         new FloppyGeometry(2, 80,  5, 3, 0xFD, 1, 2,  2, 320, 1) },
-            { FriendlyName.Acorn800k,         new FloppyGeometry(2, 80,  5, 3, 0xFD, 1, 1,  2, 192, 0) },
-            { FriendlyName.Victor9000DS,      new FloppyGeometry(2, 80,  0, 2, 0xF8, 4, 2,  2, 128, 1) },
-            { FriendlyName.HighDensity1200k,  new FloppyGeometry(2, 80, 15, 2, 0xF9, 1, 2,  7, 224, 1) },
-            { FriendlyName.HighDensity1232k,  new FloppyGeometry(2, 77,  8, 3, 0xFE, 1, 2,  2, 192, 1) },
-            { FriendlyName.HighDensity1440k,  new FloppyGeometry(2, 80, 18, 2, 0xF0, 1, 2,  9, 224, 1) },
-            { FriendlyName.DMF1024,           new FloppyGeometry(2, 80, 21, 2, 0xF0, 2, 2,  5,  16, 1) },
-            { FriendlyName.DMF2048,           new FloppyGeometry(2, 80, 21, 2, 0xF0, 4, 2,  3,  16, 1) },
-            { FriendlyName.HighDensity1722k,  new FloppyGeometry(2, 82, 21, 2, 0xF0, 1, 2, 10, 224, 1) },
-            { FriendlyName.ExtendedDensity,   new FloppyGeometry(2, 80, 36, 2, 0xF0, 2, 2,  9, 240, 1) },
+            { FriendlyName.SingleDensity87k,     new FloppyGeometry(1, 35, 10, 1, 0xFE, 1, 2,  2,  64, 30) },
+            { FriendlyName.SingleDensity90k,     new FloppyGeometry(1, 40, 18, 0, 0xFE, 2, 2,  4,  64, 54) },
+            { FriendlyName.DoubleDensity160k,    new FloppyGeometry(1, 40,  8, 2, 0xFE, 1, 2,  1,  64,  1) },
+            { FriendlyName.DoubleDensity180k,    new FloppyGeometry(1, 40,  9, 2, 0xFC, 1, 2,  1,  64,  1) },
+            { FriendlyName.SingleDensity250kMS,  new FloppyGeometry(1, 77, 26, 0, 0xFE, 4, 2,  6,  68,  1) },
+            { FriendlyName.SingleDensity250kSCP, new FloppyGeometry(1, 77, 26, 0, 0xFE, 4, 2,  6,  64, 52) },
+            { FriendlyName.DoubleDensity320k,    new FloppyGeometry(2, 40,  8, 2, 0xFF, 2, 2,  1, 112,  1) },
+            { FriendlyName.DoubleDensity360k,    new FloppyGeometry(2, 40,  9, 2, 0xFD, 2, 2,  2, 112,  1) },
+            { FriendlyName.AlphatronicPC16,      new FloppyGeometry(2, 40,  5, 3, 0xFF, 2, 2,  1, 128,  1) },
+            { FriendlyName.SingleDensity500k,    new FloppyGeometry(2, 77, 26, 0, 0xFD, 4, 2,  6,  68,  4) },
+            { FriendlyName.Victor9000SS,         new FloppyGeometry(1, 80,  0, 2, 0xF8, 4, 2,  1, 128,  1) },
+            { FriendlyName.QuadDensity640k,      new FloppyGeometry(2, 80,  8, 2, 0xFB, 2, 2,  2, 112,  1) },
+            { FriendlyName.DoubleDensity616k,    new FloppyGeometry(1, 77,  8, 3, 0xFE, 1, 2,  1,  96,  1) },
+            { FriendlyName.Tandy2000,            new FloppyGeometry(2, 80,  9, 2, 0xFD, 4, 2,  2, 112,  1) },
+            { FriendlyName.SiemensPCD,           new FloppyGeometry(2, 80,  9, 2, 0xF9, 4, 2,  2, 144,  1) },
+            { FriendlyName.DoubleDensity720k,    new FloppyGeometry(2, 80,  9, 2, 0xF9, 2, 2,  3, 112,  1) },
+            { FriendlyName.Eagle1600,            new FloppyGeometry(2, 80,  5, 3, 0xFD, 1, 2,  2, 320,  1) },
+            { FriendlyName.Acorn800k,            new FloppyGeometry(2, 80,  5, 3, 0xFD, 1, 1,  2, 192,  0) },
+            { FriendlyName.Victor9000DS,         new FloppyGeometry(2, 80,  0, 2, 0xF8, 4, 2,  2, 128,  1) },
+            { FriendlyName.HighDensity1200k,     new FloppyGeometry(2, 80, 15, 2, 0xF9, 1, 2,  7, 224,  1) },
+            { FriendlyName.HighDensity1232kPC98, new FloppyGeometry(2, 77,  8, 3, 0xFE, 1, 2,  2, 192,  1) },
+            { FriendlyName.HighDensity1232kSCP,  new FloppyGeometry(2, 77,  8, 3, 0xFE, 1, 2,  2, 128,  1) },
+            { FriendlyName.HighDensity1440k,     new FloppyGeometry(2, 80, 18, 2, 0xF0, 1, 2,  9, 224,  1) },
+            { FriendlyName.DMF1024,              new FloppyGeometry(2, 80, 21, 2, 0xF0, 2, 2,  5,  16,  1) },
+            { FriendlyName.DMF2048,              new FloppyGeometry(2, 80, 21, 2, 0xF0, 4, 2,  3,  16,  1) },
+            { FriendlyName.HighDensity1722k,     new FloppyGeometry(2, 82, 21, 2, 0xF0, 1, 2, 10, 224,  1) },
+            { FriendlyName.ExtendedDensity,      new FloppyGeometry(2, 80, 36, 2, 0xF0, 2, 2,  9, 240,  1) },
         }.ToFrozenDictionary();
 
         /// <inheritdoc />
