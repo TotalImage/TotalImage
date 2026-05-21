@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using TotalImage.Changes;
@@ -60,7 +61,7 @@ public abstract class FatFileSystem : FileSystem
             {
                 var fatOffset = (uint)_bpb.ReservedLogicalSectors;
                 var fatSize = (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
-                var rootDirSize = (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
+                var rootDirSize = (uint)_bpb.RootDirectoryEntries * (uint)DirectoryEntrySize / _bpb.BytesPerLogicalSector;
                 return fatOffset + fatSize + RootDirectorySectors;
             }
         }
@@ -84,10 +85,15 @@ public abstract class FatFileSystem : FileSystem
             => (uint)_bpb.NumberOfFATs * _bpb.LogicalSectorsPerFAT;
 
         /// <summary>
+        /// The size in bytes of a single directory entry on this volume. 32 for standard FAT, 16 for early 86-DOS.
+        /// </summary>
+        public virtual int DirectoryEntrySize => 32;
+
+        /// <summary>
         /// The number of sectors used for the root directory.
         /// </summary>
         public uint RootDirectorySectors
-            => (uint)_bpb.RootDirectoryEntries * 32 / _bpb.BytesPerLogicalSector;
+            => (uint)_bpb.RootDirectoryEntries * (uint)DirectoryEntrySize / _bpb.BytesPerLogicalSector;
 
         /// <summary>
         /// The number of sectors used for the data area.
@@ -152,13 +158,20 @@ public abstract class FatFileSystem : FileSystem
         }
 
         /// <summary>
-        /// The volume label stored as a file in the root directory. This field is usually used by most software.
+        /// Enumerates directory entries from the root directory of this volume.
+        /// Overridden by <see cref="EarlyFat12FileSystem"/> to handle the 16-byte entry format.
+        /// </summary>
+        public virtual IEnumerable<(DirectoryEntry entry, LongDirectoryEntry[] lfnEntries)> EnumerateRootDirectoryEntries()
+            => DirectoryEntry.EnumerateRootDirectory(this);
+
+        /// <summary>
+        /// The volume label stored as a file in the root directory.
         /// </summary>
         public string? RootDirectoryVolumeLabel
         {
             get
             {
-                foreach (var (entry, _) in DirectoryEntry.EnumerateRootDirectory(this))
+                foreach (var (entry, _) in EnumerateRootDirectoryEntries())
                 {
                     if (entry.Attributes.HasFlag(FatAttributes.VolumeId) && !entry.Attributes.HasFlag(FatAttributes.LongName))
                     {

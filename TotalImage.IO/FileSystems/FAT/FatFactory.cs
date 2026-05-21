@@ -46,6 +46,15 @@ namespace TotalImage.FileSystems.FAT
             BiosParameterBlock? _bpb;
             byte bpbOffset = 0x0B;
 
+            // Check for early 86-DOS (pre-0.42) before attempting BPB parsing.
+            // These disks have no BPB and do not follow the DOS media descriptor convention
+            // in the FAT header, so they cannot be detected via CheckForNoBpb.
+            var early86Dos = CheckForEarly86DosGeometry(reader);
+            if (early86Dos is not null)
+            {
+                return new EarlyFat12FileSystem(stream, early86Dos.Value.Item2);
+            }
+
             try
             {
                 _bpb = BiosParameterBlock.Parse(reader, bpbOffset); //Try to parse the BPB at the standard offset
@@ -100,6 +109,126 @@ namespace TotalImage.FileSystems.FAT
             }
 
             return GetFatFromBiosParameterBlock(stream, _bpb);
+        }
+
+        /// <summary>
+        /// Known 86-DOS (pre-0.42) disk geometries. These disks have no BPB and write FF FF FF
+        /// at the start of both FATs regardless of media type, rather than MediaDescriptor FF FF.
+        /// </summary>
+        private static readonly (FloppyGeometry.FriendlyName Name, FloppyGeometry Geometry)[] Early86DosGeometries =
+        [
+            (FloppyGeometry.FriendlyName.SingleDensity87k,     FloppyGeometry.KnownGeometries[FloppyGeometry.FriendlyName.SingleDensity87k]),
+            (FloppyGeometry.FriendlyName.SingleDensity90k,     FloppyGeometry.KnownGeometries[FloppyGeometry.FriendlyName.SingleDensity90k]),
+            (FloppyGeometry.FriendlyName.SingleDensity250kSCP, FloppyGeometry.KnownGeometries[FloppyGeometry.FriendlyName.SingleDensity250kSCP]),
+            (FloppyGeometry.FriendlyName.HighDensity1232kSCP,  FloppyGeometry.KnownGeometries[FloppyGeometry.FriendlyName.HighDensity1232kSCP]),
+        ];
+
+        /// <summary>
+        /// Checks whether the image is an early 86-DOS (pre-0.42) disk with 16-byte directory entries.
+        /// Matches by image size against known 86-DOS geometries, then verifies FAT header is FF FF FF
+        /// and that the root directory decodes correctly as 16-byte entries.
+        /// </summary>
+        /// <returns>The matching geometry and synthesised BPB, or null if not detected.</returns>
+        private static (FloppyGeometry, BiosParameterBlock)? CheckForEarly86DosGeometry(BinaryReader reader)
+        {
+            long imageSize = reader.BaseStream.Length;
+
+            foreach (var (_, geometry) in Early86DosGeometries)
+            {
+                uint bytesPerSector = (uint)(128 << geometry.BPS);
+                long expectedSize = (long)geometry.SPT * geometry.Tracks * geometry.Sides * bytesPerSector;
+
+                if (imageSize != expectedSize)
+                    continue;
+
+                long fat1Start = geometry.ReservedSectors * bytesPerSector;
+                long fat2Start = fat1Start + geometry.SPF * bytesPerSector;
+                long rootStart = fat2Start + geometry.SPF * bytesPerSector;
+
+                // Early 86-DOS always writes FF FF FF at the start of both FATs
+                reader.BaseStream.Seek(fat1Start, SeekOrigin.Begin);
+                if (reader.ReadByte() != 0xFF || reader.ReadByte() != 0xFF || reader.ReadByte() != 0xFF)
+                    continue;
+
+                reader.BaseStream.Seek(fat2Start, SeekOrigin.Begin);
+                if (reader.ReadByte() != 0xFF || reader.ReadByte() != 0xFF || reader.ReadByte() != 0xFF)
+                    continue;
+
+                // Verify at least one root directory entry decodes plausibly as a 16-byte entry
+                int readSize = (int)Math.Min(geometry.RootDirectoryEntries * 16L, 512);
+                reader.BaseStream.Seek(rootStart, SeekOrigin.Begin);
+                byte[] buf = reader.ReadBytes(readSize);
+
+                bool hasValidEntry = false;
+                for (int i = 0; i + 16 <= buf.Length; i += 16)
+                {
+                    byte first = buf[i];
+                    if (first is 0x00 or 0xF6)
+                        break;
+                    if (first is 0xE5)
+                        continue;
+
+                    ushort cluster = (ushort)(buf[i + 11] | (buf[i + 12] << 8));
+                    uint size = (uint)(buf[i + 13] | (buf[i + 14] << 8) | (buf[i + 15] << 16));
+
+                    if (cluster > 0 && size > 0 && size <= imageSize)
+                    {
+                        hasValidEntry = true;
+                        break;
+                    }
+                }
+
+                if (!hasValidEntry)
+                    continue;
+
+                var bpb = BiosParameterBlock.FromGeometry(geometry, BiosParameterBlockVersion.Dos20, "");
+                return (geometry, bpb);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Checks whether the disk uses the early 86-DOS (pre-0.42) 16-byte directory entry format.
+        /// This is detected by reading the root directory and verifying that entries are consistent with
+        /// the 16-byte layout (11-byte filename, 2-byte cluster, 3-byte size) rather than the standard 32-byte layout.
+        /// </summary>
+        /// <param name="reader">BinaryReader used to read the disk image.</param>
+        /// <param name="geometry">The floppy geometry for this disk.</param>
+        /// <param name="bpb">The synthesised BPB for this disk.</param>
+        /// <returns>True if the root directory appears to use 16-byte entries.</returns>
+        private static bool CheckForEarly86Dos(BinaryReader reader, FloppyGeometry geometry, BiosParameterBlock bpb)
+        {
+            uint bytesPerSector = (ushort)(128 << geometry.BPS);
+            long rootDirStart = (geometry.ReservedSectors + geometry.NoOfFATs * geometry.SPF) * bytesPerSector;
+
+            // Read enough bytes for a few 32-byte candidate entries to compare interpretations
+            int readSize = Math.Min(bpb.RootDirectoryEntries * 32, 512);
+            reader.BaseStream.Seek(rootDirStart, SeekOrigin.Begin);
+            byte[] buf = reader.ReadBytes(readSize);
+
+            int validAs16 = 0;
+
+            for (int i = 0; i + 16 <= buf.Length; i += 16)
+            {
+                byte first = buf[i];
+
+                // Skip unused/deleted entries
+                if (first is 0x00 or 0xF6 or 0xE5)
+                    break;
+
+                // In the 16-byte layout, bytes 11–12 are the first cluster (should be small and non-zero)
+                // and bytes 13–15 are the 24-bit file size (non-zero for any real file).
+                // In a standard DOS 1.x 32-byte entry, bytes 13–15 are creation time fields which are
+                // always zeroed on early DOS, so size16 == 0 for those — this is the key discriminator.
+                ushort cluster16 = (ushort)(buf[i + 11] | (buf[i + 12] << 8));
+                uint size16 = (uint)(buf[i + 13] | (buf[i + 14] << 8) | (buf[i + 15] << 16));
+
+                if (cluster16 > 0 && size16 > 0 && size16 <= reader.BaseStream.Length)
+                    validAs16++;
+            }
+
+            return validAs16 > 0;
         }
 
         /// <summary>

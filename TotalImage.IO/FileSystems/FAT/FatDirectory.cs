@@ -139,7 +139,7 @@ namespace TotalImage.FileSystems.FAT
             var fat = (FatFileSystem)FileSystem;
             var entries = entry switch
             {
-                null => DirectoryEntry.EnumerateRootDirectory(fat),
+                null => fat.EnumerateRootDirectoryEntries(),
                 _ => DirectoryEntry.EnumerateSubdirectory(fat, entry.Value)
             };
 
