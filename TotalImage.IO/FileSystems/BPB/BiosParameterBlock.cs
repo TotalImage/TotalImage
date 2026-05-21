@@ -130,8 +130,8 @@ namespace TotalImage.FileSystems.BPB
                 && TotalLogicalSectors != 0
                 && ReservedLogicalSectors != 0
                 && LogicalSectorsPerCluster != 0;
-                //&& LogicalSectorsPerFAT != 0 <-- This is a valid value for FAT32 volumes at this point.
-                //&& RootDirectoryEntries != 0; <-- This is a valid value for FAT32 volumes at this point.
+            //&& LogicalSectorsPerFAT != 0 <-- This is a valid value for FAT32 volumes at this point.
+            //&& RootDirectoryEntries != 0; <-- This is a valid value for FAT32 volumes at this point.
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace TotalImage.FileSystems.BPB
 
             //Zenith Z-100 (not PC-compatible) has the BPB at offset 0x04, but it doesn't include media descriptor or sectors per FAT.
             //Therefore we assume some values to properly parse the file system.
-            else if(offset == 0x04)
+            else if (offset == 0x04)
             {
                 bpb.NumberOfHeads = 2;
 
@@ -254,22 +254,21 @@ namespace TotalImage.FileSystems.BPB
         /// <param name="oemId">The OEM ID to include in the boot sector</param>
         /// <returns>A BIOS Parameter Block suitable for the floppy geometry provided</returns>
         public static BiosParameterBlock FromGeometry(FloppyGeometry geometry, BiosParameterBlockVersion version, string oemId)
-            => new BiosParameterBlock
-            {
-                OemId = Helper.UseAsLabel(oemId),
-                BytesPerLogicalSector = (ushort)(128 << geometry.BPS),
-                HiddenSectors = 0,
-                LogicalSectorsPerCluster = geometry.SPC,
-                LogicalSectorsPerFAT = geometry.SPF,
-                MediaDescriptor = geometry.MediaDescriptor,
-                NumberOfFATs = geometry.NoOfFATs,
-                NumberOfHeads = geometry.Sides,
-                PhysicalSectorsPerTrack = geometry.SPT,
-                ReservedLogicalSectors = geometry.ReservedSectors,
-                RootDirectoryEntries = geometry.RootDirectoryEntries,
-                TotalLogicalSectors = (uint)(geometry.Tracks * geometry.SPT * geometry.Sides)
-            };
-
+        => new BiosParameterBlock
+        {
+            OemId = Helper.UseAsLabel(oemId),
+            BytesPerLogicalSector = (ushort)(128 << geometry.BPS),
+            HiddenSectors = 0,
+            LogicalSectorsPerCluster = geometry.SPC,
+            LogicalSectorsPerFAT = geometry.SPF,
+            MediaDescriptor = geometry.MediaDescriptor,
+            NumberOfFATs = geometry.NoOfFATs,
+            NumberOfHeads = geometry.Sides,
+            PhysicalSectorsPerTrack = geometry.SPT,
+            ReservedLogicalSectors = geometry.ReservedSectors,
+            RootDirectoryEntries = geometry.RootDirectoryEntries,
+            TotalLogicalSectors = (uint)(geometry.Tracks * geometry.SPT * geometry.Sides)
+        };
 
         #region Static Fields
         /// <summary>
