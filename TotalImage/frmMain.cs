@@ -2303,7 +2303,10 @@ namespace TotalImage
                         break;
                 }
 
-                item.ToolTipText = $"Type: {item.SubItems[1].Text}{Environment.NewLine}Size: {size}{Environment.NewLine}Modified: {item.SubItems[3].Text}";
+                item.ToolTipText = $"Type: {item.SubItems[1].Text}{Environment.NewLine}Size: {size}";
+                
+                if(!string.IsNullOrWhiteSpace(item.SubItems[3].Text))
+                    item.ToolTipText += $"{Environment.NewLine}Modified: {item.SubItems[3].Text}";
 
                 item.Tag = fso;
                 currentFolderView.Add(item);
