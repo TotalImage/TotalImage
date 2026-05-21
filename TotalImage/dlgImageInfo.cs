@@ -177,8 +177,10 @@ namespace TotalImage
             lstPropertiesFS.FindItemWithText("Free storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.TotalFreeSpace, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
 
             var volLabel = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.VolumeLabel;
-            if (!string.IsNullOrWhiteSpace(volLabel))
+            if (!string.IsNullOrWhiteSpace(volLabel) && !volLabel.Equals("<N/A>"))
                 lstPropertiesFS.FindItemWithText("Volume label").SubItems[1].Text = volLabel;
+            else
+                lstPropertiesFS.FindItemWithText("Volume label").SubItems[1].Text = "N/A";
 
             //FAT specifics
             if (mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem is FatFileSystem fatFS)
