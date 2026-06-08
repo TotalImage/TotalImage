@@ -1101,6 +1101,9 @@ namespace TotalImage
             if (e.Node is null)
                 return;
 
+            var selectedDir = (TiDirectory)e.Node.Tag;
+            selectedDir = (TiDirectory)selectedDir.ResolveTarget();
+
             //This makes sure the selected image doesn't change when a hidden folder is selected
             if (((TiFileSystemObject)e.Node.Tag).Attributes.HasFlag(FileAttributes.Hidden))
             {
@@ -1111,7 +1114,7 @@ namespace TotalImage
                 lstDirectories.SelectedImageKey = "folder";
             }
 
-            PopulateListView((TiDirectory)e.Node.Tag);
+            PopulateListView(selectedDir);
             UpdateStatusBar(false);
 
             if (lstDirectories.SelectedNode is null)
@@ -1136,22 +1139,21 @@ namespace TotalImage
             {
                 if (GetSelectedItemData(0) is TiDirectory dir) //A folder was double-clicked
                 {
-                    var node = FindNode(lstDirectories.Nodes[0], dir);
+                    var targetDir = (TiDirectory)dir.ResolveTarget();
+                    BrowseToDirectory(targetDir);
+                    var node = FindNode(lstDirectories.Nodes[0], targetDir);
                     if (node is not null)
                     {
                         lstDirectories.SelectedNode = node;
-                    }
-                    else
-                    {
-                        throw new Exception("Associated treeview node was not found");
                     }
                 }
                 else //A file was double-clicked - extract to temp dir then open it
                 {
                     tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
-                    string targetFile = Path.Combine(tempDir, SelectedItems.First().Name);
+                    var selected = SelectedItems.ToArray();
+                    string targetFile = Path.Combine(tempDir, selected.First().Name);
 
-                    FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
+                    FileExtraction.ExtractFilesToTemporaryDirectory(this, selected, DirectoryExtractionMode.Skip);
 
                     try
                     {
@@ -1874,6 +1876,19 @@ namespace TotalImage
             }
         }
 
+        private void BrowseToDirectory(TiDirectory dir)
+        {
+            var node = FindNode(lstDirectories.Nodes[0], dir);
+            if (node is not null)
+            {
+                lstDirectories.SelectedNode = node;
+                return;
+            }
+
+            PopulateListView(dir);
+            UpdateStatusBar(false);
+        }
+
         private void frmMain_KeyUp(object sender, KeyEventArgs e)
         {
             //This is needed for whatever reason because otherwise CTRL+W doesn't work except when the menu is open...
@@ -2121,6 +2136,7 @@ namespace TotalImage
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
         {
+            dir = (TiDirectory)dir.ResolveTarget();
             var dirPathComponents = GetDirectoryPathComponents(dir);
 
             foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems))
@@ -2219,6 +2235,7 @@ namespace TotalImage
 
         private void PopulateListView(TiDirectory dir)
         {
+            dir = (TiDirectory)dir.ResolveTarget();
             lstFiles.BeginUpdate();
             lstFiles.SelectedIndices.Clear();
             currentFolderView.Clear();
@@ -2382,6 +2399,7 @@ namespace TotalImage
         private string FileAttributesToString(FileAttributes attr)
         {
             var sb = new StringBuilder();
+            bool isReparsePoint = attr.HasFlag(FileAttributes.ReparsePoint);
 
             if (attr.HasFlag(FileAttributes.Directory))
                 sb.Append('D');
@@ -2407,6 +2425,8 @@ namespace TotalImage
                 sb.Append('R');
             else
                 sb.Append('-');
+
+            sb.Append(isReparsePoint ? 'L' : '-');
 
             return sb.ToString();
         }
@@ -2742,6 +2762,11 @@ namespace TotalImage
 
         private string GetFileTypeName(string filename, FileAttributes attributes)
         {
+            if (attributes.HasFlag(FileAttributes.ReparsePoint))
+            {
+                return attributes.HasFlag(FileAttributes.Directory) ? "Junction" : "Symbolic link";
+            }
+
             var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
 
             if (Settings.CurrentSettings.QueryShellForFileTypeInfo)

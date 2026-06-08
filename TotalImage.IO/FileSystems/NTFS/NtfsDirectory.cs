@@ -13,6 +13,9 @@ public class NtfsDirectory : Directory
     private readonly NtfsFileRecord _record;
     private readonly NtfsFileNameRecord? _name;
 
+    internal NtfsFileRecord Record => _record;
+    internal NtfsFileNameRecord? NameRecord => _name;
+
     internal NtfsDirectory(NtfsFileSystem fileSystem, NtfsFileRecord record, Directory? parent, NtfsFileNameRecord? name)
         : base(fileSystem, parent)
     {
@@ -64,9 +67,13 @@ public class NtfsDirectory : Directory
     }
 
     /// <inheritdoc />
+    public override FileSystemObject ResolveTarget() =>
+        _fileSystem.ResolveDirectoryObject(this);
+
+    /// <inheritdoc />
     public override IEnumerable<FileSystemObject> EnumerateFileSystemObjects(bool showHidden)
     {
-        foreach ((NtfsFileRecord record, NtfsFileNameRecord fileName) in _fileSystem.EnumerateDirectoryEntries(_record))
+        foreach ((NtfsFileRecord record, NtfsFileNameRecord fileName) in _fileSystem.EnumerateDirectoryEntries(_fileSystem.ResolveDirectoryRecord(_record)))
         {
             FileAttributes attributes = _fileSystem.GetEffectiveAttributes(record, fileName);
             if (!showHidden && (attributes & FileAttributes.Hidden) != 0)

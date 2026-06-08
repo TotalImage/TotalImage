@@ -12,6 +12,10 @@ public class NtfsFile : File
     private readonly NtfsFileRecord _record;
     private readonly NtfsFileNameRecord _name;
 
+    internal NtfsFileRecord Record => _record;
+    internal Directory ParentDirectory => Directory;
+    internal NtfsFileNameRecord NameRecord => _name;
+
     internal NtfsFile(NtfsFileSystem fileSystem, NtfsFileRecord record, Directory parent, NtfsFileNameRecord name)
         : base(fileSystem, parent)
     {
@@ -58,13 +62,19 @@ public class NtfsFile : File
     /// <inheritdoc />
     public override ulong Length
     {
-        get => _name.RealSize;
+        get => _fileSystem.ResolveFileRecord(_record) == _record
+            ? _name.RealSize
+            : (ulong)_fileSystem.OpenDataStream(_fileSystem.ResolveFileRecord(_record)).Length;
         set => throw new NotSupportedException("NTFS is currently exposed as read-only.");
     }
 
     /// <inheritdoc />
+    public override FileSystemObject ResolveTarget() =>
+        _fileSystem.ResolveFileObject(this);
+
+    /// <inheritdoc />
     public override Stream GetStream() =>
-        _fileSystem.OpenDataStream(_record);
+        _fileSystem.OpenDataStream(_fileSystem.ResolveFileRecord(_record));
 
     /// <inheritdoc />
     public override void Delete()

@@ -49,6 +49,11 @@ namespace TotalImage.FileSystems
         public abstract ulong Length { get; set; }
 
         /// <summary>
+        /// Resolves a reparse-point target if the object represents one.
+        /// </summary>
+        public virtual FileSystemObject ResolveTarget() => this;
+
+        /// <summary>
         /// The length of the file system object as represented on the disk
         /// </summary>
         public virtual ulong LengthOnDisk => ((Length / (ulong)FileSystem.AllocationUnitSize) + 1) * (ulong)FileSystem.AllocationUnitSize;

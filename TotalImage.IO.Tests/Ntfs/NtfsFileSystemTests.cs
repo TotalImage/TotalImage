@@ -111,6 +111,42 @@ public class NtfsFileSystemTests
         Assert.True(bitmap.Attributes.HasFlag(FileAttributes.System));
     }
 
+    [Fact]
+    public void ReparsePointEntries_ReportReparsePointAttribute()
+    {
+        using var stream = new MemoryStream(CreateReparsePointImage());
+
+        var fileSystem = Assert.IsType<NtfsFileSystem>(FileSystem.AttemptDetection(stream));
+        var entries = fileSystem.RootDirectory.EnumerateFileSystemObjects(showHidden: true).ToArray();
+        var junction = Assert.IsType<NtfsDirectory>(entries.Single(entry => entry.Name == "junction"));
+        var symlink = Assert.IsType<NtfsFile>(entries.Single(entry => entry.Name == "symlink.txt"));
+        var symlinkRecord = fileSystem.LoadFileRecord(11);
+
+        Assert.True(junction.Attributes.HasFlag(FileAttributes.ReparsePoint));
+        Assert.True(symlink.Attributes.HasFlag(FileAttributes.ReparsePoint));
+        Assert.True(junction.Attributes.HasFlag(FileAttributes.Directory));
+        Assert.False(symlink.Attributes.HasFlag(FileAttributes.Directory));
+        Assert.Equal(9UL, fileSystem.ResolveFileRecord(symlinkRecord).RecordNumber);
+
+        var junctionEntries = junction.EnumerateFileSystemObjects(showHidden: true).ToArray();
+        using var symlinkReader = new StreamReader(symlink.GetStream(), Encoding.ASCII, false, leaveOpen: false);
+
+        Assert.Equal(["readme.txt"], junctionEntries.Select(entry => entry.Name).ToArray());
+        Assert.Equal("Nested readme", symlinkReader.ReadToEnd());
+    }
+
+    [Fact]
+    public void CyclicReparsePoint_DoesNotRecurseInfinitely()
+    {
+        using var stream = new MemoryStream(CreateCyclicReparsePointImage());
+
+        var fileSystem = Assert.IsType<NtfsFileSystem>(FileSystem.AttemptDetection(stream));
+        var entry = Assert.IsType<NtfsDirectory>(fileSystem.RootDirectory.EnumerateFileSystemObjects(showHidden: true).Single(x => x.Name == "cycle"));
+
+        Assert.Same(entry, entry.ResolveTarget());
+        Assert.Empty(entry.EnumerateFileSystemObjects(showHidden: true));
+    }
+
     private static byte[] CreateTestImage()
     {
         const int bytesPerSector = 512;
@@ -281,6 +317,129 @@ public class NtfsFileSystemTests
         rootIndexRecord.CopyTo(image, 40 * bytesPerSector);
         largeFirstCluster.CopyTo(image, 30 * bytesPerSector);
         largeSecondCluster.CopyTo(image, 32 * bytesPerSector);
+
+        return image;
+    }
+
+    private static byte[] CreateReparsePointImage()
+    {
+        const int bytesPerSector = 512;
+        const int sectorsPerCluster = 1;
+        const int totalClusters = 64;
+        const int mftStartCluster = 4;
+        const int mftClusterCount = 24;
+        const int fileRecordSize = 1024;
+
+        byte[] image = new byte[totalClusters * bytesPerSector];
+        byte[] helloData = Encoding.ASCII.GetBytes("Hello NTFS");
+        byte[] readmeData = Encoding.ASCII.GetBytes("Nested readme");
+
+        WriteBootSector(image, bytesPerSector, sectorsPerCluster, totalClusters, mftStartCluster, fileRecordSize);
+
+        byte[] volumeRecord = BuildFileRecord(3, false, [
+            BuildStandardInformationAttribute(FileAttributes.System | FileAttributes.Hidden),
+            BuildResidentAttribute(0x60, Encoding.Unicode.GetBytes("TESTVOL"))
+        ]);
+
+        byte[] rootRecord = BuildFileRecord(5, true, [
+            BuildStandardInformationAttribute(FileAttributes.Directory),
+            BuildResidentAttribute(0x90, BuildIndexRoot([
+                BuildIndexEntry(8, "docs", FileAttributes.Directory, 0),
+                BuildIndexEntry(9, "hello.txt", FileAttributes.Archive, (ulong)Encoding.ASCII.GetByteCount("Hello NTFS")),
+                BuildIndexEntry(10, "junction", FileAttributes.Directory | FileAttributes.ReparsePoint, 0),
+                BuildIndexEntry(11, "symlink.txt", FileAttributes.Archive | FileAttributes.ReparsePoint, 0)
+            ]))
+        ]);
+
+        byte[] bitmapRecord = BuildFileRecord(6, false, [
+            BuildStandardInformationAttribute(FileAttributes.Hidden | FileAttributes.System),
+            BuildResidentAttribute(0x80, BuildBitmap(totalClusters, [0, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]))
+        ]);
+
+        byte[] docsRecord = BuildFileRecord(8, true, [
+            BuildStandardInformationAttribute(FileAttributes.Directory),
+            BuildResidentAttribute(0x90, BuildIndexRoot([
+                BuildIndexEntry(9, "readme.txt", FileAttributes.Archive, (ulong)readmeData.Length)
+            ]))
+        ]);
+
+        byte[] readmeRecord = BuildFileRecord(9, false, [
+            BuildStandardInformationAttribute(FileAttributes.Archive),
+            BuildResidentAttribute(0x80, readmeData)
+        ]);
+
+        byte[] junctionRecord = BuildFileRecord(10, true, [
+            BuildStandardInformationAttribute(FileAttributes.Directory | FileAttributes.ReparsePoint),
+            BuildReparsePointAttribute(0xA0000003, @"\docs")
+        ]);
+
+        byte[] symlinkRecord = BuildFileRecord(11, false, [
+            BuildStandardInformationAttribute(FileAttributes.Archive | FileAttributes.ReparsePoint),
+            BuildReparsePointAttribute(0xA000000C, @"\docs\readme.txt")
+        ]);
+
+        WriteFileRecord(image, mftStartCluster, 0, BuildFileRecord(0, false, [
+            BuildStandardInformationAttribute(FileAttributes.Hidden | FileAttributes.System),
+            BuildNonResidentDataAttribute((ulong)(mftClusterCount * bytesPerSector), [
+                (mftStartCluster, mftClusterCount)
+            ])
+        ]));
+        WriteFileRecord(image, mftStartCluster, 3, volumeRecord);
+        WriteFileRecord(image, mftStartCluster, 5, rootRecord);
+        WriteFileRecord(image, mftStartCluster, 6, bitmapRecord);
+        WriteFileRecord(image, mftStartCluster, 8, docsRecord);
+        WriteFileRecord(image, mftStartCluster, 9, readmeRecord);
+        WriteFileRecord(image, mftStartCluster, 10, junctionRecord);
+        WriteFileRecord(image, mftStartCluster, 11, symlinkRecord);
+
+        return image;
+    }
+
+    private static byte[] CreateCyclicReparsePointImage()
+    {
+        const int bytesPerSector = 512;
+        const int sectorsPerCluster = 1;
+        const int totalClusters = 64;
+        const int mftStartCluster = 4;
+        const int mftClusterCount = 24;
+        const int fileRecordSize = 1024;
+
+        byte[] image = new byte[totalClusters * bytesPerSector];
+
+        WriteBootSector(image, bytesPerSector, sectorsPerCluster, totalClusters, mftStartCluster, fileRecordSize);
+
+        byte[] volumeRecord = BuildFileRecord(3, false, [
+            BuildStandardInformationAttribute(FileAttributes.System | FileAttributes.Hidden),
+            BuildResidentAttribute(0x60, Encoding.Unicode.GetBytes("TESTVOL"))
+        ]);
+
+        byte[] rootRecord = BuildFileRecord(5, true, [
+            BuildStandardInformationAttribute(FileAttributes.Directory),
+            BuildResidentAttribute(0x90, BuildIndexRoot([
+                BuildIndexEntry(8, "cycle", FileAttributes.Directory | FileAttributes.ReparsePoint, 0)
+            ]))
+        ]);
+
+        byte[] bitmapRecord = BuildFileRecord(6, false, [
+            BuildStandardInformationAttribute(FileAttributes.Hidden | FileAttributes.System),
+            BuildResidentAttribute(0x80, BuildBitmap(totalClusters, [0, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]))
+        ]);
+
+        byte[] cycleRecord = BuildFileRecord(8, true, [
+            BuildStandardInformationAttribute(FileAttributes.Directory | FileAttributes.ReparsePoint),
+            BuildReparsePointAttribute(0xA0000003, @"\cycle")
+        ]);
+
+        WriteFileRecord(image, mftStartCluster, 0, BuildFileRecord(0, false, [
+            BuildStandardInformationAttribute(FileAttributes.Hidden | FileAttributes.System),
+            BuildNonResidentDataAttribute((ulong)(mftClusterCount * bytesPerSector), [
+                (mftStartCluster, mftClusterCount)
+            ])
+        ]));
+        WriteFileRecord(image, mftStartCluster, 3, volumeRecord);
+        WriteFileRecord(image, mftStartCluster, 5, rootRecord);
+        WriteFileRecord(image, mftStartCluster, 6, bitmapRecord);
+        WriteFileRecord(image, mftStartCluster, 8, cycleRecord);
 
         return image;
     }
@@ -515,6 +674,32 @@ public class NtfsFileSystemTests
         value[0x41] = 0x01;
         nameBytes.CopyTo(value, 0x42);
         return value;
+    }
+
+    private static byte[] BuildReparsePointAttribute(uint tag, string substituteName)
+    {
+        byte[] nameBytes = Encoding.Unicode.GetBytes(substituteName);
+        int pathBufferOffset = tag == 0xA000000C ? 12 : 8;
+        byte[] data = new byte[pathBufferOffset + nameBytes.Length];
+
+        BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(0, 2), 0);
+        BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(2, 2), (ushort)nameBytes.Length);
+        BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(4, 2), 0);
+        BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(6, 2), 0);
+        if (tag == 0xA000000C)
+        {
+            BinaryPrimitives.WriteUInt32LittleEndian(data.AsSpan(8, 4), 0);
+        }
+
+        nameBytes.CopyTo(data, pathBufferOffset);
+
+        byte[] value = new byte[8 + data.Length];
+        BinaryPrimitives.WriteUInt32LittleEndian(value.AsSpan(0, 4), tag);
+        BinaryPrimitives.WriteUInt16LittleEndian(value.AsSpan(4, 2), (ushort)data.Length);
+        BinaryPrimitives.WriteUInt16LittleEndian(value.AsSpan(6, 2), 0);
+        data.CopyTo(value, 8);
+
+        return BuildResidentAttribute(0xC0, value);
     }
 
     private static byte[] EncodeUnsigned(int value)

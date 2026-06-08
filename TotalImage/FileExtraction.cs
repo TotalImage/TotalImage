@@ -89,14 +89,14 @@ public static class FileExtraction
     {
         var files = from x in items where x is TiFile select x as TiFile;
 
-        foreach (var file in files)
-        {
-            if (!file.Name.StartsWith('?'))
+            foreach (var file in files)
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                yield return (file, Path.Combine(path, file.Name));
+                if (!file.Name.StartsWith('?'))
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    yield return ((TiFile)file.ResolveTarget(), Path.Combine(path, file.Name));
+                }
             }
-        }
 
         if (mode != DirectoryExtractionMode.Skip)
         {
@@ -104,8 +104,9 @@ public static class FileExtraction
 
             foreach (var dir in dirs)
             {
+                var targetDir = (TiDirectory)dir.ResolveTarget();
                 var children = EnumerateFilesForExtractionAsync(
-                    dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems),
+                    targetDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems),
                     mode switch
                     {
                         DirectoryExtractionMode.Merge => path,

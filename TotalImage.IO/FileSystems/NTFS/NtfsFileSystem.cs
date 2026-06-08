@@ -17,6 +17,9 @@ public class NtfsFileSystem : FileSystem
     private const uint FileNameAttributeType = 0x30;
     private const uint VolumeNameAttributeType = 0x60;
     private const uint DataAttributeType = 0x80;
+    private const uint ReparsePointAttributeType = 0xC0;
+    private const uint MountPointReparseTag = 0xA0000003;
+    private const uint SymbolicLinkReparseTag = 0xA000000C;
     private const uint IndexRootAttributeType = 0x90;
     private const uint IndexAllocationAttributeType = 0xA0;
     private const ulong RootDirectoryRecordNumber = 5;
@@ -126,6 +129,16 @@ public class NtfsFileSystem : FileSystem
 
     internal IEnumerable<(NtfsFileRecord Record, NtfsFileNameRecord FileName)> EnumerateDirectoryEntries(NtfsFileRecord directoryRecord)
     {
+        directoryRecord = ResolveReparseTarget(directoryRecord, allowFileTarget: false);
+
+        foreach ((NtfsFileRecord record, NtfsFileNameRecord fileName) in EnumerateDirectoryEntriesRaw(directoryRecord))
+        {
+            yield return (record, fileName);
+        }
+    }
+
+    private IEnumerable<(NtfsFileRecord Record, NtfsFileNameRecord FileName)> EnumerateDirectoryEntriesRaw(NtfsFileRecord directoryRecord)
+    {
         NtfsResidentAttributeRecord? indexRoot = directoryRecord.Attributes
             .OfType<NtfsResidentAttributeRecord>()
             .SingleOrDefault(attribute => attribute.Type == IndexRootAttributeType);
@@ -187,6 +200,234 @@ public class NtfsFileSystem : FileSystem
                 }
             }
         }
+    }
+
+    internal NtfsFileRecord ResolveFileRecord(NtfsFileRecord record) => ResolveReparseTarget(record, allowFileTarget: true);
+
+    internal NtfsFileRecord ResolveDirectoryRecord(NtfsFileRecord record) => ResolveReparseTarget(record, allowFileTarget: false);
+
+    internal NtfsFile ResolveFileObject(NtfsFile file)
+    {
+        NtfsFileRecord resolved = ResolveFileRecord(file.Record);
+        return resolved.RecordNumber == file.Record.RecordNumber ? file : (ResolveObject(resolved) as NtfsFile) ?? file;
+    }
+
+    internal NtfsDirectory ResolveDirectoryObject(NtfsDirectory directory)
+    {
+        NtfsFileRecord resolved = ResolveDirectoryRecord(directory.Record);
+        return resolved.RecordNumber == directory.Record.RecordNumber ? directory : (ResolveObject(resolved) as NtfsDirectory) ?? directory;
+    }
+
+    private FileSystemObject? ResolveObject(NtfsFileRecord record)
+    {
+        if (record.RecordNumber == RootDirectoryRecordNumber)
+        {
+            return new NtfsDirectory(this, record, null, null);
+        }
+
+        return FindObjectByRecord(new NtfsDirectory(this, LoadFileRecord(RootDirectoryRecordNumber), null, null), record.RecordNumber);
+    }
+
+    private FileSystemObject? FindObjectByRecord(NtfsDirectory parentDirectory, ulong recordNumber)
+    {
+        foreach ((NtfsFileRecord childRecord, NtfsFileNameRecord childName) in EnumerateDirectoryEntriesRaw(parentDirectory.Record))
+        {
+            if (childRecord.RecordNumber == recordNumber)
+            {
+                return childRecord.IsDirectory
+                    ? new NtfsDirectory(this, childRecord, parentDirectory, childName)
+                    : new NtfsFile(this, childRecord, parentDirectory, childName);
+            }
+
+            if (childRecord.IsDirectory)
+            {
+                FileSystemObject? child = FindObjectByRecord(new NtfsDirectory(this, childRecord, parentDirectory, childName), recordNumber);
+                if (child is not null)
+                {
+                    return child;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private NtfsFileRecord ResolveReparseTarget(NtfsFileRecord record, bool allowFileTarget)
+    {
+        HashSet<ulong> visited = new() { record.RecordNumber };
+        NtfsFileRecord current = record;
+
+        while (TryResolveReparseTarget(current, out NtfsFileRecord? target, allowFileTarget) && target is not null)
+        {
+            if (!visited.Add(target.RecordNumber))
+            {
+                break;
+            }
+
+            current = target;
+        }
+
+        return current;
+    }
+
+    private bool TryResolveReparseTarget(NtfsFileRecord record, out NtfsFileRecord? target, bool allowFileTarget)
+    {
+        target = null;
+
+        NtfsResidentAttributeRecord? reparseAttribute = record.Attributes
+            .OfType<NtfsResidentAttributeRecord>()
+            .SingleOrDefault(attribute => attribute.Type == ReparsePointAttributeType);
+
+        if (reparseAttribute == null || reparseAttribute.Value.Length < 12)
+        {
+            return false;
+        }
+
+        ReadOnlySpan<byte> value = reparseAttribute.Value;
+        uint tag = BinaryPrimitives.ReadUInt32LittleEndian(value.Slice(0, 4));
+        if (tag != MountPointReparseTag && tag != SymbolicLinkReparseTag)
+        {
+            return false;
+        }
+
+        ushort dataLength = BinaryPrimitives.ReadUInt16LittleEndian(value.Slice(4, 2));
+        if (dataLength + 8 > value.Length)
+        {
+            return false;
+        }
+
+        ReadOnlySpan<byte> data = value.Slice(8, dataLength);
+        int pathBufferOffset = tag == SymbolicLinkReparseTag ? 12 : 8;
+        if (data.Length < pathBufferOffset)
+        {
+            return false;
+        }
+
+        ushort substituteNameOffset = BinaryPrimitives.ReadUInt16LittleEndian(data.Slice(0, 2));
+        ushort substituteNameLength = BinaryPrimitives.ReadUInt16LittleEndian(data.Slice(2, 2));
+        if ((pathBufferOffset + substituteNameOffset + substituteNameLength) > data.Length)
+        {
+            return false;
+        }
+
+        string substituteName = Encoding.Unicode.GetString(data.Slice(pathBufferOffset + substituteNameOffset, substituteNameLength));
+        string[] pathComponents = NormalizePathComponents(substituteName);
+        if (pathComponents.Length == 0)
+        {
+            return false;
+        }
+
+        target = ResolvePath(pathComponents);
+        if (target == null)
+        {
+            target = FindFirstByNameRecursive(LoadFileRecord(RootDirectoryRecordNumber), pathComponents[^1], new HashSet<ulong>());
+        }
+
+        return target != null && (allowFileTarget || target.IsDirectory);
+    }
+
+    private NtfsFileRecord? ResolvePath(IEnumerable<string> pathComponents)
+    {
+        NtfsFileRecord current = LoadFileRecord(RootDirectoryRecordNumber);
+
+        foreach (string component in pathComponents)
+        {
+            if (!TryGetChildRecordRaw(current, component, out NtfsFileRecord? child))
+            {
+                return null;
+            }
+
+            current = child!;
+        }
+
+        return current;
+    }
+
+    private bool TryGetChildRecordRaw(NtfsFileRecord directoryRecord, string name, out NtfsFileRecord? childRecord)
+    {
+        childRecord = null;
+
+        foreach ((NtfsFileRecord record, NtfsFileNameRecord fileName) in EnumerateDirectoryEntriesRaw(directoryRecord))
+        {
+            if (string.Equals(fileName.Name, name, StringComparison.OrdinalIgnoreCase))
+            {
+                childRecord = record;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private NtfsFileRecord? FindFirstByNameRecursive(NtfsFileRecord directoryRecord, string name, HashSet<ulong> visited)
+    {
+        if (!visited.Add(directoryRecord.RecordNumber))
+        {
+            return null;
+        }
+
+        foreach ((NtfsFileRecord record, NtfsFileNameRecord fileName) in EnumerateDirectoryEntriesRaw(directoryRecord))
+        {
+            if (string.Equals(fileName.Name, name, StringComparison.OrdinalIgnoreCase))
+            {
+                return record;
+            }
+
+            if (record.IsDirectory)
+            {
+                NtfsFileRecord? child = FindFirstByNameRecursive(record, name, visited);
+                if (child != null)
+                {
+                    return child;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static string[] NormalizePathComponents(string path)
+    {
+        path = path.Replace('/', '\\');
+
+        if (path.StartsWith("\\??\\", StringComparison.Ordinal))
+        {
+            path = path[4..];
+        }
+        else if (path.StartsWith("\\\\?\\", StringComparison.Ordinal))
+        {
+            path = path[4..];
+        }
+
+        if (path.Length >= 2 && path[1] == ':')
+        {
+            path = path[2..];
+        }
+
+        string[] rawComponents = path.Split('\\', StringSplitOptions.RemoveEmptyEntries);
+        List<string> components = new();
+
+        foreach (string component in rawComponents)
+        {
+            if (component == ".")
+            {
+                continue;
+            }
+
+            if (component == "..")
+            {
+                if (components.Count > 0)
+                {
+                    components.RemoveAt(components.Count - 1);
+                }
+
+                continue;
+            }
+
+            components.Add(component);
+        }
+
+        return components.ToArray();
     }
 
     private IEnumerable<(ulong FileReference, NtfsFileNameRecord FileName)> EnumerateIndexEntries(
@@ -300,6 +541,12 @@ public class NtfsFileSystem : FileSystem
     internal FileAttributes GetEffectiveAttributes(NtfsFileRecord record, NtfsFileNameRecord? fileName)
     {
         FileAttributes attributes = fileName?.Attributes ?? record.StandardInformation?.Attributes ?? 0;
+
+        if (record.Attributes.Any(attribute => attribute.Type == ReparsePointAttributeType))
+        {
+            attributes |= FileAttributes.ReparsePoint;
+        }
+
         if (record.IsDirectory)
         {
             attributes |= FileAttributes.Directory;
