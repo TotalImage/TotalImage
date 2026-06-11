@@ -87,6 +87,11 @@ namespace TotalImage.DiskGeometries
             [Display(Name = "250.25 KiB (86-DOS)")]
             SingleDensity250kSCP,
             /// <summary>
+            /// A single-sided 3.5" format with 280 KiB formatted capacity, used by the CDI DOT computer.
+            /// </summary>
+            [Display(Name = "280 KiB (CDI DOT)")]
+            CdiDot,
+            /// <summary>
             /// A standard double-sided 5.25" PC-compatible format with 320 KiB formatted capacity.
             /// </summary>
             [Display(Name = "320 KiB")]
@@ -237,6 +242,7 @@ namespace TotalImage.DiskGeometries
             { FriendlyName.DoubleDensity180k,    new FloppyGeometry(1, 40,  9, 2, 0xFC, 1, 2,  1,  64,  1) },
             { FriendlyName.SingleDensity250kMS,  new FloppyGeometry(1, 77, 26, 0, 0xFE, 4, 2,  6,  68,  1) },
             { FriendlyName.SingleDensity250kSCP, new FloppyGeometry(1, 77, 26, 0, 0xFE, 4, 2,  6,  64, 52) },
+            { FriendlyName.CdiDot,               new FloppyGeometry(1, 70,  8, 2, 0xF8, 2, 2,  1,  64,  1) },
             { FriendlyName.DoubleDensity320k,    new FloppyGeometry(2, 40,  8, 2, 0xFF, 2, 2,  1, 112,  1) },
             { FriendlyName.DoubleDensity360k,    new FloppyGeometry(2, 40,  9, 2, 0xFD, 2, 2,  2, 112,  1) },
             { FriendlyName.AlphatronicPC16,      new FloppyGeometry(2, 40,  5, 3, 0xFF, 2, 2,  1, 128,  1) },
