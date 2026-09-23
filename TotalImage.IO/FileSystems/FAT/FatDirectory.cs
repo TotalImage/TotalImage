@@ -425,12 +425,12 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <summary>
-        /// Finds the stream position of the first run of <paramref name="count"/> consecutive free
+        /// Finds the stream positions of the first run of <paramref name="count"/> consecutive free
         /// (0x00 or 0xE5) 32-byte directory entry slots in this directory.
         /// Allocates a new cluster if needed (cluster-chain directories only).
-        /// Returns the offset of the first slot in the run.
+        /// Returns the offsets in directory-chain order.
         /// </summary>
-        private long FindOrAllocateFreeDirEntryOffset(FatFileSystem fat, int count = 1)
+        private long[] FindOrAllocateFreeDirEntryOffsets(FatFileSystem fat, int count = 1, HashSet<long>? excluded = null)
         {
             var stream = fat.GetStream();
 
@@ -442,25 +442,37 @@ namespace TotalImage.FileSystems.FAT
 
                 int run = 0;
                 long runStart = -1;
+                long lastExcluded = excluded is null || excluded.Count == 0 ? -1 : excluded.Max();
+                bool afterEnd = false;
 
                 for (long pos = rootStart; pos < rootEnd; pos += 32)
                 {
                     stream.Position = pos;
                     int firstByte = stream.ReadByte();
+                    if (excluded?.Contains(pos) == true)
+                    {
+                        run = 0;
+                        runStart = -1;
+                        continue;
+                    }
+                    if (firstByte == 0x00 && pos > lastExcluded) afterEnd = true;
+                    if (afterEnd) firstByte = 0x00;
                     bool isFree = firstByte == 0x00 || firstByte == 0xE5;
                     if (isFree)
                     {
                         if (run == 0) runStart = pos;
                         run++;
-                        if (run >= count) return runStart;
+                        if (run >= count) return Enumerable.Range(0, count).Select(i => runStart + i * 32).ToArray();
                         // 0x00 means every slot from here to rootEnd is implicitly free —
                         // we can extend the run without reading further bytes.
                         if (firstByte == 0x00)
                         {
+                            if (excluded is not null && pos <= lastExcluded)
+                                continue;
                             // Check that the remaining entries can satisfy the count.
                             long slotsRemaining = (rootEnd - pos) / 32;
                             if (run + slotsRemaining - 1 >= count)
-                                return runStart;
+                                return Enumerable.Range(0, count).Select(i => runStart + i * 32).ToArray();
                             break; // truly full
                         }
                     }
@@ -483,49 +495,67 @@ namespace TotalImage.FileSystems.FAT
 
             uint dataAreaByteOffset = fat.DataAreaFirstSector * fat.BiosParameterBlock.BytesPerLogicalSector;
 
-            // We may need to grow the chain, so iterate with index to get the last cluster.
+            // Slots are consecutive in directory-chain order, not necessarily on disk.
             var clusters = fat.MainFat.GetClusterChain(firstCluster);
 
-            int runC = 0;
-            long runStartC = -1;
+            var freeSlots = new List<long>();
+            bool pastEnd = false;
+            long excludedEnd = -1;
+            bool needsScanningAfterEnd = excluded is not null && excluded.Count > 0;
+            if (excluded is not null && excluded.Count > 0)
+            {
+                long last = -1;
+                foreach (uint cluster in clusters)
+                {
+                    long start = dataAreaByteOffset + (long)(cluster - 2) * fat.BytesPerCluster;
+                    for (long pos = start; pos < start + fat.BytesPerCluster; pos += 32)
+                    {
+                        last++;
+                        if (excluded.Contains(pos)) excludedEnd = last;
+                    }
+                }
+            }
+            long slotIndex = -1;
 
             foreach (var cluster in clusters)
             {
                 long clusterStart = dataAreaByteOffset + (long)(cluster - 2) * fat.BytesPerCluster;
                 for (long pos = clusterStart; pos < clusterStart + fat.BytesPerCluster; pos += 32)
                 {
-                    stream.Position = pos;
-                    int firstByte = stream.ReadByte();
-                    bool isFree = firstByte == 0x00 || firstByte == 0xE5;
-                    if (isFree)
+                    slotIndex++;
+                    if (excluded?.Contains(pos) == true)
                     {
-                        if (runC == 0) runStartC = pos;
-                        runC++;
-                        if (runC >= count) return runStartC;
+                        freeSlots.Clear();
+                        continue;
                     }
-                    else
+                    if (!pastEnd)
                     {
-                        runC = 0; runStartC = -1;
+                        stream.Position = pos;
+                        int firstByte = stream.ReadByte();
+                        if (firstByte == 0x00 && (!needsScanningAfterEnd || slotIndex > excludedEnd)) pastEnd = true;
+                        if (!pastEnd && firstByte != 0xE5)
+                        {
+                            freeSlots.Clear();
+                            continue;
+                        }
                     }
-                    if (firstByte == 0x00) goto doneScanning;
+                    freeSlots.Add(pos);
+                    if (freeSlots.Count >= count) return freeSlots.Take(count).ToArray();
                 }
             }
-            doneScanning:
 
-            // Not enough contiguous free slots — allocate a new cluster.
-            // (The partial run at the end of the existing chain will be extended by the new cluster.)
             uint lastCluster = clusters[^1];
-            uint newCluster  = fat.AllocateCluster(lastCluster);
-            long newStart    = dataAreaByteOffset + (long)(newCluster - 2) * fat.BytesPerCluster;
-
-            stream.Position = newStart;
-            stream.Write(new byte[fat.BytesPerCluster]);
-
-            // If we had a partial run ending exactly at the boundary, the new cluster extends it.
-            if (runC > 0 && count - runC <= (int)(fat.BytesPerCluster / 32))
-                return runStartC;
-
-            return newStart;
+            while (freeSlots.Count < count)
+            {
+                uint newCluster = fat.AllocateCluster(lastCluster);
+                lastCluster = newCluster;
+                long newStart = dataAreaByteOffset + (long)(newCluster - 2) * fat.BytesPerCluster;
+                stream.Position = newStart;
+                stream.Write(new byte[fat.BytesPerCluster]);
+                for (long pos = newStart; pos < newStart + fat.BytesPerCluster; pos += 32)
+                    freeSlots.Add(pos);
+            }
+            return freeSlots.Take(count).ToArray();
         }
 
         /// <summary>
@@ -560,9 +590,9 @@ namespace TotalImage.FileSystems.FAT
 
         /// <summary>
         /// Writes LFN directory entries preceding the short-name entry, then writes the short-name entry.
-        /// All entries are written contiguously starting at <paramref name="slotOffset"/>.
+        /// Entries are written in chain order at <paramref name="slots"/>.
         /// </summary>
-        private static void WriteLfnAndShortEntry(Stream stream, long slotOffset,
+        private static void WriteLfnAndShortEntry(Stream stream, long[] slots,
             string longName, byte[] shortNameBytes,
             FatAttributes attributes, uint firstCluster, uint fileSize,
             DateTime? creationTime, DateTime? lastWriteTime, DateTime? lastAccessTime)
@@ -571,11 +601,10 @@ namespace TotalImage.FileSystems.FAT
             var chunks    = BuildLfnChunks(longName);
             int n         = chunks.Length;
 
-            stream.Position = slotOffset;
-
             // Write LFN entries in reverse order (last chunk first, highest ordinal with 0x40 flag)
             for (int i = n - 1; i >= 0; i--)
             {
+                stream.Position = slots[n - 1 - i];
                 byte ordinalByte = (byte)((i + 1) | (i == n - 1 ? 0x40 : 0x00));
                 var lfn = new LongDirectoryEntry(ordinalByte, chunks[i], checksum);
                 lfn.WriteTo(stream);
@@ -585,7 +614,120 @@ namespace TotalImage.FileSystems.FAT
             var shortEntry = new DirectoryEntry(
                 shortNameBytes, attributes, firstCluster, fileSize,
                 creationTime, lastWriteTime, lastAccessTime);
+            stream.Position = slots[n];
             shortEntry.WriteTo(stream);
+        }
+
+        /// <summary>Marks the LFN slots immediately preceding a short entry as deleted.</summary>
+        internal void DeleteLongNameEntries(long shortOffset)
+        {
+            var fat = (FatFileSystem)FileSystem;
+            var stream = fat.GetStream();
+            foreach (long pos in GetLongNameEntryOffsets(shortOffset))
+            {
+                stream.Position = pos;
+                stream.WriteByte(0xE5);
+            }
+        }
+
+        private long[] GetLongNameEntryOffsets(long shortOffset)
+        {
+            var fat = (FatFileSystem)FileSystem;
+            var stream = fat.GetStream();
+            IEnumerable<long> offsets;
+            if (entry is null && fat.BiosParameterBlock is not Fat32BiosParameterBlock)
+            {
+                long start = (fat.ReservedSectors + fat.ClusterMapsSectors) * fat.BiosParameterBlock.BytesPerLogicalSector;
+                offsets = Enumerable.Range(0, fat.BiosParameterBlock.RootDirectoryEntries).Select(i => start + i * 32L);
+            }
+            else
+            {
+                uint first = entry?.FirstClusterOfFile ?? ((Fat32BiosParameterBlock)fat.BiosParameterBlock).RootDirectoryCluster;
+                long start = (long)fat.DataAreaFirstSector * fat.BiosParameterBlock.BytesPerLogicalSector;
+                offsets = fat.MainFat.GetClusterChain(first).SelectMany(cl =>
+                    Enumerable.Range(0, (int)(fat.BytesPerCluster / 32))
+                        .Select(i => start + (long)(cl - 2) * fat.BytesPerCluster + i * 32L));
+            }
+
+            var positions = offsets.TakeWhile(pos => pos != shortOffset).ToArray();
+            if (!offsets.Skip(positions.Length).Any(pos => pos == shortOffset))
+                throw new InvalidDataException("Short entry is not in its parent directory.");
+            stream.Position = shortOffset;
+            var shortName = new byte[11];
+            stream.ReadExactly(shortName);
+            byte checksum = LongDirectoryEntry.GetShortNameChecksum(shortName);
+            var result = new List<long>();
+            for (int i = positions.Length - 1; i >= 0; i--)
+            {
+                stream.Position = positions[i];
+                var slot = new byte[32];
+                stream.ReadExactly(slot);
+                if (slot[11] != (byte)FatAttributes.LongName || slot[13] != checksum || slot[0] == 0xE5)
+                    break;
+                result.Add(positions[i]);
+            }
+            result.Reverse();
+            return result.ToArray();
+        }
+
+        internal void RenameEntry(long shortOffset, string newName)
+        {
+            var fat = (FatFileSystem)FileSystem;
+            var stream = fat.GetStream();
+            stream.Position = shortOffset;
+            var shortEntry = new byte[32];
+            stream.ReadExactly(shortEntry);
+            var existing = CollectExistingShortNames(fat);
+            var originalName = Encoding.ASCII.GetString(shortEntry, 0, 11);
+            existing.Remove(originalName);
+            var shortName = GenerateShortName(newName, existing);
+            bool needsLfn = NeedsLfn(newName);
+            int lfnCount = needsLfn ? BuildLfnChunks(newName).Length : 0;
+            var oldSlots = GetLongNameEntryOffsets(shortOffset);
+            if (existing.Contains(Encoding.ASCII.GetString(shortName)))
+                throw new IOException("A FAT entry with that short name already exists.");
+            // Reuse the existing slots when the new name fits without relocating the entry.
+            if (oldSlots.Length >= lfnCount)
+            {
+                int unused = oldSlots.Length - lfnCount;
+                for (int i = 0; i < unused; i++)
+                {
+                    stream.Position = oldSlots[i];
+                    stream.WriteByte(0xE5);
+                }
+                if (needsLfn)
+                    WriteLfnEntries(stream, oldSlots.Skip(unused).ToArray(), newName, shortName);
+                stream.Position = shortOffset;
+                stream.Write(shortName);
+                return;
+            }
+
+            // The old run cannot hold the new LFN: find space before modifying the original.
+            var slots = FindOrAllocateFreeDirEntryOffsets(fat, lfnCount + 1, oldSlots.Append(shortOffset).ToHashSet());
+            if (slots.Contains(shortOffset) || slots.Any(oldSlots.Contains))
+                throw new IOException("Cannot relocate FAT directory entry into its existing slots.");
+            WriteLfnEntries(stream, slots[..^1], newName, shortName);
+            shortName.CopyTo(shortEntry, 0);
+            stream.Position = slots[^1];
+            stream.Write(shortEntry);
+            foreach (long pos in oldSlots)
+            {
+                stream.Position = pos;
+                stream.WriteByte(0xE5);
+            }
+            stream.Position = shortOffset;
+            stream.WriteByte(0xE5);
+        }
+
+        private static void WriteLfnEntries(Stream stream, long[] slots, string name, byte[] shortName)
+        {
+            var chunks = BuildLfnChunks(name);
+            byte checksum = LongDirectoryEntry.GetShortNameChecksum(shortName);
+            for (int i = chunks.Length - 1; i >= 0; i--)
+            {
+                stream.Position = slots[chunks.Length - 1 - i];
+                new LongDirectoryEntry((byte)((i + 1) | (i == chunks.Length - 1 ? 0x40 : 0)), chunks[i], checksum).WriteTo(stream);
+            }
         }
 
         /// <summary>
@@ -620,7 +762,7 @@ namespace TotalImage.FileSystems.FAT
 
                     int toWrite = (int)Math.Min(remaining, fat.BytesPerCluster);
                     var buf = new byte[toWrite];
-                    sourceStream.Read(buf, 0, toWrite);
+                    sourceStream.ReadExactly(buf);
                     stream.Write(buf, 0, toWrite);
                     remaining -= toWrite;
                 }
@@ -633,11 +775,11 @@ namespace TotalImage.FileSystems.FAT
             int lfnCount = needsLfn ? (name.Length + 13) / 13 : 0;
             int totalSlots = lfnCount + 1;
 
-            long slotOffset = FindOrAllocateFreeDirEntryOffset(fat, totalSlots);
+            long[] slots = FindOrAllocateFreeDirEntryOffsets(fat, totalSlots);
 
             if (needsLfn)
             {
-                WriteLfnAndShortEntry(stream, slotOffset, name, shortNameBytes,
+                WriteLfnAndShortEntry(stream, slots, name, shortNameBytes,
                     attributes | FatAttributes.Archive, firstCluster, fileSize,
                     creationTime, lastWriteTime, lastAccessTime);
             }
@@ -646,7 +788,7 @@ namespace TotalImage.FileSystems.FAT
                 var newEntry = new DirectoryEntry(
                     shortNameBytes, attributes | FatAttributes.Archive,
                     firstCluster, fileSize, creationTime, lastWriteTime, lastAccessTime);
-                stream.Position = slotOffset;
+                stream.Position = slots[0];
                 newEntry.WriteTo(stream);
             }
         }
@@ -693,18 +835,18 @@ namespace TotalImage.FileSystems.FAT
             int lfnCount = needsLfn ? (name.Length + 13) / 13 : 0;
             int totalSlots = lfnCount + 1;
 
-            long slotOffset = FindOrAllocateFreeDirEntryOffset(fat, totalSlots);
+            long[] slots = FindOrAllocateFreeDirEntryOffsets(fat, totalSlots);
 
             if (needsLfn)
             {
-                WriteLfnAndShortEntry(stream, slotOffset, name, shortNameBytes,
+                WriteLfnAndShortEntry(stream, slots, name, shortNameBytes,
                     FatAttributes.Subdirectory, newCluster, 0, now, now, now);
             }
             else
             {
                 var newEntry = new DirectoryEntry(
                     shortNameBytes, FatAttributes.Subdirectory, newCluster, 0, now, now, now);
-                stream.Position = slotOffset;
+                stream.Position = slots[0];
                 newEntry.WriteTo(stream);
             }
         }
@@ -721,6 +863,7 @@ namespace TotalImage.FileSystems.FAT
             var stream = fat.GetStream();
 
             long entryOffset = FindEntryOffset(fat, entry.Value);
+            ((FatDirectory)Parent!).DeleteLongNameEntries(entryOffset);
             stream.Position = entryOffset;
             stream.WriteByte(0xE5);
 
@@ -728,7 +871,7 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <summary>
-        /// Renames this directory entry during commit (8.3 only).
+        /// Renames this directory entry during commit, updating its long-name slots if needed.
         /// </summary>
         internal void WriteRename(string newName)
         {
@@ -736,14 +879,8 @@ namespace TotalImage.FileSystems.FAT
                 throw new InvalidOperationException("Cannot rename the root directory.");
 
             var fat = (FatFileSystem)FileSystem;
-            var stream = fat.GetStream();
-
             long entryOffset = FindEntryOffset(fat, entry.Value);
-            var existingShortNames = CollectExistingShortNames(fat);
-            var shortNameBytes = GenerateShortName(newName, existingShortNames);
-
-            stream.Position = entryOffset;
-            stream.Write(shortNameBytes, 0, 11);
+            ((FatDirectory)Parent!).RenameEntry(entryOffset, newName);
         }
 
         /// <summary>

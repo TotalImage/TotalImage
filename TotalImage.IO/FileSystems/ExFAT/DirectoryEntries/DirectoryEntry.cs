@@ -44,18 +44,23 @@ public abstract class DirectoryEntry
     /// <returns>A readable stream for the entry payload.</returns>
     protected Stream GetStreamInternal(ExFatFileSystem fileSystem, bool noFatChain, ulong length)
     {
+        if (length == 0)
+            return new MemoryStream(Array.Empty<byte>(), writable: false);
         if (noFatChain)
         {
-            var clusterHeapOffset = fileSystem.BootSector.ClusterHeapOffset * fileSystem.BytesPerSector;
-            var clusterOffset = clusterHeapOffset + (FirstCluster - 2) * fileSystem.BytesPerCluster;
-            return new PartialStream(fileSystem.GetStream(), clusterOffset, (long)length)
+            long clusterHeapOffset = (long)fileSystem.BootSector.ClusterHeapOffset * fileSystem.BytesPerSector;
+            long clusterOffset = clusterHeapOffset + ((long)FirstCluster - 2) * fileSystem.BytesPerCluster;
+            return new PartialStream(fileSystem.GetStream(), clusterOffset, checked((long)length))
             {
                 Position = 0
             };
         }
         else
         {
-            return new ExFatDataStream(fileSystem, FirstCluster);
+            var chain = new ExFatDataStream(fileSystem, FirstCluster);
+            if (length > (ulong)chain.Length)
+                throw new InvalidDataException("exFAT stream length exceeds its cluster chain.");
+            return new PartialStream(chain, 0, checked((long)length));
         }
     }
 
@@ -96,7 +101,16 @@ public abstract class DirectoryEntry
 
         do
         {
-            stream.Read(buffer);
+            if (stream.Position >= stream.Length)
+                yield break;
+            try
+            {
+                stream.ReadExactly(buffer);
+            }
+            catch (EndOfStreamException)
+            {
+                yield break;
+            }
 
             var position = stream.Position;
 

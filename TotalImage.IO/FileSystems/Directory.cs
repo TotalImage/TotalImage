@@ -143,8 +143,11 @@ namespace TotalImage.FileSystems
                 else if (obj is Directory)
                     directoryCount++;
 
-                size += obj.Length;
-                sizeOnDisk += obj.LengthOnDisk;
+                if (obj is File)
+                {
+                    size += obj.Length;
+                    sizeOnDisk += obj.LengthOnDisk;
+                }
             }
 
             return (fileCount, directoryCount, size, sizeOnDisk);

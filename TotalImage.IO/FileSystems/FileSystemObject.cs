@@ -56,7 +56,7 @@ namespace TotalImage.FileSystems
         /// <summary>
         /// The length of the file system object as represented on the disk
         /// </summary>
-        public virtual ulong LengthOnDisk => ((Length / (ulong)FileSystem.AllocationUnitSize) + 1) * (ulong)FileSystem.AllocationUnitSize;
+        public virtual ulong LengthOnDisk => Length == 0 ? 0 : ((Length - 1) / (ulong)FileSystem.AllocationUnitSize + 1) * (ulong)FileSystem.AllocationUnitSize;
 
         /// <summary>
         /// The file system that contains the file system object
@@ -69,7 +69,7 @@ namespace TotalImage.FileSystems
         public bool IsReadOnly
         {
             get => (Attributes & FileAttributes.ReadOnly) > 0;
-            set => Attributes |= value ? FileAttributes.ReadOnly : 0;
+            set => Attributes = value ? Attributes | FileAttributes.ReadOnly : Attributes & ~FileAttributes.ReadOnly;
         }
 
         /// <summary>

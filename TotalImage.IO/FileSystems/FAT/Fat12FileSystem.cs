@@ -162,7 +162,7 @@ namespace TotalImage.FileSystems.FAT
             protected override uint Mask => 0xFFF;
 
             public override uint Length
-                => (uint)(_fat12.BytesPerClusterMap) / 2 * 3;
+                => Math.Min((uint)(_fat12.BytesPerClusterMap * 2 / 3), _fat12.ClusterCount + 2);
 
             public override uint this[uint index]
             {
@@ -187,11 +187,11 @@ namespace TotalImage.FileSystems.FAT
                     // crazy maths! Let's first seek further to the nearest even index.
                     reader.BaseStream.Seek(index / 2 * 3, SeekOrigin.Current);
 
-                    // Now we want to read two values. Considering there is no 24-bit
-                    // integer type, we have to read 32 bits, which means we're going
-                    // to read more than we need, so we have to discard the most
-                    // significant byte.
-                    var pair = reader.ReadUInt32() & 0xFFFFFF;
+                    // Read only the bytes belonging to this FAT copy. The final
+                    // even entry can occupy the last two bytes of the FAT.
+                    uint pair = (uint)(reader.ReadByte() | reader.ReadByte() << 8);
+                    if (index % 2 != 0 || index / 2 * 3 + 2 < _fat12.BytesPerClusterMap)
+                        pair |= (uint)reader.ReadByte() << 16;
 
                     // Right now, `pair` has the value of 0x00123ABC, bits 0-11 contain
                     // the value of the even index and bits 12-23 contain the value of
@@ -216,8 +216,10 @@ namespace TotalImage.FileSystems.FAT
 
                     // Read the existing 3-byte group so we can preserve the sibling nibble.
                     using var reader = new BinaryReader(stream, Encoding.ASCII, true);
-                    uint existing = reader.ReadUInt32() & 0xFFFFFF;
-                    stream.Seek(-3, SeekOrigin.Current);
+                    int bytesInPair = index / 2 * 3 + 2 < _fat12.BytesPerClusterMap ? 3 : 2;
+                    uint existing = (uint)(reader.ReadByte() | reader.ReadByte() << 8);
+                    if (bytesInPair == 3) existing |= (uint)reader.ReadByte() << 16;
+                    stream.Seek(-bytesInPair, SeekOrigin.Current);
 
                     uint updated;
                     if (index % 2 == 0)
@@ -227,7 +229,7 @@ namespace TotalImage.FileSystems.FAT
 
                     writer.Write((byte)(updated & 0xFF));
                     writer.Write((byte)((updated >> 8) & 0xFF));
-                    writer.Write((byte)((updated >> 16) & 0xFF));
+                    if (bytesInPair == 3) writer.Write((byte)((updated >> 16) & 0xFF));
                 }
             }
         }

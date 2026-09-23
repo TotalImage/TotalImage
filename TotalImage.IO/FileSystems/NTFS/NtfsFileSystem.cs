@@ -318,11 +318,6 @@ public class NtfsFileSystem : FileSystem
         }
 
         target = ResolvePath(pathComponents);
-        if (target == null)
-        {
-            target = FindFirstByNameRecursive(LoadFileRecord(RootDirectoryRecordNumber), pathComponents[^1], new HashSet<ulong>());
-        }
-
         return target != null && (allowFileTarget || target.IsDirectory);
     }
 
@@ -357,33 +352,6 @@ public class NtfsFileSystem : FileSystem
         }
 
         return false;
-    }
-
-    private NtfsFileRecord? FindFirstByNameRecursive(NtfsFileRecord directoryRecord, string name, HashSet<ulong> visited)
-    {
-        if (!visited.Add(directoryRecord.RecordNumber))
-        {
-            return null;
-        }
-
-        foreach ((NtfsFileRecord record, NtfsFileNameRecord fileName) in EnumerateDirectoryEntriesRaw(directoryRecord))
-        {
-            if (string.Equals(fileName.Name, name, StringComparison.OrdinalIgnoreCase))
-            {
-                return record;
-            }
-
-            if (record.IsDirectory)
-            {
-                NtfsFileRecord? child = FindFirstByNameRecursive(record, name, visited);
-                if (child != null)
-                {
-                    return child;
-                }
-            }
-        }
-
-        return null;
     }
 
     private static string[] NormalizePathComponents(string path)
@@ -664,7 +632,14 @@ public class NtfsFileSystem : FileSystem
             int offsetSize = bytes[offset] >> 4;
             offset++;
 
-            long clusterCount = ReadSignedInteger(bytes.Slice(offset, lengthSize));
+            if (lengthSize == 0 || lengthSize > 8 || offsetSize > 8)
+                throw new InvalidDataException("Invalid NTFS data run header.");
+            if (lengthSize + offsetSize > bytes.Length - offset)
+                throw new InvalidDataException("Truncated NTFS data run.");
+            ulong unsignedCount = 0;
+            for (int i = 0; i < lengthSize; i++)
+                unsignedCount |= (ulong)bytes[offset + i] << (8 * i);
+            long clusterCount = checked((long)unsignedCount);
             offset += lengthSize;
 
             long lcnDelta = offsetSize == 0 ? 0 : ReadSignedInteger(bytes.Slice(offset, offsetSize));

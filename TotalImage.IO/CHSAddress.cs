@@ -54,11 +54,11 @@ namespace TotalImage
             byte sectorsPerTrack = 0;
             uint cylinderTimesHeads = 0;
 
-            uint sectors = (uint)Math.Max(size / 512, 65535 * 16 * 255);
+            uint sectors = (uint)Math.Min(size / 512, 65535UL * 16 * 63);
 
             if (sectors >= 65535 * 16 * 63)
             {
-                sectorsPerTrack = 255;
+                sectorsPerTrack = 63;
                 heads = 16;
                 cylinderTimesHeads = sectors / sectorsPerTrack;
             }

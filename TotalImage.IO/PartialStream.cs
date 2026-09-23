@@ -115,7 +115,7 @@ namespace TotalImage
         /// <inheritdoc />
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if ((_base.Position + count) >= _offsetEnd)
+            if (_base.Position < _offsetStart || count > _offsetEnd - _base.Position)
             {
                 throw new ArgumentOutOfRangeException();
             }

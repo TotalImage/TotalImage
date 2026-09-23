@@ -47,6 +47,28 @@ namespace TotalImage.FileSystems.FAT
             }
         }
 
+        internal void UpdateFsInfo(uint cluster, bool freed, uint count = 1)
+        {
+            if (!_fsInfo.IsValid || _bpb is not Fat32BiosParameterBlock bpb) return;
+            if (_fsInfo.freeCount <= ClusterCount)
+            {
+                _fsInfo.freeCount = freed
+                    ? (count <= ClusterCount - _fsInfo.freeCount ? _fsInfo.freeCount + count : uint.MaxValue)
+                    : (count <= _fsInfo.freeCount ? _fsInfo.freeCount - count : uint.MaxValue);
+            }
+            if (freed)
+                _fsInfo.nxtFree = cluster;
+            else if (_fsInfo.nxtFree == cluster)
+                _fsInfo.nxtFree = cluster + 1 < ClusterCount + 2 ? cluster + 1 : 2;
+
+            var stream = GetStream();
+            long offset = (long)bpb.FsInfo * bpb.BytesPerLogicalSector;
+            using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+            stream.Position = offset + 488;
+            writer.Write(_fsInfo.freeCount);
+            writer.Write(_fsInfo.nxtFree);
+        }
+
         private class FileAllocationTable : FAT.FileAllocationTable
         {
             Fat32FileSystem _fat32;

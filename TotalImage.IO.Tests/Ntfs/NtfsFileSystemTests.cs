@@ -112,6 +112,25 @@ public class NtfsFileSystemTests
     }
 
     [Fact]
+    public void NonResidentFileStreams_AcceptUnsignedRunLengthsAbove127()
+    {
+        byte[] image = CreateTestImage();
+        Array.Resize(ref image, 200 * 512);
+        byte[] record = BuildFileRecord(10, false, [
+            BuildStandardInformationAttribute(FileAttributes.Archive),
+            BuildNonResidentDataAttribute(700, [(30, 128)])
+        ]);
+        WriteFileRecord(image, 4, 10, record);
+        image.AsSpan(30 * 512, 700).Fill((byte)'Z');
+        using var stream = new MemoryStream(image);
+
+        var fs = Assert.IsType<NtfsFileSystem>(FileSystem.AttemptDetection(stream));
+        var file = Assert.IsType<NtfsFile>(fs.RootDirectory.EnumerateFiles(true).Single(e => e.Name == "large.bin"));
+        using var reader = new StreamReader(file.GetStream(), Encoding.ASCII);
+        Assert.Equal(new string('Z', 700), reader.ReadToEnd());
+    }
+
+    [Fact]
     public void ReparsePointEntries_ReportReparsePointAttribute()
     {
         using var stream = new MemoryStream(CreateReparsePointImage());
@@ -145,6 +164,20 @@ public class NtfsFileSystemTests
 
         Assert.Same(entry, entry.ResolveTarget());
         Assert.Empty(entry.EnumerateFileSystemObjects(showHidden: true));
+    }
+
+    [Fact]
+    public void UnresolvedReparsePoint_DoesNotResolveByBasename()
+    {
+        byte[] image = CreateReparsePointImage();
+        WriteFileRecord(image, 4, 11, BuildFileRecord(11, false, [
+            BuildStandardInformationAttribute(FileAttributes.Archive | FileAttributes.ReparsePoint),
+            BuildReparsePointAttribute(0xA000000C, @"\??\Volume{unknown}\readme.txt")
+        ]));
+        using var stream = new MemoryStream(image);
+        var fs = Assert.IsType<NtfsFileSystem>(FileSystem.AttemptDetection(stream));
+
+        Assert.Equal(11UL, fs.ResolveFileRecord(fs.LoadFileRecord(11)).RecordNumber);
     }
 
     private static byte[] CreateTestImage()

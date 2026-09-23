@@ -74,6 +74,45 @@ public class PartitionTableTests
         Assert.Equal("ESP", entry.Name.TrimEnd('\0'));
     }
 
+    [Fact]
+    public void Mbr_Uses64BitOffsetsAndLengths()
+    {
+        byte[] image = CreateMbrImage();
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(0x1BE + 8, 4), 0x00800001);
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(0x1BE + 12, 4), 0x00800002);
+        using var container = new RawContainer(new MemoryStream(image));
+
+        var entry = Assert.IsType<MbrPartitionTable.MbrPartitionEntry>(Assert.Single(new MbrPartitionTable(container).Partitions));
+        Assert.Equal(0x00800001L * 512, entry.Offset);
+        Assert.Equal(0x00800002L * 512, entry.Length);
+    }
+
+    [Fact]
+    public void Mbr_FollowsExtendedPartitionChain()
+    {
+        byte[] image = new byte[8 * 512];
+        WriteEntry(image.AsSpan(0x1BE, 16), 0x0F, 1, 7);
+        BinaryPrimitives.WriteUInt16LittleEndian(image.AsSpan(510, 2), 0xAA55);
+        WriteEntry(image.AsSpan(512 + 0x1BE, 16), 0x06, 1, 1);
+        WriteEntry(image.AsSpan(512 + 0x1CE, 16), 0x0F, 3, 4);
+        BinaryPrimitives.WriteUInt16LittleEndian(image.AsSpan(1022, 2), 0xAA55);
+        WriteEntry(image.AsSpan(4 * 512 + 0x1BE, 16), 0x07, 1, 2);
+        BinaryPrimitives.WriteUInt16LittleEndian(image.AsSpan(5 * 512 - 2, 2), 0xAA55);
+        using var container = new RawContainer(new MemoryStream(image));
+
+        var partitions = new MbrPartitionTable(container).Partitions.ToArray();
+        Assert.Equal(2, partitions.Length);
+        Assert.Equal(2 * 512, partitions[0].Offset);
+        Assert.Equal(5 * 512, partitions[1].Offset);
+    }
+
+    private static void WriteEntry(Span<byte> entry, byte type, uint start, uint length)
+    {
+        entry[4] = type;
+        BinaryPrimitives.WriteUInt32LittleEndian(entry[8..12], start);
+        BinaryPrimitives.WriteUInt32LittleEndian(entry[12..16], length);
+    }
+
     private static byte[] CreateMbrImage()
     {
         byte[] image = new byte[1024];

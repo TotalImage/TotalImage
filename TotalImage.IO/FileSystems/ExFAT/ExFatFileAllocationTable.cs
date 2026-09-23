@@ -20,19 +20,18 @@ public class ExFatFileAllocationTable : IEnumerable<uint>
     {
         get
         {
-            if (index > _fileSystem.BootSector.FatLength * _fileSystem.BytesPerSector / 4)
+            if (index >= Length)
             {
                 throw new IndexOutOfRangeException();
             }
 
-            var offset = _fileSystem.BootSector.FatOffset * _fileSystem.BytesPerSector;
-            offset += _fatIndex * _fileSystem.BootSector.FatLength * _fileSystem.BytesPerSector;
+            long offset = ((long)_fileSystem.BootSector.FatOffset + (long)_fatIndex * _fileSystem.BootSector.FatLength) * _fileSystem.BytesPerSector;
 
             var stream = _fileSystem.GetStream();
-            stream.Position = offset + index * 4;
+            stream.Position = offset + (long)index * 4;
 
             var fatEntry = new byte[4];
-            stream.Read(fatEntry);
+            stream.ReadExactly(fatEntry);
 
             return BinaryPrimitives.ReadUInt32LittleEndian(fatEntry);
         }
@@ -49,7 +48,7 @@ public class ExFatFileAllocationTable : IEnumerable<uint>
     /// <summary>
     /// Retrieves the number of entries in the allocation table.
     /// </summary>
-    public uint Length { get; }
+    public uint Length => checked((uint)((long)_fileSystem.BootSector.FatLength * _fileSystem.BytesPerSector / 4));
 
     /// <summary>
     /// Creates an exFAT allocation table reader.
@@ -78,7 +77,7 @@ public class ExFatFileAllocationTable : IEnumerable<uint>
         0 => null,
         1 => null,
         0xFFFF_FFF7 => null,
-        0xFFFF_FFFF => null,
+        >= 0xFFFF_FFF8 => null,
         uint x => x
     };
 
@@ -89,10 +88,13 @@ public class ExFatFileAllocationTable : IEnumerable<uint>
     public uint[] GetClusterChain(uint firstCluster)
     {
         var clusters = new List<uint>();
+        var visited = new HashSet<uint>();
         uint? cluster = firstCluster;
 
         while (cluster.HasValue)
         {
+            if (!visited.Add(cluster.Value))
+                throw new System.IO.InvalidDataException("Cyclic exFAT cluster chain.");
             clusters.Add(cluster.Value);
             cluster = GetNextCluster(cluster.Value);
         }

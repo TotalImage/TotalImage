@@ -12,7 +12,7 @@ namespace TotalImage.FileSystems.FAT
         private readonly Stream _base;
         private readonly uint[] _clusters;
         private readonly uint _length;
-        private uint _position = 0;
+        private long _position = 0;
 
         /// <inheritdoc />
         public override bool CanRead => _base.CanRead;
@@ -69,7 +69,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc />
         public override int Read(byte[] buffer, int offset, int count)
         {
-            count = Math.Min(count, (int)(_length - _position));
+            count = (int)Math.Min(count, _length - _position);
 
             if (count <= 0) return 0;
 
@@ -80,7 +80,7 @@ namespace TotalImage.FileSystems.FAT
             Seek(0, SeekOrigin.Current);
 
             var totalRead = _base.Read(buffer, offset, Math.Min(count, (int)bytesLeftFromCluster));
-            _position += (uint)totalRead;
+            _position += totalRead;
 
             for (var i = firstCluster; i < lastCluster; i++)
             {
@@ -88,7 +88,7 @@ namespace TotalImage.FileSystems.FAT
 
                 var readBytes = _base.Read(buffer, offset + totalRead, Math.Min(count - totalRead, (int)_fat.BytesPerCluster));
 
-                _position += (uint)readBytes;
+                _position += readBytes;
                 totalRead += readBytes;
             }
 
@@ -106,16 +106,20 @@ namespace TotalImage.FileSystems.FAT
                 _ => throw new ArgumentException()
             };
 
-            if (target < 0)
-                throw new ArgumentException();
-
+            if (target < 0 || target > _length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            if (target == _length)
+            {
+                _position = target;
+                return target;
+            }
             var cluster = _clusters[target / _fat.BytesPerCluster];
 
             _base.Seek(_fat.DataAreaFirstSector * _fat.BiosParameterBlock.BytesPerLogicalSector, SeekOrigin.Begin);
             _base.Seek((cluster - 2) * _fat.BytesPerCluster, SeekOrigin.Current);
             _base.Seek(target % _fat.BytesPerCluster, SeekOrigin.Current);
 
-            _position = (uint)target;
+            _position = target;
             return target;
         }
 

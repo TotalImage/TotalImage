@@ -89,10 +89,13 @@ public abstract class FileAllocationTable : IEnumerable<uint>
     public uint[] GetClusterChain(uint firstCluster)
     {
         var clusters = new List<uint>();
+        var visited = new HashSet<uint>();
         var cluster = (uint?)firstCluster;
 
         while (cluster.HasValue)
         {
+            if (!visited.Add(cluster.Value))
+                throw new System.IO.InvalidDataException("Cyclic FAT cluster chain.");
             clusters.Add(cluster.Value);
             cluster = GetNextCluster(cluster.Value);
         }

@@ -14,7 +14,7 @@ namespace TotalImage.FileSystems.ExFAT
         private readonly uint[] _clusters;
         private readonly long _length;
 
-        private uint _position = 0;
+        private long _position = 0;
 
         /// <summary>
         /// Creates a stream over an exFAT cluster chain.
@@ -50,7 +50,7 @@ namespace TotalImage.FileSystems.ExFAT
         /// <inheritdoc />
         public override int Read(byte[] buffer, int offset, int count)
         {
-            count = Math.Min(count, (int)(_length - _position));
+            count = (int)Math.Min(count, _length - _position);
 
             if (count <= 0) return 0;
 
@@ -61,7 +61,7 @@ namespace TotalImage.FileSystems.ExFAT
             Seek(0, SeekOrigin.Current);
 
             var totalRead = _base.Read(buffer, offset, Math.Min(count, (int)bytesLeftFromCluster));
-            _position += (uint)totalRead;
+            _position += totalRead;
 
             for (var i = firstCluster; i < lastCluster; i++)
             {
@@ -69,7 +69,7 @@ namespace TotalImage.FileSystems.ExFAT
 
                 var readBytes = _base.Read(buffer, offset + totalRead, Math.Min(count - totalRead, (int)_fileSystem.BytesPerCluster));
 
-                _position += (uint)readBytes;
+                _position += readBytes;
                 totalRead += readBytes;
             }
 
@@ -87,16 +87,20 @@ namespace TotalImage.FileSystems.ExFAT
                 _ => throw new ArgumentException()
             };
 
-            if (target < 0)
-                throw new ArgumentException();
-
+            if (target < 0 || target > _length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            if (target == _length)
+            {
+                _position = target;
+                return target;
+            }
             var cluster = _clusters[target / _fileSystem.BytesPerCluster];
 
             _base.Seek(_fileSystem.BootSector.ClusterHeapOffset * _fileSystem.BytesPerSector, SeekOrigin.Begin);
             _base.Seek((cluster - 2) * _fileSystem.BytesPerCluster, SeekOrigin.Current);
             _base.Seek(target % _fileSystem.BytesPerCluster, SeekOrigin.Current);
 
-            _position = (uint)target;
+            _position = target;
             return target;
         }
 

@@ -42,27 +42,17 @@ internal class VhdStream : Stream
 
         if (_vhd.DynamicHeader != null && _vhd.BlockAllocationTable != null)
         {
-            var firstBlock = Position / _vhd.DynamicHeader.BlockSize;
-            var lastBlock = (Position + count - 1) / _vhd.DynamicHeader.BlockSize;
-            var blockRemaining = _vhd.DynamicHeader.BlockSize - (Position % _vhd.DynamicHeader.BlockSize);
-
-            Seek(0, SeekOrigin.Current);
-
-            var totalRead = _vhd.BlockAllocationTable.HasData(firstBlock) ?
-                _base.Read(buffer, offset, (int)Math.Min(count, blockRemaining)) :
-                ReadZeros(buffer, offset, (int)Math.Min(count, blockRemaining));
-
-            _position += totalRead;
-
-            for (var i = firstBlock; i < lastBlock; i++)
+            var totalRead = 0;
+            while (totalRead < count)
             {
+                long block = Position / _vhd.DynamicHeader.BlockSize;
+                int chunk = (int)Math.Min(count - totalRead, _vhd.DynamicHeader.BlockSize - Position % _vhd.DynamicHeader.BlockSize);
                 Seek(0, SeekOrigin.Current);
-
-                var readBytes = _vhd.BlockAllocationTable.HasData(i) ?
-                    _base.Read(buffer, offset + totalRead, Math.Min(count - totalRead, (int)_vhd.DynamicHeader.BlockSize)) :
-                    ReadZeros(buffer, offset + totalRead, Math.Min(count - totalRead, (int)_vhd.DynamicHeader.BlockSize));
-
-                _position += (uint)readBytes;
+                int readBytes = _vhd.BlockAllocationTable.HasData(block)
+                    ? _base.Read(buffer, offset + totalRead, chunk)
+                    : ReadZeros(buffer, offset + totalRead, chunk);
+                if (readBytes == 0) break;
+                _position += readBytes;
                 totalRead += readBytes;
             }
 
@@ -71,19 +61,16 @@ internal class VhdStream : Stream
         else
         {
             Seek(0, SeekOrigin.Current);
-            return _base.Read(buffer, offset, count);
+            int read = _base.Read(buffer, offset, count);
+            _position += read;
+            return read;
         }
     }
 
     private int ReadZeros(byte[] buffer, int offset, int count)
     {
-        var result = 0;
-        for(var i = offset; i < count; i++)
-        {
-            buffer[0] = 0;
-            result++;
-        }
-        return result;
+        Array.Clear(buffer, offset, count);
+        return count;
     }
 
     public override long Seek(long offset, SeekOrigin origin)
@@ -101,7 +88,12 @@ internal class VhdStream : Stream
 
         if (_vhd.DynamicHeader != null && _vhd.BlockAllocationTable != null)
         {
-            var block = (uint)target / _vhd.DynamicHeader.BlockSize;
+            if (target == Length)
+            {
+                _position = target;
+                return target;
+            }
+            var block = (uint)(target / _vhd.DynamicHeader.BlockSize);
             var blockOffset = target % _vhd.DynamicHeader.BlockSize;
 
             if (_vhd.BlockAllocationTable.HasData(block))

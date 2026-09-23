@@ -310,6 +310,8 @@ public abstract class FatFileSystem : FileSystem
                     if (previousCluster.HasValue)
                         SetClusterAllFats(previousCluster.Value, i);
 
+                    if (this is Fat32FileSystem fat32)
+                        fat32.UpdateFsInfo(i, false);
                     return i;
                 }
             }
@@ -324,6 +326,8 @@ public abstract class FatFileSystem : FileSystem
             var chain = MainFat.GetClusterChain(firstCluster);
             foreach (var cluster in chain)
                 SetClusterAllFats(cluster, 0);
+            if (this is Fat32FileSystem fat32)
+                fat32.UpdateFsInfo(firstCluster, true, (uint)chain.Length);
         }
 
         /// <summary>

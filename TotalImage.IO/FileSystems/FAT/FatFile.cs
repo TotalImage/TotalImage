@@ -154,6 +154,7 @@ namespace TotalImage.FileSystems.FAT
             var fat = (FatFileSystem)FileSystem;
             var stream = fat.GetStream();
             long entryOffset = FindEntryOffset(fat);
+            ((FatDirectory)Directory).DeleteLongNameEntries(entryOffset);
             stream.Position = entryOffset;
             stream.WriteByte(0xE5);
 
@@ -162,17 +163,13 @@ namespace TotalImage.FileSystems.FAT
         }
 
         /// <summary>
-        /// Renames this file entry (8.3 only) by rewriting the first 11 bytes of its directory entry.
+        /// Renames this file entry during commit, updating its long-name slots if needed.
         /// </summary>
         internal void WriteRename(string newName)
         {
             var fat = (FatFileSystem)FileSystem;
-            var stream = fat.GetStream();
             long entryOffset = FindEntryOffset(fat);
-
-            var shortNameBytes = ToShortNameBytes(newName);
-            stream.Position = entryOffset;
-            stream.Write(shortNameBytes, 0, 11);
+            ((FatDirectory)Directory).RenameEntry(entryOffset, newName);
         }
 
         private static byte[] ToShortNameBytes(string name)

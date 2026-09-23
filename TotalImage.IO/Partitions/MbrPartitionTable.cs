@@ -111,25 +111,60 @@ namespace TotalImage.Partitions
             for (int i = 0; i < 4; i++)
             {
                 var record = buffer[(i * 16)..((i + 1) * 16)];
-
                 MbrPartitionType type = (MbrPartitionType)record[4];
-                if (type == MbrPartitionType.Empty)
-                {
-                    continue;
-                }
-
-                byte status = record[0];
-                CHSAddress chsStart = new CHSAddress(record[1..4]);
-                CHSAddress chsEnd = new CHSAddress(record[5..8]);
                 uint lbaStart = BinaryPrimitives.ReadUInt32LittleEndian(record[8..12]);
-                uint lbaLength = BinaryPrimitives.ReadUInt32LittleEndian(record[12..16]);
-                uint offset = lbaStart * _sectorSize;
-                uint length = lbaLength * _sectorSize;
-                MbrPartitionEntry entry = new MbrPartitionEntry((status & 0x80) != 0, type, chsStart, chsEnd, lbaStart, lbaLength, offset, length, new PartialStream(_container.Content, offset, length), _container);
-                entries.Add(entry);
+                if (IsExtended(type))
+                {
+                    if (lbaStart == 0) continue;
+                    uint extendedBase = lbaStart;
+                    long nextEbr = extendedBase;
+                    var visited = new HashSet<long>();
+                    while (true)
+                    {
+                        if (!visited.Add(nextEbr))
+                            throw new InvalidDataException("Cyclic extended partition chain.");
+                        long ebrOffset = checked(nextEbr * _sectorSize);
+                        if (ebrOffset > _container.Content.Length - 512)
+                            throw new InvalidDataException("Extended partition record is outside the disk.");
+                        _container.Content.Position = ebrOffset;
+                        byte[] ebr = new byte[512];
+                        _container.Content.ReadExactly(ebr);
+                        if (BinaryPrimitives.ReadUInt16LittleEndian(ebr.AsSpan(510)) != 0xAA55)
+                            throw new InvalidDataException("Invalid extended partition record.");
+                        AddEntry(ebr.AsSpan(0x1BE, 16), nextEbr, entries);
+                        var link = ebr.AsSpan(0x1CE, 16);
+                        if (!IsExtended((MbrPartitionType)link[4])) break;
+                        uint relativeLba = BinaryPrimitives.ReadUInt32LittleEndian(link[8..12]);
+                        if (relativeLba == 0) break;
+                        nextEbr = checked((long)extendedBase + relativeLba);
+                    }
+                }
+                else
+                    AddEntry(record, 0, entries);
             }
 
             return entries.ToImmutableList();
+        }
+
+        private static bool IsExtended(MbrPartitionType type) => type is MbrPartitionType.Extended or MbrPartitionType.ExtendedLba;
+
+        private void AddEntry(ReadOnlySpan<byte> record, long lbaBase, ImmutableList<PartitionEntry>.Builder entries)
+        {
+            MbrPartitionType type = (MbrPartitionType)record[4];
+            if (type == MbrPartitionType.Empty || IsExtended(type)) return;
+            uint lbaStart = BinaryPrimitives.ReadUInt32LittleEndian(record[8..12]);
+            uint lbaLength = BinaryPrimitives.ReadUInt32LittleEndian(record[12..16]);
+            long offset = checked((lbaBase + lbaStart) * _sectorSize);
+            long length = checked((long)lbaLength * _sectorSize);
+            Span<byte> startChs = stackalloc byte[3];
+            Span<byte> endChs = stackalloc byte[3];
+            record[1..4].CopyTo(startChs);
+            record[5..8].CopyTo(endChs);
+            var entry = new MbrPartitionEntry((record[0] & 0x80) != 0, type,
+                new CHSAddress(startChs), new CHSAddress(endChs),
+                checked((uint)(lbaBase + lbaStart)), lbaLength, offset, length,
+                new PartialStream(_container.Content, offset, length), _container);
+            entries.Add(entry);
         }
 
         /// <summary>
@@ -223,7 +258,7 @@ namespace TotalImage.Partitions
             /// <param name="length">The length of the partition</param>
             /// <param name="stream">The stream containing the partition data</param>
             /// <param name="owningContainer">The container that owns this partition.</param>
-            public MbrPartitionEntry(bool active, MbrPartitionType type, CHSAddress chsStart, CHSAddress chsEnd, uint lbaStart, uint lbaLength, uint offset, uint length, Stream stream, Container? owningContainer = null)
+            public MbrPartitionEntry(bool active, MbrPartitionType type, CHSAddress chsStart, CHSAddress chsEnd, uint lbaStart, uint lbaLength, long offset, long length, Stream stream, Container? owningContainer = null)
                 : base(offset, length, stream, owningContainer)
             {
                 _active = active;

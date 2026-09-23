@@ -57,10 +57,6 @@ namespace TotalImage.FileSystems.ISO
             if (date.Length == 17)
             {
                 offsetByte = (sbyte)date[16];
-                if (offsetByte == 0)
-                {
-                    return null;
-                }
             }
 
             var offset = date.Length == 16 ? TimeSpan.FromMinutes(0) : TimeSpan.FromMinutes(offsetByte * 15);
