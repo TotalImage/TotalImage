@@ -292,6 +292,12 @@ namespace TotalImage
                 imgIcon.Image = Resources.page_white_stack;
                 imgIcon.SizeMode = PictureBoxSizeMode.StretchImage;
             }
+            if (entries.Exists(entry => entry.FileSystem.IsReadOnly || entry.FileSystem.OwningContainer?.SupportsWriting == false))
+            {
+                txtFilename.Enabled = cbxArchive.Enabled = cbxHidden.Enabled = cbxReadOnly.Enabled = cbxSystem.Enabled =
+                    cbxDateCreated.Enabled = cbxDateAccessed.Enabled = cbxDateModified.Enabled =
+                    dtpAccessed.Enabled = dtpCreated.Enabled = dtpModified.Enabled = false;
+            }
         }
 
         private void cbxDateCreated_CheckedChanged(object sender, EventArgs e)

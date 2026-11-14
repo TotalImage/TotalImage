@@ -6,6 +6,7 @@ using TotalImage.FileSystems.ExFAT;
 using TotalImage.FileSystems.FAT;
 using TotalImage.FileSystems.IMGFS;
 using TotalImage.FileSystems.ISO;
+using TotalImage.FileSystems.MTF;
 using TotalImage.FileSystems.NTFS;
 using TotalImage.FileSystems.RAW;
 using TotalImage.FileSystems.UDF;
@@ -19,6 +20,7 @@ namespace TotalImage.FileSystems
     {
         private static readonly ImmutableArray<IFileSystemFactory> _knownFactories =
         [
+            new MtfFactory(),
             new NtfsFactory(),
             new FatFactory(),
             new IsoFactory(),
@@ -99,7 +101,9 @@ namespace TotalImage.FileSystems
         /// Attempt to detect the file system of a stream using known file system types
         /// </summary>
         /// <param name="stream">The stream containing a file system</param>
-        /// <returns>A file system if detection was successful, null if not.</returns>
+        /// <returns>The detected file system, or a <see cref="RawFileSystem"/> when no supported format is recognized.</returns>
+        /// <exception cref="InvalidDataException">A recognized MTF backup is malformed or incomplete.</exception>
+        /// <exception cref="NotSupportedException">A recognized MTF backup uses an unsupported format feature.</exception>
         public static FileSystem AttemptDetection(Stream stream)
         {
             foreach (var factory in _knownFactories)
@@ -112,7 +116,8 @@ namespace TotalImage.FileSystems
                         return result;
                     }
                 }
-                catch (Exception ex)
+                // Once identified, a damaged or unsupported backup must not silently become RAW.
+                catch (Exception ex) when (factory is not MtfFactory)
                 {
                     System.Diagnostics.Debug.WriteLine($"File system detection failed for {factory.GetType().Name}: {ex.Message}");
                 }

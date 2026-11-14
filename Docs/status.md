@@ -12,6 +12,7 @@ This is the list of all currently supported media types, image containers, parti
 | Floppy disks | ✔ Yes | ❌ No | ✔ Yes |
 | CD-ROM images |  ✔ Yes | ❌ No | ❌ No |
 | Hard disks | ✔ Yes | ❌ No | ❌ No |
+| NT Backup tape images | ✔ Yes | ❌ No | ❌ No |
 
 Read and Create functionality is limited to supported features below.
 
@@ -24,6 +25,7 @@ Read and Create functionality is limited to supported features below.
 | WinImage compressed image | IMZ | ✔ Yes | ❌ No | ❌ No |
 | Anex86 disk image | FDI, HDI | ✔ Yes | ❌ No | ❌ No |
 | PCjs.org JSON | JSON | ✔ Yes | ❌ No | ❌ No |
+| SIMH tape image (NT Backup) | TAP | ⚠ Partial<sup>4</sup> | ❌ No | ❌ No |
 
 Read and Create functionality is limited to supported features below.
 
@@ -32,6 +34,8 @@ Read and Create functionality is limited to supported features below.
 <sup>2</sup> ISO-9660 images are currently treated as a raw sector container, but creating new images is not supported.
 
 <sup>3</sup> Differencing VHDs are not supported yet.
+
+<sup>4</sup> Read-only browsing and file extraction for uncompressed, single-tape Microsoft Tape Format (MTF) backups, including NT Backup tapes from 86Box. Backup sets and source volumes appear as separate directories. Compression, encryption, multi-tape continuations, sparse/link/reparse streams, variable-length streams and names stored in streams are not supported and produce explicit errors. Standard file data, timestamps and attributes are exposed; security descriptors, alternate data streams and tape catalogs are not restored. Unsafe host file names are rejected. The TAP container validates record lengths, odd-byte padding and record-error markers; MTF descriptor and stream header checksums are validated.
 
 ## Disk geometries
 | Name | Read | Write | Create |
@@ -79,3 +83,4 @@ Only partitions formatted with supported file systems are currently supported (s
 | UDF | ✔ Yes | ❌ No | ❌ No |
 | High Sierra Format | ✔ Yes | ❌ No | ❌ No |
 | Joliet extensions for ISO-9660 | ✔ Yes | ❌ No | ❌ No |
+| Microsoft Tape Format (NT Backup) | ⚠ Partial<sup>4</sup> | ❌ No | ❌ No |

@@ -14,6 +14,7 @@ using TotalImage.Containers;
 using TotalImage.Containers.NHD;
 using TotalImage.Containers.VHD;
 using TotalImage.Containers.Anex86;
+using TotalImage.Containers.TAP;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using TiDirectory = TotalImage.FileSystems.Directory;
@@ -257,6 +258,10 @@ namespace TotalImage
          * -"Save as" when the file has not been saved yet */
         private async void save_Click(object sender, EventArgs e)
         {
+            if (image?.SupportsWriting == false)
+            {
+                return;
+            }
             if (image is not null)
             {
                 if (string.IsNullOrEmpty(filename) || sender == saveAsToolStripMenuItem || sender == saveAsToolStripButton) //File hasn't been saved yet
@@ -273,6 +278,10 @@ namespace TotalImage
         //Creates a new folder
         private void newFolder_Click(object sender, EventArgs e)
         {
+            if (image?.SupportsWriting == false)
+            {
+                return;
+            }
             using dlgNewFolder dlg = new();
             if (dlg.ShowDialog() != DialogResult.OK) return;
             if (image is null || lstDirectories.SelectedNode is null) return;
@@ -319,6 +328,10 @@ namespace TotalImage
         //TODO: Implement deletion here and in the FS/container
         private void delete_Click(object sender, EventArgs e)
         {
+            if (image?.SupportsWriting == false)
+            {
+                return;
+            }
             if (lstFiles.Focused && SelectedItems.Any())
             {
                 var selectedSize = 0ul;
@@ -445,6 +458,10 @@ namespace TotalImage
         //Renames a file or folder
         private void rename_Click(object sender, EventArgs e)
         {
+            if (image?.SupportsWriting == false)
+            {
+                return;
+            }
             if (lstFiles.Focused && lstFiles.SelectedIndices.Count == 1)
             {
                 // Trigger inline label edit in the file list
@@ -546,6 +563,10 @@ namespace TotalImage
         //Saves the current image as a new file, along with any changes made to it since the last save
         private bool saveFileAs()
         {
+            if (image?.SupportsWriting == false)
+            {
+                return false;
+            }
             if (image is null)
             {
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
@@ -716,7 +737,7 @@ namespace TotalImage
             //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
             //ofd.ShowReadOnly = true;
             ofd.Filter =
-                "All supported containers (*.*)|*.nhd;*.vhd;*.iso;*.imz;*.fdi;*.hdi;*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360;*.json;*.zip|" +
+                "All supported containers (*.*)|*.nhd;*.vhd;*.iso;*.imz;*.fdi;*.hdi;*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360;*.json;*.zip;*.tap|" +
                 "Plain sector image (*.img,*.ima,*.vfd,*.flp,*.dsk,*.hdm,*.288,*.144,*.12,*.720,*.360,*.json)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360;*.json|" +
                 "Compressed plain sector image (*.imz,*.zip)|*.imz;*.zip|" +
                 "Anex86 disk image (*.fdi,*.hdi)|*.fdi;*.hdi|" +
@@ -724,6 +745,7 @@ namespace TotalImage
                 "Microsoft VHD (*.vhd)|*.vhd|" +
                 "T98-Next HD (*.nhd)|*.nhd|" +
                 "PCjs disk images (*.json)|*.json|" +
+                "NT Backup tape image (*.tap)|*.tap|" +
                 "All files (*.*)|*.*";
 
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -841,6 +863,7 @@ namespace TotalImage
                     UpdateStatusBar(false);
                 }
             }
+            ApplyReadOnlyState();
         }
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -903,6 +926,7 @@ namespace TotalImage
                 propertiesToolStripMenuItem2.Enabled = true;
                 renameToolStripMenuItem2.Enabled = false;
             }
+            ApplyReadOnlyState();
         }
 
         private void managePartitions_Click(object sender, EventArgs e)
@@ -1189,6 +1213,7 @@ namespace TotalImage
 
             expandDirectoryTreeToolStripMenuItem1.Enabled = lstDirectories.Nodes[0].Nodes.Count > 0;
             collapseDirectoryTreeToolStripMenuItem1.Enabled = lstDirectories.Nodes[0].Nodes.Count > 0;
+            ApplyReadOnlyState();
         }
 
         private void selectAll_Click(object sender, EventArgs e)
@@ -1616,6 +1641,7 @@ namespace TotalImage
             saveToolStripMenuItem.Enabled = image is not null && unsavedChanges;
             saveAsToolStripMenuItem.Enabled = image is not null;
             openContainingFolderToolStripMenuItem.Enabled = image is not null && !string.IsNullOrEmpty(filepath);
+            ApplyReadOnlyState();
         }
 
         private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
@@ -1688,6 +1714,7 @@ namespace TotalImage
                     renameToolStripMenuItem.Enabled = false;
                 }
             }
+            ApplyReadOnlyState();
         }
 
         private void toolsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
@@ -1727,6 +1754,7 @@ namespace TotalImage
                     propertiesToolStripButton.Enabled = true;
                 }
             }
+            ApplyReadOnlyState();
         }
 
         private void lstDirectories_Enter(object sender, EventArgs e)
@@ -1748,6 +1776,7 @@ namespace TotalImage
                     propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
                 }
             }
+            ApplyReadOnlyState();
         }
 
         //After an item's label (=Text property) is changed - for renaming objects
@@ -1777,7 +1806,10 @@ namespace TotalImage
         //Here we should probably perform some sanity checks
         private void lstFiles_BeforeLabelEdit(object sender, LabelEditEventArgs e)
         {
-
+            if (image?.SupportsWriting == false)
+            {
+                e.CancelEdit = true;
+            }
         }
 
         //After a node's label (=Text property) is changed - for renaming objects
@@ -1797,7 +1829,10 @@ namespace TotalImage
         //Here we should probably perform some sanity checks
         private void lstDirectories_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-
+            if (image?.SupportsWriting == false)
+            {
+                e.CancelEdit = true;
+            }
         }
 
         private void list_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
@@ -2494,6 +2529,7 @@ namespace TotalImage
                         ".img" or ".ima" or ".iso" or ".vfd" or ".flp" or ".360" or
                         ".720" or ".12" or ".144" or ".288" or ".dsk" or ".hdm" => new RawContainer(path, memoryMapping),
                         ".json" => new PCjsContainer(path, memoryMapping),
+                        ".tap" => new TapContainer(path, memoryMapping),
                         _ => throw new InvalidDataException("This container format is not recognized and cannot be opened."),
                     }; ;
                 }
@@ -2909,6 +2945,34 @@ namespace TotalImage
             //Enabling this now since we have rudimentary HDD support.
             managePartitionsToolStripButton.Enabled = image is not null && image.PartitionTable is not Partitions.NoPartitionTable;
             selectPartitionToolStripComboBox.Enabled = true;
+            ApplyReadOnlyState();
+        }
+
+        /// <summary>
+        /// Disables save and mutation commands when the current container does not support writing,
+        /// while leaving browsing and extraction available.
+        /// </summary>
+        private void ApplyReadOnlyState()
+        {
+            if (image?.SupportsWriting != false)
+            {
+                return;
+            }
+            ToolStripItem[] commands =
+            [
+                saveToolStripButton, saveAsToolStripButton, saveToolStripMenuItem, saveAsToolStripMenuItem,
+                injectToolStripButton, injectToolStripMenuItem,
+                newFolderToolStripButton, newFolderToolStripMenuItem, newFolderToolStripMenuItem2,
+                deleteToolStripButton, deleteToolStripMenuItem, deleteToolStripMenuItem1, deleteToolStripMenuItem2,
+                renameToolStripMenuItem, renameToolStripMenuItem1, renameToolStripMenuItem2,
+                labelToolStripMenuButton, changeVolumeLabelToolStripMenuItem,
+                bootsectToolStripButton, bootSectorPropertiesToolStripMenuItem,
+                changeGeometryToolStripMenuItem, formatDiskToolStripMenuItem, defragmentToolStripMenuItem
+            ];
+            foreach (var command in commands)
+            {
+                command.Enabled = false;
+            }
         }
 
         // Called whenever a pending change is added or the change set is cleared.
