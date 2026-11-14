@@ -80,6 +80,7 @@ public sealed class MtfFileSystem : FileSystem
         long position = 0;
         MtfDirectory? set = null, volume = null;
         var directories = new Dictionary<uint, MtfDirectory>();
+        var sourceDirectoryNames = new Dictionary<MtfDirectory, string>();
         bool setOpen = false;
         int setCount = 0, volumeCount = 0;
         while (position < _stream.Length)
@@ -165,14 +166,35 @@ public sealed class MtfFileSystem : FileSystem
                     var directory = volume;
                     foreach (string part in ReadString(block, 80).Split(['\0', '\\', '/'], StringSplitOptions.RemoveEmptyEntries))
                     {
-                        ValidateComponent(part);
-                        var existing = directory.Children.FirstOrDefault(x => x.Name.Equals(part, StringComparison.OrdinalIgnoreCase));
-                        directory = existing switch
+                        // System State paths can embed source-drive labels, e.g. Boot Files\0C:\0WINNT.
+                        // Expose them as relative directory names, never host drive-qualified paths.
+                        string component = part;
+                        if (part.Length == 2 && char.IsAsciiLetter(part[0]) && part[1] == ':')
                         {
-                            null => AddDirectory(directory, part),
-                            MtfDirectory child => child,
-                            _ => throw new InvalidDataException("An MTF path conflicts with a file.")
-                        };
+                            component = $"Drive {char.ToUpperInvariant(part[0])}";
+                        }
+                        ValidateComponent(component);
+                        var existing = directory.Children.FirstOrDefault(x =>
+                        {
+                            return x.Name.Equals(component, StringComparison.OrdinalIgnoreCase);
+                        });
+                        if (existing == null)
+                        {
+                            directory = AddDirectory(directory, component);
+                            sourceDirectoryNames.Add(directory, part);
+                        }
+                        else if (existing is MtfDirectory child)
+                        {
+                            if (!sourceDirectoryNames[child].Equals(part, StringComparison.OrdinalIgnoreCase))
+                            {
+                                throw new InvalidDataException("Conflicting MTF source directory names.");
+                            }
+                            directory = child;
+                        }
+                        else
+                        {
+                            throw new InvalidDataException("An MTF path conflicts with a file.");
+                        }
                     }
                     ReadMetadata(block, directory.Entry);
                     uint directoryId = U32(block, 76);
@@ -191,11 +213,17 @@ public sealed class MtfFileSystem : FileSystem
                     CheckObjectAttributes(block);
                     string name = ReadString(block, 84);
                     ValidateComponent(name);
-                    if (parent.Children.Any(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                    string displayName = name;
+                    int copy = 1;
+                    // System State can record the same path more than once; retain every copy without overwriting.
+                    while (parent.Children.Any(x =>
                     {
-                        throw new InvalidDataException("Duplicate file names in an MTF directory are not supported.");
+                        return x.Name.Equals(displayName, StringComparison.OrdinalIgnoreCase);
+                    }))
+                    {
+                        displayName = $"{Path.GetFileNameWithoutExtension(name)} ({++copy}){Path.GetExtension(name)}";
                     }
-                    file = new MtfEntry(name);
+                    file = new MtfEntry(displayName);
                     ReadMetadata(block, file, isFile: true);
                     parent.Children.Add(new MtfFile(this, parent, file));
                     break;
@@ -240,13 +268,20 @@ public sealed class MtfFileSystem : FileSystem
     /// <summary>
     /// Validates and skips an object's streams, recording its standard file-data range when present.
     /// </summary>
-    /// <param name="position">The logical byte offset of the object's first stream or the next descriptor.</param>
+    /// <param name="position">The logical byte offset immediately after the object's metadata, or of the next descriptor.</param>
     /// <param name="file">The file metadata to populate, or null for a descriptor without file content.</param>
     /// <returns>The logical offset following the streams, at the next descriptor boundary or end of archive.</returns>
     /// <exception cref="InvalidDataException">A stream is corrupt, truncated, or incorrectly aligned.</exception>
     /// <exception cref="NotSupportedException">A stream uses an unsupported encoding or storage feature.</exception>
     private long ReadStreams(long position, MtfEntry? file)
     {
+        // Windows 2000 can record an unaligned metadata length (e.g. an 85-byte ESET).
+        // The first stream header, like subsequent stream headers, starts on a four-byte boundary.
+        position = checked((position + 3) & ~3L);
+        if (position > _stream.Length)
+        {
+            throw new InvalidDataException("Truncated MTF stream alignment padding.");
+        }
         bool hasData = false;
         while (position < _stream.Length)
         {

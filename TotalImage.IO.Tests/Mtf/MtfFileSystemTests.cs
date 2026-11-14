@@ -385,6 +385,197 @@ public class MtfFileSystemTests
         Assert.Equal(3ul, fs.RootDirectory.CountFiles(true));
     }
 
+    /// <summary>Verifies Windows 2000 stream checksums and padding before catalog-terminator streams.</summary>
+    /// <param name="metadataLength">The catalog terminator's metadata length, excluding alignment padding.</param>
+    [Theory]
+    [InlineData(85)]
+    [InlineData(86)]
+    [InlineData(87)]
+    [InlineData(88)]
+    public void Windows2000Backups_AlignStreamsAndExtractAcrossRecords(int metadataLength)
+    {
+        byte[] archive = CreateArchive(sets: 2, catalogTerminatorLength: metadataLength, streamChecksums: true);
+        using var container = new TapContainer(new MemoryStream(WrapTape(archive, recordSize: 513)));
+        var fs = Assert.IsType<MtfFileSystem>(Assert.Single(container.PartitionTable.Partitions).FileSystem);
+        Assert.Equal(2, fs.RootDirectory.EnumerateDirectories(true).Count());
+        Assert.Equal(6ul, fs.RootDirectory.CountFiles(true));
+        Assert.True(fs.IsReadOnly);
+        foreach (var file in Files(fs.RootDirectory))
+        {
+            using var content = file.GetStream();
+            using var extracted = new MemoryStream();
+            content.CopyTo(extracted);
+            byte[] expected = file.Name switch
+            {
+                "hello.txt" => Payload(),
+                "other.txt" => "abc"u8.ToArray(),
+                _ => Array.Empty<byte>()
+            };
+            Assert.Equal(expected, extracted.ToArray());
+            Assert.Equal(expected.LongLength, content.Length);
+            if (file.Name == "hello.txt")
+            {
+                Assert.Equal(new DateTime(2026, 11, 14, 12, 34, 56), file.LastWriteTime);
+                Assert.True((file.Attributes & FileAttributes.Hidden) != 0);
+            }
+        }
+    }
+
+    /// <summary>Verifies that aligning Windows 2000 streams does not bypass header checksum validation.</summary>
+    /// <param name="offset">The byte to corrupt relative to the final catalog terminator.</param>
+    /// <param name="kind">The header type whose checksum must fail.</param>
+    [Theory]
+    [InlineData(50, "descriptor")]
+    [InlineData(88, "stream")]
+    [InlineData(108, "stream")]
+    public void Windows2000DamagedHeaders_AreRejected(int offset, string kind)
+    {
+        byte[] archive = CreateArchive(catalogTerminatorLength: 85, streamChecksums: true);
+        archive[archive.Length - 1024 + offset] ^= 0x10;
+        using var source = new MemoryStream(archive);
+        var exception = Assert.Throws<InvalidDataException>(() =>
+        {
+            FileSystem.AttemptDetection(source);
+        });
+        Assert.Equal($"Invalid MTF {kind} header checksum.", exception.Message);
+    }
+
+    /// <summary>Verifies bounds checks for padding and stream headers after unaligned descriptor metadata.</summary>
+    /// <param name="remainingLength">The bytes retained from the final catalog terminator.</param>
+    [Theory]
+    [InlineData(85)]
+    [InlineData(86)]
+    [InlineData(87)]
+    [InlineData(88)]
+    [InlineData(109)]
+    public void Windows2000TruncatedCatalogTerminator_IsRejected(int remainingLength)
+    {
+        byte[] archive = CreateArchive(catalogTerminatorLength: 85, streamChecksums: true);
+        using var source = new MemoryStream(archive[..(archive.Length - 1024 + remainingLength)]);
+        Assert.Throws<InvalidDataException>(() =>
+        {
+            new MtfFileSystem(source);
+        });
+    }
+
+    /// <summary>Verifies that stream lengths remain bounded after aligning descriptor metadata.</summary>
+    [Fact]
+    public void Windows2000TruncatedStream_IsRejected()
+    {
+        byte[] archive = CreateArchive(catalogTerminatorLength: 85, streamChecksums: true);
+        int header = archive.Length - 1024 + 88;
+        Put64(archive, header + 8, ulong.MaxValue);
+        Checksum(archive.AsSpan(header, 22));
+        using var source = new MemoryStream(archive);
+        var exception = Assert.Throws<InvalidDataException>(() =>
+        {
+            new MtfFileSystem(source);
+        });
+        Assert.Equal("Truncated MTF stream.", exception.Message);
+    }
+
+    /// <summary>Verifies that System State source drives become safe, relative directory components.</summary>
+    /// <param name="drive">The source-drive component recorded in the archive.</param>
+    /// <param name="directoryName">The safe directory name exposed for that drive.</param>
+    [Theory]
+    [InlineData("C:", "Drive C")]
+    [InlineData("D:", "Drive D")]
+    [InlineData("z:", "Drive Z")]
+    public void SystemStateDrivePaths_AreExposedAsRelativeDirectories(string drive, string directoryName)
+    {
+        using var source = new MemoryStream(CreateArchive(directoryPath: $"Boot Files\0{drive}\0WINNT\0",
+            catalogTerminatorLength: 85, streamChecksums: true));
+        var fs = new MtfFileSystem(source);
+        var files = Files(fs.RootDirectory).ToArray();
+        Assert.Equal(3, files.Length);
+        foreach (var file in files)
+        {
+            Assert.Equal($"\\Backup set 1\\Volume 1 (C)\\Boot Files\\{directoryName}\\WINNT\\{file.Name}", file.FullName);
+            Assert.DoesNotContain(':', file.FullName);
+        }
+    }
+
+    /// <summary>Verifies that drive-label normalization does not permit traversal, alternate streams, or arbitrary colons.</summary>
+    /// <param name="path">The unsafe directory path recorded in the archive.</param>
+    [Theory]
+    [InlineData("Boot Files\0C:\0..\0escape\0")]
+    [InlineData("Boot Files\0C:escape\0")]
+    [InlineData("Boot Files\0CC:\0")]
+    [InlineData("Boot Files\01:\0")]
+    [InlineData("Boot Files\0C:\0stream:ads\0")]
+    public void UnsafeSystemStatePaths_AreRejected(string path)
+    {
+        using var source = new MemoryStream(CreateArchive(directoryPath: path));
+        Assert.Throws<InvalidDataException>(() =>
+        {
+            new MtfFileSystem(source);
+        });
+    }
+
+    /// <summary>Verifies that a literal directory cannot silently merge with a normalized source-drive directory.</summary>
+    [Fact]
+    public void SystemStateDriveNameCollisions_AreRejected()
+    {
+        byte[] archive = CreateArchive(directoryPath: "Boot Files\0C:\0WINNT\0");
+        using var output = new MemoryStream();
+        output.Write(archive.AsSpan(0, archive.Length - 1024));
+        byte[] directory = Descriptor("DIRB", 192, ascii: false);
+        Put32(directory, 76, 2);
+        PutString(directory, 80, 96, "Boot Files\0Drive C\0WINNT\0", ascii: false);
+        WriteObject(output, directory, []);
+        output.Write(archive.AsSpan(archive.Length - 1024));
+        using var source = new MemoryStream(output.ToArray());
+        var exception = Assert.Throws<InvalidDataException>(() =>
+        {
+            new MtfFileSystem(source);
+        });
+        Assert.Equal("Conflicting MTF source directory names.", exception.Message);
+    }
+
+    /// <summary>Verifies that repeated System State files retain independent payloads and collision-free extraction names.</summary>
+    [Fact]
+    public void RepeatedFiles_ArePreservedWithUniqueNames()
+    {
+        byte[] archive = CreateArchive(directoryPath: "Boot Files\0C:\0WINNT\0");
+        using var output = new MemoryStream();
+        output.Write(archive.AsSpan(0, archive.Length - 1024));
+
+        void WriteFile(string name, byte[] data)
+        {
+            byte[] descriptor = archive.AsSpan(4096, 192).ToArray();
+            PutString(descriptor, 84, 96, name, ascii: false);
+            Put64(descriptor, 12, (ulong)data.Length);
+            Checksum(descriptor.AsSpan(0, 52));
+            WriteObject(output, descriptor, [("STAN", data)], streamChecksums: true);
+        }
+
+        WriteFile("hello (2).txt", "reserved name"u8.ToArray());
+        WriteFile("HELLO.TXT", "second copy"u8.ToArray());
+        WriteFile("hello.txt", "third copy"u8.ToArray());
+        output.Write(archive.AsSpan(archive.Length - 1024));
+        using var source = new MemoryStream(output.ToArray());
+        var fs = new MtfFileSystem(source);
+        var files = Files(fs.RootDirectory).ToDictionary(file =>
+        {
+            return file.Name;
+        });
+        Assert.Equal(6, files.Count);
+        var expected = new Dictionary<string, byte[]>
+        {
+            ["hello.txt"] = Payload(),
+            ["hello (2).txt"] = "reserved name"u8.ToArray(),
+            ["HELLO (3).TXT"] = "second copy"u8.ToArray(),
+            ["hello (4).txt"] = "third copy"u8.ToArray()
+        };
+        foreach (var pair in expected)
+        {
+            using var content = files[pair.Key].GetStream();
+            using var extracted = new MemoryStream();
+            content.CopyTo(extracted);
+            Assert.Equal(pair.Value, extracted.ToArray());
+        }
+    }
+
     /// <summary>Verifies explicit rejection of sparse, link, reparse, and streamed-name formats.</summary>
     /// <param name="type">The unsupported four-character stream type.</param>
     [Theory]
@@ -474,9 +665,12 @@ public class MtfFileSystemTests
     /// <param name="ascii">Whether to use single-byte strings rather than UTF-16LE.</param>
     /// <param name="fileName">The primary file's name, including deliberately unsafe names for validation tests.</param>
     /// <param name="directoryPath">The null-separated directory path recorded in each volume.</param>
+    /// <param name="catalogTerminatorLength">The optional second ESET's metadata length, excluding alignment padding.</param>
+    /// <param name="streamChecksums">Whether to emit Windows 2000-style checksum flags and opaque CSUM streams.</param>
     /// <returns>A logical archive with metadata, standard data, an empty file, and catalog streams.</returns>
     private static byte[] CreateArchive(int sets = 1, int volumes = 1, bool ascii = false,
-        string fileName = "hello.txt", string directoryPath = "docs\0nested\0")
+        string fileName = "hello.txt", string directoryPath = "docs\0nested\0",
+        int catalogTerminatorLength = 0, bool streamChecksums = false)
     {
         using var result = new MemoryStream();
         byte[] tape = Descriptor("TAPE", 1024, ascii);
@@ -510,7 +704,14 @@ public class MtfFileSystemTests
                 PutDate(file.AsSpan(71), new DateTime(2026, 11, 15, 1, 2, 3));
                 Put64(file, 12, (ulong)Payload().Length);
                 Checksum(file.AsSpan(0, 52));
-                WriteObject(result, file, [("STAN", Payload()), ("NACL", new byte[44])]);
+                if (streamChecksums)
+                {
+                    WriteObject(result, file, [("NACL", new byte[44]), ("STAN", Payload())], streamChecksums: true);
+                }
+                else
+                {
+                    WriteObject(result, file, [("STAN", Payload()), ("NACL", new byte[44])]);
+                }
                 var empty = Descriptor("FILE", 192, ascii);
                 Put32(empty, 76, 1);
                 PutString(empty, 84, 96, "empty.txt", ascii);
@@ -525,6 +726,10 @@ public class MtfFileSystemTests
             // End-of-set catalogs are streams, not directory/file descriptors.
             var end = Descriptor("ESET", 192, ascii);
             WriteObject(result, end, [("TFDD", "FILE SSET DIRB"u8.ToArray()), ("TSMP", new byte[30])]);
+            if (catalogTerminatorLength != 0)
+            {
+                WriteObject(result, Descriptor("ESET", catalogTerminatorLength, ascii), []);
+            }
         }
         return result.ToArray();
     }
@@ -549,16 +754,30 @@ public class MtfFileSystemTests
     /// <param name="output">The destination logical archive stream.</param>
     /// <param name="descriptor">The complete descriptor metadata buffer.</param>
     /// <param name="streams">The stream types and payloads to append in order.</param>
-    private static void WriteObject(MemoryStream output, byte[] descriptor, (string Type, byte[] Data)[] streams)
+    /// <param name="streamChecksums">Whether each stream has the checksum-present flag and a following opaque CSUM stream.</param>
+    private static void WriteObject(MemoryStream output, byte[] descriptor, (string Type, byte[] Data)[] streams,
+        bool streamChecksums = false)
     {
         output.Write(descriptor);
+        // The metadata length need not include padding to the first stream's four-byte boundary.
+        while (output.Position % 4 != 0)
+        {
+            output.WriteByte(0);
+        }
         foreach (var (type, data) in streams)
         {
-            WriteStreamHeader(output, type, (ulong)data.Length);
+            WriteStreamHeader(output, type, (ulong)data.Length, mediaFlags: streamChecksums ? (ushort)0x20 : (ushort)0);
             output.Write(data);
             while (output.Position % 4 != 0)
             {
                 output.WriteByte(0);
+            }
+            if (streamChecksums)
+            {
+                // CSUM payloads are skipped, not interpreted as headers or appended to standard file data.
+                WriteStreamHeader(output, "CSUM", 4);
+                output.Write("FILE"u8);
+                output.Write(new byte[2]);
             }
         }
         // SPAD can consume another logical block if fewer than 22 bytes remain.
@@ -571,10 +790,12 @@ public class MtfFileSystemTests
     /// <param name="output">The destination logical archive stream.</param>
     /// <param name="type">The four-character stream type.</param>
     /// <param name="length">The payload length in bytes, excluding the header and alignment padding.</param>
-    private static void WriteStreamHeader(Stream output, string type, ulong length)
+    /// <param name="mediaFlags">The media-format stream flags, including the optional checksum-present bit.</param>
+    private static void WriteStreamHeader(Stream output, string type, ulong length, ushort mediaFlags = 0)
     {
         byte[] header = new byte[22];
         Encoding.ASCII.GetBytes(type).CopyTo(header, 0);
+        Put16(header, 6, mediaFlags);
         Put64(header, 8, length);
         Checksum(header);
         output.Write(header);
