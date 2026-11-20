@@ -16,7 +16,9 @@ public abstract class FileAllocationTableBase : IEnumerable<uint>
     protected abstract uint GetEntry(uint index);
 
     /// <summary>
-    /// Retrieves the number of entries in the allocation table.
+    /// Retrieves the number of entries in the allocation table that describe clusters of the volume.
+    /// This is at most the cluster count plus 2 (entries 0 and 1 are reserved); any slack past the
+    /// end of the volume's clusters is excluded. Cluster pointers must be in the range 2..Length-1.
     /// </summary>
     public abstract uint Length { get; }
 

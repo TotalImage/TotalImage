@@ -31,10 +31,10 @@ public class ExFatFileAllocationTable : FileAllocationTableBase
         return BinaryPrimitives.ReadUInt32LittleEndian(fatEntry);
     }
 
-    /// <summary>
-    /// Retrieves the number of entries in the allocation table.
-    /// </summary>
-    public override uint Length => checked((uint)((long)_fileSystem.BootSector.FatLength * _fileSystem.BytesPerSector / 4));
+    /// <inheritdoc/>
+    public override uint Length => (uint)Math.Min(
+        (ulong)_fileSystem.BootSector.FatLength * (ulong)_fileSystem.BytesPerSector / 4,
+        (ulong)_fileSystem.BootSector.ClusterCount + 2);
 
     /// <summary>
     /// Creates an exFAT allocation table reader.

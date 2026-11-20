@@ -162,7 +162,7 @@ namespace TotalImage.FileSystems.FAT
             protected override uint Mask => 0xFFF;
 
             public override uint Length
-                => Math.Min((uint)(_fat12.BytesPerClusterMap * 2 / 3), _fat12.ClusterCount + 2);
+                => (uint)Math.Min((ulong)_fat12.BytesPerClusterMap * 2 / 3, (ulong)_fat12.ClusterCount + 2);
 
             protected override uint GetEntry(uint index)
             {

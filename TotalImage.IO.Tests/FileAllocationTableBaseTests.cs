@@ -27,6 +27,13 @@ public class FileAllocationTableBaseTests
     private static void SetExFatEntry(byte[] image, uint index, uint value)
         => BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(512 + (int)index * 4, 4), value);
 
+    [Fact]
+    public void ExFat_LengthIsClampedToClusterCount()
+    {
+        var (_, fat) = CreateExFat();
+        Assert.Equal(4u + 2, fat.Length);
+    }
+
     [Theory]
     [InlineData(0u, ClusterType.Free)]
     [InlineData(1u, ClusterType.NonFree)]
@@ -91,7 +98,7 @@ public class FileAllocationTableBaseTests
         Assert.Equal(0xBBu, table[2u]);
         var values = table.ToArray();
         // Existing enumerator behaviour: first MoveNext skips index 0.
-        Assert.Equal(127, values.Length);
+        Assert.Equal(5, values.Length);
         Assert.Equal(0xAAu, values[0]);
         Assert.Equal(0xBBu, values[1]);
     }
