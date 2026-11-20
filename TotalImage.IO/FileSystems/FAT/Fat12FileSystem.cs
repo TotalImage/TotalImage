@@ -14,7 +14,7 @@ namespace TotalImage.FileSystems.FAT
         public override string DisplayName => "FAT12";
 
         /// <inheritdoc />
-        public override FAT.FileAllocationTable[] Fats { get; }
+        public override FileAllocationTable[] Fats { get; }
 
         /// <inheritdoc />
         public override bool SupportsSubdirectories => true;
@@ -29,9 +29,9 @@ namespace TotalImage.FileSystems.FAT
         /// <param name="bpb">The parsed BIOS parameter block.</param>
         public Fat12FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
+            Fats = new FileAllocationTable[bpb.NumberOfFATs];
             for (int i = 0; i < bpb.NumberOfFATs; i++)
-                Fats[i] = new FileAllocationTable(this, i);
+                Fats[i] = new Fat12FileAllocationTable(this, i);
         }
 
         /// <summary>
@@ -146,12 +146,12 @@ namespace TotalImage.FileSystems.FAT
             return fat;
         }
 
-        private class FileAllocationTable : FAT.FileAllocationTable
+        private class Fat12FileAllocationTable : FileAllocationTable
         {
             Fat12FileSystem _fat12;
             int _fatIndex;
 
-            internal FileAllocationTable(Fat12FileSystem fat12, int fatIndex)
+            internal Fat12FileAllocationTable(Fat12FileSystem fat12, int fatIndex)
             {
                 if (fatIndex >= fat12._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();
 

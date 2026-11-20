@@ -20,7 +20,7 @@ namespace TotalImage.FileSystems.FAT
             => _fsInfo.IsValid && _fsInfo.freeCount <= ClusterCount ? _fsInfo.freeCount : base.TotalFreeClusters;
 
         /// <inheritdoc />
-        public override FAT.FileAllocationTable[] Fats { get; }
+        public override FileAllocationTable[] Fats { get; }
 
         /// <inheritdoc />
         public override bool SupportsSubdirectories => true;
@@ -35,9 +35,9 @@ namespace TotalImage.FileSystems.FAT
         /// <param name="bpb">The parsed BIOS parameter block.</param>
         public Fat32FileSystem(Stream stream, BiosParameterBlock bpb) : base(stream, bpb)
         {
-            Fats = new FAT.FileAllocationTable[bpb.NumberOfFATs];
+            Fats = new FileAllocationTable[bpb.NumberOfFATs];
             for(int i = 0; i < bpb.NumberOfFATs; i++)
-                Fats[i] = new FileAllocationTable(this, i);
+                Fats[i] = new Fat32FileAllocationTable(this, i);
 
             if (bpb is Fat32BiosParameterBlock fat32bpb)
             {
@@ -69,12 +69,12 @@ namespace TotalImage.FileSystems.FAT
             writer.Write(_fsInfo.nxtFree);
         }
 
-        private class FileAllocationTable : FAT.FileAllocationTable
+        private class Fat32FileAllocationTable : FileAllocationTable
         {
             Fat32FileSystem _fat32;
             int _fatIndex;
 
-            internal FileAllocationTable(Fat32FileSystem fat32, int fatIndex)
+            internal Fat32FileAllocationTable(Fat32FileSystem fat32, int fatIndex)
             {
                 if (fatIndex >= fat32._bpb.NumberOfFATs || fatIndex < 0) throw new ArgumentOutOfRangeException();
 
