@@ -954,10 +954,9 @@ namespace TotalImage.Forms
             ApplyReadOnlyState();
         }
 
-        private void managePartitions_Click(object sender, EventArgs e)
+        private async void managePartitions_Click(object sender, EventArgs e)
         {
-            using ManagePartitionsDialog dlg = new();
-            dlg.ShowDialog();
+            await imageDialogs.ShowManagePartitionsAsync();
         }
 
         private async void settings_Click(object sender, EventArgs e)

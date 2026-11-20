@@ -20,4 +20,9 @@ public interface IImageDialogs
     /// </summary>
     /// <param name="image">The image whose partition table is listed.</param>
     Task<PartitionSelection?> AskSelectPartitionAsync(Container image);
+
+    /// <summary>
+    /// Shows the partition manager. It doesn't list partitions or change anything yet.
+    /// </summary>
+    Task ShowManagePartitionsAsync();
 }

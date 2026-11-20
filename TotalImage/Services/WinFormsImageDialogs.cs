@@ -26,5 +26,14 @@ namespace TotalImage.Services
             dialogOwner.Window = dialog;
             return Task.FromResult(dialog.ShowDialog(owner.Window) == DialogResult.OK ? viewModel.Answer : null);
         }
+
+        public Task ShowManagePartitionsAsync()
+        {
+            // TODO: List the image's partitions once partition management is built.
+            var viewModel = new ManagePartitionsViewModel([]);
+            using var dialog = new ManagePartitionsDialog(viewModel);
+            dialog.ShowDialog(owner.Window);
+            return Task.CompletedTask;
+        }
     }
 }

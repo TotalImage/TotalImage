@@ -30,177 +30,176 @@ namespace TotalImage.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            btnOK = new System.Windows.Forms.Button();
-            btnCancel = new System.Windows.Forms.Button();
-            pnlBottom = new System.Windows.Forms.Panel();
-            lstPartitions = new ListViewEx();
-            clmNumber = new System.Windows.Forms.ColumnHeader();
-            clmLabel = new System.Windows.Forms.ColumnHeader();
-            clmType = new System.Windows.Forms.ColumnHeader();
-            clmStart = new System.Windows.Forms.ColumnHeader();
-            clmEnd = new System.Windows.Forms.ColumnHeader();
-            clmSize = new System.Windows.Forms.ColumnHeader();
-            clmActive = new System.Windows.Forms.ColumnHeader();
-            btnCreate = new System.Windows.Forms.Button();
-            btnFormat = new System.Windows.Forms.Button();
-            btnResize = new System.Windows.Forms.Button();
-            btnDelete = new System.Windows.Forms.Button();
-            btnActive = new System.Windows.Forms.Button();
-            pnlBottom.SuspendLayout();
+            okButton = new System.Windows.Forms.Button();
+            cancelButton = new System.Windows.Forms.Button();
+            buttonPanel = new System.Windows.Forms.Panel();
+            partitionsListView = new ListViewEx();
+            numberColumnHeader = new System.Windows.Forms.ColumnHeader();
+            labelColumnHeader = new System.Windows.Forms.ColumnHeader();
+            typeColumnHeader = new System.Windows.Forms.ColumnHeader();
+            startColumnHeader = new System.Windows.Forms.ColumnHeader();
+            endColumnHeader = new System.Windows.Forms.ColumnHeader();
+            sizeColumnHeader = new System.Windows.Forms.ColumnHeader();
+            activeColumnHeader = new System.Windows.Forms.ColumnHeader();
+            createButton = new System.Windows.Forms.Button();
+            formatButton = new System.Windows.Forms.Button();
+            resizeButton = new System.Windows.Forms.Button();
+            deleteButton = new System.Windows.Forms.Button();
+            activeButton = new System.Windows.Forms.Button();
+            buttonPanel.SuspendLayout();
             SuspendLayout();
             // 
-            // btnOK
+            // okButton
             // 
-            btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.Location = new System.Drawing.Point(406, 12);
-            btnOK.Name = "btnOK";
-            btnOK.Size = new System.Drawing.Size(80, 26);
-            btnOK.TabIndex = 0;
-            btnOK.Text = "OK";
+            okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.Location = new System.Drawing.Point(406, 12);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(80, 26);
+            okButton.TabIndex = 0;
+            okButton.Text = "OK";
             // 
-            // btnCancel
+            // cancelButton
             // 
-            btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(492, 12);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new System.Drawing.Size(80, 26);
-            btnCancel.TabIndex = 1;
-            btnCancel.Text = "Cancel";
+            cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.Location = new System.Drawing.Point(492, 12);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(80, 26);
+            cancelButton.TabIndex = 1;
+            cancelButton.Text = "Cancel";
             // 
-            // pnlBottom
+            // buttonPanel
             // 
-            pnlBottom.BackColor = System.Drawing.SystemColors.Control;
-            pnlBottom.Controls.Add(btnCancel);
-            pnlBottom.Controls.Add(btnOK);
-            pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 231);
-            pnlBottom.Name = "pnlBottom";
-            pnlBottom.Size = new System.Drawing.Size(584, 50);
-            pnlBottom.TabIndex = 2;
+            buttonPanel.BackColor = System.Drawing.SystemColors.Control;
+            buttonPanel.Controls.Add(cancelButton);
+            buttonPanel.Controls.Add(okButton);
+            buttonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            buttonPanel.Location = new System.Drawing.Point(0, 231);
+            buttonPanel.Name = "buttonPanel";
+            buttonPanel.Size = new System.Drawing.Size(584, 50);
+            buttonPanel.TabIndex = 2;
             // 
-            // lstPartitions
+            // partitionsListView
             // 
-            lstPartitions.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            lstPartitions.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { clmNumber, clmLabel, clmType, clmStart, clmEnd, clmSize, clmActive });
-            lstPartitions.FullRowSelect = true;
-            lstPartitions.GridLines = true;
-            lstPartitions.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            lstPartitions.Location = new System.Drawing.Point(12, 12);
-            lstPartitions.MultiSelect = false;
-            lstPartitions.Name = "lstPartitions";
-            lstPartitions.ShowGroups = false;
-            lstPartitions.Size = new System.Drawing.Size(560, 181);
-            lstPartitions.TabIndex = 7;
-            lstPartitions.UseCompatibleStateImageBehavior = false;
-            lstPartitions.View = System.Windows.Forms.View.Details;
-            lstPartitions.ItemSelectionChanged += lstPartitions_ItemSelectionChanged;
+            partitionsListView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            partitionsListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { numberColumnHeader, labelColumnHeader, typeColumnHeader, startColumnHeader, endColumnHeader, sizeColumnHeader, activeColumnHeader });
+            partitionsListView.FullRowSelect = true;
+            partitionsListView.GridLines = true;
+            partitionsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            partitionsListView.Location = new System.Drawing.Point(12, 12);
+            partitionsListView.MultiSelect = false;
+            partitionsListView.Name = "partitionsListView";
+            partitionsListView.ShowGroups = false;
+            partitionsListView.Size = new System.Drawing.Size(560, 181);
+            partitionsListView.TabIndex = 7;
+            partitionsListView.UseCompatibleStateImageBehavior = false;
+            partitionsListView.View = System.Windows.Forms.View.Details;
             // 
-            // clmNumber
+            // numberColumnHeader
             // 
-            clmNumber.Text = "No.";
-            clmNumber.Width = 35;
+            numberColumnHeader.Text = "No.";
+            numberColumnHeader.Width = 35;
             // 
-            // clmLabel
+            // labelColumnHeader
             // 
-            clmLabel.Text = "Volume label";
-            clmLabel.Width = 100;
+            labelColumnHeader.Text = "Volume label";
+            labelColumnHeader.Width = 100;
             // 
-            // clmType
+            // typeColumnHeader
             // 
-            clmType.Text = "Type";
-            clmType.Width = 90;
+            typeColumnHeader.Text = "Type";
+            typeColumnHeader.Width = 90;
             // 
-            // clmStart
+            // startColumnHeader
             // 
-            clmStart.Text = "Start";
-            clmStart.Width = 80;
+            startColumnHeader.Text = "Start";
+            startColumnHeader.Width = 80;
             // 
-            // clmEnd
+            // endColumnHeader
             // 
-            clmEnd.Text = "End";
-            clmEnd.Width = 95;
+            endColumnHeader.Text = "End";
+            endColumnHeader.Width = 95;
             // 
-            // clmSize
+            // sizeColumnHeader
             // 
-            clmSize.Text = "Size";
-            clmSize.Width = 90;
+            sizeColumnHeader.Text = "Size";
+            sizeColumnHeader.Width = 90;
             // 
-            // clmActive
+            // activeColumnHeader
             // 
-            clmActive.Text = "Active";
-            clmActive.Width = 55;
+            activeColumnHeader.Text = "Active";
+            activeColumnHeader.Width = 55;
             // 
-            // btnCreate
+            // createButton
             // 
-            btnCreate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            btnCreate.Location = new System.Drawing.Point(12, 199);
-            btnCreate.Name = "btnCreate";
-            btnCreate.Size = new System.Drawing.Size(80, 26);
-            btnCreate.TabIndex = 2;
-            btnCreate.Text = "Create...";
-            btnCreate.UseVisualStyleBackColor = true;
+            createButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            createButton.Location = new System.Drawing.Point(12, 199);
+            createButton.Name = "createButton";
+            createButton.Size = new System.Drawing.Size(80, 26);
+            createButton.TabIndex = 2;
+            createButton.Text = "Create...";
+            createButton.UseVisualStyleBackColor = true;
             // 
-            // btnFormat
+            // formatButton
             // 
-            btnFormat.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            btnFormat.Enabled = false;
-            btnFormat.Location = new System.Drawing.Point(184, 199);
-            btnFormat.Name = "btnFormat";
-            btnFormat.Size = new System.Drawing.Size(80, 26);
-            btnFormat.TabIndex = 8;
-            btnFormat.Text = "Format...";
-            btnFormat.UseVisualStyleBackColor = true;
+            formatButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            formatButton.Enabled = false;
+            formatButton.Location = new System.Drawing.Point(184, 199);
+            formatButton.Name = "formatButton";
+            formatButton.Size = new System.Drawing.Size(80, 26);
+            formatButton.TabIndex = 8;
+            formatButton.Text = "Format...";
+            formatButton.UseVisualStyleBackColor = true;
             // 
-            // btnResize
+            // resizeButton
             // 
-            btnResize.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            btnResize.Enabled = false;
-            btnResize.Location = new System.Drawing.Point(270, 199);
-            btnResize.Name = "btnResize";
-            btnResize.Size = new System.Drawing.Size(80, 26);
-            btnResize.TabIndex = 9;
-            btnResize.Text = "Resize...";
-            btnResize.UseVisualStyleBackColor = true;
+            resizeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            resizeButton.Enabled = false;
+            resizeButton.Location = new System.Drawing.Point(270, 199);
+            resizeButton.Name = "resizeButton";
+            resizeButton.Size = new System.Drawing.Size(80, 26);
+            resizeButton.TabIndex = 9;
+            resizeButton.Text = "Resize...";
+            resizeButton.UseVisualStyleBackColor = true;
             // 
-            // btnDelete
+            // deleteButton
             // 
-            btnDelete.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            btnDelete.Enabled = false;
-            btnDelete.Location = new System.Drawing.Point(356, 199);
-            btnDelete.Name = "btnDelete";
-            btnDelete.Size = new System.Drawing.Size(80, 26);
-            btnDelete.TabIndex = 10;
-            btnDelete.Text = "Delete";
-            btnDelete.UseVisualStyleBackColor = true;
+            deleteButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            deleteButton.Enabled = false;
+            deleteButton.Location = new System.Drawing.Point(356, 199);
+            deleteButton.Name = "deleteButton";
+            deleteButton.Size = new System.Drawing.Size(80, 26);
+            deleteButton.TabIndex = 10;
+            deleteButton.Text = "Delete";
+            deleteButton.UseVisualStyleBackColor = true;
             // 
-            // btnActive
+            // activeButton
             // 
-            btnActive.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            btnActive.Enabled = false;
-            btnActive.Location = new System.Drawing.Point(98, 199);
-            btnActive.Name = "btnActive";
-            btnActive.Size = new System.Drawing.Size(80, 26);
-            btnActive.TabIndex = 11;
-            btnActive.Text = "Active";
-            btnActive.UseVisualStyleBackColor = true;
+            activeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            activeButton.Enabled = false;
+            activeButton.Location = new System.Drawing.Point(98, 199);
+            activeButton.Name = "activeButton";
+            activeButton.Size = new System.Drawing.Size(80, 26);
+            activeButton.TabIndex = 11;
+            activeButton.Text = "Active";
+            activeButton.UseVisualStyleBackColor = true;
             // 
             // ManagePartitionsDialog
             // 
-            AcceptButton = btnOK;
+            AcceptButton = okButton;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.SystemColors.Window;
-            CancelButton = btnCancel;
+            CancelButton = cancelButton;
             ClientSize = new System.Drawing.Size(584, 281);
-            Controls.Add(btnActive);
-            Controls.Add(btnDelete);
-            Controls.Add(btnResize);
-            Controls.Add(btnFormat);
-            Controls.Add(btnCreate);
-            Controls.Add(lstPartitions);
-            Controls.Add(pnlBottom);
+            Controls.Add(activeButton);
+            Controls.Add(deleteButton);
+            Controls.Add(resizeButton);
+            Controls.Add(formatButton);
+            Controls.Add(createButton);
+            Controls.Add(partitionsListView);
+            Controls.Add(buttonPanel);
             Font = new System.Drawing.Font("Segoe UI", 9F);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
@@ -210,27 +209,27 @@ namespace TotalImage.Dialogs
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Manage partitions";
-            pnlBottom.ResumeLayout(false);
+            buttonPanel.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Panel pnlBottom;
-        private ListViewEx lstPartitions;
-        private System.Windows.Forms.ColumnHeader clmNumber;
-        private System.Windows.Forms.ColumnHeader clmLabel;
-        private System.Windows.Forms.ColumnHeader clmType;
-        private System.Windows.Forms.ColumnHeader clmStart;
-        private System.Windows.Forms.ColumnHeader clmEnd;
-        private System.Windows.Forms.ColumnHeader clmSize;
-        private System.Windows.Forms.ColumnHeader clmActive;
-        private System.Windows.Forms.Button btnCreate;
-        private System.Windows.Forms.Button btnFormat;
-        private System.Windows.Forms.Button btnResize;
-        private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.Button btnActive;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Panel buttonPanel;
+        private ListViewEx partitionsListView;
+        private System.Windows.Forms.ColumnHeader numberColumnHeader;
+        private System.Windows.Forms.ColumnHeader labelColumnHeader;
+        private System.Windows.Forms.ColumnHeader typeColumnHeader;
+        private System.Windows.Forms.ColumnHeader startColumnHeader;
+        private System.Windows.Forms.ColumnHeader endColumnHeader;
+        private System.Windows.Forms.ColumnHeader sizeColumnHeader;
+        private System.Windows.Forms.ColumnHeader activeColumnHeader;
+        private System.Windows.Forms.Button createButton;
+        private System.Windows.Forms.Button formatButton;
+        private System.Windows.Forms.Button resizeButton;
+        private System.Windows.Forms.Button deleteButton;
+        private System.Windows.Forms.Button activeButton;
     }
 }
