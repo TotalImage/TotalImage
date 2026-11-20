@@ -3,9 +3,13 @@ using System.Buffers.Binary;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TotalImage.Containers;
 using TotalImage.Containers.VHD;
+using TotalImage.FileSystems;
 using TotalImage.FileSystems.ExFAT;
 using TotalImage.FileSystems.ISO;
+using TotalImage.FileSystems.MTF;
+using TotalImage.FileSystems.RAW;
 using Xunit;
 
 namespace TotalImage.IO.Tests;
@@ -21,6 +25,60 @@ public class BugRegressionTests
         slice.Write(new byte[] { 7, 8 });
         Assert.Equal(new byte[] { 0, 0, 0, 0, 7, 8, 0, 0, 0, 0 }, backing.ToArray());
         Assert.Throws<ArgumentOutOfRangeException>(() => slice.WriteByte(9));
+    }
+
+    [Fact]
+    public void PartialStream_TracksPositionIndependentlyOfBaseStream()
+    {
+        byte[] data = new byte[16];
+        for (int i = 0; i < data.Length; i++)
+            data[i] = (byte)i;
+        using var backing = new MemoryStream(data);
+        using var slice = new PartialStream(backing, 8, 4);
+
+        // The base stream sits before the slice; the slice must still start at 0.
+        Assert.Equal(0, slice.Position);
+        Assert.Equal(8, slice.ReadByte());
+        Assert.Equal(1, slice.Position);
+
+        backing.Position = 0;
+        Assert.Equal(9, slice.ReadByte());
+        slice.Position = slice.Position;
+        Assert.Equal(2, slice.Seek(0, SeekOrigin.Current));
+        Assert.Equal(new byte[] { 10, 11 }, ReadToEnd(slice));
+        Assert.Equal(-1, slice.ReadByte());
+    }
+
+    [Fact]
+    public void MtfDetection_RestoresPositionOnPartialStreamBehindBaseStream()
+    {
+        using var backing = new MemoryStream(new byte[4096]);
+        using var slice = new PartialStream(backing, 2048, 2048);
+
+        Assert.False(MtfFactory.HasSignature(slice));
+        Assert.Equal(0, slice.Position);
+        Assert.IsType<RawFileSystem>(FileSystem.AttemptDetection(slice));
+    }
+
+    [Fact]
+    public void MbrPartition_FileSystemDetectionDoesNotThrow()
+    {
+        byte[] image = new byte[4096];
+        image[0x1BE + 4] = 0x0C;
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(0x1BE + 8, 4), 4);
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(0x1BE + 12, 4), 4);
+        BinaryPrimitives.WriteUInt16LittleEndian(image.AsSpan(510, 2), 0xAA55);
+        using var container = new RawContainer(new MemoryStream(image));
+
+        var partition = Assert.Single(container.PartitionTable.Partitions);
+        Assert.IsType<RawFileSystem>(partition.FileSystem);
+    }
+
+    private static byte[] ReadToEnd(Stream stream)
+    {
+        using var output = new MemoryStream();
+        stream.CopyTo(output);
+        return output.ToArray();
     }
 
     [Fact]
