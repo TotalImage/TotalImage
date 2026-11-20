@@ -20,4 +20,5 @@ internal abstract class MessageServiceStub : IMessageService
     public virtual Task ShowTempFolderClearedAsync() => throw Unexpected(nameof(ShowTempFolderClearedAsync));
     public virtual Task ShowTempFolderClearFailedAsync() => throw Unexpected(nameof(ShowTempFolderClearFailedAsync));
     public virtual Task ShowPartitionNotSupportedAsync() => throw Unexpected(nameof(ShowPartitionNotSupportedAsync));
+    public virtual Task<bool> ConfirmCreateWithoutBpbAsync() => throw Unexpected(nameof(ConfirmCreateWithoutBpbAsync));
 }

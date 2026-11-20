@@ -156,6 +156,24 @@ namespace TotalImage.Services
             return Task.CompletedTask;
         }
 
+        public Task<bool> ConfirmCreateWithoutBpbAsync()
+        {
+            var result = ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = "You chose not to create a BIOS Parameter Block (BPB) for this image. Some programs and operating systems may not recognize the disk because of this.\n\nAre you sure you want to continue?",
+                Heading = "No BIOS Parameter Block selected",
+                Caption = "Warning",
+                Buttons =
+                {
+                    TaskDialogButton.Yes,
+                    TaskDialogButton.No
+                },
+                Icon = TaskDialogIcon.Warning,
+            });
+
+            return Task.FromResult(result == TaskDialogButton.Yes);
+        }
+
         private TaskDialogButton ShowTaskDialog(TaskDialogPage page)
             => owner.Window is null ? TaskDialog.ShowDialog(page) : TaskDialog.ShowDialog(owner.Window, page);
     }

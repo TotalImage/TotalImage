@@ -48,4 +48,10 @@ public interface IMessageService
     /// Explains that a partition can't be loaded because it or its file system is not supported.
     /// </summary>
     Task ShowPartitionNotSupportedAsync();
+
+    /// <summary>
+    /// Warns that the new image gets no BIOS Parameter Block (BPB), so some programs and operating
+    /// systems may not recognize it, and asks whether to continue.
+    /// </summary>
+    Task<bool> ConfirmCreateWithoutBpbAsync();
 }
