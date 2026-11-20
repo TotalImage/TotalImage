@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Containers;
@@ -8,7 +9,7 @@ using TotalImage.ViewModels.Settings;
 
 namespace TotalImage.Services
 {
-    public sealed class WinFormsImageDialogs(DialogOwner owner, ISettingsService settings) : IImageDialogs
+    public sealed class WinFormsImageDialogs(DialogOwner owner, ISettingsService settings, IImageHashService hashService) : IImageDialogs
     {
         public Task<FormatOptions?> AskFormatOptionsAsync()
         {
@@ -51,6 +52,18 @@ namespace TotalImage.Services
                 advancedDialog.ShowDialog(dialogOwner.Window);
                 return Task.CompletedTask;
             }
+        }
+
+        public Task ShowImageInfoAsync(Container image, string? filePath, int partitionIndex)
+        {
+            // Pickers and messages opened from the dialog belong to the dialog, not the main window.
+            var dialogOwner = new DialogOwner();
+            var viewModel = new ImageInfoViewModel(image, filePath, partitionIndex, settings, hashService,
+                new WinFormsFilePickerService(dialogOwner), new WinFormsMessageService(dialogOwner), Assembly.GetEntryAssembly());
+            using var dialog = new ImageInfoDialog(viewModel);
+            dialogOwner.Window = dialog;
+            dialog.ShowDialog(owner.Window);
+            return Task.CompletedTask;
         }
     }
 }

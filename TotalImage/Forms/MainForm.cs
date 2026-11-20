@@ -201,10 +201,12 @@ namespace TotalImage.Forms
         }
 
         //Shows current image information
-        private void imageInformation_Click(object sender, EventArgs e)
+        private async void imageInformation_Click(object sender, EventArgs e)
         {
-            using ImageInfoDialog dlg = new(settings);
-            dlg.ShowDialog();
+            if (image is null)
+                return;
+
+            await imageDialogs.ShowImageInfoAsync(image, string.IsNullOrEmpty(filepath) ? null : filepath, CurrentPartitionIndex);
         }
 
         //Click event handler for all menu items in the Recent images menu

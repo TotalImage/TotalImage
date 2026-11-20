@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITempDirectoryService, TempDirectoryService>();
         services.AddSingleton<ILauncherService, ProcessLauncherService>();
         services.AddSingleton<IAppInstances, ProcessAppInstances>();
+        services.AddSingleton<IImageHashService, ImageHashService>();
         return services;
     }
 }
