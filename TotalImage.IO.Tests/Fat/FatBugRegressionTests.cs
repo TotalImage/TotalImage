@@ -2,6 +2,7 @@ using System;
 using System.Buffers.Binary;
 using System.IO;
 using System.Linq;
+using TotalImage.FileSystems;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using Xunit;
@@ -33,7 +34,7 @@ public class FatBugRegressionTests
     {
         var fs = CreateFat12(new byte[2880 * 512]);
         fs.MainFat[2] = 0xFFF;
-        using var data = new FatDataStream(fs, 2);
+        using var data = new ClusterChainStream(fs, 2);
         Assert.Equal(512, data.Seek(0, SeekOrigin.End));
         Assert.Equal(0, data.Read(new byte[1]));
 

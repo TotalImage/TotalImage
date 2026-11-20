@@ -8,7 +8,7 @@ using Xunit;
 
 namespace TotalImage.IO.Tests.Fat;
 
-public class FatDataStreamTests
+public class FatClusterChainStreamTests
 {
     [Fact]
     public void Build_MergesConsecutiveClusters()
@@ -70,7 +70,7 @@ public class FatDataStreamTests
         Fill(fs, image, 5, 'B');
         Fill(fs, image, 3, 'C');
 
-        using var stream = new FatDataStream(fs, Entry(2, 1536));
+        using var stream = new ClusterChainStream(fs, 2, 1536);
         var data = new byte[1536];
         stream.ReadExactly(data);
         Assert.True(data.Take(512).All(b => b == 'A'));
@@ -86,7 +86,7 @@ public class FatDataStreamTests
         Fill(fs, image, 2, 'X');
         Fill(fs, image, 6, 'Y');
 
-        using var stream = new FatDataStream(fs, Entry(2, 1024));
+        using var stream = new ClusterChainStream(fs, 2, 1024);
         stream.Position = 510;
         var data = new byte[4];
         stream.ReadExactly(data);
@@ -101,7 +101,7 @@ public class FatDataStreamTests
         Fill(fs, image, 2, 'P');
         Fill(fs, image, 3, 'Q');
 
-        using var stream = new FatDataStream(fs, Entry(2, 700));
+        using var stream = new ClusterChainStream(fs, 2, 700);
         Assert.Equal(700, stream.Length);
         var data = new byte[1024];
         Assert.Equal(700, stream.ReadAtLeast(data, 1024, throwOnEndOfStream: false));
@@ -120,8 +120,8 @@ public class FatDataStreamTests
         Fill(fs, image, 4, 'c');
         Fill(fs, image, 5, 'd');
 
-        using var first = new FatDataStream(fs, Entry(2, 1024));
-        using var second = new FatDataStream(fs, Entry(4, 1024));
+        using var first = new ClusterChainStream(fs, 2, 1024);
+        using var second = new ClusterChainStream(fs, 4, 1024);
         var one = new byte[1024];
         var two = new byte[1024];
         for (int i = 0; i < 1024; i += 100)
@@ -138,7 +138,7 @@ public class FatDataStreamTests
     public void Fat12_EmptyFileDoesNotWalkChain()
     {
         var (fs, _) = Create();
-        using var stream = new FatDataStream(fs, Entry(0, 0));
+        using var stream = new ClusterChainStream(fs, 0, 0);
         Assert.Equal(0, stream.Length);
         Assert.Equal(0, stream.Read(new byte[1]));
     }
@@ -160,7 +160,4 @@ public class FatDataStreamTests
         long offset = fs.DataAreaFirstSector * 512L + (cluster - 2L) * 512;
         image.AsSpan((int)offset, 512).Fill((byte)value);
     }
-
-    private static DirectoryEntry Entry(uint firstCluster, uint size) =>
-        new(Encoding.ASCII.GetBytes("FILE    BIN"), FatAttributes.Archive, firstCluster, size, null, null, null);
 }

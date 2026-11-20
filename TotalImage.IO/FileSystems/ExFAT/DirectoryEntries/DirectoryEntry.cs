@@ -57,7 +57,7 @@ public abstract class DirectoryEntry
         }
         else
         {
-            return new ExFatDataStream(fileSystem, FirstCluster, checked((long)length));
+            return new ClusterChainStream(fileSystem, FirstCluster, checked((long)length));
         }
     }
 

@@ -109,7 +109,7 @@ namespace TotalImage.FileSystems.FAT
         /// <inheritdoc/>
         public override Stream GetStream()
         {
-            return new FatDataStream((FatFileSystem)FileSystem, entry);
+            return new ClusterChainStream((FatFileSystem)FileSystem, entry.FirstClusterOfFile, entry.FileSize);
         }
 
         // -----------------------------------------------------------------------

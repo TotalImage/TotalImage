@@ -133,7 +133,7 @@ public class ExFatDirectory : Directory
     {
         var fileSystem = (ExFatFileSystem)FileSystem;
         var stream = StreamExtensionDirectoryEntry?.GetStream(fileSystem) ??
-            new ExFatDataStream(fileSystem, fileSystem.BootSector.FirstClusterOfRootDirectory);
+            new ClusterChainStream(fileSystem, fileSystem.BootSector.FirstClusterOfRootDirectory);
 
         FileDirectoryEntry? fileDirEntry = null;
         StreamExtensionDirectoryEntry? streamExtDirEntry = null;

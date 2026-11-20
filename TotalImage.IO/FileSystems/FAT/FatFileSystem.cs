@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using TotalImage.Changes;
@@ -9,7 +10,7 @@ namespace TotalImage.FileSystems.FAT
 /// <summary>
 /// Base class for FAT12, FAT16, and FAT32 file systems.
 /// </summary>
-public abstract class FatFileSystem : FileSystem
+public abstract class FatFileSystem : FileSystem, IFatLikeFileSystem
 {
         /// <summary>
         /// The BIOS parameter block that describes the volume layout.
@@ -122,6 +123,13 @@ public abstract class FatFileSystem : FileSystem
         /// The "primary" FAT (usually the first one).
         /// </summary>
         public FileAllocationTable MainFat => Fats[0];
+
+        /// <inheritdoc />
+        List<StreamExtent> IFatLikeFileSystem.GetChainExtents(uint firstCluster, long? length)
+        {
+            long dataStart = (long)DataAreaFirstSector * _bpb.BytesPerLogicalSector;
+            return MainFat.GetChainExtents(firstCluster, dataStart, BytesPerCluster, length);
+        }
 
         /// <summary>
         /// The volume label. Returns the root directory volume label if it exists, otherwise the BPB volume label if it exists, otherwise a place holder.

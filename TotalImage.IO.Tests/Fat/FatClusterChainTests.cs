@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TotalImage.FileSystems;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using Xunit;
@@ -89,7 +90,7 @@ public class FatClusterChainTests
         fs.MainFat[2] = 3000;
 
         Assert.Throws<InvalidDataException>(() => fs.MainFat.GetClusterChain(2));
-        Assert.Throws<InvalidDataException>(() => new FatDataStream(fs, 2));
+        Assert.Throws<InvalidDataException>(() => new ClusterChainStream(fs, 2));
     }
 
     [Fact]
@@ -139,7 +140,7 @@ public class FatClusterChainTests
 
         Assert.Equal(chain, fs.MainFat.GetClusterChain(2));
         var entry = new DirectoryEntry(Encoding.ASCII.GetBytes("FILE    BIN"), FatAttributes.Archive, 2, (uint)chain.Length * 512, null, null, null);
-        using var stream = new FatDataStream(fs, entry);
+        using var stream = new ClusterChainStream(fs, entry.FirstClusterOfFile, entry.FileSize);
         var data = new byte[chain.Length * 512];
         stream.ReadExactly(data);
         for (int i = 0; i < chain.Length; i++)

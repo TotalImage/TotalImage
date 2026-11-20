@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace TotalImage.FileSystems.ExFAT;
 /// <summary>
 /// Represents an exFAT file system.
 /// </summary>
-public class ExFatFileSystem : FileSystem
+public class ExFatFileSystem : FileSystem, IFatLikeFileSystem
 {
     /// <summary>
     /// Gets the parsed exFAT boot sector.
@@ -69,6 +70,13 @@ public class ExFatFileSystem : FileSystem
     public long BytesPerCluster => SectorsPerCluster * BytesPerSector;
 
     /// <inheritdoc />
+    List<StreamExtent> IFatLikeFileSystem.GetChainExtents(uint firstCluster, long? length)
+    {
+        long dataStart = (long)BootSector.ClusterHeapOffset * BytesPerSector;
+        return ActiveFat.GetChainExtents(firstCluster, dataStart, BytesPerCluster, length);
+    }
+
+    /// <inheritdoc />
     public override string DisplayName => "exFAT";
 
     /// <inheritdoc />
@@ -76,7 +84,7 @@ public class ExFatFileSystem : FileSystem
     {
         get
         {
-            var rootDirectoryStream = new ExFatDataStream(this, BootSector.FirstClusterOfRootDirectory);
+            var rootDirectoryStream = new ClusterChainStream(this, BootSector.FirstClusterOfRootDirectory);
             var volumeLabel = (VolumeLabelDirectoryEntry?)DirectoryEntry
                 .EnumerateDirectory(rootDirectoryStream)
                 .SingleOrDefault(x => x is VolumeLabelDirectoryEntry);
@@ -94,7 +102,7 @@ public class ExFatFileSystem : FileSystem
     {
         get
         {
-            var rootDirectoryStream = new ExFatDataStream(this, BootSector.FirstClusterOfRootDirectory);
+            var rootDirectoryStream = new ClusterChainStream(this, BootSector.FirstClusterOfRootDirectory);
             var allocationBitmap = (AllocationBitmapDirectoryEntry)DirectoryEntry
                 .EnumerateDirectory(rootDirectoryStream)
                 .Single(x => x is AllocationBitmapDirectoryEntry entry &&

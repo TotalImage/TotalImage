@@ -199,7 +199,7 @@ namespace TotalImage.FileSystems.FAT
         /// <returns>The parsed directory entries and any associated long file name entries.</returns>
         public static IEnumerable<(DirectoryEntry, LongDirectoryEntry[])> EnumerateSubdirectory(FatFileSystem fat, uint firstCluster)
         {
-            var stream = new FatDataStream(fat, firstCluster);
+            var stream = new ClusterChainStream(fat, firstCluster);
             var buffer = new byte[stream.Length];
 
             stream.Read(buffer);
