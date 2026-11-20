@@ -50,5 +50,69 @@ namespace TotalImage.Controls
         /// </summary>
         public static void BindOneTime(this Control control, string controlProperty, object source, string sourceProperty)
             => control.DataBindings.Add(controlProperty, source, sourceProperty, false, DataSourceUpdateMode.Never);
+
+        /// <summary>
+        /// Binds the selection of a combo box whose items are already filled in (for example by
+        /// the designer) to a view-model property: item <c>i</c> stands for <c>values[i]</c>.
+        /// Nothing is selected while the property holds a value that isn't in the list.
+        /// </summary>
+        public static void BindChoices<T>(this ComboBox comboBox, IReadOnlyList<T> values, INotifyPropertyChanged source, string sourceProperty)
+        {
+            var property = source.GetType().GetProperty(sourceProperty)
+                ?? throw new ArgumentException($"{source.GetType().Name} has no property {sourceProperty}.", nameof(sourceProperty));
+
+            void UpdateControl()
+            {
+                var value = (T)property.GetValue(source)!;
+                var index = -1;
+                for (var i = 0; i < values.Count; i++)
+                {
+                    if (EqualityComparer<T>.Default.Equals(values[i], value))
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                comboBox.SelectedIndex = index;
+            }
+
+            UpdateControl();
+
+            comboBox.SelectedIndexChanged += (_, _) =>
+            {
+                if (comboBox.SelectedIndex >= 0 && comboBox.SelectedIndex < values.Count)
+                    property.SetValue(source, values[comboBox.SelectedIndex]);
+            };
+            source.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == sourceProperty)
+                    UpdateControl();
+            };
+        }
+
+        /// <summary>
+        /// Binds a radio button to one value of a view-model property: the button is checked
+        /// while the property holds that value, and checking it sets the property to it.
+        /// </summary>
+        public static void BindRadioButton<T>(this RadioButton radioButton, INotifyPropertyChanged source, string sourceProperty, T value)
+        {
+            var property = source.GetType().GetProperty(sourceProperty)
+                ?? throw new ArgumentException($"{source.GetType().Name} has no property {sourceProperty}.", nameof(sourceProperty));
+
+            void UpdateControl() => radioButton.Checked = EqualityComparer<T>.Default.Equals((T)property.GetValue(source)!, value);
+            UpdateControl();
+
+            radioButton.CheckedChanged += (_, _) =>
+            {
+                if (radioButton.Checked)
+                    property.SetValue(source, value);
+            };
+            source.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == sourceProperty)
+                    UpdateControl();
+            };
+        }
     }
 }
