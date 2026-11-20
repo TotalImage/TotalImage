@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace TotalImage.ViewModels.Services;
@@ -54,4 +55,23 @@ public interface IMessageService
     /// systems may not recognize it, and asks whether to continue.
     /// </summary>
     Task<bool> ConfirmCreateWithoutBpbAsync();
+
+    /// <summary>
+    /// Warns that the image hashes are still being calculated and won't be exported, and asks
+    /// whether to export anyway.
+    /// </summary>
+    Task<bool> ConfirmExportWithoutHashesAsync();
+
+    /// <summary>
+    /// Tells the user that something was exported to a file.
+    /// </summary>
+    Task ShowExportSucceededAsync(string path);
+
+    /// <summary>
+    /// Tells the user that an operation failed.
+    /// </summary>
+    /// <param name="operation">What was being done, as a short phrase such as
+    /// <c>Exporting to "C:\boot.bin"</c>; the UI builds its message around it.</param>
+    /// <param name="exception">The reason it failed.</param>
+    Task ShowErrorAsync(string operation, Exception exception);
 }

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.ViewModels.Services;
@@ -172,6 +173,73 @@ namespace TotalImage.Services
             });
 
             return Task.FromResult(result == TaskDialogButton.Yes);
+        }
+
+        public Task<bool> ConfirmExportWithoutHashesAsync()
+        {
+            var result = ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = $"File hashes are still being calculated and won't be included in the exported file{Environment.NewLine}unless you wait for the calculations to complete first.",
+                Heading = "Hash calculations in progress",
+                Caption = "Warning",
+                Buttons =
+                {
+                    TaskDialogButton.Cancel,
+                    TaskDialogButton.Continue
+                },
+                Icon = TaskDialogIcon.Warning,
+                DefaultButton = TaskDialogButton.Continue,
+                SizeToContent = true
+            });
+
+            return Task.FromResult(result == TaskDialogButton.Continue);
+        }
+
+        public Task ShowExportSucceededAsync(string path)
+        {
+            ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = $"The data was successfully exported to {path}",
+                Heading = "Export successful",
+                Caption = "Success",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Information,
+                DefaultButton = TaskDialogButton.OK
+            });
+
+            return Task.CompletedTask;
+        }
+
+        public Task ShowErrorAsync(string operation, Exception exception)
+        {
+            var (heading, reason) = exception switch
+            {
+                UnauthorizedAccessException => ("Access denied",
+                    "because you do not have the necessary permissions. Make sure you have the necessary permissions and try again."),
+                IOException when (exception.HResult & 0x0000FFFF) == 32 => ("Access denied",
+                    "because the file is locked by another process. Close all processes locking this file and try again."),
+                _ => ("Operation failed",
+                    $"with the following error: {exception.Message}")
+            };
+
+            ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = $"{operation} failed {reason}{Environment.NewLine}{Environment.NewLine}" +
+                    "If you think this is a bug, please submit a bug report on our GitHub repo.",
+                Heading = heading,
+                Caption = "Error",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Error,
+                DefaultButton = TaskDialogButton.OK
+            });
+
+            return Task.CompletedTask;
         }
 
         private TaskDialogButton ShowTaskDialog(TaskDialogPage page)
