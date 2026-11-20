@@ -87,50 +87,47 @@ namespace TotalImage.FileSystems.FAT
             public override uint Length
                 => (uint)(_fat32.BytesPerClusterMap) / 4;
 
-            public override uint this[uint index]
+            protected override uint GetEntry(uint index)
             {
-                get
+                index &= Mask;
+
+                if (index >= Length) throw new ArgumentOutOfRangeException();
+
+                var stream = _fat32.GetStream();
+                using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+
+                // Seek to the beginning of the cluster map.
+                stream.Position = _fat32._bpb.ReservedLogicalSectors * _fat32._bpb.BytesPerLogicalSector;
+
+                if (_fatIndex > 0)
                 {
-                    index &= Mask;
-
-                    if (index >= Length) throw new ArgumentOutOfRangeException();
-
-                    var stream = _fat32.GetStream();
-                    using var reader = new BinaryReader(stream, Encoding.ASCII, true);
-
-                    // Seek to the beginning of the cluster map.
-                    stream.Position = _fat32._bpb.ReservedLogicalSectors * _fat32._bpb.BytesPerLogicalSector;
-
-                    if (_fatIndex > 0)
-                    {
-                        // Reading from a backup FAT, so seek to the beginning of that.
-                        var fatOffset = _fatIndex * _fat32._bpb.LogicalSectorsPerFAT * _fat32._bpb.BytesPerLogicalSector;
-                        reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
-                    }
-
-                    // 32-bit cluster map values. Nothing to see here
-                    reader.BaseStream.Seek(index * 4, SeekOrigin.Current);
-                    return reader.ReadUInt32() & Mask;
+                    // Reading from a backup FAT, so seek to the beginning of that.
+                    var fatOffset = _fatIndex * _fat32._bpb.LogicalSectorsPerFAT * _fat32._bpb.BytesPerLogicalSector;
+                    reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
                 }
 
-                set
-                {
-                    index &= Mask;
-                    if (index >= Length) throw new ArgumentOutOfRangeException();
+                // 32-bit cluster map values. Nothing to see here
+                reader.BaseStream.Seek(index * 4, SeekOrigin.Current);
+                return reader.ReadUInt32() & Mask;
+            }
 
-                    var stream = _fat32.GetStream();
-                    using var reader = new BinaryReader(stream, Encoding.ASCII, true);
-                    using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+            protected override void SetEntry(uint index, uint value)
+            {
+                index &= Mask;
+                if (index >= Length) throw new ArgumentOutOfRangeException();
 
-                    stream.Position = (_fat32._bpb.ReservedLogicalSectors + _fatIndex * _fat32._bpb.LogicalSectorsPerFAT)
-                                      * _fat32._bpb.BytesPerLogicalSector;
-                    stream.Seek(index * 4, SeekOrigin.Current);
+                var stream = _fat32.GetStream();
+                using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+                using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
 
-                    // Preserve the top 4 reserved bits.
-                    uint existing = reader.ReadUInt32();
-                    stream.Seek(-4, SeekOrigin.Current);
-                    writer.Write((existing & 0xF0000000u) | (value & 0x0FFFFFFFu));
-                }
+                stream.Position = (_fat32._bpb.ReservedLogicalSectors + _fatIndex * _fat32._bpb.LogicalSectorsPerFAT)
+                                  * _fat32._bpb.BytesPerLogicalSector;
+                stream.Seek(index * 4, SeekOrigin.Current);
+
+                // Preserve the top 4 reserved bits.
+                uint existing = reader.ReadUInt32();
+                stream.Seek(-4, SeekOrigin.Current);
+                writer.Write((existing & 0xF0000000u) | (value & 0x0FFFFFFFu));
             }
         }
     }

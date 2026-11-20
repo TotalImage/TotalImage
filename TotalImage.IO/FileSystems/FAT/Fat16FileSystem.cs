@@ -52,42 +52,39 @@ namespace TotalImage.FileSystems.FAT
             public override uint Length
                 => (uint)(_fat16.BytesPerClusterMap) / 2;
 
-            public override uint this[uint index]
+            protected override uint GetEntry(uint index)
             {
-                get
+                if (index >= Length) throw new ArgumentOutOfRangeException();
+
+                var stream = _fat16.GetStream();
+                using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+
+                // Seek to the beginning of the cluster map.
+                stream.Position = _fat16._bpb.ReservedLogicalSectors * _fat16._bpb.BytesPerLogicalSector;
+
+                if (_fatIndex > 0)
                 {
-                    if (index >= Length) throw new ArgumentOutOfRangeException();
-
-                    var stream = _fat16.GetStream();
-                    using var reader = new BinaryReader(stream, Encoding.ASCII, true);
-
-                    // Seek to the beginning of the cluster map.
-                    stream.Position = _fat16._bpb.ReservedLogicalSectors * _fat16._bpb.BytesPerLogicalSector;
-
-                    if (_fatIndex > 0)
-                    {
-                        // Reading from a backup FAT, so seek to the beginning of that.
-                        var fatOffset = _fatIndex * _fat16._bpb.LogicalSectorsPerFAT * _fat16._bpb.BytesPerLogicalSector;
-                        reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
-                    }
-
-                    // 16-bit cluster map values. Nothing to see here
-                    reader.BaseStream.Seek(index * 2, SeekOrigin.Current);
-                    return reader.ReadUInt16();
+                    // Reading from a backup FAT, so seek to the beginning of that.
+                    var fatOffset = _fatIndex * _fat16._bpb.LogicalSectorsPerFAT * _fat16._bpb.BytesPerLogicalSector;
+                    reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
                 }
 
-                set
-                {
-                    if (index >= Length) throw new ArgumentOutOfRangeException();
+                // 16-bit cluster map values. Nothing to see here
+                reader.BaseStream.Seek(index * 2, SeekOrigin.Current);
+                return reader.ReadUInt16();
+            }
 
-                    var stream = _fat16.GetStream();
-                    using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+            protected override void SetEntry(uint index, uint value)
+            {
+                if (index >= Length) throw new ArgumentOutOfRangeException();
 
-                    stream.Position = (_fat16._bpb.ReservedLogicalSectors + _fatIndex * _fat16._bpb.LogicalSectorsPerFAT)
-                                      * _fat16._bpb.BytesPerLogicalSector;
-                    stream.Seek(index * 2, SeekOrigin.Current);
-                    writer.Write((ushort)(value & 0xFFFF));
-                }
+                var stream = _fat16.GetStream();
+                using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+
+                stream.Position = (_fat16._bpb.ReservedLogicalSectors + _fatIndex * _fat16._bpb.LogicalSectorsPerFAT)
+                                  * _fat16._bpb.BytesPerLogicalSector;
+                stream.Seek(index * 2, SeekOrigin.Current);
+                writer.Write((ushort)(value & 0xFFFF));
             }
         }
     }

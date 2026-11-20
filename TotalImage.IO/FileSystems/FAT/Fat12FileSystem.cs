@@ -164,73 +164,70 @@ namespace TotalImage.FileSystems.FAT
             public override uint Length
                 => Math.Min((uint)(_fat12.BytesPerClusterMap * 2 / 3), _fat12.ClusterCount + 2);
 
-            public override uint this[uint index]
+            protected override uint GetEntry(uint index)
             {
-                get
+                if (index >= Length) throw new ArgumentOutOfRangeException();
+
+                var stream = _fat12.GetStream();
+                using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+
+                // Seek to the beginning of the cluster map.
+                stream.Position = _fat12._bpb.ReservedLogicalSectors * _fat12._bpb.BytesPerLogicalSector;
+
+                if (_fatIndex > 0)
                 {
-                    if (index >= Length) throw new ArgumentOutOfRangeException();
-
-                    var stream = _fat12.GetStream();
-                    using var reader = new BinaryReader(stream, Encoding.ASCII, true);
-
-                    // Seek to the beginning of the cluster map.
-                    stream.Position = _fat12._bpb.ReservedLogicalSectors * _fat12._bpb.BytesPerLogicalSector;
-
-                    if (_fatIndex > 0)
-                    {
-                        // Reading from a backup FAT, so seek to the beginning of that.
-                        var fatOffset = _fatIndex * _fat12._bpb.LogicalSectorsPerFAT * _fat12._bpb.BytesPerLogicalSector;
-                        reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
-                    }
-
-                    // FAT12 uses 12-bit cluster indices, therefore it's time for some
-                    // crazy maths! Let's first seek further to the nearest even index.
-                    reader.BaseStream.Seek(index / 2 * 3, SeekOrigin.Current);
-
-                    // Read only the bytes belonging to this FAT copy. The final
-                    // even entry can occupy the last two bytes of the FAT.
-                    uint pair = (uint)(reader.ReadByte() | reader.ReadByte() << 8);
-                    if (index % 2 != 0 || index / 2 * 3 + 2 < _fat12.BytesPerClusterMap)
-                        pair |= (uint)reader.ReadByte() << 16;
-
-                    // Right now, `pair` has the value of 0x00123ABC, bits 0-11 contain
-                    // the value of the even index and bits 12-23 contain the value of
-                    // the odd index. All we need to do is return the relevant part.
-                    if (index % 2 == 0)
-                        return pair & 0xFFF;
-                    else
-                        return pair >> 12;
+                    // Reading from a backup FAT, so seek to the beginning of that.
+                    var fatOffset = _fatIndex * _fat12._bpb.LogicalSectorsPerFAT * _fat12._bpb.BytesPerLogicalSector;
+                    reader.BaseStream.Seek(fatOffset, SeekOrigin.Current);
                 }
 
-                set
-                {
-                    if (index >= Length) throw new ArgumentOutOfRangeException();
+                // FAT12 uses 12-bit cluster indices, therefore it's time for some
+                // crazy maths! Let's first seek further to the nearest even index.
+                reader.BaseStream.Seek(index / 2 * 3, SeekOrigin.Current);
 
-                    var stream = _fat12.GetStream();
-                    using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
+                // Read only the bytes belonging to this FAT copy. The final
+                // even entry can occupy the last two bytes of the FAT.
+                uint pair = (uint)(reader.ReadByte() | reader.ReadByte() << 8);
+                if (index % 2 != 0 || index / 2 * 3 + 2 < _fat12.BytesPerClusterMap)
+                    pair |= (uint)reader.ReadByte() << 16;
 
-                    // Seek to the beginning of this FAT copy.
-                    stream.Position = (_fat12._bpb.ReservedLogicalSectors + _fatIndex * _fat12._bpb.LogicalSectorsPerFAT)
-                                      * _fat12._bpb.BytesPerLogicalSector;
-                    stream.Seek(index / 2 * 3, SeekOrigin.Current);
+                // Right now, `pair` has the value of 0x00123ABC, bits 0-11 contain
+                // the value of the even index and bits 12-23 contain the value of
+                // the odd index. All we need to do is return the relevant part.
+                if (index % 2 == 0)
+                    return pair & 0xFFF;
+                else
+                    return pair >> 12;
+            }
 
-                    // Read the existing 3-byte group so we can preserve the sibling nibble.
-                    using var reader = new BinaryReader(stream, Encoding.ASCII, true);
-                    int bytesInPair = index / 2 * 3 + 2 < _fat12.BytesPerClusterMap ? 3 : 2;
-                    uint existing = (uint)(reader.ReadByte() | reader.ReadByte() << 8);
-                    if (bytesInPair == 3) existing |= (uint)reader.ReadByte() << 16;
-                    stream.Seek(-bytesInPair, SeekOrigin.Current);
+            protected override void SetEntry(uint index, uint value)
+            {
+                if (index >= Length) throw new ArgumentOutOfRangeException();
 
-                    uint updated;
-                    if (index % 2 == 0)
-                        updated = (existing & 0xFFF000) | (value & 0xFFF);
-                    else
-                        updated = (existing & 0x000FFF) | ((value & 0xFFF) << 12);
+                var stream = _fat12.GetStream();
+                using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
 
-                    writer.Write((byte)(updated & 0xFF));
-                    writer.Write((byte)((updated >> 8) & 0xFF));
-                    if (bytesInPair == 3) writer.Write((byte)((updated >> 16) & 0xFF));
-                }
+                // Seek to the beginning of this FAT copy.
+                stream.Position = (_fat12._bpb.ReservedLogicalSectors + _fatIndex * _fat12._bpb.LogicalSectorsPerFAT)
+                                  * _fat12._bpb.BytesPerLogicalSector;
+                stream.Seek(index / 2 * 3, SeekOrigin.Current);
+
+                // Read the existing 3-byte group so we can preserve the sibling nibble.
+                using var reader = new BinaryReader(stream, Encoding.ASCII, true);
+                int bytesInPair = index / 2 * 3 + 2 < _fat12.BytesPerClusterMap ? 3 : 2;
+                uint existing = (uint)(reader.ReadByte() | reader.ReadByte() << 8);
+                if (bytesInPair == 3) existing |= (uint)reader.ReadByte() << 16;
+                stream.Seek(-bytesInPair, SeekOrigin.Current);
+
+                uint updated;
+                if (index % 2 == 0)
+                    updated = (existing & 0xFFF000) | (value & 0xFFF);
+                else
+                    updated = (existing & 0x000FFF) | ((value & 0xFFF) << 12);
+
+                writer.Write((byte)(updated & 0xFF));
+                writer.Write((byte)((updated >> 8) & 0xFF));
+                if (bytesInPair == 3) writer.Write((byte)((updated >> 16) & 0xFF));
             }
         }
     }

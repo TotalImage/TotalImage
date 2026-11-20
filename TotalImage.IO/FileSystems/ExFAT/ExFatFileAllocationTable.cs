@@ -1,54 +1,40 @@
 using System;
 using System.Buffers.Binary;
-using System.Collections;
-using System.Collections.Generic;
+using TotalImage.FileSystems.FAT;
 
 namespace TotalImage.FileSystems.ExFAT;
 
 /// <summary>
-/// Base class for accessing a FAT-style cluster map
+/// Read-only accessor for an exFAT cluster map
 /// </summary>
-public class ExFatFileAllocationTable : IEnumerable<uint>
+public class ExFatFileAllocationTable : FileAllocationTableBase
 {
     private ExFatFileSystem _fileSystem;
     private int _fatIndex;
 
-    /// <summary>
-    /// Access the value stored at a given index.
-    /// </summary>
-    public uint this[uint index]
+    /// <inheritdoc/>
+    protected override uint GetEntry(uint index)
     {
-        get
+        if (index >= Length)
         {
-            if (index >= Length)
-            {
-                throw new IndexOutOfRangeException();
-            }
-
-            long offset = ((long)_fileSystem.BootSector.FatOffset + (long)_fatIndex * _fileSystem.BootSector.FatLength) * _fileSystem.BytesPerSector;
-
-            var stream = _fileSystem.GetStream();
-            stream.Position = offset + (long)index * 4;
-
-            var fatEntry = new byte[4];
-            stream.ReadExactly(fatEntry);
-
-            return BinaryPrimitives.ReadUInt32LittleEndian(fatEntry);
+            throw new IndexOutOfRangeException();
         }
-    }
 
-    /// <summary>
-    /// Access the value stored at a given index.
-    /// </summary>
-    public uint this[int index]
-    {
-        get => this[(uint)index];
+        long offset = ((long)_fileSystem.BootSector.FatOffset + (long)_fatIndex * _fileSystem.BootSector.FatLength) * _fileSystem.BytesPerSector;
+
+        var stream = _fileSystem.GetStream();
+        stream.Position = offset + (long)index * 4;
+
+        var fatEntry = new byte[4];
+        stream.ReadExactly(fatEntry);
+
+        return BinaryPrimitives.ReadUInt32LittleEndian(fatEntry);
     }
 
     /// <summary>
     /// Retrieves the number of entries in the allocation table.
     /// </summary>
-    public uint Length => checked((uint)((long)_fileSystem.BootSector.FatLength * _fileSystem.BytesPerSector / 4));
+    public override uint Length => checked((uint)((long)_fileSystem.BootSector.FatLength * _fileSystem.BytesPerSector / 4));
 
     /// <summary>
     /// Creates an exFAT allocation table reader.
@@ -61,73 +47,16 @@ public class ExFatFileAllocationTable : IEnumerable<uint>
         _fatIndex = fatIndex;
     }
 
-    /// <inheritdoc/>
-    public IEnumerator<uint> GetEnumerator() => new Enumerator(this);
-
-    /// <inheritdoc/>
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
     /// <summary>
-    /// Retrieves the number of the next cluster in a cluster chain.
+    /// Determines the type of an exFAT cluster map value. 0 is free, 1 is reserved, 0xFFFFFFF7 is bad,
+    /// 0xFFFFFFF8 and above are end-of-chain; everything else points to a data cluster.
     /// </summary>
-    /// <param name="index">Current cluster</param>
-    /// <returns>The next cluster number if any, otherwise <see langword="null"/>.</returns>
-    public uint? GetNextCluster(uint index) => this[index] switch
+    public override ClusterType GetClusterType(uint value) => value switch
     {
-        0 => null,
-        1 => null,
-        0xFFFF_FFF7 => null,
-        >= 0xFFFF_FFF8 => null,
-        uint x => x
+        0 => ClusterType.Free,
+        1 => ClusterType.NonFree,
+        0xFFFF_FFF7 => ClusterType.Bad,
+        >= 0xFFFF_FFF8 => ClusterType.EndOfChain,
+        _ => ClusterType.Data
     };
-
-    /// <summary>
-    /// Retrieves the full chain of clusters starting with a given cluster.
-    /// </summary>
-    /// <param name="firstCluster">First cluster in the chain.</param>
-    public uint[] GetClusterChain(uint firstCluster)
-    {
-        var clusters = new List<uint>();
-        var visited = new HashSet<uint>();
-        uint? cluster = firstCluster;
-
-        while (cluster.HasValue)
-        {
-            if (!visited.Add(cluster.Value))
-                throw new System.IO.InvalidDataException("Cyclic exFAT cluster chain.");
-            clusters.Add(cluster.Value);
-            cluster = GetNextCluster(cluster.Value);
-        }
-
-        return clusters.ToArray();
-    }
-
-    /// <summary>
-    /// Enumerates allocation table values.
-    /// </summary>
-    public class Enumerator : IEnumerator<uint>
-    {
-        uint _currentIndex = 0;
-        ExFatFileAllocationTable _fat;
-
-        /// <inheritdoc/>
-        public uint Current => _fat[_currentIndex];
-
-        /// <inheritdoc/>
-        object IEnumerator.Current => Current;
-
-        internal Enumerator(ExFatFileAllocationTable fat)
-        {
-            _fat = fat;
-        }
-
-        /// <inheritdoc/>
-        public void Dispose() { }
-
-        /// <inheritdoc/>
-        public bool MoveNext() => ++_currentIndex < _fat.Length;
-
-        /// <inheritdoc/>
-        public void Reset() => _currentIndex = 0;
-    }
 }
