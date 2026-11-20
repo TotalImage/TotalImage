@@ -35,46 +35,65 @@ public class FileAllocationTableBaseTests
     }
 
     [Theory]
-    [InlineData(0u, ClusterType.Free)]
-    [InlineData(1u, ClusterType.NonFree)]
+    [InlineData(0u, ClusterType.Invalid)]
+    [InlineData(1u, ClusterType.Invalid)]
     [InlineData(0xFFFFFFF7u, ClusterType.Bad)]
-    [InlineData(0xFFFFFFF8u, ClusterType.EndOfChain)]
-    [InlineData(0xFFFFFFFCu, ClusterType.EndOfChain)]
+    [InlineData(0xFFFFFFF8u, ClusterType.Invalid)]
+    [InlineData(0xFFFFFFFCu, ClusterType.Invalid)]
+    [InlineData(0xFFFFFFFEu, ClusterType.Invalid)]
     [InlineData(0xFFFFFFFFu, ClusterType.EndOfChain)]
     [InlineData(2u, ClusterType.Data)]
-    [InlineData(0x0FFFFFF8u, ClusterType.Data)]
-    [InlineData(0xFFFFFFF6u, ClusterType.Data)]
+    [InlineData(5u, ClusterType.Data)]            // last cluster (ClusterCount + 1)
+    [InlineData(6u, ClusterType.Invalid)]         // past the last cluster
+    [InlineData(0x0FFFFFF8u, ClusterType.Invalid)]
+    [InlineData(0xFFFFFFF6u, ClusterType.Invalid)]
     public void ExFat_ClassifiesSpecialValues(uint value, ClusterType expected)
     {
         var (_, fat) = CreateExFat();
         Assert.Equal(expected, fat.GetClusterType(value));
-        Assert.Equal(expected != ClusterType.Data, fat.IsEndOfChainMarker(value));
+        Assert.Equal(expected == ClusterType.EndOfChain, fat.IsEndOfChainMarker(value));
     }
 
-    [Theory]
-    [InlineData(0u)]
-    [InlineData(1u)]
-    [InlineData(0xFFFFFFF7u)]
-    [InlineData(0xFFFFFFF8u)]
-    [InlineData(0xFFFFFFFFu)]
-    public void ExFat_ChainStopsAtTerminator(uint terminator)
+    [Fact]
+    public void ExFat_ChainStopsAtEndOfChain()
     {
         var (image, fat) = CreateExFat();
         SetExFatEntry(image, 2, 3);
         SetExFatEntry(image, 3, 5);
-        SetExFatEntry(image, 5, terminator);
+        SetExFatEntry(image, 5, 0xFFFFFFFF);
 
         Assert.Equal(new uint[] { 2, 3, 5 }, fat.GetClusterChain(2));
         Assert.Equal(3u, fat.GetNextCluster(2));
         Assert.Null(fat.GetNextCluster(5));
     }
 
-    [Fact]
-    public void ExFat_ChainFollowsLargeNonMarkerValue()
+    [Theory]
+    [InlineData(0u)]          // free
+    [InlineData(1u)]          // invalid
+    [InlineData(0xFFFFFFF7u)] // bad
+    [InlineData(0xFFFFFFF8u)] // invalid
+    [InlineData(0xFFFFFFFEu)] // invalid
+    [InlineData(6u)]          // first index past ClusterCount + 2
+    [InlineData(100u)]        // inside the FAT sector's slack, past the volume's clusters
+    [InlineData(0xFFFFFFF6u)] // far out of range
+    public void ExFat_ChainThrowsOnInvalidLink(uint value)
     {
         var (image, fat) = CreateExFat();
-        SetExFatEntry(image, 2, 0xFFFFFFF6);
-        Assert.Equal(0xFFFFFFF6u, fat.GetNextCluster(2));
+        SetExFatEntry(image, 2, 3);
+        SetExFatEntry(image, 3, value);
+
+        Assert.Throws<InvalidDataException>(() => fat.GetClusterChain(2));
+        Assert.Throws<InvalidDataException>(() => fat.GetNextCluster(3));
+    }
+
+    [Theory]
+    [InlineData(0u)]
+    [InlineData(1u)]
+    [InlineData(6u)]
+    public void ExFat_ChainThrowsOnInvalidFirstCluster(uint first)
+    {
+        var (_, fat) = CreateExFat();
+        Assert.Throws<InvalidDataException>(() => fat.GetClusterChain(first));
     }
 
     [Fact]

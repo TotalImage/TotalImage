@@ -867,7 +867,8 @@ namespace TotalImage.FileSystems.FAT
             stream.Position = entryOffset;
             stream.WriteByte(0xE5);
 
-            fat.FreeClusterChain(entry.Value.FirstClusterOfFile);
+            if (entry.Value.FirstClusterOfFile >= 2)
+                fat.FreeClusterChain(entry.Value.FirstClusterOfFile);
         }
 
         /// <summary>

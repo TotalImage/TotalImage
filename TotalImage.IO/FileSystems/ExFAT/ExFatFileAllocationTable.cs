@@ -48,15 +48,15 @@ public class ExFatFileAllocationTable : FileAllocationTableBase
     }
 
     /// <summary>
-    /// Determines the type of an exFAT cluster map value. 0 is free, 1 is reserved, 0xFFFFFFF7 is bad,
-    /// 0xFFFFFFF8 and above are end-of-chain; everything else points to a data cluster.
+    /// Classifies an exFAT cluster map value. 0xFFFFFFF7 is bad, 0xFFFFFFFF is end-of-chain and
+    /// 2 to <see cref="FileAllocationTableBase.Length"/> - 1 is a data cluster pointer; every other value
+    /// (0, 1, pointers past the last cluster, 0xFFFFFFF8–0xFFFFFFFE) is invalid.
     /// </summary>
     public override ClusterType GetClusterType(uint value) => value switch
     {
-        0 => ClusterType.Free,
-        1 => ClusterType.NonFree,
         0xFFFF_FFF7 => ClusterType.Bad,
-        >= 0xFFFF_FFF8 => ClusterType.EndOfChain,
-        _ => ClusterType.Data
+        0xFFFF_FFFF => ClusterType.EndOfChain,
+        _ when value >= 2 && value < Length => ClusterType.Data,
+        _ => ClusterType.Invalid
     };
 }

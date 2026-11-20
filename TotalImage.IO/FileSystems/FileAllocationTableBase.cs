@@ -23,7 +23,9 @@ public abstract class FileAllocationTableBase : IEnumerable<uint>
     public abstract uint Length { get; }
 
     /// <summary>
-    /// Determines the type of a cluster map value.
+    /// Classifies a cluster map value. <see cref="ClusterType.Data"/> is returned only for pointers to
+    /// clusters described by this table (2 to <see cref="Length"/> - 1), so chain walking follows exactly
+    /// the <see cref="ClusterType.Data"/> values and stops at <see cref="ClusterType.EndOfChain"/>.
     /// </summary>
     public abstract ClusterType GetClusterType(uint value);
 
@@ -38,10 +40,10 @@ public abstract class FileAllocationTableBase : IEnumerable<uint>
     public uint this[int index] => GetEntry((uint)index);
 
     /// <summary>
-    /// Determines whether the cluster map value is an end-of-chain marker or a valid pointer to another data cluster.
+    /// Determines whether the cluster map value is an end-of-chain marker.
     /// </summary>
-    public bool IsEndOfChainMarker(uint cluster)
-        => GetClusterType(cluster) != ClusterType.Data;
+    public bool IsEndOfChainMarker(uint value)
+        => GetClusterType(value) == ClusterType.EndOfChain;
 
     /// <summary>
     /// Determines whether a cluster number refers to a cluster described by this table.
@@ -53,20 +55,35 @@ public abstract class FileAllocationTableBase : IEnumerable<uint>
     /// Retrieves the number of the next cluster in a cluster chain.
     /// </summary>
     /// <param name="index">Current cluster</param>
-    /// <returns>The next cluster number if any, otherwise <see langword="null"/>.</returns>
+    /// <returns>The next cluster number, or <see langword="null"/> if the entry is an end-of-chain marker.</returns>
+    /// <exception cref="InvalidDataException">
+    /// The entry is neither an end-of-chain marker nor a pointer to a cluster within the table
+    /// (for example free, bad, reserved or out of range).
+    /// </exception>
     public uint? GetNextCluster(uint index)
     {
         var value = GetEntry(index);
-        return IsEndOfChainMarker(value) ? null : value;
+        return GetClusterType(value) switch
+        {
+            ClusterType.EndOfChain => null,
+            ClusterType.Data => value,
+            var type => throw new InvalidDataException($"Cluster {index} has invalid cluster map value 0x{value:X} ({type}).")
+        };
     }
 
     /// <summary>
     /// Retrieves the full chain of clusters starting with a given cluster.
     /// </summary>
     /// <param name="firstCluster">First cluster in the chain.</param>
-    /// <exception cref="InvalidDataException">The chain is cyclic.</exception>
+    /// <exception cref="InvalidDataException">
+    /// The first cluster is out of range, the chain is cyclic, or it contains a value that is neither
+    /// an end-of-chain marker nor a valid cluster pointer.
+    /// </exception>
     public uint[] GetClusterChain(uint firstCluster)
     {
+        if (!IsValidCluster(firstCluster))
+            throw new InvalidDataException($"First cluster {firstCluster} is outside the allocation table.");
+
         var clusters = new List<uint>();
         var visited = new HashSet<uint>();
         var cluster = (uint?)firstCluster;

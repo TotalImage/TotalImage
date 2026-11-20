@@ -39,28 +39,20 @@ public abstract class FileAllocationTable : FileAllocationTableBase
     }
 
     /// <summary>
-    /// Determines the type of a cluster map value.
+    /// Classifies a FAT cluster map value following the FAT specification, where MAX is the highest
+    /// cluster number in the table (<see cref="FileAllocationTableBase.Length"/> - 1): 0 is free,
+    /// 2 to MAX is a data cluster pointer, MAX+1 to xF6 (reserved, must not be used) is invalid,
+    /// xF7 is bad and xF8–xFF are end-of-chain. 1 is not defined by the specification; DOS writes it temporarily while building
+    /// a chain, so it only appears on disk after an interrupted allocation.
     /// </summary>
-    public override ClusterType GetClusterType(uint cluster)
+    public override ClusterType GetClusterType(uint cluster) => cluster switch
     {
-        if (cluster > Mask - 0x10)
-        {
-            if ((cluster & 0xF) == 7)
-                return ClusterType.Bad;
-            if ((cluster & 0xF) > 7)
-                return ClusterType.EndOfChain;
-            
-            return ClusterType.Reserved;
-        }
-        else if (cluster < 2)
-        {
-            if (cluster == 0)
-                return ClusterType.Free;
-            if (cluster == 1)
-                return ClusterType.NonFree;
-        }
-
-        return ClusterType.Data;
-    }
+        0 => ClusterType.Free,
+        1 => ClusterType.NonFree,
+        _ when cluster == Mask - 0x8 => ClusterType.Bad,
+        _ when cluster >= Mask - 0x7 && cluster <= Mask => ClusterType.EndOfChain,
+        _ when cluster < Length => ClusterType.Data,
+        _ => ClusterType.Invalid
+    };
 
 }
