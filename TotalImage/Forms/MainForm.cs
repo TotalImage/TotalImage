@@ -17,6 +17,12 @@ using TotalImage.Containers.Anex86;
 using TotalImage.Containers.TAP;
 using TotalImage.Controls;
 using TotalImage.Dialogs;
+using TotalImage.Services;
+using TotalImage.ViewModels.Extraction;
+using TotalImage.ViewModels.Formatting;
+using TotalImage.ViewModels.Services;
+using TotalImage.ViewModels.Settings;
+using TotalImage.ViewModels.Sorting;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using TiDirectory = TotalImage.FileSystems.Directory;
@@ -74,8 +80,16 @@ namespace TotalImage.Forms
         private char _lastTypeAheadChar = '\0';
         private int _lastTypeAheadIndex = -1;
 
-        public MainForm()
+        private readonly ISettingsService settings;
+        private readonly ITempDirectoryService tempDirectory;
+        private readonly UIStateService uiState;
+
+        public MainForm(ISettingsService settings, ITempDirectoryService tempDirectory, UIStateService uiState)
         {
+            this.settings = settings;
+            this.tempDirectory = tempDirectory;
+            this.uiState = uiState;
+
             InitializeComponent();
 
             //Scale the ImageList images according to current Dpi scale
@@ -90,8 +104,8 @@ namespace TotalImage.Forms
         private void frmMain_Load(object sender, EventArgs e)
         {
             //This fixes the problem of certain settings values not being returned correctly when using high DPI. Go figure...
-            Settings.ReloadSettings();
-            Settings.ReloadUIState();
+            settings.Reload();
+            uiState.Reload();
 
             SyncUIOptions();
             SyncWindowState();
@@ -179,7 +193,7 @@ namespace TotalImage.Forms
         //Shows current image information
         private void imageInformation_Click(object sender, EventArgs e)
         {
-            using ImageInfoDialog dlg = new();
+            using ImageInfoDialog dlg = new(settings);
             dlg.ShowDialog();
         }
 
@@ -204,7 +218,7 @@ namespace TotalImage.Forms
                 });
 
                 //Remove the non-working entry
-                Settings.RemoveRecentImage(imagePath);
+                settings.RemoveRecentImage(imagePath);
                 PopulateRecentList();
                 return;
             }
@@ -305,25 +319,25 @@ namespace TotalImage.Forms
         private void viewLargeIcons_Click(object sender, EventArgs e)
         {
             lstFiles.View = View.LargeIcon;
-            Settings.CurrentSettings.FilesView = View.LargeIcon;
+            settings.Current.FilesView = ViewMode.LargeIcon;
         }
 
         private void viewSmallIcons_Click(object sender, EventArgs e)
         {
             lstFiles.View = View.SmallIcon;
-            Settings.CurrentSettings.FilesView = View.SmallIcon;
+            settings.Current.FilesView = ViewMode.SmallIcon;
         }
 
         private void viewList_Click(object sender, EventArgs e)
         {
             lstFiles.View = View.List;
-            Settings.CurrentSettings.FilesView = View.List;
+            settings.Current.FilesView = ViewMode.List;
         }
 
         private void viewDetails_Click(object sender, EventArgs e)
         {
             lstFiles.View = View.Details;
-            Settings.CurrentSettings.FilesView = View.Details;
+            settings.Current.FilesView = ViewMode.Details;
         }
 
         //Deletes a file or folder
@@ -367,11 +381,11 @@ namespace TotalImage.Forms
                     itemCount += $"{fileCount} file{(fileCount == 1 ? "" : "s")}";
                 }
 
-                if (Settings.CurrentSettings.ConfirmDeletion)
+                if (settings.Current.ConfirmDeletion)
                 {
                     TaskDialogPage page = new()
                     {
-                        Text = $"Are you sure you want to delete {itemCount} occupying {Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)}?{Environment.NewLine}" +
+                        Text = $"Are you sure you want to delete {itemCount} occupying {settings.Current.SizeUnit.FormatSize(selectedSize)}?{Environment.NewLine}" +
                         $"You might still be able to undo this operation later.",
                         Heading = $"{SelectedItems.Count()} item{(SelectedItems.Count() > 1 ? "s" : "")} will be deleted",
                         Caption = "Deletion",
@@ -395,7 +409,7 @@ namespace TotalImage.Forms
                     TaskDialogButton result = TaskDialog.ShowDialog(this, page);
 
                     if (page.Verification.Checked)
-                        Settings.CurrentSettings.ConfirmDeletion = false;
+                        settings.Current.ConfirmDeletion = false;
 
                     if (result == TaskDialogButton.No)
                         return;
@@ -411,7 +425,7 @@ namespace TotalImage.Forms
             }
             else if (lstDirectories.Focused && ((TiDirectory)lstDirectories.SelectedNode.Tag).Parent is not null)
             {
-                if (Settings.CurrentSettings.ConfirmDeletion)
+                if (settings.Current.ConfirmDeletion)
                 {
                     TaskDialogPage page = new()
                     {
@@ -437,7 +451,7 @@ namespace TotalImage.Forms
                     TaskDialogButton result = TaskDialog.ShowDialog(this, page);
 
                     if (page.Verification.Checked)
-                        Settings.CurrentSettings.ConfirmDeletion = false;
+                        settings.Current.ConfirmDeletion = false;
 
                     if (result == TaskDialogButton.No)
                         return;
@@ -620,7 +634,7 @@ namespace TotalImage.Forms
                     image.PendingChanges.Changed -= OnPendingChangesChanged;
                     image.SaveImage(sfd.FileName);
 
-                    if (System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(sfd.FileName), @"\d+$").Success && Settings.CurrentSettings.AutoIncrementFilename)
+                    if (System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(sfd.FileName), @"\d+$").Success && settings.Current.AutoIncrementFilename)
                     {
                         lastSavedFilename = Path.GetFileName(sfd.FileName);
                     }
@@ -632,7 +646,7 @@ namespace TotalImage.Forms
                     filepath = sfd.FileName;
                     filename = Path.GetFileName(filepath);
 
-                    Settings.AddRecentImage(filepath);
+                    settings.AddRecentImage(filepath);
                     PopulateRecentList();
                     unsavedChanges = false;
                     saveToolStripButton.Enabled = false;
@@ -692,19 +706,19 @@ namespace TotalImage.Forms
         private void toggleCommandBar_Click(object sender, EventArgs e)
         {
             commandBar.Visible = !commandBar.Visible;
-            Settings.CurrentSettings.ShowCommandBar = commandBar.Visible;
+            settings.Current.ShowCommandBar = commandBar.Visible;
         }
 
         private void toggleDirectoryTree_Click(object sender, EventArgs e)
         {
             splitContainer.Panel1Collapsed = !splitContainer.Panel1Collapsed;
-            Settings.CurrentSettings.ShowDirectoryTree = !splitContainer.Panel1Collapsed;
+            settings.Current.ShowDirectoryTree = !splitContainer.Panel1Collapsed;
         }
 
         private void toggleStatusBar_Click(object sender, EventArgs e)
         {
             statusBar.Visible = !statusBar.Visible;
-            Settings.CurrentSettings.ShowStatusBar = statusBar.Visible;
+            settings.Current.ShowStatusBar = statusBar.Visible;
         }
 
         //TODO: Implement the "save changes first" code path
@@ -783,21 +797,21 @@ namespace TotalImage.Forms
                 }
             }
 
-            if (Settings.CurrentSettings.ExtractAlwaysAsk)
+            if (settings.Current.ExtractAlwaysAsk)
             {
-                using ExtractDialog dlg = new();
+                using ExtractDialog dlg = new(settings);
                 dlg.lblPath.Text = $"Extract {(lstDirectories.Focused ? "1" : SelectedItems.Count())} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    Settings.CurrentSettings.DefaultExtractPath = dlg.TargetPath;
+                    settings.Current.DefaultExtractPath = dlg.TargetPath;
 
                     if (lstFiles.Focused)
                     {
-                        FileExtraction.ExtractFiles(this, SelectedItems, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
+                        FileExtraction.ExtractFiles(this, settings.Current, SelectedItems, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
                     }
                     else if (lstDirectories.Focused)
                     {
-                        FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag }, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
+                        FileExtraction.ExtractFiles(this, settings.Current, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag }, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
                     }
                 }
             }
@@ -805,11 +819,11 @@ namespace TotalImage.Forms
             {
                 if (lstFiles.Focused)
                 {
-                    FileExtraction.ExtractFiles(this, SelectedItems);
+                    FileExtraction.ExtractFiles(this, settings.Current, SelectedItems);
                 }
                 else if (lstDirectories.Focused)
                 {
-                    FileExtraction.ExtractFiles(this, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag });
+                    FileExtraction.ExtractFiles(this, settings.Current, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag });
                 }
             }
         }
@@ -888,15 +902,15 @@ namespace TotalImage.Forms
             }
 
             largeIconsToolStripMenuItem2.Checked = smallIconsToolStripMenuItem2.Checked = detailsToolStripMenuItem2.Checked = listToolStripMenuItem2.Checked = false;
-            switch (Settings.CurrentSettings.FilesView)
+            switch (settings.Current.FilesView)
             {
-                case View.LargeIcon: largeIconsToolStripMenuItem2.Checked = true; break;
-                case View.SmallIcon: smallIconsToolStripMenuItem2.Checked = true; break;
-                case View.Details: detailsToolStripMenuItem2.Checked = true; break;
-                case View.List: listToolStripMenuItem2.Checked = true; break;
+                case ViewMode.LargeIcon: largeIconsToolStripMenuItem2.Checked = true; break;
+                case ViewMode.SmallIcon: smallIconsToolStripMenuItem2.Checked = true; break;
+                case ViewMode.Details: detailsToolStripMenuItem2.Checked = true; break;
+                case ViewMode.List: listToolStripMenuItem2.Checked = true; break;
             }
 
-            showHiddenObjectsToolStripMenuItem2.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem2.Checked = settings.Current.ShowHiddenItems;
 
             newFolderToolStripMenuItem2.Enabled = true;
             extractToolStripMenuItem2.Enabled = true;
@@ -939,14 +953,14 @@ namespace TotalImage.Forms
 
         private void settings_Click(object sender, EventArgs e)
         {
-            using SettingsDialog dlg = new();
+            using SettingsDialog dlg = new(settings, tempDirectory);
             DialogResult result = dlg.ShowDialog();
             if (result == DialogResult.OK)
             {
                 SyncUIOptions();
                 ResetView();
                 UpdateStatusBar(true);
-                if (!Settings.CurrentSettings.AutoIncrementFilename)
+                if (!settings.Current.AutoIncrementFilename)
                     lastSavedFilename = null;
             }
             else if (result == DialogResult.Cancel)
@@ -1000,7 +1014,7 @@ namespace TotalImage.Forms
                 return;
             }
 
-            using PropertiesDialog dlg = new(entries);
+            using PropertiesDialog dlg = new(entries, settings);
             dlg.ShowDialog();
         }
 
@@ -1025,11 +1039,11 @@ namespace TotalImage.Forms
                     catch { /* best effort */ }
                 }
 
-                if (Settings.CurrentSettings.ConfirmInjection)
+                if (settings.Current.ConfirmInjection)
                 {
                     TaskDialogPage page = new()
                     {
-                        Text = $"Are you sure you want to inject {fileCount} file{(fileCount == 1 ? "" : "s")} occupying {Settings.CurrentSettings.SizeUnit.FormatSize(totalSize)} into the image?",
+                        Text = $"Are you sure you want to inject {fileCount} file{(fileCount == 1 ? "" : "s")} occupying {settings.Current.SizeUnit.FormatSize(totalSize)} into the image?",
                         Heading = $"{fileCount} file{(fileCount == 1 ? "" : "s")} will be injected",
                         Caption = "Injection",
                         Buttons =
@@ -1046,7 +1060,7 @@ namespace TotalImage.Forms
                     TaskDialogButton result = TaskDialog.ShowDialog(this, page);
 
                     if (page.Verification.Checked)
-                        Settings.CurrentSettings.ConfirmInjection = false;
+                        settings.Current.ConfirmInjection = false;
 
                     if (result == TaskDialogButton.No)
                         return;
@@ -1057,7 +1071,7 @@ namespace TotalImage.Forms
                     foreach (string hostPath in ofd.FileNames)
                     {
                         using var stream = new FileStream(hostPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                        var source = FileDataSource.Create(stream, Settings.TempDir, Settings.CurrentSettings.MemoryMappingThreshold);
+                        var source = FileDataSource.Create(stream, tempDirectory.Root, settings.Current.MemoryMappingThreshold);
                         var now = DateTime.Now;
                         var attrs = FatAttributes.Archive;
                         targetFatDir.EnqueueAddFile(Path.GetFileName(hostPath), source, attrs, now, now, now);
@@ -1069,7 +1083,7 @@ namespace TotalImage.Forms
                     foreach (string hostPath in ofd.FileNames)
                     {
                         using var stream = new FileStream(hostPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                        var source = FileDataSource.Create(stream, Settings.TempDir, Settings.CurrentSettings.MemoryMappingThreshold);
+                        var source = FileDataSource.Create(stream, tempDirectory.Root, settings.Current.MemoryMappingThreshold);
                         var now = DateTime.Now;
                         var destPath = dirComponents.Append(Path.GetFileName(hostPath)).ToArray();
                         image.PendingChanges.Add(new Changes.AddFileChange(
@@ -1175,11 +1189,11 @@ namespace TotalImage.Forms
                 }
                 else //A file was double-clicked - extract to temp dir then open it
                 {
-                    tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
+                    tempDir = tempDirectory.GetUniqueSubdirectoryPath();
                     var selected = SelectedItems.ToArray();
                     string targetFile = Path.Combine(tempDir, selected.First().Name);
 
-                    FileExtraction.ExtractFilesToTemporaryDirectory(this, selected, DirectoryExtractionMode.Skip);
+                    FileExtraction.ExtractFilesToTemporaryDirectory(this, settings.Current, selected, DirectoryExtractionMode.Skip);
 
                     try
                     {
@@ -1290,11 +1304,11 @@ namespace TotalImage.Forms
 
         private void showHiddenItems_Click(object sender, EventArgs e)
         {
-            Settings.CurrentSettings.ShowHiddenItems = !Settings.CurrentSettings.ShowHiddenItems;
+            settings.Current.ShowHiddenItems = !settings.Current.ShowHiddenItems;
 
-            showHiddenObjectsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
-            showHiddenObjectsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowHiddenItems;
-            showHiddenObjectsToolStripMenuItem2.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem.Checked = settings.Current.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem1.Checked = settings.Current.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem2.Checked = settings.Current.ShowHiddenItems;
 
             ResetView();
         }
@@ -1305,7 +1319,7 @@ namespace TotalImage.Forms
         {
             if (e.Button == MouseButtons.Left && e.Item is not null)
             {
-                tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
+                tempDir = tempDirectory.GetUniqueSubdirectoryPath();
                 if (!Directory.Exists(tempDir))
                 {
                     Directory.CreateDirectory(tempDir);
@@ -1340,7 +1354,7 @@ namespace TotalImage.Forms
         {
             if (e.Button == MouseButtons.Left && e.Item is not null)
             {
-                tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
+                tempDir = tempDirectory.GetUniqueSubdirectoryPath();
                 if (!Directory.Exists(tempDir))
                 {
                     Directory.CreateDirectory(tempDir);
@@ -1353,7 +1367,7 @@ namespace TotalImage.Forms
                 {
                     /* Add the root dir contents (non-recursively) to the list instead of the tempdir itself, so Explorer doesn't end up moving it
                      * instead of the contents. */
-                    foreach (var fso in draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems))
+                    foreach (var fso in draggedDir.EnumerateFileSystemObjects(settings.Current.ShowHiddenItems))
                     {
                         items.Add(Path.Combine(tempDir, fso.Name));
                     }
@@ -1401,19 +1415,16 @@ namespace TotalImage.Forms
                 }
             }
 
-            Settings.Save();
+            settings.Save();
             SetUIState();
-            Settings.SaveUIState();
+            uiState.Save();
 
             //Try to clear the temp folder if this is the only instance
             if (Process.GetProcessesByName("TotalImage").Length == 1)
             {
                 try
                 {
-                    if (Directory.Exists(Settings.TempDir))
-                        Directory.Delete(Settings.TempDir, true);
-
-                    Directory.CreateDirectory(Settings.TempDir);
+                    tempDirectory.Clear();
                 }
                 catch (Exception)
                 {
@@ -1436,19 +1447,19 @@ namespace TotalImage.Forms
             }
 
             largeIconsToolStripMenuItem.Checked = smallIconsToolStripMenuItem.Checked = detailsToolStripMenuItem.Checked = listToolStripMenuItem.Checked = false;
-            switch (Settings.CurrentSettings.FilesView)
+            switch (settings.Current.FilesView)
             {
-                case View.LargeIcon: largeIconsToolStripMenuItem.Checked = true; break;
-                case View.SmallIcon: smallIconsToolStripMenuItem.Checked = true; break;
-                case View.Details: detailsToolStripMenuItem.Checked = true; break;
-                case View.List: listToolStripMenuItem.Checked = true; break;
+                case ViewMode.LargeIcon: largeIconsToolStripMenuItem.Checked = true; break;
+                case ViewMode.SmallIcon: smallIconsToolStripMenuItem.Checked = true; break;
+                case ViewMode.Details: detailsToolStripMenuItem.Checked = true; break;
+                case ViewMode.List: listToolStripMenuItem.Checked = true; break;
             }
 
             commandBarToolStripMenuItem.Checked = commandBar.Visible;
             directoryTreeToolStripMenuItem.Checked = !splitContainer.Panel1Collapsed;
             statusBarToolStripMenuItem.Checked = statusBar.Visible;
 
-            showHiddenObjectsToolStripMenuItem.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem.Checked = settings.Current.ShowHiddenItems;
 
             expandDirectoryTreeToolStripMenuItem.Enabled = image is not null && lstDirectories.Nodes[0].Nodes.Count > 0;
             collapseDirectoryTreeToolStripMenuItem.Enabled = image is not null && lstDirectories.Nodes[0].Nodes.Count > 0;
@@ -1464,15 +1475,15 @@ namespace TotalImage.Forms
         private void viewToolStripButton_DropDownOpening(object sender, EventArgs e)
         {
             largeIconsToolStripMenuItem1.Checked = smallIconsToolStripMenuItem1.Checked = detailsToolStripMenuItem1.Checked = listToolStripMenuItem1.Checked = false;
-            switch (Settings.CurrentSettings.FilesView)
+            switch (settings.Current.FilesView)
             {
-                case View.LargeIcon: largeIconsToolStripMenuItem1.Checked = true; break;
-                case View.SmallIcon: smallIconsToolStripMenuItem1.Checked = true; break;
-                case View.Details: detailsToolStripMenuItem1.Checked = true; break;
-                case View.List: listToolStripMenuItem1.Checked = true; break;
+                case ViewMode.LargeIcon: largeIconsToolStripMenuItem1.Checked = true; break;
+                case ViewMode.SmallIcon: smallIconsToolStripMenuItem1.Checked = true; break;
+                case ViewMode.Details: detailsToolStripMenuItem1.Checked = true; break;
+                case ViewMode.List: listToolStripMenuItem1.Checked = true; break;
             }
 
-            showHiddenObjectsToolStripMenuItem1.Checked = Settings.CurrentSettings.ShowHiddenItems;
+            showHiddenObjectsToolStripMenuItem1.Checked = settings.Current.ShowHiddenItems;
         }
 
         private void sortMenu_DropDownOpening(object sender, EventArgs e)
@@ -1494,7 +1505,7 @@ namespace TotalImage.Forms
             if (image is null)
                 return;
 
-            SelectPartitionDialog dlg = new()
+            SelectPartitionDialog dlg = new(settings)
             {
                 PartitionTable = image.PartitionTable
             };
@@ -1556,10 +1567,10 @@ namespace TotalImage.Forms
                     }
                     else
                     {
-                        tempDir = Path.Combine(Settings.TempDir, GetRandomDirName());
+                        tempDir = tempDirectory.GetUniqueSubdirectoryPath();
                         string targetFile = Path.Combine(tempDir, SelectedItems.First().Name);
 
-                        FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Skip);
+                        FileExtraction.ExtractFilesToTemporaryDirectory(this, settings.Current, SelectedItems, DirectoryExtractionMode.Skip);
 
                         ProcessStartInfo psi = new()
                         {
@@ -1860,14 +1871,14 @@ namespace TotalImage.Forms
                     //Here is where the actual extraction to the temp dir happens
                     if (sender is ListView)
                     {
-                        extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, SelectedItems, DirectoryExtractionMode.Preserve);
+                        extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, settings.Current, SelectedItems, DirectoryExtractionMode.Preserve);
                     }
                     else if (sender is TreeView && draggedDir is not null)
                     {
                         if (draggedDir.Parent is null) //Root dir needs to be treated separately
-                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, draggedDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems), DirectoryExtractionMode.Preserve);
+                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, settings.Current, draggedDir.EnumerateFileSystemObjects(settings.Current.ShowHiddenItems), DirectoryExtractionMode.Preserve);
                         else
-                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, new TiFileSystemObject[] { draggedDir }, DirectoryExtractionMode.Preserve);
+                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, settings.Current, new TiFileSystemObject[] { draggedDir }, DirectoryExtractionMode.Preserve);
                     }
 
                     //User cancelled extraction via the dialog, so the drop needs to be cancelled too or Explorer will try to move items that don't exist
@@ -2118,19 +2129,19 @@ namespace TotalImage.Forms
         //Sets the CurrentUIState to what the current state of UI is
         private void SetUIState()
         {
-            Settings.CurrentUIState.SplitterDistance = splitContainer.SplitterDistance;
+            uiState.Current.SplitterDistance = splitContainer.SplitterDistance;
 
             if (WindowState != FormWindowState.Minimized)
             {
-                Settings.CurrentUIState.WindowPosition = Location;
-                Settings.CurrentUIState.WindowState = WindowState;
-                Settings.CurrentUIState.WindowSize = Size;
+                uiState.Current.WindowPosition = Location;
+                uiState.Current.WindowState = WindowState;
+                uiState.Current.WindowSize = Size;
             }
 
             foreach (ColumnHeader col in lstFiles.Columns)
             {
-                Settings.CurrentUIState.MWColumnOrder[col.Index] = col.DisplayIndex;
-                Settings.CurrentUIState.MWColumnWidth[col.Index] = col.Width;
+                uiState.Current.MWColumnOrder[col.Index] = col.DisplayIndex;
+                uiState.Current.MWColumnWidth[col.Index] = col.Width;
             }
         }
 
@@ -2176,7 +2187,7 @@ namespace TotalImage.Forms
             dir = (TiDirectory)dir.ResolveTarget();
             var dirPathComponents = GetDirectoryPathComponents(dir);
 
-            foreach (var subdir in dir.EnumerateDirectories(Settings.CurrentSettings.ShowHiddenItems))
+            foreach (var subdir in dir.EnumerateDirectories(settings.Current.ShowHiddenItems))
             {
                 var subnode = new TreeNode(subdir.Name);
 
@@ -2298,7 +2309,7 @@ namespace TotalImage.Forms
 
             var dirPathComponents = GetDirectoryPathComponents(dir);
 
-            foreach (var fso in dir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems))
+            foreach (var fso in dir.EnumerateFileSystemObjects(settings.Current.ShowHiddenItems))
             {
                 var item = new ListViewItem();
                 item.Text = fso.Name;
@@ -2307,9 +2318,9 @@ namespace TotalImage.Forms
                 string size = string.Empty;
                 if (fso is TiDirectory subdir)
                 {
-                    if (Settings.CurrentSettings.FileListShowDirSize)
+                    if (settings.Current.FileListShowDirSize)
                     {
-                        size = Settings.CurrentSettings.SizeUnit.FormatSize(subdir.GetSize(true, false));
+                        size = settings.Current.SizeUnit.FormatSize(subdir.GetSize(true, false));
                         item.SubItems.Add(size);
                     }
                     else
@@ -2319,7 +2330,7 @@ namespace TotalImage.Forms
                 }
                 else
                 {
-                    size = Settings.CurrentSettings.SizeUnit.FormatSize(fso.Length);
+                    size = settings.Current.SizeUnit.FormatSize(fso.Length);
                     item.SubItems.Add(size);
                 }
 
@@ -2384,7 +2395,7 @@ namespace TotalImage.Forms
                         pendingDir = add.DestinationPath[..^1];
                         pendingName = add.DestinationPath[^1];
                         pendingLength = (ulong)add.Source.Length;
-                        sizeText = Settings.CurrentSettings.SizeUnit.FormatSize(pendingLength);
+                        sizeText = settings.Current.SizeUnit.FormatSize(pendingLength);
                         lastWrite = add.LastWriteTime;
                     }
                     else if (change is CreateDirectoryChange create && create.Path.Length > 0)
@@ -2518,7 +2529,7 @@ namespace TotalImage.Forms
                 try
                 {
                     //Disable this for now until it's properly implemented
-                    bool memoryMapping = false; //fileinfo.Length > Settings.CurrentSettings.MemoryMappingThreshold;
+                    bool memoryMapping = false; //fileinfo.Length > settings.Current.MemoryMappingThreshold;
 
                     //We're hardcoded for supported file extensions currently. This should probably be revisited at some point to see if
                     //there's a better way to handle weird extensions for supported container types etc.
@@ -2613,7 +2624,7 @@ namespace TotalImage.Forms
                 }
             }
 
-            Settings.AddRecentImage(filepath);
+            settings.AddRecentImage(filepath);
             PopulateRecentList();
 
             CurrentPartitionIndex = 0;
@@ -2644,7 +2655,7 @@ namespace TotalImage.Forms
 
                 var label = image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ');
                 var fs = image.PartitionTable.Partitions[0].FileSystem.DisplayName;
-                var length = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length);
+                var length = settings.Current.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length);
 
                 selectPartitionToolStripComboBox.Items.Add($"{label} ({fs}, {length})");
                 selectPartitionToolStripComboBox.SelectedIndex = 0;
@@ -2702,7 +2713,7 @@ namespace TotalImage.Forms
                         return;
                     }
 
-                    SelectPartitionDialog selectFrm = new()
+                    SelectPartitionDialog selectFrm = new(settings)
                     {
                         PartitionTable = image.PartitionTable
                     };
@@ -2746,7 +2757,7 @@ namespace TotalImage.Forms
 
                         var label = image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ');
                         var fs = image.PartitionTable.Partitions[i].FileSystem.DisplayName;
-                        var length = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length);
+                        var length = settings.Current.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length);
 
                         selectPartitionToolStripComboBox.Items.Add($"{(image.PartitionTable.Partitions.Count > 1 ? i + ": " : string.Empty)}{label} ({fs}, {length})");
 
@@ -2807,7 +2818,7 @@ namespace TotalImage.Forms
 
             var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
 
-            if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
+            if (settings.Current.QueryShellForFileTypeInfo)
             {
                 return ShellInterop.GetFileTypeName(filename, attributes);
             }
@@ -2826,7 +2837,7 @@ namespace TotalImage.Forms
         {
             string key;
 
-            if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
+            if (settings.Current.QueryShellForFileTypeInfo)
             {
                 var index = ShellInterop.GetFileTypeIconIndex(filename, attributes);
                 key = index.ToString();
@@ -2874,10 +2885,10 @@ namespace TotalImage.Forms
             //If shell integration is disabled, we use our own icons for file and folder, otherwise we obtain them from the shell
             (string, ImageList, Icon)[] types =
             {
-                ("file", imgFilesSmall, Settings.CurrentSettings.QueryShellForFileTypeInfo ? ShellInterop.SmallFileIcon : Properties.Resources.icon_page_white),
-                ("file", imgFilesLarge, Settings.CurrentSettings.QueryShellForFileTypeInfo ? ShellInterop.LargeFileIcon : Properties.Resources.icon_page_white_32),
-                ("folder", imgFilesSmall, Settings.CurrentSettings.QueryShellForFileTypeInfo ? ShellInterop.SmallFolderIcon : Properties.Resources.icon_folder),
-                ("folder", imgFilesLarge, Settings.CurrentSettings.QueryShellForFileTypeInfo ? ShellInterop.LargeFolderIcon : Properties.Resources.icon_folder_32)
+                ("file", imgFilesSmall, settings.Current.QueryShellForFileTypeInfo ? ShellInterop.SmallFileIcon : Properties.Resources.icon_page_white),
+                ("file", imgFilesLarge, settings.Current.QueryShellForFileTypeInfo ? ShellInterop.LargeFileIcon : Properties.Resources.icon_page_white_32),
+                ("folder", imgFilesSmall, settings.Current.QueryShellForFileTypeInfo ? ShellInterop.SmallFolderIcon : Properties.Resources.icon_folder),
+                ("folder", imgFilesLarge, settings.Current.QueryShellForFileTypeInfo ? ShellInterop.LargeFolderIcon : Properties.Resources.icon_folder_32)
             };
 
             //Also create a hidden variant for every icon above
@@ -3024,19 +3035,19 @@ namespace TotalImage.Forms
         {
             recentFilesToolStripMenuItem.DropDownItems.Clear();
 
-            for (int i = Settings.CurrentSettings.RecentImages.Count - 1; i >= 0; i--)
+            for (int i = settings.Current.RecentImages.Count - 1; i >= 0; i--)
             {
                 //Remove any bogus entries
-                if (string.IsNullOrWhiteSpace(Settings.CurrentSettings.RecentImages[i]))
+                if (string.IsNullOrWhiteSpace(settings.Current.RecentImages[i]))
                 {
-                    Settings.RemoveRecentImage(Settings.CurrentSettings.RecentImages[i]);
+                    settings.RemoveRecentImage(settings.Current.RecentImages[i]);
                     continue;
                 }
 
                 ToolStripMenuItem newItem = new()
                 {
-                    Text = $"{Settings.CurrentSettings.RecentImages.Count - i}: {Settings.CurrentSettings.RecentImages[i]}",
-                    Tag = Settings.CurrentSettings.RecentImages[i]
+                    Text = $"{settings.Current.RecentImages.Count - i}: {settings.Current.RecentImages[i]}",
+                    Tag = settings.Current.RecentImages[i]
                 };
                 newItem.Click += recentImage_Click;
                 recentFilesToolStripMenuItem.DropDownItems.Add(newItem);
@@ -3118,38 +3129,38 @@ namespace TotalImage.Forms
             // Perform the sort with these new sort options.
             SortListView();
 
-            Settings.CurrentSettings.FilesSortingColumn = column;
-            Settings.CurrentSettings.FilesSortOrder = sortOrder;
+            settings.Current.FilesSortingColumn = column;
+            settings.Current.FilesSortOrder = sortOrder.ToSortDirection();
         }
 
         private void SyncWindowState()
         {
-            WindowState = Settings.CurrentUIState.WindowState;
-            Location = Settings.CurrentUIState.WindowPosition;
-            Size = Settings.CurrentUIState.WindowSize;
-            splitContainer.SplitterDistance = Settings.CurrentUIState.SplitterDistance;
+            WindowState = uiState.Current.WindowState;
+            Location = uiState.Current.WindowPosition;
+            Size = uiState.Current.WindowSize;
+            splitContainer.SplitterDistance = uiState.Current.SplitterDistance;
 
             foreach (ColumnHeader col in lstFiles.Columns)
             {
-                col.DisplayIndex = Settings.CurrentUIState.MWColumnOrder[col.Index];
-                col.Width = Settings.CurrentUIState.MWColumnWidth[col.Index];
+                col.DisplayIndex = uiState.Current.MWColumnOrder[col.Index];
+                col.Width = uiState.Current.MWColumnWidth[col.Index];
             }
         }
 
         //Syncs the main form UI with the current settings and loaded UI state
         private void SyncUIOptions()
         {
-            lstFiles.View = Settings.CurrentSettings.FilesView;
-            splitContainer.Panel1Collapsed = !Settings.CurrentSettings.ShowDirectoryTree;
-            statusBar.Visible = Settings.CurrentSettings.ShowStatusBar;
-            commandBar.Visible = Settings.CurrentSettings.ShowCommandBar;
-            sortOrder = Settings.CurrentSettings.FilesSortOrder;
-            sortColumn = Settings.CurrentSettings.FilesSortingColumn;
+            lstFiles.View = settings.Current.FilesView.ToWinForms();
+            splitContainer.Panel1Collapsed = !settings.Current.ShowDirectoryTree;
+            statusBar.Visible = settings.Current.ShowStatusBar;
+            commandBar.Visible = settings.Current.ShowCommandBar;
+            sortOrder = settings.Current.FilesSortOrder.ToWinForms();
+            sortColumn = settings.Current.FilesSortingColumn;
 
             lstFiles.SetSortIcon(sortColumn, sortOrder);
             GetDefaultIcons(); //This is needed so that icons update immediately, rather than after a restart of the app
 
-            Settings.CheckRecentImages();
+            settings.RemoveMissingRecentImages();
             PopulateRecentList();
         }
 
@@ -3167,9 +3178,9 @@ namespace TotalImage.Forms
                 //Makes no sense to do this every time selection changes, etc. Only when operations that affect the free space are performed
                 if (updateFreeSpace)
                 {
-                    lblStatusCapacity.Text = $"Partition size: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
+                    lblStatusCapacity.Text = $"Partition size: {settings.Current.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
                     double freeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
-                    lblStatusFreeCapacity.Text = $"Free space: {Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({freeSpacePercentage / 100:p2})";
+                    lblStatusFreeCapacity.Text = $"Free space: {settings.Current.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({freeSpacePercentage / 100:p2})";
                     if (freeSpacePercentage <= 10)
                         pbrStatusCapacity.ProgressBar.SetState(ProgressBarState.Error); // Set the progress bar colour to red.
                     else if (freeSpacePercentage <= 20)
@@ -3193,7 +3204,7 @@ namespace TotalImage.Forms
                             if (updateFreeSpace || !ReferenceEquals(dir, _cachedStatusBarDir))
                             {
                                 _cachedStatusBarDir = dir;
-                                _cachedStatusBarSizeText = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(false, false))} in {dir.CountFiles(false)} item(s)";
+                                _cachedStatusBarSizeText = $"{settings.Current.SizeUnit.FormatSize(dir.GetSize(false, false))} in {dir.CountFiles(false)} item(s)";
                             }
 
                             lblStatusSize.Text = _cachedStatusBarSizeText;
@@ -3205,9 +3216,9 @@ namespace TotalImage.Forms
                             if (item is null) break;
                             lbStatusPath.Text = item.FullName;
                             if (item is TiDirectory dir)
-                                lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(dir.GetSize(true, false))} in 1 item";
+                                lblStatusSize.Text = $"{settings.Current.SizeUnit.FormatSize(dir.GetSize(true, false))} in 1 item";
                             else
-                                lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(item.Length)} in 1 item";
+                                lblStatusSize.Text = $"{settings.Current.SizeUnit.FormatSize(item.Length)} in 1 item";
                             break;
                         }
                     case StatusBarState.MultipleSelected:
@@ -3223,7 +3234,7 @@ namespace TotalImage.Forms
                             }
 
                             lbStatusPath.Text = dir.FullName;
-                            lblStatusSize.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
+                            lblStatusSize.Text = $"{settings.Current.SizeUnit.FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
                             break;
                         }
                 }
@@ -3231,9 +3242,6 @@ namespace TotalImage.Forms
         }
 
         //Generates a random name for a subfolder in the temp folder, used during double-click, ENTER keypress and drag-n-drop extraction
-        private static string GetRandomDirName()
-			=> $"~{Path.GetFileNameWithoutExtension(Path.GetRandomFileName()).ToUpperInvariant()}";
-
         private void ReloadImage()
         {
             string tempPath = filepath;

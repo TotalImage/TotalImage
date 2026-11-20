@@ -7,6 +7,8 @@ using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TotalImage.ViewModels.Extraction;
+using TotalImage.ViewModels.Settings;
 using TotalImage.Forms;
 
 using TiFile = TotalImage.FileSystems.File;
@@ -14,25 +16,6 @@ using TiDirectory = TotalImage.FileSystems.Directory;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
 namespace TotalImage;
-/// <summary>
-/// The directory extraction mode that is used for extracting directories and their contents.
-/// </summary>
-public enum DirectoryExtractionMode
-{
-    /// <summary>
-    /// Skips all directories in the selected objects list.
-    /// </summary>
-    Skip,
-    /// <summary>
-    /// Extracts all directories in the selected objects list and preserves their original structure.
-    /// </summary>
-    Preserve,
-    /// <summary>
-    /// Extracts the contents of all directories in the selected objects list into the same target directory.
-    /// </summary>
-    Merge
-}
-
 public static class FileExtraction
 {
     enum ConfirmOverwriteDialogResult
@@ -86,7 +69,7 @@ public static class FileExtraction
         }
     }
 
-    static async IAsyncEnumerable<(TiFile, string)> EnumerateFilesForExtractionAsync(IEnumerable<TiFileSystemObject> items, string path, DirectoryExtractionMode mode, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    static async IAsyncEnumerable<(TiFile, string)> EnumerateFilesForExtractionAsync(IEnumerable<TiFileSystemObject> items, string path, DirectoryExtractionMode mode, SettingsModel settings, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var files = from x in items where x is TiFile select x as TiFile;
 
@@ -107,13 +90,13 @@ public static class FileExtraction
             {
                 var targetDir = (TiDirectory)dir.ResolveTarget();
                 var children = EnumerateFilesForExtractionAsync(
-                    targetDir.EnumerateFileSystemObjects(Settings.CurrentSettings.ShowHiddenItems),
+                    targetDir.EnumerateFileSystemObjects(settings.ShowHiddenItems),
                     mode switch
                     {
                         DirectoryExtractionMode.Merge => path,
                         DirectoryExtractionMode.Preserve => Path.Combine(path, dir.Name),
                         _ => throw new ArgumentException()
-                    }, mode, cancellationToken);
+                    }, mode, settings, cancellationToken);
 
                 await foreach (var child in children)
                 {
@@ -123,7 +106,7 @@ public static class FileExtraction
         }
     }
 
-    static async Task ExtractFilesAsync(IEnumerable<(TiFile, string)> items, IProgress<(int, string)>? progress = default, CancellationToken cancellationToken = default, Func<string, bool>? confirmOverwriteCallback = default)
+    static async Task ExtractFilesAsync(IEnumerable<(TiFile, string)> items, SettingsModel settings, IProgress<(int, string)>? progress = default, CancellationToken cancellationToken = default, Func<string, bool>? confirmOverwriteCallback = default)
     {
         var i = 0;
         var mutex = new SemaphoreSlim(1, 1);
@@ -157,7 +140,7 @@ public static class FileExtraction
 
                 mutex.Release();
 
-                if (Settings.CurrentSettings.ExtractPreserveDates)
+                if (settings.ExtractPreserveDates)
                 {
                     if (file.CreationTime.HasValue)
                         File.SetCreationTime(path, file.CreationTime.Value);
@@ -169,7 +152,7 @@ public static class FileExtraction
                         File.SetLastWriteTime(path, file.LastWriteTime.Value);
                 }
 
-                if (Settings.CurrentSettings.ExtractPreserveAttributes)
+                if (settings.ExtractPreserveAttributes)
                 {
                     /* NOTE: Windows automatically sets the Archive attribute on all newly created files, so even if the attribute is cleared in the
                      * image, Windows will still automatically set it anyway. Should we perhaps try to work around this by manually clearing it after? */
@@ -179,7 +162,7 @@ public static class FileExtraction
         }
     }
 
-    public static bool ExtractFiles(IWin32Window parentWindow, IEnumerable<TiFileSystemObject> items, string path, DirectoryExtractionMode mode, bool openFolder, bool overwrite = false)
+    public static bool ExtractFiles(IWin32Window parentWindow, SettingsModel settings, IEnumerable<TiFileSystemObject> items, string path, DirectoryExtractionMode mode, bool openFolder, bool overwrite = false)
     {
         var cancellationTokenSource = new CancellationTokenSource();
         var cancelButton = TaskDialogButton.Cancel;
@@ -212,15 +195,15 @@ public static class FileExtraction
 
             try
             {
-                var files = await EnumerateFilesForExtractionAsync(items, path, mode, cancellationTokenSource.Token)
+                var files = await EnumerateFilesForExtractionAsync(items, path, mode, settings, cancellationTokenSource.Token)
                     .ToListAsync(cancellationTokenSource.Token);
 
                 page.ProgressBar.Maximum = files.Count;
                 page.ProgressBar.State = TaskDialogProgressBarState.Normal;
 
-                bool? overwriteAll = overwrite || !Settings.CurrentSettings.ConfirmOverwriteExtraction ? true : null;
+                bool? overwriteAll = overwrite || !settings.ConfirmOverwriteExtraction ? true : null;
 
-                await ExtractFilesAsync(files, progress, cancellationTokenSource.Token, (filename) =>
+                await ExtractFilesAsync(files, settings, progress, cancellationTokenSource.Token, (filename) =>
                 {
                     if (overwriteAll is null)
                         switch (ShowConfirmOverwriteDialog(page.BoundDialog!, filename))
@@ -270,12 +253,12 @@ public static class FileExtraction
         return !cancellationTokenSource.IsCancellationRequested;
     }
 
-    public static bool ExtractFilesToTemporaryDirectory(IWin32Window parentWindow, IEnumerable<TiFileSystemObject> items, DirectoryExtractionMode mode)
-        => ExtractFiles(parentWindow, items, ((MainForm)Application.OpenForms["MainForm"]).tempDir, mode, false, true);
+    public static bool ExtractFilesToTemporaryDirectory(IWin32Window parentWindow, SettingsModel settings, IEnumerable<TiFileSystemObject> items, DirectoryExtractionMode mode)
+        => ExtractFiles(parentWindow, settings, items, ((MainForm)Application.OpenForms["MainForm"]).tempDir, mode, false, true);
 
-    public static bool ExtractFiles(IWin32Window parentWindow, IEnumerable<TiFileSystemObject> items)
-        => ExtractFiles(parentWindow, items,
-            Settings.CurrentSettings.DefaultExtractPath,
-            Settings.CurrentSettings.DefaultDirectoryExtractionMode,
-            Settings.CurrentSettings.OpenFolderAfterExtract);
+    public static bool ExtractFiles(IWin32Window parentWindow, SettingsModel settings, IEnumerable<TiFileSystemObject> items)
+        => ExtractFiles(parentWindow, settings, items,
+            settings.DefaultExtractPath,
+            settings.DefaultDirectoryExtractionMode,
+            settings.OpenFolderAfterExtract);
 }

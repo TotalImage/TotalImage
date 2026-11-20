@@ -29,11 +29,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="System.Linq.Async" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TotalImage.IO\TotalImage.IO.csproj" />
+    <ProjectReference Include="..\TotalImage.ViewModels\TotalImage.ViewModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>

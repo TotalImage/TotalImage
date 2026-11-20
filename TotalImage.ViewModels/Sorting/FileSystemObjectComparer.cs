@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using TotalImage.FileSystems;
 
-namespace TotalImage
+namespace TotalImage.ViewModels.Sorting
 {
-    class FileSystemObjectComparer : Comparer<FileSystemObject>
+    public class FileSystemObjectComparer : Comparer<FileSystemObject>
     {
         enum SortCriterion
         {

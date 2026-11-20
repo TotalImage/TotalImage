@@ -4,6 +4,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TotalImage.ViewModels.Formatting;
+using TotalImage.ViewModels.Settings;
 using TotalImage.FileSystems;
 using TotalImage.Properties;
 
@@ -29,8 +31,11 @@ namespace TotalImage.Dialogs
             InitializeComponent();
         }
 
-        public PropertiesDialog(List<FileSystemObject> entries) : this()
+        private readonly ISettingsService settings = null!;
+
+        public PropertiesDialog(List<FileSystemObject> entries, ISettingsService settings) : this()
         {
+            this.settings = settings;
             if (entries is null || entries.Count == 0)
                 throw new ArgumentNullException(nameof(entries), "Entries list cannot be null or have 0 items!");
 
@@ -95,16 +100,16 @@ namespace TotalImage.Dialogs
                     txtLocation.Text = file.DirectoryName;
                     txtContains.Text = "N/A";
                     txtContains.Enabled = false;
-                    txtSize.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entries[0].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
-                    txtSizeOnDisk.Text = Settings.CurrentSettings.SizeUnit.FormatSize(entries[0].LengthOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                    txtSize.Text = settings.Current.SizeUnit.FormatSize(entries[0].Length, settings.Current.SizeUnit != SizeUnit.Bytes);
+                    txtSizeOnDisk.Text = settings.Current.SizeUnit.FormatSize(entries[0].LengthOnDisk, settings.Current.SizeUnit != SizeUnit.Bytes);
                 }
                 else if (entries[0] is FileSystems.Directory dir)
                 {
                     txtLocation.Text = dir.Parent?.FullName;
                     var stats = dir.GetStats(true);
                     txtContains.Text = $"Files: {stats.FileCount}, subdirectories: {stats.DirectoryCount}";
-                    txtSize.Text = Settings.CurrentSettings.SizeUnit.FormatSize(stats.Size, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
-                    txtSizeOnDisk.Text = Settings.CurrentSettings.SizeUnit.FormatSize(stats.SizeOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                    txtSize.Text = settings.Current.SizeUnit.FormatSize(stats.Size, settings.Current.SizeUnit != SizeUnit.Bytes);
+                    txtSizeOnDisk.Text = settings.Current.SizeUnit.FormatSize(stats.SizeOnDisk, settings.Current.SizeUnit != SizeUnit.Bytes);
                 }
 
                 // These are indeed supposed to be assignments in the conditions.
@@ -149,7 +154,7 @@ namespace TotalImage.Dialogs
                 cbxSystem.Checked = entries[0].Attributes.HasFlag(FileAttributes.System);
                 cbxArchive.Checked = entries[0].Attributes.HasFlag(FileAttributes.Archive);
 
-                if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
+                if (settings.Current.QueryShellForFileTypeInfo)
                 {
                     imgIcon.SizeMode = PictureBoxSizeMode.Normal;
                     imgIcon.Image = ShellInterop.GetFileTypeIcon(entries[0].Name, entries[0].Attributes).ToBitmap();
@@ -234,7 +239,7 @@ namespace TotalImage.Dialogs
                 }
                 else
                 {
-                    if (Settings.CurrentSettings.QueryShellForFileTypeInfo)
+                    if (settings.Current.QueryShellForFileTypeInfo)
                     {
                         txtType.Text = ShellInterop.GetFileTypeName(entries[0].Name, entries[0].Attributes);
                     }
@@ -274,8 +279,8 @@ namespace TotalImage.Dialogs
                 }
 
                 lblMultipleObjectsCount.Text = $"Files: {files}, directories: {dirs}";
-                txtSize.Text = Settings.CurrentSettings.SizeUnit.FormatSize(size, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
-                txtSizeOnDisk.Text = Settings.CurrentSettings.SizeUnit.FormatSize(sizeOnDisk, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+                txtSize.Text = settings.Current.SizeUnit.FormatSize(size, settings.Current.SizeUnit != SizeUnit.Bytes);
+                txtSizeOnDisk.Text = settings.Current.SizeUnit.FormatSize(sizeOnDisk, settings.Current.SizeUnit != SizeUnit.Bytes);
 
                 if (entries[0] is FileSystems.File file)
                     txtLocation.Text = file.DirectoryName;

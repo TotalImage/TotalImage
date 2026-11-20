@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using TotalImage.ViewModels.Formatting;
+using TotalImage.ViewModels.Settings;
 using TotalImage.Forms;
 using TotalImage.Containers;
 using TotalImage.Containers.NHD;
@@ -18,8 +20,11 @@ namespace TotalImage.Dialogs
         public bool ReadOnly { get; private set; }
         public int SelectedEntry { get; private set; }
 
-        public SelectPartitionDialog()
+        private readonly ISettingsService settings;
+
+        public SelectPartitionDialog(ISettingsService settings)
         {
+            this.settings = settings;
             InitializeComponent();
         }
 
@@ -36,8 +41,8 @@ namespace TotalImage.Dialogs
                     lblPartitionTotalSectors1.Text = $"{entry.Length / 512:N0}";
                     lblPartitionFirstLba1.Text = $"{entry.FirstLBA:N0}";
                     lblPartitionLastLba1.Text = $"{entry.LastLBA:N0}";
-                    lblPartitionStartOffset1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize((ulong)entry.Offset)}";
-                    lblPartitionEndOffset1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize((ulong)(entry.Offset + entry.Length))}";
+                    lblPartitionStartOffset1.Text = $"{settings.Current.SizeUnit.FormatSize((ulong)entry.Offset)}";
+                    lblPartitionEndOffset1.Text = $"{settings.Current.SizeUnit.FormatSize((ulong)(entry.Offset + entry.Length))}";
                     lblPartitionGuid1.Text = entry.EntryId.ToString();
                     lblPartitionSerial1.Text = "N/A";
                 }
@@ -57,8 +62,8 @@ namespace TotalImage.Dialogs
                     lblPartitionGuid1.Text = "N/A";
                     lblPartitionFirstLba1.Text = $"{entry.LbaStart:N0}";
                     lblPartitionLastLba1.Text = $"{entry.LbaStart + entry.LbaLength - 1:N0}";
-                    lblPartitionStartOffset1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize((ulong)entry.Offset)}";
-                    lblPartitionEndOffset1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize((ulong)(entry.Offset + entry.Length))}";
+                    lblPartitionStartOffset1.Text = $"{settings.Current.SizeUnit.FormatSize((ulong)entry.Offset)}";
+                    lblPartitionEndOffset1.Text = $"{settings.Current.SizeUnit.FormatSize((ulong)(entry.Offset + entry.Length))}";
                     lblPartitionTotalSectors1.Text = $"{entry.LbaLength:N0}";
                     lblPartitionSerial1.Text = "N/A";
 
@@ -108,9 +113,9 @@ namespace TotalImage.Dialogs
             if (PartitionTable is GptPartitionTable gpt)
             {
                 //Let's just assume 512-byte sectors for now
-                lblDiskTotalSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(gpt.Header.BackupLBA * 512 + 512)}";
+                lblDiskTotalSize1.Text = $"{settings.Current.SizeUnit.FormatSize(gpt.Header.BackupLBA * 512 + 512)}";
                 lblDiskTotalSectors1.Text = $"{gpt.Header.BackupLBA + 1:N0}";
-                lblDiskUsableSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize((gpt.Header.LastUsableLBA + 1 - gpt.Header.FirstUsableLBA) * 512)}";
+                lblDiskUsableSize1.Text = $"{settings.Current.SizeUnit.FormatSize((gpt.Header.LastUsableLBA + 1 - gpt.Header.FirstUsableLBA) * 512)}";
                 lblDiskGuid1.Text = gpt.Header.DiskGuid.ToString();
                 lblDiskTimestamp1.Text = "N/A";
                 lblDiskSerial1.Text = "N/A";
@@ -137,17 +142,17 @@ namespace TotalImage.Dialogs
                 {
                     long sectorCount = image.Length / 512;
                     lblDiskTotalSectors1.Text = $"{sectorCount:N0}";
-                    lblDiskTotalSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.Length)}";
+                    lblDiskTotalSize1.Text = $"{settings.Current.SizeUnit.FormatSize((ulong)image.Length)}";
 
                     /* Technically everything after the bootsector/MBR is free to be partitioned, so we're disregarding any gaps that some software may make
                      * between the MBR and the first partition. */
-                    lblDiskUsableSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize((ulong)image.Length - 512)}";
+                    lblDiskUsableSize1.Text = $"{settings.Current.SizeUnit.FormatSize((ulong)image.Length - 512)}";
                 }
                 //For VHD we can use the CurrentSize property
                 else if (image is VhdContainer vhd)
                 {
-                    lblDiskTotalSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(vhd.Footer.CurrentSize)}";
-                    lblDiskUsableSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(vhd.Footer.CurrentSize - 512)}";
+                    lblDiskTotalSize1.Text = $"{settings.Current.SizeUnit.FormatSize(vhd.Footer.CurrentSize)}";
+                    lblDiskUsableSize1.Text = $"{settings.Current.SizeUnit.FormatSize(vhd.Footer.CurrentSize - 512)}";
                     lblDiskTotalSectors1.Text = $"{vhd.Footer.CurrentSize / 512:N0}";
                 }
                 /* For NHD there's only the CHS values and sector size. Apparently some programs adjust image size to fit a CHS combo perfectly?
@@ -156,8 +161,8 @@ namespace TotalImage.Dialogs
                 {
                     ulong sectors = nhd.Header.Cylinders * nhd.Header.Heads * nhd.Header.SectorsPerTrack;
                     lblDiskTotalSectors1.Text = $"{sectors:N0}";
-                    lblDiskTotalSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(sectors * nhd.Header.SectorSize)}";
-                    lblDiskUsableSize1.Text = $"{Settings.CurrentSettings.SizeUnit.FormatSize(sectors * nhd.Header.SectorSize - nhd.Header.SectorSize)}";
+                    lblDiskTotalSize1.Text = $"{settings.Current.SizeUnit.FormatSize(sectors * nhd.Header.SectorSize)}";
+                    lblDiskUsableSize1.Text = $"{settings.Current.SizeUnit.FormatSize(sectors * nhd.Header.SectorSize - nhd.Header.SectorSize)}";
                 }
             }
 
@@ -180,7 +185,7 @@ namespace TotalImage.Dialogs
                     lvi.ForeColor = Color.Gray;
                 }
 
-                lvi.SubItems.Add(Settings.CurrentSettings.SizeUnit.FormatSize((ulong)entry.Length));
+                lvi.SubItems.Add(settings.Current.SizeUnit.FormatSize((ulong)entry.Length));
 
                 if (entry is MbrPartitionTable.MbrPartitionEntry mbrEntry)
                 {

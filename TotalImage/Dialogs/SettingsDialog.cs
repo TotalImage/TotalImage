@@ -2,20 +2,29 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using TotalImage.ViewModels.Extraction;
+using TotalImage.ViewModels.Formatting;
+using TotalImage.ViewModels.Services;
+using TotalImage.ViewModels.Settings;
 using static Interop.UxTheme;
 
 namespace TotalImage.Dialogs
 {
     public partial class SettingsDialog : Form
     {
-        public SettingsDialog()
+        private readonly ISettingsService settings;
+        private readonly ITempDirectoryService tempDirectory;
+
+        public SettingsDialog(ISettingsService settings, ITempDirectoryService tempDirectory)
         {
+            this.settings = settings;
+            this.tempDirectory = tempDirectory;
             InitializeComponent();
         }
 
         private void btnClearRecent_Click(object sender, System.EventArgs e)
         {
-            Settings.ClearRecentImages();
+            settings.ClearRecentImages();
 
             TaskDialog.ShowDialog(this, new TaskDialogPage()
             {
@@ -49,8 +58,8 @@ namespace TotalImage.Dialogs
 
             if (result == TaskDialogButton.Yes)
             {
-                Settings.LoadDefaults();
-                Settings.Save();
+                settings.ResetToDefaults();
+                settings.Save();
 
                 TaskDialog.ShowDialog(this, new TaskDialogPage()
                 {
@@ -82,43 +91,43 @@ namespace TotalImage.Dialogs
         //Syncs the dialog UI with CurrentSettings
         private void SyncUIWithSettings()
         {
-            txtExtractPath.Text = Settings.CurrentSettings.DefaultExtractPath;
-            cbxOpenDir.Checked = Settings.CurrentSettings.OpenFolderAfterExtract;
-            cbxShowCommandBar.Checked = Settings.CurrentSettings.ShowCommandBar;
-            cbxShowStatusBar.Checked = Settings.CurrentSettings.ShowStatusBar;
-            cbxShowDirectoryTree.Checked = Settings.CurrentSettings.ShowDirectoryTree;
-            cbxShowHiddenItems.Checked = Settings.CurrentSettings.ShowHiddenItems;
-            lstSortBy.SelectedIndex = Settings.CurrentSettings.FilesSortingColumn;
-            lstSortOrder.SelectedIndex = (int)Settings.CurrentSettings.FilesSortOrder - 1;
-            cbxExtractAsk.Checked = Settings.CurrentSettings.ExtractAlwaysAsk;
-            cbxPreserveAttributes.Checked = Settings.CurrentSettings.ExtractPreserveAttributes;
-            cbxPreserveDates.Checked = Settings.CurrentSettings.ExtractPreserveDates;
-            cbxShellFileIcons.Checked = Settings.CurrentSettings.QueryShellForFileTypeInfo;
-            cbxAutoincrementFilename.Checked = Settings.CurrentSettings.AutoIncrementFilename;
-            cbxConfirmDeletion.Checked = Settings.CurrentSettings.ConfirmDeletion;
-            cbxConfirmInjection.Checked = Settings.CurrentSettings.ConfirmInjection;
-            cbxConfirmOverwriteExtract.Checked = Settings.CurrentSettings.ConfirmOverwriteExtraction;
-            txtMemoryMapping.Value = Settings.CurrentSettings.MemoryMappingThreshold / 1048576;
-            cbxShowDirSizes.Checked = Settings.CurrentSettings.FileListShowDirSize;
-            lstColorMode.SelectedIndex = (int)Settings.CurrentSettings.ColorMode;
+            txtExtractPath.Text = settings.Current.DefaultExtractPath;
+            cbxOpenDir.Checked = settings.Current.OpenFolderAfterExtract;
+            cbxShowCommandBar.Checked = settings.Current.ShowCommandBar;
+            cbxShowStatusBar.Checked = settings.Current.ShowStatusBar;
+            cbxShowDirectoryTree.Checked = settings.Current.ShowDirectoryTree;
+            cbxShowHiddenItems.Checked = settings.Current.ShowHiddenItems;
+            lstSortBy.SelectedIndex = settings.Current.FilesSortingColumn;
+            lstSortOrder.SelectedIndex = (int)settings.Current.FilesSortOrder - 1;
+            cbxExtractAsk.Checked = settings.Current.ExtractAlwaysAsk;
+            cbxPreserveAttributes.Checked = settings.Current.ExtractPreserveAttributes;
+            cbxPreserveDates.Checked = settings.Current.ExtractPreserveDates;
+            cbxShellFileIcons.Checked = settings.Current.QueryShellForFileTypeInfo;
+            cbxAutoincrementFilename.Checked = settings.Current.AutoIncrementFilename;
+            cbxConfirmDeletion.Checked = settings.Current.ConfirmDeletion;
+            cbxConfirmInjection.Checked = settings.Current.ConfirmInjection;
+            cbxConfirmOverwriteExtract.Checked = settings.Current.ConfirmOverwriteExtraction;
+            txtMemoryMapping.Value = settings.Current.MemoryMappingThreshold / 1048576;
+            cbxShowDirSizes.Checked = settings.Current.FileListShowDirSize;
+            lstColorMode.SelectedIndex = (int)settings.Current.ColorMode;
 
-            switch (Settings.CurrentSettings.FilesView)
+            switch (settings.Current.FilesView)
             {
-                case View.LargeIcon: lstViewType.SelectedIndex = 0; break;
-                case View.SmallIcon: lstViewType.SelectedIndex = 1; break;
-                case View.List: lstViewType.SelectedIndex = 2; break;
-                case View.Details: lstViewType.SelectedIndex = 3; break;
-                case View.Tile: lstViewType.SelectedIndex = 4; break;
+                case ViewMode.LargeIcon: lstViewType.SelectedIndex = 0; break;
+                case ViewMode.SmallIcon: lstViewType.SelectedIndex = 1; break;
+                case ViewMode.List: lstViewType.SelectedIndex = 2; break;
+                case ViewMode.Details: lstViewType.SelectedIndex = 3; break;
+                case ViewMode.Tile: lstViewType.SelectedIndex = 4; break;
             }
 
-            switch (Settings.CurrentSettings.SizeUnit)
+            switch (settings.Current.SizeUnit)
             {
                 case SizeUnit.Bytes: lstSizeUnits.SelectedIndex = 0; break;
                 case SizeUnit.Decimal: lstSizeUnits.SelectedIndex = 1; break;
                 case SizeUnit.Binary: lstSizeUnits.SelectedIndex = 2; break;
             }
 
-            switch (Settings.CurrentSettings.DefaultDirectoryExtractionMode)
+            switch (settings.Current.DefaultDirectoryExtractionMode)
             {
                 case DirectoryExtractionMode.Skip: rbnIgnoreFolders.Checked = true; break;
                 case DirectoryExtractionMode.Merge: rbnExtractFlat.Checked = true; break;
@@ -140,50 +149,50 @@ namespace TotalImage.Dialogs
         //Sync CurrentSettings with the UI state and save to file
         private void btnOK_Click(object sender, System.EventArgs e)
         {
-            Settings.CurrentSettings.DefaultExtractPath = txtExtractPath.Text;
-            Settings.CurrentSettings.FilesSortingColumn = lstSortBy.SelectedIndex;
-            Settings.CurrentSettings.FilesSortOrder = (SortOrder)(lstSortOrder.SelectedIndex + 1);
-            Settings.CurrentSettings.OpenFolderAfterExtract = cbxOpenDir.Checked;
-            Settings.CurrentSettings.ShowCommandBar = cbxShowCommandBar.Checked;
-            Settings.CurrentSettings.ShowDirectoryTree = cbxShowDirectoryTree.Checked;
-            Settings.CurrentSettings.ShowHiddenItems = cbxShowHiddenItems.Checked;
-            Settings.CurrentSettings.ShowStatusBar = cbxShowStatusBar.Checked;
-            Settings.CurrentSettings.ExtractAlwaysAsk = cbxExtractAsk.Checked;
-            Settings.CurrentSettings.ExtractPreserveAttributes = cbxPreserveAttributes.Checked;
-            Settings.CurrentSettings.ExtractPreserveDates = cbxPreserveDates.Checked;
-            Settings.CurrentSettings.QueryShellForFileTypeInfo = cbxShellFileIcons.Checked;
-            Settings.CurrentSettings.AutoIncrementFilename = cbxAutoincrementFilename.Checked;
-            Settings.CurrentSettings.ConfirmDeletion = cbxConfirmDeletion.Checked;
-            Settings.CurrentSettings.ConfirmInjection = cbxConfirmInjection.Checked;
-            Settings.CurrentSettings.ConfirmOverwriteExtraction = cbxConfirmOverwriteExtract.Checked;
-            Settings.CurrentSettings.MemoryMappingThreshold = (long)txtMemoryMapping.Value * 1048576;
-            Settings.CurrentSettings.FileListShowDirSize = cbxShowDirSizes.Checked;
-            Settings.CurrentSettings.ColorMode = (SystemColorMode)lstColorMode.SelectedIndex;
+            settings.Current.DefaultExtractPath = txtExtractPath.Text;
+            settings.Current.FilesSortingColumn = lstSortBy.SelectedIndex;
+            settings.Current.FilesSortOrder = (SortDirection)(lstSortOrder.SelectedIndex + 1);
+            settings.Current.OpenFolderAfterExtract = cbxOpenDir.Checked;
+            settings.Current.ShowCommandBar = cbxShowCommandBar.Checked;
+            settings.Current.ShowDirectoryTree = cbxShowDirectoryTree.Checked;
+            settings.Current.ShowHiddenItems = cbxShowHiddenItems.Checked;
+            settings.Current.ShowStatusBar = cbxShowStatusBar.Checked;
+            settings.Current.ExtractAlwaysAsk = cbxExtractAsk.Checked;
+            settings.Current.ExtractPreserveAttributes = cbxPreserveAttributes.Checked;
+            settings.Current.ExtractPreserveDates = cbxPreserveDates.Checked;
+            settings.Current.QueryShellForFileTypeInfo = cbxShellFileIcons.Checked;
+            settings.Current.AutoIncrementFilename = cbxAutoincrementFilename.Checked;
+            settings.Current.ConfirmDeletion = cbxConfirmDeletion.Checked;
+            settings.Current.ConfirmInjection = cbxConfirmInjection.Checked;
+            settings.Current.ConfirmOverwriteExtraction = cbxConfirmOverwriteExtract.Checked;
+            settings.Current.MemoryMappingThreshold = (long)txtMemoryMapping.Value * 1048576;
+            settings.Current.FileListShowDirSize = cbxShowDirSizes.Checked;
+            settings.Current.ColorMode = (ColorTheme)lstColorMode.SelectedIndex;
 
             switch (lstSizeUnits.SelectedIndex)
             {
-                case 0: Settings.CurrentSettings.SizeUnit = SizeUnit.Bytes; break;
-                case 1: Settings.CurrentSettings.SizeUnit = SizeUnit.Decimal; break;
-                case 2: Settings.CurrentSettings.SizeUnit = SizeUnit.Binary; break;
+                case 0: settings.Current.SizeUnit = SizeUnit.Bytes; break;
+                case 1: settings.Current.SizeUnit = SizeUnit.Decimal; break;
+                case 2: settings.Current.SizeUnit = SizeUnit.Binary; break;
             }
 
             switch (lstViewType.SelectedIndex)
             {
-                case 0: Settings.CurrentSettings.FilesView = View.LargeIcon; break;
-                case 1: Settings.CurrentSettings.FilesView = View.SmallIcon; break;
-                case 2: Settings.CurrentSettings.FilesView = View.List; break;
-                case 3: Settings.CurrentSettings.FilesView = View.Details; break;
-                case 4: Settings.CurrentSettings.FilesView = View.Tile; break;
+                case 0: settings.Current.FilesView = ViewMode.LargeIcon; break;
+                case 1: settings.Current.FilesView = ViewMode.SmallIcon; break;
+                case 2: settings.Current.FilesView = ViewMode.List; break;
+                case 3: settings.Current.FilesView = ViewMode.Details; break;
+                case 4: settings.Current.FilesView = ViewMode.Tile; break;
             }
 
             if (rbnExtractFlat.Checked)
-                Settings.CurrentSettings.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Merge;
+                settings.Current.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Merge;
             else if (rbnExtractPreserve.Checked)
-                Settings.CurrentSettings.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Preserve;
+                settings.Current.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Preserve;
             else if (rbnIgnoreFolders.Checked)
-                Settings.CurrentSettings.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Skip;
+                settings.Current.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Skip;
 
-            Settings.Save();
+            settings.Save();
         }
 
         private void btnClearTemp_Click(object sender, EventArgs e)
@@ -215,10 +224,7 @@ namespace TotalImage.Dialogs
 
             try
             {
-                if (Directory.Exists(Settings.TempDir))
-                    Directory.Delete(Settings.TempDir, true);
-
-                Directory.CreateDirectory(Settings.TempDir);
+                tempDirectory.Clear();
             }
             catch (Exception)
             {
@@ -268,7 +274,7 @@ namespace TotalImage.Dialogs
 
         private void lstSizeUnits_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SizeUnit previewUnit = Settings.CurrentSettings.SizeUnit;
+            SizeUnit previewUnit = settings.Current.SizeUnit;
 
             switch (lstSizeUnits.SelectedIndex)
             {
@@ -290,12 +296,11 @@ namespace TotalImage.Dialogs
 
         private void btnOpenTemp_Click(object sender, EventArgs e)
         {
-            if (!Directory.Exists(Settings.TempDir))
-                Directory.CreateDirectory(Settings.TempDir);
+            tempDirectory.EnsureRootExists();
 
             ProcessStartInfo psi = new()
             {
-                FileName = Settings.TempDir,
+                FileName = tempDirectory.Root,
                 UseShellExecute = true
             };
 

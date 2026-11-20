@@ -1,16 +1,23 @@
 using System;
 using System.Windows.Forms;
+using TotalImage.ViewModels.Extraction;
+using TotalImage.ViewModels.Settings;
 
 namespace TotalImage.Dialogs
 {
     public partial class ExtractDialog : Form
     {
-        public string TargetPath { get; private set; } = Settings.CurrentSettings.DefaultExtractPath;
-        public bool OpenFolder { get; private set; } = Settings.CurrentSettings.OpenFolderAfterExtract;
+        public string TargetPath { get; private set; }
+        public bool OpenFolder { get; private set; }
         public DirectoryExtractionMode DirectoryExtractionMode { get; private set; }
 
-        public ExtractDialog()
+        private readonly ISettingsService settings;
+
+        public ExtractDialog(ISettingsService settings)
         {
+            this.settings = settings;
+            TargetPath = settings.Current.DefaultExtractPath;
+            OpenFolder = settings.Current.OpenFolderAfterExtract;
             InitializeComponent();
         }
 
@@ -78,7 +85,7 @@ namespace TotalImage.Dialogs
         {
             txtPath.Text = TargetPath;
             cbxOpenFolder.Checked = OpenFolder;
-            switch (Settings.CurrentSettings.DefaultDirectoryExtractionMode)
+            switch (settings.Current.DefaultDirectoryExtractionMode)
             {
                 case DirectoryExtractionMode.Skip: rbnIgnoreFolders.Checked = true; break;
                 case DirectoryExtractionMode.Merge: rbnExtractSameFolder.Checked = true; break;

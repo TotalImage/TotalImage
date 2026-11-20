@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 
-namespace TotalImage
+namespace TotalImage.ViewModels.Sorting
 {
     /// <summary>
     /// A comparer that inverts the output of another comparer in order to
     /// achieve descending sort order
     /// </summary>
-    class InvertedComparer<T> : IComparer<T>
+    public class InvertedComparer<T> : IComparer<T>
     {
         private IComparer<T> Comparer { get; }
 

@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TotalImage.ViewModels.Formatting;
+using TotalImage.ViewModels.Settings;
 using TotalImage.Containers;
 using TotalImage.Containers.Anex86;
 using TotalImage.Containers.NHD;
@@ -24,8 +26,11 @@ namespace TotalImage.Dialogs
         private bool hashesDone = false;
         private MainForm mainForm;
 
-        public ImageInfoDialog()
+        private readonly ISettingsService settings;
+
+        public ImageInfoDialog(ISettingsService settings)
         {
+            this.settings = settings;
             InitializeComponent();
         }
 
@@ -40,7 +45,7 @@ namespace TotalImage.Dialogs
             //File
             lstPropertiesFile.FindItemWithText("Filename").SubItems[1].Text = mainForm.filename;
             lstPropertiesFile.FindItemWithText("Path").SubItems[1].Text = mainForm.filepath;
-            lstPropertiesFile.FindItemWithText("Size").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)fileInfo.Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+            lstPropertiesFile.FindItemWithText("Size").SubItems[1].Text = settings.Current.SizeUnit.FormatSize((ulong)fileInfo.Length, settings.Current.SizeUnit != SizeUnit.Bytes);
             lstPropertiesFile.FindItemWithText("Created").SubItems[1].Text = fileInfo.CreationTime.ToString();
             lstPropertiesFile.FindItemWithText("Modified").SubItems[1].Text = fileInfo.LastWriteTime.ToString();
             lstPropertiesFile.FindItemWithText("Accessed").SubItems[1].Text = fileInfo.LastAccessTime.ToString();
@@ -72,8 +77,8 @@ namespace TotalImage.Dialogs
                 lstPropertiesContainer.Items.Add("Disk GUID").SubItems.Add($"{vhd.Footer.UniqueId}");
                 lstPropertiesContainer.Items.Add("Features").SubItems.Add($"{vhd.Footer.Features}");
                 lstPropertiesContainer.Items.Add("Creation time").SubItems.Add($"{vhd.Footer.CreationTime.DateTime}");
-                lstPropertiesContainer.Items.Add("Original size").SubItems.Add($"{Settings.CurrentSettings.SizeUnit.FormatSize(vhd.Footer.OriginalSize, true)}");
-                lstPropertiesContainer.Items.Add("Current size").SubItems.Add($"{Settings.CurrentSettings.SizeUnit.FormatSize(vhd.Footer.CurrentSize, true)}");
+                lstPropertiesContainer.Items.Add("Original size").SubItems.Add($"{settings.Current.SizeUnit.FormatSize(vhd.Footer.OriginalSize, true)}");
+                lstPropertiesContainer.Items.Add("Current size").SubItems.Add($"{settings.Current.SizeUnit.FormatSize(vhd.Footer.CurrentSize, true)}");
                 lstPropertiesContainer.Items.Add("Cylinders").SubItems.Add($"{vhd.Footer.DiskCylinders:N0}");
                 lstPropertiesContainer.Items.Add("Heads").SubItems.Add($"{vhd.Footer.DiskHeads:N0}");
                 lstPropertiesContainer.Items.Add("Sectors per track").SubItems.Add($"{vhd.Footer.DiskSectorsPerCylinder:N0}");
@@ -139,7 +144,7 @@ namespace TotalImage.Dialogs
                 lstPropertiesPartition.Items.Add("Last sector CHS").SubItems.Add($"({entry.ChsEnd.Cylinder},{entry.ChsEnd.Head},{entry.ChsEnd.Sector})");
                 lstPropertiesPartition.Items.Add("First sector LBA").SubItems.Add($"{entry.LbaStart:N0}");
                 lstPropertiesPartition.Items.Add("Total sectors").SubItems.Add($"{entry.LbaLength:N0}");
-                lstPropertiesPartition.Items.Add("Total size").SubItems.Add($"{Settings.CurrentSettings.SizeUnit.FormatSize(entry.LbaLength * 512, true)}");
+                lstPropertiesPartition.Items.Add("Total size").SubItems.Add($"{settings.Current.SizeUnit.FormatSize(entry.LbaLength * 512, true)}");
             }
             //GPT specifics
             else if (mainForm.image.PartitionTable is GptPartitionTable gpt)
@@ -174,8 +179,8 @@ namespace TotalImage.Dialogs
             lstPropertiesFS.FindItemWithText("File system").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.DisplayName;
             lstPropertiesFS.FindItemWithText("Files").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.CountFiles(true).ToString();
             lstPropertiesFS.FindItemWithText("Subdirectories").SubItems[1].Text = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.RootDirectory.CountSubdirectories(true).ToString();
-            lstPropertiesFS.FindItemWithText("Total storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
-            lstPropertiesFS.FindItemWithText("Free storage capacity").SubItems[1].Text = Settings.CurrentSettings.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.TotalFreeSpace, Settings.CurrentSettings.SizeUnit != SizeUnit.Bytes);
+            lstPropertiesFS.FindItemWithText("Total storage capacity").SubItems[1].Text = settings.Current.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].Length, settings.Current.SizeUnit != SizeUnit.Bytes);
+            lstPropertiesFS.FindItemWithText("Free storage capacity").SubItems[1].Text = settings.Current.SizeUnit.FormatSize((ulong)mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.TotalFreeSpace, settings.Current.SizeUnit != SizeUnit.Bytes);
 
             var volLabel = mainForm.image.PartitionTable.Partitions[mainForm.CurrentPartitionIndex].FileSystem.VolumeLabel;
             if (!string.IsNullOrWhiteSpace(volLabel) && !volLabel.Equals("<N/A>"))

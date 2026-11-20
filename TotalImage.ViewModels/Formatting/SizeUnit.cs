@@ -1,6 +1,6 @@
 using System;
 
-namespace TotalImage
+namespace TotalImage.ViewModels.Formatting
 {
     /// <summary>
     /// The size unit that is used to display all sizes in the UI.

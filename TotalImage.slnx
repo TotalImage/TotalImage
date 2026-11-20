@@ -9,5 +9,7 @@
   </Folder>
   <Project Path="TotalImage.IO.Tests/TotalImage.IO.Tests.csproj" />
   <Project Path="TotalImage.IO/TotalImage.IO.csproj" />
+  <Project Path="TotalImage.ViewModels.Tests/TotalImage.ViewModels.Tests.csproj" />
+  <Project Path="TotalImage.ViewModels/TotalImage.ViewModels.csproj" />
   <Project Path="TotalImage/TotalImage.csproj" />
 </Solution>
