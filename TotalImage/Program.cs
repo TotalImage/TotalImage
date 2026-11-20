@@ -44,6 +44,7 @@ namespace TotalImage
             services.AddScoped<IImageDialogs, WinFormsImageDialogs>();
             services.AddScoped<IAppDialogs, WinFormsAppDialogs>();
             services.AddScoped<IMessageService, WinFormsMessageService>();
+            services.AddScoped<IFilePickerService, WinFormsFilePickerService>();
             services.AddScoped<MainForm>();
             return services;
         }
