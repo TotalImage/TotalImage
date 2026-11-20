@@ -44,6 +44,12 @@ public abstract class FileAllocationTableBase : IEnumerable<uint>
         => GetClusterType(cluster) != ClusterType.Data;
 
     /// <summary>
+    /// Determines whether a cluster number refers to a cluster described by this table.
+    /// </summary>
+    public bool IsValidCluster(uint cluster)
+        => cluster >= 2 && cluster < Length;
+
+    /// <summary>
     /// Retrieves the number of the next cluster in a cluster chain.
     /// </summary>
     /// <param name="index">Current cluster</param>
@@ -82,15 +88,14 @@ public abstract class FileAllocationTableBase : IEnumerable<uint>
     /// <param name="firstCluster">The first cluster in the chain. Not read when <paramref name="length"/> is 0.</param>
     /// <param name="dataStart">The byte offset of cluster 2 in the volume.</param>
     /// <param name="bytesPerCluster">The cluster size in bytes.</param>
-    /// <param name="clusterCount">The number of data clusters in the volume.</param>
     /// <param name="length">The number of bytes to expose, or <see langword="null"/> for the whole chain.</param>
     /// <exception cref="InvalidDataException">The chain is cyclic, a cluster is out of range, or <paramref name="length"/> exceeds the chain.</exception>
-    internal List<StreamExtent> GetChainExtents(uint firstCluster, long dataStart, long bytesPerCluster, uint clusterCount, long? length)
+    internal List<StreamExtent> GetChainExtents(uint firstCluster, long dataStart, long bytesPerCluster, long? length)
     {
         if (length == 0)
             return [];
         var chain = GetClusterChain(firstCluster);
-        return BuildExtents(chain, dataStart, bytesPerCluster, clusterCount, length ?? chain.LongLength * bytesPerCluster);
+        return BuildExtents(chain, dataStart, bytesPerCluster, length ?? chain.LongLength * bytesPerCluster);
     }
 
     /// <summary>
@@ -99,11 +104,10 @@ public abstract class FileAllocationTableBase : IEnumerable<uint>
     /// <param name="chain">The clusters in logical order.</param>
     /// <param name="dataStart">The byte offset of cluster 2 in the volume.</param>
     /// <param name="bytesPerCluster">The cluster size in bytes.</param>
-    /// <param name="clusterCount">The number of data clusters in the volume.</param>
     /// <param name="length">The number of bytes to expose.</param>
     /// <returns>Ranges with consecutive clusters merged and the last range clipped to <paramref name="length"/>.</returns>
     /// <exception cref="InvalidDataException">A cluster is out of range, or <paramref name="length"/> exceeds the chain.</exception>
-    internal static List<StreamExtent> BuildExtents(uint[] chain, long dataStart, long bytesPerCluster, uint clusterCount, long length)
+    internal List<StreamExtent> BuildExtents(uint[] chain, long dataStart, long bytesPerCluster, long length)
     {
         var extents = new List<StreamExtent>();
         if (length <= 0)
@@ -116,7 +120,7 @@ public abstract class FileAllocationTableBase : IEnumerable<uint>
         for (int i = 0; i < chain.Length && remaining > 0; i++)
         {
             uint cluster = chain[i];
-            if (cluster < 2 || cluster - 2 >= clusterCount)
+            if (!IsValidCluster(cluster))
                 throw new InvalidDataException($"Cluster {cluster} is outside the data area.");
             long take = remaining < bytesPerCluster ? remaining : bytesPerCluster;
             if (extents.Count > 0 && cluster == previous + 1)

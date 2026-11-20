@@ -24,7 +24,7 @@ namespace TotalImage.FileSystems.FAT
         private static List<StreamExtent> BuildExtents(FatFileSystem fat, uint firstCluster, long? length)
         {
             long dataStart = (long)fat.DataAreaFirstSector * fat.BiosParameterBlock.BytesPerLogicalSector;
-            return fat.MainFat.GetChainExtents(firstCluster, dataStart, fat.BytesPerCluster, fat.ClusterCount, length);
+            return fat.MainFat.GetChainExtents(firstCluster, dataStart, fat.BytesPerCluster, length);
         }
     }
 }

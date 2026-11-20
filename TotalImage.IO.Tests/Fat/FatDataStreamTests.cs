@@ -13,21 +13,21 @@ public class FatDataStreamTests
     [Fact]
     public void Build_MergesConsecutiveClusters()
     {
-        var extents = FileAllocationTableBase.BuildExtents([2, 3, 4], 1000, 512, 10, 1536);
+        var extents = new ArrayFileAllocationTable(10 + 2).BuildExtents([2, 3, 4], 1000, 512, 1536);
         Assert.Equal([new StreamExtent(1000, 1536)], extents);
     }
 
     [Fact]
     public void Build_SplitsFragmentedChain()
     {
-        var extents = FileAllocationTableBase.BuildExtents([2, 5, 6, 3], 1000, 512, 10, 2048);
+        var extents = new ArrayFileAllocationTable(10 + 2).BuildExtents([2, 5, 6, 3], 1000, 512, 2048);
         Assert.Equal([new StreamExtent(1000, 512), new StreamExtent(2536, 1024), new StreamExtent(1512, 512)], extents);
     }
 
     [Fact]
     public void Build_ClipsLastExtentAndIgnoresUnusedClusters()
     {
-        var extents = FileAllocationTableBase.BuildExtents([2, 3, 7], 0, 512, 10, 600);
+        var extents = new ArrayFileAllocationTable(10 + 2).BuildExtents([2, 3, 7], 0, 512, 600);
         Assert.Equal([new StreamExtent(0, 600)], extents);
     }
 
@@ -37,19 +37,19 @@ public class FatDataStreamTests
     [InlineData(12u)]
     public void Build_RejectsInvalidCluster(uint cluster)
     {
-        Assert.Throws<InvalidDataException>(() => FileAllocationTableBase.BuildExtents([2, cluster], 0, 512, 10, 1024));
+        Assert.Throws<InvalidDataException>(() => new ArrayFileAllocationTable(10 + 2).BuildExtents([2, cluster], 0, 512, 1024));
     }
 
     [Fact]
     public void Build_RejectsLengthBeyondChain()
     {
-        Assert.Throws<InvalidDataException>(() => FileAllocationTableBase.BuildExtents([2, 3], 0, 512, 10, 1025));
+        Assert.Throws<InvalidDataException>(() => new ArrayFileAllocationTable(10 + 2).BuildExtents([2, 3], 0, 512, 1025));
     }
 
     [Fact]
     public void Build_EmptyLengthReturnsNoExtents()
     {
-        Assert.Empty(FileAllocationTableBase.BuildExtents([0], 0, 512, 10, 0));
+        Assert.Empty(new ArrayFileAllocationTable(10 + 2).BuildExtents([0], 0, 512, 0));
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class FatDataStreamTests
     {
         const long bytesPerCluster = 32768;
         const uint cluster = 200_000; // (200000 - 2) * 32 KiB ≈ 6.1 GiB
-        var extents = FileAllocationTableBase.BuildExtents([cluster], 4096, bytesPerCluster, 300_000, bytesPerCluster);
+        var extents = new ArrayFileAllocationTable(300_000 + 2).BuildExtents([cluster], 4096, bytesPerCluster, bytesPerCluster);
         Assert.Equal(4096 + (cluster - 2L) * bytesPerCluster, Assert.Single(extents).Offset);
     }
 

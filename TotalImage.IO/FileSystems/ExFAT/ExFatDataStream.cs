@@ -26,7 +26,7 @@ namespace TotalImage.FileSystems.ExFAT
         private static List<StreamExtent> BuildExtents(ExFatFileSystem fs, uint firstCluster, long? length)
         {
             long dataStart = (long)fs.BootSector.ClusterHeapOffset * fs.BytesPerSector;
-            return fs.ActiveFat.GetChainExtents(firstCluster, dataStart, fs.BytesPerCluster, fs.BootSector.ClusterCount, length);
+            return fs.ActiveFat.GetChainExtents(firstCluster, dataStart, fs.BytesPerCluster, length);
         }
     }
 }
