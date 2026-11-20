@@ -27,6 +27,32 @@ internal static class ImageDialogFakes
         return RawContainer.CreateImage(bpb, geometry.Tracks, true);
     }
 
+    /// <summary>
+    /// A 1.44 MB disk with a master boot record and one active FAT12 partition holding a
+    /// 720 KB floppy file system, starting at sector 1.
+    /// </summary>
+    public static RawContainer CreatePartitionedDisk()
+    {
+        var disk = CreateFloppy();
+        var geometry = FloppyGeometry.KnownGeometries[FloppyGeometry.FriendlyName.DoubleDensity720k];
+        var volume = RawContainer.CreateImage(BiosParameterBlock.FromGeometry(geometry, BiosParameterBlockVersion.Dos20, "MSDOS5.0"), geometry.Tracks, true);
+        var volumeBytes = ((MemoryStream)volume.Content).ToArray();
+
+        var content = disk.Content;
+        var mbr = new byte[512];
+        mbr[0] = 0xFA;
+        mbr[0x1BE] = 0x80; // active
+        mbr[0x1BE + 4] = 0x01; // FAT12
+        BitConverter.TryWriteBytes(mbr.AsSpan(0x1BE + 8), 1u); // first LBA
+        BitConverter.TryWriteBytes(mbr.AsSpan(0x1BE + 12), (uint)(volumeBytes.Length / 512)); // sectors
+        mbr[0x1FE] = 0x55;
+        mbr[0x1FF] = 0xAA;
+        content.Seek(0, SeekOrigin.Begin);
+        content.Write(mbr);
+        content.Write(volumeBytes);
+        return disk;
+    }
+
     public sealed class FakeSettings(SizeUnit sizeUnit = SizeUnit.Bytes) : ISettingsService
     {
         public SettingsModel Current { get; } = new() { SizeUnit = sizeUnit };

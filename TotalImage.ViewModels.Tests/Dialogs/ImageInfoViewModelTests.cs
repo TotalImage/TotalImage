@@ -107,6 +107,27 @@ public class ImageInfoViewModelTests
     }
 
     [Fact]
+    public void AnMbrDiskListsTheTableAndTheSelectedEntry()
+    {
+        var vm = Create(CreatePartitionedDisk());
+
+        Assert.Equal(
+            ["Partitioning scheme", "Physical drive number", "Disk timestamp", "Disk serial number", "Number of partitions", "Selected partition"],
+            vm.PartitionTableRows.Select(r => r.Name));
+        Assert.Equal("Master Boot Record", Value(vm.PartitionTableRows, "Partitioning scheme"));
+        Assert.Equal("1", Value(vm.PartitionTableRows, "Number of partitions"));
+        Assert.True(vm.PartitionTableRows.Single(r => r.Name == "Disk serial number").IsNotAvailable);
+
+        Assert.Equal(
+            ["Partition ID/type", "Active", "First sector CHS", "Last sector CHS", "First sector LBA", "Total sectors", "Total size"],
+            vm.PartitionRows.Select(r => r.Name));
+        Assert.StartsWith("0x01 - ", Value(vm.PartitionRows, "Partition ID/type"));
+        Assert.Equal("Yes", Value(vm.PartitionRows, "Active"));
+        Assert.Equal("1", Value(vm.PartitionRows, "First sector LBA"));
+        Assert.Equal("FAT12", Value(vm.FileSystemRows, "File system"));
+    }
+
+    [Fact]
     public void ARawContainerHasNoComment()
     {
         var vm = Create(CreateFloppy());
