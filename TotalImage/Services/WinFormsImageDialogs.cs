@@ -65,5 +65,16 @@ namespace TotalImage.Services
             dialog.ShowDialog(owner.Window);
             return Task.CompletedTask;
         }
+
+        public Task ShowBootSectorAsync(Container image, int partitionIndex)
+        {
+            var dialogOwner = new DialogOwner();
+            var viewModel = new BootSectorViewModel(image, partitionIndex,
+                new WinFormsFilePickerService(dialogOwner), new WinFormsMessageService(dialogOwner));
+            using var dialog = new BootSectorDialog(viewModel);
+            dialogOwner.Window = dialog;
+            dialog.ShowDialog(owner.Window);
+            return Task.CompletedTask;
+        }
     }
 }

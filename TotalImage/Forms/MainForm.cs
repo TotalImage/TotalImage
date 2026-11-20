@@ -176,7 +176,7 @@ namespace TotalImage.Forms
          *
          * TODO: Enable this for other file systems/partition types/media too.
          */
-        private void bootSectorProperties_Click(object sender, EventArgs e)
+        private async void bootSectorProperties_Click(object sender, EventArgs e)
         {
             if (image is not null && image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FatFileSystem)
             {
@@ -196,8 +196,10 @@ namespace TotalImage.Forms
                 return;
             }
 
-            using BootSectorDialog dlg = new();
-            dlg.ShowDialog();
+            if (image is null)
+                return;
+
+            await imageDialogs.ShowBootSectorAsync(image, CurrentPartitionIndex);
         }
 
         //Shows current image information

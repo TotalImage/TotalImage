@@ -38,4 +38,11 @@ public interface IImageDialogs
     /// <param name="filePath">The image file, or <c>null</c> when the image hasn't been saved yet.</param>
     /// <param name="partitionIndex">The selected partition.</param>
     Task ShowImageInfoAsync(Container image, string? filePath, int partitionIndex);
+
+    /// <summary>
+    /// Shows the boot sector of the selected partition or of the disk.
+    /// </summary>
+    /// <param name="image">The open image.</param>
+    /// <param name="partitionIndex">The selected partition.</param>
+    Task ShowBootSectorAsync(Container image, int partitionIndex);
 }
