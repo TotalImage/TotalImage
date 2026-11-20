@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using TotalImage.Forms;
 
 namespace TotalImage
 {
@@ -10,7 +11,7 @@ namespace TotalImage
         {
             ApplicationConfiguration.Initialize();
             Application.SetColorMode(Settings.CurrentSettings.ColorMode);
-            Application.Run(new frmMain());
+            Application.Run(new MainForm());
         }
     }
 }

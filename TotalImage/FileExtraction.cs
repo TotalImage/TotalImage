@@ -7,6 +7,7 @@ using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TotalImage.Forms;
 
 using TiFile = TotalImage.FileSystems.File;
 using TiDirectory = TotalImage.FileSystems.Directory;
@@ -270,7 +271,7 @@ public static class FileExtraction
     }
 
     public static bool ExtractFilesToTemporaryDirectory(IWin32Window parentWindow, IEnumerable<TiFileSystemObject> items, DirectoryExtractionMode mode)
-        => ExtractFiles(parentWindow, items, ((frmMain)Application.OpenForms["frmMain"]).tempDir, mode, false, true);
+        => ExtractFiles(parentWindow, items, ((MainForm)Application.OpenForms["MainForm"]).tempDir, mode, false, true);
 
     public static bool ExtractFiles(IWin32Window parentWindow, IEnumerable<TiFileSystemObject> items)
         => ExtractFiles(parentWindow, items,

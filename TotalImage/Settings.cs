@@ -428,7 +428,7 @@ namespace TotalImage
         /// <summary>
         /// Checks all the items in the recent images list and removes any that no longer exist.
         /// </summary>
-        /// <remarks>PopulateRecentList() method of frmMain should be called after this method to sync the menu items with the new state of the list.</remarks>
+        /// <remarks>PopulateRecentList() method of MainForm should be called after this method to sync the menu items with the new state of the list.</remarks>
         public static void CheckRecentImages()
         {
             for(int i = CurrentSettings.RecentImages.Count - 1; i >= 0; i--)
