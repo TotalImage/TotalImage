@@ -82,56 +82,56 @@ namespace TotalImage.Dialogs
         {
             SyncUIWithSettings();
 
-            /* lstColorMode's Win32 handle is created eagerly because it lives on the initially-visible
-             * tab, so it misses the dark mode theming that is applied lazily to handles on other tabs.
+            /* colorThemeComboBox's Win32 handle is created eagerly because it lives on the initially-visible
+             * tab, so it misses the dark mode theming that is applied lazily to handles on other tabControl.
              * Explicitly set the theme based on the active color mode to work around this. */
-            SetWindowTheme(lstColorMode.Handle, Application.ColorMode == SystemColorMode.Dark || Application.IsDarkModeEnabled ? "DarkMode_CFD" : "", null);
+            SetWindowTheme(colorThemeComboBox.Handle, Application.ColorMode == SystemColorMode.Dark || Application.IsDarkModeEnabled ? "DarkMode_CFD" : "", null);
         }
 
         //Syncs the dialog UI with CurrentSettings
         private void SyncUIWithSettings()
         {
-            txtExtractPath.Text = settings.Current.DefaultExtractPath;
-            cbxOpenDir.Checked = settings.Current.OpenFolderAfterExtract;
-            cbxShowCommandBar.Checked = settings.Current.ShowCommandBar;
-            cbxShowStatusBar.Checked = settings.Current.ShowStatusBar;
-            cbxShowDirectoryTree.Checked = settings.Current.ShowDirectoryTree;
-            cbxShowHiddenItems.Checked = settings.Current.ShowHiddenItems;
-            lstSortBy.SelectedIndex = settings.Current.FilesSortingColumn;
-            lstSortOrder.SelectedIndex = (int)settings.Current.FilesSortOrder - 1;
-            cbxExtractAsk.Checked = settings.Current.ExtractAlwaysAsk;
-            cbxPreserveAttributes.Checked = settings.Current.ExtractPreserveAttributes;
-            cbxPreserveDates.Checked = settings.Current.ExtractPreserveDates;
-            cbxShellFileIcons.Checked = settings.Current.QueryShellForFileTypeInfo;
-            cbxAutoincrementFilename.Checked = settings.Current.AutoIncrementFilename;
-            cbxConfirmDeletion.Checked = settings.Current.ConfirmDeletion;
-            cbxConfirmInjection.Checked = settings.Current.ConfirmInjection;
-            cbxConfirmOverwriteExtract.Checked = settings.Current.ConfirmOverwriteExtraction;
-            txtMemoryMapping.Value = settings.Current.MemoryMappingThreshold / 1048576;
-            cbxShowDirSizes.Checked = settings.Current.FileListShowDirSize;
-            lstColorMode.SelectedIndex = (int)settings.Current.ColorMode;
+            extractPathTextBox.Text = settings.Current.DefaultExtractPath;
+            openFolderAfterExtractCheckBox.Checked = settings.Current.OpenFolderAfterExtract;
+            showCommandBarCheckBox.Checked = settings.Current.ShowCommandBar;
+            showStatusBarCheckBox.Checked = settings.Current.ShowStatusBar;
+            showDirectoryTreeCheckBox.Checked = settings.Current.ShowDirectoryTree;
+            showHiddenItemsCheckBox.Checked = settings.Current.ShowHiddenItems;
+            sortColumnComboBox.SelectedIndex = settings.Current.FilesSortingColumn;
+            sortDirectionComboBox.SelectedIndex = (int)settings.Current.FilesSortOrder - 1;
+            extractAlwaysAskCheckBox.Checked = settings.Current.ExtractAlwaysAsk;
+            preserveAttributesCheckBox.Checked = settings.Current.ExtractPreserveAttributes;
+            preserveDatesCheckBox.Checked = settings.Current.ExtractPreserveDates;
+            queryShellCheckBox.Checked = settings.Current.QueryShellForFileTypeInfo;
+            autoIncrementFilenameCheckBox.Checked = settings.Current.AutoIncrementFilename;
+            confirmDeletionCheckBox.Checked = settings.Current.ConfirmDeletion;
+            confirmInjectionCheckBox.Checked = settings.Current.ConfirmInjection;
+            confirmOverwriteExtractionCheckBox.Checked = settings.Current.ConfirmOverwriteExtraction;
+            memoryMappingThresholdUpDown.Value = settings.Current.MemoryMappingThreshold / 1048576;
+            showDirectorySizesCheckBox.Checked = settings.Current.FileListShowDirSize;
+            colorThemeComboBox.SelectedIndex = (int)settings.Current.ColorMode;
 
             switch (settings.Current.FilesView)
             {
-                case ViewMode.LargeIcon: lstViewType.SelectedIndex = 0; break;
-                case ViewMode.SmallIcon: lstViewType.SelectedIndex = 1; break;
-                case ViewMode.List: lstViewType.SelectedIndex = 2; break;
-                case ViewMode.Details: lstViewType.SelectedIndex = 3; break;
-                case ViewMode.Tile: lstViewType.SelectedIndex = 4; break;
+                case ViewMode.LargeIcon: viewModeComboBox.SelectedIndex = 0; break;
+                case ViewMode.SmallIcon: viewModeComboBox.SelectedIndex = 1; break;
+                case ViewMode.List: viewModeComboBox.SelectedIndex = 2; break;
+                case ViewMode.Details: viewModeComboBox.SelectedIndex = 3; break;
+                case ViewMode.Tile: viewModeComboBox.SelectedIndex = 4; break;
             }
 
             switch (settings.Current.SizeUnit)
             {
-                case SizeUnit.Bytes: lstSizeUnits.SelectedIndex = 0; break;
-                case SizeUnit.Decimal: lstSizeUnits.SelectedIndex = 1; break;
-                case SizeUnit.Binary: lstSizeUnits.SelectedIndex = 2; break;
+                case SizeUnit.Bytes: sizeUnitComboBox.SelectedIndex = 0; break;
+                case SizeUnit.Decimal: sizeUnitComboBox.SelectedIndex = 1; break;
+                case SizeUnit.Binary: sizeUnitComboBox.SelectedIndex = 2; break;
             }
 
             switch (settings.Current.DefaultDirectoryExtractionMode)
             {
-                case DirectoryExtractionMode.Skip: rbnIgnoreFolders.Checked = true; break;
-                case DirectoryExtractionMode.Merge: rbnExtractFlat.Checked = true; break;
-                case DirectoryExtractionMode.Preserve: rbnExtractPreserve.Checked = true; break;
+                case DirectoryExtractionMode.Skip: skipFoldersRadioButton.Checked = true; break;
+                case DirectoryExtractionMode.Merge: mergeFoldersRadioButton.Checked = true; break;
+                case DirectoryExtractionMode.Preserve: preserveFoldersRadioButton.Checked = true; break;
             }
         }
 
@@ -142,41 +142,41 @@ namespace TotalImage.Dialogs
 
             if (fbd.ShowDialog() == DialogResult.OK)
             {
-                txtExtractPath.Text = fbd.SelectedPath;
+                extractPathTextBox.Text = fbd.SelectedPath;
             }
         }
 
         //Sync CurrentSettings with the UI state and save to file
         private void btnOK_Click(object sender, System.EventArgs e)
         {
-            settings.Current.DefaultExtractPath = txtExtractPath.Text;
-            settings.Current.FilesSortingColumn = lstSortBy.SelectedIndex;
-            settings.Current.FilesSortOrder = (SortDirection)(lstSortOrder.SelectedIndex + 1);
-            settings.Current.OpenFolderAfterExtract = cbxOpenDir.Checked;
-            settings.Current.ShowCommandBar = cbxShowCommandBar.Checked;
-            settings.Current.ShowDirectoryTree = cbxShowDirectoryTree.Checked;
-            settings.Current.ShowHiddenItems = cbxShowHiddenItems.Checked;
-            settings.Current.ShowStatusBar = cbxShowStatusBar.Checked;
-            settings.Current.ExtractAlwaysAsk = cbxExtractAsk.Checked;
-            settings.Current.ExtractPreserveAttributes = cbxPreserveAttributes.Checked;
-            settings.Current.ExtractPreserveDates = cbxPreserveDates.Checked;
-            settings.Current.QueryShellForFileTypeInfo = cbxShellFileIcons.Checked;
-            settings.Current.AutoIncrementFilename = cbxAutoincrementFilename.Checked;
-            settings.Current.ConfirmDeletion = cbxConfirmDeletion.Checked;
-            settings.Current.ConfirmInjection = cbxConfirmInjection.Checked;
-            settings.Current.ConfirmOverwriteExtraction = cbxConfirmOverwriteExtract.Checked;
-            settings.Current.MemoryMappingThreshold = (long)txtMemoryMapping.Value * 1048576;
-            settings.Current.FileListShowDirSize = cbxShowDirSizes.Checked;
-            settings.Current.ColorMode = (ColorTheme)lstColorMode.SelectedIndex;
+            settings.Current.DefaultExtractPath = extractPathTextBox.Text;
+            settings.Current.FilesSortingColumn = sortColumnComboBox.SelectedIndex;
+            settings.Current.FilesSortOrder = (SortDirection)(sortDirectionComboBox.SelectedIndex + 1);
+            settings.Current.OpenFolderAfterExtract = openFolderAfterExtractCheckBox.Checked;
+            settings.Current.ShowCommandBar = showCommandBarCheckBox.Checked;
+            settings.Current.ShowDirectoryTree = showDirectoryTreeCheckBox.Checked;
+            settings.Current.ShowHiddenItems = showHiddenItemsCheckBox.Checked;
+            settings.Current.ShowStatusBar = showStatusBarCheckBox.Checked;
+            settings.Current.ExtractAlwaysAsk = extractAlwaysAskCheckBox.Checked;
+            settings.Current.ExtractPreserveAttributes = preserveAttributesCheckBox.Checked;
+            settings.Current.ExtractPreserveDates = preserveDatesCheckBox.Checked;
+            settings.Current.QueryShellForFileTypeInfo = queryShellCheckBox.Checked;
+            settings.Current.AutoIncrementFilename = autoIncrementFilenameCheckBox.Checked;
+            settings.Current.ConfirmDeletion = confirmDeletionCheckBox.Checked;
+            settings.Current.ConfirmInjection = confirmInjectionCheckBox.Checked;
+            settings.Current.ConfirmOverwriteExtraction = confirmOverwriteExtractionCheckBox.Checked;
+            settings.Current.MemoryMappingThreshold = (long)memoryMappingThresholdUpDown.Value * 1048576;
+            settings.Current.FileListShowDirSize = showDirectorySizesCheckBox.Checked;
+            settings.Current.ColorMode = (ColorTheme)colorThemeComboBox.SelectedIndex;
 
-            switch (lstSizeUnits.SelectedIndex)
+            switch (sizeUnitComboBox.SelectedIndex)
             {
                 case 0: settings.Current.SizeUnit = SizeUnit.Bytes; break;
                 case 1: settings.Current.SizeUnit = SizeUnit.Decimal; break;
                 case 2: settings.Current.SizeUnit = SizeUnit.Binary; break;
             }
 
-            switch (lstViewType.SelectedIndex)
+            switch (viewModeComboBox.SelectedIndex)
             {
                 case 0: settings.Current.FilesView = ViewMode.LargeIcon; break;
                 case 1: settings.Current.FilesView = ViewMode.SmallIcon; break;
@@ -185,11 +185,11 @@ namespace TotalImage.Dialogs
                 case 4: settings.Current.FilesView = ViewMode.Tile; break;
             }
 
-            if (rbnExtractFlat.Checked)
+            if (mergeFoldersRadioButton.Checked)
                 settings.Current.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Merge;
-            else if (rbnExtractPreserve.Checked)
+            else if (preserveFoldersRadioButton.Checked)
                 settings.Current.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Preserve;
-            else if (rbnIgnoreFolders.Checked)
+            else if (skipFoldersRadioButton.Checked)
                 settings.Current.DefaultDirectoryExtractionMode = DirectoryExtractionMode.Skip;
 
             settings.Save();
@@ -276,22 +276,22 @@ namespace TotalImage.Dialogs
         {
             SizeUnit previewUnit = settings.Current.SizeUnit;
 
-            switch (lstSizeUnits.SelectedIndex)
+            switch (sizeUnitComboBox.SelectedIndex)
             {
                 case 0: previewUnit = SizeUnit.Bytes; break;
                 case 1: previewUnit = SizeUnit.Decimal; break;
                 case 2: previewUnit = SizeUnit.Binary; break;
             }
 
-            lblSizeUnitsPreview.Text = $"Preview:{Environment.NewLine}{previewUnit.FormatSize(234)} | " +
+            sizeUnitPreviewLabel.Text = $"Preview:{Environment.NewLine}{previewUnit.FormatSize(234)} | " +
                 $"{previewUnit.FormatSize(2345)} | {previewUnit.FormatSize(2345678)} | " +
                 $"{previewUnit.FormatSize(2345678901)} | {previewUnit.FormatSize(2345678901234)}";
         }
 
         private void cbxExtractAsk_CheckedChanged(object sender, EventArgs e)
         {
-            rbnExtractFlat.Enabled = rbnExtractPreserve.Enabled = rbnIgnoreFolders.Enabled = btnBrowse.Enabled = txtExtractPath.Enabled =
-                cbxOpenDir.Enabled = !cbxExtractAsk.Checked;
+            mergeFoldersRadioButton.Enabled = preserveFoldersRadioButton.Enabled = skipFoldersRadioButton.Enabled = browseButton.Enabled = extractPathTextBox.Enabled =
+                openFolderAfterExtractCheckBox.Enabled = !extractAlwaysAskCheckBox.Checked;
         }
 
         private void btnOpenTemp_Click(object sender, EventArgs e)

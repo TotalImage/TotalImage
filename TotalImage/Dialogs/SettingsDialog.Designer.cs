@@ -28,774 +28,774 @@ namespace TotalImage.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            btnCancel = new System.Windows.Forms.Button();
-            btnOK = new System.Windows.Forms.Button();
-            pnlBottom = new System.Windows.Forms.Panel();
-            tabs = new System.Windows.Forms.TabControl();
-            tabGeneral = new System.Windows.Forms.TabPage();
-            gbxColorMode = new System.Windows.Forms.GroupBox();
-            lstColorMode = new System.Windows.Forms.ComboBox();
-            lblColorMode1 = new System.Windows.Forms.Label();
-            lblColorMode = new System.Windows.Forms.Label();
-            gbxBehavior = new System.Windows.Forms.GroupBox();
-            lblMemoryMapping1 = new System.Windows.Forms.Label();
-            txtMemoryMapping = new System.Windows.Forms.NumericUpDown();
-            lblMemoryMapping = new System.Windows.Forms.Label();
-            cbxAutoincrementFilename = new System.Windows.Forms.CheckBox();
-            cbxConfirmOverwriteExtract = new System.Windows.Forms.CheckBox();
-            cbxConfirmDeletion = new System.Windows.Forms.CheckBox();
-            cbxConfirmInjection = new System.Windows.Forms.CheckBox();
-            gbxMisc = new System.Windows.Forms.GroupBox();
-            btnOpenTemp = new System.Windows.Forms.Button();
-            lblClearTemp = new System.Windows.Forms.Label();
-            lblClearRecent = new System.Windows.Forms.Label();
-            lblResetSettings = new System.Windows.Forms.Label();
-            btnClearTemp = new System.Windows.Forms.Button();
-            btnClearRecent = new System.Windows.Forms.Button();
-            btnResetSettings = new System.Windows.Forms.Button();
-            tabView = new System.Windows.Forms.TabPage();
-            gbxMainWindow = new System.Windows.Forms.GroupBox();
-            cbxShowCommandBar = new System.Windows.Forms.CheckBox();
-            cbxShowStatusBar = new System.Windows.Forms.CheckBox();
-            cbxShowDirectoryTree = new System.Windows.Forms.CheckBox();
-            cbxShowHiddenItems = new System.Windows.Forms.CheckBox();
-            gbxFileList = new System.Windows.Forms.GroupBox();
-            cbxShowDirSizes = new System.Windows.Forms.CheckBox();
-            lblViewType = new System.Windows.Forms.Label();
-            lstSortOrder = new System.Windows.Forms.ComboBox();
-            lstViewType = new System.Windows.Forms.ComboBox();
-            lblSortOrder = new System.Windows.Forms.Label();
-            lblSortBy = new System.Windows.Forms.Label();
-            lstSortBy = new System.Windows.Forms.ComboBox();
-            gbxSizeUnits = new System.Windows.Forms.GroupBox();
-            lblSizeUnitsTip = new System.Windows.Forms.Label();
-            lblSizeUnitsPreview = new System.Windows.Forms.Label();
-            lblSizeUnits = new System.Windows.Forms.Label();
-            lstSizeUnits = new System.Windows.Forms.ComboBox();
-            tabExtraction = new System.Windows.Forms.TabPage();
-            gbxExtractionDefaults = new System.Windows.Forms.GroupBox();
-            cbxExtractAsk = new System.Windows.Forms.CheckBox();
-            lblExtractPath = new System.Windows.Forms.Label();
-            txtExtractPath = new System.Windows.Forms.TextBox();
-            cbxOpenDir = new System.Windows.Forms.CheckBox();
-            btnBrowse = new System.Windows.Forms.Button();
-            rbnExtractPreserve = new System.Windows.Forms.RadioButton();
-            rbnIgnoreFolders = new System.Windows.Forms.RadioButton();
-            rbnExtractFlat = new System.Windows.Forms.RadioButton();
-            gbxExtractionPreserve = new System.Windows.Forms.GroupBox();
-            cbxPreserveDates = new System.Windows.Forms.CheckBox();
-            cbxPreserveAttributes = new System.Windows.Forms.CheckBox();
-            tabIntegration = new System.Windows.Forms.TabPage();
-            gbxFileAssociations = new System.Windows.Forms.GroupBox();
-            lblFileAssoc = new System.Windows.Forms.Label();
-            btnFileAssoc = new System.Windows.Forms.Button();
-            gbxIntegrationMisc = new System.Windows.Forms.GroupBox();
-            lblSystemIcons = new System.Windows.Forms.Label();
-            cbxShellFileIcons = new System.Windows.Forms.CheckBox();
-            pnlBottom.SuspendLayout();
-            tabs.SuspendLayout();
-            tabGeneral.SuspendLayout();
-            gbxColorMode.SuspendLayout();
-            gbxBehavior.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)txtMemoryMapping).BeginInit();
-            gbxMisc.SuspendLayout();
-            tabView.SuspendLayout();
-            gbxMainWindow.SuspendLayout();
-            gbxFileList.SuspendLayout();
-            gbxSizeUnits.SuspendLayout();
-            tabExtraction.SuspendLayout();
-            gbxExtractionDefaults.SuspendLayout();
-            gbxExtractionPreserve.SuspendLayout();
-            tabIntegration.SuspendLayout();
-            gbxFileAssociations.SuspendLayout();
-            gbxIntegrationMisc.SuspendLayout();
+            cancelButton = new System.Windows.Forms.Button();
+            okButton = new System.Windows.Forms.Button();
+            buttonPanel = new System.Windows.Forms.Panel();
+            tabControl = new System.Windows.Forms.TabControl();
+            generalTabPage = new System.Windows.Forms.TabPage();
+            colorThemeGroupBox = new System.Windows.Forms.GroupBox();
+            colorThemeComboBox = new System.Windows.Forms.ComboBox();
+            colorThemeRestartLabel = new System.Windows.Forms.Label();
+            colorThemeLabel = new System.Windows.Forms.Label();
+            behaviorGroupBox = new System.Windows.Forms.GroupBox();
+            memoryMappingUnitLabel = new System.Windows.Forms.Label();
+            memoryMappingThresholdUpDown = new System.Windows.Forms.NumericUpDown();
+            memoryMappingLabel = new System.Windows.Forms.Label();
+            autoIncrementFilenameCheckBox = new System.Windows.Forms.CheckBox();
+            confirmOverwriteExtractionCheckBox = new System.Windows.Forms.CheckBox();
+            confirmDeletionCheckBox = new System.Windows.Forms.CheckBox();
+            confirmInjectionCheckBox = new System.Windows.Forms.CheckBox();
+            miscGroupBox = new System.Windows.Forms.GroupBox();
+            openTempFolderButton = new System.Windows.Forms.Button();
+            clearTempFolderLabel = new System.Windows.Forms.Label();
+            clearRecentImagesLabel = new System.Windows.Forms.Label();
+            resetSettingsLabel = new System.Windows.Forms.Label();
+            clearTempFolderButton = new System.Windows.Forms.Button();
+            clearRecentImagesButton = new System.Windows.Forms.Button();
+            resetSettingsButton = new System.Windows.Forms.Button();
+            viewTabPage = new System.Windows.Forms.TabPage();
+            mainWindowGroupBox = new System.Windows.Forms.GroupBox();
+            showCommandBarCheckBox = new System.Windows.Forms.CheckBox();
+            showStatusBarCheckBox = new System.Windows.Forms.CheckBox();
+            showDirectoryTreeCheckBox = new System.Windows.Forms.CheckBox();
+            showHiddenItemsCheckBox = new System.Windows.Forms.CheckBox();
+            fileListGroupBox = new System.Windows.Forms.GroupBox();
+            showDirectorySizesCheckBox = new System.Windows.Forms.CheckBox();
+            viewModeLabel = new System.Windows.Forms.Label();
+            sortDirectionComboBox = new System.Windows.Forms.ComboBox();
+            viewModeComboBox = new System.Windows.Forms.ComboBox();
+            sortDirectionLabel = new System.Windows.Forms.Label();
+            sortColumnLabel = new System.Windows.Forms.Label();
+            sortColumnComboBox = new System.Windows.Forms.ComboBox();
+            sizeUnitGroupBox = new System.Windows.Forms.GroupBox();
+            sizeUnitTipLabel = new System.Windows.Forms.Label();
+            sizeUnitPreviewLabel = new System.Windows.Forms.Label();
+            sizeUnitLabel = new System.Windows.Forms.Label();
+            sizeUnitComboBox = new System.Windows.Forms.ComboBox();
+            extractionTabPage = new System.Windows.Forms.TabPage();
+            extractionDefaultsGroupBox = new System.Windows.Forms.GroupBox();
+            extractAlwaysAskCheckBox = new System.Windows.Forms.CheckBox();
+            extractPathLabel = new System.Windows.Forms.Label();
+            extractPathTextBox = new System.Windows.Forms.TextBox();
+            openFolderAfterExtractCheckBox = new System.Windows.Forms.CheckBox();
+            browseButton = new System.Windows.Forms.Button();
+            preserveFoldersRadioButton = new System.Windows.Forms.RadioButton();
+            skipFoldersRadioButton = new System.Windows.Forms.RadioButton();
+            mergeFoldersRadioButton = new System.Windows.Forms.RadioButton();
+            extractionPreserveGroupBox = new System.Windows.Forms.GroupBox();
+            preserveDatesCheckBox = new System.Windows.Forms.CheckBox();
+            preserveAttributesCheckBox = new System.Windows.Forms.CheckBox();
+            integrationTabPage = new System.Windows.Forms.TabPage();
+            fileAssociationsGroupBox = new System.Windows.Forms.GroupBox();
+            fileAssociationsLabel = new System.Windows.Forms.Label();
+            fileAssociationsButton = new System.Windows.Forms.Button();
+            integrationMiscGroupBox = new System.Windows.Forms.GroupBox();
+            queryShellLabel = new System.Windows.Forms.Label();
+            queryShellCheckBox = new System.Windows.Forms.CheckBox();
+            buttonPanel.SuspendLayout();
+            tabControl.SuspendLayout();
+            generalTabPage.SuspendLayout();
+            colorThemeGroupBox.SuspendLayout();
+            behaviorGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)memoryMappingThresholdUpDown).BeginInit();
+            miscGroupBox.SuspendLayout();
+            viewTabPage.SuspendLayout();
+            mainWindowGroupBox.SuspendLayout();
+            fileListGroupBox.SuspendLayout();
+            sizeUnitGroupBox.SuspendLayout();
+            extractionTabPage.SuspendLayout();
+            extractionDefaultsGroupBox.SuspendLayout();
+            extractionPreserveGroupBox.SuspendLayout();
+            integrationTabPage.SuspendLayout();
+            fileAssociationsGroupBox.SuspendLayout();
+            integrationMiscGroupBox.SuspendLayout();
             SuspendLayout();
             // 
-            // btnCancel
-            // 
-            btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(393, 12);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new System.Drawing.Size(80, 26);
-            btnCancel.TabIndex = 1;
-            btnCancel.Text = "Cancel";
-            // 
-            // btnOK
-            // 
-            btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.Location = new System.Drawing.Point(307, 12);
-            btnOK.Name = "btnOK";
-            btnOK.Size = new System.Drawing.Size(80, 26);
-            btnOK.TabIndex = 0;
-            btnOK.Text = "OK";
-            btnOK.Click += btnOK_Click;
-            // 
-            // pnlBottom
-            // 
-            pnlBottom.BackColor = System.Drawing.SystemColors.Control;
-            pnlBottom.Controls.Add(btnCancel);
-            pnlBottom.Controls.Add(btnOK);
-            pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 500);
-            pnlBottom.Name = "pnlBottom";
-            pnlBottom.Size = new System.Drawing.Size(485, 50);
-            pnlBottom.TabIndex = 2;
-            // 
-            // tabs
-            // 
-            tabs.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            tabs.Controls.Add(tabGeneral);
-            tabs.Controls.Add(tabView);
-            tabs.Controls.Add(tabExtraction);
-            tabs.Controls.Add(tabIntegration);
-            tabs.Location = new System.Drawing.Point(12, 13);
-            tabs.Name = "tabs";
-            tabs.SelectedIndex = 0;
-            tabs.Size = new System.Drawing.Size(461, 482);
-            tabs.TabIndex = 3;
-            // 
-            // tabGeneral
-            // 
-            tabGeneral.BackColor = System.Drawing.SystemColors.Window;
-            tabGeneral.Controls.Add(gbxColorMode);
-            tabGeneral.Controls.Add(gbxBehavior);
-            tabGeneral.Controls.Add(gbxMisc);
-            tabGeneral.Location = new System.Drawing.Point(4, 24);
-            tabGeneral.Name = "tabGeneral";
-            tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-            tabGeneral.Size = new System.Drawing.Size(453, 454);
-            tabGeneral.TabIndex = 0;
-            tabGeneral.Text = "General";
-            // 
-            // gbxColorMode
-            // 
-            gbxColorMode.Controls.Add(lstColorMode);
-            gbxColorMode.Controls.Add(lblColorMode1);
-            gbxColorMode.Controls.Add(lblColorMode);
-            gbxColorMode.Location = new System.Drawing.Point(6, 172);
-            gbxColorMode.Name = "gbxColorMode";
-            gbxColorMode.Size = new System.Drawing.Size(441, 82);
-            gbxColorMode.TabIndex = 3;
-            gbxColorMode.TabStop = false;
-            gbxColorMode.Text = "Color mode";
-            // 
-            // lstColorMode
-            // 
-            lstColorMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstColorMode.FormattingEnabled = true;
-            lstColorMode.Items.AddRange(new object[] { "Light", "System-defined", "Dark" });
-            lstColorMode.Location = new System.Drawing.Point(149, 19);
-            lstColorMode.Name = "lstColorMode";
-            lstColorMode.Size = new System.Drawing.Size(175, 23);
-            lstColorMode.TabIndex = 16;
-            // 
-            // lblColorMode1
-            // 
-            lblColorMode1.AutoSize = true;
-            lblColorMode1.Location = new System.Drawing.Point(9, 54);
-            lblColorMode1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            lblColorMode1.Name = "lblColorMode1";
-            lblColorMode1.Size = new System.Drawing.Size(315, 15);
-            lblColorMode1.TabIndex = 15;
-            lblColorMode1.Text = "TotalImage must be restarted for this setting to take effect.";
-            // 
-            // lblColorMode
-            // 
-            lblColorMode.AutoSize = true;
-            lblColorMode.Location = new System.Drawing.Point(9, 22);
-            lblColorMode.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            lblColorMode.Name = "lblColorMode";
-            lblColorMode.Size = new System.Drawing.Size(135, 15);
-            lblColorMode.TabIndex = 14;
-            lblColorMode.Text = "Application color mode:";
-            // 
-            // gbxBehavior
-            // 
-            gbxBehavior.Controls.Add(lblMemoryMapping1);
-            gbxBehavior.Controls.Add(txtMemoryMapping);
-            gbxBehavior.Controls.Add(lblMemoryMapping);
-            gbxBehavior.Controls.Add(cbxAutoincrementFilename);
-            gbxBehavior.Controls.Add(cbxConfirmOverwriteExtract);
-            gbxBehavior.Controls.Add(cbxConfirmDeletion);
-            gbxBehavior.Controls.Add(cbxConfirmInjection);
-            gbxBehavior.Location = new System.Drawing.Point(6, 6);
-            gbxBehavior.Name = "gbxBehavior";
-            gbxBehavior.Size = new System.Drawing.Size(441, 160);
-            gbxBehavior.TabIndex = 2;
-            gbxBehavior.TabStop = false;
-            gbxBehavior.Text = "Behavior";
-            // 
-            // lblMemoryMapping1
-            // 
-            lblMemoryMapping1.AutoSize = true;
-            lblMemoryMapping1.Enabled = false;
-            lblMemoryMapping1.Location = new System.Drawing.Point(349, 130);
-            lblMemoryMapping1.Name = "lblMemoryMapping1";
-            lblMemoryMapping1.Size = new System.Drawing.Size(28, 15);
-            lblMemoryMapping1.TabIndex = 21;
-            lblMemoryMapping1.Text = "MiB";
-            // 
-            // txtMemoryMapping
-            // 
-            txtMemoryMapping.Enabled = false;
-            txtMemoryMapping.Location = new System.Drawing.Point(243, 127);
-            txtMemoryMapping.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
-            txtMemoryMapping.Name = "txtMemoryMapping";
-            txtMemoryMapping.Size = new System.Drawing.Size(100, 23);
-            txtMemoryMapping.TabIndex = 5;
-            // 
-            // lblMemoryMapping
-            // 
-            lblMemoryMapping.AutoSize = true;
-            lblMemoryMapping.Enabled = false;
-            lblMemoryMapping.Location = new System.Drawing.Point(9, 130);
-            lblMemoryMapping.Name = "lblMemoryMapping";
-            lblMemoryMapping.Size = new System.Drawing.Size(228, 15);
-            lblMemoryMapping.TabIndex = 19;
-            lblMemoryMapping.Text = "Threshold for mapping files into memory:";
-            // 
-            // cbxAutoincrementFilename
-            // 
-            cbxAutoincrementFilename.AutoSize = true;
-            cbxAutoincrementFilename.Enabled = false;
-            cbxAutoincrementFilename.Location = new System.Drawing.Point(11, 102);
-            cbxAutoincrementFilename.Name = "cbxAutoincrementFilename";
-            cbxAutoincrementFilename.Size = new System.Drawing.Size(331, 19);
-            cbxAutoincrementFilename.TabIndex = 4;
-            cbxAutoincrementFilename.Text = "When saving, auto-increment last filename when possible";
-            // 
-            // cbxConfirmOverwriteExtract
-            // 
-            cbxConfirmOverwriteExtract.AutoSize = true;
-            cbxConfirmOverwriteExtract.Location = new System.Drawing.Point(11, 22);
-            cbxConfirmOverwriteExtract.Name = "cbxConfirmOverwriteExtract";
-            cbxConfirmOverwriteExtract.Size = new System.Drawing.Size(215, 19);
-            cbxConfirmOverwriteExtract.TabIndex = 1;
-            cbxConfirmOverwriteExtract.Text = "Confirm overwrite during extraction";
-            // 
-            // cbxConfirmDeletion
-            // 
-            cbxConfirmDeletion.AutoSize = true;
-            cbxConfirmDeletion.Enabled = false;
-            cbxConfirmDeletion.Location = new System.Drawing.Point(11, 49);
-            cbxConfirmDeletion.Name = "cbxConfirmDeletion";
-            cbxConfirmDeletion.Size = new System.Drawing.Size(116, 19);
-            cbxConfirmDeletion.TabIndex = 2;
-            cbxConfirmDeletion.Text = "Confirm deletion";
-            // 
-            // cbxConfirmInjection
-            // 
-            cbxConfirmInjection.AutoSize = true;
-            cbxConfirmInjection.Enabled = false;
-            cbxConfirmInjection.Location = new System.Drawing.Point(11, 75);
-            cbxConfirmInjection.Name = "cbxConfirmInjection";
-            cbxConfirmInjection.Size = new System.Drawing.Size(119, 19);
-            cbxConfirmInjection.TabIndex = 3;
-            cbxConfirmInjection.Text = "Confirm injection";
-            // 
-            // gbxMisc
-            // 
-            gbxMisc.Controls.Add(btnOpenTemp);
-            gbxMisc.Controls.Add(lblClearTemp);
-            gbxMisc.Controls.Add(lblClearRecent);
-            gbxMisc.Controls.Add(lblResetSettings);
-            gbxMisc.Controls.Add(btnClearTemp);
-            gbxMisc.Controls.Add(btnClearRecent);
-            gbxMisc.Controls.Add(btnResetSettings);
-            gbxMisc.Location = new System.Drawing.Point(6, 260);
-            gbxMisc.Name = "gbxMisc";
-            gbxMisc.Size = new System.Drawing.Size(441, 160);
-            gbxMisc.TabIndex = 1;
-            gbxMisc.TabStop = false;
-            gbxMisc.Text = "Advanced options";
-            // 
-            // btnOpenTemp
-            // 
-            btnOpenTemp.Location = new System.Drawing.Point(355, 123);
-            btnOpenTemp.Name = "btnOpenTemp";
-            btnOpenTemp.Size = new System.Drawing.Size(80, 26);
-            btnOpenTemp.TabIndex = 10;
-            btnOpenTemp.Text = "Open";
-            btnOpenTemp.UseVisualStyleBackColor = true;
-            btnOpenTemp.Click += btnOpenTemp_Click;
-            // 
-            // lblClearTemp
-            // 
-            lblClearTemp.AutoSize = true;
-            lblClearTemp.Location = new System.Drawing.Point(9, 96);
-            lblClearTemp.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            lblClearTemp.Name = "lblClearTemp";
-            lblClearTemp.Size = new System.Drawing.Size(328, 15);
-            lblClearTemp.TabIndex = 9;
-            lblClearTemp.Text = "Clear TotalImage's temporary folder in local application data.";
-            // 
-            // lblClearRecent
-            // 
-            lblClearRecent.AutoSize = true;
-            lblClearRecent.Location = new System.Drawing.Point(9, 61);
-            lblClearRecent.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            lblClearRecent.Name = "lblClearRecent";
-            lblClearRecent.Size = new System.Drawing.Size(152, 15);
-            lblClearRecent.TabIndex = 8;
-            lblClearRecent.Text = "Clear the recent images list.";
-            // 
-            // lblResetSettings
-            // 
-            lblResetSettings.AutoSize = true;
-            lblResetSettings.Location = new System.Drawing.Point(9, 24);
-            lblResetSettings.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            lblResetSettings.Name = "lblResetSettings";
-            lblResetSettings.Size = new System.Drawing.Size(276, 15);
-            lblResetSettings.TabIndex = 7;
-            lblResetSettings.Text = "Reset all TotalImage settings to their default values.";
-            // 
-            // btnClearTemp
-            // 
-            btnClearTemp.Location = new System.Drawing.Point(355, 91);
-            btnClearTemp.Name = "btnClearTemp";
-            btnClearTemp.Size = new System.Drawing.Size(80, 26);
-            btnClearTemp.TabIndex = 9;
-            btnClearTemp.Text = "Clear";
-            btnClearTemp.UseVisualStyleBackColor = true;
-            btnClearTemp.Click += btnClearTemp_Click;
-            // 
-            // btnClearRecent
-            // 
-            btnClearRecent.Location = new System.Drawing.Point(355, 56);
-            btnClearRecent.Name = "btnClearRecent";
-            btnClearRecent.Size = new System.Drawing.Size(80, 26);
-            btnClearRecent.TabIndex = 8;
-            btnClearRecent.Text = "Clear";
-            btnClearRecent.UseVisualStyleBackColor = true;
-            btnClearRecent.Click += btnClearRecent_Click;
-            // 
-            // btnResetSettings
-            // 
-            btnResetSettings.Location = new System.Drawing.Point(355, 19);
-            btnResetSettings.Name = "btnResetSettings";
-            btnResetSettings.Size = new System.Drawing.Size(80, 26);
-            btnResetSettings.TabIndex = 7;
-            btnResetSettings.Text = "Reset";
-            btnResetSettings.UseVisualStyleBackColor = true;
-            btnResetSettings.Click += btnReset_Click;
-            // 
-            // tabView
-            // 
-            tabView.BackColor = System.Drawing.SystemColors.Window;
-            tabView.Controls.Add(gbxMainWindow);
-            tabView.Controls.Add(gbxFileList);
-            tabView.Controls.Add(gbxSizeUnits);
-            tabView.Location = new System.Drawing.Point(4, 24);
-            tabView.Name = "tabView";
-            tabView.Padding = new System.Windows.Forms.Padding(3);
-            tabView.Size = new System.Drawing.Size(453, 454);
-            tabView.TabIndex = 2;
-            tabView.Text = "View";
-            // 
-            // gbxMainWindow
-            // 
-            gbxMainWindow.Controls.Add(cbxShowCommandBar);
-            gbxMainWindow.Controls.Add(cbxShowStatusBar);
-            gbxMainWindow.Controls.Add(cbxShowDirectoryTree);
-            gbxMainWindow.Controls.Add(cbxShowHiddenItems);
-            gbxMainWindow.Location = new System.Drawing.Point(6, 6);
-            gbxMainWindow.Name = "gbxMainWindow";
-            gbxMainWindow.Size = new System.Drawing.Size(441, 106);
-            gbxMainWindow.TabIndex = 21;
-            gbxMainWindow.TabStop = false;
-            gbxMainWindow.Text = "Main window";
-            // 
-            // cbxShowCommandBar
-            // 
-            cbxShowCommandBar.AutoSize = true;
-            cbxShowCommandBar.Location = new System.Drawing.Point(11, 22);
-            cbxShowCommandBar.Name = "cbxShowCommandBar";
-            cbxShowCommandBar.Size = new System.Drawing.Size(133, 19);
-            cbxShowCommandBar.TabIndex = 12;
-            cbxShowCommandBar.Text = "Show command bar";
-            // 
-            // cbxShowStatusBar
-            // 
-            cbxShowStatusBar.AutoSize = true;
-            cbxShowStatusBar.Location = new System.Drawing.Point(221, 22);
-            cbxShowStatusBar.Name = "cbxShowStatusBar";
-            cbxShowStatusBar.Size = new System.Drawing.Size(109, 19);
-            cbxShowStatusBar.TabIndex = 16;
-            cbxShowStatusBar.Text = "Show status bar";
-            // 
-            // cbxShowDirectoryTree
-            // 
-            cbxShowDirectoryTree.AutoSize = true;
-            cbxShowDirectoryTree.Location = new System.Drawing.Point(11, 49);
-            cbxShowDirectoryTree.Name = "cbxShowDirectoryTree";
-            cbxShowDirectoryTree.Size = new System.Drawing.Size(128, 19);
-            cbxShowDirectoryTree.TabIndex = 15;
-            cbxShowDirectoryTree.Text = "Show directory tree";
-            // 
-            // cbxShowHiddenItems
-            // 
-            cbxShowHiddenItems.AutoSize = true;
-            cbxShowHiddenItems.Location = new System.Drawing.Point(221, 48);
-            cbxShowHiddenItems.Name = "cbxShowHiddenItems";
-            cbxShowHiddenItems.Size = new System.Drawing.Size(136, 19);
-            cbxShowHiddenItems.TabIndex = 14;
-            cbxShowHiddenItems.Text = "Show hidden objects";
-            // 
-            // gbxFileList
-            // 
-            gbxFileList.Controls.Add(cbxShowDirSizes);
-            gbxFileList.Controls.Add(lblViewType);
-            gbxFileList.Controls.Add(lstSortOrder);
-            gbxFileList.Controls.Add(lstViewType);
-            gbxFileList.Controls.Add(lblSortOrder);
-            gbxFileList.Controls.Add(lblSortBy);
-            gbxFileList.Controls.Add(lstSortBy);
-            gbxFileList.Location = new System.Drawing.Point(6, 118);
-            gbxFileList.Name = "gbxFileList";
-            gbxFileList.Size = new System.Drawing.Size(441, 126);
-            gbxFileList.TabIndex = 22;
-            gbxFileList.TabStop = false;
-            gbxFileList.Text = "File list";
-            // 
-            // cbxShowDirSizes
-            // 
-            cbxShowDirSizes.AutoSize = true;
-            cbxShowDirSizes.Location = new System.Drawing.Point(221, 88);
-            cbxShowDirSizes.Name = "cbxShowDirSizes";
-            cbxShowDirSizes.Size = new System.Drawing.Size(182, 19);
-            cbxShowDirSizes.TabIndex = 20;
-            cbxShowDirSizes.Text = "Show directory sizes in file list";
-            // 
-            // lblViewType
-            // 
-            lblViewType.AutoSize = true;
-            lblViewType.Location = new System.Drawing.Point(9, 19);
-            lblViewType.Name = "lblViewType";
-            lblViewType.Size = new System.Drawing.Size(144, 15);
-            lblViewType.TabIndex = 6;
-            lblViewType.Text = "Display items in file list as:";
-            // 
-            // lstSortOrder
-            // 
-            lstSortOrder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstSortOrder.FormattingEnabled = true;
-            lstSortOrder.Items.AddRange(new object[] { "Ascending", "Descending" });
-            lstSortOrder.Location = new System.Drawing.Point(11, 88);
-            lstSortOrder.Name = "lstSortOrder";
-            lstSortOrder.Size = new System.Drawing.Size(170, 23);
-            lstSortOrder.TabIndex = 19;
-            // 
-            // lstViewType
-            // 
-            lstViewType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstViewType.FormattingEnabled = true;
-            lstViewType.Items.AddRange(new object[] { "Large icons", "Small icons", "List", "Details" });
-            lstViewType.Location = new System.Drawing.Point(11, 37);
-            lstViewType.Name = "lstViewType";
-            lstViewType.Size = new System.Drawing.Size(170, 23);
-            lstViewType.TabIndex = 7;
-            // 
-            // lblSortOrder
-            // 
-            lblSortOrder.AutoSize = true;
-            lblSortOrder.Location = new System.Drawing.Point(9, 70);
-            lblSortOrder.Name = "lblSortOrder";
-            lblSortOrder.Size = new System.Drawing.Size(134, 15);
-            lblSortOrder.TabIndex = 18;
-            lblSortOrder.Text = "Sorting order for file list:";
-            // 
-            // lblSortBy
-            // 
-            lblSortBy.AutoSize = true;
-            lblSortBy.Location = new System.Drawing.Point(219, 19);
-            lblSortBy.Name = "lblSortBy";
-            lblSortBy.Size = new System.Drawing.Size(129, 15);
-            lblSortBy.TabIndex = 8;
-            lblSortBy.Text = "Sort items in file list by:";
-            // 
-            // lstSortBy
-            // 
-            lstSortBy.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstSortBy.FormattingEnabled = true;
-            lstSortBy.Items.AddRange(new object[] { "Name", "Type", "Size", "Modified", "Attributes" });
-            lstSortBy.Location = new System.Drawing.Point(221, 37);
-            lstSortBy.Name = "lstSortBy";
-            lstSortBy.Size = new System.Drawing.Size(170, 23);
-            lstSortBy.TabIndex = 9;
-            // 
-            // gbxSizeUnits
-            // 
-            gbxSizeUnits.Controls.Add(lblSizeUnitsTip);
-            gbxSizeUnits.Controls.Add(lblSizeUnitsPreview);
-            gbxSizeUnits.Controls.Add(lblSizeUnits);
-            gbxSizeUnits.Controls.Add(lstSizeUnits);
-            gbxSizeUnits.Location = new System.Drawing.Point(6, 250);
-            gbxSizeUnits.Name = "gbxSizeUnits";
-            gbxSizeUnits.Size = new System.Drawing.Size(441, 116);
-            gbxSizeUnits.TabIndex = 23;
-            gbxSizeUnits.TabStop = false;
-            gbxSizeUnits.Text = "Size units";
-            // 
-            // lblSizeUnitsTip
-            // 
-            lblSizeUnitsTip.AutoSize = true;
-            lblSizeUnitsTip.Location = new System.Drawing.Point(219, 19);
-            lblSizeUnitsTip.Name = "lblSizeUnitsTip";
-            lblSizeUnitsTip.Size = new System.Drawing.Size(214, 45);
-            lblSizeUnitsTip.TabIndex = 22;
-            lblSizeUnitsTip.Text = "For binary and decimal, TotalImage will\r\nautomatically determine the most\r\nappropriate unit and convert to it.";
-            // 
-            // lblSizeUnitsPreview
-            // 
-            lblSizeUnitsPreview.AutoSize = true;
-            lblSizeUnitsPreview.Location = new System.Drawing.Point(9, 73);
-            lblSizeUnitsPreview.Name = "lblSizeUnitsPreview";
-            lblSizeUnitsPreview.Size = new System.Drawing.Size(303, 30);
-            lblSizeUnitsPreview.TabIndex = 21;
-            lblSizeUnitsPreview.Text = "Preview:\r\n234 B | 2345 B | 234567 B | 234567890 B | 2345678901234 B";
-            // 
-            // lblSizeUnits
-            // 
-            lblSizeUnits.AutoSize = true;
-            lblSizeUnits.Location = new System.Drawing.Point(9, 19);
-            lblSizeUnits.Name = "lblSizeUnits";
-            lblSizeUnits.Size = new System.Drawing.Size(80, 15);
-            lblSizeUnits.TabIndex = 10;
-            lblSizeUnits.Text = "Show sizes as:";
-            // 
-            // lstSizeUnits
-            // 
-            lstSizeUnits.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstSizeUnits.FormattingEnabled = true;
-            lstSizeUnits.Items.AddRange(new object[] { "Bytes", "Decimal units (factor 1000)", "Binary units (factor 1024)" });
-            lstSizeUnits.Location = new System.Drawing.Point(12, 37);
-            lstSizeUnits.Name = "lstSizeUnits";
-            lstSizeUnits.Size = new System.Drawing.Size(170, 23);
-            lstSizeUnits.TabIndex = 11;
-            lstSizeUnits.SelectedIndexChanged += lstSizeUnits_SelectedIndexChanged;
-            // 
-            // tabExtraction
-            // 
-            tabExtraction.BackColor = System.Drawing.SystemColors.Window;
-            tabExtraction.Controls.Add(gbxExtractionDefaults);
-            tabExtraction.Controls.Add(gbxExtractionPreserve);
-            tabExtraction.Location = new System.Drawing.Point(4, 24);
-            tabExtraction.Name = "tabExtraction";
-            tabExtraction.Padding = new System.Windows.Forms.Padding(3);
-            tabExtraction.Size = new System.Drawing.Size(453, 454);
-            tabExtraction.TabIndex = 3;
-            tabExtraction.Text = "Extraction";
-            // 
-            // gbxExtractionDefaults
-            // 
-            gbxExtractionDefaults.Controls.Add(cbxExtractAsk);
-            gbxExtractionDefaults.Controls.Add(lblExtractPath);
-            gbxExtractionDefaults.Controls.Add(txtExtractPath);
-            gbxExtractionDefaults.Controls.Add(cbxOpenDir);
-            gbxExtractionDefaults.Controls.Add(btnBrowse);
-            gbxExtractionDefaults.Controls.Add(rbnExtractPreserve);
-            gbxExtractionDefaults.Controls.Add(rbnIgnoreFolders);
-            gbxExtractionDefaults.Controls.Add(rbnExtractFlat);
-            gbxExtractionDefaults.Location = new System.Drawing.Point(6, 6);
-            gbxExtractionDefaults.Name = "gbxExtractionDefaults";
-            gbxExtractionDefaults.Size = new System.Drawing.Size(441, 208);
-            gbxExtractionDefaults.TabIndex = 22;
-            gbxExtractionDefaults.TabStop = false;
-            gbxExtractionDefaults.Text = "Default options";
-            // 
-            // cbxExtractAsk
-            // 
-            cbxExtractAsk.AutoSize = true;
-            cbxExtractAsk.Location = new System.Drawing.Point(11, 22);
-            cbxExtractAsk.Name = "cbxExtractAsk";
-            cbxExtractAsk.Size = new System.Drawing.Size(322, 19);
-            cbxExtractAsk.TabIndex = 0;
-            cbxExtractAsk.Text = "Always ask for these extraction options before extracting";
-            cbxExtractAsk.CheckedChanged += cbxExtractAsk_CheckedChanged;
-            // 
-            // lblExtractPath
-            // 
-            lblExtractPath.AutoSize = true;
-            lblExtractPath.Location = new System.Drawing.Point(8, 50);
-            lblExtractPath.Name = "lblExtractPath";
-            lblExtractPath.Size = new System.Drawing.Size(268, 15);
-            lblExtractPath.TabIndex = 1;
-            lblExtractPath.Text = "Extract selected item(s) to the following directory:";
-            // 
-            // txtExtractPath
-            // 
-            txtExtractPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            txtExtractPath.Location = new System.Drawing.Point(11, 68);
-            txtExtractPath.Name = "txtExtractPath";
-            txtExtractPath.Size = new System.Drawing.Size(338, 23);
-            txtExtractPath.TabIndex = 2;
-            // 
-            // cbxOpenDir
-            // 
-            cbxOpenDir.AutoSize = true;
-            cbxOpenDir.Location = new System.Drawing.Point(11, 179);
-            cbxOpenDir.Name = "cbxOpenDir";
-            cbxOpenDir.Size = new System.Drawing.Size(249, 19);
-            cbxOpenDir.TabIndex = 7;
-            cbxOpenDir.Text = "Open destination directory after extraction";
-            // 
-            // btnBrowse
-            // 
-            btnBrowse.Location = new System.Drawing.Point(355, 66);
-            btnBrowse.Name = "btnBrowse";
-            btnBrowse.Size = new System.Drawing.Size(80, 26);
-            btnBrowse.TabIndex = 3;
-            btnBrowse.Text = "Browse...";
-            btnBrowse.UseVisualStyleBackColor = true;
-            btnBrowse.Click += btnBrowse_Click;
-            // 
-            // rbnExtractPreserve
-            // 
-            rbnExtractPreserve.AutoSize = true;
-            rbnExtractPreserve.Location = new System.Drawing.Point(11, 153);
-            rbnExtractPreserve.Name = "rbnExtractPreserve";
-            rbnExtractPreserve.Size = new System.Drawing.Size(212, 19);
-            rbnExtractPreserve.TabIndex = 6;
-            rbnExtractPreserve.TabStop = true;
-            rbnExtractPreserve.Text = "Preserve original directory structure";
-            // 
-            // rbnIgnoreFolders
-            // 
-            rbnIgnoreFolders.AutoSize = true;
-            rbnIgnoreFolders.Location = new System.Drawing.Point(11, 103);
-            rbnIgnoreFolders.Name = "rbnIgnoreFolders";
-            rbnIgnoreFolders.Size = new System.Drawing.Size(217, 19);
-            rbnIgnoreFolders.TabIndex = 4;
-            rbnIgnoreFolders.TabStop = true;
-            rbnIgnoreFolders.Text = "Ignore directories and subdirectories";
-            // 
-            // rbnExtractFlat
-            // 
-            rbnExtractFlat.AutoSize = true;
-            rbnExtractFlat.Location = new System.Drawing.Point(11, 128);
-            rbnExtractFlat.Name = "rbnExtractFlat";
-            rbnExtractFlat.Size = new System.Drawing.Size(224, 19);
-            rbnExtractFlat.TabIndex = 5;
-            rbnExtractFlat.TabStop = true;
-            rbnExtractFlat.Text = "Extract all files into the same directory";
-            // 
-            // gbxExtractionPreserve
-            // 
-            gbxExtractionPreserve.Controls.Add(cbxPreserveDates);
-            gbxExtractionPreserve.Controls.Add(cbxPreserveAttributes);
-            gbxExtractionPreserve.Location = new System.Drawing.Point(6, 220);
-            gbxExtractionPreserve.Name = "gbxExtractionPreserve";
-            gbxExtractionPreserve.Size = new System.Drawing.Size(441, 80);
-            gbxExtractionPreserve.TabIndex = 23;
-            gbxExtractionPreserve.TabStop = false;
-            gbxExtractionPreserve.Text = "Preserve information";
-            // 
-            // cbxPreserveDates
-            // 
-            cbxPreserveDates.AutoSize = true;
-            cbxPreserveDates.Location = new System.Drawing.Point(11, 22);
-            cbxPreserveDates.Name = "cbxPreserveDates";
-            cbxPreserveDates.Size = new System.Drawing.Size(207, 19);
-            cbxPreserveDates.TabIndex = 8;
-            cbxPreserveDates.Text = "Preserve file dates when extracting";
-            // 
-            // cbxPreserveAttributes
-            // 
-            cbxPreserveAttributes.AutoSize = true;
-            cbxPreserveAttributes.Location = new System.Drawing.Point(11, 49);
-            cbxPreserveAttributes.Name = "cbxPreserveAttributes";
-            cbxPreserveAttributes.Size = new System.Drawing.Size(229, 19);
-            cbxPreserveAttributes.TabIndex = 9;
-            cbxPreserveAttributes.Text = "Preserve file attributes when extracting";
-            // 
-            // tabIntegration
-            // 
-            tabIntegration.BackColor = System.Drawing.SystemColors.Window;
-            tabIntegration.Controls.Add(gbxFileAssociations);
-            tabIntegration.Controls.Add(gbxIntegrationMisc);
-            tabIntegration.Location = new System.Drawing.Point(4, 24);
-            tabIntegration.Name = "tabIntegration";
-            tabIntegration.Padding = new System.Windows.Forms.Padding(3);
-            tabIntegration.Size = new System.Drawing.Size(453, 454);
-            tabIntegration.TabIndex = 1;
-            tabIntegration.Text = "Integration";
-            // 
-            // gbxFileAssociations
-            // 
-            gbxFileAssociations.Controls.Add(lblFileAssoc);
-            gbxFileAssociations.Controls.Add(btnFileAssoc);
-            gbxFileAssociations.Location = new System.Drawing.Point(6, 6);
-            gbxFileAssociations.Name = "gbxFileAssociations";
-            gbxFileAssociations.Size = new System.Drawing.Size(441, 68);
-            gbxFileAssociations.TabIndex = 8;
-            gbxFileAssociations.TabStop = false;
-            gbxFileAssociations.Text = "File associations";
-            // 
-            // lblFileAssoc
-            // 
-            lblFileAssoc.AutoSize = true;
-            lblFileAssoc.Location = new System.Drawing.Point(9, 21);
-            lblFileAssoc.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            lblFileAssoc.Name = "lblFileAssoc";
-            lblFileAssoc.Size = new System.Drawing.Size(309, 30);
-            lblFileAssoc.TabIndex = 4;
-            lblFileAssoc.Text = "File associations for TotalImage can be managed through\r\nControl Panel/Windows Settings.";
-            // 
-            // btnFileAssoc
-            // 
-            btnFileAssoc.Location = new System.Drawing.Point(356, 21);
-            btnFileAssoc.Margin = new System.Windows.Forms.Padding(2);
-            btnFileAssoc.Name = "btnFileAssoc";
-            btnFileAssoc.Size = new System.Drawing.Size(80, 26);
-            btnFileAssoc.TabIndex = 5;
-            btnFileAssoc.Text = "Open";
-            btnFileAssoc.UseVisualStyleBackColor = true;
-            btnFileAssoc.Click += btnFileAssoc_Click;
-            // 
-            // gbxIntegrationMisc
-            // 
-            gbxIntegrationMisc.Controls.Add(lblSystemIcons);
-            gbxIntegrationMisc.Controls.Add(cbxShellFileIcons);
-            gbxIntegrationMisc.Location = new System.Drawing.Point(6, 79);
-            gbxIntegrationMisc.Margin = new System.Windows.Forms.Padding(2);
-            gbxIntegrationMisc.Name = "gbxIntegrationMisc";
-            gbxIntegrationMisc.Padding = new System.Windows.Forms.Padding(2);
-            gbxIntegrationMisc.Size = new System.Drawing.Size(441, 120);
-            gbxIntegrationMisc.TabIndex = 7;
-            gbxIntegrationMisc.TabStop = false;
-            gbxIntegrationMisc.Text = "Other options";
-            // 
-            // lblSystemIcons
-            // 
-            lblSystemIcons.AutoSize = true;
-            lblSystemIcons.Location = new System.Drawing.Point(9, 51);
-            lblSystemIcons.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            lblSystemIcons.Name = "lblSystemIcons";
-            lblSystemIcons.Size = new System.Drawing.Size(413, 45);
-            lblSystemIcons.TabIndex = 6;
-            lblSystemIcons.Text = "If this option is enabled, TotalImage will obtain icons and names for file types\r\nfrom Windows, which can be slower in some situations. If disabled, generic\r\nicons and names will be used instead.";
-            // 
-            // cbxShellFileIcons
-            // 
-            cbxShellFileIcons.AutoSize = true;
-            cbxShellFileIcons.Location = new System.Drawing.Point(11, 22);
-            cbxShellFileIcons.Name = "cbxShellFileIcons";
-            cbxShellFileIcons.Size = new System.Drawing.Size(291, 19);
-            cbxShellFileIcons.TabIndex = 3;
-            cbxShellFileIcons.Text = "Display system icons and file type names in file list";
+            // cancelButton
+            // 
+            cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.Location = new System.Drawing.Point(393, 12);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(80, 26);
+            cancelButton.TabIndex = 1;
+            cancelButton.Text = "Cancel";
+            // 
+            // okButton
+            // 
+            okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.Location = new System.Drawing.Point(307, 12);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(80, 26);
+            okButton.TabIndex = 0;
+            okButton.Text = "OK";
+            okButton.Click += btnOK_Click;
+            // 
+            // buttonPanel
+            // 
+            buttonPanel.BackColor = System.Drawing.SystemColors.Control;
+            buttonPanel.Controls.Add(cancelButton);
+            buttonPanel.Controls.Add(okButton);
+            buttonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            buttonPanel.Location = new System.Drawing.Point(0, 500);
+            buttonPanel.Name = "buttonPanel";
+            buttonPanel.Size = new System.Drawing.Size(485, 50);
+            buttonPanel.TabIndex = 2;
+            // 
+            // tabControl
+            // 
+            tabControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            tabControl.Controls.Add(generalTabPage);
+            tabControl.Controls.Add(viewTabPage);
+            tabControl.Controls.Add(extractionTabPage);
+            tabControl.Controls.Add(integrationTabPage);
+            tabControl.Location = new System.Drawing.Point(12, 13);
+            tabControl.Name = "tabControl";
+            tabControl.SelectedIndex = 0;
+            tabControl.Size = new System.Drawing.Size(461, 482);
+            tabControl.TabIndex = 3;
+            // 
+            // generalTabPage
+            // 
+            generalTabPage.BackColor = System.Drawing.SystemColors.Window;
+            generalTabPage.Controls.Add(colorThemeGroupBox);
+            generalTabPage.Controls.Add(behaviorGroupBox);
+            generalTabPage.Controls.Add(miscGroupBox);
+            generalTabPage.Location = new System.Drawing.Point(4, 24);
+            generalTabPage.Name = "generalTabPage";
+            generalTabPage.Padding = new System.Windows.Forms.Padding(3);
+            generalTabPage.Size = new System.Drawing.Size(453, 454);
+            generalTabPage.TabIndex = 0;
+            generalTabPage.Text = "General";
+            // 
+            // colorThemeGroupBox
+            // 
+            colorThemeGroupBox.Controls.Add(colorThemeComboBox);
+            colorThemeGroupBox.Controls.Add(colorThemeRestartLabel);
+            colorThemeGroupBox.Controls.Add(colorThemeLabel);
+            colorThemeGroupBox.Location = new System.Drawing.Point(6, 172);
+            colorThemeGroupBox.Name = "colorThemeGroupBox";
+            colorThemeGroupBox.Size = new System.Drawing.Size(441, 82);
+            colorThemeGroupBox.TabIndex = 3;
+            colorThemeGroupBox.TabStop = false;
+            colorThemeGroupBox.Text = "Color mode";
+            // 
+            // colorThemeComboBox
+            // 
+            colorThemeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            colorThemeComboBox.FormattingEnabled = true;
+            colorThemeComboBox.Items.AddRange(new object[] { "Light", "System-defined", "Dark" });
+            colorThemeComboBox.Location = new System.Drawing.Point(149, 19);
+            colorThemeComboBox.Name = "colorThemeComboBox";
+            colorThemeComboBox.Size = new System.Drawing.Size(175, 23);
+            colorThemeComboBox.TabIndex = 16;
+            // 
+            // colorThemeRestartLabel
+            // 
+            colorThemeRestartLabel.AutoSize = true;
+            colorThemeRestartLabel.Location = new System.Drawing.Point(9, 54);
+            colorThemeRestartLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            colorThemeRestartLabel.Name = "colorThemeRestartLabel";
+            colorThemeRestartLabel.Size = new System.Drawing.Size(315, 15);
+            colorThemeRestartLabel.TabIndex = 15;
+            colorThemeRestartLabel.Text = "TotalImage must be restarted for this setting to take effect.";
+            // 
+            // colorThemeLabel
+            // 
+            colorThemeLabel.AutoSize = true;
+            colorThemeLabel.Location = new System.Drawing.Point(9, 22);
+            colorThemeLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            colorThemeLabel.Name = "colorThemeLabel";
+            colorThemeLabel.Size = new System.Drawing.Size(135, 15);
+            colorThemeLabel.TabIndex = 14;
+            colorThemeLabel.Text = "Application color mode:";
+            // 
+            // behaviorGroupBox
+            // 
+            behaviorGroupBox.Controls.Add(memoryMappingUnitLabel);
+            behaviorGroupBox.Controls.Add(memoryMappingThresholdUpDown);
+            behaviorGroupBox.Controls.Add(memoryMappingLabel);
+            behaviorGroupBox.Controls.Add(autoIncrementFilenameCheckBox);
+            behaviorGroupBox.Controls.Add(confirmOverwriteExtractionCheckBox);
+            behaviorGroupBox.Controls.Add(confirmDeletionCheckBox);
+            behaviorGroupBox.Controls.Add(confirmInjectionCheckBox);
+            behaviorGroupBox.Location = new System.Drawing.Point(6, 6);
+            behaviorGroupBox.Name = "behaviorGroupBox";
+            behaviorGroupBox.Size = new System.Drawing.Size(441, 160);
+            behaviorGroupBox.TabIndex = 2;
+            behaviorGroupBox.TabStop = false;
+            behaviorGroupBox.Text = "Behavior";
+            // 
+            // memoryMappingUnitLabel
+            // 
+            memoryMappingUnitLabel.AutoSize = true;
+            memoryMappingUnitLabel.Enabled = false;
+            memoryMappingUnitLabel.Location = new System.Drawing.Point(349, 130);
+            memoryMappingUnitLabel.Name = "memoryMappingUnitLabel";
+            memoryMappingUnitLabel.Size = new System.Drawing.Size(28, 15);
+            memoryMappingUnitLabel.TabIndex = 21;
+            memoryMappingUnitLabel.Text = "MiB";
+            // 
+            // memoryMappingThresholdUpDown
+            // 
+            memoryMappingThresholdUpDown.Enabled = false;
+            memoryMappingThresholdUpDown.Location = new System.Drawing.Point(243, 127);
+            memoryMappingThresholdUpDown.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
+            memoryMappingThresholdUpDown.Name = "memoryMappingThresholdUpDown";
+            memoryMappingThresholdUpDown.Size = new System.Drawing.Size(100, 23);
+            memoryMappingThresholdUpDown.TabIndex = 5;
+            // 
+            // memoryMappingLabel
+            // 
+            memoryMappingLabel.AutoSize = true;
+            memoryMappingLabel.Enabled = false;
+            memoryMappingLabel.Location = new System.Drawing.Point(9, 130);
+            memoryMappingLabel.Name = "memoryMappingLabel";
+            memoryMappingLabel.Size = new System.Drawing.Size(228, 15);
+            memoryMappingLabel.TabIndex = 19;
+            memoryMappingLabel.Text = "Threshold for mapping files into memory:";
+            // 
+            // autoIncrementFilenameCheckBox
+            // 
+            autoIncrementFilenameCheckBox.AutoSize = true;
+            autoIncrementFilenameCheckBox.Enabled = false;
+            autoIncrementFilenameCheckBox.Location = new System.Drawing.Point(11, 102);
+            autoIncrementFilenameCheckBox.Name = "autoIncrementFilenameCheckBox";
+            autoIncrementFilenameCheckBox.Size = new System.Drawing.Size(331, 19);
+            autoIncrementFilenameCheckBox.TabIndex = 4;
+            autoIncrementFilenameCheckBox.Text = "When saving, auto-increment last filename when possible";
+            // 
+            // confirmOverwriteExtractionCheckBox
+            // 
+            confirmOverwriteExtractionCheckBox.AutoSize = true;
+            confirmOverwriteExtractionCheckBox.Location = new System.Drawing.Point(11, 22);
+            confirmOverwriteExtractionCheckBox.Name = "confirmOverwriteExtractionCheckBox";
+            confirmOverwriteExtractionCheckBox.Size = new System.Drawing.Size(215, 19);
+            confirmOverwriteExtractionCheckBox.TabIndex = 1;
+            confirmOverwriteExtractionCheckBox.Text = "Confirm overwrite during extraction";
+            // 
+            // confirmDeletionCheckBox
+            // 
+            confirmDeletionCheckBox.AutoSize = true;
+            confirmDeletionCheckBox.Enabled = false;
+            confirmDeletionCheckBox.Location = new System.Drawing.Point(11, 49);
+            confirmDeletionCheckBox.Name = "confirmDeletionCheckBox";
+            confirmDeletionCheckBox.Size = new System.Drawing.Size(116, 19);
+            confirmDeletionCheckBox.TabIndex = 2;
+            confirmDeletionCheckBox.Text = "Confirm deletion";
+            // 
+            // confirmInjectionCheckBox
+            // 
+            confirmInjectionCheckBox.AutoSize = true;
+            confirmInjectionCheckBox.Enabled = false;
+            confirmInjectionCheckBox.Location = new System.Drawing.Point(11, 75);
+            confirmInjectionCheckBox.Name = "confirmInjectionCheckBox";
+            confirmInjectionCheckBox.Size = new System.Drawing.Size(119, 19);
+            confirmInjectionCheckBox.TabIndex = 3;
+            confirmInjectionCheckBox.Text = "Confirm injection";
+            // 
+            // miscGroupBox
+            // 
+            miscGroupBox.Controls.Add(openTempFolderButton);
+            miscGroupBox.Controls.Add(clearTempFolderLabel);
+            miscGroupBox.Controls.Add(clearRecentImagesLabel);
+            miscGroupBox.Controls.Add(resetSettingsLabel);
+            miscGroupBox.Controls.Add(clearTempFolderButton);
+            miscGroupBox.Controls.Add(clearRecentImagesButton);
+            miscGroupBox.Controls.Add(resetSettingsButton);
+            miscGroupBox.Location = new System.Drawing.Point(6, 260);
+            miscGroupBox.Name = "miscGroupBox";
+            miscGroupBox.Size = new System.Drawing.Size(441, 160);
+            miscGroupBox.TabIndex = 1;
+            miscGroupBox.TabStop = false;
+            miscGroupBox.Text = "Advanced options";
+            // 
+            // openTempFolderButton
+            // 
+            openTempFolderButton.Location = new System.Drawing.Point(355, 123);
+            openTempFolderButton.Name = "openTempFolderButton";
+            openTempFolderButton.Size = new System.Drawing.Size(80, 26);
+            openTempFolderButton.TabIndex = 10;
+            openTempFolderButton.Text = "Open";
+            openTempFolderButton.UseVisualStyleBackColor = true;
+            openTempFolderButton.Click += btnOpenTemp_Click;
+            // 
+            // clearTempFolderLabel
+            // 
+            clearTempFolderLabel.AutoSize = true;
+            clearTempFolderLabel.Location = new System.Drawing.Point(9, 96);
+            clearTempFolderLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            clearTempFolderLabel.Name = "clearTempFolderLabel";
+            clearTempFolderLabel.Size = new System.Drawing.Size(328, 15);
+            clearTempFolderLabel.TabIndex = 9;
+            clearTempFolderLabel.Text = "Clear TotalImage's temporary folder in local application data.";
+            // 
+            // clearRecentImagesLabel
+            // 
+            clearRecentImagesLabel.AutoSize = true;
+            clearRecentImagesLabel.Location = new System.Drawing.Point(9, 61);
+            clearRecentImagesLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            clearRecentImagesLabel.Name = "clearRecentImagesLabel";
+            clearRecentImagesLabel.Size = new System.Drawing.Size(152, 15);
+            clearRecentImagesLabel.TabIndex = 8;
+            clearRecentImagesLabel.Text = "Clear the recent images list.";
+            // 
+            // resetSettingsLabel
+            // 
+            resetSettingsLabel.AutoSize = true;
+            resetSettingsLabel.Location = new System.Drawing.Point(9, 24);
+            resetSettingsLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            resetSettingsLabel.Name = "resetSettingsLabel";
+            resetSettingsLabel.Size = new System.Drawing.Size(276, 15);
+            resetSettingsLabel.TabIndex = 7;
+            resetSettingsLabel.Text = "Reset all TotalImage settings to their default values.";
+            // 
+            // clearTempFolderButton
+            // 
+            clearTempFolderButton.Location = new System.Drawing.Point(355, 91);
+            clearTempFolderButton.Name = "clearTempFolderButton";
+            clearTempFolderButton.Size = new System.Drawing.Size(80, 26);
+            clearTempFolderButton.TabIndex = 9;
+            clearTempFolderButton.Text = "Clear";
+            clearTempFolderButton.UseVisualStyleBackColor = true;
+            clearTempFolderButton.Click += btnClearTemp_Click;
+            // 
+            // clearRecentImagesButton
+            // 
+            clearRecentImagesButton.Location = new System.Drawing.Point(355, 56);
+            clearRecentImagesButton.Name = "clearRecentImagesButton";
+            clearRecentImagesButton.Size = new System.Drawing.Size(80, 26);
+            clearRecentImagesButton.TabIndex = 8;
+            clearRecentImagesButton.Text = "Clear";
+            clearRecentImagesButton.UseVisualStyleBackColor = true;
+            clearRecentImagesButton.Click += btnClearRecent_Click;
+            // 
+            // resetSettingsButton
+            // 
+            resetSettingsButton.Location = new System.Drawing.Point(355, 19);
+            resetSettingsButton.Name = "resetSettingsButton";
+            resetSettingsButton.Size = new System.Drawing.Size(80, 26);
+            resetSettingsButton.TabIndex = 7;
+            resetSettingsButton.Text = "Reset";
+            resetSettingsButton.UseVisualStyleBackColor = true;
+            resetSettingsButton.Click += btnReset_Click;
+            // 
+            // viewTabPage
+            // 
+            viewTabPage.BackColor = System.Drawing.SystemColors.Window;
+            viewTabPage.Controls.Add(mainWindowGroupBox);
+            viewTabPage.Controls.Add(fileListGroupBox);
+            viewTabPage.Controls.Add(sizeUnitGroupBox);
+            viewTabPage.Location = new System.Drawing.Point(4, 24);
+            viewTabPage.Name = "viewTabPage";
+            viewTabPage.Padding = new System.Windows.Forms.Padding(3);
+            viewTabPage.Size = new System.Drawing.Size(453, 454);
+            viewTabPage.TabIndex = 2;
+            viewTabPage.Text = "View";
+            // 
+            // mainWindowGroupBox
+            // 
+            mainWindowGroupBox.Controls.Add(showCommandBarCheckBox);
+            mainWindowGroupBox.Controls.Add(showStatusBarCheckBox);
+            mainWindowGroupBox.Controls.Add(showDirectoryTreeCheckBox);
+            mainWindowGroupBox.Controls.Add(showHiddenItemsCheckBox);
+            mainWindowGroupBox.Location = new System.Drawing.Point(6, 6);
+            mainWindowGroupBox.Name = "mainWindowGroupBox";
+            mainWindowGroupBox.Size = new System.Drawing.Size(441, 106);
+            mainWindowGroupBox.TabIndex = 21;
+            mainWindowGroupBox.TabStop = false;
+            mainWindowGroupBox.Text = "Main window";
+            // 
+            // showCommandBarCheckBox
+            // 
+            showCommandBarCheckBox.AutoSize = true;
+            showCommandBarCheckBox.Location = new System.Drawing.Point(11, 22);
+            showCommandBarCheckBox.Name = "showCommandBarCheckBox";
+            showCommandBarCheckBox.Size = new System.Drawing.Size(133, 19);
+            showCommandBarCheckBox.TabIndex = 12;
+            showCommandBarCheckBox.Text = "Show command bar";
+            // 
+            // showStatusBarCheckBox
+            // 
+            showStatusBarCheckBox.AutoSize = true;
+            showStatusBarCheckBox.Location = new System.Drawing.Point(221, 22);
+            showStatusBarCheckBox.Name = "showStatusBarCheckBox";
+            showStatusBarCheckBox.Size = new System.Drawing.Size(109, 19);
+            showStatusBarCheckBox.TabIndex = 16;
+            showStatusBarCheckBox.Text = "Show status bar";
+            // 
+            // showDirectoryTreeCheckBox
+            // 
+            showDirectoryTreeCheckBox.AutoSize = true;
+            showDirectoryTreeCheckBox.Location = new System.Drawing.Point(11, 49);
+            showDirectoryTreeCheckBox.Name = "showDirectoryTreeCheckBox";
+            showDirectoryTreeCheckBox.Size = new System.Drawing.Size(128, 19);
+            showDirectoryTreeCheckBox.TabIndex = 15;
+            showDirectoryTreeCheckBox.Text = "Show directory tree";
+            // 
+            // showHiddenItemsCheckBox
+            // 
+            showHiddenItemsCheckBox.AutoSize = true;
+            showHiddenItemsCheckBox.Location = new System.Drawing.Point(221, 48);
+            showHiddenItemsCheckBox.Name = "showHiddenItemsCheckBox";
+            showHiddenItemsCheckBox.Size = new System.Drawing.Size(136, 19);
+            showHiddenItemsCheckBox.TabIndex = 14;
+            showHiddenItemsCheckBox.Text = "Show hidden objects";
+            // 
+            // fileListGroupBox
+            // 
+            fileListGroupBox.Controls.Add(showDirectorySizesCheckBox);
+            fileListGroupBox.Controls.Add(viewModeLabel);
+            fileListGroupBox.Controls.Add(sortDirectionComboBox);
+            fileListGroupBox.Controls.Add(viewModeComboBox);
+            fileListGroupBox.Controls.Add(sortDirectionLabel);
+            fileListGroupBox.Controls.Add(sortColumnLabel);
+            fileListGroupBox.Controls.Add(sortColumnComboBox);
+            fileListGroupBox.Location = new System.Drawing.Point(6, 118);
+            fileListGroupBox.Name = "fileListGroupBox";
+            fileListGroupBox.Size = new System.Drawing.Size(441, 126);
+            fileListGroupBox.TabIndex = 22;
+            fileListGroupBox.TabStop = false;
+            fileListGroupBox.Text = "File list";
+            // 
+            // showDirectorySizesCheckBox
+            // 
+            showDirectorySizesCheckBox.AutoSize = true;
+            showDirectorySizesCheckBox.Location = new System.Drawing.Point(221, 88);
+            showDirectorySizesCheckBox.Name = "showDirectorySizesCheckBox";
+            showDirectorySizesCheckBox.Size = new System.Drawing.Size(182, 19);
+            showDirectorySizesCheckBox.TabIndex = 20;
+            showDirectorySizesCheckBox.Text = "Show directory sizes in file list";
+            // 
+            // viewModeLabel
+            // 
+            viewModeLabel.AutoSize = true;
+            viewModeLabel.Location = new System.Drawing.Point(9, 19);
+            viewModeLabel.Name = "viewModeLabel";
+            viewModeLabel.Size = new System.Drawing.Size(144, 15);
+            viewModeLabel.TabIndex = 6;
+            viewModeLabel.Text = "Display items in file list as:";
+            // 
+            // sortDirectionComboBox
+            // 
+            sortDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            sortDirectionComboBox.FormattingEnabled = true;
+            sortDirectionComboBox.Items.AddRange(new object[] { "Ascending", "Descending" });
+            sortDirectionComboBox.Location = new System.Drawing.Point(11, 88);
+            sortDirectionComboBox.Name = "sortDirectionComboBox";
+            sortDirectionComboBox.Size = new System.Drawing.Size(170, 23);
+            sortDirectionComboBox.TabIndex = 19;
+            // 
+            // viewModeComboBox
+            // 
+            viewModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            viewModeComboBox.FormattingEnabled = true;
+            viewModeComboBox.Items.AddRange(new object[] { "Large icons", "Small icons", "List", "Details" });
+            viewModeComboBox.Location = new System.Drawing.Point(11, 37);
+            viewModeComboBox.Name = "viewModeComboBox";
+            viewModeComboBox.Size = new System.Drawing.Size(170, 23);
+            viewModeComboBox.TabIndex = 7;
+            // 
+            // sortDirectionLabel
+            // 
+            sortDirectionLabel.AutoSize = true;
+            sortDirectionLabel.Location = new System.Drawing.Point(9, 70);
+            sortDirectionLabel.Name = "sortDirectionLabel";
+            sortDirectionLabel.Size = new System.Drawing.Size(134, 15);
+            sortDirectionLabel.TabIndex = 18;
+            sortDirectionLabel.Text = "Sorting order for file list:";
+            // 
+            // sortColumnLabel
+            // 
+            sortColumnLabel.AutoSize = true;
+            sortColumnLabel.Location = new System.Drawing.Point(219, 19);
+            sortColumnLabel.Name = "sortColumnLabel";
+            sortColumnLabel.Size = new System.Drawing.Size(129, 15);
+            sortColumnLabel.TabIndex = 8;
+            sortColumnLabel.Text = "Sort items in file list by:";
+            // 
+            // sortColumnComboBox
+            // 
+            sortColumnComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            sortColumnComboBox.FormattingEnabled = true;
+            sortColumnComboBox.Items.AddRange(new object[] { "Name", "Type", "Size", "Modified", "Attributes" });
+            sortColumnComboBox.Location = new System.Drawing.Point(221, 37);
+            sortColumnComboBox.Name = "sortColumnComboBox";
+            sortColumnComboBox.Size = new System.Drawing.Size(170, 23);
+            sortColumnComboBox.TabIndex = 9;
+            // 
+            // sizeUnitGroupBox
+            // 
+            sizeUnitGroupBox.Controls.Add(sizeUnitTipLabel);
+            sizeUnitGroupBox.Controls.Add(sizeUnitPreviewLabel);
+            sizeUnitGroupBox.Controls.Add(sizeUnitLabel);
+            sizeUnitGroupBox.Controls.Add(sizeUnitComboBox);
+            sizeUnitGroupBox.Location = new System.Drawing.Point(6, 250);
+            sizeUnitGroupBox.Name = "sizeUnitGroupBox";
+            sizeUnitGroupBox.Size = new System.Drawing.Size(441, 116);
+            sizeUnitGroupBox.TabIndex = 23;
+            sizeUnitGroupBox.TabStop = false;
+            sizeUnitGroupBox.Text = "Size units";
+            // 
+            // sizeUnitTipLabel
+            // 
+            sizeUnitTipLabel.AutoSize = true;
+            sizeUnitTipLabel.Location = new System.Drawing.Point(219, 19);
+            sizeUnitTipLabel.Name = "sizeUnitTipLabel";
+            sizeUnitTipLabel.Size = new System.Drawing.Size(214, 45);
+            sizeUnitTipLabel.TabIndex = 22;
+            sizeUnitTipLabel.Text = "For binary and decimal, TotalImage will\r\nautomatically determine the most\r\nappropriate unit and convert to it.";
+            // 
+            // sizeUnitPreviewLabel
+            // 
+            sizeUnitPreviewLabel.AutoSize = true;
+            sizeUnitPreviewLabel.Location = new System.Drawing.Point(9, 73);
+            sizeUnitPreviewLabel.Name = "sizeUnitPreviewLabel";
+            sizeUnitPreviewLabel.Size = new System.Drawing.Size(303, 30);
+            sizeUnitPreviewLabel.TabIndex = 21;
+            sizeUnitPreviewLabel.Text = "Preview:\r\n234 B | 2345 B | 234567 B | 234567890 B | 2345678901234 B";
+            // 
+            // sizeUnitLabel
+            // 
+            sizeUnitLabel.AutoSize = true;
+            sizeUnitLabel.Location = new System.Drawing.Point(9, 19);
+            sizeUnitLabel.Name = "sizeUnitLabel";
+            sizeUnitLabel.Size = new System.Drawing.Size(80, 15);
+            sizeUnitLabel.TabIndex = 10;
+            sizeUnitLabel.Text = "Show sizes as:";
+            // 
+            // sizeUnitComboBox
+            // 
+            sizeUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            sizeUnitComboBox.FormattingEnabled = true;
+            sizeUnitComboBox.Items.AddRange(new object[] { "Bytes", "Decimal units (factor 1000)", "Binary units (factor 1024)" });
+            sizeUnitComboBox.Location = new System.Drawing.Point(12, 37);
+            sizeUnitComboBox.Name = "sizeUnitComboBox";
+            sizeUnitComboBox.Size = new System.Drawing.Size(170, 23);
+            sizeUnitComboBox.TabIndex = 11;
+            sizeUnitComboBox.SelectedIndexChanged += lstSizeUnits_SelectedIndexChanged;
+            // 
+            // extractionTabPage
+            // 
+            extractionTabPage.BackColor = System.Drawing.SystemColors.Window;
+            extractionTabPage.Controls.Add(extractionDefaultsGroupBox);
+            extractionTabPage.Controls.Add(extractionPreserveGroupBox);
+            extractionTabPage.Location = new System.Drawing.Point(4, 24);
+            extractionTabPage.Name = "extractionTabPage";
+            extractionTabPage.Padding = new System.Windows.Forms.Padding(3);
+            extractionTabPage.Size = new System.Drawing.Size(453, 454);
+            extractionTabPage.TabIndex = 3;
+            extractionTabPage.Text = "Extraction";
+            // 
+            // extractionDefaultsGroupBox
+            // 
+            extractionDefaultsGroupBox.Controls.Add(extractAlwaysAskCheckBox);
+            extractionDefaultsGroupBox.Controls.Add(extractPathLabel);
+            extractionDefaultsGroupBox.Controls.Add(extractPathTextBox);
+            extractionDefaultsGroupBox.Controls.Add(openFolderAfterExtractCheckBox);
+            extractionDefaultsGroupBox.Controls.Add(browseButton);
+            extractionDefaultsGroupBox.Controls.Add(preserveFoldersRadioButton);
+            extractionDefaultsGroupBox.Controls.Add(skipFoldersRadioButton);
+            extractionDefaultsGroupBox.Controls.Add(mergeFoldersRadioButton);
+            extractionDefaultsGroupBox.Location = new System.Drawing.Point(6, 6);
+            extractionDefaultsGroupBox.Name = "extractionDefaultsGroupBox";
+            extractionDefaultsGroupBox.Size = new System.Drawing.Size(441, 208);
+            extractionDefaultsGroupBox.TabIndex = 22;
+            extractionDefaultsGroupBox.TabStop = false;
+            extractionDefaultsGroupBox.Text = "Default options";
+            // 
+            // extractAlwaysAskCheckBox
+            // 
+            extractAlwaysAskCheckBox.AutoSize = true;
+            extractAlwaysAskCheckBox.Location = new System.Drawing.Point(11, 22);
+            extractAlwaysAskCheckBox.Name = "extractAlwaysAskCheckBox";
+            extractAlwaysAskCheckBox.Size = new System.Drawing.Size(322, 19);
+            extractAlwaysAskCheckBox.TabIndex = 0;
+            extractAlwaysAskCheckBox.Text = "Always ask for these extraction options before extracting";
+            extractAlwaysAskCheckBox.CheckedChanged += cbxExtractAsk_CheckedChanged;
+            // 
+            // extractPathLabel
+            // 
+            extractPathLabel.AutoSize = true;
+            extractPathLabel.Location = new System.Drawing.Point(8, 50);
+            extractPathLabel.Name = "extractPathLabel";
+            extractPathLabel.Size = new System.Drawing.Size(268, 15);
+            extractPathLabel.TabIndex = 1;
+            extractPathLabel.Text = "Extract selected item(s) to the following directory:";
+            // 
+            // extractPathTextBox
+            // 
+            extractPathTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            extractPathTextBox.Location = new System.Drawing.Point(11, 68);
+            extractPathTextBox.Name = "extractPathTextBox";
+            extractPathTextBox.Size = new System.Drawing.Size(338, 23);
+            extractPathTextBox.TabIndex = 2;
+            // 
+            // openFolderAfterExtractCheckBox
+            // 
+            openFolderAfterExtractCheckBox.AutoSize = true;
+            openFolderAfterExtractCheckBox.Location = new System.Drawing.Point(11, 179);
+            openFolderAfterExtractCheckBox.Name = "openFolderAfterExtractCheckBox";
+            openFolderAfterExtractCheckBox.Size = new System.Drawing.Size(249, 19);
+            openFolderAfterExtractCheckBox.TabIndex = 7;
+            openFolderAfterExtractCheckBox.Text = "Open destination directory after extraction";
+            // 
+            // browseButton
+            // 
+            browseButton.Location = new System.Drawing.Point(355, 66);
+            browseButton.Name = "browseButton";
+            browseButton.Size = new System.Drawing.Size(80, 26);
+            browseButton.TabIndex = 3;
+            browseButton.Text = "Browse...";
+            browseButton.UseVisualStyleBackColor = true;
+            browseButton.Click += btnBrowse_Click;
+            // 
+            // preserveFoldersRadioButton
+            // 
+            preserveFoldersRadioButton.AutoSize = true;
+            preserveFoldersRadioButton.Location = new System.Drawing.Point(11, 153);
+            preserveFoldersRadioButton.Name = "preserveFoldersRadioButton";
+            preserveFoldersRadioButton.Size = new System.Drawing.Size(212, 19);
+            preserveFoldersRadioButton.TabIndex = 6;
+            preserveFoldersRadioButton.TabStop = true;
+            preserveFoldersRadioButton.Text = "Preserve original directory structure";
+            // 
+            // skipFoldersRadioButton
+            // 
+            skipFoldersRadioButton.AutoSize = true;
+            skipFoldersRadioButton.Location = new System.Drawing.Point(11, 103);
+            skipFoldersRadioButton.Name = "skipFoldersRadioButton";
+            skipFoldersRadioButton.Size = new System.Drawing.Size(217, 19);
+            skipFoldersRadioButton.TabIndex = 4;
+            skipFoldersRadioButton.TabStop = true;
+            skipFoldersRadioButton.Text = "Ignore directories and subdirectories";
+            // 
+            // mergeFoldersRadioButton
+            // 
+            mergeFoldersRadioButton.AutoSize = true;
+            mergeFoldersRadioButton.Location = new System.Drawing.Point(11, 128);
+            mergeFoldersRadioButton.Name = "mergeFoldersRadioButton";
+            mergeFoldersRadioButton.Size = new System.Drawing.Size(224, 19);
+            mergeFoldersRadioButton.TabIndex = 5;
+            mergeFoldersRadioButton.TabStop = true;
+            mergeFoldersRadioButton.Text = "Extract all files into the same directory";
+            // 
+            // extractionPreserveGroupBox
+            // 
+            extractionPreserveGroupBox.Controls.Add(preserveDatesCheckBox);
+            extractionPreserveGroupBox.Controls.Add(preserveAttributesCheckBox);
+            extractionPreserveGroupBox.Location = new System.Drawing.Point(6, 220);
+            extractionPreserveGroupBox.Name = "extractionPreserveGroupBox";
+            extractionPreserveGroupBox.Size = new System.Drawing.Size(441, 80);
+            extractionPreserveGroupBox.TabIndex = 23;
+            extractionPreserveGroupBox.TabStop = false;
+            extractionPreserveGroupBox.Text = "Preserve information";
+            // 
+            // preserveDatesCheckBox
+            // 
+            preserveDatesCheckBox.AutoSize = true;
+            preserveDatesCheckBox.Location = new System.Drawing.Point(11, 22);
+            preserveDatesCheckBox.Name = "preserveDatesCheckBox";
+            preserveDatesCheckBox.Size = new System.Drawing.Size(207, 19);
+            preserveDatesCheckBox.TabIndex = 8;
+            preserveDatesCheckBox.Text = "Preserve file dates when extracting";
+            // 
+            // preserveAttributesCheckBox
+            // 
+            preserveAttributesCheckBox.AutoSize = true;
+            preserveAttributesCheckBox.Location = new System.Drawing.Point(11, 49);
+            preserveAttributesCheckBox.Name = "preserveAttributesCheckBox";
+            preserveAttributesCheckBox.Size = new System.Drawing.Size(229, 19);
+            preserveAttributesCheckBox.TabIndex = 9;
+            preserveAttributesCheckBox.Text = "Preserve file attributes when extracting";
+            // 
+            // integrationTabPage
+            // 
+            integrationTabPage.BackColor = System.Drawing.SystemColors.Window;
+            integrationTabPage.Controls.Add(fileAssociationsGroupBox);
+            integrationTabPage.Controls.Add(integrationMiscGroupBox);
+            integrationTabPage.Location = new System.Drawing.Point(4, 24);
+            integrationTabPage.Name = "integrationTabPage";
+            integrationTabPage.Padding = new System.Windows.Forms.Padding(3);
+            integrationTabPage.Size = new System.Drawing.Size(453, 454);
+            integrationTabPage.TabIndex = 1;
+            integrationTabPage.Text = "Integration";
+            // 
+            // fileAssociationsGroupBox
+            // 
+            fileAssociationsGroupBox.Controls.Add(fileAssociationsLabel);
+            fileAssociationsGroupBox.Controls.Add(fileAssociationsButton);
+            fileAssociationsGroupBox.Location = new System.Drawing.Point(6, 6);
+            fileAssociationsGroupBox.Name = "fileAssociationsGroupBox";
+            fileAssociationsGroupBox.Size = new System.Drawing.Size(441, 68);
+            fileAssociationsGroupBox.TabIndex = 8;
+            fileAssociationsGroupBox.TabStop = false;
+            fileAssociationsGroupBox.Text = "File associations";
+            // 
+            // fileAssociationsLabel
+            // 
+            fileAssociationsLabel.AutoSize = true;
+            fileAssociationsLabel.Location = new System.Drawing.Point(9, 21);
+            fileAssociationsLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            fileAssociationsLabel.Name = "fileAssociationsLabel";
+            fileAssociationsLabel.Size = new System.Drawing.Size(309, 30);
+            fileAssociationsLabel.TabIndex = 4;
+            fileAssociationsLabel.Text = "File associations for TotalImage can be managed through\r\nControl Panel/Windows Settings.";
+            // 
+            // fileAssociationsButton
+            // 
+            fileAssociationsButton.Location = new System.Drawing.Point(356, 21);
+            fileAssociationsButton.Margin = new System.Windows.Forms.Padding(2);
+            fileAssociationsButton.Name = "fileAssociationsButton";
+            fileAssociationsButton.Size = new System.Drawing.Size(80, 26);
+            fileAssociationsButton.TabIndex = 5;
+            fileAssociationsButton.Text = "Open";
+            fileAssociationsButton.UseVisualStyleBackColor = true;
+            fileAssociationsButton.Click += btnFileAssoc_Click;
+            // 
+            // integrationMiscGroupBox
+            // 
+            integrationMiscGroupBox.Controls.Add(queryShellLabel);
+            integrationMiscGroupBox.Controls.Add(queryShellCheckBox);
+            integrationMiscGroupBox.Location = new System.Drawing.Point(6, 79);
+            integrationMiscGroupBox.Margin = new System.Windows.Forms.Padding(2);
+            integrationMiscGroupBox.Name = "integrationMiscGroupBox";
+            integrationMiscGroupBox.Padding = new System.Windows.Forms.Padding(2);
+            integrationMiscGroupBox.Size = new System.Drawing.Size(441, 120);
+            integrationMiscGroupBox.TabIndex = 7;
+            integrationMiscGroupBox.TabStop = false;
+            integrationMiscGroupBox.Text = "Other options";
+            // 
+            // queryShellLabel
+            // 
+            queryShellLabel.AutoSize = true;
+            queryShellLabel.Location = new System.Drawing.Point(9, 51);
+            queryShellLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            queryShellLabel.Name = "queryShellLabel";
+            queryShellLabel.Size = new System.Drawing.Size(413, 45);
+            queryShellLabel.TabIndex = 6;
+            queryShellLabel.Text = "If this option is enabled, TotalImage will obtain icons and names for file types\r\nfrom Windows, which can be slower in some situations. If disabled, generic\r\nicons and names will be used instead.";
+            // 
+            // queryShellCheckBox
+            // 
+            queryShellCheckBox.AutoSize = true;
+            queryShellCheckBox.Location = new System.Drawing.Point(11, 22);
+            queryShellCheckBox.Name = "queryShellCheckBox";
+            queryShellCheckBox.Size = new System.Drawing.Size(291, 19);
+            queryShellCheckBox.TabIndex = 3;
+            queryShellCheckBox.Text = "Display system icons and file type names in file list";
             // 
             // SettingsDialog
             // 
-            AcceptButton = btnOK;
+            AcceptButton = okButton;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.SystemColors.Window;
-            CancelButton = btnCancel;
+            CancelButton = cancelButton;
             ClientSize = new System.Drawing.Size(485, 550);
-            Controls.Add(tabs);
-            Controls.Add(pnlBottom);
+            Controls.Add(tabControl);
+            Controls.Add(buttonPanel);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -805,101 +805,101 @@ namespace TotalImage.Dialogs
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Settings";
             Load += dlgSettings_Load;
-            pnlBottom.ResumeLayout(false);
-            tabs.ResumeLayout(false);
-            tabGeneral.ResumeLayout(false);
-            gbxColorMode.ResumeLayout(false);
-            gbxColorMode.PerformLayout();
-            gbxBehavior.ResumeLayout(false);
-            gbxBehavior.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)txtMemoryMapping).EndInit();
-            gbxMisc.ResumeLayout(false);
-            gbxMisc.PerformLayout();
-            tabView.ResumeLayout(false);
-            gbxMainWindow.ResumeLayout(false);
-            gbxMainWindow.PerformLayout();
-            gbxFileList.ResumeLayout(false);
-            gbxFileList.PerformLayout();
-            gbxSizeUnits.ResumeLayout(false);
-            gbxSizeUnits.PerformLayout();
-            tabExtraction.ResumeLayout(false);
-            gbxExtractionDefaults.ResumeLayout(false);
-            gbxExtractionDefaults.PerformLayout();
-            gbxExtractionPreserve.ResumeLayout(false);
-            gbxExtractionPreserve.PerformLayout();
-            tabIntegration.ResumeLayout(false);
-            gbxFileAssociations.ResumeLayout(false);
-            gbxFileAssociations.PerformLayout();
-            gbxIntegrationMisc.ResumeLayout(false);
-            gbxIntegrationMisc.PerformLayout();
+            buttonPanel.ResumeLayout(false);
+            tabControl.ResumeLayout(false);
+            generalTabPage.ResumeLayout(false);
+            colorThemeGroupBox.ResumeLayout(false);
+            colorThemeGroupBox.PerformLayout();
+            behaviorGroupBox.ResumeLayout(false);
+            behaviorGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)memoryMappingThresholdUpDown).EndInit();
+            miscGroupBox.ResumeLayout(false);
+            miscGroupBox.PerformLayout();
+            viewTabPage.ResumeLayout(false);
+            mainWindowGroupBox.ResumeLayout(false);
+            mainWindowGroupBox.PerformLayout();
+            fileListGroupBox.ResumeLayout(false);
+            fileListGroupBox.PerformLayout();
+            sizeUnitGroupBox.ResumeLayout(false);
+            sizeUnitGroupBox.PerformLayout();
+            extractionTabPage.ResumeLayout(false);
+            extractionDefaultsGroupBox.ResumeLayout(false);
+            extractionDefaultsGroupBox.PerformLayout();
+            extractionPreserveGroupBox.ResumeLayout(false);
+            extractionPreserveGroupBox.PerformLayout();
+            integrationTabPage.ResumeLayout(false);
+            fileAssociationsGroupBox.ResumeLayout(false);
+            fileAssociationsGroupBox.PerformLayout();
+            integrationMiscGroupBox.ResumeLayout(false);
+            integrationMiscGroupBox.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Panel pnlBottom;
-        private System.Windows.Forms.TabControl tabs;
-        private System.Windows.Forms.TabPage tabGeneral;
-        private System.Windows.Forms.TabPage tabIntegration;
-        private System.Windows.Forms.TabPage tabView;
-        private System.Windows.Forms.TabPage tabExtraction;
-        private System.Windows.Forms.CheckBox cbxExtractAsk;
-        private System.Windows.Forms.Label lblExtractPath;
-        private System.Windows.Forms.Button btnBrowse;
-        private System.Windows.Forms.TextBox txtExtractPath;
-        private System.Windows.Forms.RadioButton rbnIgnoreFolders;
-        private System.Windows.Forms.RadioButton rbnExtractPreserve;
-        private System.Windows.Forms.RadioButton rbnExtractFlat;
-        private System.Windows.Forms.CheckBox cbxOpenDir;
-        private System.Windows.Forms.ComboBox lstSizeUnits;
-        private System.Windows.Forms.Label lblSizeUnits;
-        private System.Windows.Forms.ComboBox lstSortBy;
-        private System.Windows.Forms.Label lblSortBy;
-        private System.Windows.Forms.ComboBox lstViewType;
-        private System.Windows.Forms.Label lblViewType;
-        private System.Windows.Forms.CheckBox cbxShowCommandBar;
-        private System.Windows.Forms.CheckBox cbxShowHiddenItems;
-        private System.Windows.Forms.CheckBox cbxShowDirectoryTree;
-        private System.Windows.Forms.CheckBox cbxShowStatusBar;
-        private System.Windows.Forms.Label lblSortOrder;
-        private System.Windows.Forms.ComboBox lstSortOrder;
-        private System.Windows.Forms.GroupBox gbxBehavior;
-        private System.Windows.Forms.GroupBox gbxMisc;
-        private System.Windows.Forms.Button btnClearRecent;
-        private System.Windows.Forms.Button btnResetSettings;
-        private System.Windows.Forms.CheckBox cbxPreserveAttributes;
-        private System.Windows.Forms.CheckBox cbxPreserveDates;
-        private System.Windows.Forms.CheckBox cbxShellFileIcons;
-        private System.Windows.Forms.CheckBox cbxConfirmInjection;
-        private System.Windows.Forms.CheckBox cbxConfirmDeletion;
-        private System.Windows.Forms.CheckBox cbxConfirmOverwriteExtract;
-        private System.Windows.Forms.CheckBox cbxAutoincrementFilename;
-        private System.Windows.Forms.Label lblMemoryMapping1;
-        private System.Windows.Forms.Label lblMemoryMapping;
-        private System.Windows.Forms.NumericUpDown txtMemoryMapping;
-        private System.Windows.Forms.Button btnClearTemp;
-        private System.Windows.Forms.Button btnFileAssoc;
-        private System.Windows.Forms.Label lblFileAssoc;
-        private System.Windows.Forms.GroupBox gbxIntegrationMisc;
-        private System.Windows.Forms.Label lblSystemIcons;
-        private System.Windows.Forms.Label lblResetSettings;
-        private System.Windows.Forms.Label lblClearTemp;
-        private System.Windows.Forms.Label lblClearRecent;
-        private System.Windows.Forms.CheckBox cbxShowDirSizes;
-        private System.Windows.Forms.GroupBox gbxFileAssociations;
-        private System.Windows.Forms.GroupBox gbxFileList;
-        private System.Windows.Forms.GroupBox gbxMainWindow;
-        private System.Windows.Forms.GroupBox gbxSizeUnits;
-        private System.Windows.Forms.Label lblSizeUnitsPreview;
-        private System.Windows.Forms.Label lblSizeUnitsTip;
-        private System.Windows.Forms.GroupBox gbxExtractionDefaults;
-        private System.Windows.Forms.GroupBox gbxExtractionPreserve;
-        private System.Windows.Forms.Button btnOpenTemp;
-        private System.Windows.Forms.GroupBox gbxColorMode;
-        private System.Windows.Forms.ComboBox lstColorMode;
-        private System.Windows.Forms.Label lblColorMode1;
-        private System.Windows.Forms.Label lblColorMode;
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Panel buttonPanel;
+        private System.Windows.Forms.TabControl tabControl;
+        private System.Windows.Forms.TabPage generalTabPage;
+        private System.Windows.Forms.TabPage integrationTabPage;
+        private System.Windows.Forms.TabPage viewTabPage;
+        private System.Windows.Forms.TabPage extractionTabPage;
+        private System.Windows.Forms.CheckBox extractAlwaysAskCheckBox;
+        private System.Windows.Forms.Label extractPathLabel;
+        private System.Windows.Forms.Button browseButton;
+        private System.Windows.Forms.TextBox extractPathTextBox;
+        private System.Windows.Forms.RadioButton skipFoldersRadioButton;
+        private System.Windows.Forms.RadioButton preserveFoldersRadioButton;
+        private System.Windows.Forms.RadioButton mergeFoldersRadioButton;
+        private System.Windows.Forms.CheckBox openFolderAfterExtractCheckBox;
+        private System.Windows.Forms.ComboBox sizeUnitComboBox;
+        private System.Windows.Forms.Label sizeUnitLabel;
+        private System.Windows.Forms.ComboBox sortColumnComboBox;
+        private System.Windows.Forms.Label sortColumnLabel;
+        private System.Windows.Forms.ComboBox viewModeComboBox;
+        private System.Windows.Forms.Label viewModeLabel;
+        private System.Windows.Forms.CheckBox showCommandBarCheckBox;
+        private System.Windows.Forms.CheckBox showHiddenItemsCheckBox;
+        private System.Windows.Forms.CheckBox showDirectoryTreeCheckBox;
+        private System.Windows.Forms.CheckBox showStatusBarCheckBox;
+        private System.Windows.Forms.Label sortDirectionLabel;
+        private System.Windows.Forms.ComboBox sortDirectionComboBox;
+        private System.Windows.Forms.GroupBox behaviorGroupBox;
+        private System.Windows.Forms.GroupBox miscGroupBox;
+        private System.Windows.Forms.Button clearRecentImagesButton;
+        private System.Windows.Forms.Button resetSettingsButton;
+        private System.Windows.Forms.CheckBox preserveAttributesCheckBox;
+        private System.Windows.Forms.CheckBox preserveDatesCheckBox;
+        private System.Windows.Forms.CheckBox queryShellCheckBox;
+        private System.Windows.Forms.CheckBox confirmInjectionCheckBox;
+        private System.Windows.Forms.CheckBox confirmDeletionCheckBox;
+        private System.Windows.Forms.CheckBox confirmOverwriteExtractionCheckBox;
+        private System.Windows.Forms.CheckBox autoIncrementFilenameCheckBox;
+        private System.Windows.Forms.Label memoryMappingUnitLabel;
+        private System.Windows.Forms.Label memoryMappingLabel;
+        private System.Windows.Forms.NumericUpDown memoryMappingThresholdUpDown;
+        private System.Windows.Forms.Button clearTempFolderButton;
+        private System.Windows.Forms.Button fileAssociationsButton;
+        private System.Windows.Forms.Label fileAssociationsLabel;
+        private System.Windows.Forms.GroupBox integrationMiscGroupBox;
+        private System.Windows.Forms.Label queryShellLabel;
+        private System.Windows.Forms.Label resetSettingsLabel;
+        private System.Windows.Forms.Label clearTempFolderLabel;
+        private System.Windows.Forms.Label clearRecentImagesLabel;
+        private System.Windows.Forms.CheckBox showDirectorySizesCheckBox;
+        private System.Windows.Forms.GroupBox fileAssociationsGroupBox;
+        private System.Windows.Forms.GroupBox fileListGroupBox;
+        private System.Windows.Forms.GroupBox mainWindowGroupBox;
+        private System.Windows.Forms.GroupBox sizeUnitGroupBox;
+        private System.Windows.Forms.Label sizeUnitPreviewLabel;
+        private System.Windows.Forms.Label sizeUnitTipLabel;
+        private System.Windows.Forms.GroupBox extractionDefaultsGroupBox;
+        private System.Windows.Forms.GroupBox extractionPreserveGroupBox;
+        private System.Windows.Forms.Button openTempFolderButton;
+        private System.Windows.Forms.GroupBox colorThemeGroupBox;
+        private System.Windows.Forms.ComboBox colorThemeComboBox;
+        private System.Windows.Forms.Label colorThemeRestartLabel;
+        private System.Windows.Forms.Label colorThemeLabel;
     }
 }
