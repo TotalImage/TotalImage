@@ -57,10 +57,7 @@ public abstract class DirectoryEntry
         }
         else
         {
-            var chain = new ExFatDataStream(fileSystem, FirstCluster);
-            if (length > (ulong)chain.Length)
-                throw new InvalidDataException("exFAT stream length exceeds its cluster chain.");
-            return new PartialStream(chain, 0, checked((long)length));
+            return new ExFatDataStream(fileSystem, FirstCluster, checked((long)length));
         }
     }
 

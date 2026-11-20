@@ -113,6 +113,7 @@ public class BugRegressionTests
         BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(80, 4), 1);
         BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(84, 4), 1);
         BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(88, 4), 2);
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(92, 4), 6); // ClusterCount
         image[108] = 9;
         image[110] = 1;
         BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(512 + 8, 4), 3);

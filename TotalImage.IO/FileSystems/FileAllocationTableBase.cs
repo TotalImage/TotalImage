@@ -74,6 +74,64 @@ public abstract class FileAllocationTableBase : IEnumerable<uint>
         return clusters.ToArray();
     }
 
+    /// <summary>
+    /// Builds the byte ranges of the volume that hold the first <paramref name="length"/> bytes of a cluster chain.
+    /// </summary>
+    /// <param name="firstCluster">The first cluster in the chain. Not read when <paramref name="length"/> is 0.</param>
+    /// <param name="dataStart">The byte offset of cluster 2 in the volume.</param>
+    /// <param name="bytesPerCluster">The cluster size in bytes.</param>
+    /// <param name="clusterCount">The number of data clusters in the volume.</param>
+    /// <param name="length">The number of bytes to expose, or <see langword="null"/> for the whole chain.</param>
+    /// <exception cref="InvalidDataException">The chain is cyclic, a cluster is out of range, or <paramref name="length"/> exceeds the chain.</exception>
+    internal List<StreamExtent> GetChainExtents(uint firstCluster, long dataStart, long bytesPerCluster, uint clusterCount, long? length)
+    {
+        if (length == 0)
+            return [];
+        var chain = GetClusterChain(firstCluster);
+        return BuildExtents(chain, dataStart, bytesPerCluster, clusterCount, length ?? chain.LongLength * bytesPerCluster);
+    }
+
+    /// <summary>
+    /// Builds the source ranges covering the first <paramref name="length"/> bytes of a cluster chain.
+    /// </summary>
+    /// <param name="chain">The clusters in logical order.</param>
+    /// <param name="dataStart">The byte offset of cluster 2 in the volume.</param>
+    /// <param name="bytesPerCluster">The cluster size in bytes.</param>
+    /// <param name="clusterCount">The number of data clusters in the volume.</param>
+    /// <param name="length">The number of bytes to expose.</param>
+    /// <returns>Ranges with consecutive clusters merged and the last range clipped to <paramref name="length"/>.</returns>
+    /// <exception cref="InvalidDataException">A cluster is out of range, or <paramref name="length"/> exceeds the chain.</exception>
+    internal static List<StreamExtent> BuildExtents(uint[] chain, long dataStart, long bytesPerCluster, uint clusterCount, long length)
+    {
+        var extents = new List<StreamExtent>();
+        if (length <= 0)
+            return extents;
+        if (length > chain.LongLength * bytesPerCluster)
+            throw new InvalidDataException("The data length exceeds its cluster chain.");
+
+        long remaining = length;
+        uint previous = 0;
+        for (int i = 0; i < chain.Length && remaining > 0; i++)
+        {
+            uint cluster = chain[i];
+            if (cluster < 2 || cluster - 2 >= clusterCount)
+                throw new InvalidDataException($"Cluster {cluster} is outside the data area.");
+            long take = remaining < bytesPerCluster ? remaining : bytesPerCluster;
+            if (extents.Count > 0 && cluster == previous + 1)
+            {
+                var last = extents[^1];
+                extents[^1] = last with { Length = last.Length + take };
+            }
+            else
+            {
+                extents.Add(new StreamExtent(dataStart + ((long)cluster - 2) * bytesPerCluster, take));
+            }
+            previous = cluster;
+            remaining -= take;
+        }
+        return extents;
+    }
+
     /// <inheritdoc/>
     public IEnumerator<uint> GetEnumerator() => new Enumerator(this);
 

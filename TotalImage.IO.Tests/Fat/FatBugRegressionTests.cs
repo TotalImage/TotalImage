@@ -159,7 +159,7 @@ public class FatBugRegressionTests
         Assert.Equal(90u, BinaryPrimitives.ReadUInt32LittleEndian(info[488..492]));
     }
 
-    private static Fat12FileSystem CreateFat12(byte[] image)
+    internal static Fat12FileSystem CreateFat12(byte[] image)
     {
         Span<byte> boot = image.AsSpan(0, 512);
         BinaryPrimitives.WriteUInt16LittleEndian(boot[11..13], 512);

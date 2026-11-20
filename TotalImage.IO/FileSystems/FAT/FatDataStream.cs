@@ -1,138 +1,30 @@
-using System;
-using System.IO;
+using System.Collections.Generic;
 
 namespace TotalImage.FileSystems.FAT
 {
     /// <summary>
-    /// Provides stream access to data stored in a FAT cluster chain.
+    /// Provides read-only stream access to data stored in a FAT cluster chain.
     /// </summary>
-    public class FatDataStream : Stream
+    internal sealed class FatDataStream : ReadOnlyExtentStream
     {
-        private readonly FatFileSystem _fat;
-        private readonly Stream _base;
-        private readonly uint[] _clusters;
-        private readonly uint _length;
-        private long _position = 0;
-
-        /// <inheritdoc />
-        public override bool CanRead => _base.CanRead;
-
-        /// <inheritdoc />
-        public override bool CanSeek => _base.CanSeek;
-
-        /// <inheritdoc />
-        public override bool CanWrite => _base.CanWrite;
-
-        /// <inheritdoc />
-        public override long Length => _length;
-
-        /// <inheritdoc />
-        public override long Position { get => _position; set => Seek(value, SeekOrigin.Begin); }
-
         /// <summary>
-        /// Creates a stream over a FAT cluster chain.
+        /// Creates a stream over a whole FAT cluster chain.
         /// </summary>
         /// <param name="fat">The file system that owns the cluster chain.</param>
         /// <param name="firstCluster">The first cluster in the chain.</param>
-        public FatDataStream(FatFileSystem fat, uint firstCluster)
-        {
-            _fat = fat;
-            _base = fat.GetStream();
-            _clusters = fat.MainFat.GetClusterChain(firstCluster);
-            _length = (uint)_clusters.Length * fat.BytesPerCluster;
-        }
+        public FatDataStream(FatFileSystem fat, uint firstCluster) : base(fat.GetStream(), BuildExtents(fat, firstCluster, null)) { }
 
         /// <summary>
-        /// Creates a stream over the data referenced by a FAT directory entry.
+        /// Creates a stream over the data referenced by a FAT directory entry, limited to its file size.
         /// </summary>
         /// <param name="fat">The file system that owns the entry.</param>
         /// <param name="entry">The directory entry that identifies the data stream.</param>
-        /// <param name="ignoreSize"><see langword="true"/> to expose the full cluster chain length instead of the file size.</param>
-        public FatDataStream(FatFileSystem fat, DirectoryEntry entry, bool ignoreSize) : this(fat, entry.FirstClusterOfFile)
+        public FatDataStream(FatFileSystem fat, DirectoryEntry entry) : base(fat.GetStream(), BuildExtents(fat, entry.FirstClusterOfFile, entry.FileSize)) { }
+
+        private static List<StreamExtent> BuildExtents(FatFileSystem fat, uint firstCluster, long? length)
         {
-            if (!ignoreSize)
-            {
-                _length = entry.FileSize;
-            }
-        }
-
-        /// <summary>
-        /// Creates a stream over the data referenced by a FAT directory entry.
-        /// </summary>
-        /// <param name="fat">The file system that owns the entry.</param>
-        /// <param name="entry">The directory entry that identifies the data stream.</param>
-        public FatDataStream(FatFileSystem fat, DirectoryEntry entry) : this(fat, entry, false) { }
-
-        /// <inheritdoc />
-        public override void Flush() => _base.Flush();
-
-        /// <inheritdoc />
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            count = (int)Math.Min(count, _length - _position);
-
-            if (count <= 0) return 0;
-
-            var firstCluster = _position / _fat.BytesPerCluster;
-            var lastCluster = (_position + count - 1) / _fat.BytesPerCluster;
-            var bytesLeftFromCluster = _fat.BytesPerCluster - (_position % _fat.BytesPerCluster);
-
-            Seek(0, SeekOrigin.Current);
-
-            var totalRead = _base.Read(buffer, offset, Math.Min(count, (int)bytesLeftFromCluster));
-            _position += totalRead;
-
-            for (var i = firstCluster; i < lastCluster; i++)
-            {
-                Seek(0, SeekOrigin.Current);
-
-                var readBytes = _base.Read(buffer, offset + totalRead, Math.Min(count - totalRead, (int)_fat.BytesPerCluster));
-
-                _position += readBytes;
-                totalRead += readBytes;
-            }
-
-            return totalRead;
-        }
-
-        /// <inheritdoc />
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            var target = origin switch
-            {
-                SeekOrigin.Begin => offset,
-                SeekOrigin.Current => _position + offset,
-                SeekOrigin.End => _length + offset,
-                _ => throw new ArgumentException()
-            };
-
-            if (target < 0 || target > _length)
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            if (target == _length)
-            {
-                _position = target;
-                return target;
-            }
-            var cluster = _clusters[target / _fat.BytesPerCluster];
-
-            _base.Seek(_fat.DataAreaFirstSector * _fat.BiosParameterBlock.BytesPerLogicalSector, SeekOrigin.Begin);
-            _base.Seek((cluster - 2) * _fat.BytesPerCluster, SeekOrigin.Current);
-            _base.Seek(target % _fat.BytesPerCluster, SeekOrigin.Current);
-
-            _position = target;
-            return target;
-        }
-
-        /// <inheritdoc />
-        public override void SetLength(long value)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            throw new System.NotImplementedException();
+            long dataStart = (long)fat.DataAreaFirstSector * fat.BiosParameterBlock.BytesPerLogicalSector;
+            return fat.MainFat.GetChainExtents(firstCluster, dataStart, fat.BytesPerCluster, fat.ClusterCount, length);
         }
     }
 }

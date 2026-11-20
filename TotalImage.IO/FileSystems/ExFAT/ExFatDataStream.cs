@@ -1,119 +1,32 @@
-using System;
-using System.IO;
+using System.Collections.Generic;
 
 namespace TotalImage.FileSystems.ExFAT
 {
     /// <summary>
-    /// Provides stream access to data stored in an exFAT cluster chain.
+    /// Provides read-only stream access to data stored in an exFAT cluster chain.
     /// </summary>
-    public class ExFatDataStream : Stream
+    internal sealed class ExFatDataStream : ReadOnlyExtentStream
     {
-        private readonly ExFatFileSystem _fileSystem;
-        private readonly Stream _base;
-
-        private readonly uint[] _clusters;
-        private readonly long _length;
-
-        private long _position = 0;
-
         /// <summary>
-        /// Creates a stream over an exFAT cluster chain.
+        /// Creates a stream over a whole exFAT cluster chain.
         /// </summary>
         /// <param name="fileSystem">The file system that owns the cluster chain.</param>
         /// <param name="firstCluster">The first cluster in the chain.</param>
-        public ExFatDataStream(ExFatFileSystem fileSystem, uint firstCluster)
+        public ExFatDataStream(ExFatFileSystem fileSystem, uint firstCluster) : base(fileSystem.GetStream(), BuildExtents(fileSystem, firstCluster, null)) { }
+
+        /// <summary>
+        /// Creates a stream over the first <paramref name="length"/> bytes of an exFAT cluster chain.
+        /// </summary>
+        /// <param name="fileSystem">The file system that owns the cluster chain.</param>
+        /// <param name="firstCluster">The first cluster in the chain.</param>
+        /// <param name="length">The number of bytes to expose.</param>
+        /// <exception cref="System.IO.InvalidDataException"><paramref name="length"/> exceeds the cluster chain.</exception>
+        public ExFatDataStream(ExFatFileSystem fileSystem, uint firstCluster, long length) : base(fileSystem.GetStream(), BuildExtents(fileSystem, firstCluster, length)) { }
+
+        private static List<StreamExtent> BuildExtents(ExFatFileSystem fs, uint firstCluster, long? length)
         {
-            _fileSystem = fileSystem;
-            _base = fileSystem.GetStream();
-            _clusters = fileSystem.ActiveFat.GetClusterChain(firstCluster);
-            _length = _clusters.Length * fileSystem.BytesPerCluster;
-        }
-
-        /// <inheritdoc />
-        public override bool CanRead => _base.CanRead;
-
-        /// <inheritdoc />
-        public override bool CanSeek => _base.CanSeek;
-
-        /// <inheritdoc />
-        public override bool CanWrite => _base.CanWrite;
-
-        /// <inheritdoc />
-        public override long Length => _length;
-
-        /// <inheritdoc />
-        public override long Position { get => _position; set => Seek(value, SeekOrigin.Begin); }
-
-        /// <inheritdoc />
-        public override void Flush() => _base.Flush();
-
-        /// <inheritdoc />
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            count = (int)Math.Min(count, _length - _position);
-
-            if (count <= 0) return 0;
-
-            var firstCluster = _position / _fileSystem.BytesPerCluster;
-            var lastCluster = (_position + count - 1) / _fileSystem.BytesPerCluster;
-            var bytesLeftFromCluster = _fileSystem.BytesPerCluster - (_position % _fileSystem.BytesPerCluster);
-
-            Seek(0, SeekOrigin.Current);
-
-            var totalRead = _base.Read(buffer, offset, Math.Min(count, (int)bytesLeftFromCluster));
-            _position += totalRead;
-
-            for (var i = firstCluster; i < lastCluster; i++)
-            {
-                Seek(0, SeekOrigin.Current);
-
-                var readBytes = _base.Read(buffer, offset + totalRead, Math.Min(count - totalRead, (int)_fileSystem.BytesPerCluster));
-
-                _position += readBytes;
-                totalRead += readBytes;
-            }
-
-            return totalRead;
-        }
-
-        /// <inheritdoc />
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            var target = origin switch
-            {
-                SeekOrigin.Begin => offset,
-                SeekOrigin.Current => _position + offset,
-                SeekOrigin.End => _length + offset,
-                _ => throw new ArgumentException()
-            };
-
-            if (target < 0 || target > _length)
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            if (target == _length)
-            {
-                _position = target;
-                return target;
-            }
-            var cluster = _clusters[target / _fileSystem.BytesPerCluster];
-
-            _base.Seek(_fileSystem.BootSector.ClusterHeapOffset * _fileSystem.BytesPerSector, SeekOrigin.Begin);
-            _base.Seek((cluster - 2) * _fileSystem.BytesPerCluster, SeekOrigin.Current);
-            _base.Seek(target % _fileSystem.BytesPerCluster, SeekOrigin.Current);
-
-            _position = target;
-            return target;
-        }
-
-        /// <inheritdoc />
-        public override void SetLength(long value)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /// <inheritdoc />
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            throw new System.NotImplementedException();
+            long dataStart = (long)fs.BootSector.ClusterHeapOffset * fs.BytesPerSector;
+            return fs.ActiveFat.GetChainExtents(firstCluster, dataStart, fs.BytesPerCluster, fs.BootSector.ClusterCount, length);
         }
     }
 }
