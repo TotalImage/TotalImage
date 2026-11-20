@@ -130,7 +130,6 @@ namespace TotalImage.Dialogs
             okButton.Size = new System.Drawing.Size(80, 26);
             okButton.TabIndex = 0;
             okButton.Text = "OK";
-            okButton.Click += btnOK_Click;
             // 
             // buttonPanel
             // 
@@ -319,7 +318,6 @@ namespace TotalImage.Dialogs
             openTempFolderButton.TabIndex = 10;
             openTempFolderButton.Text = "Open";
             openTempFolderButton.UseVisualStyleBackColor = true;
-            openTempFolderButton.Click += btnOpenTemp_Click;
             // 
             // clearTempFolderLabel
             // 
@@ -359,7 +357,6 @@ namespace TotalImage.Dialogs
             clearTempFolderButton.TabIndex = 9;
             clearTempFolderButton.Text = "Clear";
             clearTempFolderButton.UseVisualStyleBackColor = true;
-            clearTempFolderButton.Click += btnClearTemp_Click;
             // 
             // clearRecentImagesButton
             // 
@@ -369,7 +366,6 @@ namespace TotalImage.Dialogs
             clearRecentImagesButton.TabIndex = 8;
             clearRecentImagesButton.Text = "Clear";
             clearRecentImagesButton.UseVisualStyleBackColor = true;
-            clearRecentImagesButton.Click += btnClearRecent_Click;
             // 
             // resetSettingsButton
             // 
@@ -379,7 +375,6 @@ namespace TotalImage.Dialogs
             resetSettingsButton.TabIndex = 7;
             resetSettingsButton.Text = "Reset";
             resetSettingsButton.UseVisualStyleBackColor = true;
-            resetSettingsButton.Click += btnReset_Click;
             // 
             // viewTabPage
             // 
@@ -574,7 +569,6 @@ namespace TotalImage.Dialogs
             sizeUnitComboBox.Name = "sizeUnitComboBox";
             sizeUnitComboBox.Size = new System.Drawing.Size(170, 23);
             sizeUnitComboBox.TabIndex = 11;
-            sizeUnitComboBox.SelectedIndexChanged += lstSizeUnits_SelectedIndexChanged;
             // 
             // extractionTabPage
             // 
@@ -613,7 +607,6 @@ namespace TotalImage.Dialogs
             extractAlwaysAskCheckBox.Size = new System.Drawing.Size(322, 19);
             extractAlwaysAskCheckBox.TabIndex = 0;
             extractAlwaysAskCheckBox.Text = "Always ask for these extraction options before extracting";
-            extractAlwaysAskCheckBox.CheckedChanged += cbxExtractAsk_CheckedChanged;
             // 
             // extractPathLabel
             // 
@@ -649,7 +642,6 @@ namespace TotalImage.Dialogs
             browseButton.TabIndex = 3;
             browseButton.Text = "Browse...";
             browseButton.UseVisualStyleBackColor = true;
-            browseButton.Click += btnBrowse_Click;
             // 
             // preserveFoldersRadioButton
             // 
@@ -752,7 +744,7 @@ namespace TotalImage.Dialogs
             fileAssociationsButton.TabIndex = 5;
             fileAssociationsButton.Text = "Open";
             fileAssociationsButton.UseVisualStyleBackColor = true;
-            fileAssociationsButton.Click += btnFileAssoc_Click;
+            fileAssociationsButton.Click += FileAssociationsButton_Click;
             // 
             // integrationMiscGroupBox
             // 
@@ -804,7 +796,7 @@ namespace TotalImage.Dialogs
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Settings";
-            Load += dlgSettings_Load;
+            Load += SettingsDialog_Load;
             buttonPanel.ResumeLayout(false);
             tabControl.ResumeLayout(false);
             generalTabPage.ResumeLayout(false);

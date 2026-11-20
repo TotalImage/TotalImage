@@ -960,11 +960,10 @@ namespace TotalImage.Forms
             dlg.ShowDialog();
         }
 
-        private void settings_Click(object sender, EventArgs e)
+        private async void settings_Click(object sender, EventArgs e)
         {
-            using SettingsDialog dlg = new(settings, tempDirectory);
-            DialogResult result = dlg.ShowDialog();
-            if (result == DialogResult.OK)
+            var change = await appDialogs.ShowSettingsAsync();
+            if (change is not null)
             {
                 SyncUIOptions();
                 ResetView();
@@ -972,7 +971,7 @@ namespace TotalImage.Forms
                 if (!settings.Current.AutoIncrementFilename)
                     lastSavedFilename = null;
             }
-            else if (result == DialogResult.Cancel)
+            else
             {
                 //If the user cleared the recent images list in the dialog, we still want to update the menu in the main form
                 PopulateRecentList();
