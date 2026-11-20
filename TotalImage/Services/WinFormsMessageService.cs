@@ -242,6 +242,25 @@ namespace TotalImage.Services
             return Task.CompletedTask;
         }
 
+        public Task<bool> ConfirmCreateExtractFolderAsync(string path)
+        {
+            var result = ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = $"The target directory you selected does not exist.{Environment.NewLine}Would you like to create it and continue the extraction?",
+                Heading = "Directory does not exist",
+                Caption = "Extraction",
+                Buttons =
+                {
+                    TaskDialogButton.Yes,
+                    TaskDialogButton.No
+                },
+                Icon = TaskDialogIcon.Warning,
+                SizeToContent = true
+            });
+
+            return Task.FromResult(result == TaskDialogButton.Yes);
+        }
+
         private TaskDialogButton ShowTaskDialog(TaskDialogPage page)
             => owner.Window is null ? TaskDialog.ShowDialog(page) : TaskDialog.ShowDialog(owner.Window, page);
     }

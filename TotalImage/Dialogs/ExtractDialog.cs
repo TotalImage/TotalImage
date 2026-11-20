@@ -1,96 +1,32 @@
-using System;
 using System.Windows.Forms;
+using TotalImage.Controls;
+using TotalImage.ViewModels.Dialogs;
 using TotalImage.ViewModels.Extraction;
-using TotalImage.ViewModels.Settings;
 
 namespace TotalImage.Dialogs
 {
     public partial class ExtractDialog : Form
     {
-        public string TargetPath { get; private set; }
-        public bool OpenFolder { get; private set; }
-        public DirectoryExtractionMode DirectoryExtractionMode { get; private set; }
-
-        private readonly ISettingsService settings;
-
-        public ExtractDialog(ISettingsService settings)
+        public ExtractDialog(ExtractViewModel viewModel)
         {
-            this.settings = settings;
-            TargetPath = settings.Current.DefaultExtractPath;
-            OpenFolder = settings.Current.OpenFolderAfterExtract;
             InitializeComponent();
-        }
 
-        private void btnOK_Click(object sender, System.EventArgs e)
-        {
-            TargetPath = txtPath.Text;
-            OpenFolder = cbxOpenFolder.Checked;
-            if (rbnExtractSameFolder.Checked)
-            {
-                DirectoryExtractionMode = DirectoryExtractionMode.Merge;
-            }
-            else if (rbnIgnoreFolders.Checked)
-            {
-                DirectoryExtractionMode = DirectoryExtractionMode.Skip;
-            }
-            else if (rbnPreserveDirs.Checked)
-            {
-                DirectoryExtractionMode = DirectoryExtractionMode.Preserve;
-            }
+            promptLabel.BindOneTime(nameof(Label.Text), viewModel, nameof(ExtractViewModel.Prompt));
+            targetPathTextBox.BindTwoWay(nameof(TextBox.Text), viewModel, nameof(ExtractViewModel.TargetPath));
+            skipDirectoriesRadioButton.BindRadioButton(viewModel, nameof(ExtractViewModel.DirectoryExtractionMode), DirectoryExtractionMode.Skip);
+            mergeDirectoriesRadioButton.BindRadioButton(viewModel, nameof(ExtractViewModel.DirectoryExtractionMode), DirectoryExtractionMode.Merge);
+            preserveDirectoriesRadioButton.BindRadioButton(viewModel, nameof(ExtractViewModel.DirectoryExtractionMode), DirectoryExtractionMode.Preserve);
+            openFolderCheckBox.BindTwoWay(nameof(CheckBox.Checked), viewModel, nameof(ExtractViewModel.OpenFolder));
+            okButton.BindOneWay(nameof(Button.Enabled), viewModel, nameof(ExtractViewModel.CanExtract));
+            browseButton.Command = viewModel.BrowseCommand;
 
-            //If directory doesn't exist, ask the user to create it 
-            if (!System.IO.Directory.Exists(TargetPath))
+            // The view model may ask to create the target folder first, and the dialog stays open
+            // when the user declines.
+            okButton.Click += async (_, _) =>
             {
-                TaskDialogPage page = new TaskDialogPage()
-                {
-                    Text = $"The target directory you selected does not exist.{Environment.NewLine}Would you like to create it and continue the extraction?",
-                    Heading = $"Directory does not exist",
-                    Caption = "Extraction",
-                    Buttons =
-                        {
-                            TaskDialogButton.Yes,
-                            TaskDialogButton.No
-                        },
-                    Icon = TaskDialogIcon.Warning,
-                    SizeToContent = true
-                };
-                TaskDialogButton result = TaskDialog.ShowDialog(this, page);
-
-                if (result == TaskDialogButton.Yes)
-                {
-                    System.IO.Directory.CreateDirectory(TargetPath);
-                }
-                else
-                {
-                    DialogResult = DialogResult.None;
-                    return;
-                }
-            }
-        }
-
-        private void btnBrowse_Click(object sender, System.EventArgs e)
-        {
-            using FolderBrowserDialog fbd = new FolderBrowserDialog
-            {
-                ShowNewFolderButton = true
+                if (await viewModel.TryAcceptAsync())
+                    DialogResult = DialogResult.OK;
             };
-
-            if (fbd.ShowDialog() == DialogResult.OK)
-            {
-                txtPath.Text = fbd.SelectedPath;
-            }
-        }
-
-        private void dlgExtract_Load(object sender, System.EventArgs e)
-        {
-            txtPath.Text = TargetPath;
-            cbxOpenFolder.Checked = OpenFolder;
-            switch (settings.Current.DefaultDirectoryExtractionMode)
-            {
-                case DirectoryExtractionMode.Skip: rbnIgnoreFolders.Checked = true; break;
-                case DirectoryExtractionMode.Merge: rbnExtractSameFolder.Checked = true; break;
-                case DirectoryExtractionMode.Preserve: rbnPreserveDirs.Checked = true; break;
-            }
         }
     }
 }

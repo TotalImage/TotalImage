@@ -23,4 +23,10 @@ public interface IEntryDialogs
     /// Asks for new volume labels of a FAT volume.
     /// </summary>
     Task<VolumeLabelChange?> AskVolumeLabelAsync(string rootDirectoryLabel, string bpbLabel);
+
+    /// <summary>
+    /// Asks where and how to extract the selected entries.
+    /// </summary>
+    /// <param name="itemCount">The number of selected entries.</param>
+    Task<ExtractOptions?> AskExtractOptionsAsync(int itemCount);
 }

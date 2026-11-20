@@ -74,4 +74,9 @@ public interface IMessageService
     /// <c>Exporting to "C:\boot.bin"</c>; the UI builds its message around it.</param>
     /// <param name="exception">The reason it failed.</param>
     Task ShowErrorAsync(string operation, Exception exception);
+
+    /// <summary>
+    /// Says that the folder chosen for extraction does not exist and asks whether to create it.
+    /// </summary>
+    Task<bool> ConfirmCreateExtractFolderAsync(string path);
 }

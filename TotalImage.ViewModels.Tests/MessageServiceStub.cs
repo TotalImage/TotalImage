@@ -24,4 +24,5 @@ internal abstract class MessageServiceStub : IMessageService
     public virtual Task<bool> ConfirmExportWithoutHashesAsync() => throw Unexpected(nameof(ConfirmExportWithoutHashesAsync));
     public virtual Task ShowExportSucceededAsync(string path) => throw Unexpected(nameof(ShowExportSucceededAsync));
     public virtual Task ShowErrorAsync(string operation, Exception exception) => throw Unexpected(nameof(ShowErrorAsync));
+    public virtual Task<bool> ConfirmCreateExtractFolderAsync(string path) => throw Unexpected(nameof(ConfirmCreateExtractFolderAsync));
 }

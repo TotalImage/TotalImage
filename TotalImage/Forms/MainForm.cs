@@ -791,7 +791,7 @@ namespace TotalImage.Forms
         }
 
         //Extracts file(s) or folder(s) from the image to the specified path.
-        private void extract_Click(object sender, EventArgs e)
+        private async void extract_Click(object sender, EventArgs e)
         {
             /* We need to check the treeview and listview focus so we know which items to extract.
              * Some of this might be a bit of a hack, but it works for now... */
@@ -812,19 +812,18 @@ namespace TotalImage.Forms
 
             if (settings.Current.ExtractAlwaysAsk)
             {
-                using ExtractDialog dlg = new(settings);
-                dlg.lblPath.Text = $"Extract {(lstDirectories.Focused ? "1" : SelectedItems.Count())} selected {(SelectedItems.Count() > 1 ? "items" : "item")} to the following folder:";
-                if (dlg.ShowDialog() == DialogResult.OK)
+                var options = await entryDialogs.AskExtractOptionsAsync(lstDirectories.Focused ? 1 : SelectedItems.Count());
+                if (options is not null)
                 {
-                    settings.Current.DefaultExtractPath = dlg.TargetPath;
+                    settings.Current.DefaultExtractPath = options.TargetPath;
 
                     if (lstFiles.Focused)
                     {
-                        FileExtraction.ExtractFiles(this, settings.Current, SelectedItems, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
+                        FileExtraction.ExtractFiles(this, settings.Current, SelectedItems, options.TargetPath, options.DirectoryExtractionMode, options.OpenFolder);
                     }
                     else if (lstDirectories.Focused)
                     {
-                        FileExtraction.ExtractFiles(this, settings.Current, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag }, dlg.TargetPath, dlg.DirectoryExtractionMode, dlg.OpenFolder);
+                        FileExtraction.ExtractFiles(this, settings.Current, new[] { (TiFileSystemObject)lstDirectories.SelectedNode.Tag }, options.TargetPath, options.DirectoryExtractionMode, options.OpenFolder);
                     }
                 }
             }
