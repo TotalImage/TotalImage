@@ -1508,19 +1508,15 @@ namespace TotalImage.Forms
             }
         }
 
-        private void selectPartitionToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void selectPartitionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (image is null)
                 return;
 
-            SelectPartitionDialog dlg = new(settings)
+            var selection = await imageDialogs.AskSelectPartitionAsync(image);
+            if (selection is not null)
             {
-                PartitionTable = image.PartitionTable
-            };
-
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                LoadPartitionInCurrentImage(dlg.SelectedEntry);
+                LoadPartitionInCurrentImage(selection.Index);
             }
         }
 
@@ -2488,7 +2484,7 @@ namespace TotalImage.Forms
         }
 
         //Opens an image
-        private void OpenImage(string? path)
+        private async void OpenImage(string? path)
         {
             if (path is not null && string.IsNullOrWhiteSpace(path))
             {
@@ -2721,18 +2717,14 @@ namespace TotalImage.Forms
                         return;
                     }
 
-                    SelectPartitionDialog selectFrm = new(settings)
-                    {
-                        PartitionTable = image.PartitionTable
-                    };
-
-                    if (selectFrm.ShowDialog() == DialogResult.Cancel)
+                    var selection = await imageDialogs.AskSelectPartitionAsync(image);
+                    if (selection is null)
                     {
                         CloseImage();
                         return;
                     }
 
-                    CurrentPartitionIndex = selectFrm.SelectedEntry;
+                    CurrentPartitionIndex = selection.Index;
                 }
 
                 if (image.PartitionTable.Partitions.Count == 1 && image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)

@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using TotalImage.Containers;
 using TotalImage.ViewModels.Dialogs;
 
 namespace TotalImage.ViewModels.Services;
@@ -13,4 +14,10 @@ public interface IImageDialogs
     /// Asks how to format the current partition.
     /// </summary>
     Task<FormatOptions?> AskFormatOptionsAsync();
+
+    /// <summary>
+    /// Asks which partition of the image to load.
+    /// </summary>
+    /// <param name="image">The image whose partition table is listed.</param>
+    Task<PartitionSelection?> AskSelectPartitionAsync(Container image);
 }

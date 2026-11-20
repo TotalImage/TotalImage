@@ -502,33 +502,31 @@ public sealed class SettingsViewModelTests : IDisposable
         public bool AreOtherInstancesRunning() => OthersRunning;
     }
 
-    private sealed class FakeMessages : IMessageService
+    private sealed class FakeMessages : MessageServiceStub
     {
         public List<string> Calls { get; } = [];
         public bool ConfirmReset { get; set; } = true;
         public bool ConfirmClearTemp { get; set; } = true;
 
-        public Task<bool> ConfirmFormatAsync() => throw new NotSupportedException();
+        public override Task ShowRecentImagesClearedAsync() => Record("RecentImagesCleared");
 
-        public Task ShowRecentImagesClearedAsync() => Record("RecentImagesCleared");
-
-        public Task<bool> ConfirmResetSettingsAsync()
+        public override Task<bool> ConfirmResetSettingsAsync()
         {
             Calls.Add("ConfirmReset");
             return Task.FromResult(ConfirmReset);
         }
 
-        public Task ShowSettingsResetAsync() => Record("SettingsReset");
+        public override Task ShowSettingsResetAsync() => Record("SettingsReset");
 
-        public Task<bool> ConfirmClearTempFolderWithOtherInstancesAsync()
+        public override Task<bool> ConfirmClearTempFolderWithOtherInstancesAsync()
         {
             Calls.Add("ConfirmClearTempWithOthers");
             return Task.FromResult(ConfirmClearTemp);
         }
 
-        public Task ShowTempFolderClearedAsync() => Record("TempFolderCleared");
+        public override Task ShowTempFolderClearedAsync() => Record("TempFolderCleared");
 
-        public Task ShowTempFolderClearFailedAsync() => Record("TempFolderClearFailed");
+        public override Task ShowTempFolderClearFailedAsync() => Record("TempFolderClearFailed");
 
         private Task Record(string call)
         {

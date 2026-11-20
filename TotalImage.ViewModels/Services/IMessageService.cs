@@ -43,4 +43,9 @@ public interface IMessageService
     /// Tells the user that the temporary folder could not be cleared.
     /// </summary>
     Task ShowTempFolderClearFailedAsync();
+
+    /// <summary>
+    /// Explains that a partition can't be loaded because it or its file system is not supported.
+    /// </summary>
+    Task ShowPartitionNotSupportedAsync();
 }

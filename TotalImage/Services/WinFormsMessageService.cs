@@ -137,6 +137,25 @@ namespace TotalImage.Services
             return Task.CompletedTask;
         }
 
+        public Task ShowPartitionNotSupportedAsync()
+        {
+            ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = "This partition cannot be loaded because it or the file system contained within is not supported. Select a supported partition to load.",
+                Heading = "Unsupported partition type",
+                Caption = "Information",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Information,
+                DefaultButton = TaskDialogButton.OK,
+                SizeToContent = true
+            });
+
+            return Task.CompletedTask;
+        }
+
         private TaskDialogButton ShowTaskDialog(TaskDialogPage page)
             => owner.Window is null ? TaskDialog.ShowDialog(page) : TaskDialog.ShowDialog(owner.Window, page);
     }
