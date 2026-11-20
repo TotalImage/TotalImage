@@ -1,69 +1,24 @@
-using System;
 using System.Windows.Forms;
+using TotalImage.Controls;
+using TotalImage.ViewModels.Dialogs;
 
 namespace TotalImage.Dialogs
 {
     public partial class ChangeVolumeLabelDialog : Form
     {
-        private readonly string oldLabel;
-        private readonly string oldBPBLabel;
-
-        public string NewLabel { get; private set; } = "";
-        public string NewBPBLabel { get; private set; } = "";
-        public bool WriteBPBLabel { get; private set; }
-
-        public ChangeVolumeLabelDialog(string rdLabel, string bpbLabel)
+        public ChangeVolumeLabelDialog(VolumeLabelViewModel viewModel)
         {
             InitializeComponent();
-            oldLabel = rdLabel;
-            oldBPBLabel = bpbLabel;
-        }
 
-        private void btnOK_Click(object sender, EventArgs e)
-        {
-            NewLabel = txtNewLabel.Text.ToUpper().PadRight(11, ' ');
-            WriteBPBLabel = cbxBPBLabel.Checked;
-            NewBPBLabel = txtBPBLabel.Text.ToUpper().PadRight(11, ' ');
-        }
-
-        private void cbxBPBLabel_CheckedChanged(object sender, EventArgs e)
-        {
-            txtBPBLabel.Enabled = cbxBPBLabel.Checked;
-            cbxSync.Enabled = cbxBPBLabel.Checked;
-            if (!cbxBPBLabel.Checked)
-            {
-                txtBPBLabel.Text = "";
-                cbxSync.Checked = false;
-            }
-            else
-            {
-                txtBPBLabel.Text = txtNewLabel.Text;
-            }
-        }
-
-        private void txtRootDirLabel_TextChanged(object sender, EventArgs e)
-        {
-            if (cbxBPBLabel.Checked && cbxSync.Checked)
-                txtBPBLabel.Text = txtNewLabel.Text;
-        }
-
-        private void dlgChangeVolLabel_Load(object sender, EventArgs e)
-        {
-            txtBPBLabel.Text = oldBPBLabel;
-            txtNewLabel.Text = oldLabel;
-        }
-
-        private void cbxSync_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbxSync.Checked)
-            {
-                txtBPBLabel.Text = txtNewLabel.Text;
-                txtBPBLabel.ReadOnly = true;
-            }
-            else
-            {
-                txtBPBLabel.ReadOnly = false;
-            }
+            rootDirectoryLabelTextBox.MaxLength = bpbLabelTextBox.MaxLength = VolumeLabelViewModel.MaxLength;
+            rootDirectoryLabelTextBox.BindTwoWay(nameof(TextBox.Text), viewModel, nameof(VolumeLabelViewModel.RootDirectoryLabel));
+            writeBpbLabelCheckBox.BindTwoWay(nameof(CheckBox.Checked), viewModel, nameof(VolumeLabelViewModel.WriteBpbLabel));
+            syncLabelsCheckBox.BindTwoWay(nameof(CheckBox.Checked), viewModel, nameof(VolumeLabelViewModel.SyncLabels));
+            syncLabelsCheckBox.BindOneWay(nameof(CheckBox.Enabled), viewModel, nameof(VolumeLabelViewModel.CanEditBpbLabel));
+            bpbLabelTextBox.BindTwoWay(nameof(TextBox.Text), viewModel, nameof(VolumeLabelViewModel.BpbLabel));
+            bpbLabelTextBox.BindOneWay(nameof(TextBox.Enabled), viewModel, nameof(VolumeLabelViewModel.CanEditBpbLabel));
+            bpbLabelTextBox.BindOneWay(nameof(TextBox.ReadOnly), viewModel, nameof(VolumeLabelViewModel.IsBpbLabelReadOnly));
+            okButton.Command = viewModel.AcceptCommand;
         }
     }
 }

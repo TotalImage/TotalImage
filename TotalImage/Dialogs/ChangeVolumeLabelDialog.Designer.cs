@@ -28,130 +28,126 @@ namespace TotalImage.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            btnOK = new System.Windows.Forms.Button();
-            btnCancel = new System.Windows.Forms.Button();
-            txtNewLabel = new System.Windows.Forms.TextBox();
-            lblNewLabel = new System.Windows.Forms.Label();
-            pnlBottom = new System.Windows.Forms.Panel();
-            gbxFatOptions = new System.Windows.Forms.GroupBox();
-            cbxSync = new System.Windows.Forms.CheckBox();
-            cbxBPBLabel = new System.Windows.Forms.CheckBox();
-            txtBPBLabel = new System.Windows.Forms.TextBox();
-            pnlBottom.SuspendLayout();
-            gbxFatOptions.SuspendLayout();
+            okButton = new System.Windows.Forms.Button();
+            cancelButton = new System.Windows.Forms.Button();
+            rootDirectoryLabelTextBox = new System.Windows.Forms.TextBox();
+            rootDirectoryLabelLabel = new System.Windows.Forms.Label();
+            buttonPanel = new System.Windows.Forms.Panel();
+            fatOptionsGroupBox = new System.Windows.Forms.GroupBox();
+            syncLabelsCheckBox = new System.Windows.Forms.CheckBox();
+            writeBpbLabelCheckBox = new System.Windows.Forms.CheckBox();
+            bpbLabelTextBox = new System.Windows.Forms.TextBox();
+            buttonPanel.SuspendLayout();
+            fatOptionsGroupBox.SuspendLayout();
             SuspendLayout();
             // 
-            // btnOK
+            // okButton
             // 
-            btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.Location = new System.Drawing.Point(106, 12);
-            btnOK.Name = "btnOK";
-            btnOK.Size = new System.Drawing.Size(80, 26);
-            btnOK.TabIndex = 3;
-            btnOK.Text = "OK";
-            btnOK.Click += btnOK_Click;
+            okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.Location = new System.Drawing.Point(106, 12);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(80, 26);
+            okButton.TabIndex = 3;
+            okButton.Text = "OK";
             // 
-            // btnCancel
+            // cancelButton
             // 
-            btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(192, 12);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new System.Drawing.Size(80, 26);
-            btnCancel.TabIndex = 4;
-            btnCancel.Text = "Cancel";
+            cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.Location = new System.Drawing.Point(192, 12);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(80, 26);
+            cancelButton.TabIndex = 4;
+            cancelButton.Text = "Cancel";
             // 
-            // txtNewLabel
+            // rootDirectoryLabelTextBox
             // 
-            txtNewLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            txtNewLabel.Location = new System.Drawing.Point(12, 27);
-            txtNewLabel.MaxLength = 11;
-            txtNewLabel.Name = "txtNewLabel";
-            txtNewLabel.Size = new System.Drawing.Size(260, 23);
-            txtNewLabel.TabIndex = 0;
-            txtNewLabel.TextChanged += txtRootDirLabel_TextChanged;
+            rootDirectoryLabelTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            rootDirectoryLabelTextBox.Location = new System.Drawing.Point(12, 27);
+            rootDirectoryLabelTextBox.MaxLength = 11;
+            rootDirectoryLabelTextBox.Name = "rootDirectoryLabelTextBox";
+            rootDirectoryLabelTextBox.Size = new System.Drawing.Size(260, 23);
+            rootDirectoryLabelTextBox.TabIndex = 0;
             // 
-            // lblNewLabel
+            // rootDirectoryLabelLabel
             // 
-            lblNewLabel.AutoSize = true;
-            lblNewLabel.Location = new System.Drawing.Point(9, 9);
-            lblNewLabel.Name = "lblNewLabel";
-            lblNewLabel.Size = new System.Drawing.Size(142, 15);
-            lblNewLabel.TabIndex = 4;
-            lblNewLabel.Text = "Enter a new volume label:";
+            rootDirectoryLabelLabel.AutoSize = true;
+            rootDirectoryLabelLabel.Location = new System.Drawing.Point(9, 9);
+            rootDirectoryLabelLabel.Name = "rootDirectoryLabelLabel";
+            rootDirectoryLabelLabel.Size = new System.Drawing.Size(142, 15);
+            rootDirectoryLabelLabel.TabIndex = 4;
+            rootDirectoryLabelLabel.Text = "Enter a new volume label:";
             // 
-            // pnlBottom
+            // buttonPanel
             // 
-            pnlBottom.BackColor = System.Drawing.SystemColors.Control;
-            pnlBottom.Controls.Add(btnOK);
-            pnlBottom.Controls.Add(btnCancel);
-            pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 171);
-            pnlBottom.Name = "pnlBottom";
-            pnlBottom.Size = new System.Drawing.Size(284, 50);
-            pnlBottom.TabIndex = 5;
+            buttonPanel.BackColor = System.Drawing.SystemColors.Control;
+            buttonPanel.Controls.Add(okButton);
+            buttonPanel.Controls.Add(cancelButton);
+            buttonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            buttonPanel.Location = new System.Drawing.Point(0, 171);
+            buttonPanel.Name = "buttonPanel";
+            buttonPanel.Size = new System.Drawing.Size(284, 50);
+            buttonPanel.TabIndex = 5;
             // 
-            // gbxFatOptions
+            // fatOptionsGroupBox
             // 
-            gbxFatOptions.Controls.Add(cbxSync);
-            gbxFatOptions.Controls.Add(cbxBPBLabel);
-            gbxFatOptions.Controls.Add(txtBPBLabel);
-            gbxFatOptions.Location = new System.Drawing.Point(12, 56);
-            gbxFatOptions.Name = "gbxFatOptions";
-            gbxFatOptions.Size = new System.Drawing.Size(260, 109);
-            gbxFatOptions.TabIndex = 7;
-            gbxFatOptions.TabStop = false;
-            gbxFatOptions.Text = "FAT options";
+            fatOptionsGroupBox.Controls.Add(syncLabelsCheckBox);
+            fatOptionsGroupBox.Controls.Add(writeBpbLabelCheckBox);
+            fatOptionsGroupBox.Controls.Add(bpbLabelTextBox);
+            fatOptionsGroupBox.Location = new System.Drawing.Point(12, 56);
+            fatOptionsGroupBox.Name = "fatOptionsGroupBox";
+            fatOptionsGroupBox.Size = new System.Drawing.Size(260, 109);
+            fatOptionsGroupBox.TabIndex = 7;
+            fatOptionsGroupBox.TabStop = false;
+            fatOptionsGroupBox.Text = "FAT options";
             // 
-            // cbxSync
+            // syncLabelsCheckBox
             // 
-            cbxSync.AutoSize = true;
-            cbxSync.Checked = true;
-            cbxSync.CheckState = System.Windows.Forms.CheckState.Checked;
-            cbxSync.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxSync.Location = new System.Drawing.Point(6, 48);
-            cbxSync.Name = "cbxSync";
-            cbxSync.Size = new System.Drawing.Size(241, 20);
-            cbxSync.TabIndex = 9;
-            cbxSync.Text = "Write the same label as in root directory";
-            cbxSync.CheckedChanged += cbxSync_CheckedChanged;
+            syncLabelsCheckBox.AutoSize = true;
+            syncLabelsCheckBox.Checked = true;
+            syncLabelsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            syncLabelsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            syncLabelsCheckBox.Location = new System.Drawing.Point(6, 48);
+            syncLabelsCheckBox.Name = "syncLabelsCheckBox";
+            syncLabelsCheckBox.Size = new System.Drawing.Size(241, 20);
+            syncLabelsCheckBox.TabIndex = 9;
+            syncLabelsCheckBox.Text = "Write the same label as in root directory";
             // 
-            // cbxBPBLabel
+            // writeBpbLabelCheckBox
             // 
-            cbxBPBLabel.AutoSize = true;
-            cbxBPBLabel.Checked = true;
-            cbxBPBLabel.CheckState = System.Windows.Forms.CheckState.Checked;
-            cbxBPBLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cbxBPBLabel.Location = new System.Drawing.Point(6, 22);
-            cbxBPBLabel.Name = "cbxBPBLabel";
-            cbxBPBLabel.Size = new System.Drawing.Size(233, 20);
-            cbxBPBLabel.TabIndex = 7;
-            cbxBPBLabel.Text = "Also write the volume label to the BPB";
-            cbxBPBLabel.CheckedChanged += cbxBPBLabel_CheckedChanged;
+            writeBpbLabelCheckBox.AutoSize = true;
+            writeBpbLabelCheckBox.Checked = true;
+            writeBpbLabelCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            writeBpbLabelCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            writeBpbLabelCheckBox.Location = new System.Drawing.Point(6, 22);
+            writeBpbLabelCheckBox.Name = "writeBpbLabelCheckBox";
+            writeBpbLabelCheckBox.Size = new System.Drawing.Size(233, 20);
+            writeBpbLabelCheckBox.TabIndex = 7;
+            writeBpbLabelCheckBox.Text = "Also write the volume label to the BPB";
             // 
-            // txtBPBLabel
+            // bpbLabelTextBox
             // 
-            txtBPBLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            txtBPBLabel.Location = new System.Drawing.Point(6, 74);
-            txtBPBLabel.MaxLength = 11;
-            txtBPBLabel.Name = "txtBPBLabel";
-            txtBPBLabel.ReadOnly = true;
-            txtBPBLabel.Size = new System.Drawing.Size(248, 23);
-            txtBPBLabel.TabIndex = 8;
+            bpbLabelTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            bpbLabelTextBox.Location = new System.Drawing.Point(6, 74);
+            bpbLabelTextBox.MaxLength = 11;
+            bpbLabelTextBox.Name = "bpbLabelTextBox";
+            bpbLabelTextBox.ReadOnly = true;
+            bpbLabelTextBox.Size = new System.Drawing.Size(248, 23);
+            bpbLabelTextBox.TabIndex = 8;
             // 
             // ChangeVolumeLabelDialog
             // 
-            AcceptButton = btnOK;
+            AcceptButton = okButton;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.SystemColors.Window;
-            CancelButton = btnCancel;
+            CancelButton = cancelButton;
             ClientSize = new System.Drawing.Size(284, 221);
-            Controls.Add(pnlBottom);
-            Controls.Add(txtNewLabel);
-            Controls.Add(lblNewLabel);
-            Controls.Add(gbxFatOptions);
+            Controls.Add(buttonPanel);
+            Controls.Add(rootDirectoryLabelTextBox);
+            Controls.Add(rootDirectoryLabelLabel);
+            Controls.Add(fatOptionsGroupBox);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -160,24 +156,23 @@ namespace TotalImage.Dialogs
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Change volume label";
-            Load += dlgChangeVolLabel_Load;
-            pnlBottom.ResumeLayout(false);
-            gbxFatOptions.ResumeLayout(false);
-            gbxFatOptions.PerformLayout();
+            buttonPanel.ResumeLayout(false);
+            fatOptionsGroupBox.ResumeLayout(false);
+            fatOptionsGroupBox.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.TextBox txtNewLabel;
-        private System.Windows.Forms.Label lblNewLabel;
-        private System.Windows.Forms.Panel pnlBottom;
-        private System.Windows.Forms.GroupBox gbxFatOptions;
-        private System.Windows.Forms.CheckBox cbxSync;
-        private System.Windows.Forms.CheckBox cbxBPBLabel;
-        private System.Windows.Forms.TextBox txtBPBLabel;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.TextBox rootDirectoryLabelTextBox;
+        private System.Windows.Forms.Label rootDirectoryLabelLabel;
+        private System.Windows.Forms.Panel buttonPanel;
+        private System.Windows.Forms.GroupBox fatOptionsGroupBox;
+        private System.Windows.Forms.CheckBox syncLabelsCheckBox;
+        private System.Windows.Forms.CheckBox writeBpbLabelCheckBox;
+        private System.Windows.Forms.TextBox bpbLabelTextBox;
     }
 }

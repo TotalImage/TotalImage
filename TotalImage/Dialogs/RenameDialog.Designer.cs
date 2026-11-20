@@ -28,96 +28,95 @@ namespace TotalImage.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            pnlBottom = new System.Windows.Forms.Panel();
-            btnCancel = new System.Windows.Forms.Button();
-            btnOK = new System.Windows.Forms.Button();
-            lblDesc = new System.Windows.Forms.Label();
-            txtName = new System.Windows.Forms.TextBox();
-            lblShortname = new System.Windows.Forms.Label();
-            lblShortname1 = new System.Windows.Forms.Label();
-            pnlBottom.SuspendLayout();
+            buttonPanel = new System.Windows.Forms.Panel();
+            cancelButton = new System.Windows.Forms.Button();
+            okButton = new System.Windows.Forms.Button();
+            promptLabel = new System.Windows.Forms.Label();
+            nameTextBox = new System.Windows.Forms.TextBox();
+            shortNameLabel = new System.Windows.Forms.Label();
+            shortNameValueLabel = new System.Windows.Forms.Label();
+            buttonPanel.SuspendLayout();
             SuspendLayout();
             // 
-            // pnlBottom
+            // buttonPanel
             // 
-            pnlBottom.BackColor = System.Drawing.SystemColors.Control;
-            pnlBottom.Controls.Add(btnCancel);
-            pnlBottom.Controls.Add(btnOK);
-            pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 101);
-            pnlBottom.Name = "pnlBottom";
-            pnlBottom.Size = new System.Drawing.Size(484, 50);
-            pnlBottom.TabIndex = 3;
+            buttonPanel.BackColor = System.Drawing.SystemColors.Control;
+            buttonPanel.Controls.Add(cancelButton);
+            buttonPanel.Controls.Add(okButton);
+            buttonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            buttonPanel.Location = new System.Drawing.Point(0, 101);
+            buttonPanel.Name = "buttonPanel";
+            buttonPanel.Size = new System.Drawing.Size(484, 50);
+            buttonPanel.TabIndex = 3;
             // 
-            // btnCancel
+            // cancelButton
             // 
-            btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(392, 12);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new System.Drawing.Size(80, 26);
-            btnCancel.TabIndex = 1;
-            btnCancel.Text = "Cancel";
+            cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.Location = new System.Drawing.Point(392, 12);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(80, 26);
+            cancelButton.TabIndex = 1;
+            cancelButton.Text = "Cancel";
             // 
-            // btnOK
+            // okButton
             // 
-            btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.Location = new System.Drawing.Point(306, 12);
-            btnOK.Name = "btnOK";
-            btnOK.Size = new System.Drawing.Size(80, 26);
-            btnOK.TabIndex = 0;
-            btnOK.Text = "OK";
-            btnOK.Click += btnOK_Click;
+            okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.Location = new System.Drawing.Point(306, 12);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(80, 26);
+            okButton.TabIndex = 0;
+            okButton.Text = "OK";
             // 
-            // lblDesc
+            // promptLabel
             // 
-            lblDesc.AutoSize = true;
-            lblDesc.Location = new System.Drawing.Point(9, 9);
-            lblDesc.Name = "lblDesc";
-            lblDesc.Size = new System.Drawing.Size(214, 15);
-            lblDesc.TabIndex = 4;
-            lblDesc.Text = "Enter a new name for <oldname here>:";
+            promptLabel.AutoSize = true;
+            promptLabel.Location = new System.Drawing.Point(9, 9);
+            promptLabel.Name = "promptLabel";
+            promptLabel.Size = new System.Drawing.Size(214, 15);
+            promptLabel.TabIndex = 4;
+            promptLabel.Text = "Enter a new name for <oldname here>:";
             // 
-            // txtName
+            // nameTextBox
             // 
-            txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            txtName.Location = new System.Drawing.Point(12, 36);
-            txtName.Name = "txtName";
-            txtName.Size = new System.Drawing.Size(460, 23);
-            txtName.TabIndex = 5;
+            nameTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            nameTextBox.Location = new System.Drawing.Point(12, 36);
+            nameTextBox.Name = "nameTextBox";
+            nameTextBox.Size = new System.Drawing.Size(460, 23);
+            nameTextBox.TabIndex = 5;
             // 
-            // lblShortname
+            // shortNameLabel
             // 
-            lblShortname.AutoSize = true;
-            lblShortname.Location = new System.Drawing.Point(9, 71);
-            lblShortname.Name = "lblShortname";
-            lblShortname.Size = new System.Drawing.Size(97, 15);
-            lblShortname.TabIndex = 6;
-            lblShortname.Text = "Short name (8.3):";
+            shortNameLabel.AutoSize = true;
+            shortNameLabel.Location = new System.Drawing.Point(9, 71);
+            shortNameLabel.Name = "shortNameLabel";
+            shortNameLabel.Size = new System.Drawing.Size(97, 15);
+            shortNameLabel.TabIndex = 6;
+            shortNameLabel.Text = "Short name (8.3):";
             // 
-            // lblShortname1
+            // shortNameValueLabel
             // 
-            lblShortname1.AutoSize = true;
-            lblShortname1.Location = new System.Drawing.Point(109, 71);
-            lblShortname1.Name = "lblShortname1";
-            lblShortname1.Size = new System.Drawing.Size(80, 15);
-            lblShortname1.TabIndex = 7;
-            lblShortname1.Text = "<shortname>";
+            shortNameValueLabel.AutoSize = true;
+            shortNameValueLabel.Location = new System.Drawing.Point(109, 71);
+            shortNameValueLabel.Name = "shortNameValueLabel";
+            shortNameValueLabel.Size = new System.Drawing.Size(80, 15);
+            shortNameValueLabel.TabIndex = 7;
+            shortNameValueLabel.Text = "<shortname>";
             // 
             // RenameDialog
             // 
-            AcceptButton = btnOK;
+            AcceptButton = okButton;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.SystemColors.Window;
-            CancelButton = btnCancel;
+            CancelButton = cancelButton;
             ClientSize = new System.Drawing.Size(484, 151);
-            Controls.Add(lblShortname1);
-            Controls.Add(lblShortname);
-            Controls.Add(txtName);
-            Controls.Add(lblDesc);
-            Controls.Add(pnlBottom);
+            Controls.Add(shortNameValueLabel);
+            Controls.Add(shortNameLabel);
+            Controls.Add(nameTextBox);
+            Controls.Add(promptLabel);
+            Controls.Add(buttonPanel);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -126,20 +125,19 @@ namespace TotalImage.Dialogs
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Rename item";
-            Load += dlgRename_Load;
-            pnlBottom.ResumeLayout(false);
+            buttonPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel pnlBottom;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Label lblDesc;
-        private System.Windows.Forms.TextBox txtName;
-        private System.Windows.Forms.Label lblShortname;
-        private System.Windows.Forms.Label lblShortname1;
+        private System.Windows.Forms.Panel buttonPanel;
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Label promptLabel;
+        private System.Windows.Forms.TextBox nameTextBox;
+        private System.Windows.Forms.Label shortNameLabel;
+        private System.Windows.Forms.Label shortNameValueLabel;
     }
 }

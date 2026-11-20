@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TotalImage.Forms;
 using TotalImage.Services;
 using TotalImage.ViewModels;
+using TotalImage.ViewModels.Services;
 using TotalImage.ViewModels.Settings;
 
 namespace TotalImage
@@ -38,6 +39,11 @@ namespace TotalImage
             var services = new ServiceCollection();
             services.AddTotalImageViewModels();
             services.AddSingleton<UIStateService>();
+            services.AddScoped<DialogOwner>();
+            services.AddScoped<IEntryDialogs, WinFormsEntryDialogs>();
+            services.AddScoped<IImageDialogs, WinFormsImageDialogs>();
+            services.AddScoped<IAppDialogs, WinFormsAppDialogs>();
+            services.AddScoped<IMessageService, WinFormsMessageService>();
             services.AddScoped<MainForm>();
             return services;
         }

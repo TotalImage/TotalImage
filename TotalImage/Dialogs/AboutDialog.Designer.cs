@@ -28,124 +28,124 @@ namespace TotalImage.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            btnOK = new System.Windows.Forms.Button();
-            lblTitle = new System.Windows.Forms.Label();
-            lblDesc = new System.Windows.Forms.Label();
-            lblVer = new System.Windows.Forms.Label();
-            lblCopyright = new System.Windows.Forms.Label();
-            pnlBottom = new System.Windows.Forms.Panel();
-            imgLogo = new System.Windows.Forms.PictureBox();
-            lblLicense = new System.Windows.Forms.Label();
-            lnkGitHub = new System.Windows.Forms.LinkLabel();
-            pnlBottom.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)imgLogo).BeginInit();
+            okButton = new System.Windows.Forms.Button();
+            titleLabel = new System.Windows.Forms.Label();
+            descriptionLabel = new System.Windows.Forms.Label();
+            versionLabel = new System.Windows.Forms.Label();
+            copyrightLabel = new System.Windows.Forms.Label();
+            buttonPanel = new System.Windows.Forms.Panel();
+            logoPictureBox = new System.Windows.Forms.PictureBox();
+            licenseLabel = new System.Windows.Forms.Label();
+            projectLinkLabel = new System.Windows.Forms.LinkLabel();
+            buttonPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)logoPictureBox).BeginInit();
             SuspendLayout();
             // 
-            // btnOK
+            // okButton
             // 
-            btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.Location = new System.Drawing.Point(177, 12);
-            btnOK.Name = "btnOK";
-            btnOK.Size = new System.Drawing.Size(80, 26);
-            btnOK.TabIndex = 0;
-            btnOK.Text = "OK";
-            btnOK.UseVisualStyleBackColor = true;
+            okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.Location = new System.Drawing.Point(177, 12);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(80, 26);
+            okButton.TabIndex = 0;
+            okButton.Text = "OK";
+            okButton.UseVisualStyleBackColor = true;
             // 
-            // lblTitle
+            // titleLabel
             // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            lblTitle.Location = new System.Drawing.Point(66, 12);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new System.Drawing.Size(96, 21);
-            lblTitle.TabIndex = 1;
-            lblTitle.Text = "TotalImage";
+            titleLabel.AutoSize = true;
+            titleLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            titleLabel.Location = new System.Drawing.Point(66, 12);
+            titleLabel.Name = "titleLabel";
+            titleLabel.Size = new System.Drawing.Size(96, 21);
+            titleLabel.TabIndex = 1;
+            titleLabel.Text = "TotalImage";
             // 
-            // lblDesc
+            // descriptionLabel
             // 
-            lblDesc.AutoSize = true;
-            lblDesc.Location = new System.Drawing.Point(67, 43);
-            lblDesc.Name = "lblDesc";
-            lblDesc.Size = new System.Drawing.Size(143, 15);
-            lblDesc.TabIndex = 2;
-            lblDesc.Text = "A better disk image editor";
+            descriptionLabel.AutoSize = true;
+            descriptionLabel.Location = new System.Drawing.Point(67, 43);
+            descriptionLabel.Name = "descriptionLabel";
+            descriptionLabel.Size = new System.Drawing.Size(143, 15);
+            descriptionLabel.TabIndex = 2;
+            descriptionLabel.Text = "A better disk image editor";
             // 
-            // lblVer
+            // versionLabel
             // 
-            lblVer.AutoSize = true;
-            lblVer.Location = new System.Drawing.Point(9, 73);
-            lblVer.Name = "lblVer";
-            lblVer.Size = new System.Drawing.Size(229, 15);
-            lblVer.TabIndex = 3;
-            lblVer.Text = "Version: <version> <release> (<commit>)";
+            versionLabel.AutoSize = true;
+            versionLabel.Location = new System.Drawing.Point(9, 73);
+            versionLabel.Name = "versionLabel";
+            versionLabel.Size = new System.Drawing.Size(229, 15);
+            versionLabel.TabIndex = 3;
+            versionLabel.Text = "Version: <version> <release> (<commit>)";
             // 
-            // lblCopyright
+            // copyrightLabel
             // 
-            lblCopyright.AutoSize = true;
-            lblCopyright.Location = new System.Drawing.Point(9, 97);
-            lblCopyright.Name = "lblCopyright";
-            lblCopyright.Size = new System.Drawing.Size(247, 15);
-            lblCopyright.TabIndex = 4;
-            lblCopyright.Text = "Copyright © 2020-2026 The TotalImage Team";
+            copyrightLabel.AutoSize = true;
+            copyrightLabel.Location = new System.Drawing.Point(9, 97);
+            copyrightLabel.Name = "copyrightLabel";
+            copyrightLabel.Size = new System.Drawing.Size(247, 15);
+            copyrightLabel.TabIndex = 4;
+            copyrightLabel.Text = "Copyright © 2020-2026 The TotalImage Team";
             // 
-            // pnlBottom
+            // buttonPanel
             // 
-            pnlBottom.BackColor = System.Drawing.SystemColors.Control;
-            pnlBottom.Controls.Add(btnOK);
-            pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 206);
-            pnlBottom.Name = "pnlBottom";
-            pnlBottom.Size = new System.Drawing.Size(269, 50);
-            pnlBottom.TabIndex = 5;
+            buttonPanel.BackColor = System.Drawing.SystemColors.Control;
+            buttonPanel.Controls.Add(okButton);
+            buttonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            buttonPanel.Location = new System.Drawing.Point(0, 206);
+            buttonPanel.Name = "buttonPanel";
+            buttonPanel.Size = new System.Drawing.Size(269, 50);
+            buttonPanel.TabIndex = 5;
             // 
-            // imgLogo
+            // logoPictureBox
             // 
-            imgLogo.Image = Properties.Resources.logo_48;
-            imgLogo.Location = new System.Drawing.Point(12, 12);
-            imgLogo.Name = "imgLogo";
-            imgLogo.Size = new System.Drawing.Size(48, 48);
-            imgLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            imgLogo.TabIndex = 6;
-            imgLogo.TabStop = false;
+            logoPictureBox.Image = Properties.Resources.logo_48;
+            logoPictureBox.Location = new System.Drawing.Point(12, 12);
+            logoPictureBox.Name = "logoPictureBox";
+            logoPictureBox.Size = new System.Drawing.Size(48, 48);
+            logoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            logoPictureBox.TabIndex = 6;
+            logoPictureBox.TabStop = false;
             // 
-            // lblLicense
+            // licenseLabel
             // 
-            lblLicense.AutoSize = true;
-            lblLicense.Location = new System.Drawing.Point(9, 121);
-            lblLicense.Name = "lblLicense";
-            lblLicense.Size = new System.Drawing.Size(249, 45);
-            lblLicense.TabIndex = 7;
-            lblLicense.Text = "TotalImage is licensed under the MIT license. \r\nSee the LICENSE file for more information and\r\nAUTHORS for a list of contributors.";
+            licenseLabel.AutoSize = true;
+            licenseLabel.Location = new System.Drawing.Point(9, 121);
+            licenseLabel.Name = "licenseLabel";
+            licenseLabel.Size = new System.Drawing.Size(249, 45);
+            licenseLabel.TabIndex = 7;
+            licenseLabel.Text = "TotalImage is licensed under the MIT license. \r\nSee the LICENSE file for more information and\r\nAUTHORS for a list of contributors.";
             // 
-            // lnkGitHub
+            // projectLinkLabel
             // 
-            lnkGitHub.AutoSize = true;
-            lnkGitHub.LinkColor = System.Drawing.SystemColors.HotTrack;
-            lnkGitHub.Location = new System.Drawing.Point(9, 175);
-            lnkGitHub.Name = "lnkGitHub";
-            lnkGitHub.Size = new System.Drawing.Size(237, 15);
-            lnkGitHub.TabIndex = 8;
-            lnkGitHub.TabStop = true;
-            lnkGitHub.Text = "https://github.com/TotalImage/TotalImage";
-            lnkGitHub.LinkClicked += lnkGitHub_LinkClicked;
+            projectLinkLabel.AutoSize = true;
+            projectLinkLabel.LinkColor = System.Drawing.SystemColors.HotTrack;
+            projectLinkLabel.Location = new System.Drawing.Point(9, 175);
+            projectLinkLabel.Name = "projectLinkLabel";
+            projectLinkLabel.Size = new System.Drawing.Size(237, 15);
+            projectLinkLabel.TabIndex = 8;
+            projectLinkLabel.TabStop = true;
+            projectLinkLabel.Text = "https://github.com/TotalImage/TotalImage";
+            projectLinkLabel.LinkClicked += ProjectLinkLabel_LinkClicked;
             // 
             // AboutDialog
             // 
-            AcceptButton = btnOK;
+            AcceptButton = okButton;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.SystemColors.Window;
-            CancelButton = btnOK;
+            CancelButton = okButton;
             ClientSize = new System.Drawing.Size(269, 256);
-            Controls.Add(lnkGitHub);
-            Controls.Add(lblLicense);
-            Controls.Add(imgLogo);
-            Controls.Add(pnlBottom);
-            Controls.Add(lblCopyright);
-            Controls.Add(lblVer);
-            Controls.Add(lblDesc);
-            Controls.Add(lblTitle);
+            Controls.Add(projectLinkLabel);
+            Controls.Add(licenseLabel);
+            Controls.Add(logoPictureBox);
+            Controls.Add(buttonPanel);
+            Controls.Add(copyrightLabel);
+            Controls.Add(versionLabel);
+            Controls.Add(descriptionLabel);
+            Controls.Add(titleLabel);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -154,23 +154,22 @@ namespace TotalImage.Dialogs
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "About TotalImage";
-            Load += dlgAbout_Load;
-            pnlBottom.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)imgLogo).EndInit();
+            buttonPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)logoPictureBox).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.Label lblTitle;
-        private System.Windows.Forms.Label lblDesc;
-        private System.Windows.Forms.Label lblVer;
-        private System.Windows.Forms.Label lblCopyright;
-        private System.Windows.Forms.Panel pnlBottom;
-        private System.Windows.Forms.PictureBox imgLogo;
-        private System.Windows.Forms.Label lblLicense;
-        private System.Windows.Forms.LinkLabel lnkGitHub;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Label titleLabel;
+        private System.Windows.Forms.Label descriptionLabel;
+        private System.Windows.Forms.Label versionLabel;
+        private System.Windows.Forms.Label copyrightLabel;
+        private System.Windows.Forms.Panel buttonPanel;
+        private System.Windows.Forms.PictureBox logoPictureBox;
+        private System.Windows.Forms.Label licenseLabel;
+        private System.Windows.Forms.LinkLabel projectLinkLabel;
     }
 }

@@ -1,37 +1,25 @@
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
+using TotalImage.ViewModels.Dialogs;
 
 namespace TotalImage.Dialogs
 {
     public partial class AboutDialog : Form
     {
-        private const string RELEASE_NAME = "Alpha 1";
+        private readonly AboutViewModel viewModel;
 
-        public AboutDialog()
+        public AboutDialog(AboutViewModel viewModel)
         {
             InitializeComponent();
+
+            this.viewModel = viewModel;
+            versionLabel.Text = viewModel.VersionText;
+            projectLinkLabel.Text = AboutViewModel.ProjectUrl;
         }
 
-        private void dlgAbout_Load(object sender, EventArgs e)
+        private void ProjectLinkLabel_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
         {
-            var asm = Assembly.GetEntryAssembly();
-            var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
-            var hash = attrs.FirstOrDefault(a => a.Key == "GitHash");
-            lblVer.Text = $"Version: {asm.GetName().Version} {RELEASE_NAME} ({hash.Value})";
-        }
-
-        private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            lnkGitHub.LinkVisited = true;
-            ProcessStartInfo psi = new()
-            {
-                FileName = lnkGitHub.Text,
-                UseShellExecute = true
-            };
-            Process.Start(psi);
+            viewModel.OpenProjectPageCommand.Execute(null);
+            projectLinkLabel.LinkVisited = viewModel.ProjectPageVisited;
         }
     }
 }

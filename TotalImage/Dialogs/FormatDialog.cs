@@ -1,44 +1,21 @@
-using System;
 using System.Windows.Forms;
+using TotalImage.Controls;
+using TotalImage.ViewModels.Dialogs;
 
 namespace TotalImage.Dialogs
 {
     public partial class FormatDialog : Form
     {
-        public FormatDialog()
+        public FormatDialog(FormatViewModel viewModel)
         {
             InitializeComponent();
-        }
 
-        //TODO: Obtain the list of available file systems and cluster sizes for this particular image and display them
-        private void dlgFormat_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnOK_Click(object sender, EventArgs e)
-        {
-            TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
-            {
-                Text = "Are you sure you want to continue?",
-                Heading = "WARNING: Formatting will erase all data in the current partition!",
-                Caption = "Warning",
-                Buttons =
-                        {
-                            TaskDialogButton.Yes,
-                            TaskDialogButton.No
-                        },
-                Icon = TaskDialogIcon.Warning,
-            });
-
-            if (result == TaskDialogButton.Yes)
-            {
-                throw new NotImplementedException();
-            }
-            else
-            {
-                DialogResult = DialogResult.None;
-            }
+            fileSystemComboBox.BindItems(viewModel.FileSystems, viewModel, nameof(FormatViewModel.FileSystem));
+            clusterSizeComboBox.BindItems(viewModel.ClusterSizes, viewModel, nameof(FormatViewModel.ClusterSize));
+            volumeLabelTextBox.MaxLength = FormatViewModel.MaxVolumeLabelLength;
+            volumeLabelTextBox.BindTwoWay(nameof(TextBox.Text), viewModel, nameof(FormatViewModel.VolumeLabel));
+            quickFormatCheckBox.BindTwoWay(nameof(CheckBox.Checked), viewModel, nameof(FormatViewModel.QuickFormat));
+            okButton.Command = viewModel.AcceptCommand;
         }
     }
 }

@@ -83,12 +83,22 @@ namespace TotalImage.Forms
         private readonly ISettingsService settings;
         private readonly ITempDirectoryService tempDirectory;
         private readonly UIStateService uiState;
+        private readonly IEntryDialogs entryDialogs;
+        private readonly IImageDialogs imageDialogs;
+        private readonly IAppDialogs appDialogs;
+        private readonly IMessageService messages;
 
-        public MainForm(ISettingsService settings, ITempDirectoryService tempDirectory, UIStateService uiState)
+        public MainForm(ISettingsService settings, ITempDirectoryService tempDirectory, UIStateService uiState, DialogOwner dialogOwner,
+            IEntryDialogs entryDialogs, IImageDialogs imageDialogs, IAppDialogs appDialogs, IMessageService messages)
         {
             this.settings = settings;
             this.tempDirectory = tempDirectory;
             this.uiState = uiState;
+            this.entryDialogs = entryDialogs;
+            this.imageDialogs = imageDialogs;
+            this.appDialogs = appDialogs;
+            this.messages = messages;
+            dialogOwner.Window = this;
 
             InitializeComponent();
 
@@ -135,7 +145,7 @@ namespace TotalImage.Forms
 
         //Allows viewing and editing both volume labels
         //TODO: Actually change the volume labels
-        private void changeVolumeLabel_Click(object sender, EventArgs e)
+        private async void changeVolumeLabel_Click(object sender, EventArgs e)
         {
             if (image?.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FatFileSystem fs)
             {
@@ -155,10 +165,10 @@ namespace TotalImage.Forms
                 return;
             }
 
-            using ChangeVolumeLabelDialog dlg = new(fs.RootDirectoryVolumeLabel, fs.BpbVolumeLabel);
-            if (dlg.ShowDialog() == DialogResult.OK)
+            var change = await entryDialogs.AskVolumeLabelAsync(fs.RootDirectoryVolumeLabel ?? string.Empty, fs.BpbVolumeLabel ?? string.Empty);
+            if (change is not null)
             {
-                fs.EnqueueSetVolumeLabel(dlg.NewLabel);
+                fs.EnqueueSetVolumeLabel(change.RootDirectoryLabel);
             }
         }
 
@@ -292,26 +302,26 @@ namespace TotalImage.Forms
         }
 
         //Creates a new folder
-        private void newFolder_Click(object sender, EventArgs e)
+        private async void newFolder_Click(object sender, EventArgs e)
         {
             if (image?.SupportsWriting == false)
             {
                 return;
             }
-            using NewFolderDialog dlg = new();
-            if (dlg.ShowDialog() != DialogResult.OK) return;
+            var newName = await entryDialogs.AskNewFolderNameAsync();
+            if (newName is null) return;
             if (image is null || lstDirectories.SelectedNode is null) return;
 
             var nodeTag = lstDirectories.SelectedNode.Tag;
             if (nodeTag is FatDirectory fatDir)
             {
-                fatDir.EnqueueCreateSubdirectory(dlg.NewName);
+                fatDir.EnqueueCreateSubdirectory(newName);
             }
             else if (nodeTag is PendingDirectory pendingDir)
             {
                 // Build path components from the pending directory's FullName + new name
                 var path = FullNameToPathComponents(pendingDir.FullName)
-                    .Append(dlg.NewName).ToArray();
+                    .Append(newName).ToArray();
                 image.PendingChanges.Add(new Changes.CreateDirectoryChange(path));
             }
         }
@@ -509,10 +519,10 @@ namespace TotalImage.Forms
 
         //Formats the selected partition/floppy disk
         //TODO: Implement this here and in FS/container.
-        private void format_Click(object sender, EventArgs e)
+        private async void format_Click(object sender, EventArgs e)
         {
-            using FormatDialog dlg = new();
-            if (dlg.ShowDialog() == DialogResult.Yes)
+            var options = await imageDialogs.AskFormatOptionsAsync();
+            if (options is not null && await messages.ConfirmFormatAsync())
             {
                 throw new NotImplementedException();
                 // Need to figure out how to actually do this, because right now it's unclear...
@@ -771,10 +781,9 @@ namespace TotalImage.Forms
             }
         }
 
-        private void about_Click(object sender, EventArgs e)
+        private async void about_Click(object sender, EventArgs e)
         {
-            using AboutDialog dlg = new();
-            dlg.ShowDialog();
+            await appDialogs.ShowAboutAsync();
         }
 
         //Extracts file(s) or folder(s) from the image to the specified path.
