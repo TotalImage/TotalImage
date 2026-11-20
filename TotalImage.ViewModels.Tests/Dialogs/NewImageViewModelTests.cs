@@ -337,15 +337,17 @@ public class NewImageViewModelTests
     }
 
     [Fact]
-    public void AdvancedOptions_WhenCustomIsAlreadyChosen_KeepTheGeometry()
+    public void AdvancedOptions_WhenCustomIsAlreadyChosen_ApplyTheGeometry()
     {
-        var vm = Create(advanced => advanced.Tracks = 82);
+        var vm = Create(advanced => advanced.Tracks++);
         vm.SelectedGeometry = Option(Name.Custom);
 
         vm.ShowAdvancedOptionsCommand.Execute(null);
+        vm.ShowAdvancedOptionsCommand.Execute(null);
 
         Assert.Equal(Name.Custom, vm.SelectedGeometry.Value);
-        Assert.Same(FloppyGeometry.KnownGeometries[Name.HighDensity1440k], vm.Geometry);
+        Assert.Equal(82, vm.Geometry.Tracks);
+        Assert.Equal(18, vm.Geometry.SPT);
     }
 
     [Fact]

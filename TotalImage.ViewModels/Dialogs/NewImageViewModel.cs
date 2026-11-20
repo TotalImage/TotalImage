@@ -236,9 +236,11 @@ public partial class NewImageViewModel : DialogViewModel<NewImageOptions>
         await showAdvancedOptions(advanced);
 
         var newGeometry = advanced.ToGeometry();
-        if (SelectedGeometry.Value != FloppyGeometry.FriendlyName.Custom && !newGeometry.Equals(Geometry))
+        if (!newGeometry.Equals(Geometry))
         {
-            SelectedGeometry = GetGeometryOption(FloppyGeometry.FriendlyName.Custom);
+            if (SelectedGeometry.Value != FloppyGeometry.FriendlyName.Custom)
+                SelectedGeometry = GetGeometryOption(FloppyGeometry.FriendlyName.Custom);
+
             Geometry = newGeometry;
         }
 
