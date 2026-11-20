@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using TotalImage.FileSystems.FAT;
 
-namespace TotalImage.FileSystems;
+namespace TotalImage.FileSystems.FAT;
 
 /// <summary>
 /// Read-only base class for FAT-style cluster maps (FAT12/16/32 and exFAT).

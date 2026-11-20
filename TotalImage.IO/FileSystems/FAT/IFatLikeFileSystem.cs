@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace TotalImage.FileSystems;
+namespace TotalImage.FileSystems.FAT;
 
 /// <summary>
 /// A FAT or exFAT file system, which stores data in cluster chains linked through a file allocation table.

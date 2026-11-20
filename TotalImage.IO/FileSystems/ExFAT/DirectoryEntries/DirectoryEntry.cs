@@ -2,6 +2,7 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
+using TotalImage.FileSystems.FAT;
 using DirectoryEntryType = TotalImage.FileSystems.ExFAT.EntryType;
 
 namespace TotalImage.FileSystems.ExFAT;

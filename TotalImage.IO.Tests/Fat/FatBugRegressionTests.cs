@@ -2,7 +2,6 @@ using System;
 using System.Buffers.Binary;
 using System.IO;
 using System.Linq;
-using TotalImage.FileSystems;
 using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using Xunit;

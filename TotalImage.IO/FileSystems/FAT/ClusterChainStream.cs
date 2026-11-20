@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace TotalImage.FileSystems;
+namespace TotalImage.FileSystems.FAT;
 
 /// <summary>
 /// Provides read-only stream access to data stored in a FAT or exFAT cluster chain.
