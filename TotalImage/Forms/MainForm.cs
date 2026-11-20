@@ -239,10 +239,10 @@ namespace TotalImage.Forms
 
         //Creates a new disk image
         //TODO: Implement the "save changes first" code path
-        private void newImage_Click(object sender, EventArgs e)
+        private async void newImage_Click(object sender, EventArgs e)
         {
-            using NewImageDialog dlg = new();
-            if (dlg.ShowDialog() == DialogResult.OK)
+            var options = await imageDialogs.AskNewImageAsync();
+            if (options is not null)
             {
                 if (unsavedChanges)
                 {
@@ -268,12 +268,12 @@ namespace TotalImage.Forms
                     CloseImage();
                 image = null;
 
-                BiosParameterBlock bpb = dlg.BPBVersion == BiosParameterBlockVersion.Dos34 || dlg.BPBVersion == BiosParameterBlockVersion.Dos40
-                    ? ExtendedBiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID, dlg.SerialNumber, dlg.FileSystemType, dlg.VolumeLabel)
-                    : BiosParameterBlock.FromGeometry(dlg.Geometry, dlg.BPBVersion, dlg.OEMID);
+                BiosParameterBlock bpb = options.BpbVersion == BiosParameterBlockVersion.Dos34 || options.BpbVersion == BiosParameterBlockVersion.Dos40
+                    ? ExtendedBiosParameterBlock.FromGeometry(options.Geometry, options.BpbVersion, options.OemId, options.SerialNumber, options.FileSystemType, options.VolumeLabel)
+                    : BiosParameterBlock.FromGeometry(options.Geometry, options.BpbVersion, options.OemId);
 
                 //Create a new image and immediately open it
-                image = RawContainer.CreateImage(bpb, dlg.Geometry.Tracks, dlg.WriteBPB);
+                image = RawContainer.CreateImage(bpb, options.Geometry.Tracks, options.WriteBpb);
                 unsavedChanges = true;
                 OpenImage(null);
             }

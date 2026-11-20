@@ -35,5 +35,22 @@ namespace TotalImage.Services
             dialog.ShowDialog(owner.Window);
             return Task.CompletedTask;
         }
+
+        public Task<NewImageOptions?> AskNewImageAsync()
+        {
+            // Questions asked while the dialog is open (and the advanced options) belong to the dialog.
+            var dialogOwner = new DialogOwner();
+            var viewModel = new NewImageViewModel(new WinFormsMessageService(dialogOwner), ShowAdvancedOptions);
+            using var dialog = new NewImageDialog(viewModel);
+            dialogOwner.Window = dialog;
+            return Task.FromResult(dialog.ShowDialog(owner.Window) == DialogResult.OK ? viewModel.Answer : null);
+
+            Task ShowAdvancedOptions(NewImageAdvancedViewModel advanced)
+            {
+                using var advancedDialog = new NewImageAdvancedDialog(advanced);
+                advancedDialog.ShowDialog(dialogOwner.Window);
+                return Task.CompletedTask;
+            }
+        }
     }
 }

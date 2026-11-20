@@ -29,329 +29,318 @@ namespace TotalImage.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            pnlBottom = new System.Windows.Forms.Panel();
-            btnOK = new System.Windows.Forms.Button();
-            btnCancel = new System.Windows.Forms.Button();
-            gbxMediaType = new System.Windows.Forms.GroupBox();
-            lblContainerFormat = new System.Windows.Forms.Label();
-            lstContainerFormat = new System.Windows.Forms.ComboBox();
-            rbnHardDisk = new System.Windows.Forms.RadioButton();
-            rbnFloppyDisk = new System.Windows.Forms.RadioButton();
-            gbxOptions = new System.Windows.Forms.GroupBox();
-            pnlHardDisk = new System.Windows.Forms.Panel();
-            lstPartitionTable = new System.Windows.Forms.ComboBox();
-            cbxWritePartTable = new System.Windows.Forms.CheckBox();
-            rbnDifferencing = new System.Windows.Forms.RadioButton();
-            rbnDynamic = new System.Windows.Forms.RadioButton();
-            rbnFixed = new System.Windows.Forms.RadioButton();
-            lblDiskType = new System.Windows.Forms.Label();
-            lblDiskSize = new System.Windows.Forms.Label();
-            txtDiskSize = new System.Windows.Forms.NumericUpDown();
-            pnlFloppy = new System.Windows.Forms.Panel();
-            lstFloppyBPB = new System.Windows.Forms.ComboBox();
-            cbxFloppyBPB = new System.Windows.Forms.CheckBox();
-            txtFloppyLabel = new System.Windows.Forms.TextBox();
-            lblFloppyGeometry = new System.Windows.Forms.Label();
-            lblFloppyLabel = new System.Windows.Forms.Label();
-            btnAdvanced = new System.Windows.Forms.Button();
-            lstFloppyGeometries = new System.Windows.Forms.ComboBox();
-            pnlBottom.SuspendLayout();
-            gbxMediaType.SuspendLayout();
-            gbxOptions.SuspendLayout();
-            pnlHardDisk.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)txtDiskSize).BeginInit();
-            pnlFloppy.SuspendLayout();
+            buttonPanel = new System.Windows.Forms.Panel();
+            okButton = new System.Windows.Forms.Button();
+            cancelButton = new System.Windows.Forms.Button();
+            mediaTypeGroupBox = new System.Windows.Forms.GroupBox();
+            containerFormatLabel = new System.Windows.Forms.Label();
+            containerFormatComboBox = new System.Windows.Forms.ComboBox();
+            hardDiskRadioButton = new System.Windows.Forms.RadioButton();
+            floppyDiskRadioButton = new System.Windows.Forms.RadioButton();
+            optionsGroupBox = new System.Windows.Forms.GroupBox();
+            hardDiskPanel = new System.Windows.Forms.Panel();
+            partitionTableComboBox = new System.Windows.Forms.ComboBox();
+            writePartitionTableCheckBox = new System.Windows.Forms.CheckBox();
+            differencingRadioButton = new System.Windows.Forms.RadioButton();
+            dynamicRadioButton = new System.Windows.Forms.RadioButton();
+            fixedSizeRadioButton = new System.Windows.Forms.RadioButton();
+            diskTypeLabel = new System.Windows.Forms.Label();
+            diskSizeLabel = new System.Windows.Forms.Label();
+            diskSizeNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            floppyPanel = new System.Windows.Forms.Panel();
+            bpbVersionComboBox = new System.Windows.Forms.ComboBox();
+            writeBpbCheckBox = new System.Windows.Forms.CheckBox();
+            volumeLabelTextBox = new System.Windows.Forms.TextBox();
+            geometryLabel = new System.Windows.Forms.Label();
+            volumeLabelLabel = new System.Windows.Forms.Label();
+            advancedButton = new System.Windows.Forms.Button();
+            geometryComboBox = new System.Windows.Forms.ComboBox();
+            buttonPanel.SuspendLayout();
+            mediaTypeGroupBox.SuspendLayout();
+            optionsGroupBox.SuspendLayout();
+            hardDiskPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)diskSizeNumericUpDown).BeginInit();
+            floppyPanel.SuspendLayout();
             SuspendLayout();
             // 
-            // pnlBottom
+            // buttonPanel
             // 
-            pnlBottom.BackColor = System.Drawing.SystemColors.Control;
-            pnlBottom.Controls.Add(btnOK);
-            pnlBottom.Controls.Add(btnCancel);
-            pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 272);
-            pnlBottom.Name = "pnlBottom";
-            pnlBottom.Size = new System.Drawing.Size(399, 50);
-            pnlBottom.TabIndex = 0;
+            buttonPanel.BackColor = System.Drawing.SystemColors.Control;
+            buttonPanel.Controls.Add(okButton);
+            buttonPanel.Controls.Add(cancelButton);
+            buttonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            buttonPanel.Location = new System.Drawing.Point(0, 272);
+            buttonPanel.Name = "buttonPanel";
+            buttonPanel.Size = new System.Drawing.Size(399, 50);
+            buttonPanel.TabIndex = 0;
             // 
-            // btnOK
+            // okButton
             // 
-            btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.Location = new System.Drawing.Point(219, 12);
-            btnOK.Name = "btnOK";
-            btnOK.Size = new System.Drawing.Size(80, 26);
-            btnOK.TabIndex = 9;
-            btnOK.Text = "OK";
-            btnOK.Click += btnOK_Click;
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.Location = new System.Drawing.Point(219, 12);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(80, 26);
+            okButton.TabIndex = 9;
+            okButton.Text = "OK";
             // 
-            // btnCancel
+            // cancelButton
             // 
-            btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(305, 12);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new System.Drawing.Size(80, 26);
-            btnCancel.TabIndex = 10;
-            btnCancel.Text = "Cancel";
+            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.Location = new System.Drawing.Point(305, 12);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(80, 26);
+            cancelButton.TabIndex = 10;
+            cancelButton.Text = "Cancel";
             // 
-            // gbxMediaType
+            // mediaTypeGroupBox
             // 
-            gbxMediaType.Controls.Add(lblContainerFormat);
-            gbxMediaType.Controls.Add(lstContainerFormat);
-            gbxMediaType.Controls.Add(rbnHardDisk);
-            gbxMediaType.Controls.Add(rbnFloppyDisk);
-            gbxMediaType.Location = new System.Drawing.Point(10, 12);
-            gbxMediaType.Name = "gbxMediaType";
-            gbxMediaType.Size = new System.Drawing.Size(378, 80);
-            gbxMediaType.TabIndex = 0;
-            gbxMediaType.TabStop = false;
-            gbxMediaType.Text = "Media and container type";
+            mediaTypeGroupBox.Controls.Add(containerFormatLabel);
+            mediaTypeGroupBox.Controls.Add(containerFormatComboBox);
+            mediaTypeGroupBox.Controls.Add(hardDiskRadioButton);
+            mediaTypeGroupBox.Controls.Add(floppyDiskRadioButton);
+            mediaTypeGroupBox.Location = new System.Drawing.Point(10, 12);
+            mediaTypeGroupBox.Name = "mediaTypeGroupBox";
+            mediaTypeGroupBox.Size = new System.Drawing.Size(378, 80);
+            mediaTypeGroupBox.TabIndex = 0;
+            mediaTypeGroupBox.TabStop = false;
+            mediaTypeGroupBox.Text = "Media and container type";
             // 
-            // lblContainerFormat
+            // containerFormatLabel
             // 
-            lblContainerFormat.AutoSize = true;
-            lblContainerFormat.Location = new System.Drawing.Point(6, 51);
-            lblContainerFormat.Name = "lblContainerFormat";
-            lblContainerFormat.Size = new System.Drawing.Size(101, 15);
-            lblContainerFormat.TabIndex = 9;
-            lblContainerFormat.Text = "Container format:";
+            containerFormatLabel.AutoSize = true;
+            containerFormatLabel.Location = new System.Drawing.Point(6, 51);
+            containerFormatLabel.Name = "containerFormatLabel";
+            containerFormatLabel.Size = new System.Drawing.Size(101, 15);
+            containerFormatLabel.TabIndex = 9;
+            containerFormatLabel.Text = "Container format:";
             // 
-            // lstContainerFormat
+            // containerFormatComboBox
             // 
-            lstContainerFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstContainerFormat.FormattingEnabled = true;
-            lstContainerFormat.Items.AddRange(new object[] { "Plain sector image" });
-            lstContainerFormat.Location = new System.Drawing.Point(113, 47);
-            lstContainerFormat.Name = "lstContainerFormat";
-            lstContainerFormat.Size = new System.Drawing.Size(259, 23);
-            lstContainerFormat.TabIndex = 9;
+            containerFormatComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            containerFormatComboBox.FormattingEnabled = true;
+            containerFormatComboBox.Location = new System.Drawing.Point(113, 47);
+            containerFormatComboBox.Name = "containerFormatComboBox";
+            containerFormatComboBox.Size = new System.Drawing.Size(259, 23);
+            containerFormatComboBox.TabIndex = 9;
             // 
-            // rbnHardDisk
+            // hardDiskRadioButton
             // 
-            rbnHardDisk.AutoSize = true;
-            rbnHardDisk.Location = new System.Drawing.Point(135, 22);
-            rbnHardDisk.Name = "rbnHardDisk";
-            rbnHardDisk.Size = new System.Drawing.Size(75, 19);
-            rbnHardDisk.TabIndex = 2;
-            rbnHardDisk.Text = "Hard disk";
+            hardDiskRadioButton.AutoSize = true;
+            hardDiskRadioButton.Location = new System.Drawing.Point(135, 22);
+            hardDiskRadioButton.Name = "hardDiskRadioButton";
+            hardDiskRadioButton.Size = new System.Drawing.Size(75, 19);
+            hardDiskRadioButton.TabIndex = 2;
+            hardDiskRadioButton.Text = "Hard disk";
             // 
-            // rbnFloppyDisk
+            // floppyDiskRadioButton
             // 
-            rbnFloppyDisk.AutoSize = true;
-            rbnFloppyDisk.Checked = true;
-            rbnFloppyDisk.Location = new System.Drawing.Point(8, 22);
-            rbnFloppyDisk.Name = "rbnFloppyDisk";
-            rbnFloppyDisk.Size = new System.Drawing.Size(85, 19);
-            rbnFloppyDisk.TabIndex = 1;
-            rbnFloppyDisk.TabStop = true;
-            rbnFloppyDisk.Text = "Floppy disk";
-            rbnFloppyDisk.CheckedChanged += rbnFloppyDisk_CheckedChanged;
+            floppyDiskRadioButton.AutoSize = true;
+            floppyDiskRadioButton.Checked = true;
+            floppyDiskRadioButton.Location = new System.Drawing.Point(8, 22);
+            floppyDiskRadioButton.Name = "floppyDiskRadioButton";
+            floppyDiskRadioButton.Size = new System.Drawing.Size(85, 19);
+            floppyDiskRadioButton.TabIndex = 1;
+            floppyDiskRadioButton.TabStop = true;
+            floppyDiskRadioButton.Text = "Floppy disk";
             // 
-            // gbxOptions
+            // optionsGroupBox
             // 
-            gbxOptions.Controls.Add(pnlFloppy);
-            gbxOptions.Controls.Add(pnlHardDisk);
-            gbxOptions.Location = new System.Drawing.Point(10, 98);
-            gbxOptions.Name = "gbxOptions";
-            gbxOptions.Size = new System.Drawing.Size(378, 166);
-            gbxOptions.TabIndex = 3;
-            gbxOptions.TabStop = false;
-            gbxOptions.Text = "Options";
+            optionsGroupBox.Controls.Add(floppyPanel);
+            optionsGroupBox.Controls.Add(hardDiskPanel);
+            optionsGroupBox.Location = new System.Drawing.Point(10, 98);
+            optionsGroupBox.Name = "optionsGroupBox";
+            optionsGroupBox.Size = new System.Drawing.Size(378, 166);
+            optionsGroupBox.TabIndex = 3;
+            optionsGroupBox.TabStop = false;
+            optionsGroupBox.Text = "Options";
             // 
-            // pnlHardDisk
+            // hardDiskPanel
             // 
-            pnlHardDisk.Controls.Add(lstPartitionTable);
-            pnlHardDisk.Controls.Add(cbxWritePartTable);
-            pnlHardDisk.Controls.Add(rbnDifferencing);
-            pnlHardDisk.Controls.Add(rbnDynamic);
-            pnlHardDisk.Controls.Add(rbnFixed);
-            pnlHardDisk.Controls.Add(lblDiskType);
-            pnlHardDisk.Controls.Add(lblDiskSize);
-            pnlHardDisk.Controls.Add(txtDiskSize);
-            pnlHardDisk.Location = new System.Drawing.Point(2, 17);
-            pnlHardDisk.Name = "pnlHardDisk";
-            pnlHardDisk.Size = new System.Drawing.Size(371, 140);
-            pnlHardDisk.TabIndex = 10;
+            hardDiskPanel.Controls.Add(partitionTableComboBox);
+            hardDiskPanel.Controls.Add(writePartitionTableCheckBox);
+            hardDiskPanel.Controls.Add(differencingRadioButton);
+            hardDiskPanel.Controls.Add(dynamicRadioButton);
+            hardDiskPanel.Controls.Add(fixedSizeRadioButton);
+            hardDiskPanel.Controls.Add(diskTypeLabel);
+            hardDiskPanel.Controls.Add(diskSizeLabel);
+            hardDiskPanel.Controls.Add(diskSizeNumericUpDown);
+            hardDiskPanel.Location = new System.Drawing.Point(2, 17);
+            hardDiskPanel.Name = "hardDiskPanel";
+            hardDiskPanel.Size = new System.Drawing.Size(371, 140);
+            hardDiskPanel.TabIndex = 10;
             // 
-            // lstPartitionTable
+            // partitionTableComboBox
             // 
-            lstPartitionTable.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            lstPartitionTable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstPartitionTable.FormattingEnabled = true;
-            lstPartitionTable.Items.AddRange(new object[] { "Master Boot Record", "GUID Partition Table" });
-            lstPartitionTable.Location = new System.Drawing.Point(216, 37);
-            lstPartitionTable.Name = "lstPartitionTable";
-            lstPartitionTable.Size = new System.Drawing.Size(150, 23);
-            lstPartitionTable.TabIndex = 15;
+            partitionTableComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            partitionTableComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            partitionTableComboBox.FormattingEnabled = true;
+            partitionTableComboBox.Location = new System.Drawing.Point(216, 37);
+            partitionTableComboBox.Name = "partitionTableComboBox";
+            partitionTableComboBox.Size = new System.Drawing.Size(150, 23);
+            partitionTableComboBox.TabIndex = 15;
             // 
-            // cbxWritePartTable
+            // writePartitionTableCheckBox
             // 
-            cbxWritePartTable.AutoSize = true;
-            cbxWritePartTable.Checked = true;
-            cbxWritePartTable.CheckState = System.Windows.Forms.CheckState.Checked;
-            cbxWritePartTable.Location = new System.Drawing.Point(8, 38);
-            cbxWritePartTable.Name = "cbxWritePartTable";
-            cbxWritePartTable.Size = new System.Drawing.Size(201, 19);
-            cbxWritePartTable.TabIndex = 14;
-            cbxWritePartTable.Text = "Write a partition table to the disk:";
-            cbxWritePartTable.CheckedChanged += cbxWritePartTable_CheckedChanged;
+            writePartitionTableCheckBox.AutoSize = true;
+            writePartitionTableCheckBox.Checked = true;
+            writePartitionTableCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            writePartitionTableCheckBox.Location = new System.Drawing.Point(8, 38);
+            writePartitionTableCheckBox.Name = "writePartitionTableCheckBox";
+            writePartitionTableCheckBox.Size = new System.Drawing.Size(201, 19);
+            writePartitionTableCheckBox.TabIndex = 14;
+            writePartitionTableCheckBox.Text = "Write a partition table to the disk:";
             // 
-            // rbnDifferencing
+            // differencingRadioButton
             // 
-            rbnDifferencing.AutoSize = true;
-            rbnDifferencing.Enabled = false;
-            rbnDifferencing.Location = new System.Drawing.Point(260, 89);
-            rbnDifferencing.Name = "rbnDifferencing";
-            rbnDifferencing.Size = new System.Drawing.Size(90, 19);
-            rbnDifferencing.TabIndex = 13;
-            rbnDifferencing.Text = "Differencing";
+            differencingRadioButton.AutoSize = true;
+            differencingRadioButton.Enabled = false;
+            differencingRadioButton.Location = new System.Drawing.Point(260, 89);
+            differencingRadioButton.Name = "differencingRadioButton";
+            differencingRadioButton.Size = new System.Drawing.Size(90, 19);
+            differencingRadioButton.TabIndex = 13;
+            differencingRadioButton.Text = "Differencing";
             // 
-            // rbnDynamic
+            // dynamicRadioButton
             // 
-            rbnDynamic.AutoSize = true;
-            rbnDynamic.Enabled = false;
-            rbnDynamic.Location = new System.Drawing.Point(98, 89);
-            rbnDynamic.Name = "rbnDynamic";
-            rbnDynamic.Size = new System.Drawing.Size(148, 19);
-            rbnDynamic.TabIndex = 12;
-            rbnDynamic.Text = "Dynamically expanding";
+            dynamicRadioButton.AutoSize = true;
+            dynamicRadioButton.Enabled = false;
+            dynamicRadioButton.Location = new System.Drawing.Point(98, 89);
+            dynamicRadioButton.Name = "dynamicRadioButton";
+            dynamicRadioButton.Size = new System.Drawing.Size(148, 19);
+            dynamicRadioButton.TabIndex = 12;
+            dynamicRadioButton.Text = "Dynamically expanding";
             // 
-            // rbnFixed
+            // fixedSizeRadioButton
             // 
-            rbnFixed.AutoSize = true;
-            rbnFixed.Checked = true;
-            rbnFixed.Location = new System.Drawing.Point(8, 89);
-            rbnFixed.Name = "rbnFixed";
-            rbnFixed.Size = new System.Drawing.Size(76, 19);
-            rbnFixed.TabIndex = 10;
-            rbnFixed.TabStop = true;
-            rbnFixed.Text = "Fixed-size";
+            fixedSizeRadioButton.AutoSize = true;
+            fixedSizeRadioButton.Checked = true;
+            fixedSizeRadioButton.Location = new System.Drawing.Point(8, 89);
+            fixedSizeRadioButton.Name = "fixedSizeRadioButton";
+            fixedSizeRadioButton.Size = new System.Drawing.Size(76, 19);
+            fixedSizeRadioButton.TabIndex = 10;
+            fixedSizeRadioButton.TabStop = true;
+            fixedSizeRadioButton.Text = "Fixed-size";
             // 
-            // lblDiskType
+            // diskTypeLabel
             // 
-            lblDiskType.AutoSize = true;
-            lblDiskType.Location = new System.Drawing.Point(5, 70);
-            lblDiskType.Name = "lblDiskType";
-            lblDiskType.Size = new System.Drawing.Size(58, 15);
-            lblDiskType.TabIndex = 10;
-            lblDiskType.Text = "Disk type:";
+            diskTypeLabel.AutoSize = true;
+            diskTypeLabel.Location = new System.Drawing.Point(5, 70);
+            diskTypeLabel.Name = "diskTypeLabel";
+            diskTypeLabel.Size = new System.Drawing.Size(58, 15);
+            diskTypeLabel.TabIndex = 10;
+            diskTypeLabel.Text = "Disk type:";
             // 
-            // lblDiskSize
+            // diskSizeLabel
             // 
-            lblDiskSize.AutoSize = true;
-            lblDiskSize.Location = new System.Drawing.Point(5, 10);
-            lblDiskSize.Name = "lblDiskSize";
-            lblDiskSize.Size = new System.Drawing.Size(86, 15);
-            lblDiskSize.TabIndex = 10;
-            lblDiskSize.Text = "Disk size (MiB):";
+            diskSizeLabel.AutoSize = true;
+            diskSizeLabel.Location = new System.Drawing.Point(5, 10);
+            diskSizeLabel.Name = "diskSizeLabel";
+            diskSizeLabel.Size = new System.Drawing.Size(86, 15);
+            diskSizeLabel.TabIndex = 10;
+            diskSizeLabel.Text = "Disk size (MiB):";
             // 
-            // txtDiskSize
+            // diskSizeNumericUpDown
             // 
-            txtDiskSize.Location = new System.Drawing.Point(101, 8);
-            txtDiskSize.Margin = new System.Windows.Forms.Padding(2);
-            txtDiskSize.Maximum = new decimal(new int[] { 2088960, 0, 0, 0 });
-            txtDiskSize.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            txtDiskSize.Name = "txtDiskSize";
-            txtDiskSize.Size = new System.Drawing.Size(120, 23);
-            txtDiskSize.TabIndex = 11;
-            txtDiskSize.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            diskSizeNumericUpDown.Location = new System.Drawing.Point(101, 8);
+            diskSizeNumericUpDown.Margin = new System.Windows.Forms.Padding(2);
+            diskSizeNumericUpDown.Maximum = new decimal(new int[] { 2088960, 0, 0, 0 });
+            diskSizeNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            diskSizeNumericUpDown.Name = "diskSizeNumericUpDown";
+            diskSizeNumericUpDown.Size = new System.Drawing.Size(120, 23);
+            diskSizeNumericUpDown.TabIndex = 11;
+            diskSizeNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
-            // pnlFloppy
+            // floppyPanel
             // 
-            pnlFloppy.Controls.Add(lstFloppyBPB);
-            pnlFloppy.Controls.Add(cbxFloppyBPB);
-            pnlFloppy.Controls.Add(txtFloppyLabel);
-            pnlFloppy.Controls.Add(lblFloppyGeometry);
-            pnlFloppy.Controls.Add(lblFloppyLabel);
-            pnlFloppy.Controls.Add(btnAdvanced);
-            pnlFloppy.Controls.Add(lstFloppyGeometries);
-            pnlFloppy.Location = new System.Drawing.Point(2, 17);
-            pnlFloppy.Name = "pnlFloppy";
-            pnlFloppy.Size = new System.Drawing.Size(371, 140);
-            pnlFloppy.TabIndex = 9;
+            floppyPanel.Controls.Add(bpbVersionComboBox);
+            floppyPanel.Controls.Add(writeBpbCheckBox);
+            floppyPanel.Controls.Add(volumeLabelTextBox);
+            floppyPanel.Controls.Add(geometryLabel);
+            floppyPanel.Controls.Add(volumeLabelLabel);
+            floppyPanel.Controls.Add(advancedButton);
+            floppyPanel.Controls.Add(geometryComboBox);
+            floppyPanel.Location = new System.Drawing.Point(2, 17);
+            floppyPanel.Name = "floppyPanel";
+            floppyPanel.Size = new System.Drawing.Size(371, 140);
+            floppyPanel.TabIndex = 9;
             // 
-            // lstFloppyBPB
+            // bpbVersionComboBox
             // 
-            lstFloppyBPB.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            lstFloppyBPB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstFloppyBPB.FormattingEnabled = true;
-            lstFloppyBPB.Items.AddRange(new object[] { "DOS 2.0", "DOS 3.4", "DOS 4.0+" });
-            lstFloppyBPB.Location = new System.Drawing.Point(227, 86);
-            lstFloppyBPB.Name = "lstFloppyBPB";
-            lstFloppyBPB.Size = new System.Drawing.Size(138, 23);
-            lstFloppyBPB.TabIndex = 8;
-            lstFloppyBPB.SelectedIndexChanged += lstFloppyBPB_SelectedIndexChanged;
+            bpbVersionComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            bpbVersionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            bpbVersionComboBox.FormattingEnabled = true;
+            bpbVersionComboBox.Location = new System.Drawing.Point(227, 86);
+            bpbVersionComboBox.Name = "bpbVersionComboBox";
+            bpbVersionComboBox.Size = new System.Drawing.Size(138, 23);
+            bpbVersionComboBox.TabIndex = 8;
             // 
-            // cbxFloppyBPB
+            // writeBpbCheckBox
             // 
-            cbxFloppyBPB.AutoSize = true;
-            cbxFloppyBPB.Location = new System.Drawing.Point(8, 89);
-            cbxFloppyBPB.Name = "cbxFloppyBPB";
-            cbxFloppyBPB.Size = new System.Drawing.Size(213, 19);
-            cbxFloppyBPB.TabIndex = 7;
-            cbxFloppyBPB.Text = "Write a DOS BPB to the boot sector:";
-            cbxFloppyBPB.CheckedChanged += cbxFloppyBPB_CheckedChanged;
+            writeBpbCheckBox.AutoSize = true;
+            writeBpbCheckBox.Location = new System.Drawing.Point(8, 89);
+            writeBpbCheckBox.Name = "writeBpbCheckBox";
+            writeBpbCheckBox.Size = new System.Drawing.Size(213, 19);
+            writeBpbCheckBox.TabIndex = 7;
+            writeBpbCheckBox.Text = "Write a DOS BPB to the boot sector:";
             // 
-            // txtFloppyLabel
+            // volumeLabelTextBox
             // 
-            txtFloppyLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            txtFloppyLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            txtFloppyLabel.Location = new System.Drawing.Point(90, 57);
-            txtFloppyLabel.MaxLength = 11;
-            txtFloppyLabel.Name = "txtFloppyLabel";
-            txtFloppyLabel.Size = new System.Drawing.Size(275, 23);
-            txtFloppyLabel.TabIndex = 6;
-            txtFloppyLabel.TextChanged += txtFloppyLabel_TextChanged;
+            volumeLabelTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            volumeLabelTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            volumeLabelTextBox.Location = new System.Drawing.Point(90, 57);
+            volumeLabelTextBox.MaxLength = 11;
+            volumeLabelTextBox.Name = "volumeLabelTextBox";
+            volumeLabelTextBox.Size = new System.Drawing.Size(275, 23);
+            volumeLabelTextBox.TabIndex = 6;
             // 
-            // lblFloppyGeometry
+            // geometryLabel
             // 
-            lblFloppyGeometry.AutoSize = true;
-            lblFloppyGeometry.Location = new System.Drawing.Point(6, 10);
-            lblFloppyGeometry.Name = "lblFloppyGeometry";
-            lblFloppyGeometry.Size = new System.Drawing.Size(62, 15);
-            lblFloppyGeometry.TabIndex = 0;
-            lblFloppyGeometry.Text = "Geometry:";
+            geometryLabel.AutoSize = true;
+            geometryLabel.Location = new System.Drawing.Point(6, 10);
+            geometryLabel.Name = "geometryLabel";
+            geometryLabel.Size = new System.Drawing.Size(62, 15);
+            geometryLabel.TabIndex = 0;
+            geometryLabel.Text = "Geometry:";
             // 
-            // lblFloppyLabel
+            // volumeLabelLabel
             // 
-            lblFloppyLabel.AutoSize = true;
-            lblFloppyLabel.Location = new System.Drawing.Point(6, 62);
-            lblFloppyLabel.Name = "lblFloppyLabel";
-            lblFloppyLabel.Size = new System.Drawing.Size(78, 15);
-            lblFloppyLabel.TabIndex = 3;
-            lblFloppyLabel.Text = "Volume label:";
+            volumeLabelLabel.AutoSize = true;
+            volumeLabelLabel.Location = new System.Drawing.Point(6, 62);
+            volumeLabelLabel.Name = "volumeLabelLabel";
+            volumeLabelLabel.Size = new System.Drawing.Size(78, 15);
+            volumeLabelLabel.TabIndex = 3;
+            volumeLabelLabel.Text = "Volume label:";
             // 
-            // btnAdvanced
+            // advancedButton
             // 
-            btnAdvanced.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            btnAdvanced.Location = new System.Drawing.Point(282, 27);
-            btnAdvanced.Name = "btnAdvanced";
-            btnAdvanced.Size = new System.Drawing.Size(83, 26);
-            btnAdvanced.TabIndex = 5;
-            btnAdvanced.Text = "Advanced...";
-            btnAdvanced.UseVisualStyleBackColor = true;
-            btnAdvanced.Click += btnAdvanced_Click;
+            advancedButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            advancedButton.Location = new System.Drawing.Point(282, 27);
+            advancedButton.Name = "advancedButton";
+            advancedButton.Size = new System.Drawing.Size(83, 26);
+            advancedButton.TabIndex = 5;
+            advancedButton.Text = "Advanced...";
+            advancedButton.UseVisualStyleBackColor = true;
             // 
-            // lstFloppyGeometries
+            // geometryComboBox
             // 
-            lstFloppyGeometries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstFloppyGeometries.FormattingEnabled = true;
-            lstFloppyGeometries.Location = new System.Drawing.Point(8, 28);
-            lstFloppyGeometries.Name = "lstFloppyGeometries";
-            lstFloppyGeometries.Size = new System.Drawing.Size(270, 23);
-            lstFloppyGeometries.TabIndex = 4;
-            lstFloppyGeometries.SelectedIndexChanged += lstFloppyGeometries_SelectedIndexChanged;
+            geometryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            geometryComboBox.FormattingEnabled = true;
+            geometryComboBox.Location = new System.Drawing.Point(8, 28);
+            geometryComboBox.Name = "geometryComboBox";
+            geometryComboBox.Size = new System.Drawing.Size(270, 23);
+            geometryComboBox.TabIndex = 4;
             // 
             // NewImageDialog
             // 
-            AcceptButton = btnOK;
+            AcceptButton = okButton;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.SystemColors.Window;
-            CancelButton = btnCancel;
+            CancelButton = cancelButton;
             ClientSize = new System.Drawing.Size(399, 322);
-            Controls.Add(gbxOptions);
-            Controls.Add(gbxMediaType);
-            Controls.Add(pnlBottom);
+            Controls.Add(optionsGroupBox);
+            Controls.Add(mediaTypeGroupBox);
+            Controls.Add(buttonPanel);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -360,46 +349,45 @@ namespace TotalImage.Dialogs
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "New image";
-            Load += dlgNewImage_Load;
-            pnlBottom.ResumeLayout(false);
-            gbxMediaType.ResumeLayout(false);
-            gbxMediaType.PerformLayout();
-            gbxOptions.ResumeLayout(false);
-            pnlHardDisk.ResumeLayout(false);
-            pnlHardDisk.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)txtDiskSize).EndInit();
-            pnlFloppy.ResumeLayout(false);
-            pnlFloppy.PerformLayout();
+            buttonPanel.ResumeLayout(false);
+            mediaTypeGroupBox.ResumeLayout(false);
+            mediaTypeGroupBox.PerformLayout();
+            optionsGroupBox.ResumeLayout(false);
+            hardDiskPanel.ResumeLayout(false);
+            hardDiskPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)diskSizeNumericUpDown).EndInit();
+            floppyPanel.ResumeLayout(false);
+            floppyPanel.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel pnlBottom;
-        private System.Windows.Forms.GroupBox gbxMediaType;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnOK;
-        private System.Windows.Forms.RadioButton rbnFloppyDisk;
-        private System.Windows.Forms.RadioButton rbnHardDisk;
-        private System.Windows.Forms.GroupBox gbxOptions;
-        private System.Windows.Forms.Label lblFloppyGeometry;
-        private System.Windows.Forms.Button btnAdvanced;
-        private System.Windows.Forms.Label lblFloppyLabel;
-        private System.Windows.Forms.TextBox txtFloppyLabel;
-        private System.Windows.Forms.Panel pnlFloppy;
-        private System.Windows.Forms.Panel pnlHardDisk;
-        private System.Windows.Forms.ComboBox lstFloppyGeometries;
-        internal System.Windows.Forms.CheckBox cbxFloppyBPB;
-        internal System.Windows.Forms.ComboBox lstFloppyBPB;
-        private System.Windows.Forms.Label lblContainerFormat;
-        private System.Windows.Forms.ComboBox lstContainerFormat;
-        private System.Windows.Forms.Label lblDiskSize;
-        private System.Windows.Forms.NumericUpDown txtDiskSize;
-        private System.Windows.Forms.RadioButton rbnDifferencing;
-        private System.Windows.Forms.RadioButton rbnDynamic;
-        private System.Windows.Forms.RadioButton rbnFixed;
-        private System.Windows.Forms.Label lblDiskType;
-        internal System.Windows.Forms.ComboBox lstPartitionTable;
-        internal System.Windows.Forms.CheckBox cbxWritePartTable;
+        private System.Windows.Forms.Panel buttonPanel;
+        private System.Windows.Forms.GroupBox mediaTypeGroupBox;
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.RadioButton floppyDiskRadioButton;
+        private System.Windows.Forms.RadioButton hardDiskRadioButton;
+        private System.Windows.Forms.GroupBox optionsGroupBox;
+        private System.Windows.Forms.Label geometryLabel;
+        private System.Windows.Forms.Button advancedButton;
+        private System.Windows.Forms.Label volumeLabelLabel;
+        private System.Windows.Forms.TextBox volumeLabelTextBox;
+        private System.Windows.Forms.Panel floppyPanel;
+        private System.Windows.Forms.Panel hardDiskPanel;
+        private System.Windows.Forms.ComboBox geometryComboBox;
+        private System.Windows.Forms.CheckBox writeBpbCheckBox;
+        private System.Windows.Forms.ComboBox bpbVersionComboBox;
+        private System.Windows.Forms.Label containerFormatLabel;
+        private System.Windows.Forms.ComboBox containerFormatComboBox;
+        private System.Windows.Forms.Label diskSizeLabel;
+        private System.Windows.Forms.NumericUpDown diskSizeNumericUpDown;
+        private System.Windows.Forms.RadioButton differencingRadioButton;
+        private System.Windows.Forms.RadioButton dynamicRadioButton;
+        private System.Windows.Forms.RadioButton fixedSizeRadioButton;
+        private System.Windows.Forms.Label diskTypeLabel;
+        private System.Windows.Forms.ComboBox partitionTableComboBox;
+        private System.Windows.Forms.CheckBox writePartitionTableCheckBox;
     }
 }

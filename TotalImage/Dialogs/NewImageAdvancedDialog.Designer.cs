@@ -30,60 +30,59 @@ namespace TotalImage.Dialogs
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewImageAdvancedDialog));
-            btnOK = new System.Windows.Forms.Button();
+            okButton = new System.Windows.Forms.Button();
             toolTip = new System.Windows.Forms.ToolTip(components);
-            txtFloppyTracks = new System.Windows.Forms.NumericUpDown();
-            lblFloppyTracks = new System.Windows.Forms.Label();
-            txtFloppyReservedSect = new System.Windows.Forms.NumericUpDown();
-            txtFloppyNumFATs = new System.Windows.Forms.NumericUpDown();
-            txtFloppyFSType = new System.Windows.Forms.TextBox();
-            lblFloppyFSType = new System.Windows.Forms.Label();
-            txtFloppySerial = new System.Windows.Forms.TextBox();
-            lblFloppySerial = new System.Windows.Forms.Label();
-            lstFloppySides = new System.Windows.Forms.ComboBox();
-            lblFloppySides = new System.Windows.Forms.Label();
-            txtFloppySPT = new System.Windows.Forms.NumericUpDown();
-            lblFloppySPT = new System.Windows.Forms.Label();
-            txtFloppySPF = new System.Windows.Forms.NumericUpDown();
-            lblFloppySPF = new System.Windows.Forms.Label();
-            txtFloppyMediaDesc = new System.Windows.Forms.NumericUpDown();
-            lblFloppyMediaDesc = new System.Windows.Forms.Label();
-            txtFloppyTotalSect = new System.Windows.Forms.NumericUpDown();
-            lblFloppyTotalSect = new System.Windows.Forms.Label();
-            txtFloppyRootDir = new System.Windows.Forms.NumericUpDown();
-            lblFloppyRootDir = new System.Windows.Forms.Label();
-            lblFloppyNumFATs = new System.Windows.Forms.Label();
-            lblFloppyReservedSect = new System.Windows.Forms.Label();
-            txtFloppySPC = new System.Windows.Forms.NumericUpDown();
-            lblFloppySPC = new System.Windows.Forms.Label();
-            txtFloppyBPS = new System.Windows.Forms.NumericUpDown();
-            lblFloppyBPS = new System.Windows.Forms.Label();
-            txtFloppyOEMID = new System.Windows.Forms.TextBox();
-            lblFloppyOEMID = new System.Windows.Forms.Label();
-            pnlBottom = new System.Windows.Forms.Panel();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyTracks).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyReservedSect).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyNumFATs).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppySPT).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppySPF).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyMediaDesc).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyTotalSect).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyRootDir).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppySPC).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyBPS).BeginInit();
-            pnlBottom.SuspendLayout();
+            tracksNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            tracksLabel = new System.Windows.Forms.Label();
+            reservedSectorsNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            fatCountNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            fileSystemTypeTextBox = new System.Windows.Forms.TextBox();
+            fileSystemTypeLabel = new System.Windows.Forms.Label();
+            serialNumberTextBox = new System.Windows.Forms.TextBox();
+            serialNumberLabel = new System.Windows.Forms.Label();
+            sidesComboBox = new System.Windows.Forms.ComboBox();
+            sidesLabel = new System.Windows.Forms.Label();
+            sectorsPerTrackNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            sectorsPerTrackLabel = new System.Windows.Forms.Label();
+            sectorsPerFatNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            sectorsPerFatLabel = new System.Windows.Forms.Label();
+            mediaDescriptorNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            mediaDescriptorLabel = new System.Windows.Forms.Label();
+            totalSectorsNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            totalSectorsLabel = new System.Windows.Forms.Label();
+            rootDirectoryEntriesNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            rootDirectoryEntriesLabel = new System.Windows.Forms.Label();
+            fatCountLabel = new System.Windows.Forms.Label();
+            reservedSectorsLabel = new System.Windows.Forms.Label();
+            sectorsPerClusterNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            sectorsPerClusterLabel = new System.Windows.Forms.Label();
+            bytesPerSectorNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            bytesPerSectorLabel = new System.Windows.Forms.Label();
+            oemIdTextBox = new System.Windows.Forms.TextBox();
+            oemIdLabel = new System.Windows.Forms.Label();
+            buttonPanel = new System.Windows.Forms.Panel();
+            ((System.ComponentModel.ISupportInitialize)tracksNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)reservedSectorsNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)fatCountNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)sectorsPerTrackNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)sectorsPerFatNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)mediaDescriptorNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)totalSectorsNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)rootDirectoryEntriesNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)sectorsPerClusterNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)bytesPerSectorNumericUpDown).BeginInit();
+            buttonPanel.SuspendLayout();
             SuspendLayout();
             // 
-            // btnOK
+            // okButton
             // 
-            btnOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            btnOK.Location = new System.Drawing.Point(422, 12);
-            btnOK.Name = "btnOK";
-            btnOK.Size = new System.Drawing.Size(80, 26);
-            btnOK.TabIndex = 14;
-            btnOK.Text = "OK";
-            btnOK.Click += btnOK_Click;
+            okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.Location = new System.Drawing.Point(422, 12);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(80, 26);
+            okButton.TabIndex = 14;
+            okButton.Text = "OK";
             // 
             // toolTip
             // 
@@ -93,348 +92,349 @@ namespace TotalImage.Dialogs
             toolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             toolTip.ToolTipTitle = "The more you know...";
             // 
-            // txtFloppyTracks
+            // tracksNumericUpDown
             // 
-            txtFloppyTracks.Location = new System.Drawing.Point(411, 131);
-            txtFloppyTracks.Maximum = new decimal(new int[] { 82, 0, 0, 0 });
-            txtFloppyTracks.Minimum = new decimal(new int[] { 40, 0, 0, 0 });
-            txtFloppyTracks.Name = "txtFloppyTracks";
-            txtFloppyTracks.Size = new System.Drawing.Size(84, 23);
-            txtFloppyTracks.TabIndex = 9;
-            toolTip.SetToolTip(txtFloppyTracks, "The number of tracks on one side of the disk.");
-            txtFloppyTracks.Value = new decimal(new int[] { 80, 0, 0, 0 });
+            tracksNumericUpDown.Location = new System.Drawing.Point(411, 131);
+            tracksNumericUpDown.Maximum = new decimal(new int[] { 82, 0, 0, 0 });
+            tracksNumericUpDown.Minimum = new decimal(new int[] { 40, 0, 0, 0 });
+            tracksNumericUpDown.Name = "tracksNumericUpDown";
+            tracksNumericUpDown.Size = new System.Drawing.Size(84, 23);
+            tracksNumericUpDown.TabIndex = 9;
+            toolTip.SetToolTip(tracksNumericUpDown, "The number of tracks on one side of the disk.");
+            tracksNumericUpDown.Value = new decimal(new int[] { 80, 0, 0, 0 });
             // 
-            // lblFloppyTracks
+            // tracksLabel
             // 
-            lblFloppyTracks.AutoSize = true;
-            lblFloppyTracks.Location = new System.Drawing.Point(269, 133);
-            lblFloppyTracks.Name = "lblFloppyTracks";
-            lblFloppyTracks.Size = new System.Drawing.Size(87, 15);
-            lblFloppyTracks.TabIndex = 60;
-            lblFloppyTracks.Text = "Tracks per side:";
-            toolTip.SetToolTip(lblFloppyTracks, "The number of tracks on one side of the disk.");
+            tracksLabel.AutoSize = true;
+            tracksLabel.Location = new System.Drawing.Point(269, 133);
+            tracksLabel.Name = "tracksLabel";
+            tracksLabel.Size = new System.Drawing.Size(87, 15);
+            tracksLabel.TabIndex = 60;
+            tracksLabel.Text = "Tracks per side:";
+            toolTip.SetToolTip(tracksLabel, "The number of tracks on one side of the disk.");
             // 
-            // txtFloppyReservedSect
+            // reservedSectorsNumericUpDown
             // 
-            txtFloppyReservedSect.Location = new System.Drawing.Point(411, 44);
-            txtFloppyReservedSect.Maximum = new decimal(new int[] { 20, 0, 0, 0 });
-            txtFloppyReservedSect.Name = "txtFloppyReservedSect";
-            txtFloppyReservedSect.Size = new System.Drawing.Size(84, 23);
-            txtFloppyReservedSect.TabIndex = 3;
-            toolTip.SetToolTip(txtFloppyReservedSect, "The number of sectors before the first file allocation table (FAT).\r\nFor most FAT12-formatted floppies, there is only one reserved\r\nsector - the boot sector.\r\n");
-            txtFloppyReservedSect.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            reservedSectorsNumericUpDown.Location = new System.Drawing.Point(411, 44);
+            reservedSectorsNumericUpDown.Maximum = new decimal(new int[] { 20, 0, 0, 0 });
+            reservedSectorsNumericUpDown.Name = "reservedSectorsNumericUpDown";
+            reservedSectorsNumericUpDown.Size = new System.Drawing.Size(84, 23);
+            reservedSectorsNumericUpDown.TabIndex = 3;
+            toolTip.SetToolTip(reservedSectorsNumericUpDown, "The number of sectors before the first file allocation table (FAT).\r\nFor most FAT12-formatted floppies, there is only one reserved\r\nsector - the boot sector.\r\n");
+            reservedSectorsNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
-            // txtFloppyNumFATs
+            // fatCountNumericUpDown
             // 
-            txtFloppyNumFATs.Location = new System.Drawing.Point(143, 102);
-            txtFloppyNumFATs.Maximum = new decimal(new int[] { 9, 0, 0, 0 });
-            txtFloppyNumFATs.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            txtFloppyNumFATs.Name = "txtFloppyNumFATs";
-            txtFloppyNumFATs.Size = new System.Drawing.Size(113, 23);
-            txtFloppyNumFATs.TabIndex = 6;
-            toolTip.SetToolTip(txtFloppyNumFATs, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, this value is basically always 2.\r\n");
-            txtFloppyNumFATs.Value = new decimal(new int[] { 2, 0, 0, 0 });
+            fatCountNumericUpDown.Location = new System.Drawing.Point(143, 102);
+            fatCountNumericUpDown.Maximum = new decimal(new int[] { 9, 0, 0, 0 });
+            fatCountNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            fatCountNumericUpDown.Name = "fatCountNumericUpDown";
+            fatCountNumericUpDown.Size = new System.Drawing.Size(113, 23);
+            fatCountNumericUpDown.TabIndex = 6;
+            toolTip.SetToolTip(fatCountNumericUpDown, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, this value is basically always 2.\r\n");
+            fatCountNumericUpDown.Value = new decimal(new int[] { 2, 0, 0, 0 });
             // 
-            // txtFloppyFSType
+            // fileSystemTypeTextBox
             // 
-            txtFloppyFSType.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            txtFloppyFSType.Location = new System.Drawing.Point(143, 73);
-            txtFloppyFSType.MaxLength = 8;
-            txtFloppyFSType.Name = "txtFloppyFSType";
-            txtFloppyFSType.Size = new System.Drawing.Size(113, 23);
-            txtFloppyFSType.TabIndex = 4;
-            txtFloppyFSType.Text = "FAT12";
-            toolTip.SetToolTip(txtFloppyFSType, resources.GetString("txtFloppyFSType.ToolTip"));
+            fileSystemTypeTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            fileSystemTypeTextBox.Location = new System.Drawing.Point(143, 73);
+            fileSystemTypeTextBox.MaxLength = 8;
+            fileSystemTypeTextBox.Name = "fileSystemTypeTextBox";
+            fileSystemTypeTextBox.Size = new System.Drawing.Size(113, 23);
+            fileSystemTypeTextBox.TabIndex = 4;
+            fileSystemTypeTextBox.Text = "FAT12";
+            toolTip.SetToolTip(fileSystemTypeTextBox, resources.GetString("fileSystemTypeTextBox.ToolTip"));
             // 
-            // lblFloppyFSType
+            // fileSystemTypeLabel
             // 
-            lblFloppyFSType.AutoSize = true;
-            lblFloppyFSType.Location = new System.Drawing.Point(12, 75);
-            lblFloppyFSType.Name = "lblFloppyFSType";
-            lblFloppyFSType.Size = new System.Drawing.Size(94, 15);
-            lblFloppyFSType.TabIndex = 57;
-            lblFloppyFSType.Text = "File system type:";
-            toolTip.SetToolTip(lblFloppyFSType, resources.GetString("lblFloppyFSType.ToolTip"));
+            fileSystemTypeLabel.AutoSize = true;
+            fileSystemTypeLabel.Location = new System.Drawing.Point(12, 75);
+            fileSystemTypeLabel.Name = "fileSystemTypeLabel";
+            fileSystemTypeLabel.Size = new System.Drawing.Size(94, 15);
+            fileSystemTypeLabel.TabIndex = 57;
+            fileSystemTypeLabel.Text = "File system type:";
+            toolTip.SetToolTip(fileSystemTypeLabel, resources.GetString("fileSystemTypeLabel.ToolTip"));
             // 
-            // txtFloppySerial
+            // serialNumberTextBox
             // 
-            txtFloppySerial.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            txtFloppySerial.Location = new System.Drawing.Point(143, 44);
-            txtFloppySerial.MaxLength = 8;
-            txtFloppySerial.Name = "txtFloppySerial";
-            txtFloppySerial.Size = new System.Drawing.Size(113, 23);
-            txtFloppySerial.TabIndex = 2;
-            toolTip.SetToolTip(txtFloppySerial, "This field can be used to detect when the disk was ejected\r\nand a different disk was inserted.");
+            serialNumberTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            serialNumberTextBox.Location = new System.Drawing.Point(143, 44);
+            serialNumberTextBox.MaxLength = 8;
+            serialNumberTextBox.Name = "serialNumberTextBox";
+            serialNumberTextBox.Size = new System.Drawing.Size(113, 23);
+            serialNumberTextBox.TabIndex = 2;
+            toolTip.SetToolTip(serialNumberTextBox, "This field can be used to detect when the disk was ejected\r\nand a different disk was inserted.");
             // 
-            // lblFloppySerial
+            // serialNumberLabel
             // 
-            lblFloppySerial.AutoSize = true;
-            lblFloppySerial.Location = new System.Drawing.Point(12, 47);
-            lblFloppySerial.Name = "lblFloppySerial";
-            lblFloppySerial.Size = new System.Drawing.Size(125, 15);
-            lblFloppySerial.TabIndex = 56;
-            lblFloppySerial.Text = "Volume serial number:\r\n";
-            toolTip.SetToolTip(lblFloppySerial, "This field can be used to detect when the disk was ejected\r\nand a different disk was inserted.\r\n");
+            serialNumberLabel.AutoSize = true;
+            serialNumberLabel.Location = new System.Drawing.Point(12, 47);
+            serialNumberLabel.Name = "serialNumberLabel";
+            serialNumberLabel.Size = new System.Drawing.Size(125, 15);
+            serialNumberLabel.TabIndex = 56;
+            serialNumberLabel.Text = "Volume serial number:\r\n";
+            toolTip.SetToolTip(serialNumberLabel, "This field can be used to detect when the disk was ejected\r\nand a different disk was inserted.\r\n");
             // 
-            // lstFloppySides
+            // sidesComboBox
             // 
-            lstFloppySides.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            lstFloppySides.FormattingEnabled = true;
-            lstFloppySides.Items.AddRange(new object[] { "1", "2" });
-            lstFloppySides.Location = new System.Drawing.Point(411, 189);
-            lstFloppySides.Name = "lstFloppySides";
-            lstFloppySides.Size = new System.Drawing.Size(84, 23);
-            lstFloppySides.TabIndex = 13;
-            toolTip.SetToolTip(lstFloppySides, "Determines whether a disk is single-sided (SS) or double-sided (DS).");
+            sidesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            sidesComboBox.FormattingEnabled = true;
+            sidesComboBox.Location = new System.Drawing.Point(411, 189);
+            sidesComboBox.Name = "sidesComboBox";
+            sidesComboBox.Size = new System.Drawing.Size(84, 23);
+            sidesComboBox.TabIndex = 13;
+            toolTip.SetToolTip(sidesComboBox, "Determines whether a disk is single-sided (SS) or double-sided (DS).");
             // 
-            // lblFloppySides
+            // sidesLabel
             // 
-            lblFloppySides.AutoSize = true;
-            lblFloppySides.Location = new System.Drawing.Point(269, 190);
-            lblFloppySides.Name = "lblFloppySides";
-            lblFloppySides.Size = new System.Drawing.Size(37, 15);
-            lblFloppySides.TabIndex = 55;
-            lblFloppySides.Text = "Sides:";
-            toolTip.SetToolTip(lblFloppySides, "Determines whether a disk is single-sided (SS) or double-sided (DS).");
+            sidesLabel.AutoSize = true;
+            sidesLabel.Location = new System.Drawing.Point(269, 190);
+            sidesLabel.Name = "sidesLabel";
+            sidesLabel.Size = new System.Drawing.Size(37, 15);
+            sidesLabel.TabIndex = 55;
+            sidesLabel.Text = "Sides:";
+            toolTip.SetToolTip(sidesLabel, "Determines whether a disk is single-sided (SS) or double-sided (DS).");
             // 
-            // txtFloppySPT
+            // sectorsPerTrackNumericUpDown
             // 
-            txtFloppySPT.Location = new System.Drawing.Point(143, 188);
-            txtFloppySPT.Maximum = new decimal(new int[] { 36, 0, 0, 0 });
-            txtFloppySPT.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
-            txtFloppySPT.Name = "txtFloppySPT";
-            txtFloppySPT.Size = new System.Drawing.Size(113, 23);
-            txtFloppySPT.TabIndex = 12;
-            toolTip.SetToolTip(txtFloppySPT, "The number of sectors in one track.");
-            txtFloppySPT.Value = new decimal(new int[] { 18, 0, 0, 0 });
+            sectorsPerTrackNumericUpDown.Location = new System.Drawing.Point(143, 188);
+            sectorsPerTrackNumericUpDown.Maximum = new decimal(new int[] { 36, 0, 0, 0 });
+            sectorsPerTrackNumericUpDown.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
+            sectorsPerTrackNumericUpDown.Name = "sectorsPerTrackNumericUpDown";
+            sectorsPerTrackNumericUpDown.Size = new System.Drawing.Size(113, 23);
+            sectorsPerTrackNumericUpDown.TabIndex = 12;
+            toolTip.SetToolTip(sectorsPerTrackNumericUpDown, "The number of sectors in one track.");
+            sectorsPerTrackNumericUpDown.Value = new decimal(new int[] { 18, 0, 0, 0 });
             // 
-            // lblFloppySPT
+            // sectorsPerTrackLabel
             // 
-            lblFloppySPT.AutoSize = true;
-            lblFloppySPT.Location = new System.Drawing.Point(12, 190);
-            lblFloppySPT.Name = "lblFloppySPT";
-            lblFloppySPT.Size = new System.Drawing.Size(97, 15);
-            lblFloppySPT.TabIndex = 54;
-            lblFloppySPT.Text = "Sectors per track:";
-            toolTip.SetToolTip(lblFloppySPT, "The number of sectors in one track.");
+            sectorsPerTrackLabel.AutoSize = true;
+            sectorsPerTrackLabel.Location = new System.Drawing.Point(12, 190);
+            sectorsPerTrackLabel.Name = "sectorsPerTrackLabel";
+            sectorsPerTrackLabel.Size = new System.Drawing.Size(97, 15);
+            sectorsPerTrackLabel.TabIndex = 54;
+            sectorsPerTrackLabel.Text = "Sectors per track:";
+            toolTip.SetToolTip(sectorsPerTrackLabel, "The number of sectors in one track.");
             // 
-            // txtFloppySPF
+            // sectorsPerFatNumericUpDown
             // 
-            txtFloppySPF.Location = new System.Drawing.Point(411, 14);
-            txtFloppySPF.Maximum = new decimal(new int[] { 11, 0, 0, 0 });
-            txtFloppySPF.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            txtFloppySPF.Name = "txtFloppySPF";
-            txtFloppySPF.Size = new System.Drawing.Size(84, 23);
-            txtFloppySPF.TabIndex = 1;
-            toolTip.SetToolTip(txtFloppySPF, "Defines the number of sectors occupied by each file\r\nallocation table (FAT).");
-            txtFloppySPF.Value = new decimal(new int[] { 9, 0, 0, 0 });
+            sectorsPerFatNumericUpDown.Location = new System.Drawing.Point(411, 14);
+            sectorsPerFatNumericUpDown.Maximum = new decimal(new int[] { 11, 0, 0, 0 });
+            sectorsPerFatNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            sectorsPerFatNumericUpDown.Name = "sectorsPerFatNumericUpDown";
+            sectorsPerFatNumericUpDown.Size = new System.Drawing.Size(84, 23);
+            sectorsPerFatNumericUpDown.TabIndex = 1;
+            toolTip.SetToolTip(sectorsPerFatNumericUpDown, "Defines the number of sectors occupied by each file\r\nallocation table (FAT).");
+            sectorsPerFatNumericUpDown.Value = new decimal(new int[] { 9, 0, 0, 0 });
             // 
-            // lblFloppySPF
+            // sectorsPerFatLabel
             // 
-            lblFloppySPF.AutoSize = true;
-            lblFloppySPF.Location = new System.Drawing.Point(269, 17);
-            lblFloppySPF.Name = "lblFloppySPF";
-            lblFloppySPF.Size = new System.Drawing.Size(90, 15);
-            lblFloppySPF.TabIndex = 53;
-            lblFloppySPF.Text = "Sectors per FAT:";
-            toolTip.SetToolTip(lblFloppySPF, "Defines the number of sectors occupied by each file\r\nallocation table (FAT).");
+            sectorsPerFatLabel.AutoSize = true;
+            sectorsPerFatLabel.Location = new System.Drawing.Point(269, 17);
+            sectorsPerFatLabel.Name = "sectorsPerFatLabel";
+            sectorsPerFatLabel.Size = new System.Drawing.Size(90, 15);
+            sectorsPerFatLabel.TabIndex = 53;
+            sectorsPerFatLabel.Text = "Sectors per FAT:";
+            toolTip.SetToolTip(sectorsPerFatLabel, "Defines the number of sectors occupied by each file\r\nallocation table (FAT).");
             // 
-            // txtFloppyMediaDesc
+            // mediaDescriptorNumericUpDown
             // 
-            txtFloppyMediaDesc.Hexadecimal = true;
-            txtFloppyMediaDesc.Location = new System.Drawing.Point(411, 160);
-            txtFloppyMediaDesc.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
-            txtFloppyMediaDesc.Minimum = new decimal(new int[] { 237, 0, 0, 0 });
-            txtFloppyMediaDesc.Name = "txtFloppyMediaDesc";
-            txtFloppyMediaDesc.Size = new System.Drawing.Size(84, 23);
-            txtFloppyMediaDesc.TabIndex = 11;
-            toolTip.SetToolTip(txtFloppyMediaDesc, resources.GetString("txtFloppyMediaDesc.ToolTip"));
-            txtFloppyMediaDesc.Value = new decimal(new int[] { 240, 0, 0, 0 });
+            mediaDescriptorNumericUpDown.Hexadecimal = true;
+            mediaDescriptorNumericUpDown.Location = new System.Drawing.Point(411, 160);
+            mediaDescriptorNumericUpDown.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            mediaDescriptorNumericUpDown.Minimum = new decimal(new int[] { 237, 0, 0, 0 });
+            mediaDescriptorNumericUpDown.Name = "mediaDescriptorNumericUpDown";
+            mediaDescriptorNumericUpDown.Size = new System.Drawing.Size(84, 23);
+            mediaDescriptorNumericUpDown.TabIndex = 11;
+            toolTip.SetToolTip(mediaDescriptorNumericUpDown, resources.GetString("mediaDescriptorNumericUpDown.ToolTip"));
+            mediaDescriptorNumericUpDown.Value = new decimal(new int[] { 240, 0, 0, 0 });
             // 
-            // lblFloppyMediaDesc
+            // mediaDescriptorLabel
             // 
-            lblFloppyMediaDesc.AutoSize = true;
-            lblFloppyMediaDesc.Location = new System.Drawing.Point(269, 162);
-            lblFloppyMediaDesc.Name = "lblFloppyMediaDesc";
-            lblFloppyMediaDesc.Size = new System.Drawing.Size(99, 15);
-            lblFloppyMediaDesc.TabIndex = 52;
-            lblFloppyMediaDesc.Text = "Media descriptor:";
-            toolTip.SetToolTip(lblFloppyMediaDesc, resources.GetString("lblFloppyMediaDesc.ToolTip"));
+            mediaDescriptorLabel.AutoSize = true;
+            mediaDescriptorLabel.Location = new System.Drawing.Point(269, 162);
+            mediaDescriptorLabel.Name = "mediaDescriptorLabel";
+            mediaDescriptorLabel.Size = new System.Drawing.Size(99, 15);
+            mediaDescriptorLabel.TabIndex = 52;
+            mediaDescriptorLabel.Text = "Media descriptor:";
+            toolTip.SetToolTip(mediaDescriptorLabel, resources.GetString("mediaDescriptorLabel.ToolTip"));
             // 
-            // txtFloppyTotalSect
+            // totalSectorsNumericUpDown
             // 
-            txtFloppyTotalSect.Location = new System.Drawing.Point(411, 73);
-            txtFloppyTotalSect.Maximum = new decimal(new int[] { 7360, 0, 0, 0 });
-            txtFloppyTotalSect.Minimum = new decimal(new int[] { 320, 0, 0, 0 });
-            txtFloppyTotalSect.Name = "txtFloppyTotalSect";
-            txtFloppyTotalSect.Size = new System.Drawing.Size(84, 23);
-            txtFloppyTotalSect.TabIndex = 5;
-            toolTip.SetToolTip(txtFloppyTotalSect, "This field specifies the total number of sectors on a disk. The number\r\nis calculated by multiplying the number of tracks, sectors per track and\r\nnumber of sides (tracks * SPT * sides).\r\n");
-            txtFloppyTotalSect.Value = new decimal(new int[] { 2880, 0, 0, 0 });
+            totalSectorsNumericUpDown.Location = new System.Drawing.Point(411, 73);
+            totalSectorsNumericUpDown.Maximum = new decimal(new int[] { 7360, 0, 0, 0 });
+            totalSectorsNumericUpDown.Minimum = new decimal(new int[] { 0, 0, 0, 0 });
+            totalSectorsNumericUpDown.Increment = new decimal(new int[] { 0, 0, 0, 0 });
+            totalSectorsNumericUpDown.ReadOnly = true;
+            totalSectorsNumericUpDown.Name = "totalSectorsNumericUpDown";
+            totalSectorsNumericUpDown.Size = new System.Drawing.Size(84, 23);
+            totalSectorsNumericUpDown.TabIndex = 5;
+            toolTip.SetToolTip(totalSectorsNumericUpDown, "This field specifies the total number of sectors on a disk. The number\r\nis calculated by multiplying the number of tracks, sectors per track and\r\nnumber of sides (tracks * SPT * sides).\r\n");
+            totalSectorsNumericUpDown.Value = new decimal(new int[] { 2880, 0, 0, 0 });
             // 
-            // lblFloppyTotalSect
+            // totalSectorsLabel
             // 
-            lblFloppyTotalSect.AutoSize = true;
-            lblFloppyTotalSect.Location = new System.Drawing.Point(269, 75);
-            lblFloppyTotalSect.Name = "lblFloppyTotalSect";
-            lblFloppyTotalSect.Size = new System.Drawing.Size(135, 15);
-            lblFloppyTotalSect.TabIndex = 49;
-            lblFloppyTotalSect.Text = "Total number of sectors:";
-            toolTip.SetToolTip(lblFloppyTotalSect, "This field specifies the total number of sectors on a disk. The number\r\nis calculated by multiplying the number of tracks, sectors per track and\r\nnumber of sides (tracks * SPT * sides).");
+            totalSectorsLabel.AutoSize = true;
+            totalSectorsLabel.Location = new System.Drawing.Point(269, 75);
+            totalSectorsLabel.Name = "totalSectorsLabel";
+            totalSectorsLabel.Size = new System.Drawing.Size(135, 15);
+            totalSectorsLabel.TabIndex = 49;
+            totalSectorsLabel.Text = "Total number of sectors:";
+            toolTip.SetToolTip(totalSectorsLabel, "This field specifies the total number of sectors on a disk. The number\r\nis calculated by multiplying the number of tracks, sectors per track and\r\nnumber of sides (tracks * SPT * sides).");
             // 
-            // txtFloppyRootDir
+            // rootDirectoryEntriesNumericUpDown
             // 
-            txtFloppyRootDir.Increment = new decimal(new int[] { 16, 0, 0, 0 });
-            txtFloppyRootDir.Location = new System.Drawing.Point(411, 102);
-            txtFloppyRootDir.Maximum = new decimal(new int[] { 320, 0, 0, 0 });
-            txtFloppyRootDir.Minimum = new decimal(new int[] { 16, 0, 0, 0 });
-            txtFloppyRootDir.Name = "txtFloppyRootDir";
-            txtFloppyRootDir.Size = new System.Drawing.Size(84, 23);
-            txtFloppyRootDir.TabIndex = 7;
-            toolTip.SetToolTip(txtFloppyRootDir, "This is the maximum number of files that can be located in the\r\nroot directory of the disk. ");
-            txtFloppyRootDir.Value = new decimal(new int[] { 224, 0, 0, 0 });
+            rootDirectoryEntriesNumericUpDown.Increment = new decimal(new int[] { 16, 0, 0, 0 });
+            rootDirectoryEntriesNumericUpDown.Location = new System.Drawing.Point(411, 102);
+            rootDirectoryEntriesNumericUpDown.Maximum = new decimal(new int[] { 320, 0, 0, 0 });
+            rootDirectoryEntriesNumericUpDown.Minimum = new decimal(new int[] { 16, 0, 0, 0 });
+            rootDirectoryEntriesNumericUpDown.Name = "rootDirectoryEntriesNumericUpDown";
+            rootDirectoryEntriesNumericUpDown.Size = new System.Drawing.Size(84, 23);
+            rootDirectoryEntriesNumericUpDown.TabIndex = 7;
+            toolTip.SetToolTip(rootDirectoryEntriesNumericUpDown, "This is the maximum number of files that can be located in the\r\nroot directory of the disk. ");
+            rootDirectoryEntriesNumericUpDown.Value = new decimal(new int[] { 224, 0, 0, 0 });
             // 
-            // lblFloppyRootDir
+            // rootDirectoryEntriesLabel
             // 
-            lblFloppyRootDir.AutoSize = true;
-            lblFloppyRootDir.Location = new System.Drawing.Point(269, 104);
-            lblFloppyRootDir.Name = "lblFloppyRootDir";
-            lblFloppyRootDir.Size = new System.Drawing.Size(123, 15);
-            lblFloppyRootDir.TabIndex = 46;
-            lblFloppyRootDir.Text = "Root directory entries:";
-            toolTip.SetToolTip(lblFloppyRootDir, "This is the maximum number of files that can be located in the\r\nroot directory of the disk.");
+            rootDirectoryEntriesLabel.AutoSize = true;
+            rootDirectoryEntriesLabel.Location = new System.Drawing.Point(269, 104);
+            rootDirectoryEntriesLabel.Name = "rootDirectoryEntriesLabel";
+            rootDirectoryEntriesLabel.Size = new System.Drawing.Size(123, 15);
+            rootDirectoryEntriesLabel.TabIndex = 46;
+            rootDirectoryEntriesLabel.Text = "Root directory entries:";
+            toolTip.SetToolTip(rootDirectoryEntriesLabel, "This is the maximum number of files that can be located in the\r\nroot directory of the disk.");
             // 
-            // lblFloppyNumFATs
+            // fatCountLabel
             // 
-            lblFloppyNumFATs.AutoSize = true;
-            lblFloppyNumFATs.Location = new System.Drawing.Point(12, 104);
-            lblFloppyNumFATs.Name = "lblFloppyNumFATs";
-            lblFloppyNumFATs.Size = new System.Drawing.Size(94, 15);
-            lblFloppyNumFATs.TabIndex = 45;
-            lblFloppyNumFATs.Text = "Number of FATs:";
-            toolTip.SetToolTip(lblFloppyNumFATs, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, this value is basically always 2.");
+            fatCountLabel.AutoSize = true;
+            fatCountLabel.Location = new System.Drawing.Point(12, 104);
+            fatCountLabel.Name = "fatCountLabel";
+            fatCountLabel.Size = new System.Drawing.Size(94, 15);
+            fatCountLabel.TabIndex = 45;
+            fatCountLabel.Text = "Number of FATs:";
+            toolTip.SetToolTip(fatCountLabel, "The number of file allocation tables (FAT). On FAT12-formatted\r\nfloppy disks, this value is basically always 2.");
             // 
-            // lblFloppyReservedSect
+            // reservedSectorsLabel
             // 
-            lblFloppyReservedSect.AutoSize = true;
-            lblFloppyReservedSect.Location = new System.Drawing.Point(269, 47);
-            lblFloppyReservedSect.Name = "lblFloppyReservedSect";
-            lblFloppyReservedSect.Size = new System.Drawing.Size(97, 15);
-            lblFloppyReservedSect.TabIndex = 43;
-            lblFloppyReservedSect.Text = "Reserved sectors:";
-            toolTip.SetToolTip(lblFloppyReservedSect, "The number of sectors before the first file allocation table (FAT).\r\nFor most FAT12-formatted floppies, there is only one reserved\r\nsector - the boot sector.\r\n");
+            reservedSectorsLabel.AutoSize = true;
+            reservedSectorsLabel.Location = new System.Drawing.Point(269, 47);
+            reservedSectorsLabel.Name = "reservedSectorsLabel";
+            reservedSectorsLabel.Size = new System.Drawing.Size(97, 15);
+            reservedSectorsLabel.TabIndex = 43;
+            reservedSectorsLabel.Text = "Reserved sectors:";
+            toolTip.SetToolTip(reservedSectorsLabel, "The number of sectors before the first file allocation table (FAT).\r\nFor most FAT12-formatted floppies, there is only one reserved\r\nsector - the boot sector.\r\n");
             // 
-            // txtFloppySPC
+            // sectorsPerClusterNumericUpDown
             // 
-            txtFloppySPC.Location = new System.Drawing.Point(143, 159);
-            txtFloppySPC.Maximum = new decimal(new int[] { 128, 0, 0, 0 });
-            txtFloppySPC.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            txtFloppySPC.Name = "txtFloppySPC";
-            txtFloppySPC.Size = new System.Drawing.Size(113, 23);
-            txtFloppySPC.TabIndex = 10;
-            toolTip.SetToolTip(txtFloppySPC, "This field determines the number of sectors that make up one cluster.\r\n");
-            txtFloppySPC.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            sectorsPerClusterNumericUpDown.Location = new System.Drawing.Point(143, 159);
+            sectorsPerClusterNumericUpDown.Maximum = new decimal(new int[] { 128, 0, 0, 0 });
+            sectorsPerClusterNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            sectorsPerClusterNumericUpDown.Name = "sectorsPerClusterNumericUpDown";
+            sectorsPerClusterNumericUpDown.Size = new System.Drawing.Size(113, 23);
+            sectorsPerClusterNumericUpDown.TabIndex = 10;
+            toolTip.SetToolTip(sectorsPerClusterNumericUpDown, "This field determines the number of sectors that make up one cluster.\r\n");
+            sectorsPerClusterNumericUpDown.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
-            // lblFloppySPC
+            // sectorsPerClusterLabel
             // 
-            lblFloppySPC.AutoSize = true;
-            lblFloppySPC.Location = new System.Drawing.Point(12, 162);
-            lblFloppySPC.Name = "lblFloppySPC";
-            lblFloppySPC.Size = new System.Drawing.Size(106, 15);
-            lblFloppySPC.TabIndex = 39;
-            lblFloppySPC.Text = "Sectors per cluster:";
-            toolTip.SetToolTip(lblFloppySPC, "This field determines the number of sectors that make up one cluster.");
+            sectorsPerClusterLabel.AutoSize = true;
+            sectorsPerClusterLabel.Location = new System.Drawing.Point(12, 162);
+            sectorsPerClusterLabel.Name = "sectorsPerClusterLabel";
+            sectorsPerClusterLabel.Size = new System.Drawing.Size(106, 15);
+            sectorsPerClusterLabel.TabIndex = 39;
+            sectorsPerClusterLabel.Text = "Sectors per cluster:";
+            toolTip.SetToolTip(sectorsPerClusterLabel, "This field determines the number of sectors that make up one cluster.");
             // 
-            // txtFloppyBPS
+            // bytesPerSectorNumericUpDown
             // 
-            txtFloppyBPS.Increment = new decimal(new int[] { 128, 0, 0, 0 });
-            txtFloppyBPS.Location = new System.Drawing.Point(143, 130);
-            txtFloppyBPS.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
-            txtFloppyBPS.Minimum = new decimal(new int[] { 128, 0, 0, 0 });
-            txtFloppyBPS.Name = "txtFloppyBPS";
-            txtFloppyBPS.Size = new System.Drawing.Size(113, 23);
-            txtFloppyBPS.TabIndex = 8;
-            toolTip.SetToolTip(txtFloppyBPS, "This field determines the size of a sector in bytes.");
-            txtFloppyBPS.Value = new decimal(new int[] { 512, 0, 0, 0 });
+            bytesPerSectorNumericUpDown.Increment = new decimal(new int[] { 128, 0, 0, 0 });
+            bytesPerSectorNumericUpDown.Location = new System.Drawing.Point(143, 130);
+            bytesPerSectorNumericUpDown.Maximum = new decimal(new int[] { 4096, 0, 0, 0 });
+            bytesPerSectorNumericUpDown.Minimum = new decimal(new int[] { 128, 0, 0, 0 });
+            bytesPerSectorNumericUpDown.Name = "bytesPerSectorNumericUpDown";
+            bytesPerSectorNumericUpDown.Size = new System.Drawing.Size(113, 23);
+            bytesPerSectorNumericUpDown.TabIndex = 8;
+            toolTip.SetToolTip(bytesPerSectorNumericUpDown, "This field determines the size of a sector in bytes.");
+            bytesPerSectorNumericUpDown.Value = new decimal(new int[] { 512, 0, 0, 0 });
             // 
-            // lblFloppyBPS
+            // bytesPerSectorLabel
             // 
-            lblFloppyBPS.AutoSize = true;
-            lblFloppyBPS.Location = new System.Drawing.Point(12, 133);
-            lblFloppyBPS.Name = "lblFloppyBPS";
-            lblFloppyBPS.Size = new System.Drawing.Size(93, 15);
-            lblFloppyBPS.TabIndex = 37;
-            lblFloppyBPS.Text = "Bytes per sector:";
-            toolTip.SetToolTip(lblFloppyBPS, "This field determines the size of a sector in bytes.");
+            bytesPerSectorLabel.AutoSize = true;
+            bytesPerSectorLabel.Location = new System.Drawing.Point(12, 133);
+            bytesPerSectorLabel.Name = "bytesPerSectorLabel";
+            bytesPerSectorLabel.Size = new System.Drawing.Size(93, 15);
+            bytesPerSectorLabel.TabIndex = 37;
+            bytesPerSectorLabel.Text = "Bytes per sector:";
+            toolTip.SetToolTip(bytesPerSectorLabel, "This field determines the size of a sector in bytes.");
             // 
-            // txtFloppyOEMID
+            // oemIdTextBox
             // 
-            txtFloppyOEMID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            txtFloppyOEMID.Location = new System.Drawing.Point(143, 14);
-            txtFloppyOEMID.MaxLength = 8;
-            txtFloppyOEMID.Name = "txtFloppyOEMID";
-            txtFloppyOEMID.Size = new System.Drawing.Size(113, 23);
-            txtFloppyOEMID.TabIndex = 0;
-            txtFloppyOEMID.Text = "MSDOS5.0";
-            toolTip.SetToolTip(txtFloppyOEMID, "The OEM ID field is often used to identify the system that formatted\r\nthe disk. Using non-standard values could result in the operating\r\nsystem or program not recognizing the disk.");
+            oemIdTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            oemIdTextBox.Location = new System.Drawing.Point(143, 14);
+            oemIdTextBox.MaxLength = 8;
+            oemIdTextBox.Name = "oemIdTextBox";
+            oemIdTextBox.Size = new System.Drawing.Size(113, 23);
+            oemIdTextBox.TabIndex = 0;
+            oemIdTextBox.Text = "MSDOS5.0";
+            toolTip.SetToolTip(oemIdTextBox, "The OEM ID field is often used to identify the system that formatted\r\nthe disk. Using non-standard values could result in the operating\r\nsystem or program not recognizing the disk.");
             // 
-            // lblFloppyOEMID
+            // oemIdLabel
             // 
-            lblFloppyOEMID.AutoSize = true;
-            lblFloppyOEMID.Location = new System.Drawing.Point(12, 17);
-            lblFloppyOEMID.Name = "lblFloppyOEMID";
-            lblFloppyOEMID.Size = new System.Drawing.Size(50, 15);
-            lblFloppyOEMID.TabIndex = 34;
-            lblFloppyOEMID.Text = "OEM ID:";
-            toolTip.SetToolTip(lblFloppyOEMID, "The OEM ID field is often used to identify the system that formatted\r\nthe disk. Using non-standard values could result in the operating\r\nsystem or program not recognizing the disk.\r\n");
+            oemIdLabel.AutoSize = true;
+            oemIdLabel.Location = new System.Drawing.Point(12, 17);
+            oemIdLabel.Name = "oemIdLabel";
+            oemIdLabel.Size = new System.Drawing.Size(50, 15);
+            oemIdLabel.TabIndex = 34;
+            oemIdLabel.Text = "OEM ID:";
+            toolTip.SetToolTip(oemIdLabel, "The OEM ID field is often used to identify the system that formatted\r\nthe disk. Using non-standard values could result in the operating\r\nsystem or program not recognizing the disk.\r\n");
             // 
-            // pnlBottom
+            // buttonPanel
             // 
-            pnlBottom.BackColor = System.Drawing.SystemColors.Control;
-            pnlBottom.Controls.Add(btnOK);
-            pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            pnlBottom.Location = new System.Drawing.Point(0, 226);
-            pnlBottom.Name = "pnlBottom";
-            pnlBottom.Size = new System.Drawing.Size(514, 50);
-            pnlBottom.TabIndex = 18;
+            buttonPanel.BackColor = System.Drawing.SystemColors.Control;
+            buttonPanel.Controls.Add(okButton);
+            buttonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            buttonPanel.Location = new System.Drawing.Point(0, 226);
+            buttonPanel.Name = "buttonPanel";
+            buttonPanel.Size = new System.Drawing.Size(514, 50);
+            buttonPanel.TabIndex = 18;
             // 
             // NewImageAdvancedDialog
             // 
-            AcceptButton = btnOK;
+            AcceptButton = okButton;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             BackColor = System.Drawing.SystemColors.Window;
-            CancelButton = btnOK;
+            CancelButton = okButton;
             ClientSize = new System.Drawing.Size(514, 276);
-            Controls.Add(txtFloppyTracks);
-            Controls.Add(lblFloppyTracks);
-            Controls.Add(txtFloppyReservedSect);
-            Controls.Add(txtFloppyNumFATs);
-            Controls.Add(txtFloppyFSType);
-            Controls.Add(lblFloppyFSType);
-            Controls.Add(txtFloppySerial);
-            Controls.Add(lblFloppySerial);
-            Controls.Add(lstFloppySides);
-            Controls.Add(lblFloppySides);
-            Controls.Add(txtFloppySPT);
-            Controls.Add(lblFloppySPT);
-            Controls.Add(txtFloppySPF);
-            Controls.Add(lblFloppySPF);
-            Controls.Add(txtFloppyMediaDesc);
-            Controls.Add(lblFloppyMediaDesc);
-            Controls.Add(txtFloppyTotalSect);
-            Controls.Add(lblFloppyTotalSect);
-            Controls.Add(txtFloppyRootDir);
-            Controls.Add(lblFloppyRootDir);
-            Controls.Add(lblFloppyNumFATs);
-            Controls.Add(lblFloppyReservedSect);
-            Controls.Add(txtFloppySPC);
-            Controls.Add(lblFloppySPC);
-            Controls.Add(txtFloppyBPS);
-            Controls.Add(lblFloppyBPS);
-            Controls.Add(txtFloppyOEMID);
-            Controls.Add(lblFloppyOEMID);
-            Controls.Add(pnlBottom);
+            Controls.Add(tracksNumericUpDown);
+            Controls.Add(tracksLabel);
+            Controls.Add(reservedSectorsNumericUpDown);
+            Controls.Add(fatCountNumericUpDown);
+            Controls.Add(fileSystemTypeTextBox);
+            Controls.Add(fileSystemTypeLabel);
+            Controls.Add(serialNumberTextBox);
+            Controls.Add(serialNumberLabel);
+            Controls.Add(sidesComboBox);
+            Controls.Add(sidesLabel);
+            Controls.Add(sectorsPerTrackNumericUpDown);
+            Controls.Add(sectorsPerTrackLabel);
+            Controls.Add(sectorsPerFatNumericUpDown);
+            Controls.Add(sectorsPerFatLabel);
+            Controls.Add(mediaDescriptorNumericUpDown);
+            Controls.Add(mediaDescriptorLabel);
+            Controls.Add(totalSectorsNumericUpDown);
+            Controls.Add(totalSectorsLabel);
+            Controls.Add(rootDirectoryEntriesNumericUpDown);
+            Controls.Add(rootDirectoryEntriesLabel);
+            Controls.Add(fatCountLabel);
+            Controls.Add(reservedSectorsLabel);
+            Controls.Add(sectorsPerClusterNumericUpDown);
+            Controls.Add(sectorsPerClusterLabel);
+            Controls.Add(bytesPerSectorNumericUpDown);
+            Controls.Add(bytesPerSectorLabel);
+            Controls.Add(oemIdTextBox);
+            Controls.Add(oemIdLabel);
+            Controls.Add(buttonPanel);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -443,53 +443,52 @@ namespace TotalImage.Dialogs
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Advanced options";
-            Load += dlgNewImageAdvanced_Load;
-            ((System.ComponentModel.ISupportInitialize)txtFloppyTracks).EndInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyReservedSect).EndInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyNumFATs).EndInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppySPT).EndInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppySPF).EndInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyMediaDesc).EndInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyTotalSect).EndInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyRootDir).EndInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppySPC).EndInit();
-            ((System.ComponentModel.ISupportInitialize)txtFloppyBPS).EndInit();
-            pnlBottom.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)tracksNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)reservedSectorsNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)fatCountNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)sectorsPerTrackNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)sectorsPerFatNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)mediaDescriptorNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)totalSectorsNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)rootDirectoryEntriesNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)sectorsPerClusterNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)bytesPerSectorNumericUpDown).EndInit();
+            buttonPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-        private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.ToolTip toolTip;
-        private System.Windows.Forms.Panel pnlBottom;
-        private System.Windows.Forms.Label lblFloppyTracks;
-        private System.Windows.Forms.Label lblFloppyFSType;
-        private System.Windows.Forms.Label lblFloppySerial;
-        private System.Windows.Forms.Label lblFloppySides;
-        private System.Windows.Forms.Label lblFloppySPT;
-        private System.Windows.Forms.Label lblFloppySPF;
-        private System.Windows.Forms.Label lblFloppyMediaDesc;
-        private System.Windows.Forms.Label lblFloppyTotalSect;
-        private System.Windows.Forms.Label lblFloppyRootDir;
-        private System.Windows.Forms.Label lblFloppyNumFATs;
-        private System.Windows.Forms.Label lblFloppyReservedSect;
-        private System.Windows.Forms.Label lblFloppySPC;
-        private System.Windows.Forms.Label lblFloppyBPS;
-        private System.Windows.Forms.Label lblFloppyOEMID;
-        internal System.Windows.Forms.NumericUpDown txtFloppyTracks;
-        internal System.Windows.Forms.NumericUpDown txtFloppyReservedSect;
-        internal System.Windows.Forms.ComboBox lstFloppySides;
-        internal System.Windows.Forms.NumericUpDown txtFloppySPF;
-        internal System.Windows.Forms.NumericUpDown txtFloppyMediaDesc;
-        internal System.Windows.Forms.NumericUpDown txtFloppyTotalSect;
-        internal System.Windows.Forms.NumericUpDown txtFloppyRootDir;
-        internal System.Windows.Forms.NumericUpDown txtFloppyNumFATs;
-        internal System.Windows.Forms.TextBox txtFloppyFSType;
-        internal System.Windows.Forms.TextBox txtFloppySerial;
-        internal System.Windows.Forms.NumericUpDown txtFloppySPT;
-        internal System.Windows.Forms.NumericUpDown txtFloppySPC;
-        internal System.Windows.Forms.NumericUpDown txtFloppyBPS;
-        internal System.Windows.Forms.TextBox txtFloppyOEMID;
+        private System.Windows.Forms.Panel buttonPanel;
+        private System.Windows.Forms.Label tracksLabel;
+        private System.Windows.Forms.Label fileSystemTypeLabel;
+        private System.Windows.Forms.Label serialNumberLabel;
+        private System.Windows.Forms.Label sidesLabel;
+        private System.Windows.Forms.Label sectorsPerTrackLabel;
+        private System.Windows.Forms.Label sectorsPerFatLabel;
+        private System.Windows.Forms.Label mediaDescriptorLabel;
+        private System.Windows.Forms.Label totalSectorsLabel;
+        private System.Windows.Forms.Label rootDirectoryEntriesLabel;
+        private System.Windows.Forms.Label fatCountLabel;
+        private System.Windows.Forms.Label reservedSectorsLabel;
+        private System.Windows.Forms.Label sectorsPerClusterLabel;
+        private System.Windows.Forms.Label bytesPerSectorLabel;
+        private System.Windows.Forms.Label oemIdLabel;
+        private System.Windows.Forms.NumericUpDown tracksNumericUpDown;
+        private System.Windows.Forms.NumericUpDown reservedSectorsNumericUpDown;
+        private System.Windows.Forms.ComboBox sidesComboBox;
+        private System.Windows.Forms.NumericUpDown sectorsPerFatNumericUpDown;
+        private System.Windows.Forms.NumericUpDown mediaDescriptorNumericUpDown;
+        private System.Windows.Forms.NumericUpDown totalSectorsNumericUpDown;
+        private System.Windows.Forms.NumericUpDown rootDirectoryEntriesNumericUpDown;
+        private System.Windows.Forms.NumericUpDown fatCountNumericUpDown;
+        private System.Windows.Forms.TextBox fileSystemTypeTextBox;
+        private System.Windows.Forms.TextBox serialNumberTextBox;
+        private System.Windows.Forms.NumericUpDown sectorsPerTrackNumericUpDown;
+        private System.Windows.Forms.NumericUpDown sectorsPerClusterNumericUpDown;
+        private System.Windows.Forms.NumericUpDown bytesPerSectorNumericUpDown;
+        private System.Windows.Forms.TextBox oemIdTextBox;
     }
 }

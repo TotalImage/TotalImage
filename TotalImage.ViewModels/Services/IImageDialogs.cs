@@ -25,4 +25,9 @@ public interface IImageDialogs
     /// Shows the partition manager. It doesn't list partitions or change anything yet.
     /// </summary>
     Task ShowManagePartitionsAsync();
+
+    /// <summary>
+    /// Asks what kind of image to create, including its advanced options.
+    /// </summary>
+    Task<NewImageOptions?> AskNewImageAsync();
 }
