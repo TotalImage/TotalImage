@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.ViewModels.Services;
@@ -22,6 +23,118 @@ namespace TotalImage.Services
             });
 
             return Task.FromResult(result == TaskDialogButton.Yes);
+        }
+
+        public Task ShowRecentImagesClearedAsync()
+        {
+            ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = "List of recently opened images has been successfully cleared.",
+                Heading = "Recent images cleared",
+                Caption = "Success",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Information,
+                DefaultButton = TaskDialogButton.OK
+            });
+
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> ConfirmResetSettingsAsync()
+        {
+            var result = ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = "All settings will be reset to their default values.",
+                Heading = "Are you sure you want to continue?",
+                Caption = "Warning",
+                Buttons =
+                {
+                    TaskDialogButton.Yes,
+                    TaskDialogButton.No
+                },
+                Icon = TaskDialogIcon.Warning,
+                DefaultButton = TaskDialogButton.No
+            });
+
+            return Task.FromResult(result == TaskDialogButton.Yes);
+        }
+
+        public Task ShowSettingsResetAsync()
+        {
+            ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = "All settings were successfully reset to their default values.",
+                Heading = "Settings reset",
+                Caption = "Success",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Information,
+                DefaultButton = TaskDialogButton.OK
+            });
+
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> ConfirmClearTempFolderWithOtherInstancesAsync()
+        {
+            var result = ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = $"More than one instance of TotalImage is currently running. Attempting to clear the temporary folder while other instances are " +
+                $"using it can cause unpredictable behavior.{Environment.NewLine}{Environment.NewLine}Are you sure you want to continue?",
+                Heading = "Multiple instances are running",
+                Caption = "Warning",
+                Buttons =
+                {
+                    TaskDialogButton.Yes,
+                    TaskDialogButton.No,
+                },
+                Icon = TaskDialogIcon.Warning,
+                DefaultButton = TaskDialogButton.No,
+                SizeToContent = true
+            });
+
+            return Task.FromResult(result == TaskDialogButton.Yes);
+        }
+
+        public Task ShowTempFolderClearedAsync()
+        {
+            ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = "Temporary folder has been successfully cleared.",
+                Heading = "Temporary folder cleared",
+                Caption = "Success",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Information,
+                DefaultButton = TaskDialogButton.OK
+            });
+
+            return Task.CompletedTask;
+        }
+
+        public Task ShowTempFolderClearFailedAsync()
+        {
+            ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = "Temporary folder could not be cleared because it is in use by another process or inaccessible.",
+                Heading = "Cannot clear temporary folder",
+                Caption = "Error",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Error,
+                DefaultButton = TaskDialogButton.OK
+            });
+
+            return Task.CompletedTask;
         }
 
         private TaskDialogButton ShowTaskDialog(TaskDialogPage page)

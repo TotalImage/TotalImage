@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ISettingsService>(_ => new SettingsService(SettingsService.DefaultDirectory));
         services.AddSingleton<ITempDirectoryService, TempDirectoryService>();
         services.AddSingleton<ILauncherService, ProcessLauncherService>();
+        services.AddSingleton<IAppInstances, ProcessAppInstances>();
         return services;
     }
 }
