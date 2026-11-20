@@ -102,4 +102,42 @@ public class FileAllocationTableBaseTests
         Assert.Equal(0xAAu, values[0]);
         Assert.Equal(0xBBu, values[1]);
     }
+
+    /// <summary>
+    /// Builds an exFAT volume whose root directory (cluster 2) holds only an allocation bitmap
+    /// (cluster 3, contiguous) marking clusters 2 and 3 as used.
+    /// </summary>
+    private static ExFatFileSystem CreateExFatWithBitmap(uint clusterCount)
+    {
+        var image = new byte[(2 + clusterCount) * 512];
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(80, 4), 1);  // FatOffset
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(84, 4), 1);  // FatLength
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(88, 4), 2);  // ClusterHeapOffset
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(92, 4), clusterCount);
+        BinaryPrimitives.WriteUInt32LittleEndian(image.AsSpan(96, 4), 2);  // FirstClusterOfRootDirectory
+        image[108] = 9;
+        image[110] = 1;
+        SetExFatEntry(image, 2, 0xFFFFFFFF);
+
+        uint bitmapLength = (clusterCount + 7) / 8;
+        var root = image.AsSpan(1024, 32);
+        root[0] = 0x81; // Allocation bitmap, first bitmap
+        BinaryPrimitives.WriteUInt32LittleEndian(root[20..24], 3);
+        BinaryPrimitives.WriteUInt64LittleEndian(root[24..32], bitmapLength);
+
+        // Clusters 2 and 3 are allocated; every other bit, including any padding bits past
+        // ClusterCount in the last byte, is clear.
+        image[1536] = 0b0000_0011;
+        return new ExFatFileSystem(new MemoryStream(image));
+    }
+
+    [Theory]
+    [InlineData(16u)] // multiple of 8
+    [InlineData(13u)] // not a multiple of 8
+    [InlineData(9u)]
+    public void ExFat_TotalFreeSpaceCountsExactlyClusterCountBits(uint clusterCount)
+    {
+        var fs = CreateExFatWithBitmap(clusterCount);
+        Assert.Equal((clusterCount - 2) * 512L, fs.TotalFreeSpace);
+    }
 }

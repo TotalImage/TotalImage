@@ -100,30 +100,18 @@ public class ExFatFileSystem : FileSystem
                 .Single(x => x is AllocationBitmapDirectoryEntry entry &&
                     (entry.BitmapFlags & 0x01) == (BootSector.VolumeFlags & 0x01));
 
-            var buffer = new byte[BootSector.ClusterCount / 8 + 1];
-            var stream = allocationBitmap.GetStream(this);
-            stream.Read(buffer);
+            var clusterCount = BootSector.ClusterCount;
+            var buffer = new byte[(clusterCount + 7) / 8];
+            using (var stream = allocationBitmap.GetStream(this))
+                stream.ReadExactly(buffer);
 
-            var freeClusters = 0L;
-
-            for (var i = 0; i < buffer.Length - 1; i++)
-            {
-                for (var shift = 0; shift < 8; shift++)
-                {
-                    if ((buffer[i] & (1 << shift)) == 0)
-                    {
-                        freeClusters++;
-                    }
-                }
-            }
-
-            for (var shift = 0; shift < buffer.Length % 8; shift++)
-            {
-                if ((buffer[^1] & (1 << shift)) == 0)
-                {
-                    freeClusters++;
-                }
-            }
+            // Count the clear bits among the first ClusterCount bits; any trailing bits are ignored.
+            var allocatedClusters = 0L;
+            for (var i = 0; i < clusterCount / 8; i++)
+                allocatedClusters += System.Numerics.BitOperations.PopCount(buffer[i]);
+            if (clusterCount % 8 != 0)
+                allocatedClusters += System.Numerics.BitOperations.PopCount(buffer[^1] & ((1u << (int)(clusterCount % 8)) - 1));
+            var freeClusters = clusterCount - allocatedClusters;
 
             return freeClusters * BytesPerCluster;
         }
