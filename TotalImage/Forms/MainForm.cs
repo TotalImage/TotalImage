@@ -68,9 +68,10 @@ namespace TotalImage.Forms
         private readonly UIStateService uiState;
         private readonly IEntryDialogs entryDialogs;
         private readonly IFilePickerService filePicker;
+        private readonly IFileTypeInfo fileTypes;
 
         public MainForm(MainViewModel viewModel, ISettingsService settings, ITempDirectoryService tempDirectory, UIStateService uiState,
-            DialogOwner dialogOwner, IEntryDialogs entryDialogs, IFilePickerService filePicker)
+            DialogOwner dialogOwner, IEntryDialogs entryDialogs, IFilePickerService filePicker, IFileTypeInfo fileTypes)
         {
             this.viewModel = viewModel;
             this.settings = settings;
@@ -78,6 +79,7 @@ namespace TotalImage.Forms
             this.uiState = uiState;
             this.entryDialogs = entryDialogs;
             this.filePicker = filePicker;
+            this.fileTypes = fileTypes;
             dialogOwner.Window = this;
 
             InitializeComponent();
@@ -1487,7 +1489,7 @@ namespace TotalImage.Forms
             {
                 var item = new ListViewItem();
                 item.Text = fso.Name;
-                item.SubItems.Add(GetFileTypeName(fso.Name, fso.Attributes));
+                item.SubItems.Add(fileTypes.GetTypeName(fso.Name, fso.Attributes));
 
                 string size = string.Empty;
                 if (fso is TiDirectory subdir)
@@ -1593,7 +1595,7 @@ namespace TotalImage.Forms
                     var attrs = isDirectory ? FileAttributes.Directory : FileAttributes.Normal;
                     var pendingItem = new ListViewItem();
                     pendingItem.Text = pendingName;
-                    pendingItem.SubItems.Add(GetFileTypeName(pendingName, attrs));
+                    pendingItem.SubItems.Add(fileTypes.GetTypeName(pendingName, attrs));
                     pendingItem.SubItems.Add(sizeText);
                     pendingItem.ImageIndex = GetFileTypeIconIndex(pendingName, attrs);
                     pendingItem.SubItems.Add(lastWrite.ToString());
@@ -1681,30 +1683,6 @@ namespace TotalImage.Forms
 
             PopulateListView(fileSystem.RootDirectory);
             ReportBrowseState();
-        }
-
-        private string GetFileTypeName(string filename, FileAttributes attributes)
-        {
-            if (attributes.HasFlag(FileAttributes.ReparsePoint))
-            {
-                return attributes.HasFlag(FileAttributes.Directory) ? "Junction" : "Symbolic link";
-            }
-
-            var extension = attributes.HasFlag(FileAttributes.Directory) ? "folder" : Path.GetExtension(filename);
-
-            if (settings.Current.QueryShellForFileTypeInfo)
-            {
-                return ShellInterop.GetFileTypeName(filename, attributes);
-            }
-            else
-            {
-                if (attributes.HasFlag(FileAttributes.Directory))
-                    return "File folder";
-                else if (extension.Length > 0)
-                    return $"{extension[1..].ToUpper()} File";
-                else
-                    return "File";
-            }
         }
 
         private int GetFileTypeIconIndex(string filename, FileAttributes attributes)

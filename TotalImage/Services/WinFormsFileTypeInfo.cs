@@ -13,9 +13,10 @@ namespace TotalImage.Services
     public sealed class WinFormsFileTypeInfo(ISettingsService settings) : IFileTypeInfo
     {
         public string GetTypeName(string name, FileAttributes attributes)
-            => settings.Current.QueryShellForFileTypeInfo
-                ? ShellInterop.GetFileTypeName(name, attributes)
-                : GenericFileTypeInfo.GetGenericTypeName(name, attributes);
+            => GenericFileTypeInfo.GetReparsePointTypeName(attributes)
+                ?? (settings.Current.QueryShellForFileTypeInfo
+                    ? ShellInterop.GetFileTypeName(name, attributes)
+                    : GenericFileTypeInfo.GetGenericTypeName(name, attributes));
 
         /// <summary>
         /// Gets the 32x32 icon of an entry. <c>Stretch</c> is true for the built-in icons, which

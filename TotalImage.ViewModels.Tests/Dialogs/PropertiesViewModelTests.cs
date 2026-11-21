@@ -464,6 +464,16 @@ public class PropertiesViewModelTests : IDisposable
     }
 
     [Fact]
+    public void ReparsePointsAreNamedByTheirKind()
+    {
+        var types = new GenericFileTypeInfo();
+
+        Assert.Equal("Junction", types.GetTypeName("LINK", FileAttributes.Directory | FileAttributes.ReparsePoint));
+        Assert.Equal("Symbolic link", types.GetTypeName("link.txt", FileAttributes.Archive | FileAttributes.ReparsePoint));
+        Assert.Null(GenericFileTypeInfo.GetReparsePointTypeName(FileAttributes.Directory));
+    }
+
+    [Fact]
     public async Task MeasurementsCountSelectedAndContainedEntries()
     {
         var measured = await EntryMeasurements.MeasureAsync([Readme, Notes, Docs, image.Get("EMPTY")]);
