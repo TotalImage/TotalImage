@@ -596,11 +596,14 @@ public class MainViewModelSessionTests : IDisposable
     {
         await context.OpenFloppyAsync();
         var image = Vm.Image!;
+        var changed = new List<string?>();
+        Vm.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
         Vm.Dispose();
 
-        Assert.Null(Vm.Image);
         Assert.Throws<ObjectDisposedException>(() => image.Content.Position = 0);
+        // The view may be disposed already, so it isn't notified.
+        Assert.Empty(changed);
     }
 
     [Fact]

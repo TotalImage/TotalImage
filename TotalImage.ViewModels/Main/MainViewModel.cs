@@ -594,13 +594,15 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     partial void OnIsBusyChanged(bool value) => RefreshCommands();
 
+    /// <summary>
+    /// Releases the open image. Raises no change notifications: the view may already be gone.
+    /// </summary>
     public void Dispose()
     {
         if (Image is { } image)
         {
             image.PendingChanges.Changed -= OnPendingChangesChanged;
             image.Dispose();
-            Image = null;
         }
     }
 
