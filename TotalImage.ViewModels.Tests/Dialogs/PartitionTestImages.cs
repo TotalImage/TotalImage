@@ -127,7 +127,7 @@ internal sealed class PartitionTestImages : IDisposable
     /// <summary>
     /// A freshly formatted 360 KiB FAT12 volume with a DOS 4.0 BPB.
     /// </summary>
-    private static byte[] CreateFatVolume()
+    internal static byte[] CreateFatVolume()
     {
         var geometry = FloppyGeometry.KnownGeometries[FloppyGeometry.FriendlyName.DoubleDensity360k];
         var bpb = ExtendedBiosParameterBlock.FromGeometry(geometry, BiosParameterBlockVersion.Dos40, "TOTALIMG",

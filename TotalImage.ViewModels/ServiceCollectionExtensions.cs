@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ILauncherService, ProcessLauncherService>();
         services.AddSingleton<IAppInstances, ProcessAppInstances>();
         services.AddSingleton<IImageHashService, ImageHashService>();
+        services.AddSingleton<IImageFileService, ImageFileService>();
         return services;
     }
 }
