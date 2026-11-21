@@ -13,6 +13,7 @@ using TotalImage.Changes;
 using TotalImage.Controls;
 using TotalImage.Services;
 using TotalImage.ViewModels.Extraction;
+using TotalImage.ViewModels.Browsing;
 using TotalImage.ViewModels.Formatting;
 using TotalImage.ViewModels.Main;
 using TotalImage.ViewModels.Services;

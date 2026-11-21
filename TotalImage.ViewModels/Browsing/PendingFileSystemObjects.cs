@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using TotalImage.FileSystems;
 
-namespace TotalImage
+namespace TotalImage.ViewModels.Browsing
 {
     /// <summary>
     /// A read-only stand-in for a file that has been injected into the pending change set
-    /// but does not yet exist on disk. Used as the <c>Tag</c> on synthetic list-view items
-    /// so that all existing UI code paths can safely cast <c>Tag</c> to
-    /// <see cref="FileSystemObject"/> without null checks.
+    /// but does not yet exist on disk. The file list shows it as a pending entry, so code
+    /// that works with entries can treat it as any other <see cref="FileSystemObject"/>.
     /// </summary>
-    internal sealed class PendingFile : FileSystemObject
+    public sealed class PendingFile : FileSystemObject
     {
         private readonly string _name;
         private readonly ulong _length;
@@ -71,16 +70,16 @@ namespace TotalImage
 
     /// <summary>
     /// A read-only stand-in for a directory that has been created in the pending change set
-    /// but does not yet exist on disk. Used as the <c>Tag</c> on synthetic list-view items.
+    /// but does not yet exist on disk. Shown as a pending entry in the folder tree and the file list.
     /// </summary>
-    internal sealed class PendingDirectory : FileSystems.Directory
+    public sealed class PendingDirectory : FileSystems.Directory
     {
         private readonly string _name;
         private readonly string _fullName;
 
         /// <param name="name">The directory's short name (e.g. "NEWFOLDER").</param>
         /// <param name="parentFullName">FullName of the parent directory (e.g. "\" or "\SUB").
-        /// Used to construct a correct FullName so that FindNode can match this node.</param>
+        /// Used to construct a correct FullName so that the folder can be found by its path.</param>
         public PendingDirectory(string name, string parentFullName)
             : base(null!, null)   // no real FileSystem or parent
         {
