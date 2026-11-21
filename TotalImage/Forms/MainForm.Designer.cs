@@ -115,12 +115,12 @@ namespace TotalImage.Forms
             onlineDocumentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             statusBar = new System.Windows.Forms.StatusStrip();
-            lblStatusCapacity = new System.Windows.Forms.ToolStripStatusLabel();
-            lblStatusFreeCapacity = new System.Windows.Forms.ToolStripStatusLabel();
-            pbrStatusCapacity = new System.Windows.Forms.ToolStripProgressBar();
-            lblStatusSize = new System.Windows.Forms.ToolStripStatusLabel();
-            lbStatusPath = new System.Windows.Forms.ToolStripStatusLabel();
-            lblNotifications = new System.Windows.Forms.ToolStripButton();
+            partitionSizeLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            freeSpaceLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            freeSpaceProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            selectionSizeLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            locationLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            notificationsLabel = new System.Windows.Forms.ToolStripButton();
             commandBar = new System.Windows.Forms.ToolStrip();
             newToolStripButton = new System.Windows.Forms.ToolStripButton();
             openToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -135,7 +135,7 @@ namespace TotalImage.Forms
             deleteToolStripButton = new System.Windows.Forms.ToolStripButton();
             propertiesToolStripButton = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-            selectPartitionToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
+            partitionComboBox = new System.Windows.Forms.ToolStripComboBox();
             managePartitionsToolStripButton = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             labelToolStripMenuButton = new System.Windows.Forms.ToolStripButton();
@@ -220,7 +220,6 @@ namespace TotalImage.Forms
             expandDirectoryTreeToolStripMenuItem1.Name = "expandDirectoryTreeToolStripMenuItem1";
             expandDirectoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             expandDirectoryTreeToolStripMenuItem1.Text = "Expand directory tree";
-            expandDirectoryTreeToolStripMenuItem1.Click += expandDirectoryTree_Click;
             // 
             // collapseDirectoryTreeToolStripMenuItem1
             // 
@@ -228,7 +227,6 @@ namespace TotalImage.Forms
             collapseDirectoryTreeToolStripMenuItem1.Name = "collapseDirectoryTreeToolStripMenuItem1";
             collapseDirectoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             collapseDirectoryTreeToolStripMenuItem1.Text = "Collapse directory tree";
-            collapseDirectoryTreeToolStripMenuItem1.Click += collapseDirectoryTree_Click;
             // 
             // toolStripSeparator15
             // 
@@ -241,7 +239,6 @@ namespace TotalImage.Forms
             injectToolStripMenuItem1.Name = "injectToolStripMenuItem1";
             injectToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             injectToolStripMenuItem1.Text = "Inject files or folders...";
-            injectToolStripMenuItem1.Click += injectFiles_Click;
             // 
             // extractToolStripMenuItem1
             // 
@@ -250,7 +247,6 @@ namespace TotalImage.Forms
             extractToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X;
             extractToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             extractToolStripMenuItem1.Text = "Extract...";
-            extractToolStripMenuItem1.Click += extract_Click;
             // 
             // newFolderToolStripMenuItem1
             // 
@@ -259,7 +255,6 @@ namespace TotalImage.Forms
             newFolderToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.N;
             newFolderToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             newFolderToolStripMenuItem1.Text = "New folder...";
-            newFolderToolStripMenuItem1.Click += newFolder_Click;
             // 
             // deleteToolStripMenuItem1
             // 
@@ -268,7 +263,6 @@ namespace TotalImage.Forms
             deleteToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             deleteToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             deleteToolStripMenuItem1.Text = "Delete";
-            deleteToolStripMenuItem1.Click += delete_Click;
             // 
             // renameToolStripMenuItem1
             // 
@@ -277,7 +271,6 @@ namespace TotalImage.Forms
             renameToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.F2;
             renameToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             renameToolStripMenuItem1.Text = "Rename...";
-            renameToolStripMenuItem1.Click += rename_Click;
             // 
             // propertiesToolStripMenuItem1
             // 
@@ -286,7 +279,6 @@ namespace TotalImage.Forms
             propertiesToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Enter;
             propertiesToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             propertiesToolStripMenuItem1.Text = "Properties...";
-            propertiesToolStripMenuItem1.Click += properties_Click;
             // 
             // menuBar
             // 
@@ -306,37 +298,30 @@ namespace TotalImage.Forms
             cmsToolbars.Name = "cmsToolbars";
             cmsToolbars.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             cmsToolbars.Size = new System.Drawing.Size(152, 70);
-            cmsToolbars.Opening += cmsToolbars_Opening;
             // 
             // commandBarToolStripMenuItem1
             // 
             commandBarToolStripMenuItem1.Checked = true;
-            commandBarToolStripMenuItem1.CheckOnClick = true;
             commandBarToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             commandBarToolStripMenuItem1.Name = "commandBarToolStripMenuItem1";
             commandBarToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
             commandBarToolStripMenuItem1.Text = "Command bar";
-            commandBarToolStripMenuItem1.Click += toggleCommandBar_Click;
             // 
             // directoryTreeToolStripMenuItem1
             // 
             directoryTreeToolStripMenuItem1.Checked = true;
-            directoryTreeToolStripMenuItem1.CheckOnClick = true;
             directoryTreeToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             directoryTreeToolStripMenuItem1.Name = "directoryTreeToolStripMenuItem1";
             directoryTreeToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
             directoryTreeToolStripMenuItem1.Text = "Directory tree";
-            directoryTreeToolStripMenuItem1.Click += toggleDirectoryTree_Click;
             // 
             // statusBarToolStripMenuItem1
             // 
             statusBarToolStripMenuItem1.Checked = true;
-            statusBarToolStripMenuItem1.CheckOnClick = true;
             statusBarToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             statusBarToolStripMenuItem1.Name = "statusBarToolStripMenuItem1";
             statusBarToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
             statusBarToolStripMenuItem1.Text = "Status bar";
-            statusBarToolStripMenuItem1.Click += toggleStatusBar_Click;
             // 
             // fileToolStripMenuItem
             // 
@@ -345,7 +330,6 @@ namespace TotalImage.Forms
             fileToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F;
             fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             fileToolStripMenuItem.Text = "File";
-            fileToolStripMenuItem.DropDownOpening += fileToolStripMenuItem_DropDownOpening;
             // 
             // newToolStripMenuItem
             // 
@@ -354,7 +338,6 @@ namespace TotalImage.Forms
             newToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N;
             newToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             newToolStripMenuItem.Text = "New...";
-            newToolStripMenuItem.Click += newImage_Click;
             // 
             // openToolStripMenuItem
             // 
@@ -363,7 +346,6 @@ namespace TotalImage.Forms
             openToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O;
             openToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             openToolStripMenuItem.Text = "Open...";
-            openToolStripMenuItem.Click += openImage_Click;
             // 
             // saveToolStripMenuItem
             // 
@@ -372,7 +354,6 @@ namespace TotalImage.Forms
             saveToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
             saveToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             saveToolStripMenuItem.Text = "Save";
-            saveToolStripMenuItem.Click += save_Click;
             // 
             // saveAsToolStripMenuItem
             // 
@@ -381,7 +362,6 @@ namespace TotalImage.Forms
             saveAsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.S;
             saveAsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             saveAsToolStripMenuItem.Text = "Save as...";
-            saveAsToolStripMenuItem.Click += save_Click;
             // 
             // reloadImageToolStripMenuItem
             // 
@@ -389,7 +369,6 @@ namespace TotalImage.Forms
             reloadImageToolStripMenuItem.Name = "reloadImageToolStripMenuItem";
             reloadImageToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             reloadImageToolStripMenuItem.Text = "Reload image";
-            reloadImageToolStripMenuItem.Click += reloadImage_Click;
             // 
             // closeImageToolStripMenuItem
             // 
@@ -398,7 +377,6 @@ namespace TotalImage.Forms
             closeImageToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W;
             closeImageToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             closeImageToolStripMenuItem.Text = "Close image";
-            closeImageToolStripMenuItem.Click += closeImage_Click;
             // 
             // toolStripSeparator2
             // 
@@ -424,7 +402,6 @@ namespace TotalImage.Forms
             exitToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4;
             exitToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             exitToolStripMenuItem.Text = "Exit";
-            exitToolStripMenuItem.Click += exit_Click;
             // 
             // editToolStripMenuItem
             // 
@@ -433,7 +410,6 @@ namespace TotalImage.Forms
             editToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.E;
             editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             editToolStripMenuItem.Text = "Edit";
-            editToolStripMenuItem.DropDownOpening += editToolStripMenuItem_DropDownOpening;
             // 
             // selectAllToolStripMenuItem
             // 
@@ -441,7 +417,6 @@ namespace TotalImage.Forms
             selectAllToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
             selectAllToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             selectAllToolStripMenuItem.Text = "Select all";
-            selectAllToolStripMenuItem.Click += selectAll_Click;
             // 
             // toolStripSeparator23
             // 
@@ -455,7 +430,6 @@ namespace TotalImage.Forms
             injectToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Insert;
             injectToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             injectToolStripMenuItem.Text = "Inject files or folders...";
-            injectToolStripMenuItem.Click += injectFiles_Click;
             // 
             // extractToolStripMenuItem
             // 
@@ -464,7 +438,6 @@ namespace TotalImage.Forms
             extractToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X;
             extractToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             extractToolStripMenuItem.Text = "Extract...";
-            extractToolStripMenuItem.Click += extract_Click;
             // 
             // newFolderToolStripMenuItem
             // 
@@ -473,7 +446,6 @@ namespace TotalImage.Forms
             newFolderToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.N;
             newFolderToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             newFolderToolStripMenuItem.Text = "New folder...";
-            newFolderToolStripMenuItem.Click += newFolder_Click;
             // 
             // deleteToolStripMenuItem
             // 
@@ -482,7 +454,6 @@ namespace TotalImage.Forms
             deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             deleteToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             deleteToolStripMenuItem.Text = "Delete";
-            deleteToolStripMenuItem.Click += delete_Click;
             // 
             // renameToolStripMenuItem
             // 
@@ -491,7 +462,6 @@ namespace TotalImage.Forms
             renameToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
             renameToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             renameToolStripMenuItem.Text = "Rename...";
-            renameToolStripMenuItem.Click += rename_Click;
             // 
             // propertiesToolStripMenuItem
             // 
@@ -500,7 +470,6 @@ namespace TotalImage.Forms
             propertiesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Enter;
             propertiesToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             propertiesToolStripMenuItem.Text = "Properties...";
-            propertiesToolStripMenuItem.Click += properties_Click;
             // 
             // toolStripSeparator3
             // 
@@ -513,14 +482,12 @@ namespace TotalImage.Forms
             changeVolumeLabelToolStripMenuItem.Name = "changeVolumeLabelToolStripMenuItem";
             changeVolumeLabelToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             changeVolumeLabelToolStripMenuItem.Text = "Change volume label...";
-            changeVolumeLabelToolStripMenuItem.Click += changeVolumeLabel_Click;
             // 
             // changeGeometryToolStripMenuItem
             // 
             changeGeometryToolStripMenuItem.Name = "changeGeometryToolStripMenuItem";
             changeGeometryToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             changeGeometryToolStripMenuItem.Text = "Change floppy geometry...";
-            changeGeometryToolStripMenuItem.Click += changeFormat_Click;
             // 
             // defragmentToolStripMenuItem
             // 
@@ -528,14 +495,12 @@ namespace TotalImage.Forms
             defragmentToolStripMenuItem.Name = "defragmentToolStripMenuItem";
             defragmentToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             defragmentToolStripMenuItem.Text = "Defragment...";
-            defragmentToolStripMenuItem.Click += defragment_Click;
             // 
             // formatDiskToolStripMenuItem
             // 
             formatDiskToolStripMenuItem.Name = "formatDiskToolStripMenuItem";
             formatDiskToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             formatDiskToolStripMenuItem.Text = "Format disk/partition...";
-            formatDiskToolStripMenuItem.Click += format_Click;
             // 
             // bootSectorPropertiesToolStripMenuItem
             // 
@@ -543,7 +508,6 @@ namespace TotalImage.Forms
             bootSectorPropertiesToolStripMenuItem.Name = "bootSectorPropertiesToolStripMenuItem";
             bootSectorPropertiesToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             bootSectorPropertiesToolStripMenuItem.Text = "Boot sector properties...";
-            bootSectorPropertiesToolStripMenuItem.Click += bootSectorProperties_Click;
             // 
             // toolStripSeparator17
             // 
@@ -556,7 +520,6 @@ namespace TotalImage.Forms
             selectPartitionToolStripMenuItem.Name = "selectPartitionToolStripMenuItem";
             selectPartitionToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             selectPartitionToolStripMenuItem.Text = "Select partition...";
-            selectPartitionToolStripMenuItem.Click += selectPartitionToolStripMenuItem_Click;
             // 
             // managePartitionsToolStripMenuItem
             // 
@@ -564,7 +527,6 @@ namespace TotalImage.Forms
             managePartitionsToolStripMenuItem.Name = "managePartitionsToolStripMenuItem";
             managePartitionsToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             managePartitionsToolStripMenuItem.Text = "Manage partitions...";
-            managePartitionsToolStripMenuItem.Click += managePartitions_Click;
             // 
             // viewToolStripMenuItem
             // 
@@ -573,7 +535,6 @@ namespace TotalImage.Forms
             viewToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.V;
             viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             viewToolStripMenuItem.Text = "View";
-            viewToolStripMenuItem.DropDownOpening += viewMenu_DropDownOpening;
             // 
             // parentDirectoryToolStripMenuItem
             // 
@@ -581,7 +542,6 @@ namespace TotalImage.Forms
             parentDirectoryToolStripMenuItem.Name = "parentDirectoryToolStripMenuItem";
             parentDirectoryToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             parentDirectoryToolStripMenuItem.Text = "Parent directory";
-            parentDirectoryToolStripMenuItem.Click += parentDirectoryToolStripMenuItem_Click;
             // 
             // toolStripSeparator4
             // 
@@ -594,7 +554,6 @@ namespace TotalImage.Forms
             expandDirectoryTreeToolStripMenuItem.Name = "expandDirectoryTreeToolStripMenuItem";
             expandDirectoryTreeToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             expandDirectoryTreeToolStripMenuItem.Text = "Expand directory tree";
-            expandDirectoryTreeToolStripMenuItem.Click += expandDirectoryTree_Click;
             // 
             // collapseDirectoryTreeToolStripMenuItem
             // 
@@ -602,7 +561,6 @@ namespace TotalImage.Forms
             collapseDirectoryTreeToolStripMenuItem.Name = "collapseDirectoryTreeToolStripMenuItem";
             collapseDirectoryTreeToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             collapseDirectoryTreeToolStripMenuItem.Text = "Collapse directory tree";
-            collapseDirectoryTreeToolStripMenuItem.Click += collapseDirectoryTree_Click;
             // 
             // toolStripSeparator16
             // 
@@ -611,11 +569,9 @@ namespace TotalImage.Forms
             // 
             // showHiddenObjectsToolStripMenuItem
             // 
-            showHiddenObjectsToolStripMenuItem.CheckOnClick = true;
             showHiddenObjectsToolStripMenuItem.Name = "showHiddenObjectsToolStripMenuItem";
             showHiddenObjectsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             showHiddenObjectsToolStripMenuItem.Text = "Show hidden objects";
-            showHiddenObjectsToolStripMenuItem.Click += showHiddenItems_Click;
             // 
             // toolStripSeparator13
             // 
@@ -627,21 +583,18 @@ namespace TotalImage.Forms
             largeIconsToolStripMenuItem.Name = "largeIconsToolStripMenuItem";
             largeIconsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             largeIconsToolStripMenuItem.Text = "Large icons";
-            largeIconsToolStripMenuItem.Click += viewLargeIcons_Click;
             // 
             // smallIconsToolStripMenuItem
             // 
             smallIconsToolStripMenuItem.Name = "smallIconsToolStripMenuItem";
             smallIconsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             smallIconsToolStripMenuItem.Text = "Small icons";
-            smallIconsToolStripMenuItem.Click += viewSmallIcons_Click;
             // 
             // listToolStripMenuItem
             // 
             listToolStripMenuItem.Name = "listToolStripMenuItem";
             listToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             listToolStripMenuItem.Text = "List";
-            listToolStripMenuItem.Click += viewList_Click;
             // 
             // detailsToolStripMenuItem
             // 
@@ -650,7 +603,6 @@ namespace TotalImage.Forms
             detailsToolStripMenuItem.Name = "detailsToolStripMenuItem";
             detailsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             detailsToolStripMenuItem.Text = "Details";
-            detailsToolStripMenuItem.Click += viewDetails_Click;
             // 
             // toolStripSeparator6
             // 
@@ -670,35 +622,30 @@ namespace TotalImage.Forms
             nameToolStripMenuItem.Name = "nameToolStripMenuItem";
             nameToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             nameToolStripMenuItem.Text = "Name";
-            nameToolStripMenuItem.Click += sortByName_Click;
             // 
             // typeToolStripMenuItem
             // 
             typeToolStripMenuItem.Name = "typeToolStripMenuItem";
             typeToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             typeToolStripMenuItem.Text = "Type";
-            typeToolStripMenuItem.Click += sortByType_Click;
             // 
             // sizeToolStripMenuItem
             // 
             sizeToolStripMenuItem.Name = "sizeToolStripMenuItem";
             sizeToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             sizeToolStripMenuItem.Text = "Size";
-            sizeToolStripMenuItem.Click += sortBySize_Click;
             // 
             // modifiedToolStripMenuItem
             // 
             modifiedToolStripMenuItem.Name = "modifiedToolStripMenuItem";
             modifiedToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             modifiedToolStripMenuItem.Text = "Modified";
-            modifiedToolStripMenuItem.Click += sortByModified_Click;
             // 
             // attributesToolStripMenuItem
             // 
             attributesToolStripMenuItem.Name = "attributesToolStripMenuItem";
             attributesToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             attributesToolStripMenuItem.Text = "Attributes";
-            attributesToolStripMenuItem.Click += sortByAttributes_Click;
             // 
             // toolbarsToolStripMenuItem
             // 
@@ -721,32 +668,26 @@ namespace TotalImage.Forms
             // commandBarToolStripMenuItem
             // 
             commandBarToolStripMenuItem.Checked = true;
-            commandBarToolStripMenuItem.CheckOnClick = true;
             commandBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             commandBarToolStripMenuItem.Name = "commandBarToolStripMenuItem";
             commandBarToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             commandBarToolStripMenuItem.Text = "Command bar";
-            commandBarToolStripMenuItem.Click += toggleCommandBar_Click;
             // 
             // directoryTreeToolStripMenuItem
             // 
             directoryTreeToolStripMenuItem.Checked = true;
-            directoryTreeToolStripMenuItem.CheckOnClick = true;
             directoryTreeToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             directoryTreeToolStripMenuItem.Name = "directoryTreeToolStripMenuItem";
             directoryTreeToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             directoryTreeToolStripMenuItem.Text = "Directory tree";
-            directoryTreeToolStripMenuItem.Click += toggleDirectoryTree_Click;
             // 
             // statusBarToolStripMenuItem
             // 
             statusBarToolStripMenuItem.Checked = true;
-            statusBarToolStripMenuItem.CheckOnClick = true;
             statusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             statusBarToolStripMenuItem.Name = "statusBarToolStripMenuItem";
             statusBarToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             statusBarToolStripMenuItem.Text = "Status bar";
-            statusBarToolStripMenuItem.Click += toggleStatusBar_Click;
             // 
             // toolsToolStripMenuItem
             // 
@@ -754,14 +695,12 @@ namespace TotalImage.Forms
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             toolsToolStripMenuItem.Text = "Tools";
-            toolsToolStripMenuItem.DropDownOpening += toolsToolStripMenuItem_DropDownOpening;
             // 
             // deletedObjectsToolStripMenuItem
             // 
             deletedObjectsToolStripMenuItem.Name = "deletedObjectsToolStripMenuItem";
             deletedObjectsToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             deletedObjectsToolStripMenuItem.Text = "Deleted objects...";
-            deletedObjectsToolStripMenuItem.Click += deletedItemsToolStripMenuItem_Click;
             // 
             // hexViewToolStripMenuItem
             // 
@@ -769,7 +708,6 @@ namespace TotalImage.Forms
             hexViewToolStripMenuItem.Name = "hexViewToolStripMenuItem";
             hexViewToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             hexViewToolStripMenuItem.Text = "Hex view...";
-            hexViewToolStripMenuItem.Click += hexView_Click;
             // 
             // imageInformationToolStripMenuItem
             // 
@@ -777,7 +715,6 @@ namespace TotalImage.Forms
             imageInformationToolStripMenuItem.Name = "imageInformationToolStripMenuItem";
             imageInformationToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             imageInformationToolStripMenuItem.Text = "Image information...";
-            imageInformationToolStripMenuItem.Click += imageInformation_Click;
             // 
             // toolStripSeparator5
             // 
@@ -790,7 +727,6 @@ namespace TotalImage.Forms
             settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
             settingsToolStripMenuItem1.Size = new System.Drawing.Size(182, 22);
             settingsToolStripMenuItem1.Text = "Settings...";
-            settingsToolStripMenuItem1.Click += settings_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -813,12 +749,11 @@ namespace TotalImage.Forms
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             aboutToolStripMenuItem.Text = "About...";
-            aboutToolStripMenuItem.Click += about_Click;
             // 
             // statusBar
             // 
             statusBar.ContextMenuStrip = cmsToolbars;
-            statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { lblStatusCapacity, lblStatusFreeCapacity, pbrStatusCapacity, lblStatusSize, lbStatusPath, lblNotifications });
+            statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { partitionSizeLabel, freeSpaceLabel, freeSpaceProgressBar, selectionSizeLabel, locationLabel, notificationsLabel });
             statusBar.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             statusBar.Location = new System.Drawing.Point(0, 635);
             statusBar.Name = "statusBar";
@@ -827,52 +762,51 @@ namespace TotalImage.Forms
             statusBar.TabIndex = 1;
             statusBar.Text = "statusStrip1";
             // 
-            // lblStatusCapacity
+            // partitionSizeLabel
             // 
-            lblStatusCapacity.BackColor = System.Drawing.Color.Transparent;
-            lblStatusCapacity.Name = "lblStatusCapacity";
-            lblStatusCapacity.Size = new System.Drawing.Size(0, 21);
+            partitionSizeLabel.BackColor = System.Drawing.Color.Transparent;
+            partitionSizeLabel.Name = "partitionSizeLabel";
+            partitionSizeLabel.Size = new System.Drawing.Size(0, 21);
             // 
-            // lblStatusFreeCapacity
+            // freeSpaceLabel
             // 
-            lblStatusFreeCapacity.BackColor = System.Drawing.Color.Transparent;
-            lblStatusFreeCapacity.Name = "lblStatusFreeCapacity";
-            lblStatusFreeCapacity.Size = new System.Drawing.Size(0, 21);
+            freeSpaceLabel.BackColor = System.Drawing.Color.Transparent;
+            freeSpaceLabel.Name = "freeSpaceLabel";
+            freeSpaceLabel.Size = new System.Drawing.Size(0, 21);
             // 
-            // pbrStatusCapacity
+            // freeSpaceProgressBar
             // 
-            pbrStatusCapacity.Margin = new System.Windows.Forms.Padding(0, 3, 4, 2);
-            pbrStatusCapacity.Name = "pbrStatusCapacity";
-            pbrStatusCapacity.Size = new System.Drawing.Size(100, 21);
+            freeSpaceProgressBar.Margin = new System.Windows.Forms.Padding(0, 3, 4, 2);
+            freeSpaceProgressBar.Name = "freeSpaceProgressBar";
+            freeSpaceProgressBar.Size = new System.Drawing.Size(100, 21);
             // 
-            // lblStatusSize
+            // selectionSizeLabel
             // 
-            lblStatusSize.BackColor = System.Drawing.Color.Transparent;
-            lblStatusSize.Name = "lblStatusSize";
-            lblStatusSize.Size = new System.Drawing.Size(0, 21);
+            selectionSizeLabel.BackColor = System.Drawing.Color.Transparent;
+            selectionSizeLabel.Name = "selectionSizeLabel";
+            selectionSizeLabel.Size = new System.Drawing.Size(0, 21);
             // 
-            // lbStatusPath
+            // locationLabel
             // 
-            lbStatusPath.BackColor = System.Drawing.Color.Transparent;
-            lbStatusPath.Name = "lbStatusPath";
-            lbStatusPath.Size = new System.Drawing.Size(0, 21);
+            locationLabel.BackColor = System.Drawing.Color.Transparent;
+            locationLabel.Name = "locationLabel";
+            locationLabel.Size = new System.Drawing.Size(0, 21);
             // 
-            // lblNotifications
+            // notificationsLabel
             // 
-            lblNotifications.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            lblNotifications.Image = Properties.Resources.error;
-            lblNotifications.ImageTransparentColor = System.Drawing.Color.Magenta;
-            lblNotifications.Name = "lblNotifications";
-            lblNotifications.Size = new System.Drawing.Size(95, 24);
-            lblNotifications.Text = "Notifications";
-            lblNotifications.Visible = false;
-            lblNotifications.Click += lblNotifications_Click;
+            notificationsLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            notificationsLabel.Image = Properties.Resources.error;
+            notificationsLabel.ImageTransparentColor = System.Drawing.Color.Magenta;
+            notificationsLabel.Name = "notificationsLabel";
+            notificationsLabel.Size = new System.Drawing.Size(95, 24);
+            notificationsLabel.Text = "Notifications";
+            notificationsLabel.Visible = false;
             // 
             // commandBar
             // 
             commandBar.ContextMenuStrip = cmsToolbars;
             commandBar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            commandBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripButton, openToolStripButton, saveToolStripButton, saveAsToolStripButton, reloadImageToolStripButton, closeImageToolStripButton, toolStripSeparator8, injectToolStripButton, extractToolStripButton, newFolderToolStripButton, deleteToolStripButton, propertiesToolStripButton, toolStripSeparator9, selectPartitionToolStripComboBox, managePartitionsToolStripButton, toolStripSeparator11, labelToolStripMenuButton, bootsectToolStripButton, infoToolStripButton, toolStripSeparator10, parentDirectoryToolStripButton, viewToolStripButton, sortToolStripButton, toolStripSeparator12, settingsToolStripButton });
+            commandBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripButton, openToolStripButton, saveToolStripButton, saveAsToolStripButton, reloadImageToolStripButton, closeImageToolStripButton, toolStripSeparator8, injectToolStripButton, extractToolStripButton, newFolderToolStripButton, deleteToolStripButton, propertiesToolStripButton, toolStripSeparator9, partitionComboBox, managePartitionsToolStripButton, toolStripSeparator11, labelToolStripMenuButton, bootsectToolStripButton, infoToolStripButton, toolStripSeparator10, parentDirectoryToolStripButton, viewToolStripButton, sortToolStripButton, toolStripSeparator12, settingsToolStripButton });
             commandBar.Location = new System.Drawing.Point(0, 24);
             commandBar.Name = "commandBar";
             commandBar.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -889,7 +823,6 @@ namespace TotalImage.Forms
             newToolStripButton.Size = new System.Drawing.Size(23, 22);
             newToolStripButton.Text = "&New";
             newToolStripButton.ToolTipText = "New image...";
-            newToolStripButton.Click += newImage_Click;
             // 
             // openToolStripButton
             // 
@@ -900,7 +833,6 @@ namespace TotalImage.Forms
             openToolStripButton.Size = new System.Drawing.Size(23, 22);
             openToolStripButton.Text = "&Open";
             openToolStripButton.ToolTipText = "Open image...";
-            openToolStripButton.Click += openImage_Click;
             // 
             // saveToolStripButton
             // 
@@ -910,7 +842,6 @@ namespace TotalImage.Forms
             saveToolStripButton.Name = "saveToolStripButton";
             saveToolStripButton.Size = new System.Drawing.Size(23, 22);
             saveToolStripButton.Text = "&Save";
-            saveToolStripButton.Click += save_Click;
             // 
             // saveAsToolStripButton
             // 
@@ -920,7 +851,6 @@ namespace TotalImage.Forms
             saveAsToolStripButton.Name = "saveAsToolStripButton";
             saveAsToolStripButton.Size = new System.Drawing.Size(23, 22);
             saveAsToolStripButton.Text = "Save as";
-            saveAsToolStripButton.Click += save_Click;
             // 
             // reloadImageToolStripButton
             // 
@@ -930,7 +860,6 @@ namespace TotalImage.Forms
             reloadImageToolStripButton.Name = "reloadImageToolStripButton";
             reloadImageToolStripButton.Size = new System.Drawing.Size(23, 22);
             reloadImageToolStripButton.Text = "Reload image";
-            reloadImageToolStripButton.Click += reloadImage_Click;
             // 
             // closeImageToolStripButton
             // 
@@ -940,7 +869,6 @@ namespace TotalImage.Forms
             closeImageToolStripButton.Name = "closeImageToolStripButton";
             closeImageToolStripButton.Size = new System.Drawing.Size(23, 22);
             closeImageToolStripButton.Text = "Close image";
-            closeImageToolStripButton.Click += closeImage_Click;
             // 
             // toolStripSeparator8
             // 
@@ -956,7 +884,6 @@ namespace TotalImage.Forms
             injectToolStripButton.Size = new System.Drawing.Size(23, 22);
             injectToolStripButton.Text = "Inject files";
             injectToolStripButton.ToolTipText = "Inject files...";
-            injectToolStripButton.Click += injectFiles_Click;
             // 
             // extractToolStripButton
             // 
@@ -967,7 +894,6 @@ namespace TotalImage.Forms
             extractToolStripButton.Size = new System.Drawing.Size(23, 22);
             extractToolStripButton.Text = "Extract";
             extractToolStripButton.ToolTipText = "Extract...";
-            extractToolStripButton.Click += extract_Click;
             // 
             // newFolderToolStripButton
             // 
@@ -978,7 +904,6 @@ namespace TotalImage.Forms
             newFolderToolStripButton.Size = new System.Drawing.Size(23, 22);
             newFolderToolStripButton.Text = "New folder";
             newFolderToolStripButton.ToolTipText = "New folder...";
-            newFolderToolStripButton.Click += newFolder_Click;
             // 
             // deleteToolStripButton
             // 
@@ -988,7 +913,6 @@ namespace TotalImage.Forms
             deleteToolStripButton.Name = "deleteToolStripButton";
             deleteToolStripButton.Size = new System.Drawing.Size(23, 22);
             deleteToolStripButton.Text = "Delete";
-            deleteToolStripButton.Click += delete_Click;
             // 
             // propertiesToolStripButton
             // 
@@ -999,26 +923,25 @@ namespace TotalImage.Forms
             propertiesToolStripButton.Size = new System.Drawing.Size(23, 22);
             propertiesToolStripButton.Text = "Properties";
             propertiesToolStripButton.ToolTipText = "Properties...";
-            propertiesToolStripButton.Click += properties_Click;
             // 
             // toolStripSeparator9
             // 
             toolStripSeparator9.Name = "toolStripSeparator9";
             toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
             // 
-            // selectPartitionToolStripComboBox
+            // partitionComboBox
             // 
-            selectPartitionToolStripComboBox.AutoSize = false;
-            selectPartitionToolStripComboBox.AutoToolTip = true;
-            selectPartitionToolStripComboBox.DropDownHeight = 200;
-            selectPartitionToolStripComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            selectPartitionToolStripComboBox.DropDownWidth = 250;
-            selectPartitionToolStripComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
-            selectPartitionToolStripComboBox.IntegralHeight = false;
-            selectPartitionToolStripComboBox.MaxDropDownItems = 64;
-            selectPartitionToolStripComboBox.Name = "selectPartitionToolStripComboBox";
-            selectPartitionToolStripComboBox.Size = new System.Drawing.Size(250, 23);
-            selectPartitionToolStripComboBox.SelectedIndexChanged += selectPartitionToolStripComboBox_SelectedIndexChanged;
+            partitionComboBox.AutoSize = false;
+            partitionComboBox.AutoToolTip = true;
+            partitionComboBox.DropDownHeight = 200;
+            partitionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            partitionComboBox.DropDownWidth = 250;
+            partitionComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
+            partitionComboBox.IntegralHeight = false;
+            partitionComboBox.MaxDropDownItems = 64;
+            partitionComboBox.Name = "partitionComboBox";
+            partitionComboBox.Size = new System.Drawing.Size(250, 23);
+            partitionComboBox.SelectedIndexChanged += PartitionComboBox_SelectedIndexChanged;
             // 
             // managePartitionsToolStripButton
             // 
@@ -1029,7 +952,6 @@ namespace TotalImage.Forms
             managePartitionsToolStripButton.Size = new System.Drawing.Size(23, 22);
             managePartitionsToolStripButton.Text = "Manage partitions";
             managePartitionsToolStripButton.ToolTipText = "Manage partitions...";
-            managePartitionsToolStripButton.Click += managePartitions_Click;
             // 
             // toolStripSeparator11
             // 
@@ -1045,7 +967,6 @@ namespace TotalImage.Forms
             labelToolStripMenuButton.Size = new System.Drawing.Size(23, 22);
             labelToolStripMenuButton.Text = "Change volume label";
             labelToolStripMenuButton.ToolTipText = "Change volume label...";
-            labelToolStripMenuButton.Click += changeVolumeLabel_Click;
             // 
             // bootsectToolStripButton
             // 
@@ -1056,7 +977,6 @@ namespace TotalImage.Forms
             bootsectToolStripButton.Size = new System.Drawing.Size(23, 22);
             bootsectToolStripButton.Text = "Boot sector properties";
             bootsectToolStripButton.ToolTipText = "Boot sector properties...";
-            bootsectToolStripButton.Click += bootSectorProperties_Click;
             // 
             // infoToolStripButton
             // 
@@ -1067,7 +987,6 @@ namespace TotalImage.Forms
             infoToolStripButton.Size = new System.Drawing.Size(23, 22);
             infoToolStripButton.Text = "Image information";
             infoToolStripButton.ToolTipText = "Image information...";
-            infoToolStripButton.Click += imageInformation_Click;
             // 
             // toolStripSeparator10
             // 
@@ -1082,7 +1001,6 @@ namespace TotalImage.Forms
             parentDirectoryToolStripButton.Name = "parentDirectoryToolStripButton";
             parentDirectoryToolStripButton.Size = new System.Drawing.Size(23, 22);
             parentDirectoryToolStripButton.Text = "Parent directory";
-            parentDirectoryToolStripButton.Click += parentDirectoryToolStripButton_Click;
             // 
             // viewToolStripButton
             // 
@@ -1093,15 +1011,12 @@ namespace TotalImage.Forms
             viewToolStripButton.Name = "viewToolStripButton";
             viewToolStripButton.Size = new System.Drawing.Size(29, 22);
             viewToolStripButton.Text = "View";
-            viewToolStripButton.DropDownOpening += viewToolStripButton_DropDownOpening;
             // 
             // showHiddenObjectsToolStripMenuItem1
             // 
-            showHiddenObjectsToolStripMenuItem1.CheckOnClick = true;
             showHiddenObjectsToolStripMenuItem1.Name = "showHiddenObjectsToolStripMenuItem1";
             showHiddenObjectsToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
             showHiddenObjectsToolStripMenuItem1.Text = "Show hidden objects";
-            showHiddenObjectsToolStripMenuItem1.Click += showHiddenItems_Click;
             // 
             // toolStripSeparator14
             // 
@@ -1113,21 +1028,18 @@ namespace TotalImage.Forms
             largeIconsToolStripMenuItem1.Name = "largeIconsToolStripMenuItem1";
             largeIconsToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
             largeIconsToolStripMenuItem1.Text = "Large icons";
-            largeIconsToolStripMenuItem1.Click += viewLargeIcons_Click;
             // 
             // smallIconsToolStripMenuItem1
             // 
             smallIconsToolStripMenuItem1.Name = "smallIconsToolStripMenuItem1";
             smallIconsToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
             smallIconsToolStripMenuItem1.Text = "Small icons";
-            smallIconsToolStripMenuItem1.Click += viewSmallIcons_Click;
             // 
             // listToolStripMenuItem1
             // 
             listToolStripMenuItem1.Name = "listToolStripMenuItem1";
             listToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
             listToolStripMenuItem1.Text = "List";
-            listToolStripMenuItem1.Click += viewList_Click;
             // 
             // detailsToolStripMenuItem1
             // 
@@ -1136,7 +1048,6 @@ namespace TotalImage.Forms
             detailsToolStripMenuItem1.Name = "detailsToolStripMenuItem1";
             detailsToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
             detailsToolStripMenuItem1.Text = "Details";
-            detailsToolStripMenuItem1.Click += viewDetails_Click;
             // 
             // sortToolStripButton
             // 
@@ -1147,42 +1058,36 @@ namespace TotalImage.Forms
             sortToolStripButton.Name = "sortToolStripButton";
             sortToolStripButton.Size = new System.Drawing.Size(29, 22);
             sortToolStripButton.Text = "Sort by";
-            sortToolStripButton.DropDownOpening += sortMenu_DropDownOpening;
             // 
             // nameToolStripMenuItem1
             // 
             nameToolStripMenuItem1.Name = "nameToolStripMenuItem1";
             nameToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             nameToolStripMenuItem1.Text = "Name";
-            nameToolStripMenuItem1.Click += sortByName_Click;
             // 
             // typeToolStripMenuItem1
             // 
             typeToolStripMenuItem1.Name = "typeToolStripMenuItem1";
             typeToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             typeToolStripMenuItem1.Text = "Type";
-            typeToolStripMenuItem1.Click += sortByType_Click;
             // 
             // sizeToolStripMenuItem1
             // 
             sizeToolStripMenuItem1.Name = "sizeToolStripMenuItem1";
             sizeToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             sizeToolStripMenuItem1.Text = "Size";
-            sizeToolStripMenuItem1.Click += sortBySize_Click;
             // 
             // modifiedToolStripMenuItem1
             // 
             modifiedToolStripMenuItem1.Name = "modifiedToolStripMenuItem1";
             modifiedToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             modifiedToolStripMenuItem1.Text = "Modified";
-            modifiedToolStripMenuItem1.Click += sortByModified_Click;
             // 
             // attributesToolStripMenuItem1
             // 
             attributesToolStripMenuItem1.Name = "attributesToolStripMenuItem1";
             attributesToolStripMenuItem1.Size = new System.Drawing.Size(126, 22);
             attributesToolStripMenuItem1.Text = "Attributes";
-            attributesToolStripMenuItem1.Click += sortByAttributes_Click;
             // 
             // toolStripSeparator12
             // 
@@ -1198,7 +1103,6 @@ namespace TotalImage.Forms
             settingsToolStripButton.Size = new System.Drawing.Size(23, 22);
             settingsToolStripButton.Text = "Settings";
             settingsToolStripButton.ToolTipText = "Settings...";
-            settingsToolStripButton.Click += settings_Click;
             // 
             // splitContainer
             // 
@@ -1339,7 +1243,6 @@ namespace TotalImage.Forms
             parentDirectoryToolStripMenuItem1.Name = "parentDirectoryToolStripMenuItem1";
             parentDirectoryToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             parentDirectoryToolStripMenuItem1.Text = "Parent directory";
-            parentDirectoryToolStripMenuItem1.Click += parentDirectoryToolStripMenuItem1_Click;
             // 
             // toolStripSeparator7
             // 
@@ -1359,7 +1262,6 @@ namespace TotalImage.Forms
             showHiddenObjectsToolStripMenuItem2.Name = "showHiddenObjectsToolStripMenuItem2";
             showHiddenObjectsToolStripMenuItem2.Size = new System.Drawing.Size(184, 22);
             showHiddenObjectsToolStripMenuItem2.Text = "Show hidden objects";
-            showHiddenObjectsToolStripMenuItem2.Click += showHiddenItems_Click;
             // 
             // toolStripSeparator19
             // 
@@ -1371,28 +1273,24 @@ namespace TotalImage.Forms
             largeIconsToolStripMenuItem2.Name = "largeIconsToolStripMenuItem2";
             largeIconsToolStripMenuItem2.Size = new System.Drawing.Size(184, 22);
             largeIconsToolStripMenuItem2.Text = "Large icons";
-            largeIconsToolStripMenuItem2.Click += viewLargeIcons_Click;
             // 
             // smallIconsToolStripMenuItem2
             // 
             smallIconsToolStripMenuItem2.Name = "smallIconsToolStripMenuItem2";
             smallIconsToolStripMenuItem2.Size = new System.Drawing.Size(184, 22);
             smallIconsToolStripMenuItem2.Text = "Small icons";
-            smallIconsToolStripMenuItem2.Click += viewSmallIcons_Click;
             // 
             // listToolStripMenuItem2
             // 
             listToolStripMenuItem2.Name = "listToolStripMenuItem2";
             listToolStripMenuItem2.Size = new System.Drawing.Size(184, 22);
             listToolStripMenuItem2.Text = "List";
-            listToolStripMenuItem2.Click += viewList_Click;
             // 
             // detailsToolStripMenuItem2
             // 
             detailsToolStripMenuItem2.Name = "detailsToolStripMenuItem2";
             detailsToolStripMenuItem2.Size = new System.Drawing.Size(184, 22);
             detailsToolStripMenuItem2.Text = "Details";
-            detailsToolStripMenuItem2.Click += viewDetails_Click;
             // 
             // sortByToolStripMenuItem1
             // 
@@ -1407,35 +1305,30 @@ namespace TotalImage.Forms
             nameToolStripMenuItem2.Name = "nameToolStripMenuItem2";
             nameToolStripMenuItem2.Size = new System.Drawing.Size(126, 22);
             nameToolStripMenuItem2.Text = "Name";
-            nameToolStripMenuItem2.Click += sortByName_Click;
             // 
             // typeToolStripMenuItem2
             // 
             typeToolStripMenuItem2.Name = "typeToolStripMenuItem2";
             typeToolStripMenuItem2.Size = new System.Drawing.Size(126, 22);
             typeToolStripMenuItem2.Text = "Type";
-            typeToolStripMenuItem2.Click += sortByType_Click;
             // 
             // sizeToolStripMenuItem2
             // 
             sizeToolStripMenuItem2.Name = "sizeToolStripMenuItem2";
             sizeToolStripMenuItem2.Size = new System.Drawing.Size(126, 22);
             sizeToolStripMenuItem2.Text = "Size";
-            sizeToolStripMenuItem2.Click += sortBySize_Click;
             // 
             // modifiedToolStripMenuItem2
             // 
             modifiedToolStripMenuItem2.Name = "modifiedToolStripMenuItem2";
             modifiedToolStripMenuItem2.Size = new System.Drawing.Size(126, 22);
             modifiedToolStripMenuItem2.Text = "Modified";
-            modifiedToolStripMenuItem2.Click += sortByModified_Click;
             // 
             // attributesToolStripMenuItem2
             // 
             attributesToolStripMenuItem2.Name = "attributesToolStripMenuItem2";
             attributesToolStripMenuItem2.Size = new System.Drawing.Size(126, 22);
             attributesToolStripMenuItem2.Text = "Attributes";
-            attributesToolStripMenuItem2.Click += sortByAttributes_Click;
             // 
             // toolStripSeparator18
             // 
@@ -1448,7 +1341,6 @@ namespace TotalImage.Forms
             selectAllToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A;
             selectAllToolStripMenuItem1.Size = new System.Drawing.Size(216, 22);
             selectAllToolStripMenuItem1.Text = "Select all";
-            selectAllToolStripMenuItem1.Click += selectAll_Click;
             // 
             // toolStripSeparator22
             // 
@@ -1461,7 +1353,6 @@ namespace TotalImage.Forms
             injectToolStripMenuItem2.Name = "injectToolStripMenuItem2";
             injectToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             injectToolStripMenuItem2.Text = "Inject files or folders...";
-            injectToolStripMenuItem2.Click += injectFiles_Click;
             // 
             // extractToolStripMenuItem2
             // 
@@ -1470,7 +1361,6 @@ namespace TotalImage.Forms
             extractToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X;
             extractToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             extractToolStripMenuItem2.Text = "Extract...";
-            extractToolStripMenuItem2.Click += extract_Click;
             // 
             // newFolderToolStripMenuItem2
             // 
@@ -1479,7 +1369,6 @@ namespace TotalImage.Forms
             newFolderToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.N;
             newFolderToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             newFolderToolStripMenuItem2.Text = "New folder...";
-            newFolderToolStripMenuItem2.Click += newFolder_Click;
             // 
             // deleteToolStripMenuItem2
             // 
@@ -1488,7 +1377,6 @@ namespace TotalImage.Forms
             deleteToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             deleteToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             deleteToolStripMenuItem2.Text = "Delete";
-            deleteToolStripMenuItem2.Click += delete_Click;
             // 
             // renameToolStripMenuItem2
             // 
@@ -1497,7 +1385,6 @@ namespace TotalImage.Forms
             renameToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.F2;
             renameToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             renameToolStripMenuItem2.Text = "Rename...";
-            renameToolStripMenuItem2.Click += rename_Click;
             // 
             // propertiesToolStripMenuItem2
             // 
@@ -1506,7 +1393,6 @@ namespace TotalImage.Forms
             propertiesToolStripMenuItem2.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Enter;
             propertiesToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             propertiesToolStripMenuItem2.Text = "Properties...";
-            propertiesToolStripMenuItem2.Click += properties_Click;
             // 
             // imgFilesLarge
             // 
@@ -1519,7 +1405,6 @@ namespace TotalImage.Forms
             openContainingFolderToolStripMenuItem.Name = "openContainingFolderToolStripMenuItem";
             openContainingFolderToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             openContainingFolderToolStripMenuItem.Text = "Open containing folder...";
-            openContainingFolderToolStripMenuItem.Click += openContainingFolderToolStripMenuItem_Click;
             // 
             // MainForm
             // 
@@ -1538,9 +1423,8 @@ namespace TotalImage.Forms
             Name = "MainForm";
             StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             Text = "TotalImage";
-            FormClosing += frmMain_FormClosing;
-            Load += frmMain_Load;
-            KeyUp += frmMain_KeyUp;
+            FormClosing += MainForm_FormClosing;
+            Load += MainForm_Load;
             cmsDirTree.ResumeLayout(false);
             menuBar.ResumeLayout(false);
             menuBar.PerformLayout();
@@ -1592,7 +1476,7 @@ namespace TotalImage.Forms
         private System.Windows.Forms.ColumnHeader clmSize;
         private System.Windows.Forms.ColumnHeader clmType;
         private System.Windows.Forms.ColumnHeader clmModified;
-        private System.Windows.Forms.ToolStripStatusLabel lblStatusCapacity;
+        private System.Windows.Forms.ToolStripStatusLabel partitionSizeLabel;
         private System.Windows.Forms.ToolStripMenuItem selectPartitionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem managePartitionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem largeIconsToolStripMenuItem;
@@ -1662,8 +1546,8 @@ namespace TotalImage.Forms
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
         private System.Windows.Forms.ToolStripMenuItem showHiddenObjectsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
-        private System.Windows.Forms.ToolStripStatusLabel lblStatusSize;
-        private System.Windows.Forms.ToolStripStatusLabel lbStatusPath;
+        private System.Windows.Forms.ToolStripStatusLabel selectionSizeLabel;
+        private System.Windows.Forms.ToolStripStatusLabel locationLabel;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem changeGeometryToolStripMenuItem;
@@ -1672,7 +1556,7 @@ namespace TotalImage.Forms
         private System.Windows.Forms.ToolStripMenuItem expandDirectoryTreeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem collapseDirectoryTreeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
-        private System.Windows.Forms.ToolStripComboBox selectPartitionToolStripComboBox;
+        private System.Windows.Forms.ToolStripComboBox partitionComboBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageInformationToolStripMenuItem;
@@ -1681,9 +1565,9 @@ namespace TotalImage.Forms
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator17;
         private System.Windows.Forms.ToolStripMenuItem hexViewToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader clmAttributes;
-        private System.Windows.Forms.ToolStripStatusLabel lblStatusFreeCapacity;
-        private System.Windows.Forms.ToolStripProgressBar pbrStatusCapacity;
-        private System.Windows.Forms.ToolStripButton lblNotifications;
+        private System.Windows.Forms.ToolStripStatusLabel freeSpaceLabel;
+        private System.Windows.Forms.ToolStripProgressBar freeSpaceProgressBar;
+        private System.Windows.Forms.ToolStripButton notificationsLabel;
         internal System.Windows.Forms.ImageList imgFilesSmall;
         internal System.Windows.Forms.ImageList imgFilesLarge;
         private System.Windows.Forms.ToolStripMenuItem parentDirectoryToolStripMenuItem;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace TotalImage.Controls
 {
@@ -44,6 +45,52 @@ namespace TotalImage.Controls
                     UpdateControl();
             };
         }
+
+        /// <summary>
+        /// Runs <paramref name="apply"/> now and whenever a view-model property changes. For
+        /// targets that can't be data-bound, such as tool strip items or a form's state.
+        /// </summary>
+        public static void Observe(this INotifyPropertyChanged source, string sourceProperty, Action apply)
+        {
+            apply();
+            source.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == sourceProperty)
+                    apply();
+            };
+        }
+
+        /// <summary>
+        /// Binds menu items and tool strip buttons to a command: clicking them runs it, and they
+        /// are enabled while it can run.
+        /// </summary>
+        public static void BindCommand(this ICommand command, params ToolStripItem[] items)
+            => command.BindCommand(null, items);
+
+        /// <summary>
+        /// Binds menu items and tool strip buttons to a command with a parameter.
+        /// </summary>
+        public static void BindCommand(this ICommand command, object? parameter, params ToolStripItem[] items)
+        {
+            foreach (var item in items)
+            {
+                // The parameter first, so the first CanExecute query already gets it.
+                item.CommandParameter = parameter;
+                item.Command = command;
+            }
+        }
+
+        /// <summary>
+        /// Checks menu items while <paramref name="isChecked"/> is true, re-evaluated whenever a
+        /// view-model property changes.
+        /// </summary>
+        public static void BindChecked(this INotifyPropertyChanged source, string sourceProperty, Func<bool> isChecked, params ToolStripMenuItem[] items)
+            => source.Observe(sourceProperty, () =>
+            {
+                var value = isChecked();
+                foreach (var item in items)
+                    item.Checked = value;
+            });
 
         /// <summary>
         /// Binds a control property to a property of an object that never changes.

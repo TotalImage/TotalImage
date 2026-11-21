@@ -10,46 +10,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Changes;
-using TotalImage.Containers;
-using TotalImage.Containers.NHD;
-using TotalImage.Containers.VHD;
-using TotalImage.Containers.Anex86;
-using TotalImage.Containers.TAP;
 using TotalImage.Controls;
-using TotalImage.Dialogs;
 using TotalImage.Services;
 using TotalImage.ViewModels.Extraction;
 using TotalImage.ViewModels.Formatting;
+using TotalImage.ViewModels.Main;
 using TotalImage.ViewModels.Services;
 using TotalImage.ViewModels.Settings;
 using TotalImage.ViewModels.Sorting;
-using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using TiDirectory = TotalImage.FileSystems.Directory;
 using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
 namespace TotalImage.Forms
 {
-    enum StatusBarState
+    public partial class MainForm : Form, IMainViewBridge
     {
-        NoneSelected,
-        OneSelected,
-        MultipleSelected
-    }
-
-    public partial class MainForm : Form
-    {
-        private int sortColumn;
-        private SortOrder sortOrder;
         private TiDirectory? lastViewedDir;
-        private string? lastSavedFilename;
         private TiDirectory? draggedDir;
 
-        public string filename = "";
-        public string filepath = "";
-        public bool unsavedChanges = false;
-        public Container? image;
-        public int CurrentPartitionIndex;
         public string tempDir;
 
         // Cached fonts to avoid allocating a new GDI Font object per list item
@@ -58,10 +37,6 @@ namespace TotalImage.Forms
         // Cached image list indices, populated after icons are loaded
         private int _smallFolderIndex = -1;
         private int _smallFolderHiddenIndex = -1;
-
-        // Cache for the NoneSelected status bar size text to avoid a recursive GetSize() on every selection change
-        private TiDirectory? _cachedStatusBarDir;
-        private string _cachedStatusBarSizeText = string.Empty;
 
         // Shared ColorMatrix/ImageAttributes used by CreateHiddenIcon - constructed once
         private static readonly ColorMatrix _hiddenIconColorMatrix = new() { Matrix33 = 0.65f };
@@ -80,24 +55,28 @@ namespace TotalImage.Forms
         private char _lastTypeAheadChar = '\0';
         private int _lastTypeAheadIndex = -1;
 
+        // TEMPORARY (stage 5): the pane that has (or last had) the focus, reported to the view model.
+        private BrowsePane focusedPane = BrowsePane.Files;
+
+        // Set while the partition combo box is filled from the view model.
+        private bool updatingPartitionComboBox;
+
+        private readonly MainViewModel viewModel;
         private readonly ISettingsService settings;
         private readonly ITempDirectoryService tempDirectory;
         private readonly UIStateService uiState;
         private readonly IEntryDialogs entryDialogs;
-        private readonly IImageDialogs imageDialogs;
-        private readonly IAppDialogs appDialogs;
-        private readonly IMessageService messages;
+        private readonly IFilePickerService filePicker;
 
-        public MainForm(ISettingsService settings, ITempDirectoryService tempDirectory, UIStateService uiState, DialogOwner dialogOwner,
-            IEntryDialogs entryDialogs, IImageDialogs imageDialogs, IAppDialogs appDialogs, IMessageService messages)
+        public MainForm(MainViewModel viewModel, ISettingsService settings, ITempDirectoryService tempDirectory, UIStateService uiState,
+            DialogOwner dialogOwner, IEntryDialogs entryDialogs, IFilePickerService filePicker)
         {
+            this.viewModel = viewModel;
             this.settings = settings;
             this.tempDirectory = tempDirectory;
             this.uiState = uiState;
             this.entryDialogs = entryDialogs;
-            this.imageDialogs = imageDialogs;
-            this.appDialogs = appDialogs;
-            this.messages = messages;
+            this.filePicker = filePicker;
             dialogOwner.Window = this;
 
             InitializeComponent();
@@ -108,213 +87,262 @@ namespace TotalImage.Forms
                 imgFilesSmall.ImageSize = new SizeF(16 * (g.DpiX / 96f), 16 * (g.DpiY / 96f)).ToSize();
                 imgFilesLarge.ImageSize = new SizeF(32 * (g.DpiX / 96f), 32 * (g.DpiY / 96f)).ToSize();
             }
+
+            viewModel.View = this;
+            BindCommands();
         }
 
+        #region View model bindings
+
+        private void BindCommands()
+        {
+            var vm = viewModel;
+
+            // File
+            vm.NewImageCommand.BindCommand(newToolStripMenuItem, newToolStripButton);
+            vm.OpenImageCommand.BindCommand(openToolStripMenuItem, openToolStripButton);
+            vm.OpenContainingFolderCommand.BindCommand(openContainingFolderToolStripMenuItem);
+            vm.SaveCommand.BindCommand(saveToolStripMenuItem, saveToolStripButton);
+            vm.SaveAsCommand.BindCommand(saveAsToolStripMenuItem, saveAsToolStripButton);
+            vm.ReloadImageCommand.BindCommand(reloadImageToolStripMenuItem, reloadImageToolStripButton);
+            vm.CloseImageCommand.BindCommand(closeImageToolStripMenuItem, closeImageToolStripButton);
+            vm.ExitCommand.BindCommand(exitToolStripMenuItem);
+
+            // Edit and the context menus
+            vm.SelectAllCommand.BindCommand(selectAllToolStripMenuItem, selectAllToolStripMenuItem1);
+            vm.InjectFilesCommand.BindCommand(injectToolStripMenuItem, injectToolStripMenuItem1, injectToolStripMenuItem2, injectToolStripButton);
+            vm.ExtractCommand.BindCommand(extractToolStripMenuItem, extractToolStripMenuItem1, extractToolStripMenuItem2, extractToolStripButton);
+            vm.NewFolderCommand.BindCommand(newFolderToolStripMenuItem, newFolderToolStripMenuItem1, newFolderToolStripMenuItem2, newFolderToolStripButton);
+            vm.DeleteCommand.BindCommand(deleteToolStripMenuItem, deleteToolStripMenuItem1, deleteToolStripMenuItem2, deleteToolStripButton);
+            vm.RenameCommand.BindCommand(renameToolStripMenuItem, renameToolStripMenuItem1, renameToolStripMenuItem2);
+            vm.ShowPropertiesCommand.BindCommand(propertiesToolStripMenuItem, propertiesToolStripMenuItem1, propertiesToolStripMenuItem2, propertiesToolStripButton);
+            vm.ChangeVolumeLabelCommand.BindCommand(changeVolumeLabelToolStripMenuItem, labelToolStripMenuButton);
+            vm.ChangeFormatCommand.BindCommand(changeGeometryToolStripMenuItem);
+            vm.DefragmentCommand.BindCommand(defragmentToolStripMenuItem);
+            vm.FormatCommand.BindCommand(formatDiskToolStripMenuItem);
+            vm.ShowBootSectorCommand.BindCommand(bootSectorPropertiesToolStripMenuItem, bootsectToolStripButton);
+            vm.ChoosePartitionCommand.BindCommand(selectPartitionToolStripMenuItem);
+            vm.ManagePartitionsCommand.BindCommand(managePartitionsToolStripMenuItem, managePartitionsToolStripButton);
+
+            // View
+            vm.GoToParentFolderCommand.BindCommand(parentDirectoryToolStripMenuItem, parentDirectoryToolStripMenuItem1, parentDirectoryToolStripButton);
+            vm.ExpandFolderTreeCommand.BindCommand(expandDirectoryTreeToolStripMenuItem, expandDirectoryTreeToolStripMenuItem1);
+            vm.CollapseFolderTreeCommand.BindCommand(collapseDirectoryTreeToolStripMenuItem, collapseDirectoryTreeToolStripMenuItem1);
+            vm.ToggleShowHiddenItemsCommand.BindCommand(showHiddenObjectsToolStripMenuItem, showHiddenObjectsToolStripMenuItem1, showHiddenObjectsToolStripMenuItem2);
+            vm.ToggleCommandBarCommand.BindCommand(commandBarToolStripMenuItem, commandBarToolStripMenuItem1);
+            vm.ToggleDirectoryTreeCommand.BindCommand(directoryTreeToolStripMenuItem, directoryTreeToolStripMenuItem1);
+            vm.ToggleStatusBarCommand.BindCommand(statusBarToolStripMenuItem, statusBarToolStripMenuItem1);
+
+            foreach (var (mode, items) in ViewModeItems)
+                vm.SetViewModeCommand.BindCommand(mode, items);
+
+            // Item i sorts by file list column i.
+            for (int column = 0; column < SortItems.Length; column++)
+                vm.SortByCommand.BindCommand(column, SortItems[column]);
+
+            // Tools and help
+            vm.ShowDeletedObjectsCommand.BindCommand(deletedObjectsToolStripMenuItem);
+            vm.ShowHexViewCommand.BindCommand(hexViewToolStripMenuItem);
+            vm.ShowImageInformationCommand.BindCommand(imageInformationToolStripMenuItem, infoToolStripButton);
+            vm.ShowSettingsCommand.BindCommand(settingsToolStripMenuItem1, settingsToolStripButton);
+            vm.ShowAboutCommand.BindCommand(aboutToolStripMenuItem);
+            vm.ShowNotificationsCommand.BindCommand(notificationsLabel);
+        }
+
+        private (ViewMode Mode, ToolStripMenuItem[] Items)[] ViewModeItems =>
+        [
+            (ViewMode.LargeIcon, [largeIconsToolStripMenuItem, largeIconsToolStripMenuItem1, largeIconsToolStripMenuItem2]),
+            (ViewMode.SmallIcon, [smallIconsToolStripMenuItem, smallIconsToolStripMenuItem1, smallIconsToolStripMenuItem2]),
+            (ViewMode.List, [listToolStripMenuItem, listToolStripMenuItem1, listToolStripMenuItem2]),
+            (ViewMode.Details, [detailsToolStripMenuItem, detailsToolStripMenuItem1, detailsToolStripMenuItem2])
+        ];
+
+        // The sort menu items of each file list column, in column order.
+        private ToolStripMenuItem[][] SortItems =>
+        [
+            [nameToolStripMenuItem, nameToolStripMenuItem1, nameToolStripMenuItem2],
+            [typeToolStripMenuItem, typeToolStripMenuItem1, typeToolStripMenuItem2],
+            [sizeToolStripMenuItem, sizeToolStripMenuItem1, sizeToolStripMenuItem2],
+            [modifiedToolStripMenuItem, modifiedToolStripMenuItem1, modifiedToolStripMenuItem2],
+            [attributesToolStripMenuItem, attributesToolStripMenuItem1, attributesToolStripMenuItem2]
+        ];
+
+        // Bound once the window exists (from Load), so the controls can be updated right away.
+        private void BindState()
+        {
+            var vm = viewModel;
+
+            vm.Observe(nameof(MainViewModel.Title), () => Text = vm.Title);
+
+            // View options
+            vm.Observe(nameof(MainViewModel.ViewMode), () => lstFiles.View = vm.ViewMode.ToWinForms());
+            vm.Observe(nameof(MainViewModel.ShowCommandBar), () => commandBar.Visible = vm.ShowCommandBar);
+            vm.Observe(nameof(MainViewModel.ShowDirectoryTree), () => splitContainer.Panel1Collapsed = !vm.ShowDirectoryTree);
+            vm.Observe(nameof(MainViewModel.ShowStatusBar), () => statusBar.Visible = vm.ShowStatusBar);
+            vm.Observe(nameof(MainViewModel.ShowHiddenItems), ResetView);
+            vm.Observe(nameof(MainViewModel.SortColumn), SortListView);
+            vm.Observe(nameof(MainViewModel.SortDirection), SortListView);
+
+            vm.BindChecked(nameof(MainViewModel.ShowHiddenItems), () => vm.ShowHiddenItems,
+                showHiddenObjectsToolStripMenuItem, showHiddenObjectsToolStripMenuItem1, showHiddenObjectsToolStripMenuItem2);
+            vm.BindChecked(nameof(MainViewModel.ShowCommandBar), () => vm.ShowCommandBar, commandBarToolStripMenuItem, commandBarToolStripMenuItem1);
+            vm.BindChecked(nameof(MainViewModel.ShowDirectoryTree), () => vm.ShowDirectoryTree, directoryTreeToolStripMenuItem, directoryTreeToolStripMenuItem1);
+            vm.BindChecked(nameof(MainViewModel.ShowStatusBar), () => vm.ShowStatusBar, statusBarToolStripMenuItem, statusBarToolStripMenuItem1);
+            foreach (var (mode, items) in ViewModeItems)
+                vm.BindChecked(nameof(MainViewModel.ViewMode), () => vm.ViewMode == mode, items);
+            var sortItems = SortItems;
+            for (int column = 0; column < sortItems.Length; column++)
+            {
+                var sortColumn = column;
+                vm.BindChecked(nameof(MainViewModel.SortColumn), () => vm.SortColumn == sortColumn, sortItems[column]);
+            }
+
+            // Image session
+            vm.Observe(nameof(MainViewModel.RecentImages), PopulateRecentList);
+            vm.Observe(nameof(MainViewModel.Partitions), SyncPartitionComboBox);
+            vm.Observe(nameof(MainViewModel.CurrentPartitionIndex), SyncPartitionComboBox);
+            vm.Observe(nameof(MainViewModel.CurrentFileSystem), LoadPartition);
+            vm.Observe(nameof(MainViewModel.IsImageOpen), () =>
+            {
+                var open = vm.IsImageOpen;
+                partitionComboBox.Enabled = open;
+                freeSpaceProgressBar.Visible = open;
+
+                // Border sides give the status bar children separator-like looks while an image is open.
+                partitionSizeLabel.BorderSides = open ? ToolStripStatusLabelBorderSides.Right : ToolStripStatusLabelBorderSides.None;
+                selectionSizeLabel.BorderSides = open ? ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right : ToolStripStatusLabelBorderSides.None;
+            });
+            vm.ContentsChanged += (_, _) => ResetView();
+            vm.SettingsApplied += (_, _) =>
+            {
+                GetDefaultIcons(); //This is needed so that icons update immediately, rather than after a restart of the app
+                ResetView();
+            };
+            vm.CloseRequested += (_, _) => Close();
+
+            // Status bar
+            vm.Observe(nameof(MainViewModel.PartitionSizeText), () => partitionSizeLabel.Text = vm.PartitionSizeText);
+            vm.Observe(nameof(MainViewModel.FreeSpaceText), () => freeSpaceLabel.Text = vm.FreeSpaceText);
+            vm.Observe(nameof(MainViewModel.FreeSpacePercentage), UpdateFreeSpaceBar);
+            vm.Observe(nameof(MainViewModel.LocationText), () => locationLabel.Text = vm.LocationText);
+            vm.Observe(nameof(MainViewModel.SelectionSizeText), () => selectionSizeLabel.Text = vm.SelectionSizeText);
+        }
+
+        private void UpdateFreeSpaceBar()
+        {
+            if (!viewModel.IsImageOpen)
+                return;
+
+            double freeSpacePercentage = viewModel.FreeSpacePercentage;
+            if (freeSpacePercentage <= 10)
+                freeSpaceProgressBar.ProgressBar.SetState(ProgressBarState.Error); // Set the progress bar colour to red.
+            else if (freeSpacePercentage <= 20)
+                freeSpaceProgressBar.ProgressBar.SetState(ProgressBarState.Paused); // Set the progress bar colour to yellow.
+            else
+                freeSpaceProgressBar.ProgressBar.SetState(ProgressBarState.Normal); // Set the progress bar colour to green.
+
+            // Set progress bar value with a bit of a hack to disable the glow.
+            freeSpaceProgressBar.Minimum = 100 - (int)freeSpacePercentage;
+            freeSpaceProgressBar.Value = 100 - (int)freeSpacePercentage;
+            freeSpaceProgressBar.Minimum = 0;
+        }
+
+        private void SyncPartitionComboBox()
+        {
+            updatingPartitionComboBox = true;
+            try
+            {
+                partitionComboBox.Items.Clear();
+                foreach (var option in viewModel.Partitions)
+                    partitionComboBox.Items.Add(option);
+
+                partitionComboBox.SelectedItem = viewModel.Partitions.FirstOrDefault(o => o.Index == viewModel.CurrentPartitionIndex);
+            }
+            finally
+            {
+                updatingPartitionComboBox = false;
+            }
+        }
+
+        private void PopulateRecentList()
+        {
+            foreach (var oldItem in recentFilesToolStripMenuItem.DropDownItems.Cast<ToolStripItem>().ToList())
+                oldItem.Dispose();
+
+            var recentImages = viewModel.RecentImages;
+            for (int i = 0; i < recentImages.Count; i++)
+            {
+                ToolStripMenuItem newItem = new() { Text = $"{i + 1}: {recentImages[i]}" };
+                viewModel.OpenRecentImageCommand.BindCommand(recentImages[i], newItem);
+                recentFilesToolStripMenuItem.DropDownItems.Add(newItem);
+            }
+
+            recentFilesToolStripMenuItem.Enabled = viewModel.HasRecentImages;
+        }
+
+        /// <summary>
+        /// TEMPORARY (stage 5): tells the view model what the folder tree and the file list show
+        /// and what is selected, for the enabled rules and the status bar.
+        /// </summary>
+        private void ReportBrowseState()
+        {
+            if (viewModel.Image is null || lstDirectories.Nodes.Count == 0)
+            {
+                viewModel.UpdateBrowseState(BrowseState.Empty);
+                return;
+            }
+
+            var node = lstDirectories.SelectedNode;
+            var folder = node is null ? FolderSelection.None
+                : node == lstDirectories.Nodes[0] ? FolderSelection.Root
+                : FolderSelection.Subfolder;
+            var entries = SelectedItems.ToList();
+
+            viewModel.UpdateBrowseState(new BrowseState(
+                focusedPane,
+                folder,
+                node?.Tag as TiDirectory,
+                entries,
+                IsParentEntrySelected: lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift,
+                // Pending synthetic items (not yet on disk) can't be extracted, deleted, renamed or inspected
+                IsSelectedEntryPending: entries.Count == 1 && entries[0] is PendingFile or PendingDirectory,
+                HasSubfolders: lstDirectories.Nodes[0].Nodes.Count > 0));
+        }
+
+        #endregion
+
         #region Event Handlers
-        private void frmMain_Load(object sender, EventArgs e)
+        private async void MainForm_Load(object sender, EventArgs e)
         {
             //This fixes the problem of certain settings values not being returned correctly when using high DPI. Go figure...
             settings.Reload();
             uiState.Reload();
 
-            SyncUIOptions();
+            BindState();
+            viewModel.LoadSettings();
             SyncWindowState();
-            DisableUI();
 
             GetDefaultIcons();
             lstDirectories.SelectedImageIndex = imgFilesSmall.Images.IndexOfKey("folder");
+
+            for (var i = 1; i < lstFiles.Columns.Count; i++)
+                upOneFolderListViewItem.SubItems.Add(string.Empty);
 
             //Open the file that was dragged onto the exe/shortcut or passed as a command line argument
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
             {
                 string argPath = args[1];
-                OpenImage(argPath);
-            }
-
-            for (var i = 1; i < lstFiles.Columns.Count; i++)
-                upOneFolderListViewItem.SubItems.Add(string.Empty);
-        }
-
-        //Shows a hex view of the current image
-        private void hexView_Click(object sender, EventArgs e)
-        {
-            using HexViewDialog frm = new();
-            frm.ShowDialog();
-        }
-
-        //Allows viewing and editing both volume labels
-        //TODO: Actually change the volume labels
-        private async void changeVolumeLabel_Click(object sender, EventArgs e)
-        {
-            if (image?.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FatFileSystem fs)
-            {
-                TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = "This feature is currently only available for FAT partitions.",
-                    Heading = "Feature not available",
-                    Caption = "Information",
-                    Buttons =
-                    {
-                        TaskDialogButton.OK
-                    },
-                    Icon = TaskDialogIcon.Information,
-                    DefaultButton = TaskDialogButton.OK
-                });
-
-                return;
-            }
-
-            var change = await entryDialogs.AskVolumeLabelAsync(fs.RootDirectoryVolumeLabel ?? string.Empty, fs.BpbVolumeLabel ?? string.Empty);
-            if (change is not null)
-            {
-                fs.EnqueueSetVolumeLabel(change.RootDirectoryLabel);
-            }
-        }
-
-        /* Allows viewing and editing bootsector properties
-         *
-         * TODO: Enable this for other file systems/partition types/media too.
-         */
-        private async void bootSectorProperties_Click(object sender, EventArgs e)
-        {
-            if (image is not null && image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem is not FatFileSystem)
-            {
-                TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = "This feature is currently only available for FAT file systems.",
-                    Heading = "Feature not available",
-                    Caption = "Information",
-                    Buttons =
-                    {
-                        TaskDialogButton.OK
-                    },
-                    Icon = TaskDialogIcon.Information,
-                    DefaultButton = TaskDialogButton.OK
-                });
-
-                return;
-            }
-
-            if (image is null)
-                return;
-
-            await imageDialogs.ShowBootSectorAsync(image, CurrentPartitionIndex);
-        }
-
-        //Shows current image information
-        private async void imageInformation_Click(object sender, EventArgs e)
-        {
-            if (image is null)
-                return;
-
-            await imageDialogs.ShowImageInfoAsync(image, string.IsNullOrEmpty(filepath) ? null : filepath, CurrentPartitionIndex);
-        }
-
-        //Click event handler for all menu items in the Recent images menu
-        private void recentImage_Click(object sender, EventArgs e)
-        {
-            string imagePath = (string)((ToolStripMenuItem)sender).Tag;
-            if (!File.Exists(imagePath))
-            {
-                TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = $"The file \"{Path.GetFileName(imagePath)}\" could not be opened because it no longer exists. It may have been renamed, moved or deleted since it was last opened in TotalImage. It will now be removed from your recent images list.{Environment.NewLine}{Environment.NewLine}" +
-                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                    Heading = "File not found",
-                    Caption = "Error",
-                    Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                    Icon = TaskDialogIcon.Error,
-                    SizeToContent = true
-                });
-
-                //Remove the non-working entry
-                settings.RemoveRecentImage(imagePath);
-                PopulateRecentList();
-                return;
-            }
-
-            CloseImage();
-            OpenImage(imagePath);
-        }
-
-        //Creates a new disk image
-        //TODO: Implement the "save changes first" code path
-        private async void newImage_Click(object sender, EventArgs e)
-        {
-            var options = await imageDialogs.AskNewImageAsync();
-            if (options is not null)
-            {
-                if (unsavedChanges)
-                {
-                    TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"Would you like to save them before creating a new image?",
-                        Heading = "You have unsaved changes",
-                        Caption = "Warning",
-                        Buttons =
-                        {
-                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
-                            new TaskDialogCommandLinkButton("&Discard"),
-                            TaskDialogButton.Cancel
-                        },
-                        Icon = TaskDialogIcon.Warning,
-                    });
-
-                    if (result.Tag is not null) /* Save changes first... */ ;
-                    else if (result == TaskDialogButton.Cancel) return;
-                }
-
-                if (image is not null)
-                    CloseImage();
-                image = null;
-
-                BiosParameterBlock bpb = options.BpbVersion == BiosParameterBlockVersion.Dos34 || options.BpbVersion == BiosParameterBlockVersion.Dos40
-                    ? ExtendedBiosParameterBlock.FromGeometry(options.Geometry, options.BpbVersion, options.OemId, options.SerialNumber, options.FileSystemType, options.VolumeLabel)
-                    : BiosParameterBlock.FromGeometry(options.Geometry, options.BpbVersion, options.OemId);
-
-                //Create a new image and immediately open it
-                image = RawContainer.CreateImage(bpb, options.Geometry.Tracks, options.WriteBpb);
-                unsavedChanges = true;
-                OpenImage(null);
-            }
-        }
-
-        /* The Save button/menu item acts as either:
-         * -"Save" when the file is already saved and there are unsaved changes
-         * -"Save as" when the file has not been saved yet */
-        private async void save_Click(object sender, EventArgs e)
-        {
-            if (image?.SupportsWriting == false)
-            {
-                return;
-            }
-            if (image is not null)
-            {
-                if (string.IsNullOrEmpty(filename) || sender == saveAsToolStripMenuItem || sender == saveAsToolStripButton) //File hasn't been saved yet
-                {
-                    saveFileAs();
-                }
-                else
-                {
-                    await saveFile();
-                }
+                await viewModel.OpenImageFileAsync(argPath);
             }
         }
 
         //Creates a new folder
-        private async void newFolder_Click(object sender, EventArgs e)
+        async Task IMainViewBridge.CreateFolderAsync()
         {
-            if (image?.SupportsWriting == false)
-            {
-                return;
-            }
             var newName = await entryDialogs.AskNewFolderNameAsync();
             if (newName is null) return;
-            if (image is null || lstDirectories.SelectedNode is null) return;
+            if (viewModel.Image is not { } image || lstDirectories.SelectedNode is null) return;
 
             var nodeTag = lstDirectories.SelectedNode.Tag;
             if (nodeTag is FatDirectory fatDir)
@@ -330,38 +358,10 @@ namespace TotalImage.Forms
             }
         }
 
-        private void viewLargeIcons_Click(object sender, EventArgs e)
-        {
-            lstFiles.View = View.LargeIcon;
-            settings.Current.FilesView = ViewMode.LargeIcon;
-        }
-
-        private void viewSmallIcons_Click(object sender, EventArgs e)
-        {
-            lstFiles.View = View.SmallIcon;
-            settings.Current.FilesView = ViewMode.SmallIcon;
-        }
-
-        private void viewList_Click(object sender, EventArgs e)
-        {
-            lstFiles.View = View.List;
-            settings.Current.FilesView = ViewMode.List;
-        }
-
-        private void viewDetails_Click(object sender, EventArgs e)
-        {
-            lstFiles.View = View.Details;
-            settings.Current.FilesView = ViewMode.Details;
-        }
-
         //Deletes a file or folder
         //TODO: Implement deletion here and in the FS/container
-        private void delete_Click(object sender, EventArgs e)
+        Task IMainViewBridge.DeleteAsync()
         {
-            if (image?.SupportsWriting == false)
-            {
-                return;
-            }
             if (lstFiles.Focused && SelectedItems.Any())
             {
                 var selectedSize = 0ul;
@@ -426,7 +426,7 @@ namespace TotalImage.Forms
                         settings.Current.ConfirmDeletion = false;
 
                     if (result == TaskDialogButton.No)
-                        return;
+                        return Task.CompletedTask;
                 }
 
                 foreach (var entry in SelectedItems)
@@ -468,30 +468,19 @@ namespace TotalImage.Forms
                         settings.Current.ConfirmDeletion = false;
 
                     if (result == TaskDialogButton.No)
-                        return;
+                        return Task.CompletedTask;
                 }
 
                 if (lstDirectories.SelectedNode?.Tag is FatDirectory selectedFatDir)
                     selectedFatDir.EnqueueDelete();
             }
-        }
 
-        //Undeletes a delete file or folder
-        //TODO: Implement this here and in FS/container. Although checks are already performed in menu item code to disable the option entirely
-        //when it's not applicable, some additional checks here probably wouldn't hurt either...
-        private void undelete_Click(object sender, EventArgs e)
-        {
-            using DeletedObjectsDialog dlg = new();
-            dlg.ShowDialog();
+            return Task.CompletedTask;
         }
 
         //Renames a file or folder
-        private void rename_Click(object sender, EventArgs e)
+        void IMainViewBridge.Rename()
         {
-            if (image?.SupportsWriting == false)
-            {
-                return;
-            }
             if (lstFiles.Focused && lstFiles.SelectedIndices.Count == 1)
             {
                 // Trigger inline label edit in the file list
@@ -506,292 +495,8 @@ namespace TotalImage.Forms
             }
         }
 
-        //Changes image format
-        //TODO: The best UI for this still needs to be determined. Once that's done, implement the functionality here and in FS/container.
-        private void changeFormat_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException("This feature is not implemented yet");
-        }
-
-        //Defragments the selected partition
-        //TODO: Implement this here and in FS/container.
-        private void defragment_Click(object sender, EventArgs e)
-        {
-            using DefragmentDialog dlg = new();
-            dlg.ShowDialog();
-        }
-
-        //Formats the selected partition/floppy disk
-        //TODO: Implement this here and in FS/container.
-        private async void format_Click(object sender, EventArgs e)
-        {
-            var options = await imageDialogs.AskFormatOptionsAsync();
-            if (options is not null && await messages.ConfirmFormatAsync())
-            {
-                throw new NotImplementedException();
-                // Need to figure out how to actually do this, because right now it's unclear...
-                // DoSomeFormatThing();
-            }
-        }
-
-        //Save the changes made to the current image since the last save or since it was opened
-        private async Task saveFile()
-        {
-            if (image is null)
-            {
-                TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = "No image is currently loaded.",
-                    Heading = "Cannot save",
-                    Caption = "Error",
-                    Buttons = { TaskDialogButton.OK },
-                    Icon = TaskDialogIcon.Error,
-                    SizeToContent = true
-                });
-                return;
-            }
-
-            // Unsubscribe before dispose so the Dispose-triggered ChangeSet.Clear() does not
-            // fire ResetView() against an already-disposed container stream.
-            image.PendingChanges.Changed -= OnPendingChangesChanged;
-
-            if (image.PendingChanges.IsDirty)
-            {
-                try
-                {
-                    await image.CommitChanges(filepath);
-                }
-                catch (IOException ex)
-                {
-                    // Re-subscribe on failure — the container is still alive
-                    image.PendingChanges.Changed += OnPendingChangesChanged;
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = ex.Message,
-                        Heading = "Save failed",
-                        Caption = "Error",
-                        Buttons = { TaskDialogButton.OK },
-                        Icon = TaskDialogIcon.Error,
-                        SizeToContent = true,
-                    });
-                    return;
-                }
-                OpenImage(filepath); // Reload after commit (image was disposed by CommitChanges)
-            }
-            else
-            {
-                image.SaveImage(filepath);
-                OpenImage(filepath); // Reload the image
-            }
-
-            saveToolStripButton.Enabled = false;
-            saveToolStripMenuItem.Enabled = false;
-            Text = $"{filename} - TotalImage";
-            unsavedChanges = false;
-        }
-
-        //Saves the current image as a new file, along with any changes made to it since the last save
-        private bool saveFileAs()
-        {
-            if (image?.SupportsWriting == false)
-            {
-                return false;
-            }
-            if (image is null)
-            {
-                TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = "No image is currently loaded.",
-                    Heading = "Cannot save",
-                    Caption = "Error",
-                    Buttons = { TaskDialogButton.OK },
-                    Icon = TaskDialogIcon.Error,
-                    SizeToContent = true
-                });
-                return false;
-            }
-
-            using SaveFileDialog sfd = new();
-            sfd.AutoUpgradeEnabled = true;
-            sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-            sfd.OverwritePrompt = true;
-            sfd.DefaultExt = "img";
-            sfd.Filter =
-                "Raw sector image (*.img, *.ima, *.vfd, *.flp, *.dsk, *.xdf, *.hdm)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.xdf;*.hdm|" +
-                "All files (*.*)|*.*";
-
-            if (lastSavedFilename is not null)
-            {
-                string nameNoExt = Path.GetFileNameWithoutExtension(lastSavedFilename);
-                string number = System.Text.RegularExpressions.Regex.Match(nameNoExt, @"\d+$").Value;
-                string prefix = nameNoExt[..nameNoExt.LastIndexOf(number)];
-                int i = int.Parse(number) + 1;
-                string newFilename = prefix + i.ToString(new string('0', number.Length));
-                sfd.FileName = newFilename;
-            }
-
-            DialogResult result = sfd.ShowDialog();
-
-            if (result == DialogResult.OK)
-            {
-                if (sfd.FilterIndex == 0 ||
-                    sfd.FileName.EndsWith(".img", StringComparison.OrdinalIgnoreCase) ||
-                    sfd.FileName.EndsWith(".ima", StringComparison.OrdinalIgnoreCase) ||
-                    sfd.FileName.EndsWith(".vfd", StringComparison.OrdinalIgnoreCase) ||
-                    sfd.FileName.EndsWith(".flp", StringComparison.OrdinalIgnoreCase) ||
-                    sfd.FileName.EndsWith(".dsk", StringComparison.OrdinalIgnoreCase) ||
-                    sfd.FileName.EndsWith(".hdm", StringComparison.OrdinalIgnoreCase))
-                {
-                    // Unsubscribe before SaveImage disposes the container so the
-                    // Dispose-triggered ChangeSet.Clear() does not fire ResetView()
-                    // against an already-disposed stream.
-                    image.PendingChanges.Changed -= OnPendingChangesChanged;
-                    image.SaveImage(sfd.FileName);
-
-                    if (System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(sfd.FileName), @"\d+$").Success && settings.Current.AutoIncrementFilename)
-                    {
-                        lastSavedFilename = Path.GetFileName(sfd.FileName);
-                    }
-                    else
-                    {
-                        lastSavedFilename = null;
-                    }
-
-                    filepath = sfd.FileName;
-                    filename = Path.GetFileName(filepath);
-
-                    settings.AddRecentImage(filepath);
-                    PopulateRecentList();
-                    unsavedChanges = false;
-                    saveToolStripButton.Enabled = false;
-
-                    OpenImage(filepath); // Reload so the container stream is live and the handler is resubscribed
-                }
-
-                return true;
-            }
-            else if (result == DialogResult.Cancel)
-            {
-                return false;
-            }
-
-            return false;
-        }
-
-        //Closes the application
-        private async void exit_Click(object sender, EventArgs e)
-        {
-            if (unsavedChanges)
-            {
-                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = $"Would you like to save them before closing TotalImage?",
-                    Heading = "You have unsaved changes",
-                    Caption = "Warning",
-                    Buttons =
-                        {
-                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
-                            new TaskDialogCommandLinkButton("&Discard"),
-                            TaskDialogButton.Cancel
-                        },
-                    Icon = TaskDialogIcon.Warning,
-                });
-
-                if (result.Tag is not null)
-                {
-                    if (string.IsNullOrEmpty(filename)) //File hasn't been saved yet
-                    {
-                        if (!saveFileAs())
-                        {
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        await saveFile();
-                    }
-                }
-                else if (result == TaskDialogButton.Cancel) return;
-            }
-
-            Application.Exit();
-        }
-
-        private void toggleCommandBar_Click(object sender, EventArgs e)
-        {
-            commandBar.Visible = !commandBar.Visible;
-            settings.Current.ShowCommandBar = commandBar.Visible;
-        }
-
-        private void toggleDirectoryTree_Click(object sender, EventArgs e)
-        {
-            splitContainer.Panel1Collapsed = !splitContainer.Panel1Collapsed;
-            settings.Current.ShowDirectoryTree = !splitContainer.Panel1Collapsed;
-        }
-
-        private void toggleStatusBar_Click(object sender, EventArgs e)
-        {
-            statusBar.Visible = !statusBar.Visible;
-            settings.Current.ShowStatusBar = statusBar.Visible;
-        }
-
-        //TODO: Implement the "save changes first" code path
-        private void openImage_Click(object sender, EventArgs e)
-        {
-            if (unsavedChanges)
-            {
-                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = $"Would you like to save them before opening another image?",
-                    Heading = "You have unsaved changes",
-                    Caption = "Warning",
-                    Buttons =
-                        {
-                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
-                            new TaskDialogCommandLinkButton("&Discard"),
-                            TaskDialogButton.Cancel
-                        },
-                    Icon = TaskDialogIcon.Warning,
-                });
-
-                if (result.Tag is not null) save_Click(result, e);
-                else if (result == TaskDialogButton.Cancel) return;
-            }
-
-            using OpenFileDialog ofd = new();
-            ofd.AutoUpgradeEnabled = true;
-            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-            ofd.CheckFileExists = true;
-            ofd.CheckPathExists = true;
-            ofd.Multiselect = false;
-            //We probably want this, but it degrades the dialog appearance to XP dialog... Some workaround for this would be nice.
-            //ofd.ShowReadOnly = true;
-            ofd.Filter =
-                "All supported containers (*.*)|*.nhd;*.vhd;*.iso;*.imz;*.fdi;*.hdi;*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360;*.json;*.zip;*.tap|" +
-                "Plain sector image (*.img,*.ima,*.vfd,*.flp,*.dsk,*.hdm,*.288,*.144,*.12,*.720,*.360,*.json)|*.img;*.ima;*.vfd;*.flp;*.dsk;*.hdm;*.288;*.144;*.12;*.720;*.360;*.json|" +
-                "Compressed plain sector image (*.imz,*.zip)|*.imz;*.zip|" +
-                "Anex86 disk image (*.fdi,*.hdi)|*.fdi;*.hdi|" +
-                "ISO image (*.iso)|*.iso|" +
-                "Microsoft VHD (*.vhd)|*.vhd|" +
-                "T98-Next HD (*.nhd)|*.nhd|" +
-                "PCjs disk images (*.json)|*.json|" +
-                "NT Backup tape image (*.tap)|*.tap|" +
-                "All files (*.*)|*.*";
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                CloseImage();
-                OpenImage(ofd.FileName);
-            }
-        }
-
-        private async void about_Click(object sender, EventArgs e)
-        {
-            await appDialogs.ShowAboutAsync();
-        }
-
         //Extracts file(s) or folder(s) from the image to the specified path.
-        private async void extract_Click(object sender, EventArgs e)
+        async Task IMainViewBridge.ExtractAsync()
         {
             /* We need to check the treeview and listview focus so we know which items to extract.
              * Some of this might be a bit of a hack, but it works for now... */
@@ -853,135 +558,24 @@ namespace TotalImage.Forms
                 _updatingSelection = false;
             }
 
-            if (image is not null)
-            {
-                if (lstFiles.SelectedIndices.Count == 0)
-                {
-                    deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                    extractToolStripButton.Enabled = true;
-                    propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-
-                    UpdateStatusBar(false);
-                }
-                else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
-                {
-                    deleteToolStripButton.Enabled = false;
-                    extractToolStripButton.Enabled = false;
-                    propertiesToolStripButton.Enabled = false;
-
-                    UpdateStatusBar(false);
-                }
-                else if (lstFiles.SelectedIndices.Count == 1)
-                {
-                    TiFileSystemObject? entry = GetSelectedItemData(0);
-                    // Pending synthetic items (not yet on disk) — disable destructive actions
-                    bool isPending = entry is PendingFile or PendingDirectory;
-                    deleteToolStripButton.Enabled = !isPending;
-                    extractToolStripButton.Enabled = !isPending;
-                    propertiesToolStripButton.Enabled = !isPending;
-
-                    UpdateStatusBar(false);
-                }
-                else
-                {
-                    deleteToolStripButton.Enabled = true;
-                    extractToolStripButton.Enabled = true;
-                    propertiesToolStripButton.Enabled = true;
-
-                    UpdateStatusBar(false);
-                }
-            }
-            ApplyReadOnlyState();
+            ReportBrowseState();
         }
 
         private void cmsFileList_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (image is null)
+            if (viewModel.Image is null || (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift))
             {
                 e.Cancel = true;
                 return;
             }
 
-            nameToolStripMenuItem2.Checked = typeToolStripMenuItem2.Checked = sizeToolStripMenuItem2.Checked =
-                modifiedToolStripMenuItem2.Checked = attributesToolStripMenuItem2.Checked = false;
-            switch (sortColumn)
-            {
-                case 0: nameToolStripMenuItem2.Checked = true; break;
-                case 1: typeToolStripMenuItem2.Checked = true; break;
-                case 2: sizeToolStripMenuItem2.Checked = true; break;
-                case 3: modifiedToolStripMenuItem2.Checked = true; break;
-                case 4: attributesToolStripMenuItem2.Checked = true; break;
-            }
-
-            largeIconsToolStripMenuItem2.Checked = smallIconsToolStripMenuItem2.Checked = detailsToolStripMenuItem2.Checked = listToolStripMenuItem2.Checked = false;
-            switch (settings.Current.FilesView)
-            {
-                case ViewMode.LargeIcon: largeIconsToolStripMenuItem2.Checked = true; break;
-                case ViewMode.SmallIcon: smallIconsToolStripMenuItem2.Checked = true; break;
-                case ViewMode.Details: detailsToolStripMenuItem2.Checked = true; break;
-                case ViewMode.List: listToolStripMenuItem2.Checked = true; break;
-            }
-
-            showHiddenObjectsToolStripMenuItem2.Checked = settings.Current.ShowHiddenItems;
-
-            newFolderToolStripMenuItem2.Enabled = true;
-            extractToolStripMenuItem2.Enabled = true;
-
-            if (lstFiles.SelectedIndices.Count == 0)
-            {
-                deleteToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                propertiesToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                renameToolStripMenuItem2.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-            }
-            else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
-            {
-                e.Cancel = true;
-                return;
-            }
-            else if (lstFiles.SelectedIndices.Count == 1)
-            {
-                TiFileSystemObject? entry = GetSelectedItemData(0);
-                bool isPending = entry is PendingFile or PendingDirectory;
-                deleteToolStripMenuItem2.Enabled = !isPending;
-                extractToolStripMenuItem2.Enabled = !isPending;
-                propertiesToolStripMenuItem2.Enabled = !isPending;
-                renameToolStripMenuItem2.Enabled = !isPending;
-            }
-            else
-            {
-                deleteToolStripMenuItem2.Enabled = true;
-                extractToolStripMenuItem2.Enabled = true;
-                propertiesToolStripMenuItem2.Enabled = true;
-                renameToolStripMenuItem2.Enabled = false;
-            }
-            ApplyReadOnlyState();
-        }
-
-        private async void managePartitions_Click(object sender, EventArgs e)
-        {
-            await imageDialogs.ShowManagePartitionsAsync();
-        }
-
-        private async void settings_Click(object sender, EventArgs e)
-        {
-            var change = await appDialogs.ShowSettingsAsync();
-            if (change is not null)
-            {
-                SyncUIOptions();
-                ResetView();
-                UpdateStatusBar(true);
-                if (!settings.Current.AutoIncrementFilename)
-                    lastSavedFilename = null;
-            }
-            else
-            {
-                //If the user cleared the recent images list in the dialog, we still want to update the menu in the main form
-                PopulateRecentList();
-            }
+            // The menu acts on the file list, so its commands follow the file list's rules.
+            focusedPane = BrowsePane.Files;
+            ReportBrowseState();
         }
 
         //TODO: Implement the Properties dialog for multiple selected objects like Windows does it
-        private async void properties_Click(object sender, EventArgs e)
+        async Task IMainViewBridge.ShowPropertiesAsync()
         {
             List<TiFileSystemObject> entries = new();
             if (lstDirectories.Focused)
@@ -1028,22 +622,15 @@ namespace TotalImage.Forms
             await entryDialogs.AskPropertiesAsync(entries);
         }
 
-        private void injectFiles_Click(object sender, EventArgs e)
+        async Task IMainViewBridge.InjectFilesAsync()
         {
-            using OpenFileDialog ofd = new();
-            ofd.AutoUpgradeEnabled = true;
-            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
-            ofd.CheckFileExists = true;
-            ofd.CheckPathExists = true;
-            ofd.Multiselect = true;
-            ofd.Filter = "All files (*.*)|*.*";
-
             //TODO: Get the count and total size of seleted items to inject before showing the dialog
-            if (ofd.ShowDialog() == DialogResult.OK)
+            var fileNames = await filePicker.PickFilesToAddAsync();
+            if (fileNames.Count > 0)
             {
-                int fileCount = ofd.FileNames.Length;
+                int fileCount = fileNames.Count;
                 ulong totalSize = 0;
-                foreach (string path in ofd.FileNames)
+                foreach (string path in fileNames)
                 {
                     try { totalSize += (ulong)new FileInfo(path).Length; }
                     catch { /* best effort */ }
@@ -1078,7 +665,7 @@ namespace TotalImage.Forms
 
                 if (lstDirectories.SelectedNode?.Tag is FatDirectory targetFatDir)
                 {
-                    foreach (string hostPath in ofd.FileNames)
+                    foreach (string hostPath in fileNames)
                     {
                         using var stream = new FileStream(hostPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                         var source = FileDataSource.Create(stream, tempDirectory.Root, settings.Current.MemoryMappingThreshold);
@@ -1087,10 +674,10 @@ namespace TotalImage.Forms
                         targetFatDir.EnqueueAddFile(Path.GetFileName(hostPath), source, attrs, now, now, now);
                     }
                 }
-                else if (lstDirectories.SelectedNode?.Tag is PendingDirectory pendingDir && image is not null)
+                else if (lstDirectories.SelectedNode?.Tag is PendingDirectory pendingDir && viewModel.Image is { } image)
                 {
                     var dirComponents = FullNameToPathComponents(pendingDir.FullName);
-                    foreach (string hostPath in ofd.FileNames)
+                    foreach (string hostPath in fileNames)
                     {
                         using var stream = new FileStream(hostPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                         var source = FileDataSource.Create(stream, tempDirectory.Root, settings.Current.MemoryMappingThreshold);
@@ -1103,47 +690,8 @@ namespace TotalImage.Forms
             }
         }
 
-        private void closeImage_Click(object sender, EventArgs e)
-        {
-            if (unsavedChanges)
-            {
-                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = $"Would you like to save them before closing the current image?",
-                    Heading = "You have unsaved changes",
-                    Caption = "Warning",
-                    Buttons =
-                        {
-                            new TaskDialogCommandLinkButton("&Save") { Tag = 1 },
-                            new TaskDialogCommandLinkButton("&Discard"),
-                            TaskDialogButton.Cancel
-                        },
-                    Icon = TaskDialogIcon.Warning,
-                });
-
-                if (result.Tag is not null) /* Save changes... */ ;
-                else if (result == TaskDialogButton.Cancel) return;
-            }
-            CloseImage();
-        }
-
         private void lstFiles_ColumnClick(object sender, ColumnClickEventArgs e)
-            => SortListViewBy(e.Column);
-
-        private void sortByType_Click(object sender, EventArgs e)
-            => SortListViewBy(lstFiles.Columns.IndexOfKey("clmType"));
-
-        private void sortByModified_Click(object sender, EventArgs e)
-            => SortListViewBy(lstFiles.Columns.IndexOfKey("clmModified"));
-
-        private void sortByName_Click(object sender, EventArgs e)
-            => SortListViewBy(lstFiles.Columns.IndexOfKey("clmName"));
-
-        private void sortBySize_Click(object sender, EventArgs e)
-            => SortListViewBy(lstFiles.Columns.IndexOfKey("clmSize"));
-
-        private void sortByAttributes_Click(object sender, EventArgs e)
-            => SortListViewBy(lstFiles.Columns.IndexOfKey("clmAttributes"));
+            => viewModel.SortByCommand.Execute(e.Column);
 
         //TODO: Move that file count stuff elsewhere and just call it to get the number.
         private void lstDirectories_AfterSelect(object sender, TreeViewEventArgs e)
@@ -1165,22 +713,7 @@ namespace TotalImage.Forms
             }
 
             PopulateListView(selectedDir);
-            UpdateStatusBar(false);
-
-            if (lstDirectories.SelectedNode is null)
-            {
-                extractToolStripButton.Enabled = false;
-                newFolderToolStripButton.Enabled = false;
-                propertiesToolStripButton.Enabled = false;
-                deleteToolStripButton.Enabled = false;
-            }
-            else
-            {
-                extractToolStripButton.Enabled = true;
-                newFolderToolStripButton.Enabled = true;
-                deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-            }
+            ReportBrowseState();
         }
 
         private void lstFiles_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -1232,17 +765,12 @@ namespace TotalImage.Forms
                 return;
             }
 
-            deleteToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-            renameToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-            extractToolStripMenuItem1.Enabled = true;
-            propertiesToolStripMenuItem1.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-
-            expandDirectoryTreeToolStripMenuItem1.Enabled = lstDirectories.Nodes[0].Nodes.Count > 0;
-            collapseDirectoryTreeToolStripMenuItem1.Enabled = lstDirectories.Nodes[0].Nodes.Count > 0;
-            ApplyReadOnlyState();
+            // The menu acts on the folder tree, so its commands follow the folder tree's rules.
+            focusedPane = BrowsePane.Folders;
+            ReportBrowseState();
         }
 
-        private void selectAll_Click(object sender, EventArgs e)
+        void IMainViewBridge.SelectAll()
         {
             lstFiles.Focus();
             lstFiles.SelectAllItems();
@@ -1250,7 +778,7 @@ namespace TotalImage.Forms
 
         private void list_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) && image is null)
+            if (e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) && !viewModel.IsImageOpen)
                 e.Effect = DragDropEffects.Copy;
             else
                 e.Effect = DragDropEffects.None;
@@ -1259,9 +787,9 @@ namespace TotalImage.Forms
         /* Drag and drop was performed on the ListView - a file was dragged into the ListView/TreeView from Explorer => try to open it
          * Right now, we only handle case a for opening a single file that was dragged into the window.
          * TODO: Implement other drag and drop scenarios (moving files within the image, etc.). */
-        private void list_DragDrop(object sender, DragEventArgs e)
+        private async void list_DragDrop(object sender, DragEventArgs e)
         {
-            if (e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) && image is null)
+            if (e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) && !viewModel.IsImageOpen)
             {
                 //Files are being dragged into the listview from outside the form
                 var data = e.Data.GetData(DataFormats.FileDrop, false);
@@ -1270,20 +798,18 @@ namespace TotalImage.Forms
                     string[] items = (string[])data;
                     if (items.Length == 1)
                     {
-                        CloseImage();
-                        filepath = items[0];
-                        OpenImage(filepath);
+                        await viewModel.OpenImageFileAsync(items[0]);
                     }
                 }
             }
         }
 
-        private void expandDirectoryTree_Click(object sender, EventArgs e)
+        void IMainViewBridge.ExpandFolderTree()
         {
             lstDirectories.ExpandAll();
         }
 
-        private void collapseDirectoryTree_Click(object sender, EventArgs e)
+        void IMainViewBridge.CollapseFolderTree()
         {
             lstDirectories.CollapseAll();
 
@@ -1310,17 +836,6 @@ namespace TotalImage.Forms
                     return;
                 }
             }
-        }
-
-        private void showHiddenItems_Click(object sender, EventArgs e)
-        {
-            settings.Current.ShowHiddenItems = !settings.Current.ShowHiddenItems;
-
-            showHiddenObjectsToolStripMenuItem.Checked = settings.Current.ShowHiddenItems;
-            showHiddenObjectsToolStripMenuItem1.Checked = settings.Current.ShowHiddenItems;
-            showHiddenObjectsToolStripMenuItem2.Checked = settings.Current.ShowHiddenItems;
-
-            ResetView();
         }
 
         /* Fires when the user starts dragging a ListViewItem around. String array is needed for Explorer to perform the move operation once
@@ -1398,31 +913,16 @@ namespace TotalImage.Forms
             }
         }
 
-        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (unsavedChanges)
+            if (!viewModel.IsCloseConfirmed && viewModel.HasUnsavedChanges)
             {
-                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = $"Would you like to save them before closing TotalImage?",
-                    Heading = "You have unsaved changes",
-                    Caption = "Warning",
-                    Buttons =
-                        {
-                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
-                            new TaskDialogCommandLinkButton("&Discard"),
-                            TaskDialogButton.Cancel
-                        },
-                    Icon = TaskDialogIcon.Warning,
-                });
+                // Ask first, and close again once the answer allows it.
+                e.Cancel = true;
+                if (await viewModel.ConfirmCloseWindowAsync())
+                    BeginInvoke(Close);
 
-                /*if (result.Tag is not null) // Save changes... ;
-                else */
-                if (result == TaskDialogButton.Cancel)
-                {
-                    e.Cancel = true;
-                    return;
-                }
+                return;
             }
 
             settings.Save();
@@ -1443,105 +943,12 @@ namespace TotalImage.Forms
             }
         }
 
-        private void viewMenu_DropDownOpening(object sender, EventArgs e)
-        {
-            nameToolStripMenuItem.Checked = typeToolStripMenuItem.Checked = sizeToolStripMenuItem.Checked =
-                modifiedToolStripMenuItem.Checked = attributesToolStripMenuItem.Checked = false;
-            switch (sortColumn)
-            {
-                case 0: nameToolStripMenuItem.Checked = true; break;
-                case 1: typeToolStripMenuItem.Checked = true; break;
-                case 2: sizeToolStripMenuItem.Checked = true; break;
-                case 3: modifiedToolStripMenuItem.Checked = true; break;
-                case 4: attributesToolStripMenuItem.Checked = true; break;
-            }
-
-            largeIconsToolStripMenuItem.Checked = smallIconsToolStripMenuItem.Checked = detailsToolStripMenuItem.Checked = listToolStripMenuItem.Checked = false;
-            switch (settings.Current.FilesView)
-            {
-                case ViewMode.LargeIcon: largeIconsToolStripMenuItem.Checked = true; break;
-                case ViewMode.SmallIcon: smallIconsToolStripMenuItem.Checked = true; break;
-                case ViewMode.Details: detailsToolStripMenuItem.Checked = true; break;
-                case ViewMode.List: listToolStripMenuItem.Checked = true; break;
-            }
-
-            commandBarToolStripMenuItem.Checked = commandBar.Visible;
-            directoryTreeToolStripMenuItem.Checked = !splitContainer.Panel1Collapsed;
-            statusBarToolStripMenuItem.Checked = statusBar.Visible;
-
-            showHiddenObjectsToolStripMenuItem.Checked = settings.Current.ShowHiddenItems;
-
-            expandDirectoryTreeToolStripMenuItem.Enabled = image is not null && lstDirectories.Nodes[0].Nodes.Count > 0;
-            collapseDirectoryTreeToolStripMenuItem.Enabled = image is not null && lstDirectories.Nodes[0].Nodes.Count > 0;
-        }
-
-        private void cmsToolbars_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            commandBarToolStripMenuItem1.Checked = commandBar.Visible;
-            directoryTreeToolStripMenuItem1.Checked = !splitContainer.Panel1Collapsed;
-            statusBarToolStripMenuItem1.Checked = statusBar.Visible;
-        }
-
-        private void viewToolStripButton_DropDownOpening(object sender, EventArgs e)
-        {
-            largeIconsToolStripMenuItem1.Checked = smallIconsToolStripMenuItem1.Checked = detailsToolStripMenuItem1.Checked = listToolStripMenuItem1.Checked = false;
-            switch (settings.Current.FilesView)
-            {
-                case ViewMode.LargeIcon: largeIconsToolStripMenuItem1.Checked = true; break;
-                case ViewMode.SmallIcon: smallIconsToolStripMenuItem1.Checked = true; break;
-                case ViewMode.Details: detailsToolStripMenuItem1.Checked = true; break;
-                case ViewMode.List: listToolStripMenuItem1.Checked = true; break;
-            }
-
-            showHiddenObjectsToolStripMenuItem1.Checked = settings.Current.ShowHiddenItems;
-        }
-
-        private void sortMenu_DropDownOpening(object sender, EventArgs e)
-        {
-            nameToolStripMenuItem1.Checked = typeToolStripMenuItem1.Checked = sizeToolStripMenuItem1.Checked =
-                modifiedToolStripMenuItem1.Checked = attributesToolStripMenuItem1.Checked = false;
-            switch (sortColumn)
-            {
-                case 0: nameToolStripMenuItem1.Checked = true; break;
-                case 1: typeToolStripMenuItem1.Checked = true; break;
-                case 2: sizeToolStripMenuItem1.Checked = true; break;
-                case 3: modifiedToolStripMenuItem1.Checked = true; break;
-                case 4: attributesToolStripMenuItem1.Checked = true; break;
-            }
-        }
-
-        private async void selectPartitionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (image is null)
-                return;
-
-            var selection = await imageDialogs.AskSelectPartitionAsync(image);
-            if (selection is not null)
-            {
-                LoadPartitionInCurrentImage(selection.Index);
-            }
-        }
-
-        private void selectPartitionToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void PartitionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             /* Note that we can't simply use the ComboBox.SelectedIndex, as unsupported partitions aren't added to the ComboBox and thus item
              * indices are shifted compared to actual partition indices. */
-            if (image is null)
-                return;
-
-            if (image.PartitionTable.Partitions.Count > 1)
-            {
-                string? itemText = selectPartitionToolStripComboBox.SelectedItem?.ToString();
-                int colonPos = itemText?.IndexOf(':') ?? -1;
-                if (colonPos > 0 && int.TryParse(itemText![..colonPos], out int realIndex))
-                {
-                    if (realIndex != CurrentPartitionIndex)
-                    {
-                        LoadPartitionInCurrentImage(realIndex);
-                        CurrentPartitionIndex = realIndex;
-                    }
-                }
-            }
+            if (!updatingPartitionComboBox && partitionComboBox.SelectedItem is PartitionOption option)
+                viewModel.SelectPartition(option.Index);
         }
 
         private void lstFiles_KeyUp(object sender, KeyEventArgs e)
@@ -1647,155 +1054,16 @@ namespace TotalImage.Forms
 
         }
 
-        private void lblNotifications_Click(object sender, EventArgs e)
-        {
-            using NotificationsDialog dlg = new();
-            dlg.ShowDialog();
-        }
-
-        private void fileToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-        {
-            closeImageToolStripMenuItem.Enabled = image is not null;
-            reloadImageToolStripMenuItem.Enabled = image is not null;
-            saveToolStripMenuItem.Enabled = image is not null && unsavedChanges;
-            saveAsToolStripMenuItem.Enabled = image is not null;
-            openContainingFolderToolStripMenuItem.Enabled = image is not null && !string.IsNullOrEmpty(filepath);
-            ApplyReadOnlyState();
-        }
-
-        private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-        {
-            if (image is null)
-            {
-                injectToolStripMenuItem.Enabled = false;
-                extractToolStripMenuItem.Enabled = false;
-                renameToolStripMenuItem.Enabled = false;
-                deleteToolStripMenuItem.Enabled = false;
-                propertiesToolStripMenuItem.Enabled = false;
-                selectAllToolStripMenuItem.Enabled = false;
-                newFolderToolStripMenuItem.Enabled = false;
-                changeGeometryToolStripMenuItem.Enabled = false;
-                selectPartitionToolStripMenuItem.Enabled = false;
-                managePartitionsToolStripMenuItem.Enabled = false;
-                bootSectorPropertiesToolStripMenuItem.Enabled = false;
-                formatDiskToolStripMenuItem.Enabled = false;
-                defragmentToolStripMenuItem.Enabled = false;
-                changeVolumeLabelToolStripMenuItem.Enabled = false;
-
-                return;
-            }
-
-            changeGeometryToolStripMenuItem.Enabled = true;
-            selectPartitionToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable;
-            managePartitionsToolStripMenuItem.Enabled = image.PartitionTable is not Partitions.NoPartitionTable;
-            bootSectorPropertiesToolStripMenuItem.Enabled = true;
-            changeVolumeLabelToolStripMenuItem.Enabled = true;
-            formatDiskToolStripMenuItem.Enabled = true;
-            defragmentToolStripMenuItem.Enabled = true;
-            injectToolStripMenuItem.Enabled = InjectionSupported;
-            extractToolStripMenuItem.Enabled = true;
-            selectAllToolStripMenuItem.Enabled = true;
-            newFolderToolStripMenuItem.Enabled = true;
-
-            if (lstDirectories.Focused)
-            {
-                renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                propertiesToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-            }
-            else if (lstFiles.Focused)
-            {
-                if (lstFiles.SelectedIndices.Count == 0)
-                {
-                    deleteToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                    propertiesToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                    renameToolStripMenuItem.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                }
-                else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
-                {
-                    renameToolStripMenuItem.Enabled = false;
-                    deleteToolStripMenuItem.Enabled = false;
-                    propertiesToolStripMenuItem.Enabled = false;
-                }
-                else if (lstFiles.SelectedIndices.Count == 1)
-                {
-                    TiFileSystemObject? entry = GetSelectedItemData(0);
-                    bool isPending = entry is PendingFile or PendingDirectory;
-                    deleteToolStripMenuItem.Enabled = !isPending;
-                    extractToolStripMenuItem.Enabled = !isPending;
-                    propertiesToolStripMenuItem.Enabled = !isPending;
-                    renameToolStripMenuItem.Enabled = !isPending;
-                }
-                else
-                {
-                    deleteToolStripMenuItem.Enabled = true;
-                    propertiesToolStripMenuItem.Enabled = true;
-                    renameToolStripMenuItem.Enabled = false;
-                }
-            }
-            ApplyReadOnlyState();
-        }
-
-        private void toolsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
-        {
-            imageInformationToolStripMenuItem.Enabled = image is not null;
-            hexViewToolStripMenuItem.Enabled = image is not null;
-        }
-
         private void lstFiles_Enter(object sender, EventArgs e)
         {
-            if (image is not null)
-            {
-                if (lstFiles.SelectedIndices.Count == 0)
-                {
-                    deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                    extractToolStripButton.Enabled = true;
-                    propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                }
-                else if (lstFiles.SelectedIndices.Count == 1 && lstFiles.SelectedIndices[0] < IndexShift)
-                {
-                    deleteToolStripButton.Enabled = false;
-                    extractToolStripButton.Enabled = false;
-                    propertiesToolStripButton.Enabled = false;
-                }
-                else if (lstFiles.SelectedIndices.Count == 1)
-                {
-                    TiFileSystemObject? entry = GetSelectedItemData(0);
-                    bool isPending = entry is PendingFile or PendingDirectory;
-                    deleteToolStripButton.Enabled = !isPending;
-                    extractToolStripButton.Enabled = !isPending;
-                    propertiesToolStripButton.Enabled = !isPending;
-                }
-                else
-                {
-                    deleteToolStripButton.Enabled = true;
-                    extractToolStripButton.Enabled = true;
-                    propertiesToolStripButton.Enabled = true;
-                }
-            }
-            ApplyReadOnlyState();
+            focusedPane = BrowsePane.Files;
+            ReportBrowseState();
         }
 
         private void lstDirectories_Enter(object sender, EventArgs e)
         {
-            if (image is not null)
-            {
-                if (lstDirectories.SelectedNode is null)
-                {
-                    extractToolStripButton.Enabled = false;
-                    newFolderToolStripButton.Enabled = false;
-                    propertiesToolStripButton.Enabled = false;
-                    deleteToolStripButton.Enabled = false;
-                }
-                else
-                {
-                    extractToolStripButton.Enabled = true;
-                    newFolderToolStripButton.Enabled = true;
-                    deleteToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                    propertiesToolStripButton.Enabled = lstDirectories.SelectedNode != lstDirectories.Nodes[0];
-                }
-            }
-            ApplyReadOnlyState();
+            focusedPane = BrowsePane.Folders;
+            ReportBrowseState();
         }
 
         //After an item's label (=Text property) is changed - for renaming objects
@@ -1825,7 +1093,7 @@ namespace TotalImage.Forms
         //Here we should probably perform some sanity checks
         private void lstFiles_BeforeLabelEdit(object sender, LabelEditEventArgs e)
         {
-            if (image?.SupportsWriting == false)
+            if (viewModel.Image?.SupportsWriting == false)
             {
                 e.CancelEdit = true;
             }
@@ -1848,7 +1116,7 @@ namespace TotalImage.Forms
         //Here we should probably perform some sanity checks
         private void lstDirectories_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            if (image?.SupportsWriting == false)
+            if (viewModel.Image?.SupportsWriting == false)
             {
                 e.CancelEdit = true;
             }
@@ -1906,25 +1174,9 @@ namespace TotalImage.Forms
                 e.Action = DragAction.Continue;
         }
 
-        private void parentDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        void IMainViewBridge.GoToParentFolder()
         {
-            if (lstDirectories.SelectedNode.Parent is not null)
-            {
-                lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
-            }
-        }
-
-        private void parentDirectoryToolStripButton_Click(object sender, EventArgs e)
-        {
-            if (lstDirectories.SelectedNode.Parent is not null)
-            {
-                lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
-            }
-        }
-
-        private void parentDirectoryToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (lstDirectories.SelectedNode.Parent is not null)
+            if (lstDirectories.SelectedNode?.Parent is not null)
             {
                 lstDirectories.SelectedNode = lstDirectories.SelectedNode.Parent;
             }
@@ -1940,72 +1192,7 @@ namespace TotalImage.Forms
             }
 
             PopulateListView(dir);
-            UpdateStatusBar(false);
-        }
-
-        private void frmMain_KeyUp(object sender, KeyEventArgs e)
-        {
-            //This is needed for whatever reason because otherwise CTRL+W doesn't work except when the menu is open...
-            if (e.KeyCode == Keys.W && e.Modifiers == Keys.Control)
-            {
-                closeImage_Click(sender, e);
-            }
-        }
-        private void reloadImage_Click(object sender, EventArgs e)
-        {
-            if (image is null || string.IsNullOrEmpty(filepath))
-            {
-                throw new InvalidOperationException("No image is currently loaded");
-            }
-
-            if (unsavedChanges)
-            {
-                TaskDialogButton result = TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = $"Would you like to save them before reloading the image?",
-                    Heading = "You have unsaved changes",
-                    Caption = "Warning",
-                    Buttons =
-                        {
-                            new  TaskDialogCommandLinkButton("&Save") { Tag = 1 },
-                            new TaskDialogCommandLinkButton("&Discard"),
-                            TaskDialogButton.Cancel
-                        },
-                    Icon = TaskDialogIcon.Warning,
-                });
-
-                if (result.Tag is not null) /* Save changes first... */ ;
-                else if (result == TaskDialogButton.Cancel) return;
-            }
-
-            ReloadImage();
-        }
-
-        private void deletedItemsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using DeletedObjectsDialog dlg = new();
-            dlg.ShowDialog();
-        }
-
-        private void openContainingFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //This opens the folder containing the currently opened image in File Explorer and selects the image file
-            try
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "explorer.exe",
-                    Arguments = $"/select,\"{filepath}\"",
-                    UseShellExecute = true,
-                    ErrorDialog = true
-                });
-            }
-            catch (System.ComponentModel.Win32Exception ex)
-            {
-                // Throw if Process.Start fails with anything other than ERROR_CANCELLED
-                if (ex.NativeErrorCode != 0x000004C7)
-                    throw;
-            }
+            ReportBrowseState();
         }
         #endregion
 
@@ -2015,10 +1202,6 @@ namespace TotalImage.Forms
             => from x in lstFiles.SelectedIndices.Cast<int>()
                where x >= IndexShift && currentFolderView[x - IndexShift].Tag is TiFileSystemObject
                select (TiFileSystemObject)currentFolderView[x - IndexShift].Tag;
-
-        /// <summary>Returns true when the current partition's filesystem supports file injection.</summary>
-        private bool InjectionSupported
-            => image?.PartitionTable.Partitions[CurrentPartitionIndex].SupportsWriting ?? false;
 
         /// <summary>
         /// Classifies the pending-change state of a file-system entry in the UI.
@@ -2063,7 +1246,7 @@ namespace TotalImage.Forms
         /// </summary>
         private PendingItemState GetPendingState(string name, string[] dirPath)
         {
-            if (image is null) return PendingItemState.None;
+            if (viewModel.Image is not { } image) return PendingItemState.None;
 
             var state = PendingItemState.None;
 
@@ -2124,14 +1307,6 @@ namespace TotalImage.Forms
             return true;
         }
 
-        StatusBarState StatusBarState
-            => lstFiles.SelectedIndices.Cast<int>().Where(x => x >= IndexShift).Count() switch
-            {
-                0 => StatusBarState.NoneSelected,
-                1 => StatusBarState.OneSelected,
-                _ => StatusBarState.MultipleSelected
-            };
-
         //Sets the CurrentUIState to what the current state of UI is
         private void SetUIState()
         {
@@ -2154,38 +1329,39 @@ namespace TotalImage.Forms
         // Used for events that require the current folder view to be updated (e.g. show hidden items toggled, etc.)
         private void ResetView()
         {
-            if (image is not null)
+            if (viewModel.CurrentFileSystem is not { } fileSystem)
+                return;
+
+            lastViewedDir = lstDirectories.SelectedNode?.Tag as TiDirectory;
+
+            var root = new TreeNode(@"\");
+            root.ImageIndex = _smallFolderIndex;
+            root.SelectedImageIndex = _smallFolderIndex;
+            root.Tag = fileSystem.RootDirectory;
+
+            lstDirectories.BeginUpdate();
+            PopulateTreeView(root, fileSystem.RootDirectory);
+
+            lstDirectories.Nodes.Clear();
+            lstDirectories.Nodes.Add(root);
+            lstDirectories.Sort();
+            lstDirectories.EndUpdate();
+
+            if (lastViewedDir is not null)
             {
-                lastViewedDir = (TiDirectory)lstDirectories.SelectedNode.Tag;
-
-                var root = new TreeNode(@"\");
-                root.ImageIndex = _smallFolderIndex;
-                root.SelectedImageIndex = _smallFolderIndex;
-                root.Tag = image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.RootDirectory;
-
-                lstDirectories.BeginUpdate();
-                PopulateTreeView(root, image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.RootDirectory);
-
-                lstDirectories.Nodes.Clear();
-                lstDirectories.Nodes.Add(root);
-                lstDirectories.Sort();
-                lstDirectories.EndUpdate();
-
-                if (lastViewedDir is not null)
-                {
-                    TreeNode? node = FindNode(lstDirectories.Nodes[0], lastViewedDir);
-                    if (node is null)
-                        lstDirectories.SelectedNode = lstDirectories.Nodes[0];
-                    else
-                        lstDirectories.SelectedNode = node;
-                }
-                else
-                {
+                TreeNode? node = FindNode(lstDirectories.Nodes[0], lastViewedDir);
+                if (node is null)
                     lstDirectories.SelectedNode = lstDirectories.Nodes[0];
-                }
-
-                PopulateListView((TiDirectory)lstDirectories.SelectedNode.Tag);
+                else
+                    lstDirectories.SelectedNode = node;
             }
+            else
+            {
+                lstDirectories.SelectedNode = lstDirectories.Nodes[0];
+            }
+
+            PopulateListView((TiDirectory)lstDirectories.SelectedNode.Tag);
+            ReportBrowseState();
         }
 
         private void PopulateTreeView(TreeNode node, TiDirectory dir)
@@ -2231,7 +1407,7 @@ namespace TotalImage.Forms
             }
 
             // Synthesise tree nodes for pending CreateDirectoryChange entries in this directory
-            if (image is not null)
+            if (viewModel.Image is { } image)
             {
                 foreach (var change in image.PendingChanges.Changes)
                 {
@@ -2302,15 +1478,6 @@ namespace TotalImage.Forms
             if (dir.Parent is not null)
             {
                 count++;
-                parentDirectoryToolStripMenuItem.Enabled = true;
-                parentDirectoryToolStripMenuItem1.Enabled = true;
-                parentDirectoryToolStripButton.Enabled = true;
-            }
-            else
-            {
-                parentDirectoryToolStripMenuItem.Enabled = false;
-                parentDirectoryToolStripMenuItem1.Enabled = false;
-                parentDirectoryToolStripButton.Enabled = false;
             }
 
             var dirPathComponents = GetDirectoryPathComponents(dir);
@@ -2375,7 +1542,7 @@ namespace TotalImage.Forms
                 }
 
                 item.ToolTipText = $"Type: {item.SubItems[1].Text}{Environment.NewLine}Size: {size}";
-                
+
                 if(!string.IsNullOrWhiteSpace(item.SubItems[3].Text))
                     item.ToolTipText += $"{Environment.NewLine}Modified: {item.SubItems[3].Text}";
 
@@ -2385,7 +1552,7 @@ namespace TotalImage.Forms
             }
 
             // Synthesise list items for pending additions that don't yet exist on disk
-            if (image is not null)
+            if (viewModel.Image is { } image)
             {
                 foreach (var change in image.PendingChanges.Changes)
                 {
@@ -2485,306 +1652,15 @@ namespace TotalImage.Forms
             return sb.ToString();
         }
 
-        //Opens an image
-        private async void OpenImage(string? path)
+        // Shows the partition the view model loaded, or nothing when no image is open.
+        private void LoadPartition()
         {
-            if (path is not null && string.IsNullOrWhiteSpace(path))
+            if (viewModel.CurrentFileSystem is not { } fileSystem)
             {
-                TaskDialog.ShowDialog(this, new TaskDialogPage()
-                {
-                    Text = "The provided path is empty or whitespace and cannot be opened.",
-                    Heading = "Invalid path",
-                    Caption = "Error",
-                    Buttons = { TaskDialogButton.OK },
-                    Icon = TaskDialogIcon.Error,
-                    SizeToContent = true
-                });
-                return;
-            }
-
-            //Opening an existing file, otherwise it's a newly created image
-            if (path is not null)
-            {
-                filepath = path;
-                filename = Path.GetFileName(path);
-                FileInfo fileinfo = new(path);
-                var fileext = Path.GetExtension(filename).ToLowerInvariant();
-                var filesize = fileinfo.Length;
-
-                //Stop with empty files rightaway
-                if (filesize == 0)
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"The file \"{filename}\" appears to be empty (ie. zero bytes in size). If you downloaded or copied this file from some other location, make sure the source file is not damaged and that the transfer completed successfully.{Environment.NewLine}{Environment.NewLine}" +
-                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "File is empty",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                        SizeToContent = true
-                    });
-
-                    CloseImage();
-                    return;
-                }
-
-                try
-                {
-                    //Disable this for now until it's properly implemented
-                    bool memoryMapping = false; //fileinfo.Length > settings.Current.MemoryMappingThreshold;
-
-                    //We're hardcoded for supported file extensions currently. This should probably be revisited at some point to see if
-                    //there's a better way to handle weird extensions for supported container types etc.
-                    image = fileext switch
-                    {
-                        ".vhd" => new VhdContainer(path, memoryMapping),
-                        ".nhd" => new NhdContainer(path, memoryMapping),
-                        ".imz" or ".zip" => new ImzContainer(path, memoryMapping),
-                        ".hdi" or ".fdi" => new Anex86Container(path, memoryMapping),
-                        ".img" or ".ima" or ".iso" or ".vfd" or ".flp" or ".360" or
-                        ".720" or ".12" or ".144" or ".288" or ".dsk" or ".hdm" => new RawContainer(path, memoryMapping),
-                        ".json" => new PCjsContainer(path, memoryMapping),
-                        ".tap" => new TapContainer(path, memoryMapping),
-                        _ => throw new InvalidDataException("This container format is not recognized and cannot be opened."),
-                    }; ;
-                }
-                catch (FileNotFoundException)
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"The file \"{filename}\" could not be opened because it no longer exists. It may have been moved or deleted in the mean time. Make sure the file exists and is accessible and try again.{Environment.NewLine}{Environment.NewLine}" +
-                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "File not found",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                        SizeToContent = true
-                    });
-
-                    CloseImage();
-                    return;
-                }
-                catch (IOException e) when ((e.HResult & 0x0000FFFF) == 32) //File is locked by another process
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"The file \"{filename}\" could not be opened because it's currently locked by another process. Close all processes using this file and try again.{Environment.NewLine}{Environment.NewLine}" +
-                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "File is in use",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                        SizeToContent = true
-                    });
-
-                    CloseImage();
-                    return;
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"The file \"{filename}\" could not be opened because access was denied. Make sure you have the required permissions and that the file is not marked as read-only.{Environment.NewLine}{Environment.NewLine}" +
-                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "Access denied",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                        SizeToContent = true
-                    });
-
-                    CloseImage();
-                    return;
-                }
-                catch (Exception e)
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"The file \"{filename}\" could not be opened due to the following exception:{Environment.NewLine}{Environment.NewLine}" +
-                                $"{e.Message}{Environment.NewLine}{Environment.NewLine}If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "Cannot open file",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                        SizeToContent = true
-                    });
-
-                    CloseImage();
-                    return;
-                }
-            }
-
-            settings.AddRecentImage(filepath);
-            PopulateRecentList();
-
-            CurrentPartitionIndex = 0;
-            selectPartitionToolStripComboBox.Items.Clear();
-
-            if (image.PartitionTable is Partitions.NoPartitionTable)
-            {
-                if (image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"We attempted to open this file as the {image.DisplayName} container, but found no supported partition table or any supported file systems inside, so this image cannot be loaded. " +
-                                $"It's also possible this container format might not be correct for this file.{Environment.NewLine}{Environment.NewLine}" +
-                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "Cannot open file",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                        SizeToContent = true
-                    });
-
-                    CloseImage();
-                    return;
-                }
-
-                var label = image.PartitionTable.Partitions[0].FileSystem.VolumeLabel.TrimEnd(' ');
-                var fs = image.PartitionTable.Partitions[0].FileSystem.DisplayName;
-                var length = settings.Current.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[0].Length);
-
-                selectPartitionToolStripComboBox.Items.Add($"{label} ({fs}, {length})");
-                selectPartitionToolStripComboBox.SelectedIndex = 0;
-            }
-            else
-            {
-                if (image.PartitionTable.Partitions.Count == 0)
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"We found a supported partition table in this image ({image.PartitionTable.DisplayName}), but no partitions, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
-                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "No partitions found",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                        SizeToContent = true,
-                    });
-
-                    CloseImage();
-                    return;
-                }
-
-                if (image.PartitionTable.Partitions.Count > 1)
-                {
-                    //If there's multiple partitions in a supported partition table, and they're all unsupported types, for now we just back out.
-                    //Once we implement partition management (soon™), we can offer that to the user.
-                    int rawCount = 0;
-                    foreach (Partitions.PartitionEntry entry in image.PartitionTable.Partitions)
-                    {
-                        if (entry.FileSystem is FileSystems.RAW.RawFileSystem)
-                            rawCount++;
-                    }
-
-                    if (rawCount == image.PartitionTable.Partitions.Count)
-                    {
-                        TaskDialog.ShowDialog(this, new TaskDialogPage()
-                        {
-                            Text = $"We found a supported partition table ({image.PartitionTable.DisplayName}) and several partitions in this image, but they all contain unsupported file systems, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
-                                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                            Heading = "No supported file systems",
-                            Caption = "Error",
-                            Buttons =
-                            {
-                                TaskDialogButton.OK
-                            },
-                            Icon = TaskDialogIcon.Error,
-                            SizeToContent = true
-                        });
-
-                        CloseImage();
-                        return;
-                    }
-
-                    var selection = await imageDialogs.AskSelectPartitionAsync(image);
-                    if (selection is null)
-                    {
-                        CloseImage();
-                        return;
-                    }
-
-                    CurrentPartitionIndex = selection.Index;
-                }
-
-                if (image.PartitionTable.Partitions.Count == 1 && image.PartitionTable.Partitions[0].FileSystem is FileSystems.RAW.RawFileSystem)
-                {
-                    TaskDialog.ShowDialog(this, new TaskDialogPage()
-                    {
-                        Text = $"We found a supported partition table ({image.PartitionTable.DisplayName}) and one partition in this image, but it contains an unsupported file system, so this image cannot be loaded.{Environment.NewLine}{Environment.NewLine}" +
-                                $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
-                        Heading = "Unsupported file system",
-                        Caption = "Error",
-                        Buttons =
-                        {
-                            TaskDialogButton.OK
-                        },
-                        Icon = TaskDialogIcon.Error,
-                        SizeToContent = true
-                    });
-
-                    CloseImage();
-                    return;
-                }
-
-                for (int i = 0; i < image.PartitionTable.Partitions.Count; i++)
-                {
-                    try
-                    {
-                        //Skip adding RAW to the combobox since it can't be loaded anyway
-                        if (image.PartitionTable.Partitions[i].FileSystem is FileSystems.RAW.RawFileSystem)
-                            continue;
-
-                        var label = image.PartitionTable.Partitions[i].FileSystem.VolumeLabel.TrimEnd(' ');
-                        var fs = image.PartitionTable.Partitions[i].FileSystem.DisplayName;
-                        var length = settings.Current.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[i].Length);
-
-                        selectPartitionToolStripComboBox.Items.Add($"{(image.PartitionTable.Partitions.Count > 1 ? i + ": " : string.Empty)}{label} ({fs}, {length})");
-
-                    }
-                    catch (InvalidDataException)
-                    {
-
-                    }
-                }
-
-                selectPartitionToolStripComboBox.SelectedIndex = image.PartitionTable.Partitions.Count > 1 ? selectPartitionToolStripComboBox.FindString($"{CurrentPartitionIndex}: ") : 0;
-            }
-
-            LoadPartitionInCurrentImage(CurrentPartitionIndex);
-
-            if (filename != "")
-                Text = $"{filename} - TotalImage";
-            else
-                Text = "(Untitled) - TotalImage";
-        }
-
-        private void LoadPartitionInCurrentImage(int index)
-        {
-            if (image is null)
-            {
+                lstDirectories.Nodes.Clear();
+                currentFolderView.Clear();
+                lstFiles.VirtualListSize = 0;
+                ReportBrowseState();
                 return;
             }
 
@@ -2792,8 +1668,8 @@ namespace TotalImage.Forms
             root.ImageIndex = _smallFolderIndex;
             root.SelectedImageIndex = _smallFolderIndex;
 
-            root.Tag = image.PartitionTable.Partitions[index].FileSystem.RootDirectory;
-            PopulateTreeView(root, image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
+            root.Tag = fileSystem.RootDirectory;
+            PopulateTreeView(root, fileSystem.RootDirectory);
 
             lstDirectories.BeginUpdate();
             lstDirectories.Nodes.Clear();
@@ -2802,13 +1678,8 @@ namespace TotalImage.Forms
             lstDirectories.EndUpdate();
             lstDirectories.SelectedNode = lstDirectories.Nodes[0];
 
-            PopulateListView(image.PartitionTable.Partitions[index].FileSystem.RootDirectory);
-
-            // Subscribe to change tracking so the save button stays in sync
-            image.PendingChanges.Changed += OnPendingChangesChanged;
-
-            EnableUI();
-            UpdateStatusBar(true);
+            PopulateListView(fileSystem.RootDirectory);
+            ReportBrowseState();
         }
 
         private string GetFileTypeName(string filename, FileAttributes attributes)
@@ -2937,148 +1808,6 @@ namespace TotalImage.Forms
             return null;
         }
 
-        //Enables various UI elements after an image is loaded
-        public void EnableUI()
-        {
-            injectToolStripButton.Enabled = InjectionSupported;
-            closeImageToolStripButton.Enabled = true;
-            reloadImageToolStripButton.Enabled = true;
-            newFolderToolStripButton.Enabled = true;
-            labelToolStripMenuButton.Enabled = true;
-            bootsectToolStripButton.Enabled = true;
-            infoToolStripButton.Enabled = true;
-            pbrStatusCapacity.Visible = true;
-
-            // Change border sides for status bar children to add seperator-like looks.
-            lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.Right;
-            lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Right;
-
-            if (unsavedChanges)
-                saveToolStripButton.Enabled = true;
-            saveAsToolStripButton.Enabled = true;
-
-            //Enabling this now since we have rudimentary HDD support.
-            managePartitionsToolStripButton.Enabled = image is not null && image.PartitionTable is not Partitions.NoPartitionTable;
-            selectPartitionToolStripComboBox.Enabled = true;
-            ApplyReadOnlyState();
-        }
-
-        /// <summary>
-        /// Disables save and mutation commands when the current container does not support writing,
-        /// while leaving browsing and extraction available.
-        /// </summary>
-        private void ApplyReadOnlyState()
-        {
-            if (image?.SupportsWriting != false)
-            {
-                return;
-            }
-            ToolStripItem[] commands =
-            [
-                saveToolStripButton, saveAsToolStripButton, saveToolStripMenuItem, saveAsToolStripMenuItem,
-                injectToolStripButton, injectToolStripMenuItem,
-                newFolderToolStripButton, newFolderToolStripMenuItem, newFolderToolStripMenuItem2,
-                deleteToolStripButton, deleteToolStripMenuItem, deleteToolStripMenuItem1, deleteToolStripMenuItem2,
-                renameToolStripMenuItem, renameToolStripMenuItem1, renameToolStripMenuItem2,
-                labelToolStripMenuButton, changeVolumeLabelToolStripMenuItem,
-                bootsectToolStripButton, bootSectorPropertiesToolStripMenuItem,
-                changeGeometryToolStripMenuItem, formatDiskToolStripMenuItem, defragmentToolStripMenuItem
-            ];
-            foreach (var command in commands)
-            {
-                command.Enabled = false;
-            }
-        }
-
-        // Called whenever a pending change is added or the change set is cleared.
-        private void OnPendingChangesChanged(object? sender, EventArgs e)
-        {
-            bool dirty = image?.PendingChanges.IsDirty ?? false;
-            unsavedChanges = dirty;
-            saveToolStripButton.Enabled = dirty;
-            saveToolStripMenuItem.Enabled = dirty;
-            if (!dirty)
-                Text = $"{(string.IsNullOrEmpty(filename) ? "(Untitled)" : filename)} - TotalImage";
-            else
-                Text = $"*{(string.IsNullOrEmpty(filename) ? "(Untitled)" : filename)} - TotalImage";
-
-            // Refresh the tree and file list so pending-change highlights are updated
-            if (image is not null)
-                ResetView();
-        }
-
-        //Disables various UI elements after an image is loaded
-        private void DisableUI()
-        {
-            closeImageToolStripButton.Enabled = false;
-            reloadImageToolStripButton.Enabled = false;
-            injectToolStripButton.Enabled = false;
-            extractToolStripButton.Enabled = false;
-            deleteToolStripButton.Enabled = false;
-            propertiesToolStripButton.Enabled = false;
-            newFolderToolStripButton.Enabled = false;
-            labelToolStripMenuButton.Enabled = false;
-            bootsectToolStripButton.Enabled = false;
-            infoToolStripButton.Enabled = false;
-            saveToolStripButton.Enabled = false;
-            saveAsToolStripButton.Enabled = false;
-            managePartitionsToolStripButton.Enabled = false;
-            selectPartitionToolStripComboBox.Enabled = false;
-            pbrStatusCapacity.Visible = false;
-            parentDirectoryToolStripMenuItem.Enabled = false;
-            parentDirectoryToolStripButton.Enabled = false;
-
-            // Change border sides for status bar children to remove seperator-like looks.
-            lblStatusCapacity.BorderSides = ToolStripStatusLabelBorderSides.None;
-            lblStatusSize.BorderSides = ToolStripStatusLabelBorderSides.None;
-        }
-
-        private void PopulateRecentList()
-        {
-            recentFilesToolStripMenuItem.DropDownItems.Clear();
-
-            for (int i = settings.Current.RecentImages.Count - 1; i >= 0; i--)
-            {
-                //Remove any bogus entries
-                if (string.IsNullOrWhiteSpace(settings.Current.RecentImages[i]))
-                {
-                    settings.RemoveRecentImage(settings.Current.RecentImages[i]);
-                    continue;
-                }
-
-                ToolStripMenuItem newItem = new()
-                {
-                    Text = $"{settings.Current.RecentImages.Count - i}: {settings.Current.RecentImages[i]}",
-                    Tag = settings.Current.RecentImages[i]
-                };
-                newItem.Click += recentImage_Click;
-                recentFilesToolStripMenuItem.DropDownItems.Add(newItem);
-            }
-
-            recentFilesToolStripMenuItem.Enabled = recentFilesToolStripMenuItem.DropDownItems.Count != 0;
-        }
-
-        private void CloseImage()
-        {
-            unsavedChanges = false;
-            Text = "TotalImage";
-            filename = "";
-            filepath = "";
-            if (image is not null)
-            {
-                image.PendingChanges.Changed -= OnPendingChangesChanged;
-                image.Dispose();
-                image = null;
-            }
-            lstDirectories.Nodes.Clear();
-            currentFolderView.Clear();
-            lstFiles.VirtualListSize = 0;
-            selectPartitionToolStripComboBox.Items.Clear();
-            _cachedStatusBarDir = null;
-            DisableUI();
-            UpdateStatusBar(false);
-        }
-
         private TiFileSystemObject? GetSelectedItemData(int idx)
         {
             if (lstFiles.SelectedIndices[idx] < IndexShift)
@@ -3099,40 +1828,12 @@ namespace TotalImage.Forms
 
         private void SortListView()
         {
-            IComparer<ListViewItem> sort = GetListViewItemSorter(sortColumn, sortOrder);
+            var sortOrder = viewModel.SortDirection.ToWinForms();
+            IComparer<ListViewItem> sort = GetListViewItemSorter(viewModel.SortColumn, sortOrder);
             currentFolderView.Sort(sort);
 
             lstFiles.Refresh();
-            lstFiles.SetSortIcon(sortColumn, sortOrder);
-        }
-
-        private void SortListViewBy(int column)
-        {
-            if (column == sortColumn)
-            {
-                // Reverse the current sort direction for this column.
-                if (sortOrder == SortOrder.Ascending)
-                {
-                    sortOrder = SortOrder.Descending;
-                }
-                else
-                {
-                    sortOrder = SortOrder.Ascending;
-                }
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                sortColumn = column;
-                sortOrder = SortOrder.Ascending;
-            }
-
-
-            // Perform the sort with these new sort options.
-            SortListView();
-
-            settings.Current.FilesSortingColumn = column;
-            settings.Current.FilesSortOrder = sortOrder.ToSortDirection();
+            lstFiles.SetSortIcon(viewModel.SortColumn, sortOrder);
         }
 
         private void SyncWindowState()
@@ -3147,108 +1848,6 @@ namespace TotalImage.Forms
                 col.DisplayIndex = uiState.Current.MWColumnOrder[col.Index];
                 col.Width = uiState.Current.MWColumnWidth[col.Index];
             }
-        }
-
-        //Syncs the main form UI with the current settings and loaded UI state
-        private void SyncUIOptions()
-        {
-            lstFiles.View = settings.Current.FilesView.ToWinForms();
-            splitContainer.Panel1Collapsed = !settings.Current.ShowDirectoryTree;
-            statusBar.Visible = settings.Current.ShowStatusBar;
-            commandBar.Visible = settings.Current.ShowCommandBar;
-            sortOrder = settings.Current.FilesSortOrder.ToWinForms();
-            sortColumn = settings.Current.FilesSortingColumn;
-
-            lstFiles.SetSortIcon(sortColumn, sortOrder);
-            GetDefaultIcons(); //This is needed so that icons update immediately, rather than after a restart of the app
-
-            settings.RemoveMissingRecentImages();
-            PopulateRecentList();
-        }
-
-        private void UpdateStatusBar(bool updateFreeSpace)
-        {
-            if (image is null)
-            {
-                lblStatusCapacity.Text = string.Empty;
-                lblStatusFreeCapacity.Text = string.Empty;
-                lbStatusPath.Text = string.Empty;
-                lblStatusSize.Text = string.Empty;
-            }
-            else
-            {
-                //Makes no sense to do this every time selection changes, etc. Only when operations that affect the free space are performed
-                if (updateFreeSpace)
-                {
-                    lblStatusCapacity.Text = $"Partition size: {settings.Current.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].Length)}";
-                    double freeSpacePercentage = (double)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace / image.PartitionTable.Partitions[CurrentPartitionIndex].Length * 100;
-                    lblStatusFreeCapacity.Text = $"Free space: {settings.Current.SizeUnit.FormatSize((ulong)image.PartitionTable.Partitions[CurrentPartitionIndex].FileSystem.TotalFreeSpace)} ({freeSpacePercentage / 100:p2})";
-                    if (freeSpacePercentage <= 10)
-                        pbrStatusCapacity.ProgressBar.SetState(ProgressBarState.Error); // Set the progress bar colour to red.
-                    else if (freeSpacePercentage <= 20)
-                        pbrStatusCapacity.ProgressBar.SetState(ProgressBarState.Paused); // Set the progress bar colour to yellow.
-                    else
-                        pbrStatusCapacity.ProgressBar.SetState(ProgressBarState.Normal); // Set the progress bar colour to green.
-
-                    // Set progress bar value with a bit of a hack to disable the glow.
-                    pbrStatusCapacity.Minimum = 100 - (int)freeSpacePercentage;
-                    pbrStatusCapacity.Value = 100 - (int)freeSpacePercentage;
-                    pbrStatusCapacity.Minimum = 0;
-                }
-
-                switch (StatusBarState)
-                {
-                    case StatusBarState.NoneSelected:
-                        {
-                            var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
-                            lbStatusPath.Text = dir.FullName;
-
-                            if (updateFreeSpace || !ReferenceEquals(dir, _cachedStatusBarDir))
-                            {
-                                _cachedStatusBarDir = dir;
-                                _cachedStatusBarSizeText = $"{settings.Current.SizeUnit.FormatSize(dir.GetSize(false, false))} in {dir.CountFiles(false)} item(s)";
-                            }
-
-                            lblStatusSize.Text = _cachedStatusBarSizeText;
-                            break;
-                        }
-                    case StatusBarState.OneSelected:
-                        {
-                            var item = GetSelectedItemData(0);
-                            if (item is null) break;
-                            lbStatusPath.Text = item.FullName;
-                            if (item is TiDirectory dir)
-                                lblStatusSize.Text = $"{settings.Current.SizeUnit.FormatSize(dir.GetSize(true, false))} in 1 item";
-                            else
-                                lblStatusSize.Text = $"{settings.Current.SizeUnit.FormatSize(item.Length)} in 1 item";
-                            break;
-                        }
-                    case StatusBarState.MultipleSelected:
-                        {
-                            var dir = (TiDirectory)lstDirectories.SelectedNode.Tag;
-                            var selectedSize = 0ul;
-                            foreach (var entry in SelectedItems)
-                            {
-                                if (entry is TiDirectory subdir)
-                                    selectedSize += subdir.GetSize(true, false);
-                                else
-                                    selectedSize += entry.Length;
-                            }
-
-                            lbStatusPath.Text = dir.FullName;
-                            lblStatusSize.Text = $"{settings.Current.SizeUnit.FormatSize(selectedSize)} in {SelectedItems.Count()} item(s)";
-                            break;
-                        }
-                }
-            }
-        }
-
-        //Generates a random name for a subfolder in the temp folder, used during double-click, ENTER keypress and drag-n-drop extraction
-        private void ReloadImage()
-        {
-            string tempPath = filepath;
-            CloseImage();
-            OpenImage(tempPath);
         }
     }
 }
