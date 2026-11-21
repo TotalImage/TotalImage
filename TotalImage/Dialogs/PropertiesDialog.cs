@@ -1,401 +1,78 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows.Forms;
-using TotalImage.ViewModels.Formatting;
-using TotalImage.ViewModels.Settings;
-using TotalImage.FileSystems;
-using TotalImage.Properties;
+using TotalImage.Controls;
+using TotalImage.ViewModels.Dialogs;
 
 namespace TotalImage.Dialogs
 {
     public partial class PropertiesDialog : Form
     {
-        private List<FileSystemObject> entries; //The file system objects to show the properties of
-        private bool hashesDone = false; //Have the MD5 and SHA-1 hashes been calculated yet?
-        private bool hashesCalculating = false; //Are the MD5 and SHA-1 hashes currently being calculated?
-
-        public string? NewName { get; private set; }
-        public DateTime? DateModified { get; private set; }
-        public DateTime? DateCreated { get; private set; }
-        public DateTime? DateAccessed { get; private set; }
-        public bool AttrReadOnly { get; private set; }
-        public bool AttrHidden { get; private set; }
-        public bool AttrSystem { get; private set; }
-        public bool AttrArchive { get; private set; }
-
-        private PropertiesDialog()
+        /// <param name="icon">The icon of the entry (or entries).</param>
+        /// <param name="stretchIcon">Whether the icon must be scaled to fit.</param>
+        public PropertiesDialog(PropertiesViewModel viewModel, Image icon, bool stretchIcon)
         {
             InitializeComponent();
+
+            iconPictureBox.Image = icon;
+            iconPictureBox.SizeMode = stretchIcon ? PictureBoxSizeMode.StretchImage : PictureBoxSizeMode.Normal;
+
+            nameTextBox.BindTwoWay(nameof(TextBox.Text), viewModel, nameof(PropertiesViewModel.Name));
+            nameTextBox.BindOneTime(nameof(TextBox.Enabled), viewModel, nameof(PropertiesViewModel.CanEditName));
+            // Bindings on a control that starts hidden are not applied, so these fixed values are set directly.
+            nameTextBox.Visible = viewModel.IsSingle;
+            selectionSummaryLabel.Visible = viewModel.IsMultiple;
+            selectionSummaryLabel.Text = viewModel.SelectionSummary;
+
+            typeTextBox.BindOneTime(nameof(TextBox.Text), viewModel, nameof(PropertiesViewModel.TypeName));
+            locationTextBox.BindOneTime(nameof(TextBox.Text), viewModel, nameof(PropertiesViewModel.Location));
+            sizeTextBox.BindOneWay(nameof(TextBox.Text), viewModel, nameof(PropertiesViewModel.SizeText));
+            sizeOnDiskTextBox.BindOneWay(nameof(TextBox.Text), viewModel, nameof(PropertiesViewModel.SizeOnDiskText));
+            containsTextBox.BindOneWay(nameof(TextBox.Text), viewModel, nameof(PropertiesViewModel.ContainsText));
+            containsTextBox.BindOneTime(nameof(TextBox.Enabled), viewModel, nameof(PropertiesViewModel.IsContainsAvailable));
+            shortNameTextBox.BindOneTime(nameof(TextBox.Text), viewModel, nameof(PropertiesViewModel.ShortName));
+            shortNameTextBox.BindOneTime(nameof(TextBox.Enabled), viewModel, nameof(PropertiesViewModel.IsFatInfoAvailable));
+            firstClusterTextBox.BindOneTime(nameof(TextBox.Text), viewModel, nameof(PropertiesViewModel.FirstCluster));
+            firstClusterTextBox.BindOneTime(nameof(TextBox.Enabled), viewModel, nameof(PropertiesViewModel.IsFatInfoAvailable));
+
+            BindHash(crc32TextBox, viewModel, nameof(PropertiesViewModel.Crc32Text));
+            BindHash(md5TextBox, viewModel, nameof(PropertiesViewModel.Md5Text));
+            BindHash(sha1TextBox, viewModel, nameof(PropertiesViewModel.Sha1Text));
+
+            BindDate(createdCheckBox, createdDateTimePicker, viewModel.Created);
+            BindDate(modifiedCheckBox, modifiedDateTimePicker, viewModel.Modified);
+            BindDate(accessedCheckBox, accessedDateTimePicker, viewModel.Accessed);
+
+            BindAttribute(readOnlyCheckBox, viewModel, nameof(PropertiesViewModel.ReadOnly));
+            BindAttribute(hiddenCheckBox, viewModel, nameof(PropertiesViewModel.Hidden));
+            BindAttribute(systemCheckBox, viewModel, nameof(PropertiesViewModel.System));
+            BindAttribute(archiveCheckBox, viewModel, nameof(PropertiesViewModel.Archive));
+
+            okButton.Command = viewModel.AcceptCommand;
+            Load += (_, _) => viewModel.LoadCommand.Execute(null);
+            FormClosing += (_, _) => viewModel.StopBackgroundWork();
         }
 
-        private readonly ISettingsService settings = null!;
-
-        public PropertiesDialog(List<FileSystemObject> entries, ISettingsService settings) : this()
+        private static void BindHash(TextBox textBox, PropertiesViewModel viewModel, string property)
         {
-            this.settings = settings;
-            if (entries is null || entries.Count == 0)
-                throw new ArgumentNullException(nameof(entries), "Entries list cannot be null or have 0 items!");
-
-            this.entries = entries;
+            textBox.BindOneWay(nameof(TextBox.Text), viewModel, property);
+            textBox.BindOneTime(nameof(TextBox.Enabled), viewModel, nameof(PropertiesViewModel.AreHashesAvailable));
+            textBox.Click += (_, _) => viewModel.CalculateHashesCommand.Execute(null);
         }
 
-        //TODO: Perform filename validation
-        private void btnOK_Click(object sender, EventArgs e)
+        private static void BindDate(CheckBox checkBox, DateTimePicker picker, EntryDateViewModel date)
         {
-            NewName = txtFilename.Text;
-
-            if (cbxDateModified.Checked)
-                DateModified = dtpModified.Value;
-            if (cbxDateCreated.Checked)
-                DateCreated = dtpCreated.Value;
-            if (cbxDateAccessed.Checked)
-                DateAccessed = dtpAccessed.Value;
-
-            AttrArchive = cbxArchive.Checked;
-            AttrHidden = cbxHidden.Checked;
-            AttrReadOnly = cbxReadOnly.Checked;
-            AttrSystem = cbxSystem.Checked;
+            checkBox.BindTwoWay(nameof(CheckBox.Checked), date, nameof(EntryDateViewModel.IsSet));
+            checkBox.BindOneTime(nameof(CheckBox.Enabled), date, nameof(EntryDateViewModel.CanToggle));
+            picker.BindTwoWay(nameof(DateTimePicker.Value), date, nameof(EntryDateViewModel.Value));
+            picker.BindOneWay(nameof(DateTimePicker.Enabled), date, nameof(EntryDateViewModel.CanEditValue));
+            // A blank custom format shows an unset date as empty.
+            picker.DataBindings.Add(new Binding(nameof(DateTimePicker.CustomFormat), date, nameof(EntryDateViewModel.Format), true, DataSourceUpdateMode.Never) { NullValue = " " });
         }
 
-        //TODO: Perform short file name (8.3) generation (via the FAT helper class?)
-        private void txtFilename_TextChanged(object sender, EventArgs e)
+        private static void BindAttribute(CheckBox checkBox, PropertiesViewModel viewModel, string property)
         {
-
+            checkBox.BindCheckState(viewModel, property);
+            checkBox.BindOneTime(nameof(CheckBox.Enabled), viewModel, nameof(PropertiesViewModel.CanEditAttributes));
         }
-
-        //TODO: Maybe we should follow the user's locale for the date format?
-        private void dlgProperties_Load(object sender, EventArgs e)
-        {
-            if (entries.Count == 1) //Single object is straightforward
-            {
-                if (entries[0] is FileSystems.File)
-                {
-                    txtHashCRC32.Enabled = txtHashMD5.Enabled = txtHashSHA1.Enabled = true;
-                    txtHashCRC32.Text = txtHashMD5.Text = txtHashSHA1.Text = "Click to calculate";
-                }
-                else
-                {
-                    txtHashCRC32.Enabled = txtHashMD5.Enabled = txtHashSHA1.Enabled = false;
-                    txtHashCRC32.Text = txtHashMD5.Text = txtHashSHA1.Text = "N/A";
-                }
-
-                txtFilename.Text = entries[0].Name;
-                if (entries[0] is IFatFileSystemObject fatObj)
-                {
-                    txtShortFilename.Text = fatObj.ShortName;
-                    txtFirstCluster.Text = fatObj.FirstCluster.ToString();
-                }
-                else
-                {
-                    //For now. We might want to always generate this anyway even for other file systems?
-                    txtShortFilename.Text = txtFirstCluster.Text = "N/A"; 
-                    txtShortFilename.Enabled = txtFirstCluster.Enabled = false;
-                }
-
-                if (entries[0] is FileSystems.File file)
-                {
-                    txtLocation.Text = file.DirectoryName;
-                    txtContains.Text = "N/A";
-                    txtContains.Enabled = false;
-                    txtSize.Text = settings.Current.SizeUnit.FormatSize(entries[0].Length, settings.Current.SizeUnit != SizeUnit.Bytes);
-                    txtSizeOnDisk.Text = settings.Current.SizeUnit.FormatSize(entries[0].LengthOnDisk, settings.Current.SizeUnit != SizeUnit.Bytes);
-                }
-                else if (entries[0] is FileSystems.Directory dir)
-                {
-                    txtLocation.Text = dir.Parent?.FullName;
-                    var stats = dir.GetStats(true);
-                    txtContains.Text = $"Files: {stats.FileCount}, subdirectories: {stats.DirectoryCount}";
-                    txtSize.Text = settings.Current.SizeUnit.FormatSize(stats.Size, settings.Current.SizeUnit != SizeUnit.Bytes);
-                    txtSizeOnDisk.Text = settings.Current.SizeUnit.FormatSize(stats.SizeOnDisk, settings.Current.SizeUnit != SizeUnit.Bytes);
-                }
-
-                // These are indeed supposed to be assignments in the conditions.
-                if (cbxDateAccessed.Checked = dtpAccessed.Enabled = entries[0].LastAccessTime.HasValue)
-                {
-                    if (entries[0] is IFatFileSystemObject)
-                        dtpAccessed.CustomFormat = "yyyy-MM-dd";
-                    else
-                        dtpAccessed.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-                    dtpAccessed.Value = entries[0].LastAccessTime!.Value;
-                }
-                else
-                {
-                    dtpAccessed.Text = "";
-                    dtpAccessed.CustomFormat = " ";
-                }
-
-                if (cbxDateModified.Checked = dtpModified.Enabled = entries[0].LastWriteTime.HasValue)
-                {
-                    dtpModified.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-                    dtpModified.Value = entries[0].LastWriteTime!.Value;
-                }
-                else
-                {
-                    dtpModified.Text = "";
-                    dtpModified.CustomFormat = " ";
-                }
-
-                if (cbxDateCreated.Checked = dtpCreated.Enabled = entries[0].CreationTime.HasValue)
-                {
-                    dtpCreated.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-                    dtpCreated.Value = entries[0].CreationTime!.Value;
-                }
-                else
-                {
-                    dtpCreated.Text = "";
-                    dtpCreated.CustomFormat = " ";
-                }
-
-                cbxReadOnly.Checked = entries[0].Attributes.HasFlag(FileAttributes.ReadOnly);
-                cbxHidden.Checked = entries[0].Attributes.HasFlag(FileAttributes.Hidden);
-                cbxSystem.Checked = entries[0].Attributes.HasFlag(FileAttributes.System);
-                cbxArchive.Checked = entries[0].Attributes.HasFlag(FileAttributes.Archive);
-
-                if (settings.Current.QueryShellForFileTypeInfo)
-                {
-                    imgIcon.SizeMode = PictureBoxSizeMode.Normal;
-                    imgIcon.Image = ShellInterop.GetFileTypeIcon(entries[0].Name, entries[0].Attributes).ToBitmap();
-                    txtType.Text = ShellInterop.GetFileTypeName(entries[0].Name, entries[0].Attributes);
-                }
-                else
-                {
-                    imgIcon.SizeMode = PictureBoxSizeMode.StretchImage;
-                    imgIcon.Image = entries[0].Attributes.HasFlag(FileAttributes.Directory)
-                        ? Resources.icon_folder_32.ToBitmap()
-                        : Resources.icon_page_white_32.ToBitmap();
-
-                    var extension = Path.GetExtension(entries[0].Name);
-
-                    if (entries[0].Attributes.HasFlag(FileAttributes.Directory))
-                        txtType.Text = "File folder";
-                    else if (extension.Length > 0)
-                        txtType.Text = $"{extension[1..].ToUpper()} File";
-                    else
-                        txtType.Text = "File";
-                }
-
-                //Prevent any changes to deleted items as well as ISO file system objects
-                if (entries[0] is FileSystems.ISO.IsoFile || entries[0] is FileSystems.ISO.IsoDirectory)
-                {
-                    txtFilename.Enabled = cbxArchive.Enabled = cbxHidden.Enabled = cbxReadOnly.Enabled = cbxSystem.Enabled =
-                    cbxDateCreated.Enabled = cbxDateAccessed.Enabled = cbxDateModified.Enabled = dtpAccessed.Enabled =
-                    dtpCreated.Enabled = dtpModified.Enabled = false;
-                }
-            }
-            else //If we're showing info for multiple objects, it needs to be treated separately
-            {
-                txtFilename.Enabled = txtFilename.Visible = false;
-                lblMultipleObjectsCount.Visible = true;
-
-                int dirs = 0;
-                int files = 0;
-                ulong size = 0;
-                ulong sizeOnDisk = 0;
-                uint attribReadOnly = 0;
-                uint attribSystem = 0;
-                uint attribHidden = 0;
-                uint attribArchive = 0;
-                string foExt = entries[0] is FileSystems.Directory ? "folder" : Path.GetExtension(entries[0].Name);
-                bool differentTypes = false;
-
-                foreach (FileSystemObject fso in entries)
-                {
-                    if (fso is FileSystems.Directory dir)
-                    {
-                        dirs++;
-                        var stats = dir.GetStats(true);
-                        size += stats.Size;
-                        sizeOnDisk += stats.SizeOnDisk;
-
-                        if (!foExt.Equals("folder"))
-                            differentTypes = true;
-                    }
-                    else
-                    {
-                        files++;
-                        size += fso.Length;
-                        sizeOnDisk += fso.LengthOnDisk;
-
-                        if (!foExt.Equals(Path.GetExtension(fso.Name)))
-                            differentTypes = true;
-                    }
-
-                    if (fso.Attributes.HasFlag(FileAttributes.ReadOnly))
-                        attribReadOnly++;
-                    if (fso.Attributes.HasFlag(FileAttributes.System))
-                        attribSystem++;
-                    if (fso.Attributes.HasFlag(FileAttributes.Hidden))
-                        attribHidden++;
-                    if (fso.Attributes.HasFlag(FileAttributes.Archive))
-                        attribArchive++;
-                }
-
-                if (differentTypes)
-                {
-                    txtType.Text = "Multiple types";
-                }
-                else
-                {
-                    if (settings.Current.QueryShellForFileTypeInfo)
-                    {
-                        txtType.Text = ShellInterop.GetFileTypeName(entries[0].Name, entries[0].Attributes);
-                    }
-                    else
-                    {
-                        if (entries[0].Attributes.HasFlag(FileAttributes.Directory))
-                            txtType.Text = "File folder";
-                        else if (foExt.Length > 0)
-                            txtType.Text = $"{foExt[1..].ToUpper()} File";
-                        else
-                            txtType.Text = "File";
-                    }
-                }
-
-                if (attribReadOnly > 0)
-                {
-                    cbxReadOnly.Checked = true;
-                    cbxReadOnly.CheckState = attribReadOnly < entries.Count ? CheckState.Indeterminate : CheckState.Checked;
-                }
-
-                if (attribSystem > 0)
-                {
-                    cbxSystem.Checked = true;
-                    cbxSystem.CheckState = attribSystem < entries.Count ? CheckState.Indeterminate : CheckState.Checked;
-                }
-
-                if (attribHidden > 0)
-                {
-                    cbxHidden.Checked = true;
-                    cbxHidden.CheckState = attribHidden < entries.Count ? CheckState.Indeterminate : CheckState.Checked;
-                }
-
-                if (attribArchive > 0)
-                {
-                    cbxArchive.Checked = true;
-                    cbxArchive.CheckState = attribArchive < entries.Count ? CheckState.Indeterminate : CheckState.Checked;
-                }
-
-                lblMultipleObjectsCount.Text = $"Files: {files}, directories: {dirs}";
-                txtSize.Text = settings.Current.SizeUnit.FormatSize(size, settings.Current.SizeUnit != SizeUnit.Bytes);
-                txtSizeOnDisk.Text = settings.Current.SizeUnit.FormatSize(sizeOnDisk, settings.Current.SizeUnit != SizeUnit.Bytes);
-
-                if (entries[0] is FileSystems.File file)
-                    txtLocation.Text = file.DirectoryName;
-                else if (entries[0] is FileSystems.Directory dir)
-                    txtLocation.Text = dir.Parent?.FullName;
-
-                txtShortFilename.Enabled = txtFirstCluster.Enabled = txtContains.Enabled = txtHashCRC32.Enabled = txtHashMD5.Enabled = txtHashSHA1.Enabled = false;
-                txtShortFilename.Text = txtFirstCluster.Text = txtContains.Text = txtHashCRC32.Text = txtHashMD5.Text = txtHashSHA1.Text = "N/A";
-                cbxDateCreated.Enabled = cbxDateAccessed.Enabled = cbxDateModified.Enabled = false;
-                dtpAccessed.Enabled = dtpCreated.Enabled = dtpModified.Enabled = false;
-                dtpAccessed.Text = dtpCreated.Text = dtpModified.Text = "";
-                dtpAccessed.CustomFormat = dtpCreated.CustomFormat = dtpModified.CustomFormat = " ";
-
-                imgIcon.Image = Resources.page_white_stack;
-                imgIcon.SizeMode = PictureBoxSizeMode.StretchImage;
-            }
-            if (entries.Exists(entry => entry.FileSystem.IsReadOnly || entry.FileSystem.OwningContainer?.SupportsWriting == false))
-            {
-                txtFilename.Enabled = cbxArchive.Enabled = cbxHidden.Enabled = cbxReadOnly.Enabled = cbxSystem.Enabled =
-                    cbxDateCreated.Enabled = cbxDateAccessed.Enabled = cbxDateModified.Enabled =
-                    dtpAccessed.Enabled = dtpCreated.Enabled = dtpModified.Enabled = false;
-            }
-        }
-
-        private void cbxDateCreated_CheckedChanged(object sender, EventArgs e)
-        {
-            if (entries.Count == 1)
-            {
-                dtpCreated.Enabled = cbxDateCreated.Checked;
-                if (dtpCreated.Enabled)
-                {
-                    dtpCreated.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-                    dtpCreated.Value = DateTime.Now;
-                }
-                else
-                {
-                    dtpCreated.Text = "";
-                    dtpCreated.CustomFormat = " ";
-                }
-            }
-        }
-
-        private void cbxDateModified_CheckedChanged(object sender, EventArgs e)
-        {
-            if (entries.Count == 1)
-            {
-                dtpModified.Enabled = cbxDateModified.Checked;
-                if (dtpModified.Enabled)
-                {
-                    dtpModified.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-                    dtpModified.Value = DateTime.Now;
-                }
-                else
-                {
-                    dtpModified.Text = "";
-                    dtpModified.CustomFormat = " ";
-                }
-            }
-        }
-
-        private void cbxDateAccessed_CheckedChanged(object sender, EventArgs e)
-        {
-            if (entries.Count == 1)
-            {
-                dtpAccessed.Enabled = cbxDateAccessed.Checked;
-                if (dtpAccessed.Enabled)
-                {
-                    if (entries[0] is IFatFileSystemObject)
-                        dtpAccessed.CustomFormat = "yyyy-MM-dd";
-                    else
-                        dtpAccessed.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-                    dtpAccessed.Value = DateTime.Now;
-                }
-                else
-                {
-                    dtpAccessed.Text = "";
-                    dtpAccessed.CustomFormat = " ";
-                }
-            }
-        }
-
-        private CancellationTokenSource cts = new();
-
-        private async void txtHash_Click(object sender, EventArgs e)
-        {
-            if (!hashesDone && !hashesCalculating && entries.Count == 1)
-            {
-                hashesCalculating = true;
-                txtHashCRC32.Text = txtHashMD5.Text = txtHashSHA1.Text = "Please wait...";
-                txtHashCRC32.Enabled = txtHashMD5.Enabled = txtHashSHA1.Enabled = true;
-
-                var fileStream = ((FileSystems.File)entries[0]).GetStream();
-
-                var crc32 = HashCalculator.CalculateCrc32HashAsync(fileStream, cts.Token);
-                var md5 = HashCalculator.CalculateMd5HashAsync(fileStream, cts.Token);
-                var sha1 = HashCalculator.CalculateSha1HashAsync(fileStream, cts.Token);
-
-                try
-                {
-                    txtHashCRC32.Text = await crc32;
-                    txtHashMD5.Text = await md5;
-                    txtHashSHA1.Text = await sha1;
-                }
-
-                catch (Exception ex) when (ex is TaskCanceledException || ex is OperationCanceledException)
-                {
-                    // Hash calculation was canceled, carry on
-                }
-
-                hashesDone = true;
-                hashesCalculating = false;
-            }
-        }
-
-        private void dlgProperties_FormClosing(object sender, FormClosingEventArgs e)
-            => cts.Cancel(); // Cancel the background work if it's still in progress
     }
 }

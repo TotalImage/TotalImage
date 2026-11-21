@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using TotalImage.FileSystems;
 using TotalImage.ViewModels.Dialogs;
 
 namespace TotalImage.ViewModels.Services;
@@ -29,4 +31,9 @@ public interface IEntryDialogs
     /// </summary>
     /// <param name="itemCount">The number of selected entries.</param>
     Task<ExtractOptions?> AskExtractOptionsAsync(int itemCount);
+
+    /// <summary>
+    /// Shows the properties of one or more entries and asks for changes to them.
+    /// </summary>
+    Task<EntryPropertiesChange?> AskPropertiesAsync(IReadOnlyList<FileSystemObject> entries);
 }

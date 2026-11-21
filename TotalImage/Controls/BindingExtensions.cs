@@ -114,5 +114,35 @@ namespace TotalImage.Controls
                     UpdateControl();
             };
         }
+
+        /// <summary>
+        /// Binds a check box to a <c>bool?</c> view-model property in both directions: <c>null</c>
+        /// shows as indeterminate.
+        /// </summary>
+        public static void BindCheckState(this CheckBox checkBox, INotifyPropertyChanged source, string sourceProperty)
+        {
+            var property = source.GetType().GetProperty(sourceProperty)
+                ?? throw new ArgumentException($"{source.GetType().Name} has no property {sourceProperty}.", nameof(sourceProperty));
+
+            void UpdateControl() => checkBox.CheckState = (bool?)property.GetValue(source) switch
+            {
+                null => CheckState.Indeterminate,
+                true => CheckState.Checked,
+                false => CheckState.Unchecked
+            };
+            UpdateControl();
+
+            checkBox.CheckStateChanged += (_, _) => property.SetValue(source, checkBox.CheckState switch
+            {
+                CheckState.Indeterminate => null,
+                CheckState.Checked => (bool?)true,
+                _ => false
+            });
+            source.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == sourceProperty)
+                    UpdateControl();
+            };
+        }
     }
 }

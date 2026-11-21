@@ -1,13 +1,16 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Dialogs;
+using TotalImage.FileSystems;
+using TotalImage.Properties;
 using TotalImage.ViewModels.Dialogs;
 using TotalImage.ViewModels.Services;
 using TotalImage.ViewModels.Settings;
 
 namespace TotalImage.Services
 {
-    public sealed class WinFormsEntryDialogs(DialogOwner owner, ISettingsService settings, IFilePickerService filePicker, IMessageService messages) : IEntryDialogs
+    public sealed class WinFormsEntryDialogs(DialogOwner owner, ISettingsService settings, IFilePickerService filePicker, IMessageService messages, WinFormsFileTypeInfo fileTypeInfo) : IEntryDialogs
     {
         public Task<string?> AskRenameAsync(string currentName)
         {
@@ -35,6 +38,16 @@ namespace TotalImage.Services
             var viewModel = new ExtractViewModel(itemCount, settings, filePicker, messages);
             using var dialog = new ExtractDialog(viewModel);
             return Task.FromResult(ShowWithNestedDialogs(dialog) == DialogResult.OK ? viewModel.Answer : null);
+        }
+
+        public Task<EntryPropertiesChange?> AskPropertiesAsync(IReadOnlyList<FileSystemObject> entries)
+        {
+            var viewModel = new PropertiesViewModel(entries, settings, fileTypeInfo);
+            var (icon, stretch) = viewModel.IsMultiple
+                ? (Resources.page_white_stack, true)
+                : fileTypeInfo.GetLargeIcon(entries[0].Name, entries[0].Attributes);
+            using var dialog = new PropertiesDialog(viewModel, icon, stretch);
+            return Task.FromResult(dialog.ShowDialog(owner.Window) == DialogResult.OK ? viewModel.Answer : null);
         }
 
         // Shows a dialog whose view model asks further questions, so that the pickers and

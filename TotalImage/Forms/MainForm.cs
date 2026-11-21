@@ -981,7 +981,7 @@ namespace TotalImage.Forms
         }
 
         //TODO: Implement the Properties dialog for multiple selected objects like Windows does it
-        private void properties_Click(object sender, EventArgs e)
+        private async void properties_Click(object sender, EventArgs e)
         {
             List<TiFileSystemObject> entries = new();
             if (lstDirectories.Focused)
@@ -1024,8 +1024,8 @@ namespace TotalImage.Forms
                 return;
             }
 
-            using PropertiesDialog dlg = new(entries, settings);
-            dlg.ShowDialog();
+            // TODO: Apply the changes. The dialog's answer has never been applied so far.
+            await entryDialogs.AskPropertiesAsync(entries);
         }
 
         private void injectFiles_Click(object sender, EventArgs e)
