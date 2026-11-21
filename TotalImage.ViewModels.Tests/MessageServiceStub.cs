@@ -25,4 +25,8 @@ internal abstract class MessageServiceStub : IMessageService
     public virtual Task ShowExportSucceededAsync(string path) => throw Unexpected(nameof(ShowExportSucceededAsync));
     public virtual Task ShowErrorAsync(string operation, Exception exception) => throw Unexpected(nameof(ShowErrorAsync));
     public virtual Task<bool> ConfirmCreateExtractFolderAsync(string path) => throw Unexpected(nameof(ConfirmCreateExtractFolderAsync));
+    public virtual Task<UnsavedChangesAnswer> AskUnsavedChangesAsync(UnsavedChangesReason reason) => throw Unexpected(nameof(AskUnsavedChangesAsync));
+    public virtual Task ShowCannotOpenImageAsync(ImageOpenFailure failure) => throw Unexpected(nameof(ShowCannotOpenImageAsync));
+    public virtual Task ShowRecentImageMissingAsync(string fileName) => throw Unexpected(nameof(ShowRecentImageMissingAsync));
+    public virtual Task ShowFatOnlyFeatureAsync() => throw Unexpected(nameof(ShowFatOnlyFeatureAsync));
 }

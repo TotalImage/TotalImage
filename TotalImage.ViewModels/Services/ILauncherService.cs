@@ -14,4 +14,10 @@ public interface ILauncherService
     /// Opens a folder in the system file manager.
     /// </summary>
     void OpenFolder(string path);
+
+    /// <summary>
+    /// Shows a file in the system file manager: its folder opens with the file selected where
+    /// the platform supports it.
+    /// </summary>
+    void RevealFile(string path);
 }

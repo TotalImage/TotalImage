@@ -261,6 +261,120 @@ namespace TotalImage.Services
             return Task.FromResult(result == TaskDialogButton.Yes);
         }
 
+        public Task<UnsavedChangesAnswer> AskUnsavedChangesAsync(UnsavedChangesReason reason)
+        {
+            var save = new TaskDialogCommandLinkButton("&Save");
+            var discard = new TaskDialogCommandLinkButton("&Discard");
+            var action = reason switch
+            {
+                UnsavedChangesReason.NewImage => "creating a new image",
+                UnsavedChangesReason.OpenImage => "opening another image",
+                UnsavedChangesReason.CloseImage => "closing the current image",
+                UnsavedChangesReason.ReloadImage => "reloading the image",
+                _ => "closing TotalImage"
+            };
+
+            var result = ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = $"Would you like to save them before {action}?",
+                Heading = "You have unsaved changes",
+                Caption = "Warning",
+                Buttons =
+                {
+                    save,
+                    discard,
+                    TaskDialogButton.Cancel
+                },
+                Icon = TaskDialogIcon.Warning,
+            });
+
+            return Task.FromResult(result == save ? UnsavedChangesAnswer.Save
+                : result == discard ? UnsavedChangesAnswer.Discard
+                : UnsavedChangesAnswer.Cancel);
+        }
+
+        public Task ShowCannotOpenImageAsync(ImageOpenFailure failure)
+        {
+            const string BugReport = "If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.";
+            var paragraph = Environment.NewLine + Environment.NewLine;
+            var (heading, text) = failure.Problem switch
+            {
+                ImageOpenProblem.InvalidPath => ("Invalid path",
+                    "The provided path is empty or whitespace and cannot be opened."),
+                ImageOpenProblem.EmptyFile => ("File is empty",
+                    $"The file \"{failure.FileName}\" appears to be empty (ie. zero bytes in size). If you downloaded or copied this file from some other location, make sure the source file is not damaged and that the transfer completed successfully.{paragraph}{BugReport}"),
+                ImageOpenProblem.FileNotFound => ("File not found",
+                    $"The file \"{failure.FileName}\" could not be opened because it no longer exists. It may have been moved or deleted in the mean time. Make sure the file exists and is accessible and try again.{paragraph}{BugReport}"),
+                ImageOpenProblem.FileLocked => ("File is in use",
+                    $"The file \"{failure.FileName}\" could not be opened because it's currently locked by another process. Close all processes using this file and try again.{paragraph}{BugReport}"),
+                ImageOpenProblem.AccessDenied => ("Access denied",
+                    $"The file \"{failure.FileName}\" could not be opened because access was denied. Make sure you have the required permissions and that the file is not marked as read-only.{paragraph}{BugReport}"),
+                ImageOpenProblem.NoSupportedFileSystem => ("Cannot open file",
+                    $"We attempted to open this file as the {failure.ContainerName} container, but found no supported partition table or any supported file systems inside, so this image cannot be loaded. " +
+                    $"It's also possible this container format might not be correct for this file.{paragraph}{BugReport}"),
+                ImageOpenProblem.NoPartitions => ("No partitions found",
+                    $"We found a supported partition table in this image ({failure.PartitionTableName}), but no partitions, so this image cannot be loaded.{paragraph}{BugReport}"),
+                ImageOpenProblem.NoSupportedPartitions => ("No supported file systems",
+                    $"We found a supported partition table ({failure.PartitionTableName}) and several partitions in this image, but they all contain unsupported file systems, so this image cannot be loaded.{paragraph}{BugReport}"),
+                ImageOpenProblem.UnsupportedPartition => ("Unsupported file system",
+                    $"We found a supported partition table ({failure.PartitionTableName}) and one partition in this image, but it contains an unsupported file system, so this image cannot be loaded.{paragraph}{BugReport}"),
+                _ => ("Cannot open file",
+                    $"The file \"{failure.FileName}\" could not be opened due to the following exception:{paragraph}{failure.ErrorMessage}{paragraph}{BugReport}")
+            };
+
+            ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = text,
+                Heading = heading,
+                Caption = "Error",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Error,
+                SizeToContent = true
+            });
+
+            return Task.CompletedTask;
+        }
+
+        public Task ShowRecentImageMissingAsync(string fileName)
+        {
+            ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = $"The file \"{fileName}\" could not be opened because it no longer exists. It may have been renamed, moved or deleted since it was last opened in TotalImage. It will now be removed from your recent images list.{Environment.NewLine}{Environment.NewLine}" +
+                    $"If you think this is a bug, please submit a bug report (with this image included) on our GitHub repo.",
+                Heading = "File not found",
+                Caption = "Error",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Error,
+                SizeToContent = true
+            });
+
+            return Task.CompletedTask;
+        }
+
+        public Task ShowFatOnlyFeatureAsync()
+        {
+            ShowTaskDialog(new TaskDialogPage()
+            {
+                Text = "This feature is currently only available for FAT file systems.",
+                Heading = "Feature not available",
+                Caption = "Information",
+                Buttons =
+                {
+                    TaskDialogButton.OK
+                },
+                Icon = TaskDialogIcon.Information,
+                DefaultButton = TaskDialogButton.OK
+            });
+
+            return Task.CompletedTask;
+        }
+
         private TaskDialogButton ShowTaskDialog(TaskDialogPage page)
             => owner.Window is null ? TaskDialog.ShowDialog(page) : TaskDialog.ShowDialog(owner.Window, page);
     }

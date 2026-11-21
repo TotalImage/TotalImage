@@ -40,7 +40,12 @@ internal sealed class PartitionTestImages : IDisposable
     /// An MBR image with an active FAT12 partition at sector 1 and an empty (RAW) NTFS-typed
     /// partition right after it.
     /// </summary>
-    public RawContainer CreateMbrImage(bool validTimestamp = true)
+    public RawContainer CreateMbrImage(bool validTimestamp = true) => Open(MbrImageBytes(validTimestamp));
+
+    /// <summary>
+    /// The bytes of <see cref="CreateMbrImage"/>.
+    /// </summary>
+    internal static byte[] MbrImageBytes(bool validTimestamp = true)
     {
         byte[] floppyBytes = CreateFatVolume();
         byte[] image = new byte[(1 + FatSectors + RawSectors) * 512];
@@ -57,7 +62,7 @@ internal sealed class PartitionTestImages : IDisposable
         WriteMbrEntry(mbr[0x1CE..], false, MbrPartitionTable.MbrPartitionType.HpfsNtfsExFat, 1 + FatSectors, RawSectors);
         BinaryPrimitives.WriteUInt16LittleEndian(mbr[510..], 0xAA55);
 
-        return Open(image);
+        return image;
     }
 
     public static readonly Guid GptDiskGuid = new(Enumerable16(0x11));
@@ -66,7 +71,12 @@ internal sealed class PartitionTestImages : IDisposable
     /// <summary>
     /// A GPT image (as in the IO tests) with one empty EFI system partition at LBA 3-4, BIOS bootable.
     /// </summary>
-    public RawContainer CreateGptImage()
+    public RawContainer CreateGptImage() => Open(GptImageBytes());
+
+    /// <summary>
+    /// The bytes of <see cref="CreateGptImage"/>.
+    /// </summary>
+    internal static byte[] GptImageBytes()
     {
         byte[] image = new byte[2560];
 
@@ -97,7 +107,7 @@ internal sealed class PartitionTestImages : IDisposable
         BinaryPrimitives.WriteUInt64LittleEndian(entry[48..56], (ulong)GptPartitionTable.GptPartitionFlags.BiosBootable);
         Encoding.Unicode.GetBytes("ESP").CopyTo(entry[56..]);
 
-        return Open(image);
+        return image;
     }
 
     /// <summary>
@@ -143,7 +153,7 @@ internal sealed class PartitionTestImages : IDisposable
         return bytes;
     }
 
-    private static void WriteMbrEntry(Span<byte> entry, bool active, MbrPartitionTable.MbrPartitionType type, uint start, uint length)
+    internal static void WriteMbrEntry(Span<byte> entry, bool active, MbrPartitionTable.MbrPartitionType type, uint start, uint length)
     {
         entry[0] = active ? (byte)0x80 : (byte)0;
         entry[4] = (byte)type;

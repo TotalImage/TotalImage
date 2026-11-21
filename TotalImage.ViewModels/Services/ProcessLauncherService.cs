@@ -1,4 +1,7 @@
+using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 
 namespace TotalImage.ViewModels.Services;
 
@@ -13,6 +16,34 @@ public sealed class ProcessLauncherService : ILauncherService
 
     /// <inheritdoc/>
     public void OpenFolder(string path) => Start(path);
+
+    /// <inheritdoc/>
+    public void RevealFile(string path)
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            try
+            {
+                using var _ = Process.Start(new ProcessStartInfo
+                {
+                    FileName = "explorer.exe",
+                    Arguments = $"/select,\"{path}\"",
+                    UseShellExecute = true,
+                    ErrorDialog = true
+                });
+            }
+            catch (Win32Exception ex) when (ex.NativeErrorCode == ErrorCancelled)
+            {
+                // The user dismissed the error dialog.
+            }
+        }
+        else if (Path.GetDirectoryName(path) is { Length: > 0 } folder)
+        {
+            Start(folder);
+        }
+    }
+
+    private const int ErrorCancelled = 0x000004C7;
 
     private static void Start(string target)
     {

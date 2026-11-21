@@ -196,6 +196,8 @@ public class AboutViewModelTests
         public List<string> Opened { get; } = [];
         public void OpenUrl(string url) => Opened.Add(url);
         public void OpenFolder(string path) => Opened.Add(path);
+
+        public void RevealFile(string path) => throw new System.NotSupportedException();
     }
 
     [Fact]
