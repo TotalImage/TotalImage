@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        xmlns:extraction="clr-namespace:TotalImage.ViewModels.Extraction;assembly=TotalImage.ViewModels"
+        xmlns:conv="clr-namespace:TotalImage.Avalonia.Converters"
+        x:Class="TotalImage.Avalonia.Dialogs.ExtractDialog"
+        x:DataType="dialogs:ExtractViewModel"
+        Title="Extract"
+        Icon="/Assets/logo.ico"
+        Width="560"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button x:Name="okButton" Content="OK" Classes="accent" MinWidth="80" HorizontalContentAlignment="Center"
+                        IsDefault="True" IsEnabled="{Binding CanExtract}" />
+                <Button x:Name="cancelButton" Content="Cancel" MinWidth="80" HorizontalContentAlignment="Center" IsCancel="True" />
+            </StackPanel>
+        </Border>
+        <StackPanel Margin="16" Spacing="8">
+            <TextBlock Text="{Binding Prompt, Mode=OneTime}" TextWrapping="Wrap" />
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Browse..." Margin="8,0,0,0" Command="{Binding BrowseCommand}" />
+                <TextBox x:Name="targetPathTextBox" Text="{Binding TargetPath}" />
+            </DockPanel>
+            <StackPanel Spacing="2" Margin="0,4,0,0">
+                <RadioButton GroupName="directories" Content="Ignore folders"
+                             IsChecked="{Binding DirectoryExtractionMode, Converter={x:Static conv:ChoiceConverter.Instance}, ConverterParameter={x:Static extraction:DirectoryExtractionMode.Skip}}" />
+                <RadioButton GroupName="directories" Content="Extract all files into the same folder"
+                             IsChecked="{Binding DirectoryExtractionMode, Converter={x:Static conv:ChoiceConverter.Instance}, ConverterParameter={x:Static extraction:DirectoryExtractionMode.Merge}}" />
+                <RadioButton GroupName="directories" Content="Preserve original directory structure"
+                             IsChecked="{Binding DirectoryExtractionMode, Converter={x:Static conv:ChoiceConverter.Instance}, ConverterParameter={x:Static extraction:DirectoryExtractionMode.Preserve}}" />
+            </StackPanel>
+            <CheckBox Content="Open destination folder after extraction" IsChecked="{Binding OpenFolder}" />
+        </StackPanel>
+    </DockPanel>
+</Window>

@@ -66,13 +66,15 @@ public sealed class AvaloniaEntryDialogs(WindowOwner owner, ISettingsService set
 
     #region Extract options
 
-    public override Task<ExtractOptions?> AskExtractOptionsAsync(int itemCount)
+    public override async Task<ExtractOptions?> AskExtractOptionsAsync(int itemCount)
     {
-        // TODO (phase B): Dialogs/ExtractDialog.axaml bound to
-        // new ExtractViewModel(itemCount, Settings, services.FilePicker, services.Messages), with services
-        // owned by the dialog (DialogHost.ServicesFor). Its OK button must await viewModel.TryAcceptAsync()
-        // before closing (see the WinForms ExtractDialog).
-        throw new NotImplementedException("The extract dialog isn't available in the Avalonia UI yet.");
+        // The folder picker and the question about creating the folder belong to the dialog.
+        var dialogOwner = new WindowOwner();
+        var services = DialogHost.ServicesFor(dialogOwner);
+        var viewModel = new ExtractViewModel(itemCount, Settings, services.FilePicker, services.Messages);
+        var dialog = new ExtractDialog(viewModel);
+        dialogOwner.Window = dialog;
+        return await DialogHost.ShowDialogAsync(dialog, owner.Window) ? viewModel.Answer : null;
     }
 
     #endregion
