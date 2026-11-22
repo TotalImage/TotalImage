@@ -3,8 +3,8 @@ using TotalImage.ViewModels.Services;
 namespace TotalImage.Avalonia.Services;
 
 /// <summary>
-/// Other instances share the temporary folder: other processes of the app, and the other main
-/// windows of this one.
+/// Other instances share the temporary folder: other processes of this app or of the WinForms
+/// app (see <see cref="ProcessAppInstances"/>), and the other main windows of this one.
 /// </summary>
 public sealed class AvaloniaAppInstances(MainWindows windows) : IAppInstances
 {
