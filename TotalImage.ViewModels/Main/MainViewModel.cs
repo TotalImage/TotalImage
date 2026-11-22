@@ -760,10 +760,10 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     /// <summary>
     /// Extracts entries while the progress window is shown, which keeps the image from being
-    /// used for anything else meanwhile. Explains the problem when it fails.
+    /// used for anything else meanwhile. Explains the problem when it fails. Asks before overwriting files when
+    /// <paramref name="askOverwrite"/> and the settings say so. Returns whether everything was
+    /// extracted: not cancelled and no error.
     /// </summary>
-    /// <param name="askOverwrite">Whether to ask before overwriting files (when the settings say so).</param>
-    /// <returns>Whether everything was extracted: not cancelled and no error.</returns>
     private async Task<bool> ExtractEntriesAsync(IEnumerable<FileSystemObject> entries, string targetPath, DirectoryExtractionMode mode, bool askOverwrite)
     {
         var current = settings.Current;

@@ -25,10 +25,6 @@ namespace TotalImage.Forms
 {
     public partial class MainForm : Form, IMainViewBridge
     {
-        private TiDirectory? draggedDir;
-
-        public string tempDir;
-
         //For tracking which entry was last selected by keypress
         private char _lastTypeAheadChar = '\0';
         private int _lastTypeAheadIndex = -1;
@@ -577,31 +573,18 @@ namespace TotalImage.Forms
 
         private void BrowsePane_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) && !viewModel.IsImageOpen)
-                e.Effect = DragDropEffects.Copy;
-            else
-                e.Effect = DragDropEffects.None;
+            e.Effect = DroppedPaths(e) is { } paths && viewModel.CanAcceptDrop(paths) ? DragDropEffects.Copy : DragDropEffects.None;
         }
 
-        /* Drag and drop was performed on the ListView - a file was dragged into the ListView/TreeView from Explorer => try to open it
-         * Right now, we only handle case a for opening a single file that was dragged into the window.
-         * TODO: Implement other drag and drop scenarios (moving files within the image, etc.). */
+        // Files dragged into the list or the tree from outside the window.
         private async void BrowsePane_DragDrop(object sender, DragEventArgs e)
         {
-            if (e.Data is not null && e.Data.GetDataPresent(DataFormats.FileDrop) && !viewModel.IsImageOpen)
-            {
-                //Files are being dragged into the listview from outside the form
-                var data = e.Data.GetData(DataFormats.FileDrop, false);
-                if (data is not null)
-                {
-                    string[] items = (string[])data;
-                    if (items.Length == 1)
-                    {
-                        await viewModel.OpenImageFileAsync(items[0]);
-                    }
-                }
-            }
+            if (DroppedPaths(e) is { } paths)
+                await viewModel.DropAsync(paths);
         }
+
+        private static string[]? DroppedPaths(DragEventArgs e)
+            => e.Data?.GetDataPresent(DataFormats.FileDrop) == true ? e.Data.GetData(DataFormats.FileDrop, false) as string[] : null;
 
         private void FolderTree_MouseUp(object sender, MouseEventArgs e)
         {
@@ -622,79 +605,36 @@ namespace TotalImage.Forms
             }
         }
 
-        /* Fires when the user starts dragging a ListViewItem around. String array is needed for Explorer to perform the move operation once
-         * the drop is performed. */
-        private void FileList_ItemDrag(object sender, ItemDragEventArgs e)
+        // Dragging entries out of the list: they are extracted to a temporary folder first.
+        private async void FileList_ItemDrag(object sender, ItemDragEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && e.Item is not null)
-            {
-                tempDir = tempDirectory.GetUniqueSubdirectoryPath();
-                if (!Directory.Exists(tempDir))
-                {
-                    Directory.CreateDirectory(tempDir);
-                }
-
-                if (((ListViewItem)e.Item).Tag is EntryViewModel { IsParentEntry: true })
-                {
-                    return;
-                }
-
-                List<string> items = new();
-                foreach (TiFileSystemObject fso in viewModel.SelectedObjects)
-                {
-                    string item = Path.Combine(tempDir, fso.Name);
-                    items.Add(item);
-                }
-                StringCollection draggedItems = new();
-                draggedItems.AddRange(items.ToArray());
-
-                DataObject data = new();
-                data.SetFileDropList(draggedItems); //Needed for Explorer
-                /* Set the preferred drop effect to Copy to prevent Explorer from defaulting to "Create a link" for filenames
-                 * that are registered under SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths. */
-                data.SetData("Preferred DropEffect", new MemoryStream(BitConverter.GetBytes((int)DragDropEffects.Copy)));
-                fileList.DoDragDrop(data, DragDropEffects.Copy);
-            }
+            if (e.Button == MouseButtons.Left && e.Item is ListViewItem { Tag: EntryViewModel { IsParentEntry: false } })
+                StartDragOut(fileList, await viewModel.PrepareDragOutAsync(viewModel.SelectedEntries));
         }
 
-        /* Fires when the user starts dragging a TreeNode around. String array is needed for Explorer to perform the move operation once
-         * the drop is performed. */
-        private void FolderTree_ItemDrag(object sender, ItemDragEventArgs e)
+        // Dragging a folder out of the tree: it is extracted to a temporary folder first.
+        private async void FolderTree_ItemDrag(object sender, ItemDragEventArgs e)
         {
             if (e.Button == MouseButtons.Left && FolderTreeAdapter.FolderOf(e.Item as TreeNode) is { } folder)
-            {
-                tempDir = tempDirectory.GetUniqueSubdirectoryPath();
-                if (!Directory.Exists(tempDir))
-                {
-                    Directory.CreateDirectory(tempDir);
-                }
+                StartDragOut(folderTree, await viewModel.PrepareDragOutAsync(folder));
+        }
 
-                //This array is needed for Explorer to perform the file copy/move operation later on.
-                List<string> items = new();
-                draggedDir = folder.Directory;
-                if (draggedDir.Parent is null)
-                {
-                    /* Add the root dir contents (non-recursively) to the list instead of the tempdir itself, so Explorer doesn't end up moving it
-                     * instead of the contents. */
-                    foreach (var fso in draggedDir.EnumerateFileSystemObjects(settings.Current.ShowHiddenItems))
-                    {
-                        items.Add(Path.Combine(tempDir, fso.Name));
-                    }
-                }
-                else
-                {
-                    items.Add(Path.Combine(tempDir, draggedDir.Name));
-                }
-                StringCollection draggedItems = new();
-                draggedItems.AddRange(items.ToArray());
+        private void StartDragOut(Control source, IReadOnlyList<string> paths)
+        {
+            if (paths.Count == 0)
+                return;
 
-                DataObject data = new();
-                data.SetFileDropList(draggedItems); //FileDrop is needed for Explorer
-                /* Set the preferred drop effect to Copy to prevent Explorer from defaulting to "Create a link" for filenames
-                 * that are registered under SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths. */
-                data.SetData("Preferred DropEffect", new MemoryStream(BitConverter.GetBytes((int)DragDropEffects.Copy)));
-                folderTree.DoDragDrop(data, DragDropEffects.Copy);
-            }
+            StringCollection draggedItems = new();
+            draggedItems.AddRange(paths.ToArray());
+
+            DataObject data = new();
+            data.SetFileDropList(draggedItems); //Needed for Explorer
+            /* Set the preferred drop effect to Copy to prevent Explorer from defaulting to "Create a link" for filenames
+             * that are registered under SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths. */
+            data.SetData("Preferred DropEffect", new MemoryStream(BitConverter.GetBytes((int)DragDropEffects.Copy)));
+
+            var effect = source.DoDragDrop(data, DragDropEffects.Copy);
+            viewModel.EndDragOut(dropped: effect != DragDropEffects.None);
         }
 
         private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -858,50 +798,10 @@ namespace TotalImage.Forms
         {
             //ESC cancels the drag and drop action
             if (e.EscapePressed)
-            {
                 e.Action = DragAction.Cancel;
-                Directory.Delete(tempDir, true);
-                return;
-            }
-
-            /* If the left mouse button was released, complete the drag and drop operation. In our case, this means that any files or folders
-             * that may have been dragged out of the window have to be extracted into a temporary folder first, then the drop is performed so
-             * Explorer will move these items to the actual drag and drop destination. Dropping inside the window is not supported yet. */
-            if ((e.KeyState & 1) == 0)
-            {
-                if (!ClientRectangle.Contains(PointToClient(MousePosition)))
-                {
-                    Capture = true;
-                    var extractionSucceeded = false;
-
-                    //Here is where the actual extraction to the temp dir happens
-                    if (sender is ListView)
-                    {
-                        extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, settings.Current, viewModel.SelectedObjects, DirectoryExtractionMode.Preserve);
-                    }
-                    else if (sender is TreeView && draggedDir is not null)
-                    {
-                        if (draggedDir.Parent is null) //Root dir needs to be treated separately
-                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, settings.Current, draggedDir.EnumerateFileSystemObjects(settings.Current.ShowHiddenItems), DirectoryExtractionMode.Preserve);
-                        else
-                            extractionSucceeded = FileExtraction.ExtractFilesToTemporaryDirectory(this, settings.Current, new TiFileSystemObject[] { draggedDir }, DirectoryExtractionMode.Preserve);
-                    }
-
-                    //User cancelled extraction via the dialog, so the drop needs to be cancelled too or Explorer will try to move items that don't exist
-                    if (extractionSucceeded)
-                        e.Action = DragAction.Drop;
-                    else
-                    {
-                        e.Action = DragAction.Cancel;
-                        Directory.Delete(tempDir, true);
-                    }
-                }
-                else
-                    e.Action = DragAction.Cancel;
-
-                return;
-            }
-            //Left mouse button wasn't released yes, continue the drag
+            // Once the left mouse button is released, the entries are dropped outside the window. Dropping inside it is not supported yet.
+            else if ((e.KeyState & 1) == 0)
+                e.Action = ClientRectangle.Contains(PointToClient(MousePosition)) ? DragAction.Cancel : DragAction.Drop;
             else
                 e.Action = DragAction.Continue;
         }
