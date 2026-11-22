@@ -11,7 +11,7 @@ namespace TotalImage.ViewModels;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds the shared app-wide services (settings, temp-directory management, the launcher, image files)
+    /// Adds the shared app-wide services (settings, temp-directory management, the launcher, image files, extraction)
     /// and the main view model, one per window scope.
     /// Each UI adds its own implementations of the dialog and picker services.
     /// </summary>
@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IAppInstances, ProcessAppInstances>();
         services.AddSingleton<IImageHashService, ImageHashService>();
         services.AddSingleton<IImageFileService, ImageFileService>();
+        services.AddSingleton<IFileExtractionService, FileExtractionService>();
         services.AddScoped<MainViewModel>();
         return services;
     }

@@ -266,6 +266,7 @@ internal sealed class FakeEntryDialogs : IEntryDialogs
     public Task<string?> AskNewFolderNameAsync() => throw new NotSupportedException();
     public Task<ExtractOptions?> AskExtractOptionsAsync(int itemCount) => throw new NotSupportedException();
     public Task<EntryPropertiesChange?> AskPropertiesAsync(IReadOnlyList<FileSystemObject> entries) => throw new NotSupportedException();
+    public Task ShowExtractionProgressAsync(Func<IProgress<Extraction.ExtractionProgress>, CancellationToken, Task> extraction) => throw new NotSupportedException();
 }
 
 internal sealed class FakeAppDialogs : IAppDialogs

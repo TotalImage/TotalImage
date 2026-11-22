@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Dialogs;
 using TotalImage.FileSystems;
 using TotalImage.Properties;
 using TotalImage.ViewModels.Dialogs;
+using TotalImage.ViewModels.Extraction;
 using TotalImage.ViewModels.Services;
 using TotalImage.ViewModels.Settings;
 
@@ -48,6 +51,70 @@ namespace TotalImage.Services
                 : fileTypeInfo.GetLargeIcon(entries[0].Name, entries[0].Attributes);
             using var dialog = new PropertiesDialog(viewModel, icon, stretch);
             return Task.FromResult(dialog.ShowDialog(owner.Window) == DialogResult.OK ? viewModel.Answer : null);
+        }
+
+        public Task ShowExtractionProgressAsync(Func<IProgress<ExtractionProgress>, CancellationToken, Task> extraction)
+        {
+            using var cancellation = new CancellationTokenSource();
+
+            // The window stays open until the extraction has stopped, so the image is never read
+            // while the main window can be used.
+            var cancelButton = TaskDialogButton.Cancel;
+            cancelButton.AllowCloseDialog = false;
+            cancelButton.Click += (_, _) => cancellation.Cancel();
+
+            var page = new TaskDialogPage()
+            {
+                Caption = "Extracting",
+                Heading = "Extracting files, please wait...",
+                Text = "This might take a while, so sit back and relax while we do all the work.",
+                Buttons = { cancelButton },
+                ProgressBar = new TaskDialogProgressBar()
+                {
+                    State = TaskDialogProgressBarState.Marquee
+                },
+                Footnote = new TaskDialogFootnote()
+                {
+                    Text = "Enumerating files..."
+                }
+            };
+
+            var progress = new Progress<ExtractionProgress>(report =>
+            {
+                page.ProgressBar.Maximum = report.Total;
+                page.ProgressBar.State = TaskDialogProgressBarState.Normal;
+                page.ProgressBar.Value = report.Completed;
+                if (report.FileName is not null)
+                    page.Footnote.Text = $"Extracting {report.FileName}";
+            });
+
+            Exception? failure = null;
+            page.Created += async (_, _) =>
+            {
+                // Questions asked during the extraction (like overwriting a file) belong to this window.
+                var parent = owner.Window;
+                owner.Window = page.BoundDialog;
+                try
+                {
+                    await extraction(progress, cancellation.Token);
+                }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                }
+                finally
+                {
+                    owner.Window = parent;
+                    page.BoundDialog?.Close();
+                }
+            };
+
+            if (owner.Window is null)
+                TaskDialog.ShowDialog(page);
+            else
+                TaskDialog.ShowDialog(owner.Window, page);
+
+            return failure is null ? Task.CompletedTask : Task.FromException(failure);
         }
 
         // Shows a dialog whose view model asks further questions, so that the pickers and

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using TotalImage.ViewModels.Extraction;
 using TotalImage.ViewModels.Services;
 
 namespace TotalImage.ViewModels.Tests;
@@ -29,4 +30,5 @@ internal abstract class MessageServiceStub : IMessageService
     public virtual Task ShowCannotOpenImageAsync(ImageOpenFailure failure) => throw Unexpected(nameof(ShowCannotOpenImageAsync));
     public virtual Task ShowRecentImageMissingAsync(string fileName) => throw Unexpected(nameof(ShowRecentImageMissingAsync));
     public virtual Task ShowFatOnlyFeatureAsync() => throw Unexpected(nameof(ShowFatOnlyFeatureAsync));
+    public virtual Task<OverwriteAnswer> AskOverwriteAsync(string fileName) => throw Unexpected(nameof(AskOverwriteAsync));
 }

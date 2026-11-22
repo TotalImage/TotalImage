@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TotalImage.ViewModels.Extraction;
 using TotalImage.ViewModels.Services;
 
 namespace TotalImage.Services
@@ -373,6 +374,39 @@ namespace TotalImage.Services
             });
 
             return Task.CompletedTask;
+        }
+
+        public Task<OverwriteAnswer> AskOverwriteAsync(string fileName)
+        {
+            var overwriteButton = new TaskDialogButton("&Overwrite");
+            var skipButton = new TaskDialogButton("&Skip");
+            var page = new TaskDialogPage()
+            {
+                Text = $"The file \"{fileName}\" already exists in the target directory. Do you want to overwrite it?",
+                Heading = "File already exists",
+                Caption = "Warning",
+                Buttons =
+                {
+                    overwriteButton,
+                    skipButton,
+                    TaskDialogButton.Cancel
+                },
+                AllowCancel = true,
+                Verification = new TaskDialogVerificationCheckBox()
+                {
+                    Checked = false,
+                    Text = "Do this for all currently extracted files"
+                },
+                Icon = TaskDialogIcon.Warning,
+                DefaultButton = TaskDialogButton.Cancel
+            };
+
+            var result = ShowTaskDialog(page);
+            var choice = result == overwriteButton ? OverwriteChoice.Overwrite
+                : result == skipButton ? OverwriteChoice.Skip
+                : OverwriteChoice.Cancel;
+
+            return Task.FromResult(new OverwriteAnswer(choice, choice != OverwriteChoice.Cancel && page.Verification.Checked));
         }
 
         private TaskDialogButton ShowTaskDialog(TaskDialogPage page)

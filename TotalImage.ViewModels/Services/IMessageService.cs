@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using TotalImage.ViewModels.Extraction;
 
 namespace TotalImage.ViewModels.Services;
 
@@ -103,6 +104,14 @@ public interface IMessageService
     /// Says that the feature is only available for FAT file systems so far.
     /// </summary>
     Task ShowFatOnlyFeatureAsync();
+
+    /// <summary>
+    /// Says that a file being extracted exists already in the target folder and asks whether to
+    /// overwrite it, skip it or stop the extraction, and whether to do the same for every other
+    /// such file.
+    /// </summary>
+    /// <param name="fileName">The file name, without its folder.</param>
+    Task<OverwriteAnswer> AskOverwriteAsync(string fileName);
 }
 
 /// <summary>

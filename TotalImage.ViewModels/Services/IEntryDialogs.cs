@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using TotalImage.FileSystems;
 using TotalImage.ViewModels.Dialogs;
+using TotalImage.ViewModels.Extraction;
 
 namespace TotalImage.ViewModels.Services;
 
@@ -36,4 +39,13 @@ public interface IEntryDialogs
     /// Shows the properties of one or more entries and asks for changes to them.
     /// </summary>
     Task<EntryPropertiesChange?> AskPropertiesAsync(IReadOnlyList<FileSystemObject> entries);
+
+    /// <summary>
+    /// Shows the progress of an extraction in a modal window while it runs, so the image is not
+    /// used for anything else meanwhile. The window's Cancel button cancels the token; the window
+    /// closes once the extraction has finished.
+    /// </summary>
+    /// <param name="extraction">Runs the extraction, reporting its progress.</param>
+    /// <returns>Completes (or fails) like <paramref name="extraction"/>, after the window closed.</returns>
+    Task ShowExtractionProgressAsync(Func<IProgress<ExtractionProgress>, CancellationToken, Task> extraction);
 }
