@@ -409,6 +409,96 @@ namespace TotalImage.Services
             return Task.FromResult(new OverwriteAnswer(choice, choice != OverwriteChoice.Cancel && page.Verification.Checked));
         }
 
+        public Task<Confirmation> ConfirmDeleteAsync(DeletionSummary summary)
+        {
+            //Build a fancy string for showing the item count
+            var (fileCount, dirCount) = (summary.FileCount, summary.DirectoryCount);
+            string itemCount = "";
+            if (dirCount > 0)
+            {
+                itemCount += $"{dirCount} director{(dirCount == 1 ? "y" : "ies")}";
+                if (fileCount > 0)
+                    itemCount += $" and {fileCount} file{(fileCount == 1 ? "" : "s")}";
+            }
+            else
+            {
+                itemCount += $"{fileCount} file{(fileCount == 1 ? "" : "s")}";
+            }
+
+            var total = fileCount + dirCount;
+            return Task.FromResult(ShowConfirmation(new TaskDialogPage()
+            {
+                Text = $"Are you sure you want to delete {itemCount} occupying {summary.SizeText}?{Environment.NewLine}" +
+                $"You might still be able to undo this operation later.",
+                Heading = $"{total} item{(total > 1 ? "s" : "")} will be deleted",
+                Caption = "Deletion",
+                Buttons =
+                {
+                    TaskDialogButton.Yes,
+                    TaskDialogButton.No
+                },
+                DefaultButton = TaskDialogButton.Yes,
+                SizeToContent = true,
+                Icon = TaskDialogIcon.Warning,
+                Verification = new TaskDialogVerificationCheckBox()
+                {
+                    Text = "Do not ask for confirmation again"
+                }
+            }, clearFocus: true));
+        }
+
+        public Task<Confirmation> ConfirmDeleteFolderAsync()
+        {
+            return Task.FromResult(ShowConfirmation(new TaskDialogPage()
+            {
+                Text = $"Are you sure you want to delete this directory and all its contents?{Environment.NewLine}" +
+                $"You might still be able to undo this operation later.",
+                Heading = $"Directory will be deleted",
+                Caption = "Warning",
+                Buttons =
+                {
+                    TaskDialogButton.Yes,
+                    TaskDialogButton.No
+                },
+                Icon = TaskDialogIcon.Warning,
+                Verification = new TaskDialogVerificationCheckBox()
+                {
+                    Text = "Do not ask for confirmation again"
+                }
+            }, clearFocus: true));
+        }
+
+        public Task<Confirmation> ConfirmInjectAsync(int fileCount, string sizeText)
+        {
+            return Task.FromResult(ShowConfirmation(new TaskDialogPage()
+            {
+                Text = $"Are you sure you want to inject {fileCount} file{(fileCount == 1 ? "" : "s")} occupying {sizeText} into the image?",
+                Heading = $"{fileCount} file{(fileCount == 1 ? "" : "s")} will be injected",
+                Caption = "Injection",
+                Buttons =
+                {
+                    TaskDialogButton.Yes,
+                    TaskDialogButton.No
+                },
+                Icon = TaskDialogIcon.Warning,
+                Verification = new TaskDialogVerificationCheckBox()
+                {
+                    Text = "Do not ask for confirmation again"
+                }
+            }, clearFocus: false));
+        }
+
+        // A Yes/No question with a "do not ask again" check box. Clearing the focus keeps the
+        // Enter key that answers it from reaching the file list or the folder tree.
+        private Confirmation ShowConfirmation(TaskDialogPage page, bool clearFocus)
+        {
+            if (clearFocus && owner.Window is ContainerControl window)
+                window.ActiveControl = null;
+
+            var result = ShowTaskDialog(page);
+            return new Confirmation(result == TaskDialogButton.Yes, page.Verification!.Checked);
+        }
+
         private TaskDialogButton ShowTaskDialog(TaskDialogPage page)
             => owner.Window is null ? TaskDialog.ShowDialog(page) : TaskDialog.ShowDialog(owner.Window, page);
     }

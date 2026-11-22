@@ -112,7 +112,40 @@ public interface IMessageService
     /// </summary>
     /// <param name="fileName">The file name, without its folder.</param>
     Task<OverwriteAnswer> AskOverwriteAsync(string fileName);
+
+    /// <summary>
+    /// Asks whether to delete entries selected in the file list, and whether to stop asking.
+    /// </summary>
+    Task<Confirmation> ConfirmDeleteAsync(DeletionSummary summary);
+
+    /// <summary>
+    /// Asks whether to delete the folder selected in the folder tree and everything in it, and
+    /// whether to stop asking.
+    /// </summary>
+    Task<Confirmation> ConfirmDeleteFolderAsync();
+
+    /// <summary>
+    /// Asks whether to add files of the computer to the image, and whether to stop asking.
+    /// </summary>
+    /// <param name="fileCount">The number of files.</param>
+    /// <param name="sizeText">Their total size, formatted.</param>
+    Task<Confirmation> ConfirmInjectAsync(int fileCount, string sizeText);
 }
+
+/// <summary>
+/// The answer to a question that asks for confirmation and offers not to ask again.
+/// </summary>
+/// <param name="Confirmed">Whether to go on.</param>
+/// <param name="DontAskAgain">Whether the user asked not to be asked again (whatever the answer).</param>
+public sealed record Confirmation(bool Confirmed, bool DontAskAgain = false);
+
+/// <summary>
+/// What is about to be deleted, for <see cref="IMessageService.ConfirmDeleteAsync"/>.
+/// </summary>
+/// <param name="FileCount">The number of files.</param>
+/// <param name="DirectoryCount">The number of folders.</param>
+/// <param name="SizeText">The total size, including everything in the folders, formatted.</param>
+public sealed record DeletionSummary(int FileCount, int DirectoryCount, string SizeText);
 
 /// <summary>
 /// The answer to <see cref="IMessageService.AskUnsavedChangesAsync"/>.

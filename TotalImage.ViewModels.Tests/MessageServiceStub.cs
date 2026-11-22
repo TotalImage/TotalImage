@@ -31,4 +31,7 @@ internal abstract class MessageServiceStub : IMessageService
     public virtual Task ShowRecentImageMissingAsync(string fileName) => throw Unexpected(nameof(ShowRecentImageMissingAsync));
     public virtual Task ShowFatOnlyFeatureAsync() => throw Unexpected(nameof(ShowFatOnlyFeatureAsync));
     public virtual Task<OverwriteAnswer> AskOverwriteAsync(string fileName) => throw Unexpected(nameof(AskOverwriteAsync));
+    public virtual Task<Confirmation> ConfirmDeleteAsync(DeletionSummary summary) => throw Unexpected(nameof(ConfirmDeleteAsync));
+    public virtual Task<Confirmation> ConfirmDeleteFolderAsync() => throw Unexpected(nameof(ConfirmDeleteFolderAsync));
+    public virtual Task<Confirmation> ConfirmInjectAsync(int fileCount, string sizeText) => throw Unexpected(nameof(ConfirmInjectAsync));
 }

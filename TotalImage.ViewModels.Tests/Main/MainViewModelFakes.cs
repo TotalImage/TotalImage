@@ -310,7 +310,15 @@ internal sealed class FakeEntryDialogs : IEntryDialogs
     }
 
     public Task<string?> AskRenameAsync(string currentName) => throw new NotSupportedException();
-    public Task<string?> AskNewFolderNameAsync() => throw new NotSupportedException();
+    public string? NewFolderAnswer { get; set; }
+    public int NewFolderRequests { get; private set; }
+
+    public Task<string?> AskNewFolderNameAsync()
+    {
+        NewFolderRequests++;
+        return Task.FromResult(NewFolderAnswer);
+    }
+
     public Task<EntryPropertiesChange?> AskPropertiesAsync(IReadOnlyList<FileSystemObject> entries) => throw new NotSupportedException();
 }
 
@@ -401,6 +409,30 @@ internal sealed class FakeMainMessages : MessageServiceStub
     public List<OverwriteAnswer> OverwriteAnswers { get; } = [new(OverwriteChoice.Overwrite)];
     public List<string> OverwriteQuestions { get; } = [];
 
+    public Confirmation DeleteAnswer { get; set; } = new(true);
+    public List<DeletionSummary> DeleteQuestions { get; } = [];
+    public int FolderDeleteQuestions { get; private set; }
+    public Confirmation InjectAnswer { get; set; } = new(true);
+    public List<(int FileCount, string SizeText)> InjectQuestions { get; } = [];
+
+    public override Task<Confirmation> ConfirmDeleteAsync(DeletionSummary summary)
+    {
+        DeleteQuestions.Add(summary);
+        return Task.FromResult(DeleteAnswer);
+    }
+
+    public override Task<Confirmation> ConfirmDeleteFolderAsync()
+    {
+        FolderDeleteQuestions++;
+        return Task.FromResult(DeleteAnswer);
+    }
+
+    public override Task<Confirmation> ConfirmInjectAsync(int fileCount, string sizeText)
+    {
+        InjectQuestions.Add((fileCount, sizeText));
+        return Task.FromResult(InjectAnswer);
+    }
+
     public override Task<OverwriteAnswer> AskOverwriteAsync(string fileName)
     {
         OverwriteQuestions.Add(fileName);
@@ -430,7 +462,9 @@ internal sealed class FakeMainFilePicker : IFilePickerService
 
     public Task<string?> PickSaveFileAsync(IReadOnlyList<FileTypeFilter> filters, string defaultExtension, string? suggestedFileName = null) => throw new NotSupportedException();
     public Task<string?> PickFolderAsync(string? initialFolder = null) => throw new NotSupportedException();
-    public Task<IReadOnlyList<string>> PickFilesToAddAsync() => throw new NotSupportedException();
+    public IReadOnlyList<string> FilesToAdd { get; set; } = [];
+
+    public Task<IReadOnlyList<string>> PickFilesToAddAsync() => Task.FromResult(FilesToAdd);
 }
 
 internal sealed class FakeMainLauncher : ILauncherService
@@ -455,9 +489,6 @@ internal sealed class FakeBridge : IMainViewBridge
 
     public void Rename() => Calls.Add(nameof(Rename));
 
-    public Task InjectFilesAsync() => Record(nameof(InjectFilesAsync));
-    public Task CreateFolderAsync() => Record(nameof(CreateFolderAsync));
-    public Task DeleteAsync() => Record(nameof(DeleteAsync));
     public Task ShowPropertiesAsync() => Record(nameof(ShowPropertiesAsync));
 
     private Task Record(string name)

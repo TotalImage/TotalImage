@@ -10,12 +10,6 @@ namespace TotalImage.ViewModels.Main;
 /// </summary>
 public interface IMainViewBridge
 {
-    Task InjectFilesAsync();
-
-    Task CreateFolderAsync();
-
-    Task DeleteAsync();
-
     void Rename();
 
     Task ShowPropertiesAsync();

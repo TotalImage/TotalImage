@@ -696,9 +696,6 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #region Entry commands (temporary bridge to the view)
 
-    [RelayCommand(CanExecute = nameof(CanInjectFiles))]
-    private Task InjectFiles() => View?.InjectFilesAsync() ?? Task.CompletedTask;
-
     /// <summary>
     /// Extracts the selected entries (everything in the folder when nothing is selected), or the
     /// folder selected in the tree (its entries for the root folder), asking where first when the
@@ -784,12 +781,6 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
         return completed;
     }
-
-    [RelayCommand(CanExecute = nameof(CanCreateFolder))]
-    private Task NewFolder() => View?.CreateFolderAsync() ?? Task.CompletedTask;
-
-    [RelayCommand(CanExecute = nameof(CanDelete))]
-    private Task Delete() => View?.DeleteAsync() ?? Task.CompletedTask;
 
     [RelayCommand(CanExecute = nameof(CanRename))]
     private void Rename() => View?.Rename();
