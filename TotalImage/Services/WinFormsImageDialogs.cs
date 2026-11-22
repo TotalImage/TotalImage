@@ -1,7 +1,6 @@
-using System.Reflection;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TotalImage.Containers;
 using TotalImage.Dialogs;
 using TotalImage.ViewModels.Dialogs;
 using TotalImage.ViewModels.Services;
@@ -9,26 +8,27 @@ using TotalImage.ViewModels.Settings;
 
 namespace TotalImage.Services
 {
-    public sealed class WinFormsImageDialogs(DialogOwner owner, ISettingsService settings, IImageHashService hashService) : IImageDialogs
+    public sealed class WinFormsImageDialogs(DialogOwner owner, ISettingsService settings, IImageHashService hashService)
+        : ImageDialogsBase(settings, hashService)
     {
-        public Task<FormatOptions?> AskFormatOptionsAsync()
+        public override Task<FormatOptions?> AskFormatOptionsAsync()
         {
             var viewModel = new FormatViewModel();
             using var dialog = new FormatDialog(viewModel);
             return Task.FromResult(dialog.ShowDialog(owner.Window) == DialogResult.OK ? viewModel.Answer : null);
         }
 
-        public Task<PartitionSelection?> AskSelectPartitionAsync(Container image)
+        protected override Task<PartitionSelection?> ShowSelectPartitionAsync(Func<DialogServices, SelectPartitionViewModel> createViewModel)
         {
             // Messages raised from inside the dialog are owned by the dialog, not the main window.
             var dialogOwner = new DialogOwner();
-            var viewModel = new SelectPartitionViewModel(image, settings, new WinFormsMessageService(dialogOwner));
+            var viewModel = createViewModel(ServicesFor(dialogOwner));
             using var dialog = new SelectPartitionDialog(viewModel);
             dialogOwner.Window = dialog;
             return Task.FromResult(dialog.ShowDialog(owner.Window) == DialogResult.OK ? viewModel.Answer : null);
         }
 
-        public Task ShowManagePartitionsAsync()
+        public override Task ShowManagePartitionsAsync()
         {
             // TODO: List the image's partitions once partition management is built.
             var viewModel = new ManagePartitionsViewModel([]);
@@ -37,7 +37,7 @@ namespace TotalImage.Services
             return Task.CompletedTask;
         }
 
-        public Task<NewImageOptions?> AskNewImageAsync()
+        public override Task<NewImageOptions?> AskNewImageAsync()
         {
             // Questions asked while the dialog is open (and the advanced options) belong to the dialog.
             var dialogOwner = new DialogOwner();
@@ -54,27 +54,29 @@ namespace TotalImage.Services
             }
         }
 
-        public Task ShowImageInfoAsync(Container image, string? filePath, int partitionIndex)
+        protected override Task ShowImageInfoAsync(Func<DialogServices, ImageInfoViewModel> createViewModel)
         {
             // Pickers and messages opened from the dialog belong to the dialog, not the main window.
             var dialogOwner = new DialogOwner();
-            var viewModel = new ImageInfoViewModel(image, filePath, partitionIndex, settings, hashService,
-                new WinFormsFilePickerService(dialogOwner), new WinFormsMessageService(dialogOwner), Assembly.GetEntryAssembly());
+            var viewModel = createViewModel(ServicesFor(dialogOwner));
             using var dialog = new ImageInfoDialog(viewModel);
             dialogOwner.Window = dialog;
             dialog.ShowDialog(owner.Window);
             return Task.CompletedTask;
         }
 
-        public Task ShowBootSectorAsync(Container image, int partitionIndex)
+        protected override Task ShowBootSectorAsync(Func<DialogServices, BootSectorViewModel> createViewModel)
         {
             var dialogOwner = new DialogOwner();
-            var viewModel = new BootSectorViewModel(image, partitionIndex,
-                new WinFormsFilePickerService(dialogOwner), new WinFormsMessageService(dialogOwner));
+            var viewModel = createViewModel(ServicesFor(dialogOwner));
             using var dialog = new BootSectorDialog(viewModel);
             dialogOwner.Window = dialog;
             dialog.ShowDialog(owner.Window);
             return Task.CompletedTask;
         }
+
+        // The pickers and messages of a dialog, owned by its window once it is set on the owner.
+        private static DialogServices ServicesFor(DialogOwner dialogOwner)
+            => new(new WinFormsMessageService(dialogOwner), new WinFormsFilePickerService(dialogOwner));
     }
 }

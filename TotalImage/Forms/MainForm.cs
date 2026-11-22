@@ -1,20 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Adapters;
 using TotalImage.Controls;
 using TotalImage.Services;
 using TotalImage.ViewModels.Browsing;
-using TotalImage.ViewModels.Extraction;
-using TotalImage.ViewModels.Formatting;
 using TotalImage.ViewModels.Main;
-using TotalImage.ViewModels.Services;
 using TotalImage.ViewModels.Settings;
 
 namespace TotalImage.Forms
@@ -292,7 +287,7 @@ namespace TotalImage.Forms
 
         private void FileListContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (viewModel.Image is null || viewModel.IsParentEntrySelected)
+            if (!viewModel.IsImageOpen || viewModel.IsParentEntrySelected)
             {
                 e.Cancel = true;
                 return;
