@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using TotalImage.Avalonia.Dialogs;
@@ -11,15 +10,13 @@ namespace TotalImage.Avalonia.Services;
 /*
  * Application dialogs (IAppDialogs).
  *
- *   Done:      About (Dialogs/AboutDialog.axaml)
- *   Remaining: Settings (TODO phase B: Dialogs/SettingsDialog.axaml)
+ *   Done:      About (Dialogs/AboutDialog.axaml), Settings (Dialogs/SettingsDialog.axaml)
  *
  * Each dialog method has its own region, so that dialogs can be added in parallel with few merge
  * conflicts. See AvaloniaEntryDialogs for how a dialog window is added.
  */
 public sealed class AvaloniaAppDialogs(WindowOwner owner, ILauncherService launcher,
-    ISettingsService settings, ITempDirectoryService tempDirectory, IAppInstances instances,
-    IMessageService messages, IFilePickerService filePicker) : IAppDialogs
+    ISettingsService settings, ITempDirectoryService tempDirectory, IAppInstances instances) : IAppDialogs
 {
     #region About
 
@@ -33,14 +30,23 @@ public sealed class AvaloniaAppDialogs(WindowOwner owner, ILauncherService launc
 
     #region Settings
 
-    public Task<SettingsChangeResult?> ShowSettingsAsync()
+    public async Task<SettingsChangeResult?> ShowSettingsAsync()
     {
-        // TODO (phase B): Dialogs/SettingsDialog.axaml bound to the view model below. The messages
-        // and pickers its commands show belong on top of the dialog: give it its own WindowOwner and
-        // services (DialogHost.ServicesFor) instead of the scope's messages and filePicker.
-        // After accepting, apply the color theme (App.ApplyColorTheme) if it changed.
-        _ = (settings, tempDirectory, instances, messages, filePicker);
-        throw new NotImplementedException("The settings dialog isn't available in the Avalonia UI yet.");
+        // The messages and pickers the dialog's commands show belong on top of the dialog.
+        var dialogOwner = new WindowOwner();
+        var services = DialogHost.ServicesFor(dialogOwner);
+        var viewModel = new SettingsViewModel(settings, tempDirectory, instances, services.Messages, launcher, services.FilePicker);
+        var dialog = new SettingsDialog(viewModel);
+        dialogOwner.Window = dialog;
+
+        if (!await DialogHost.ShowDialogAsync(dialog, owner.Window))
+            return null;
+
+        var change = viewModel.Answer;
+        if (change?.ColorThemeChanged == true)
+            App.ApplyColorTheme(settings.Current.ColorMode);
+
+        return change;
     }
 
     #endregion

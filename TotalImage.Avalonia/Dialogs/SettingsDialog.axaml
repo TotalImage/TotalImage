@@ -1,0 +1,222 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        xmlns:settings="clr-namespace:TotalImage.ViewModels.Settings;assembly=TotalImage.ViewModels"
+        xmlns:formatting="clr-namespace:TotalImage.ViewModels.Formatting;assembly=TotalImage.ViewModels"
+        xmlns:extraction="clr-namespace:TotalImage.ViewModels.Extraction;assembly=TotalImage.ViewModels"
+        xmlns:conv="clr-namespace:TotalImage.Avalonia.Converters"
+        x:Class="TotalImage.Avalonia.Dialogs.SettingsDialog"
+        x:DataType="dialogs:SettingsViewModel"
+        Title="Settings"
+        Icon="/Assets/logo.ico"
+        Width="540"
+        Height="660"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <Window.Styles>
+        <!-- A titled box, like a WinForms group box. -->
+        <Style Selector="HeaderedContentControl.group">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}" BorderThickness="1"
+                            CornerRadius="4" Padding="12,8,12,12">
+                        <StackPanel Spacing="8">
+                            <ContentPresenter Content="{TemplateBinding Header}" FontWeight="SemiBold" />
+                            <ContentPresenter Content="{TemplateBinding Content}" />
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="TabItem">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="MinHeight" Value="36" />
+        </Style>
+        <Style Selector="TabItem > StackPanel">
+            <Setter Property="Margin" Value="0,12,0,0" />
+            <Setter Property="Spacing" Value="12" />
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="Width" Value="240" />
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="MinWidth" Value="80" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+    </Window.Styles>
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button x:Name="okButton" Content="OK" Classes="accent" IsDefault="True" Command="{Binding AcceptCommand}" />
+                <Button x:Name="cancelButton" Content="Cancel" IsCancel="True" />
+            </StackPanel>
+        </Border>
+        <TabControl Margin="12,4,12,12">
+            <TabItem Header="General">
+                <StackPanel>
+                    <HeaderedContentControl Classes="group" Header="Color mode">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBlock Text="Application color mode:" VerticalAlignment="Center" />
+                            <ComboBox x:Name="colorThemeComboBox" Grid.Column="1"
+                                      SelectedValue="{Binding ColorTheme}" SelectedValueBinding="{ReflectionBinding Tag}">
+                                <ComboBoxItem Content="Light" Tag="{x:Static settings:ColorTheme.Classic}" />
+                                <ComboBoxItem Content="System-defined" Tag="{x:Static settings:ColorTheme.System}" />
+                                <ComboBoxItem Content="Dark" Tag="{x:Static settings:ColorTheme.Dark}" />
+                            </ComboBox>
+                        </Grid>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Classes="group" Header="Behavior">
+                        <StackPanel Spacing="4">
+                            <CheckBox Content="Confirm injection" IsChecked="{Binding ConfirmInjection}" />
+                            <CheckBox Content="Confirm deletion" IsChecked="{Binding ConfirmDeletion}" />
+                            <CheckBox Content="Confirm overwrite during extraction" IsChecked="{Binding ConfirmOverwriteExtraction}" />
+                            <!-- Disabled like in the WinForms dialog: the option isn't implemented yet. -->
+                            <CheckBox Content="When saving, auto-increment last filename when possible"
+                                      IsChecked="{Binding AutoIncrementFilename}" IsEnabled="False" />
+                            <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,4,0,0">
+                                <TextBlock Text="Threshold for mapping files into memory:" VerticalAlignment="Center" />
+                                <NumericUpDown x:Name="memoryMappingThresholdUpDown" Grid.Column="1" Width="140"
+                                               Minimum="0" Maximum="999999" Increment="1" FormatString="0"
+                                               Value="{Binding MemoryMappingThresholdMiB}" />
+                                <TextBlock Grid.Column="2" Text="MiB" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </Grid>
+                        </StackPanel>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Classes="group" Header="Advanced options">
+                        <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="8">
+                            <TextBlock Text="Clear the recent images list." VerticalAlignment="Center" TextWrapping="Wrap" />
+                            <Button x:Name="clearRecentImagesButton" Grid.Column="2" Content="Clear"
+                                    Command="{Binding ClearRecentImagesCommand}" />
+                            <TextBlock Grid.Row="1" Text="Clear TotalImage's temporary folder in local application data."
+                                       VerticalAlignment="Center" TextWrapping="Wrap" />
+                            <Button x:Name="openTempFolderButton" Grid.Row="1" Grid.Column="1" Content="Open"
+                                    Command="{Binding OpenTempFolderCommand}" />
+                            <Button x:Name="clearTempFolderButton" Grid.Row="1" Grid.Column="2" Content="Clear"
+                                    Command="{Binding ClearTempFolderCommand}" />
+                            <TextBlock Grid.Row="2" Text="Reset all TotalImage settings to their default values."
+                                       VerticalAlignment="Center" TextWrapping="Wrap" />
+                            <Button x:Name="resetSettingsButton" Grid.Row="2" Grid.Column="2" Content="Reset"
+                                    Command="{Binding ResetToDefaultsCommand}" />
+                        </Grid>
+                    </HeaderedContentControl>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="View">
+                <StackPanel>
+                    <HeaderedContentControl Classes="group" Header="Main window">
+                        <StackPanel Spacing="4">
+                            <CheckBox Content="Show command bar" IsChecked="{Binding ShowCommandBar}" />
+                            <CheckBox Content="Show status bar" IsChecked="{Binding ShowStatusBar}" />
+                            <CheckBox Content="Show directory tree" IsChecked="{Binding ShowDirectoryTree}" />
+                            <CheckBox Content="Show hidden objects" IsChecked="{Binding ShowHiddenItems}" />
+                        </StackPanel>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Classes="group" Header="File list">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="8">
+                            <TextBlock Text="Display items in file list as:" VerticalAlignment="Center" />
+                            <ComboBox x:Name="viewModeComboBox" Grid.Column="1"
+                                      SelectedValue="{Binding FilesView}" SelectedValueBinding="{ReflectionBinding Tag}">
+                                <ComboBoxItem Content="Large icons" Tag="{x:Static settings:ViewMode.LargeIcon}" />
+                                <ComboBoxItem Content="Small icons" Tag="{x:Static settings:ViewMode.SmallIcon}" />
+                                <ComboBoxItem Content="List" Tag="{x:Static settings:ViewMode.List}" />
+                                <ComboBoxItem Content="Details" Tag="{x:Static settings:ViewMode.Details}" />
+                            </ComboBox>
+                            <TextBlock Grid.Row="1" Text="Sort items in file list by:" VerticalAlignment="Center" />
+                            <!-- The index of the item is the sort column. -->
+                            <ComboBox x:Name="sortColumnComboBox" Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding SortColumn}">
+                                <ComboBoxItem Content="Name" />
+                                <ComboBoxItem Content="Type" />
+                                <ComboBoxItem Content="Size" />
+                                <ComboBoxItem Content="Modified" />
+                                <ComboBoxItem Content="Attributes" />
+                            </ComboBox>
+                            <TextBlock Grid.Row="2" Text="Sorting order for file list:" VerticalAlignment="Center" />
+                            <ComboBox x:Name="sortDirectionComboBox" Grid.Row="2" Grid.Column="1"
+                                      SelectedValue="{Binding SortDirection}" SelectedValueBinding="{ReflectionBinding Tag}">
+                                <ComboBoxItem Content="Ascending" Tag="{x:Static settings:SortDirection.Ascending}" />
+                                <ComboBoxItem Content="Descending" Tag="{x:Static settings:SortDirection.Descending}" />
+                            </ComboBox>
+                            <CheckBox Grid.Row="3" Grid.ColumnSpan="2" Content="Show directory sizes in file list"
+                                      IsChecked="{Binding ShowDirectorySizes}" />
+                        </Grid>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Classes="group" Header="Size units">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
+                            <TextBlock Text="Show sizes as:" VerticalAlignment="Center" />
+                            <ComboBox x:Name="sizeUnitComboBox" Grid.Column="1"
+                                      SelectedValue="{Binding SizeUnit}" SelectedValueBinding="{ReflectionBinding Tag}">
+                                <ComboBoxItem Content="Bytes" Tag="{x:Static formatting:SizeUnit.Bytes}" />
+                                <ComboBoxItem Content="Decimal units (factor 1000)" Tag="{x:Static formatting:SizeUnit.Decimal}" />
+                                <ComboBoxItem Content="Binary units (factor 1024)" Tag="{x:Static formatting:SizeUnit.Binary}" />
+                            </ComboBox>
+                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" TextWrapping="Wrap" Opacity="0.75"
+                                       Text="For binary and decimal, TotalImage will automatically determine the most appropriate unit and convert to it." />
+                            <TextBlock x:Name="sizeUnitPreviewText" Grid.Row="2" Grid.ColumnSpan="2" TextWrapping="Wrap"
+                                       Text="{Binding SizeUnitPreview}" />
+                        </Grid>
+                    </HeaderedContentControl>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Extraction">
+                <StackPanel>
+                    <HeaderedContentControl Classes="group" Header="Default options">
+                        <StackPanel Spacing="8">
+                            <CheckBox x:Name="extractAlwaysAskCheckBox" Content="Always ask for these extraction options before extracting"
+                                      IsChecked="{Binding ExtractAlwaysAsk}" />
+                            <TextBlock Text="Extract selected item(s) to the following directory:" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <TextBox x:Name="extractPathTextBox" Text="{Binding ExtractPath}"
+                                         IsEnabled="{Binding CanEditExtractionDefaults}" />
+                                <Button x:Name="browseButton" Grid.Column="1" Content="Browse..."
+                                        Command="{Binding BrowseExtractPathCommand}" IsEnabled="{Binding CanEditExtractionDefaults}" />
+                            </Grid>
+                            <StackPanel Spacing="4">
+                                <RadioButton x:Name="mergeFoldersRadioButton" GroupName="folders"
+                                             Content="Extract all files into the same directory"
+                                             IsEnabled="{Binding CanEditExtractionDefaults}"
+                                             IsChecked="{Binding DirectoryExtractionMode, Converter={x:Static conv:ChoiceConverter.Instance}, ConverterParameter={x:Static extraction:DirectoryExtractionMode.Merge}}" />
+                                <RadioButton x:Name="preserveFoldersRadioButton" GroupName="folders"
+                                             Content="Preserve original directory structure"
+                                             IsEnabled="{Binding CanEditExtractionDefaults}"
+                                             IsChecked="{Binding DirectoryExtractionMode, Converter={x:Static conv:ChoiceConverter.Instance}, ConverterParameter={x:Static extraction:DirectoryExtractionMode.Preserve}}" />
+                                <RadioButton x:Name="skipFoldersRadioButton" GroupName="folders"
+                                             Content="Ignore directories and subdirectories"
+                                             IsEnabled="{Binding CanEditExtractionDefaults}"
+                                             IsChecked="{Binding DirectoryExtractionMode, Converter={x:Static conv:ChoiceConverter.Instance}, ConverterParameter={x:Static extraction:DirectoryExtractionMode.Skip}}" />
+                            </StackPanel>
+                            <CheckBox x:Name="openFolderAfterExtractCheckBox" Content="Open destination directory after extraction"
+                                      IsChecked="{Binding OpenFolderAfterExtract}" IsEnabled="{Binding CanEditExtractionDefaults}" />
+                        </StackPanel>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Classes="group" Header="Preserve information">
+                        <StackPanel Spacing="4">
+                            <CheckBox Content="Preserve file dates when extracting" IsChecked="{Binding PreserveDates}" />
+                            <CheckBox Content="Preserve file attributes when extracting" IsChecked="{Binding PreserveAttributes}" />
+                        </StackPanel>
+                    </HeaderedContentControl>
+                </StackPanel>
+            </TabItem>
+            <!-- Both options are about Windows; the tab is hidden elsewhere. -->
+            <TabItem x:Name="integrationTab" Header="Integration">
+                <StackPanel>
+                    <HeaderedContentControl Classes="group" Header="File associations">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <TextBlock Text="File associations for TotalImage can be managed through Windows Settings."
+                                       TextWrapping="Wrap" VerticalAlignment="Center" />
+                            <Button x:Name="fileAssociationsButton" Grid.Column="1" Content="Open" />
+                        </Grid>
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Classes="group" Header="Other options">
+                        <StackPanel Spacing="8">
+                            <CheckBox x:Name="queryShellCheckBox" Content="Display system icons and file type names in file list"
+                                      IsChecked="{Binding QueryShellForFileTypeInfo}" />
+                            <TextBlock TextWrapping="Wrap" Opacity="0.75"
+                                       Text="If this option is enabled, TotalImage will obtain icons and names for file types from Windows, which can be slower in some situations. If disabled, generic icons and names will be used instead." />
+                        </StackPanel>
+                    </HeaderedContentControl>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
