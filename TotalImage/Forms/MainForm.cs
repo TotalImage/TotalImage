@@ -368,6 +368,13 @@ namespace TotalImage.Forms
             if (paths.Count == 0)
                 return;
 
+            var effect = source.DoDragDrop(CreateDragOutData(paths), DragDropEffects.Copy);
+            viewModel.EndDragOut(dropped: effect != DragDropEffects.None);
+        }
+
+        // The drag data of extracted files, for Explorer and other drop targets.
+        internal static DataObject CreateDragOutData(IReadOnlyList<string> paths)
+        {
             StringCollection draggedItems = new();
             draggedItems.AddRange(paths.ToArray());
 
@@ -376,9 +383,7 @@ namespace TotalImage.Forms
             /* Set the preferred drop effect to Copy to prevent Explorer from defaulting to "Create a link" for filenames
              * that are registered under SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths. */
             data.SetData("Preferred DropEffect", new MemoryStream(BitConverter.GetBytes((int)DragDropEffects.Copy)));
-
-            var effect = source.DoDragDrop(data, DragDropEffects.Copy);
-            viewModel.EndDragOut(dropped: effect != DragDropEffects.None);
+            return data;
         }
 
         private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
