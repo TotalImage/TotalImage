@@ -1,0 +1,53 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        x:Class="TotalImage.Avalonia.Dialogs.ManagePartitionsDialog"
+        x:DataType="dialogs:ManagePartitionsViewModel"
+        Title="Manage partitions"
+        Icon="/Assets/logo.ico"
+        Width="640"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button x:Name="okButton" Content="OK" Classes="accent" MinWidth="80" HorizontalContentAlignment="Center" IsDefault="True" />
+                <Button x:Name="cancelButton" Content="Cancel" MinWidth="80" HorizontalContentAlignment="Center" IsCancel="True" />
+            </StackPanel>
+        </Border>
+        <StackPanel Margin="16" Spacing="8">
+            <Border BorderThickness="1" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                <DataGrid Height="180"
+                          ItemsSource="{Binding Rows}"
+                          SelectedIndex="{Binding SelectedIndex}"
+                          SelectionMode="Single"
+                          IsReadOnly="True"
+                          CanUserSortColumns="False"
+                          CanUserReorderColumns="False"
+                          GridLinesVisibility="None"
+                          HeadersVisibility="Column"
+                          RowHeight="22">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:DataType="dialogs:ManagedPartitionRow" Header="No." Binding="{Binding Number}" Width="70" />
+                        <DataGridTextColumn x:DataType="dialogs:ManagedPartitionRow" Header="Volume label" Binding="{Binding VolumeLabel}" Width="*" />
+                        <DataGridTextColumn x:DataType="dialogs:ManagedPartitionRow" Header="Type" Binding="{Binding Type}" Width="80" />
+                        <DataGridTextColumn x:DataType="dialogs:ManagedPartitionRow" Header="Start" Binding="{Binding Start}" Width="70" />
+                        <DataGridTextColumn x:DataType="dialogs:ManagedPartitionRow" Header="End" Binding="{Binding End}" Width="70" />
+                        <DataGridTextColumn x:DataType="dialogs:ManagedPartitionRow" Header="Size" Binding="{Binding Size}" Width="70" />
+                        <DataGridTextColumn x:DataType="dialogs:ManagedPartitionRow" Header="Active" Binding="{Binding Active}" Width="80" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+            <!-- None of the actions are implemented yet; the buttons only follow the selection. -->
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <Button Content="Create..." MinWidth="80" HorizontalContentAlignment="Center" />
+                <Button Content="Active" MinWidth="80" HorizontalContentAlignment="Center" IsEnabled="{Binding HasSelection}" />
+                <Button Content="Format..." MinWidth="80" HorizontalContentAlignment="Center" IsEnabled="{Binding HasSelection}" />
+                <Button Content="Resize..." MinWidth="80" HorizontalContentAlignment="Center" IsEnabled="{Binding HasSelection}" />
+                <Button Content="Delete" MinWidth="80" HorizontalContentAlignment="Center" IsEnabled="{Binding HasSelection}" />
+            </StackPanel>
+        </StackPanel>
+    </DockPanel>
+</Window>

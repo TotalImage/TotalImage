@@ -52,11 +52,11 @@ public sealed class AvaloniaImageDialogs(WindowOwner owner, ISettingsService set
 
     #region Manage partitions
 
-    public override Task ShowManagePartitionsAsync()
+    public override async Task ShowManagePartitionsAsync()
     {
-        // TODO (phase B): Dialogs/ManagePartitionsDialog.axaml bound to new ManagePartitionsViewModel([]),
-        // like the WinForms service (partition management isn't built yet).
-        throw new NotImplementedException("The partition manager isn't available in the Avalonia UI yet.");
+        // TODO: List the image's partitions once partition management is built.
+        var viewModel = new ManagePartitionsViewModel([]);
+        await DialogHost.ShowDialogAsync(new ManagePartitionsDialog(viewModel), owner.Window);
     }
 
     #endregion
