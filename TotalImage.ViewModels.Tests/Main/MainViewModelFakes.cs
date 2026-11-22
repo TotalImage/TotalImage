@@ -36,7 +36,6 @@ internal sealed class MainTestContext : IDisposable
     public FakeMainMessages Messages { get; } = new();
     public FakeMainFilePicker FilePicker { get; } = new();
     public FakeMainLauncher Launcher { get; } = new();
-    public FakeBridge Bridge { get; } = new();
     public FakeFileTypes FileTypes { get; } = new();
     public FileExtractionService Extraction { get; } = new();
 
@@ -53,7 +52,7 @@ internal sealed class MainTestContext : IDisposable
     /// The view model, created on first use so tests can set up the settings first.
     /// </summary>
     public MainViewModel ViewModel => viewModel ??= new MainViewModel(Settings, ImageFiles, ImageDialogs, EntryDialogs,
-        AppDialogs, Messages, FilePicker, Launcher, FileTypes, TempDirectory, Extraction) { View = Bridge };
+        AppDialogs, Messages, FilePicker, Launcher, FileTypes, TempDirectory, Extraction);
 
     public string Folder => temp.Path;
 
@@ -319,7 +318,13 @@ internal sealed class FakeEntryDialogs : IEntryDialogs
         return Task.FromResult(NewFolderAnswer);
     }
 
-    public Task<EntryPropertiesChange?> AskPropertiesAsync(IReadOnlyList<FileSystemObject> entries) => throw new NotSupportedException();
+    public List<IReadOnlyList<FileSystemObject>> PropertiesShown { get; } = [];
+
+    public Task<EntryPropertiesChange?> AskPropertiesAsync(IReadOnlyList<FileSystemObject> entries)
+    {
+        PropertiesShown.Add(entries);
+        return Task.FromResult<EntryPropertiesChange?>(null);
+    }
 }
 
 /// <summary>
@@ -481,21 +486,6 @@ internal sealed class FakeMainLauncher : ILauncherService
     public void OpenUrl(string url) => throw new NotSupportedException();
     public void OpenFolder(string path) => OpenedFolders.Add(path);
     public void OpenFile(string path) => OpenedFiles.Add((path, System.IO.File.Exists(path)));
-}
-
-internal sealed class FakeBridge : IMainViewBridge
-{
-    public List<string> Calls { get; } = [];
-
-    public void Rename() => Calls.Add(nameof(Rename));
-
-    public Task ShowPropertiesAsync() => Record(nameof(ShowPropertiesAsync));
-
-    private Task Record(string name)
-    {
-        Calls.Add(name);
-        return Task.CompletedTask;
-    }
 }
 
 /// <summary>

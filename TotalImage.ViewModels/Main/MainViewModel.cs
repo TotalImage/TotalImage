@@ -87,11 +87,6 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     /// </summary>
     public event EventHandler? SettingsApplied;
 
-    /// <summary>
-    /// TEMPORARY (stage 6): does the work of the editing commands.
-    /// </summary>
-    public IMainViewBridge? View { get; set; }
-
     #region Image session
 
     /// <summary>
@@ -694,7 +689,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
-    #region Entry commands (temporary bridge to the view)
+    #region Entry commands
 
     /// <summary>
     /// Extracts the selected entries (everything in the folder when nothing is selected), or the
@@ -781,12 +776,6 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
         return completed;
     }
-
-    [RelayCommand(CanExecute = nameof(CanRename))]
-    private void Rename() => View?.Rename();
-
-    [RelayCommand(CanExecute = nameof(CanShowProperties))]
-    private Task ShowProperties() => View?.ShowPropertiesAsync() ?? Task.CompletedTask;
 
     private bool CanInjectFiles() => CanEditImage() && (CurrentPartition?.SupportsWriting ?? false);
 

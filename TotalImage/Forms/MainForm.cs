@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TotalImage.Adapters;
-using TotalImage.Changes;
 using TotalImage.Controls;
 using TotalImage.Services;
 using TotalImage.ViewModels.Browsing;
@@ -17,13 +16,10 @@ using TotalImage.ViewModels.Formatting;
 using TotalImage.ViewModels.Main;
 using TotalImage.ViewModels.Services;
 using TotalImage.ViewModels.Settings;
-using TotalImage.FileSystems.FAT;
-using TiDirectory = TotalImage.FileSystems.Directory;
-using TiFileSystemObject = TotalImage.FileSystems.FileSystemObject;
 
 namespace TotalImage.Forms
 {
-    public partial class MainForm : Form, IMainViewBridge
+    public partial class MainForm : Form
     {
         //For tracking which entry was last selected by keypress
         private char _lastTypeAheadChar = '\0';
@@ -36,21 +32,17 @@ namespace TotalImage.Forms
         private readonly ISettingsService settings;
         private readonly ITempDirectoryService tempDirectory;
         private readonly UIStateService uiState;
-        private readonly IEntryDialogs entryDialogs;
-        private readonly IFilePickerService filePicker;
 
         private readonly FileIcons icons;
         private FileListAdapter fileListAdapter = null!;
 
         public MainForm(MainViewModel viewModel, ISettingsService settings, ITempDirectoryService tempDirectory, UIStateService uiState,
-            DialogOwner dialogOwner, IEntryDialogs entryDialogs, IFilePickerService filePicker)
+            DialogOwner dialogOwner)
         {
             this.viewModel = viewModel;
             this.settings = settings;
             this.tempDirectory = tempDirectory;
             this.uiState = uiState;
-            this.entryDialogs = entryDialogs;
-            this.filePicker = filePicker;
             dialogOwner.Window = this;
 
             InitializeComponent();
@@ -64,7 +56,6 @@ namespace TotalImage.Forms
 
             icons = new FileIcons(smallFileIcons, largeFileIcons, settings);
 
-            viewModel.View = this;
             BindCommands();
         }
 
@@ -207,6 +198,7 @@ namespace TotalImage.Forms
             //This is needed so that icons update immediately, rather than after a restart of the app
             vm.SettingsApplied += (_, _) => icons.Reset();
             vm.CloseRequested += (_, _) => Close();
+            vm.RenameRequested += OnRenameRequested;
 
             // Status bar
             vm.Observe(nameof(MainViewModel.PartitionSizeText), () => partitionSizeLabel.Text = vm.PartitionSizeText);
@@ -291,19 +283,13 @@ namespace TotalImage.Forms
             }
         }
 
-        //Renames a file or folder
-        void IMainViewBridge.Rename()
+        // Renaming edits the name in place.
+        private void OnRenameRequested(object? sender, RenameRequestedEventArgs e)
         {
-            if (viewModel.ActivePane == BrowsePane.Files)
-            {
-                // Trigger inline label edit in the file list
-                if (viewModel.SelectedEntries is [{ IsParentEntry: false } entry] && fileListAdapter.IndexOf(entry) is var index and >= 0)
-                    fileList.Items[index].BeginEdit();
-            }
-            else if (viewModel.CurrentFolder is { IsRoot: false } && folderTree.SelectedNode is not null)
-            {
+            if (e.Entry is { } entry && fileListAdapter.IndexOf(entry) is var index and >= 0)
+                fileList.Items[index].BeginEdit();
+            else if (e.Folder is not null && folderTree.SelectedNode is not null)
                 folderTree.SelectedNode.BeginEdit();
-            }
         }
 
         private void FileListContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -316,31 +302,6 @@ namespace TotalImage.Forms
 
             // The menu acts on the file list, so its commands follow the file list's rules.
             viewModel.ActivePane = BrowsePane.Files;
-        }
-
-        //TODO: Implement the Properties dialog for multiple selected objects like Windows does it
-        async Task IMainViewBridge.ShowPropertiesAsync()
-        {
-            List<TiFileSystemObject> entries = new();
-            if (viewModel.ActivePane == BrowsePane.Folders)
-            {
-                if (viewModel.CurrentFolder is { } folder && folder.Directory.Parent is null) //Can't show properties for the root node at this time
-                {
-                    entries.Add(folder.Directory);
-                }
-            }
-            else
-            {
-                entries.AddRange(viewModel.SelectedObjects);
-            }
-
-            if (entries.Count == 0)
-            {
-                return;
-            }
-
-            // TODO: Apply the changes. The dialog's answer has never been applied so far.
-            await entryDialogs.AskPropertiesAsync(entries);
         }
 
         private async void FileList_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -528,60 +489,34 @@ namespace TotalImage.Forms
             viewModel.ActivePane = BrowsePane.Folders;
         }
 
-        //After an item's label (=Text property) is changed - for renaming objects
-        //From here the name change should propagate to the associated FileSystemObject and to the stream
         private void FileList_AfterLabelEdit(object sender, LabelEditEventArgs e)
         {
             if (e.Label is null)
                 return; // user cancelled
 
-            if (e.Item < 0 || e.Item >= viewModel.Entries.Count)
-            {
-                e.CancelEdit = true;
-                return;
-            }
-
-            var fso = fileListAdapter.EntryAt(e.Item).Entry;
-            if (fso is FatFile fatFile)
-                fatFile.EnqueueRename(e.Label);
-            else if (fso is FatDirectory fatDir)
-                fatDir.EnqueueRename(e.Label);
-            else
+            if (e.Item < 0 || e.Item >= viewModel.Entries.Count || !viewModel.RenameEntry(fileListAdapter.EntryAt(e.Item), e.Label))
                 e.CancelEdit = true;
         }
 
-        //Before an item's label (=Text property) will be changed - for renaming objects.
-        //Here we should probably perform some sanity checks
         private void FileList_BeforeLabelEdit(object sender, LabelEditEventArgs e)
         {
-            // The ".." entry stands for the parent folder, which isn't renamed from here.
-            if (viewModel.Image?.SupportsWriting == false || fileListAdapter.EntryAt(e.Item).IsParentEntry)
-            {
+            if (!viewModel.CanRenameEntry(fileListAdapter.EntryAt(e.Item)))
                 e.CancelEdit = true;
-            }
         }
 
-        //After a node's label (=Text property) is changed - for renaming objects
-        //From here the name change should propagate to the associated FileSystemObject and to the stream
         private void FolderTree_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             if (e.Label is null)
                 return; // user cancelled
 
-            if (FolderTreeAdapter.FolderOf(e.Node)?.Directory is FatDirectory fatDir)
-                fatDir.EnqueueRename(e.Label);
-            else
+            if (FolderTreeAdapter.FolderOf(e.Node) is not { } folder || !viewModel.RenameFolder(folder, e.Label))
                 e.CancelEdit = true;
         }
 
-        //Before a node's label (=Text property) will be changed - for renaming objects.
-        //Here we should probably perform some sanity checks
         private void FolderTree_BeforeLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            if (viewModel.Image?.SupportsWriting == false)
-            {
+            if (FolderTreeAdapter.FolderOf(e.Node) is { } folder && !viewModel.CanRenameFolder(folder))
                 e.CancelEdit = true;
-            }
         }
 
         private void BrowsePane_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)

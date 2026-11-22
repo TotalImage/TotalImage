@@ -266,6 +266,130 @@ public class MainViewModelEditingTests : IDisposable
 
     #endregion
 
+    #region Rename
+
+    [Fact]
+    public async Task RenamingTheSelectedEntryAsksTheViewToEditItsName()
+    {
+        await context.OpenBrowseImageAsync();
+        var requests = new System.Collections.Generic.List<RenameRequestedEventArgs>();
+        Vm.RenameRequested += (_, e) => requests.Add(e);
+        Vm.SelectEntries([Entry("ALPHA.TXT")]);
+
+        Vm.RenameCommand.Execute(null);
+
+        var request = Assert.Single(requests);
+        Assert.Same(Entry("ALPHA.TXT"), request.Entry);
+        Assert.Null(request.Folder);
+    }
+
+    [Fact]
+    public async Task RenamingFromTheTreeAsksTheViewToEditTheFolderName()
+    {
+        await context.OpenBrowseImageAsync();
+        var requests = new System.Collections.Generic.List<RenameRequestedEventArgs>();
+        Vm.RenameRequested += (_, e) => requests.Add(e);
+        Vm.CurrentFolder = Docs;
+        Vm.ActivePane = BrowsePane.Folders;
+
+        Vm.RenameCommand.Execute(null);
+
+        var request = Assert.Single(requests);
+        Assert.Same(Docs, request.Folder);
+        Assert.Null(request.Entry);
+    }
+
+    [Fact]
+    public async Task ARenamedEntryIsQueued()
+    {
+        await context.OpenBrowseImageAsync();
+        Vm.CurrentFolder = Docs;
+
+        Assert.True(Vm.RenameEntry(Entry("A.TXT"), "C.TXT"));
+
+        var change = Changes.Changes.OfType<RenameChange>().Single();
+        Assert.Equal(["DOCS", "A.TXT"], change.OldPath);
+        Assert.Equal("C.TXT", change.NewName);
+        Assert.Equal(PendingState.Renamed, Entry("A.TXT").PendingState);
+    }
+
+    [Fact]
+    public async Task ARenamedFolderIsQueued()
+    {
+        await context.OpenBrowseImageAsync();
+
+        Assert.True(Vm.RenameFolder(Docs, "PAPERS"));
+
+        var change = Changes.Changes.OfType<RenameChange>().Single();
+        Assert.Equal(["DOCS"], change.OldPath);
+        Assert.Equal("PAPERS", change.NewName);
+    }
+
+    [Fact]
+    public async Task APendingEntryCantBeRenamed()
+    {
+        await context.OpenBrowseImageAsync();
+        Changes.Add(new CreateDirectoryChange(["NEW"]));
+
+        Assert.False(Vm.RenameEntry(Entry("NEW"), "OTHER"));
+        Assert.False(Vm.RenameFolder(Vm.RootFolder!.Children.Single(folder => folder.Name == "NEW"), "OTHER"));
+        Assert.Single(Changes.Changes);
+    }
+
+    [Fact]
+    public async Task TheParentEntryCantBeRenamed()
+    {
+        await context.OpenBrowseImageAsync();
+        Vm.CurrentFolder = Docs;
+
+        Assert.False(Vm.CanRenameEntry(Entry(EntryViewModel.ParentEntryName)));
+        Assert.True(Vm.CanRenameEntry(Entry("A.TXT")));
+        Assert.True(Vm.CanRenameFolder(Docs));
+    }
+
+    [Fact]
+    public async Task NothingCanBeRenamedInAnImageThatCantBeWritten()
+    {
+        var bytes = System.IO.File.ReadAllBytes(context.WriteFloppy());
+        context.ImageFiles.OpenOverride = _ => new ReadOnlyContainer(bytes);
+        await context.OpenAsync(context.PathOf("disk.img"));
+
+        Assert.False(Vm.CanRenameFolder(Vm.RootFolder!));
+        Assert.All(Vm.Entries, entry => Assert.False(Vm.CanRenameEntry(entry)));
+    }
+
+    #endregion
+
+    #region Properties
+
+    [Fact]
+    public async Task PropertiesAreShownForTheSelectedEntries()
+    {
+        await context.OpenBrowseImageAsync();
+        Vm.SelectEntries([Entry("ALPHA.TXT"), Entry("DOCS")]);
+
+        await Vm.ShowPropertiesCommand.ExecuteAsync(null);
+
+        var shown = Assert.Single(context.EntryDialogs.PropertiesShown);
+        Assert.Equal(["ALPHA.TXT", "DOCS"], shown.Select(entry => entry.Name).Order());
+    }
+
+    [Fact]
+    public async Task ASubfolderInTheTreeShowsNoProperties()
+    {
+        // As before: from the tree, only the root folder would be shown, and the command is
+        // disabled there.
+        await context.OpenBrowseImageAsync();
+        Vm.CurrentFolder = Docs;
+        Vm.ActivePane = BrowsePane.Folders;
+
+        await Vm.ShowPropertiesCommand.ExecuteAsync(null);
+
+        Assert.Empty(context.EntryDialogs.PropertiesShown);
+    }
+
+    #endregion
+
     [Fact]
     public async Task EditsAreSavedIntoTheImage()
     {

@@ -392,19 +392,6 @@ public class MainViewModelCommandTests : IDisposable
         Assert.Equal(commands.ToHashSet(), refreshed);
     }
 
-    [Fact]
-    public async Task TheEditingCommandsAreDoneByTheView()
-    {
-        await context.OpenBrowseImageAsync();
-        Vm.CurrentFolder = Docs;
-        Vm.ActivePane = BrowsePane.Folders;
-
-        Vm.RenameCommand.Execute(null);
-        await Vm.ShowPropertiesCommand.ExecuteAsync(null);
-
-        Assert.Equal(["Rename", "ShowPropertiesAsync"], context.Bridge.Calls);
-    }
-
     #endregion
 
     #region Image and partition tools
