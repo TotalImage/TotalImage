@@ -13,8 +13,7 @@ namespace TotalImage.Avalonia.Services;
 /*
  * Entry dialogs (IEntryDialogs).
  *
- *   Done:      Rename, New folder, Volume label, Extraction progress
- *   Remaining: Extract options, Properties (TODO phase B)
+ *   Done:      Rename, New folder, Volume label, Extract options, Properties, Extraction progress
  *
  * How to add a dialog window (the pattern every dialog follows):
  *   1. Dialogs/<Name>Dialog.axaml with x:DataType set to the shared view model
@@ -81,13 +80,18 @@ public sealed class AvaloniaEntryDialogs(WindowOwner owner, ISettingsService set
 
     #region Properties
 
-    protected override Task<EntryPropertiesChange?> ShowPropertiesAsync(PropertiesViewModel viewModel, string firstName, FileAttributes firstAttributes)
+    private static readonly Lazy<global::Avalonia.Media.IImage> MultipleEntriesIcon = new(() =>
     {
-        // TODO (phase B): Dialogs/PropertiesDialog.axaml bound to viewModel. Its large icon:
-        // viewModel.IsMultiple ? Assets/page_white_stack.png
-        //     : icons.Get(ViewModels.Browsing.IconKey.ForEntry(firstName, firstAttributes), large: true).
-        _ = icons;
-        throw new NotImplementedException("The properties dialog isn't available in the Avalonia UI yet.");
+        using var stream = global::Avalonia.Platform.AssetLoader.Open(new Uri("avares://TotalImage.Avalonia/Assets/page_white_stack.png"));
+        return new global::Avalonia.Media.Imaging.Bitmap(stream);
+    });
+
+    protected override async Task<EntryPropertiesChange?> ShowPropertiesAsync(PropertiesViewModel viewModel, string firstName, FileAttributes firstAttributes)
+    {
+        var icon = viewModel.IsMultiple
+            ? MultipleEntriesIcon.Value
+            : icons.Get(ViewModels.Browsing.IconKey.ForEntry(firstName, firstAttributes), large: true);
+        return await DialogHost.ShowDialogAsync(new PropertiesDialog(viewModel, icon), owner.Window) ? viewModel.Answer : null;
     }
 
     #endregion

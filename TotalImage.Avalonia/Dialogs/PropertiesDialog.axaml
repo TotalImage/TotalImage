@@ -1,0 +1,121 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        xmlns:controls="clr-namespace:TotalImage.Avalonia.Controls"
+        x:Class="TotalImage.Avalonia.Dialogs.PropertiesDialog"
+        x:DataType="dialogs:PropertiesViewModel"
+        Title="Properties"
+        Icon="/Assets/logo.ico"
+        Width="580"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <Window.Styles>
+        <Style Selector="Grid.properties > TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Grid.properties > CheckBox">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBox.value">
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="2,4" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+        <Style Selector="TextBox.value:pointerover /template/ Border#PART_BorderElement, TextBox.value:focus /template/ Border#PART_BorderElement, TextBox.value:disabled /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style Selector="TextBox.hash">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontFamily" Value="Consolas, Menlo, monospace" />
+        </Style>
+        <Style Selector="Separator">
+            <Setter Property="Margin" Value="0,6" />
+        </Style>
+    </Window.Styles>
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button x:Name="okButton" Content="OK" Classes="accent" MinWidth="80" HorizontalContentAlignment="Center"
+                        IsDefault="True" Command="{Binding AcceptCommand}" />
+                <Button x:Name="cancelButton" Content="Cancel" MinWidth="80" HorizontalContentAlignment="Center" IsCancel="True" />
+            </StackPanel>
+        </Border>
+        <StackPanel Margin="16,12">
+            <DockPanel>
+                <Image x:Name="iconImage" DockPanel.Dock="Left" Width="32" Height="32" Stretch="Uniform" Margin="0,0,16,0" />
+                <Panel VerticalAlignment="Center">
+                    <TextBox x:Name="nameTextBox" Text="{Binding Name}" IsEnabled="{Binding CanEditName, Mode=OneTime}"
+                             IsVisible="{Binding IsSingle, Mode=OneTime}" />
+                    <TextBlock Text="{Binding SelectionSummary, Mode=OneTime}" IsVisible="{Binding IsMultiple, Mode=OneTime}" />
+                </Panel>
+            </DockPanel>
+
+            <Separator />
+            <Grid Classes="properties" ColumnDefinitions="130,*" RowDefinitions="Auto,Auto">
+                <TextBlock Text="Type:" />
+                <TextBox Grid.Column="1" Classes="value" Text="{Binding TypeName, Mode=OneTime}" />
+                <TextBlock Grid.Row="1" Text="Location:" />
+                <TextBox Grid.Row="1" Grid.Column="1" Classes="value" Text="{Binding Location, Mode=OneTime}" />
+            </Grid>
+
+            <Separator />
+            <Grid Classes="properties" ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto">
+                <TextBlock Text="Size:" />
+                <TextBox Grid.Column="1" Classes="value" Text="{Binding SizeText}" />
+                <TextBlock Grid.Row="1" Text="Size on disk:" />
+                <TextBox Grid.Row="1" Grid.Column="1" Classes="value" Text="{Binding SizeOnDiskText}" />
+                <TextBlock Grid.Row="2" Text="Contains:" IsEnabled="{Binding IsContainsAvailable, Mode=OneTime}" />
+                <TextBox Grid.Row="2" Grid.Column="1" Classes="value" Text="{Binding ContainsText}"
+                         IsEnabled="{Binding IsContainsAvailable, Mode=OneTime}" />
+            </Grid>
+
+            <Separator />
+            <Grid Classes="properties" ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                <TextBlock Text="Short name (8.3):" />
+                <TextBox Grid.Column="1" Classes="value" Text="{Binding ShortName, Mode=OneTime}"
+                         IsEnabled="{Binding IsFatInfoAvailable, Mode=OneTime}" />
+                <TextBlock Grid.Row="1" Text="First cluster:" />
+                <TextBox Grid.Row="1" Grid.Column="1" Classes="value" Text="{Binding FirstCluster, Mode=OneTime}"
+                         IsEnabled="{Binding IsFatInfoAvailable, Mode=OneTime}" />
+                <TextBlock Grid.Row="2" Text="CRC-32 hash:" />
+                <TextBox x:Name="crc32TextBox" Grid.Row="2" Grid.Column="1" Classes="value hash" Text="{Binding Crc32Text}"
+                         IsEnabled="{Binding AreHashesAvailable, Mode=OneTime}" />
+                <TextBlock Grid.Row="3" Text="MD5 hash:" />
+                <TextBox x:Name="md5TextBox" Grid.Row="3" Grid.Column="1" Classes="value hash" Text="{Binding Md5Text}"
+                         IsEnabled="{Binding AreHashesAvailable, Mode=OneTime}" />
+                <TextBlock Grid.Row="4" Text="SHA-1 hash:" />
+                <TextBox x:Name="sha1TextBox" Grid.Row="4" Grid.Column="1" Classes="value hash" Text="{Binding Sha1Text}"
+                         IsEnabled="{Binding AreHashesAvailable, Mode=OneTime}" />
+            </Grid>
+
+            <Separator />
+            <Grid Classes="properties" ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="4">
+                <CheckBox Content="Created:" IsChecked="{Binding Created.IsSet}" IsEnabled="{Binding Created.CanToggle, Mode=OneTime}" />
+                <controls:DateTimeEditor Grid.Column="1" Value="{Binding Created.Value}" Format="{Binding Created.Format}"
+                                         IsEnabled="{Binding Created.CanEditValue}" />
+                <CheckBox Grid.Row="1" Content="Modified:" IsChecked="{Binding Modified.IsSet}" IsEnabled="{Binding Modified.CanToggle, Mode=OneTime}" />
+                <controls:DateTimeEditor Grid.Row="1" Grid.Column="1" Value="{Binding Modified.Value}" Format="{Binding Modified.Format}"
+                                         IsEnabled="{Binding Modified.CanEditValue}" />
+                <CheckBox Grid.Row="2" Content="Accessed:" IsChecked="{Binding Accessed.IsSet}" IsEnabled="{Binding Accessed.CanToggle, Mode=OneTime}" />
+                <controls:DateTimeEditor Grid.Row="2" Grid.Column="1" Value="{Binding Accessed.Value}" Format="{Binding Accessed.Format}"
+                                         IsEnabled="{Binding Accessed.CanEditValue}" />
+            </Grid>
+
+            <Separator />
+            <Grid Classes="properties" ColumnDefinitions="130,*">
+                <TextBlock Text="Attributes:" />
+                <WrapPanel Grid.Column="1" ItemSpacing="16">
+                    <CheckBox Content="Read-only" IsChecked="{Binding ReadOnly}" IsEnabled="{Binding CanEditAttributes, Mode=OneTime}" />
+                    <CheckBox Content="Hidden" IsChecked="{Binding Hidden}" IsEnabled="{Binding CanEditAttributes, Mode=OneTime}" />
+                    <CheckBox Content="System" IsChecked="{Binding System}" IsEnabled="{Binding CanEditAttributes, Mode=OneTime}" />
+                    <CheckBox Content="Archive" IsChecked="{Binding Archive}" IsEnabled="{Binding CanEditAttributes, Mode=OneTime}" />
+                </WrapPanel>
+            </Grid>
+        </StackPanel>
+    </DockPanel>
+</Window>
