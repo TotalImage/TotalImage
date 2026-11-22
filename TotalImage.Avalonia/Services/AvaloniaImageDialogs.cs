@@ -28,11 +28,10 @@ public sealed class AvaloniaImageDialogs(WindowOwner owner, ISettingsService set
 {
     #region Format
 
-    public override Task<FormatOptions?> AskFormatOptionsAsync()
+    public override async Task<FormatOptions?> AskFormatOptionsAsync()
     {
-        // TODO (phase B): Dialogs/FormatDialog.axaml bound to new FormatViewModel().
-        _ = owner; // The window the dialogs are shown on top of.
-        throw new NotImplementedException("The format dialog isn't available in the Avalonia UI yet.");
+        var viewModel = new FormatViewModel();
+        return await DialogHost.ShowDialogAsync(new FormatDialog(viewModel), owner.Window) ? viewModel.Answer : null;
     }
 
     #endregion

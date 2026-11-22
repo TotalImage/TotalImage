@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        x:Class="TotalImage.Avalonia.Dialogs.FormatDialog"
+        x:DataType="dialogs:FormatViewModel"
+        Title="Format"
+        Icon="/Assets/logo.ico"
+        Width="320"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button x:Name="okButton" Content="OK" Classes="accent" MinWidth="80" HorizontalContentAlignment="Center"
+                        IsDefault="True" Command="{Binding AcceptCommand}" />
+                <Button x:Name="cancelButton" Content="Cancel" MinWidth="80" HorizontalContentAlignment="Center" IsCancel="True" />
+            </StackPanel>
+        </Border>
+        <StackPanel Margin="16" Spacing="4">
+            <TextBlock Text="File system:" />
+            <ComboBox x:Name="fileSystemComboBox" ItemsSource="{Binding FileSystems}" SelectedItem="{Binding FileSystem}" HorizontalAlignment="Stretch" />
+            <TextBlock Text="Cluster size:" Margin="0,8,0,0" />
+            <ComboBox x:Name="clusterSizeComboBox" ItemsSource="{Binding ClusterSizes}" SelectedItem="{Binding ClusterSize}" HorizontalAlignment="Stretch" />
+            <TextBlock Text="Volume label:" Margin="0,8,0,0" />
+            <TextBox x:Name="volumeLabelTextBox" Text="{Binding VolumeLabel}" MaxLength="{x:Static dialogs:FormatViewModel.MaxVolumeLabelLength}" />
+            <CheckBox Content="Quick format" IsChecked="{Binding QuickFormat}" Margin="0,8,0,0" />
+        </StackPanel>
+    </DockPanel>
+</Window>
