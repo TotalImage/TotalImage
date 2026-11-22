@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using TotalImage.Changes;
 using TotalImage.FileSystems;
+using TotalImage.ViewModels.Browsing;
 using TotalImage.ViewModels.Dialogs;
 using TotalImage.ViewModels.Formatting;
 using TotalImage.ViewModels.Main;
@@ -60,11 +61,6 @@ public class MainViewModelCommandTests : IDisposable
         [nameof(Vm.ToggleDirectoryTreeCommand)] = Vm.ToggleDirectoryTreeCommand,
         [nameof(Vm.ToggleStatusBarCommand)] = Vm.ToggleStatusBarCommand,
     };
-
-    private BrowseState Browse(BrowsePane pane = BrowsePane.Files, FolderSelection folder = FolderSelection.Root,
-        Directory? directory = null, IReadOnlyList<FileSystemObject>? selected = null, bool parentSelected = false,
-        bool pending = false, bool subfolders = false)
-        => new(pane, folder, directory ?? Vm.CurrentFileSystem!.RootDirectory, selected ?? [], parentSelected, pending, subfolders);
 
     private static void AssertEnabled(bool expected, Dictionary<string, IRelayCommand> commands, object? parameter = null)
     {
@@ -165,9 +161,10 @@ public class MainViewModelCommandTests : IDisposable
     [Fact]
     public async Task AReadOnlyImageCanOnlyBeBrowsed()
     {
-        context.ImageFiles.OpenOverride = _ => new ReadOnlyContainer(PartitionTestImages.CreateFatVolume());
-        await context.OpenAsync(context.WriteFloppy());
-        Vm.UpdateBrowseState(Browse(BrowsePane.Folders, FolderSelection.Subfolder));
+        context.ImageFiles.OpenOverride = path => new ReadOnlyContainer(System.IO.File.ReadAllBytes(path));
+        await context.OpenBrowseImageAsync();
+        Vm.CurrentFolder = Docs;
+        Vm.ActivePane = BrowsePane.Folders;
 
         Assert.False(Vm.Image!.SupportsWriting);
         Assert.False(Vm.SaveCommand.CanExecute(null));
@@ -210,12 +207,16 @@ public class MainViewModelCommandTests : IDisposable
         Assert.Equal(properties, CanExecute(Rule.Properties));
     }
 
+    private FolderViewModel Docs => Vm.RootFolder!.Children.Single(folder => folder.Name == "DOCS");
+
+    private EntryViewModel Entry(string name) => Vm.Entries.Single(entry => entry.Name == name);
+
     [Fact]
     public async Task TheRootFolderInTheTreeCanOnlyBeExtracted()
     {
-        await context.OpenFloppyAsync();
+        await context.OpenBrowseImageAsync();
 
-        Vm.UpdateBrowseState(Browse(BrowsePane.Folders, FolderSelection.Root));
+        Vm.ActivePane = BrowsePane.Folders;
 
         AssertRules(extract: true, delete: false, rename: false, properties: false);
         Assert.True(Vm.NewFolderCommand.CanExecute(null));
@@ -224,9 +225,10 @@ public class MainViewModelCommandTests : IDisposable
     [Fact]
     public async Task ASubfolderInTheTreeAllowsEverything()
     {
-        await context.OpenFloppyAsync();
+        await context.OpenBrowseImageAsync();
 
-        Vm.UpdateBrowseState(Browse(BrowsePane.Folders, FolderSelection.Subfolder));
+        Vm.CurrentFolder = Docs;
+        Vm.ActivePane = BrowsePane.Folders;
 
         AssertRules(extract: true, delete: true, rename: true, properties: true);
         Assert.True(Vm.NewFolderCommand.CanExecute(null));
@@ -235,43 +237,59 @@ public class MainViewModelCommandTests : IDisposable
     [Fact]
     public async Task NoFolderInTheTreeAllowsNothing()
     {
-        await context.OpenFloppyAsync();
+        await context.OpenBrowseImageAsync();
 
-        Vm.UpdateBrowseState(Browse(BrowsePane.Folders, FolderSelection.None));
+        Vm.CurrentFolder = null;
+        Vm.ActivePane = BrowsePane.Folders;
 
         AssertRules(extract: false, delete: false, rename: false, properties: false);
         Assert.False(Vm.NewFolderCommand.CanExecute(null));
     }
 
-    [Theory]
-    [InlineData(FolderSelection.Root, false)]
-    [InlineData(FolderSelection.Subfolder, true)]
-    public async Task NothingSelectedInTheListActsOnTheFolder(FolderSelection folder, bool changeable)
+    [Fact]
+    public async Task TheSelectionInTheListDoesntMatterInTheTree()
     {
-        await context.OpenFloppyAsync();
+        await context.OpenBrowseImageAsync();
+        Vm.SelectEntries([Entry("ALPHA.TXT")]);
 
-        Vm.UpdateBrowseState(Browse(BrowsePane.Files, folder));
+        Vm.ActivePane = BrowsePane.Folders;
 
-        AssertRules(extract: true, delete: changeable, rename: changeable, properties: changeable);
+        AssertRules(extract: true, delete: false, rename: false, properties: false);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task NothingSelectedInTheListActsOnTheFolder(bool inSubfolder)
+    {
+        await context.OpenBrowseImageAsync();
+        if (inSubfolder)
+            Vm.CurrentFolder = Docs;
+
+        Vm.ActivePane = BrowsePane.Files;
+
+        AssertRules(extract: true, delete: inSubfolder, rename: inSubfolder, properties: inSubfolder);
     }
 
     [Fact]
     public async Task TheParentEntryAllowsNothing()
     {
-        await context.OpenFloppyAsync();
+        await context.OpenBrowseImageAsync();
+        Vm.CurrentFolder = Docs;
 
-        Vm.UpdateBrowseState(Browse(BrowsePane.Files, FolderSelection.Subfolder, parentSelected: true));
+        Vm.SelectEntries([Entry("..")]);
 
+        Assert.True(Vm.IsParentEntrySelected);
+        Assert.Empty(Vm.SelectedObjects);
         AssertRules(extract: false, delete: false, rename: false, properties: false);
     }
 
     [Fact]
     public async Task OneEntryAllowsEverything()
     {
-        await context.OpenFloppyAsync();
-        var root = new FakeDirectory("\\");
+        await context.OpenBrowseImageAsync();
 
-        Vm.UpdateBrowseState(Browse(BrowsePane.Files, FolderSelection.Root, selected: [root.AddFile("A.TXT", 1)]));
+        Vm.SelectEntries([Entry("ALPHA.TXT")]);
 
         AssertRules(extract: true, delete: true, rename: true, properties: true);
     }
@@ -279,10 +297,10 @@ public class MainViewModelCommandTests : IDisposable
     [Fact]
     public async Task APendingEntryAllowsNothing()
     {
-        await context.OpenFloppyAsync();
-        var root = new FakeDirectory("\\");
+        await context.OpenBrowseImageAsync();
+        Vm.Image!.PendingChanges.Add(new CreateDirectoryChange(["NEWDIR"]));
 
-        Vm.UpdateBrowseState(Browse(BrowsePane.Files, FolderSelection.Subfolder, selected: [root.AddFile("A.TXT", 1)], pending: true));
+        Vm.SelectEntries([Entry("NEWDIR")]);
 
         AssertRules(extract: false, delete: false, rename: false, properties: false);
     }
@@ -290,10 +308,20 @@ public class MainViewModelCommandTests : IDisposable
     [Fact]
     public async Task SeveralEntriesCantBeRenamed()
     {
-        await context.OpenFloppyAsync();
-        var root = new FakeDirectory("\\");
+        await context.OpenBrowseImageAsync();
 
-        Vm.UpdateBrowseState(Browse(BrowsePane.Files, FolderSelection.Root, selected: [root.AddFile("A.TXT", 1), root.AddFile("B.TXT", 2)]));
+        Vm.SelectEntries([Entry("ALPHA.TXT"), Entry("DOCS")]);
+
+        AssertRules(extract: true, delete: true, rename: false, properties: true);
+    }
+
+    [Fact]
+    public async Task SeveralEntriesWithAPendingOneAllowWhatSeveralEntriesAllow()
+    {
+        await context.OpenBrowseImageAsync();
+        Vm.Image!.PendingChanges.Add(new CreateDirectoryChange(["NEWDIR"]));
+
+        Vm.SelectEntries([Entry("ALPHA.TXT"), Entry("NEWDIR")]);
 
         AssertRules(extract: true, delete: true, rename: false, properties: true);
     }
@@ -301,12 +329,10 @@ public class MainViewModelCommandTests : IDisposable
     [Fact]
     public async Task TheParentFolderCommandNeedsAParent()
     {
-        await context.OpenFloppyAsync();
-        var root = new FakeDirectory("\\");
-        Vm.UpdateBrowseState(Browse(directory: root));
+        await context.OpenBrowseImageAsync();
         Assert.False(Vm.GoToParentFolderCommand.CanExecute(null));
 
-        Vm.UpdateBrowseState(Browse(directory: root.AddDirectory("SUB")));
+        Vm.CurrentFolder = Docs;
 
         Assert.True(Vm.GoToParentFolderCommand.CanExecute(null));
     }
@@ -315,52 +341,64 @@ public class MainViewModelCommandTests : IDisposable
     public async Task ExpandAndCollapseNeedSubfolders()
     {
         await context.OpenFloppyAsync();
-        Vm.UpdateBrowseState(Browse(subfolders: false));
         Assert.False(Vm.ExpandFolderTreeCommand.CanExecute(null));
         Assert.False(Vm.CollapseFolderTreeCommand.CanExecute(null));
 
-        Vm.UpdateBrowseState(Browse(subfolders: true));
+        // A folder that only exists as a pending change counts.
+        Vm.Image!.PendingChanges.Add(new CreateDirectoryChange(["NEWDIR"]));
 
         Assert.True(Vm.ExpandFolderTreeCommand.CanExecute(null));
         Assert.True(Vm.CollapseFolderTreeCommand.CanExecute(null));
     }
 
     [Fact]
-    public void TheBrowseStateIsIgnoredWithoutAnImage()
+    public void WithoutAnImageTheEntryCommandsAreDisabled()
     {
-        Vm.UpdateBrowseState(new BrowseState(BrowsePane.Folders, FolderSelection.Subfolder, new FakeDirectory("\\"), [], false, false, true));
+        Vm.ActivePane = BrowsePane.Folders;
 
-        Assert.Same(BrowseState.Empty, Vm.Browse);
-        Assert.False(Vm.ExtractCommand.CanExecute(null));
+        AssertRules(extract: false, delete: false, rename: false, properties: false);
+        Assert.False(Vm.NewFolderCommand.CanExecute(null));
         Assert.False(Vm.ExpandFolderTreeCommand.CanExecute(null));
+        Assert.False(Vm.GoToParentFolderCommand.CanExecute(null));
+        Assert.False(Vm.SelectAllCommand.CanExecute(null));
     }
 
-    [Fact]
-    public async Task ChangingTheBrowseStateRefreshesTheEntryCommands()
+    public static TheoryData<string> BrowseChanges => ["pane", "selection", "folder"];
+
+    [Theory]
+    [MemberData(nameof(BrowseChanges))]
+    public async Task ChangingWhatIsSelectedRefreshesTheEntryCommands(string change)
     {
-        await context.OpenFloppyAsync();
+        await context.OpenBrowseImageAsync();
         IRelayCommand[] commands = [Vm.SelectAllCommand, Vm.GoToParentFolderCommand, Vm.ExpandFolderTreeCommand, Vm.CollapseFolderTreeCommand,
             Vm.InjectFilesCommand, Vm.ExtractCommand, Vm.NewFolderCommand, Vm.DeleteCommand, Vm.RenameCommand, Vm.ShowPropertiesCommand];
         var refreshed = new HashSet<IRelayCommand>();
         foreach (var command in commands)
             command.CanExecuteChanged += (sender, _) => refreshed.Add((IRelayCommand)sender!);
 
-        Vm.UpdateBrowseState(Browse(BrowsePane.Folders, FolderSelection.Subfolder));
+        switch (change)
+        {
+            case "pane":
+                Vm.ActivePane = BrowsePane.Folders;
+                break;
+            case "selection":
+                Vm.SelectEntries([Entry("ALPHA.TXT")]);
+                break;
+            default:
+                Vm.CurrentFolder = Docs;
+                break;
+        }
 
         Assert.Equal(commands.ToHashSet(), refreshed);
     }
 
     [Fact]
-    public async Task TheEntryCommandsAreDoneByTheView()
+    public async Task TheEditingCommandsAreDoneByTheView()
     {
-        await context.OpenFloppyAsync();
-        var root = new FakeDirectory("\\");
-        Vm.UpdateBrowseState(Browse(BrowsePane.Folders, FolderSelection.Subfolder, directory: root.AddDirectory("SUB"), subfolders: true));
+        await context.OpenBrowseImageAsync();
+        Vm.CurrentFolder = Docs;
+        Vm.ActivePane = BrowsePane.Folders;
 
-        Vm.SelectAllCommand.Execute(null);
-        Vm.GoToParentFolderCommand.Execute(null);
-        Vm.ExpandFolderTreeCommand.Execute(null);
-        Vm.CollapseFolderTreeCommand.Execute(null);
         await Vm.InjectFilesCommand.ExecuteAsync(null);
         await Vm.ExtractCommand.ExecuteAsync(null);
         await Vm.NewFolderCommand.ExecuteAsync(null);
@@ -368,8 +406,7 @@ public class MainViewModelCommandTests : IDisposable
         Vm.RenameCommand.Execute(null);
         await Vm.ShowPropertiesCommand.ExecuteAsync(null);
 
-        Assert.Equal(["SelectAll", "GoToParentFolder", "ExpandFolderTree", "CollapseFolderTree", "InjectFilesAsync",
-            "ExtractAsync", "CreateFolderAsync", "DeleteAsync", "Rename", "ShowPropertiesAsync"], context.Bridge.Calls);
+        Assert.Equal(["InjectFilesAsync", "ExtractAsync", "CreateFolderAsync", "DeleteAsync", "Rename", "ShowPropertiesAsync"], context.Bridge.Calls);
     }
 
     #endregion
@@ -676,6 +713,8 @@ public class MainViewModelCommandTests : IDisposable
         Assert.Equal(percentage, Vm.FreeSpacePercentage);
     }
 
+    private EntryViewModel EntryOf(FileSystemObject entry) => Vm.Entries.Single(e => e.Entry == entry);
+
     [Fact]
     public async Task WithNothingSelectedTheStatusBarShowsTheFolder()
     {
@@ -685,7 +724,7 @@ public class MainViewModelCommandTests : IDisposable
         root.AddFile("B.TXT", 23);
         root.AddDirectory("SUB").AddFile("C.TXT", 1000);
 
-        Vm.UpdateBrowseState(Browse(directory: root));
+        Vm.CurrentFolder = FakeFolders.Root(root);
 
         Assert.Equal("\\", Vm.LocationText);
         Assert.Equal($"{SizeUnit.Bytes.FormatSize(123)} in 2 item(s)", Vm.SelectionSizeText);
@@ -700,12 +739,13 @@ public class MainViewModelCommandTests : IDisposable
         var sub = root.AddDirectory("SUB");
         sub.AddFile("C.TXT", 1000);
         sub.AddDirectory("DEEP").AddFile("D.TXT", 1);
+        Vm.CurrentFolder = FakeFolders.Root(root);
 
-        Vm.UpdateBrowseState(Browse(directory: root, selected: [file]));
+        Vm.SelectEntries([EntryOf(file)]);
         Assert.Equal(file.FullName, Vm.LocationText);
         Assert.Equal($"{SizeUnit.Bytes.FormatSize(100)} in 1 item", Vm.SelectionSizeText);
 
-        Vm.UpdateBrowseState(Browse(directory: root, selected: [sub]));
+        Vm.SelectEntries([EntryOf(sub)]);
         Assert.Equal(sub.FullName, Vm.LocationText);
         Assert.Equal($"{SizeUnit.Bytes.FormatSize(1001)} in 1 item", Vm.SelectionSizeText);
     }
@@ -718,11 +758,24 @@ public class MainViewModelCommandTests : IDisposable
         var file = root.AddFile("A.TXT", 100);
         var sub = root.AddDirectory("SUB");
         sub.AddFile("C.TXT", 1000);
+        Vm.CurrentFolder = FakeFolders.Root(root);
 
-        Vm.UpdateBrowseState(Browse(directory: root, selected: [file, sub]));
+        Vm.SelectEntries([EntryOf(file), EntryOf(sub)]);
 
         Assert.Equal("\\", Vm.LocationText);
         Assert.Equal($"{SizeUnit.Bytes.FormatSize(1100)} in 2 item(s)", Vm.SelectionSizeText);
+    }
+
+    [Fact]
+    public async Task TheParentEntryOnItsOwnShowsTheFolder()
+    {
+        await context.OpenBrowseImageAsync();
+        Vm.CurrentFolder = Vm.RootFolder!.Children.Single(folder => folder.Name == "DOCS");
+
+        Vm.SelectEntries([Vm.Entries[0]]);
+
+        Assert.Equal(Vm.CurrentFolder.FullName, Vm.LocationText);
+        Assert.Equal($"{SizeUnit.Bytes.FormatSize(150)} in 2 item(s)", Vm.SelectionSizeText);
     }
 
     [Fact]
@@ -731,14 +784,15 @@ public class MainViewModelCommandTests : IDisposable
         await context.OpenFloppyAsync();
         var root = new FakeDirectory("\\");
         root.AddFile("A.TXT", 100);
-        Vm.UpdateBrowseState(Browse(directory: root));
+        Vm.CurrentFolder = FakeFolders.Root(root);
 
         root.AddFile("B.TXT", 23);
-        Vm.UpdateBrowseState(Browse(directory: root));
+        Vm.CurrentFolder = FakeFolders.Root(root);
         Assert.Equal($"{SizeUnit.Bytes.FormatSize(100)} in 1 item(s)", Vm.SelectionSizeText);
 
         context.AppDialogs.SettingsAnswer = new SettingsChangeResult(false);
         Vm.ShowSettingsCommand.Execute(null);
+        Vm.CurrentFolder = FakeFolders.Root(root);
         Assert.Equal($"{SizeUnit.Bytes.FormatSize(123)} in 2 item(s)", Vm.SelectionSizeText);
     }
 

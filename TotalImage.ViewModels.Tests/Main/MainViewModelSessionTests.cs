@@ -321,8 +321,7 @@ public class MainViewModelSessionTests : IDisposable
     public async Task PendingChangesMarkTheImageUnsaved()
     {
         await context.OpenFloppyAsync();
-        var contentsChanged = 0;
-        Vm.ContentsChanged += (_, _) => contentsChanged++;
+        var entries = Vm.Entries;
         var changed = new List<string?>();
         Vm.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
@@ -330,7 +329,7 @@ public class MainViewModelSessionTests : IDisposable
 
         Assert.True(Vm.HasUnsavedChanges);
         Assert.Equal("*disk.img - TotalImage", Vm.Title);
-        Assert.Equal(1, contentsChanged);
+        Assert.NotSame(entries, Vm.Entries);
         Assert.Contains(nameof(MainViewModel.HasUnsavedChanges), changed);
         Assert.Contains(nameof(MainViewModel.Title), changed);
     }
@@ -401,10 +400,9 @@ public class MainViewModelSessionTests : IDisposable
         Assert.False(Vm.IsBusy);
 
         // The image is still watched for changes.
-        var contentsChanged = 0;
-        Vm.ContentsChanged += (_, _) => contentsChanged++;
+        var entries = Vm.Entries;
         AddChange("OTHER");
-        Assert.Equal(1, contentsChanged);
+        Assert.NotSame(entries, Vm.Entries);
     }
 
     [Fact]
@@ -575,7 +573,7 @@ public class MainViewModelSessionTests : IDisposable
     {
         await context.OpenFloppyAsync();
         var image = Vm.Image!;
-        Vm.UpdateBrowseState(new BrowseState(BrowsePane.Files, FolderSelection.Root, Vm.CurrentFileSystem!.RootDirectory, [], false, false, false));
+        Assert.NotNull(Vm.CurrentFolder);
 
         await Vm.CloseImageCommand.ExecuteAsync(null);
 
@@ -585,7 +583,10 @@ public class MainViewModelSessionTests : IDisposable
         Assert.Empty(Vm.Partitions);
         Assert.Equal(0, Vm.CurrentPartitionIndex);
         Assert.Equal("TotalImage", Vm.Title);
-        Assert.Same(BrowseState.Empty, Vm.Browse);
+        Assert.Null(Vm.RootFolder);
+        Assert.Null(Vm.CurrentFolder);
+        Assert.Empty(Vm.Entries);
+        Assert.Empty(Vm.SelectedEntries);
         Assert.Equal(string.Empty, Vm.PartitionSizeText);
         Assert.Equal(string.Empty, Vm.LocationText);
         Assert.Throws<ObjectDisposedException>(() => image.Content.Position = 0);

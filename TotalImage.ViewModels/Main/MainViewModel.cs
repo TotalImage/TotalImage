@@ -43,6 +43,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     private readonly IMessageService messages;
     private readonly IFilePickerService filePicker;
     private readonly ILauncherService launcher;
+    private readonly IFileTypeInfo fileTypes;
 
     // The last file name saved with "Save as" that ends with a number, offered incremented next time.
     private string? lastSavedFileName;
@@ -53,7 +54,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     public MainViewModel(ISettingsService settings, IImageFileService imageFiles, IImageDialogs imageDialogs,
         IEntryDialogs entryDialogs, IAppDialogs appDialogs, IMessageService messages, IFilePickerService filePicker,
-        ILauncherService launcher)
+        ILauncherService launcher, IFileTypeInfo fileTypes)
     {
         this.settings = settings;
         this.imageFiles = imageFiles;
@@ -63,6 +64,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         this.messages = messages;
         this.filePicker = filePicker;
         this.launcher = launcher;
+        this.fileTypes = fileTypes;
 
         ReadViewSettings();
         RecentImages = ReadRecentImages();
@@ -74,19 +76,13 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     public event EventHandler? CloseRequested;
 
     /// <summary>
-    /// TEMPORARY (stage 5): raised when the pending changes of the image changed, so the view
-    /// redraws the folder tree and the file list.
-    /// </summary>
-    public event EventHandler? ContentsChanged;
-
-    /// <summary>
     /// Raised after the settings dialog was accepted and the settings were applied here, so the
     /// view can refresh what depends on them (icons, file list).
     /// </summary>
     public event EventHandler? SettingsApplied;
 
     /// <summary>
-    /// TEMPORARY (stages 5 and 6): does the work of the browsing and editing commands.
+    /// TEMPORARY (stage 6): does the work of the editing commands.
     /// </summary>
     public IMainViewBridge? View { get; set; }
 
@@ -564,7 +560,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     private void OnPendingChangesChanged(object? sender, EventArgs e)
     {
         HasUnsavedChanges = Image?.PendingChanges.IsDirty ?? false;
-        ContentsChanged?.Invoke(this, EventArgs.Empty);
+        ReloadFolders();
     }
 
     /// <summary>
@@ -584,7 +580,6 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         CurrentFileSystem = null;
         CurrentPartitionIndex = 0;
         Partitions = [];
-        Browse = BrowseState.Empty;
         UpdateCapacity();
         UpdateSelectionStatus();
         RefreshCommands();
@@ -693,37 +688,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
-    #region Entries (temporary bridge to the view)
-
-    /// <summary>
-    /// TEMPORARY (stage 5): what the folder tree and the file list show and what is selected.
-    /// </summary>
-    [ObservableProperty]
-    public partial BrowseState Browse { get; private set; } = BrowseState.Empty;
-
-    /// <summary>
-    /// TEMPORARY (stage 5): the view reports what the folder tree and file list show and what
-    /// is selected in them.
-    /// </summary>
-    public void UpdateBrowseState(BrowseState state)
-    {
-        Browse = Image is null ? BrowseState.Empty : state;
-        UpdateSelectionStatus();
-        foreach (var command in EntryCommands)
-            command.NotifyCanExecuteChanged();
-    }
-
-    [RelayCommand(CanExecute = nameof(CanUseImage))]
-    private void SelectAll() => View?.SelectAll();
-
-    [RelayCommand(CanExecute = nameof(CanGoToParentFolder))]
-    private void GoToParentFolder() => View?.GoToParentFolder();
-
-    [RelayCommand(CanExecute = nameof(CanExpandOrCollapse))]
-    private void ExpandFolderTree() => View?.ExpandFolderTree();
-
-    [RelayCommand(CanExecute = nameof(CanExpandOrCollapse))]
-    private void CollapseFolderTree() => View?.CollapseFolderTree();
+    #region Entry commands (temporary bridge to the view)
 
     [RelayCommand(CanExecute = nameof(CanInjectFiles))]
     private Task InjectFiles() => View?.InjectFilesAsync() ?? Task.CompletedTask;
@@ -743,16 +708,12 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand(CanExecute = nameof(CanShowProperties))]
     private Task ShowProperties() => View?.ShowPropertiesAsync() ?? Task.CompletedTask;
 
-    private bool CanGoToParentFolder() => CanUseImage() && Browse.CurrentDirectory?.Parent is not null;
-
-    private bool CanExpandOrCollapse() => CanUseImage() && Browse.HasSubfolders;
-
     private bool CanInjectFiles() => CanEditImage() && (CurrentPartition?.SupportsWriting ?? false);
 
-    private bool CanCreateFolder() => CanEditImage() && Browse.Folder != FolderSelection.None;
+    private bool CanCreateFolder() => CanEditImage() && CurrentFolder is not null;
 
     private bool CanExtract() => CanUseImage()
-        && SelectionAllows(inFolderTree: Browse.Folder != FolderSelection.None, withNothingSelected: true, withSeveralSelected: true);
+        && SelectionAllows(inFolderTree: CurrentFolder is not null, withNothingSelected: true, withSeveralSelected: true);
 
     private bool CanDelete() => CanEditImage() && SelectionAllowsChangingEntries(withSeveralSelected: true);
 
@@ -760,11 +721,11 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     private bool CanShowProperties() => CanUseImage() && SelectionAllowsChangingEntries(withSeveralSelected: true);
 
-    // Delete, rename and properties apply to the selected entries, or to the selected folder
+    // Delete, rename and properties apply to the selected entries, or to the current folder
     // unless it is the root.
     private bool SelectionAllowsChangingEntries(bool withSeveralSelected)
     {
-        var isSubfolder = Browse.Folder == FolderSelection.Subfolder;
+        var isSubfolder = CurrentFolder is { IsRoot: false };
         return SelectionAllows(inFolderTree: isSubfolder, withNothingSelected: isSubfolder, withSeveralSelected);
     }
 
@@ -775,13 +736,14 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     /// </summary>
     private bool SelectionAllows(bool inFolderTree, bool withNothingSelected, bool withSeveralSelected)
     {
-        if (Browse.FocusedPane == BrowsePane.Folders)
+        if (ActivePane == BrowsePane.Folders)
             return inFolderTree;
 
-        return Browse.SelectedEntries.Count switch
+        var selected = SelectedEntries.Where(entry => !entry.IsParentEntry).ToList();
+        return selected.Count switch
         {
-            0 => !Browse.IsParentEntrySelected && withNothingSelected,
-            1 => !Browse.IsSelectedEntryPending,
+            0 => !IsParentEntrySelected && withNothingSelected,
+            1 => !selected[0].IsPending,
             _ => withSeveralSelected
         };
     }
@@ -925,6 +887,9 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
         LoadSettings();
         SettingsApplied?.Invoke(this, EventArgs.Empty);
+
+        // Type names, sizes and icons may have changed.
+        ReloadFolders();
     }
 
     [RelayCommand]
@@ -987,7 +952,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     private void UpdateSelectionStatus()
     {
-        var directory = Browse.CurrentDirectory;
+        var directory = CurrentFolder?.Directory;
         if (Image is null || directory is null)
         {
             LocationText = string.Empty;
@@ -996,7 +961,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         }
 
         var unit = settings.Current.SizeUnit;
-        var entries = Browse.SelectedEntries;
+        var entries = SelectedObjects;
         switch (entries.Count)
         {
             case 0:

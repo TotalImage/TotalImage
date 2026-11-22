@@ -6,7 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using TotalImage.Containers;
 using TotalImage.FileSystems;
+using TotalImage.FileSystems.FAT;
 using TotalImage.Partitions;
+using TotalImage.ViewModels.Browsing;
 using TotalImage.ViewModels.Dialogs;
 using TotalImage.ViewModels.Main;
 using TotalImage.ViewModels.Services;
@@ -34,6 +36,7 @@ internal sealed class MainTestContext : IDisposable
     public FakeMainFilePicker FilePicker { get; } = new();
     public FakeMainLauncher Launcher { get; } = new();
     public FakeBridge Bridge { get; } = new();
+    public FakeFileTypes FileTypes { get; } = new();
 
     private MainViewModel? viewModel;
 
@@ -41,7 +44,7 @@ internal sealed class MainTestContext : IDisposable
     /// The view model, created on first use so tests can set up the settings first.
     /// </summary>
     public MainViewModel ViewModel => viewModel ??= new MainViewModel(Settings, ImageFiles, ImageDialogs, EntryDialogs,
-        AppDialogs, Messages, FilePicker, Launcher) { View = Bridge };
+        AppDialogs, Messages, FilePicker, Launcher, FileTypes) { View = Bridge };
 
     public string Folder => temp.Path;
 
@@ -90,6 +93,17 @@ internal sealed class MainTestContext : IDisposable
     {
         FilePicker.OpenPath = path;
         await ViewModel.OpenImageCommand.ExecuteAsync(null);
+    }
+
+    /// <summary>
+    /// Opens a 1.44 MB floppy with <see cref="BrowseTestImage"/>'s folders and files.
+    /// </summary>
+    public async Task OpenBrowseImageAsync()
+    {
+        var path = PathOf("browse.img");
+        BrowseTestImage.Write(path, Folder);
+        await OpenAsync(path);
+        Assert.True(ViewModel.IsImageOpen);
     }
 
     /// <summary>
@@ -366,10 +380,6 @@ internal sealed class FakeBridge : IMainViewBridge
 {
     public List<string> Calls { get; } = [];
 
-    public void SelectAll() => Calls.Add(nameof(SelectAll));
-    public void GoToParentFolder() => Calls.Add(nameof(GoToParentFolder));
-    public void ExpandFolderTree() => Calls.Add(nameof(ExpandFolderTree));
-    public void CollapseFolderTree() => Calls.Add(nameof(CollapseFolderTree));
     public void Rename() => Calls.Add(nameof(Rename));
 
     public Task InjectFilesAsync() => Record(nameof(InjectFilesAsync));
@@ -383,6 +393,79 @@ internal sealed class FakeBridge : IMainViewBridge
         Calls.Add(name);
         return Task.CompletedTask;
     }
+}
+
+/// <summary>
+/// Names types like <see cref="GenericFileTypeInfo"/> and counts how often it was asked.
+/// </summary>
+internal sealed class FakeFileTypes : IFileTypeInfo
+{
+    public List<(string Name, FileAttributes Attributes)> Requests { get; } = [];
+
+    public string GetTypeName(string name, FileAttributes attributes)
+    {
+        Requests.Add((name, attributes));
+        return "Fake " + GenericFileTypeInfo.GetGenericTypeName(name, attributes);
+    }
+}
+
+/// <summary>
+/// A 1.44 MB FAT12 floppy made with <see cref="RawContainer.CreateImage"/>, with these entries
+/// added through its change set and committed to a file:
+/// <code>
+/// \DOCS\               folder
+/// \DOCS\DEEP\          folder
+/// \DOCS\DEEP\X.TXT     1 byte
+/// \DOCS\A.TXT          100 bytes, 2004
+/// \DOCS\B.TXT          50 bytes, 2005
+/// \EMPTY\              folder
+/// \ALPHA.TXT           10 bytes, 2001, read-only
+/// \MID.BIN             2000 bytes, 2002
+/// \ZETA.ARC            300 bytes, 2003, system
+/// \HIDDEN.SYS          5 bytes, 2000, hidden
+/// </code>
+/// </summary>
+internal static class BrowseTestImage
+{
+    public static readonly string[] RootFolders = ["DOCS", "EMPTY"];
+
+    public static readonly string[] RootFiles = ["ALPHA.TXT", "MID.BIN", "ZETA.ARC", "HIDDEN.SYS"];
+
+    public static void Write(string path, string tempFolder)
+    {
+        var geometry = DiskGeometries.FloppyGeometry.KnownGeometries[DiskGeometries.FloppyGeometry.FriendlyName.HighDensity1440k];
+        var bpb = FileSystems.BPB.BiosParameterBlock.FromGeometry(geometry, FileSystems.BPB.BiosParameterBlockVersion.Dos20, "TESTOEM ");
+        using var image = RawContainer.CreateImage(bpb, geometry.Tracks, true);
+        var changes = image.PendingChanges;
+
+        void AddFile(string[] filePath, int length, int year, FatAttributes attributes = 0)
+        {
+            var source = Changes.FileDataSource.Create(new MemoryStream(new byte[length]), tempFolder, long.MaxValue);
+            var written = new DateTime(year, 1, 2, 3, 4, 6);
+            changes.Add(new Changes.AddFileChange(filePath, source, FatAttributes.Archive | attributes, written, written, written));
+        }
+
+        changes.Add(new Changes.CreateDirectoryChange(["DOCS"]));
+        changes.Add(new Changes.CreateDirectoryChange(["DOCS", "DEEP"]));
+        AddFile(["DOCS", "DEEP", "X.TXT"], 1, 2006);
+        AddFile(["DOCS", "A.TXT"], 100, 2004);
+        AddFile(["DOCS", "B.TXT"], 50, 2005);
+        changes.Add(new Changes.CreateDirectoryChange(["EMPTY"]));
+        AddFile(["ALPHA.TXT"], 10, 2001, FatAttributes.ReadOnly);
+        AddFile(["MID.BIN"], 2000, 2002);
+        AddFile(["ZETA.ARC"], 300, 2003, FatAttributes.System);
+        AddFile(["HIDDEN.SYS"], 5, 2000, FatAttributes.Hidden);
+
+        image.CommitChanges(path).GetAwaiter().GetResult();
+    }
+}
+
+internal static class FakeFolders
+{
+    /// <summary>
+    /// The root of a folder tree over a fake directory.
+    /// </summary>
+    public static FolderViewModel Root(FakeDirectory directory) => new(directory, new FolderTreeOptions(true, null));
 }
 
 /// <summary>

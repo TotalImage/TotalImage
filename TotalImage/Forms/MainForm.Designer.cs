@@ -22,7 +22,7 @@ namespace TotalImage.Forms
             }
             if (disposing)
             {
-                _monoFont.Dispose();
+                fileListAdapter?.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -37,7 +37,7 @@ namespace TotalImage.Forms
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            cmsDirTree = new System.Windows.Forms.ContextMenuStrip(components);
+            folderTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(components);
             expandDirectoryTreeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             collapseDirectoryTreeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
@@ -159,15 +159,15 @@ namespace TotalImage.Forms
             toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             settingsToolStripButton = new System.Windows.Forms.ToolStripButton();
             splitContainer = new System.Windows.Forms.SplitContainer();
-            lstDirectories = new TreeViewEx();
-            imgFilesSmall = new System.Windows.Forms.ImageList(components);
-            lstFiles = new ListViewEx();
-            clmName = new System.Windows.Forms.ColumnHeader();
-            clmType = new System.Windows.Forms.ColumnHeader();
-            clmSize = new System.Windows.Forms.ColumnHeader();
-            clmModified = new System.Windows.Forms.ColumnHeader();
-            clmAttributes = new System.Windows.Forms.ColumnHeader();
-            cmsFileList = new System.Windows.Forms.ContextMenuStrip(components);
+            folderTree = new TreeViewEx();
+            smallFileIcons = new System.Windows.Forms.ImageList(components);
+            fileList = new ListViewEx();
+            nameColumn = new System.Windows.Forms.ColumnHeader();
+            typeColumn = new System.Windows.Forms.ColumnHeader();
+            sizeColumn = new System.Windows.Forms.ColumnHeader();
+            modifiedColumn = new System.Windows.Forms.ColumnHeader();
+            attributesColumn = new System.Windows.Forms.ColumnHeader();
+            fileListContextMenu = new System.Windows.Forms.ContextMenuStrip(components);
             parentDirectoryToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             viewToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -192,9 +192,9 @@ namespace TotalImage.Forms
             deleteToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             renameToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             propertiesToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            imgFilesLarge = new System.Windows.Forms.ImageList(components);
+            largeFileIcons = new System.Windows.Forms.ImageList(components);
             openContainingFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            cmsDirTree.SuspendLayout();
+            folderTreeContextMenu.SuspendLayout();
             menuBar.SuspendLayout();
             cmsToolbars.SuspendLayout();
             statusBar.SuspendLayout();
@@ -203,16 +203,16 @@ namespace TotalImage.Forms
             splitContainer.Panel1.SuspendLayout();
             splitContainer.Panel2.SuspendLayout();
             splitContainer.SuspendLayout();
-            cmsFileList.SuspendLayout();
+            fileListContextMenu.SuspendLayout();
             SuspendLayout();
             // 
-            // cmsDirTree
+            // folderTreeContextMenu
             // 
-            cmsDirTree.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { expandDirectoryTreeToolStripMenuItem1, collapseDirectoryTreeToolStripMenuItem1, toolStripSeparator15, injectToolStripMenuItem1, extractToolStripMenuItem1, newFolderToolStripMenuItem1, deleteToolStripMenuItem1, renameToolStripMenuItem1, propertiesToolStripMenuItem1 });
-            cmsDirTree.Name = "cmsDirTree";
-            cmsDirTree.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            cmsDirTree.Size = new System.Drawing.Size(217, 186);
-            cmsDirTree.Opening += cmsDirTree_Opening;
+            folderTreeContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { expandDirectoryTreeToolStripMenuItem1, collapseDirectoryTreeToolStripMenuItem1, toolStripSeparator15, injectToolStripMenuItem1, extractToolStripMenuItem1, newFolderToolStripMenuItem1, deleteToolStripMenuItem1, renameToolStripMenuItem1, propertiesToolStripMenuItem1 });
+            folderTreeContextMenu.Name = "folderTreeContextMenu";
+            folderTreeContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            folderTreeContextMenu.Size = new System.Drawing.Size(217, 186);
+            folderTreeContextMenu.Opening += FolderTreeContextMenu_Opening;
             // 
             // expandDirectoryTreeToolStripMenuItem1
             // 
@@ -1113,129 +1113,122 @@ namespace TotalImage.Forms
             // 
             // splitContainer.Panel1
             // 
-            splitContainer.Panel1.Controls.Add(lstDirectories);
+            splitContainer.Panel1.Controls.Add(folderTree);
             // 
             // splitContainer.Panel2
             // 
-            splitContainer.Panel2.Controls.Add(lstFiles);
+            splitContainer.Panel2.Controls.Add(fileList);
             splitContainer.Size = new System.Drawing.Size(984, 586);
             splitContainer.SplitterDistance = 280;
             splitContainer.SplitterWidth = 3;
             splitContainer.TabIndex = 3;
             // 
-            // lstDirectories
+            // folderTree
             // 
-            lstDirectories.AllowDrop = true;
-            lstDirectories.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            lstDirectories.Dock = System.Windows.Forms.DockStyle.Fill;
-            lstDirectories.FullRowSelect = true;
-            lstDirectories.HideSelection = false;
-            lstDirectories.ImageKey = "folder_closed_16.png";
-            lstDirectories.ImageList = imgFilesSmall;
-            lstDirectories.LabelEdit = true;
-            lstDirectories.Location = new System.Drawing.Point(0, 0);
-            lstDirectories.Name = "lstDirectories";
-            lstDirectories.SelectedImageIndex = 0;
-            lstDirectories.ShowLines = false;
-            lstDirectories.Size = new System.Drawing.Size(280, 586);
-            lstDirectories.TabIndex = 0;
-            lstDirectories.BeforeLabelEdit += lstDirectories_BeforeLabelEdit;
-            lstDirectories.AfterLabelEdit += lstDirectories_AfterLabelEdit;
-            lstDirectories.ItemDrag += lstDirectories_ItemDrag;
-            lstDirectories.AfterSelect += lstDirectories_AfterSelect;
-            lstDirectories.DragDrop += list_DragDrop;
-            lstDirectories.DragEnter += list_DragEnter;
-            lstDirectories.QueryContinueDrag += list_QueryContinueDrag;
-            lstDirectories.Enter += lstDirectories_Enter;
-            lstDirectories.MouseUp += lstDirectories_MouseUp;
+            folderTree.AllowDrop = true;
+            folderTree.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            folderTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            folderTree.FullRowSelect = true;
+            folderTree.HideSelection = false;
+            folderTree.ImageKey = "folder_closed_16.png";
+            folderTree.ImageList = smallFileIcons;
+            folderTree.LabelEdit = true;
+            folderTree.Location = new System.Drawing.Point(0, 0);
+            folderTree.Name = "folderTree";
+            folderTree.SelectedImageIndex = 0;
+            folderTree.ShowLines = false;
+            folderTree.Size = new System.Drawing.Size(280, 586);
+            folderTree.TabIndex = 0;
+            folderTree.BeforeLabelEdit += FolderTree_BeforeLabelEdit;
+            folderTree.AfterLabelEdit += FolderTree_AfterLabelEdit;
+            folderTree.ItemDrag += FolderTree_ItemDrag;
+            folderTree.DragDrop += BrowsePane_DragDrop;
+            folderTree.DragEnter += BrowsePane_DragEnter;
+            folderTree.QueryContinueDrag += BrowsePane_QueryContinueDrag;
+            folderTree.Enter += FolderTree_Enter;
+            folderTree.MouseUp += FolderTree_MouseUp;
             // 
-            // imgFilesSmall
+            // smallFileIcons
             // 
-            imgFilesSmall.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            imgFilesSmall.ImageSize = new System.Drawing.Size(16, 16);
-            imgFilesSmall.TransparentColor = System.Drawing.Color.Transparent;
+            smallFileIcons.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            smallFileIcons.ImageSize = new System.Drawing.Size(16, 16);
+            smallFileIcons.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // lstFiles
+            // fileList
             // 
-            lstFiles.AllowColumnReorder = true;
-            lstFiles.AllowDrop = true;
-            lstFiles.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            lstFiles.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { clmName, clmType, clmSize, clmModified, clmAttributes });
-            lstFiles.ContextMenuStrip = cmsFileList;
-            lstFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            lstFiles.FullRowSelect = true;
-            lstFiles.LabelEdit = true;
-            lstFiles.LargeImageList = imgFilesLarge;
-            lstFiles.Location = new System.Drawing.Point(0, 0);
-            lstFiles.Name = "lstFiles";
-            lstFiles.ShowGroups = false;
-            lstFiles.ShowItemToolTips = true;
-            lstFiles.Size = new System.Drawing.Size(701, 586);
-            lstFiles.SmallImageList = imgFilesSmall;
-            lstFiles.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            lstFiles.TabIndex = 0;
-            lstFiles.UseCompatibleStateImageBehavior = false;
-            lstFiles.View = System.Windows.Forms.View.Details;
-            lstFiles.VirtualMode = true;
-            lstFiles.AfterLabelEdit += lstFiles_AfterLabelEdit;
-            lstFiles.BeforeLabelEdit += lstFiles_BeforeLabelEdit;
-            lstFiles.CacheVirtualItems += lstFiles_CacheVirtualItems;
-            lstFiles.ColumnClick += lstFiles_ColumnClick;
-            lstFiles.ItemDrag += lstFiles_ItemDrag;
-            lstFiles.RetrieveVirtualItem += lstFiles_RetrieveVirtualItem;
-            lstFiles.SearchForVirtualItem += lstFiles_SearchForVirtualItem;
-            lstFiles.SelectedIndexChanged += lstFiles_SelectedIndexChanged;
-            lstFiles.DragDrop += list_DragDrop;
-            lstFiles.DragEnter += list_DragEnter;
-            lstFiles.QueryContinueDrag += list_QueryContinueDrag;
-            lstFiles.Enter += lstFiles_Enter;
-            lstFiles.KeyPress += lstFiles_KeyPress;
-            lstFiles.KeyUp += lstFiles_KeyUp;
-            lstFiles.MouseDoubleClick += lstFiles_MouseDoubleClick;
+            fileList.AllowColumnReorder = true;
+            fileList.AllowDrop = true;
+            fileList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            fileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { nameColumn, typeColumn, sizeColumn, modifiedColumn, attributesColumn });
+            fileList.ContextMenuStrip = fileListContextMenu;
+            fileList.Dock = System.Windows.Forms.DockStyle.Fill;
+            fileList.FullRowSelect = true;
+            fileList.LabelEdit = true;
+            fileList.LargeImageList = largeFileIcons;
+            fileList.Location = new System.Drawing.Point(0, 0);
+            fileList.Name = "fileList";
+            fileList.ShowGroups = false;
+            fileList.ShowItemToolTips = true;
+            fileList.Size = new System.Drawing.Size(701, 586);
+            fileList.SmallImageList = smallFileIcons;
+            fileList.TabIndex = 0;
+            fileList.UseCompatibleStateImageBehavior = false;
+            fileList.View = System.Windows.Forms.View.Details;
+            fileList.VirtualMode = true;
+            fileList.AfterLabelEdit += FileList_AfterLabelEdit;
+            fileList.BeforeLabelEdit += FileList_BeforeLabelEdit;
+            fileList.ItemDrag += FileList_ItemDrag;
+            fileList.DragDrop += BrowsePane_DragDrop;
+            fileList.DragEnter += BrowsePane_DragEnter;
+            fileList.QueryContinueDrag += BrowsePane_QueryContinueDrag;
+            fileList.Enter += FileList_Enter;
+            fileList.KeyPress += FileList_KeyPress;
+            fileList.KeyUp += FileList_KeyUp;
+            fileList.MouseDoubleClick += FileList_MouseDoubleClick;
             // 
-            // clmName
+            // nameColumn
             // 
-            clmName.Name = "clmName";
-            clmName.Tag = "Name";
-            clmName.Text = "Name";
-            clmName.Width = 150;
+            nameColumn.Name = "nameColumn";
+            nameColumn.Tag = "Name";
+            nameColumn.Text = "Name";
+            nameColumn.Width = 150;
             // 
-            // clmType
+            // typeColumn
             // 
-            clmType.Name = "clmType";
-            clmType.Tag = "Type";
-            clmType.Text = "Type";
-            clmType.Width = 150;
+            typeColumn.Name = "typeColumn";
+            typeColumn.Tag = "Type";
+            typeColumn.Text = "Type";
+            typeColumn.Width = 150;
             // 
-            // clmSize
+            // sizeColumn
             // 
-            clmSize.Name = "clmSize";
-            clmSize.Tag = "Size";
-            clmSize.Text = "Size";
-            clmSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            clmSize.Width = 150;
+            sizeColumn.Name = "sizeColumn";
+            sizeColumn.Tag = "Size";
+            sizeColumn.Text = "Size";
+            sizeColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            sizeColumn.Width = 150;
             // 
-            // clmModified
+            // modifiedColumn
             // 
-            clmModified.Name = "clmModified";
-            clmModified.Tag = "Modified";
-            clmModified.Text = "Modified";
-            clmModified.Width = 150;
+            modifiedColumn.Name = "modifiedColumn";
+            modifiedColumn.Tag = "Modified";
+            modifiedColumn.Text = "Modified";
+            modifiedColumn.Width = 150;
             // 
-            // clmAttributes
+            // attributesColumn
             // 
-            clmAttributes.Name = "clmAttributes";
-            clmAttributes.Tag = "Attributes";
-            clmAttributes.Text = "Attributes";
-            clmAttributes.Width = 85;
+            attributesColumn.Name = "attributesColumn";
+            attributesColumn.Tag = "Attributes";
+            attributesColumn.Text = "Attributes";
+            attributesColumn.Width = 85;
             // 
-            // cmsFileList
+            // fileListContextMenu
             // 
-            cmsFileList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { parentDirectoryToolStripMenuItem1, toolStripSeparator7, viewToolStripMenuItem1, sortByToolStripMenuItem1, toolStripSeparator18, selectAllToolStripMenuItem1, toolStripSeparator22, injectToolStripMenuItem2, extractToolStripMenuItem2, newFolderToolStripMenuItem2, deleteToolStripMenuItem2, renameToolStripMenuItem2, propertiesToolStripMenuItem2 });
-            cmsFileList.Name = "cmsFileList";
-            cmsFileList.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            cmsFileList.Size = new System.Drawing.Size(217, 242);
-            cmsFileList.Opening += cmsFileList_Opening;
+            fileListContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { parentDirectoryToolStripMenuItem1, toolStripSeparator7, viewToolStripMenuItem1, sortByToolStripMenuItem1, toolStripSeparator18, selectAllToolStripMenuItem1, toolStripSeparator22, injectToolStripMenuItem2, extractToolStripMenuItem2, newFolderToolStripMenuItem2, deleteToolStripMenuItem2, renameToolStripMenuItem2, propertiesToolStripMenuItem2 });
+            fileListContextMenu.Name = "fileListContextMenu";
+            fileListContextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            fileListContextMenu.Size = new System.Drawing.Size(217, 242);
+            fileListContextMenu.Opening += FileListContextMenu_Opening;
             // 
             // parentDirectoryToolStripMenuItem1
             // 
@@ -1394,11 +1387,11 @@ namespace TotalImage.Forms
             propertiesToolStripMenuItem2.Size = new System.Drawing.Size(216, 22);
             propertiesToolStripMenuItem2.Text = "Properties...";
             // 
-            // imgFilesLarge
+            // largeFileIcons
             // 
-            imgFilesLarge.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            imgFilesLarge.ImageSize = new System.Drawing.Size(32, 32);
-            imgFilesLarge.TransparentColor = System.Drawing.Color.Transparent;
+            largeFileIcons.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+            largeFileIcons.ImageSize = new System.Drawing.Size(32, 32);
+            largeFileIcons.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // openContainingFolderToolStripMenuItem
             // 
@@ -1425,7 +1418,7 @@ namespace TotalImage.Forms
             Text = "TotalImage";
             FormClosing += MainForm_FormClosing;
             Load += MainForm_Load;
-            cmsDirTree.ResumeLayout(false);
+            folderTreeContextMenu.ResumeLayout(false);
             menuBar.ResumeLayout(false);
             menuBar.PerformLayout();
             cmsToolbars.ResumeLayout(false);
@@ -1437,7 +1430,7 @@ namespace TotalImage.Forms
             splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer).EndInit();
             splitContainer.ResumeLayout(false);
-            cmsFileList.ResumeLayout(false);
+            fileListContextMenu.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1472,10 +1465,10 @@ namespace TotalImage.Forms
         private System.Windows.Forms.ToolStripButton newToolStripButton;
         private System.Windows.Forms.ToolStripButton openToolStripButton;
         private System.Windows.Forms.ToolStripButton saveToolStripButton;
-        private System.Windows.Forms.ColumnHeader clmName;
-        private System.Windows.Forms.ColumnHeader clmSize;
-        private System.Windows.Forms.ColumnHeader clmType;
-        private System.Windows.Forms.ColumnHeader clmModified;
+        private System.Windows.Forms.ColumnHeader nameColumn;
+        private System.Windows.Forms.ColumnHeader sizeColumn;
+        private System.Windows.Forms.ColumnHeader typeColumn;
+        private System.Windows.Forms.ColumnHeader modifiedColumn;
         private System.Windows.Forms.ToolStripStatusLabel partitionSizeLabel;
         private System.Windows.Forms.ToolStripMenuItem selectPartitionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem managePartitionsToolStripMenuItem;
@@ -1498,11 +1491,11 @@ namespace TotalImage.Forms
         private System.Windows.Forms.ToolStripMenuItem commandBarToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem directoryTreeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem statusBarToolStripMenuItem1;
-        private System.Windows.Forms.ContextMenuStrip cmsDirTree;
+        private System.Windows.Forms.ContextMenuStrip folderTreeContextMenu;
         private System.Windows.Forms.ToolStripMenuItem extractToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem1;
-        private System.Windows.Forms.ContextMenuStrip cmsFileList;
+        private System.Windows.Forms.ContextMenuStrip fileListContextMenu;
         private System.Windows.Forms.ToolStripMenuItem extractToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem2;
@@ -1537,8 +1530,8 @@ namespace TotalImage.Forms
         private System.Windows.Forms.ToolStripButton closeImageToolStripButton;
         private System.Windows.Forms.ToolStripMenuItem formatDiskToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem defragmentToolStripMenuItem;
-        private TreeViewEx lstDirectories;
-        public ListViewEx lstFiles;
+        private TreeViewEx folderTree;
+        private ListViewEx fileList;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem2;
@@ -1564,12 +1557,12 @@ namespace TotalImage.Forms
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator17;
         private System.Windows.Forms.ToolStripMenuItem hexViewToolStripMenuItem;
-        private System.Windows.Forms.ColumnHeader clmAttributes;
+        private System.Windows.Forms.ColumnHeader attributesColumn;
         private System.Windows.Forms.ToolStripStatusLabel freeSpaceLabel;
         private System.Windows.Forms.ToolStripProgressBar freeSpaceProgressBar;
         private System.Windows.Forms.ToolStripButton notificationsLabel;
-        internal System.Windows.Forms.ImageList imgFilesSmall;
-        internal System.Windows.Forms.ImageList imgFilesLarge;
+        private System.Windows.Forms.ImageList smallFileIcons;
+        private System.Windows.Forms.ImageList largeFileIcons;
         private System.Windows.Forms.ToolStripMenuItem parentDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton parentDirectoryToolStripButton;
