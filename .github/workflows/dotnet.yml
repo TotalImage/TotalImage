@@ -45,10 +45,12 @@ jobs:
       run: |
         dotnet restore TotalImage.IO.Tests/TotalImage.IO.Tests.csproj
         dotnet restore TotalImage.ViewModels.Tests/TotalImage.ViewModels.Tests.csproj
+        dotnet restore TotalImage.Avalonia/TotalImage.Avalonia.csproj
     - name: Build
       run: |
         dotnet build --no-restore TotalImage.IO.Tests/TotalImage.IO.Tests.csproj
         dotnet build --no-restore TotalImage.ViewModels.Tests/TotalImage.ViewModels.Tests.csproj
+        dotnet build --no-restore TotalImage.Avalonia/TotalImage.Avalonia.csproj
     - name: Test
       run: |
         dotnet test --no-build --verbosity normal --project TotalImage.IO.Tests/TotalImage.IO.Tests.csproj
