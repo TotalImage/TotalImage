@@ -1,0 +1,105 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        x:Class="TotalImage.Avalonia.Dialogs.SelectPartitionDialog"
+        x:DataType="dialogs:SelectPartitionViewModel"
+        Title="Select partition"
+        Icon="/Assets/logo.ico"
+        Width="560"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <Window.Styles>
+        <!-- Partitions whose file system could not be read are dimmed, like in the WinForms UI. -->
+        <Style Selector="DataGridRow.dimmed">
+            <Setter Property="Foreground" Value="Gray" />
+        </Style>
+        <Style Selector="Grid.info > TextBlock">
+            <Setter Property="Margin" Value="0,1" />
+        </Style>
+        <Style Selector="Grid.info > TextBlock.value">
+            <Setter Property="Margin" Value="8,1,0,1" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+    </Window.Styles>
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button x:Name="okButton" Content="OK" Classes="accent" MinWidth="80" HorizontalContentAlignment="Center"
+                        IsDefault="True" Command="{Binding AcceptCommand}" />
+                <Button x:Name="cancelButton" Content="Cancel" MinWidth="80" HorizontalContentAlignment="Center" IsCancel="True" />
+            </StackPanel>
+        </Border>
+        <StackPanel Margin="16" Spacing="8">
+            <TextBlock Text="Select a partition to load:" />
+            <Border BorderThickness="1" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                <DataGrid x:Name="partitionsGrid"
+                          Height="160"
+                          ItemsSource="{Binding Rows}"
+                          SelectedIndex="{Binding SelectedIndex}"
+                          SelectionMode="Single"
+                          IsReadOnly="True"
+                          CanUserSortColumns="False"
+                          CanUserReorderColumns="False"
+                          GridLinesVisibility="None"
+                          HeadersVisibility="Column"
+                          RowHeight="22">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:DataType="dialogs:PartitionRow" Header="No." Binding="{Binding Index}" Width="70" />
+                        <DataGridTextColumn x:DataType="dialogs:PartitionRow" Header="File system" Binding="{Binding FileSystem}" Width="110" />
+                        <DataGridTextColumn x:DataType="dialogs:PartitionRow" Header="Volume label" Binding="{Binding VolumeLabel}" Width="*" />
+                        <DataGridTextColumn x:DataType="dialogs:PartitionRow" Header="Size" Binding="{Binding Size}" Width="110" />
+                        <DataGridTextColumn x:DataType="dialogs:PartitionRow" Header="Active" Binding="{Binding Flag}" Width="100" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+            <Grid ColumnDefinitions="*,12,*">
+                <HeaderedContentControl Grid.Column="0" Header="Disk information">
+                    <Grid Classes="info" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0,4,0,0">
+                        <TextBlock Grid.Row="0" Text="Partition table:" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Classes="value" Text="{Binding PartitionTableName}" />
+                        <TextBlock Grid.Row="1" Text="Disk type:" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="value" Text="{Binding DiskType}" />
+                        <TextBlock Grid.Row="2" Text="Total size:" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Classes="value" Text="{Binding DiskTotalSize}" />
+                        <TextBlock Grid.Row="3" Text="Total sectors:" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Classes="value" Text="{Binding DiskTotalSectors}" />
+                        <TextBlock Grid.Row="4" Text="Usable size:" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Classes="value" Text="{Binding DiskUsableSize}" />
+                        <TextBlock Grid.Row="5" Text="GPT GUID:" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Classes="value" Text="{Binding DiskGuid}" />
+                        <TextBlock Grid.Row="6" Text="Timestamp:" />
+                        <TextBlock Grid.Row="6" Grid.Column="1" Classes="value" Text="{Binding DiskTimestamp}" />
+                        <TextBlock Grid.Row="7" Text="Serial number:" />
+                        <TextBlock Grid.Row="7" Grid.Column="1" Classes="value" Text="{Binding DiskSerial}" />
+                    </Grid>
+                </HeaderedContentControl>
+                <HeaderedContentControl Grid.Column="2" Header="Partition information">
+                    <Grid Classes="info" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" Margin="0,4,0,0">
+                        <TextBlock Grid.Row="0" Text="Partition type:" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Classes="value" Text="{Binding PartitionType}" />
+                        <TextBlock Grid.Row="1" Text="GPT GUID:" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="value" Text="{Binding PartitionGuid}" />
+                        <TextBlock Grid.Row="2" Text="Serial number:" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Classes="value" Text="{Binding PartitionSerial}" />
+                        <TextBlock Grid.Row="3" Text="First LBA:" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Classes="value" Text="{Binding PartitionFirstLba}" />
+                        <TextBlock Grid.Row="4" Text="Last LBA:" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Classes="value" Text="{Binding PartitionLastLba}" />
+                        <TextBlock Grid.Row="5" Text="Start offset:" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Classes="value" Text="{Binding PartitionStartOffset}" />
+                        <TextBlock Grid.Row="6" Text="End offset:" />
+                        <TextBlock Grid.Row="6" Grid.Column="1" Classes="value" Text="{Binding PartitionEndOffset}" />
+                        <TextBlock Grid.Row="7" Text="Total sectors:" />
+                        <TextBlock Grid.Row="7" Grid.Column="1" Classes="value" Text="{Binding PartitionTotalSectors}" />
+                    </Grid>
+                </HeaderedContentControl>
+            </Grid>
+            <HeaderedContentControl Header="Options">
+                <CheckBox Content="Load as read-only" Margin="0,4,0,0"
+                          IsChecked="{Binding ReadOnly}" IsEnabled="{Binding CanChangeReadOnly}" />
+            </HeaderedContentControl>
+        </StackPanel>
+    </DockPanel>
+</Window>

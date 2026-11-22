@@ -38,11 +38,14 @@ public sealed class AvaloniaImageDialogs(WindowOwner owner, ISettingsService set
 
     #region Select partition
 
-    protected override Task<PartitionSelection?> ShowSelectPartitionAsync(Func<DialogServices, SelectPartitionViewModel> createViewModel)
+    protected override async Task<PartitionSelection?> ShowSelectPartitionAsync(Func<DialogServices, SelectPartitionViewModel> createViewModel)
     {
-        // TODO (phase B): Dialogs/SelectPartitionDialog.axaml (the prototype on origin/avalonia-prototype
-        // has a layout). Needed to open images with several partitions.
-        throw new NotImplementedException("The partition selection dialog isn't available in the Avalonia UI yet.");
+        // The message about unsupported partitions belongs to the dialog, not the main window.
+        var dialogOwner = new WindowOwner();
+        var viewModel = createViewModel(DialogHost.ServicesFor(dialogOwner));
+        var dialog = new SelectPartitionDialog(viewModel);
+        dialogOwner.Window = dialog;
+        return await DialogHost.ShowDialogAsync(dialog, owner.Window) ? viewModel.Answer : null;
     }
 
     #endregion
