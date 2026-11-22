@@ -10,8 +10,7 @@ namespace TotalImage.Avalonia.Services;
 /*
  * Image dialogs (IImageDialogs).
  *
- *   Done:      (none yet)
- *   Remaining (TODO phase B): Format, Select partition, Manage partitions, New image (+ advanced),
+ *   Done:      Format, Select partition, Manage partitions, New image (+ advanced),
  *              Image information, Boot sector
  *
  * Each dialog method has its own region, so that dialogs can be added in parallel with few merge

@@ -91,8 +91,8 @@ public partial class App : Application
         return services;
     }
 
-    // Dialogs that phase B hasn't built yet throw NotImplementedException. Say so instead of
-    // closing the app.
+    // Features that aren't built yet (formatting, for example) throw NotImplementedException.
+    // Say so instead of closing the app.
     private void OnUnhandledException(object? sender, DispatcherUnhandledExceptionEventArgs e)
     {
         if (e.Exception is not NotImplementedException)
