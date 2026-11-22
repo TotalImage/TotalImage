@@ -1,0 +1,84 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        xmlns:conv="clr-namespace:TotalImage.Avalonia.Converters"
+        x:Class="TotalImage.Avalonia.Dialogs.NewImageAdvancedDialog"
+        x:DataType="dialogs:NewImageAdvancedViewModel"
+        Title="Advanced options"
+        Icon="/Assets/logo.ico"
+        Width="640"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <Window.Styles>
+        <Style Selector="Grid.fields > TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+        <Style Selector="Grid.fields > NumericUpDown">
+            <Setter Property="FormatString" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+    </Window.Styles>
+    <DockPanel>
+        <!-- The options are applied however the dialog is closed, so there is no Cancel button. -->
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button x:Name="okButton" Content="OK" Classes="accent" MinWidth="80" HorizontalContentAlignment="Center"
+                        IsDefault="True" IsCancel="True" />
+            </StackPanel>
+        </Border>
+        <Grid Classes="fields" Margin="16" ColumnDefinitions="Auto,*,24,Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+              RowSpacing="6">
+            <!-- Left column: boot sector fields and the sector layout. -->
+            <TextBlock Text="OEM ID:" />
+            <TextBox Grid.Column="1" x:Name="oemIdTextBox" Text="{Binding OemId}" IsEnabled="{Binding IsOemIdEnabled, Mode=OneTime}"
+                     MaxLength="{x:Static dialogs:NewImageAdvancedViewModel.MaxBootSectorFieldLength}" />
+            <TextBlock Grid.Row="1" Text="Volume serial number:" />
+            <TextBox Grid.Row="1" Grid.Column="1" x:Name="serialNumberTextBox" Text="{Binding SerialNumber}"
+                     IsEnabled="{Binding IsSerialNumberEnabled, Mode=OneTime}"
+                     MaxLength="{x:Static dialogs:NewImageAdvancedViewModel.MaxBootSectorFieldLength}" />
+            <TextBlock Grid.Row="2" Text="File system type:" />
+            <TextBox Grid.Row="2" Grid.Column="1" x:Name="fileSystemTypeTextBox" Text="{Binding FileSystemType}"
+                     IsEnabled="{Binding IsFileSystemTypeEnabled, Mode=OneTime}"
+                     MaxLength="{x:Static dialogs:NewImageAdvancedViewModel.MaxBootSectorFieldLength}" />
+            <TextBlock Grid.Row="3" Text="Number of FATs:" />
+            <NumericUpDown Grid.Row="3" Grid.Column="1" x:Name="fatCountNumericUpDown" Minimum="1" Maximum="9"
+                           Value="{Binding NumberOfFats}" />
+            <TextBlock Grid.Row="4" Text="Bytes per sector:" />
+            <NumericUpDown Grid.Row="4" Grid.Column="1" x:Name="bytesPerSectorNumericUpDown" Minimum="128" Maximum="4096" Increment="128"
+                           Value="{Binding BytesPerSector}" />
+            <TextBlock Grid.Row="5" Text="Sectors per cluster:" />
+            <NumericUpDown Grid.Row="5" Grid.Column="1" x:Name="sectorsPerClusterNumericUpDown" Minimum="1" Maximum="128"
+                           Value="{Binding SectorsPerCluster}" />
+            <TextBlock Grid.Row="6" Text="Sectors per track:" />
+            <NumericUpDown Grid.Row="6" Grid.Column="1" x:Name="sectorsPerTrackNumericUpDown" Minimum="5" Maximum="36"
+                           Value="{Binding SectorsPerTrack}" />
+
+            <!-- Right column: the FAT layout and the disk geometry. -->
+            <TextBlock Grid.Column="3" Text="Sectors per FAT:" />
+            <NumericUpDown Grid.Column="4" x:Name="sectorsPerFatNumericUpDown" Minimum="1" Maximum="11"
+                           Value="{Binding SectorsPerFat}" />
+            <TextBlock Grid.Row="1" Grid.Column="3" Text="Reserved sectors:" />
+            <NumericUpDown Grid.Row="1" Grid.Column="4" x:Name="reservedSectorsNumericUpDown" Minimum="0" Maximum="20"
+                           Value="{Binding ReservedSectors}" />
+            <TextBlock Grid.Row="2" Grid.Column="3" Text="Total number of sectors:" />
+            <NumericUpDown Grid.Row="2" Grid.Column="4" x:Name="totalSectorsNumericUpDown" IsReadOnly="True" ShowButtonSpinner="False"
+                           Value="{Binding TotalSectors, Mode=OneWay}" />
+            <TextBlock Grid.Row="3" Grid.Column="3" Text="Root directory entries:" />
+            <NumericUpDown Grid.Row="3" Grid.Column="4" x:Name="rootDirectoryEntriesNumericUpDown" Minimum="16" Maximum="320" Increment="16"
+                           Value="{Binding RootDirectoryEntries}" />
+            <TextBlock Grid.Row="4" Grid.Column="3" Text="Tracks per side:" />
+            <NumericUpDown Grid.Row="4" Grid.Column="4" x:Name="tracksNumericUpDown" Minimum="40" Maximum="82"
+                           Value="{Binding Tracks}" />
+            <TextBlock Grid.Row="5" Grid.Column="3" Text="Media descriptor:" />
+            <NumericUpDown Grid.Row="5" Grid.Column="4" x:Name="mediaDescriptorNumericUpDown" Minimum="237" Maximum="255"
+                           TextConverter="{x:Static conv:HexNumberConverter.Instance}"
+                           Value="{Binding MediaDescriptor}" />
+            <TextBlock Grid.Row="6" Grid.Column="3" Text="Sides:" />
+            <ComboBox Grid.Row="6" Grid.Column="4" x:Name="sidesComboBox" HorizontalAlignment="Stretch"
+                      ItemsSource="{Binding SideCounts}" SelectedItem="{Binding Sides}" />
+        </Grid>
+    </DockPanel>
+</Window>

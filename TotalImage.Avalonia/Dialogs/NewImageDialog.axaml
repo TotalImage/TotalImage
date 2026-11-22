@@ -1,0 +1,78 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        x:Class="TotalImage.Avalonia.Dialogs.NewImageDialog"
+        x:DataType="dialogs:NewImageViewModel"
+        Title="New image"
+        Icon="/Assets/logo.ico"
+        Width="460"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button x:Name="okButton" Content="OK" Classes="accent" MinWidth="80" HorizontalContentAlignment="Center"
+                        IsDefault="True" Command="{Binding CreateCommand}" />
+                <Button x:Name="cancelButton" Content="Cancel" MinWidth="80" HorizontalContentAlignment="Center" IsCancel="True" />
+            </StackPanel>
+        </Border>
+        <StackPanel Margin="16" Spacing="12">
+            <HeaderedContentControl Header="Media and container type">
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" Margin="0,4,0,0">
+                    <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="24">
+                        <RadioButton x:Name="floppyDiskRadioButton" GroupName="MediaType" Content="Floppy disk"
+                                     IsChecked="{Binding IsFloppyDisk}" />
+                        <RadioButton x:Name="hardDiskRadioButton" GroupName="MediaType" Content="Hard disk"
+                                     IsChecked="{Binding IsHardDisk}" />
+                    </StackPanel>
+                    <TextBlock Grid.Row="1" Text="Container format:" VerticalAlignment="Center" Margin="0,4,8,0" />
+                    <ComboBox Grid.Row="1" Grid.Column="1" x:Name="containerFormatComboBox" HorizontalAlignment="Stretch" Margin="0,4,0,0"
+                              ItemsSource="{Binding ContainerFormats}" SelectedItem="{Binding ContainerFormat}" />
+                </Grid>
+            </HeaderedContentControl>
+            <HeaderedContentControl Header="Options">
+                <Panel Margin="0,4,0,0">
+                    <!-- Floppy disk options. -->
+                    <Grid x:Name="floppyPanel" IsVisible="{Binding IsFloppyDisk}"
+                          ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" >
+                        <TextBlock Grid.ColumnSpan="3" Text="Geometry:" />
+                        <ComboBox Grid.Row="1" Grid.ColumnSpan="2" x:Name="geometryComboBox" HorizontalAlignment="Stretch" Margin="0,4,8,0"
+                                  ItemsSource="{x:Static dialogs:NewImageViewModel.FloppyGeometries}" SelectedItem="{Binding SelectedGeometry}" />
+                        <Button Grid.Row="1" Grid.Column="2" x:Name="advancedButton" Content="Advanced..." Margin="0,4,0,0"
+                                Command="{Binding ShowAdvancedOptionsCommand}" />
+                        <TextBlock Grid.Row="2" Text="Volume label:" VerticalAlignment="Center" Margin="0,8,8,0" />
+                        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" x:Name="volumeLabelTextBox" Margin="0,8,0,0"
+                                 Text="{Binding VolumeLabel}" MaxLength="{x:Static dialogs:NewImageViewModel.MaxVolumeLabelLength}" />
+                        <CheckBox Grid.Row="3" Grid.ColumnSpan="2" x:Name="writeBpbCheckBox" Content="Write a DOS BPB to the boot sector:" Margin="0,8,8,0"
+                                  IsChecked="{Binding WriteBpb}" IsEnabled="{Binding CanChangeWriteBpb}" />
+                        <ComboBox Grid.Row="3" Grid.Column="2" x:Name="bpbVersionComboBox" MinWidth="110" Margin="0,8,0,0" VerticalAlignment="Center"
+                                  ItemsSource="{x:Static dialogs:NewImageViewModel.BpbVersions}" SelectedItem="{Binding BpbVersion}"
+                                  IsEnabled="{Binding CanChooseBpbVersion}" />
+                    </Grid>
+                    <!-- Hard disk options. Only fixed-size disks so far. -->
+                    <Grid x:Name="hardDiskPanel" IsVisible="{Binding IsHardDisk}"
+                          ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                        <TextBlock Text="Disk size (MiB):" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <NumericUpDown Grid.Column="1" x:Name="diskSizeNumericUpDown" HorizontalAlignment="Left" MinWidth="140"
+                                       Minimum="1" Maximum="2088960" Increment="1" FormatString="0"
+                                       Value="{Binding DiskSize}" />
+                        <CheckBox Grid.Row="1" x:Name="writePartitionTableCheckBox" Content="Write a partition table to the disk:" Margin="0,8,8,0"
+                                  IsChecked="{Binding WritePartitionTable}" />
+                        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="partitionTableComboBox" HorizontalAlignment="Stretch" Margin="0,8,0,0"
+                                  VerticalAlignment="Center"
+                                  ItemsSource="{x:Static dialogs:NewImageViewModel.PartitionTables}" SelectedItem="{Binding PartitionTable}"
+                                  IsEnabled="{Binding CanChoosePartitionTable}" />
+                        <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="Disk type:" Margin="0,8,0,0" />
+                        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="16">
+                            <RadioButton GroupName="DiskType" Content="Fixed-size" IsChecked="True" />
+                            <RadioButton GroupName="DiskType" Content="Dynamically expanding" IsEnabled="False" />
+                            <RadioButton GroupName="DiskType" Content="Differencing" IsEnabled="False" />
+                        </StackPanel>
+                    </Grid>
+                </Panel>
+            </HeaderedContentControl>
+        </StackPanel>
+    </DockPanel>
+</Window>

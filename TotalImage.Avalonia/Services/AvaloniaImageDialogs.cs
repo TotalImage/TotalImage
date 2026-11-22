@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using TotalImage.Avalonia.Dialogs;
 using TotalImage.ViewModels.Dialogs;
 using TotalImage.ViewModels.Services;
 using TotalImage.ViewModels.Settings;
@@ -60,12 +61,17 @@ public sealed class AvaloniaImageDialogs(WindowOwner owner, ISettingsService set
 
     #region New image
 
-    public override Task<NewImageOptions?> AskNewImageAsync()
+    public override async Task<NewImageOptions?> AskNewImageAsync()
     {
-        // TODO (phase B): Dialogs/NewImageDialog.axaml bound to
-        // new NewImageViewModel(new AvaloniaMessageService(dialogOwner), ShowAdvancedOptions), where
-        // ShowAdvancedOptions shows Dialogs/NewImageAdvancedDialog.axaml on top of the new image dialog.
-        throw new NotImplementedException("The new image dialog isn't available in the Avalonia UI yet.");
+        // Questions asked while the dialog is open (and the advanced options) belong to the dialog.
+        var dialogOwner = new WindowOwner();
+        var viewModel = new NewImageViewModel(DialogHost.ServicesFor(dialogOwner).Messages, ShowAdvancedOptions);
+        var dialog = new NewImageDialog(viewModel);
+        dialogOwner.Window = dialog;
+        return await DialogHost.ShowDialogAsync(dialog, owner.Window) ? viewModel.Answer : null;
+
+        Task ShowAdvancedOptions(NewImageAdvancedViewModel advanced)
+            => DialogHost.ShowDialogAsync(new NewImageAdvancedDialog(advanced), dialogOwner.Window);
     }
 
     #endregion
