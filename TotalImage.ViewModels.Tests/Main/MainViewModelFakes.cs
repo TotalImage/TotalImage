@@ -38,6 +38,7 @@ internal sealed class MainTestContext : IDisposable
     public FakeMainLauncher Launcher { get; } = new();
     public FakeFileTypes FileTypes { get; } = new();
     public FileExtractionService Extraction { get; } = new();
+    public FakeAppInstances AppInstances { get; } = new();
 
     /// <summary>
     /// The temporary folder of the app, inside the test's folder.
@@ -52,7 +53,7 @@ internal sealed class MainTestContext : IDisposable
     /// The view model, created on first use so tests can set up the settings first.
     /// </summary>
     public MainViewModel ViewModel => viewModel ??= new MainViewModel(Settings, ImageFiles, ImageDialogs, EntryDialogs,
-        AppDialogs, Messages, FilePicker, Launcher, FileTypes, TempDirectory, Extraction);
+        AppDialogs, Messages, FilePicker, Launcher, FileTypes, TempDirectory, Extraction, AppInstances);
 
     public string Folder => temp.Path;
 
@@ -470,6 +471,13 @@ internal sealed class FakeMainFilePicker : IFilePickerService
     public IReadOnlyList<string> FilesToAdd { get; set; } = [];
 
     public Task<IReadOnlyList<string>> PickFilesToAddAsync() => Task.FromResult(FilesToAdd);
+}
+
+internal sealed class FakeAppInstances : IAppInstances
+{
+    public bool OthersRunning { get; set; }
+
+    public bool AreOtherInstancesRunning() => OthersRunning;
 }
 
 internal sealed class FakeMainLauncher : ILauncherService

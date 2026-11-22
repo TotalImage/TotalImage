@@ -30,18 +30,16 @@ namespace TotalImage.Forms
 
         private readonly MainViewModel viewModel;
         private readonly ISettingsService settings;
-        private readonly ITempDirectoryService tempDirectory;
         private readonly UIStateService uiState;
 
         private readonly FileIcons icons;
         private FileListAdapter fileListAdapter = null!;
 
-        public MainForm(MainViewModel viewModel, ISettingsService settings, ITempDirectoryService tempDirectory, UIStateService uiState,
+        public MainForm(MainViewModel viewModel, ISettingsService settings, UIStateService uiState,
             DialogOwner dialogOwner)
         {
             this.viewModel = viewModel;
             this.settings = settings;
-            this.tempDirectory = tempDirectory;
             this.uiState = uiState;
             dialogOwner.Window = this;
 
@@ -400,22 +398,9 @@ namespace TotalImage.Forms
                 return;
             }
 
-            settings.Save();
             SetUIState();
             uiState.Save();
-
-            //Try to clear the temp folder if this is the only instance
-            if (Process.GetProcessesByName("TotalImage").Length == 1)
-            {
-                try
-                {
-                    tempDirectory.Clear();
-                }
-                catch (Exception)
-                {
-                    //Ignore the exception, since the program is closing anyway... The folder can be cleared another day.
-                }
-            }
+            viewModel.OnWindowClosing();
         }
 
         private void PartitionComboBox_SelectedIndexChanged(object sender, EventArgs e)

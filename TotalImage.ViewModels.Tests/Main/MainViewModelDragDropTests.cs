@@ -202,4 +202,32 @@ public class MainViewModelDragDropTests : IDisposable
         await Vm.DropAsync([context.WriteFloppy("c.img")]);
         Assert.Equal(open, Vm.FilePath);
     }
+
+    [Fact]
+    public async Task ClosingTheWindowSavesTheSettingsAndClearsTheTemporaryFolder()
+    {
+        await context.OpenBrowseImageAsync();
+        var paths = await Vm.PrepareDragOutAsync([Entry("ALPHA.TXT")]);
+        Vm.EndDragOut(dropped: true);
+
+        Vm.OnWindowClosing();
+
+        Assert.Equal(1, context.Settings.Saves);
+        Assert.False(File.Exists(paths[0]));
+        Assert.Empty(TemporaryFolders());
+    }
+
+    [Fact]
+    public async Task TheTemporaryFolderIsKeptWhileOtherInstancesRun()
+    {
+        await context.OpenBrowseImageAsync();
+        var paths = await Vm.PrepareDragOutAsync([Entry("ALPHA.TXT")]);
+        Vm.EndDragOut(dropped: true);
+        context.AppInstances.OthersRunning = true;
+
+        Vm.OnWindowClosing();
+
+        Assert.Equal(1, context.Settings.Saves);
+        Assert.True(File.Exists(paths[0]));
+    }
 }

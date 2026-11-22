@@ -48,6 +48,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     private readonly IFileTypeInfo fileTypes;
     private readonly ITempDirectoryService tempDirectory;
     private readonly IFileExtractionService extraction;
+    private readonly IAppInstances appInstances;
 
     // The last file name saved with "Save as" that ends with a number, offered incremented next time.
     private string? lastSavedFileName;
@@ -58,7 +59,8 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     public MainViewModel(ISettingsService settings, IImageFileService imageFiles, IImageDialogs imageDialogs,
         IEntryDialogs entryDialogs, IAppDialogs appDialogs, IMessageService messages, IFilePickerService filePicker,
-        ILauncherService launcher, IFileTypeInfo fileTypes, ITempDirectoryService tempDirectory, IFileExtractionService extraction)
+        ILauncherService launcher, IFileTypeInfo fileTypes, ITempDirectoryService tempDirectory, IFileExtractionService extraction,
+        IAppInstances appInstances)
     {
         this.settings = settings;
         this.imageFiles = imageFiles;
@@ -71,6 +73,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         this.fileTypes = fileTypes;
         this.tempDirectory = tempDirectory;
         this.extraction = extraction;
+        this.appInstances = appInstances;
 
         ReadViewSettings();
         RecentImages = ReadRecentImages();
@@ -584,6 +587,27 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         UpdateCapacity();
         UpdateSelectionStatus();
         RefreshCommands();
+    }
+
+    /// <summary>
+    /// Called when the window closes, after closing was confirmed: saves the settings and clears
+    /// the temporary folder unless another instance may still be using it.
+    /// </summary>
+    public void OnWindowClosing()
+    {
+        settings.Save();
+
+        if (appInstances.AreOtherInstancesRunning())
+            return;
+
+        try
+        {
+            tempDirectory.Clear();
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            //Ignore the exception, since the program is closing anyway... The folder can be cleared another day.
+        }
     }
 
     partial void OnHasUnsavedChangesChanged(bool value) => RefreshCommands();
