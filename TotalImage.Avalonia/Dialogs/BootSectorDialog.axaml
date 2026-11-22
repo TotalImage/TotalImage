@@ -1,0 +1,45 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        x:Class="TotalImage.Avalonia.Dialogs.BootSectorDialog"
+        x:DataType="dialogs:BootSectorViewModel"
+        Title="Boot sector properties"
+        Icon="/Assets/logo.ico"
+        Width="600"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button x:Name="okButton" Content="OK" Classes="accent" MinWidth="80" HorizontalContentAlignment="Center" IsDefault="True" />
+                <Button x:Name="cancelButton" Content="Cancel" MinWidth="80" HorizontalContentAlignment="Center" IsCancel="True" />
+            </StackPanel>
+        </Border>
+        <StackPanel Margin="12" Spacing="8">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <TextBlock Text="Show boot sector of:" VerticalAlignment="Center" />
+                <RadioButton x:Name="diskRadioButton" GroupName="BootSectorSource" Content="Disk (MBR)"
+                             IsChecked="{Binding IsDiskSelected}" IsEnabled="{Binding CanShowDisk, Mode=OneTime}" />
+                <RadioButton x:Name="partitionRadioButton" GroupName="BootSectorSource" Content="Selected partition (VBR)"
+                             IsChecked="{Binding IsPartitionSelected}" />
+            </StackPanel>
+            <!-- Loading a boot sector and presets aren't implemented yet, as in the WinForms UI. -->
+            <DockPanel>
+                <Button x:Name="loadButton" DockPanel.Dock="Left" Content="Load..." MinWidth="80" HorizontalContentAlignment="Center"
+                        IsEnabled="False" />
+                <Button x:Name="exportButton" DockPanel.Dock="Left" Content="Save..." MinWidth="80" HorizontalContentAlignment="Center"
+                        Margin="6,0,0,0" Command="{Binding ExportCommand}" />
+                <TextBlock DockPanel.Dock="Left" Text="Presets:" VerticalAlignment="Center" Margin="12,0,6,0" IsEnabled="False" Opacity="0.5" />
+                <Button x:Name="applyButton" DockPanel.Dock="Right" Content="Apply" MinWidth="80" HorizontalContentAlignment="Center"
+                        Margin="6,0,0,0" IsEnabled="False" />
+                <ComboBox x:Name="presetComboBox" HorizontalAlignment="Stretch" IsEnabled="False" />
+            </DockPanel>
+            <TextBox x:Name="bootSectorTextBox" Text="{Binding HexText}" IsReadOnly="True" AcceptsReturn="True"
+                     FontFamily="Cascadia Mono,Consolas,Menlo,DejaVu Sans Mono,monospace" FontSize="13"
+                     Height="320" TextWrapping="NoWrap"
+                     ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        </StackPanel>
+    </DockPanel>
+</Window>

@@ -86,10 +86,14 @@ public sealed class AvaloniaImageDialogs(WindowOwner owner, ISettingsService set
 
     #region Boot sector
 
-    protected override Task ShowBootSectorAsync(Func<DialogServices, BootSectorViewModel> createViewModel)
+    protected override async Task ShowBootSectorAsync(Func<DialogServices, BootSectorViewModel> createViewModel)
     {
-        // TODO (phase B): Dialogs/BootSectorDialog.axaml.
-        throw new NotImplementedException("The boot sector dialog isn't available in the Avalonia UI yet.");
+        // The export's picker and messages belong to the dialog, not the main window.
+        var dialogOwner = new WindowOwner();
+        var viewModel = createViewModel(DialogHost.ServicesFor(dialogOwner));
+        var dialog = new Dialogs.BootSectorDialog(viewModel);
+        dialogOwner.Window = dialog;
+        await DialogHost.ShowDialogAsync(dialog, owner.Window);
     }
 
     #endregion
