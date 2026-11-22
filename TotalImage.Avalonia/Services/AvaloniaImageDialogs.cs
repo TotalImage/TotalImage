@@ -72,10 +72,14 @@ public sealed class AvaloniaImageDialogs(WindowOwner owner, ISettingsService set
 
     #region Image information
 
-    protected override Task ShowImageInfoAsync(Func<DialogServices, ImageInfoViewModel> createViewModel)
+    protected override async Task ShowImageInfoAsync(Func<DialogServices, ImageInfoViewModel> createViewModel)
     {
-        // TODO (phase B): Dialogs/ImageInfoDialog.axaml.
-        throw new NotImplementedException("The image information dialog isn't available in the Avalonia UI yet.");
+        // The export's picker and messages belong to the dialog, not the main window.
+        var dialogOwner = new WindowOwner();
+        var viewModel = createViewModel(DialogHost.ServicesFor(dialogOwner));
+        var dialog = new Dialogs.ImageInfoDialog(viewModel);
+        dialogOwner.Window = dialog;
+        await DialogHost.ShowDialogAsync(dialog, owner.Window);
     }
 
     #endregion

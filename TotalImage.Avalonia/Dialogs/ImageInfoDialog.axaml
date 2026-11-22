@@ -1,0 +1,112 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        x:Class="TotalImage.Avalonia.Dialogs.ImageInfoDialog"
+        x:DataType="dialogs:ImageInfoViewModel"
+        Title="Image information"
+        Icon="/Assets/logo.ico"
+        Width="560" Height="500"
+        MinWidth="400" MinHeight="360"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <Window.Styles>
+        <!-- Compact tab headers, so all five pages fit on one row. -->
+        <Style Selector="TabItem">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Padding" Value="10,0" />
+        </Style>
+        <Style Selector="DataGrid.properties">
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="CanUserSortColumns" Value="False" />
+            <Setter Property="CanUserReorderColumns" Value="False" />
+            <Setter Property="CanUserResizeColumns" Value="True" />
+            <Setter Property="GridLinesVisibility" Value="None" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="RowHeight" Value="22" />
+        </Style>
+        <Style Selector="TextBlock.cell">
+            <Setter Property="Margin" Value="6,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+        <!-- Properties without a value are greyed out; values still being calculated are in italics. -->
+        <Style Selector="TextBlock.cell.notAvailable">
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
+        </Style>
+        <Style Selector="TextBlock.cell.pending">
+            <Setter Property="FontStyle" Value="Italic" />
+        </Style>
+    </Window.Styles>
+
+    <Window.Resources>
+        <DataTemplate x:Key="NameCell" x:DataType="dialogs:PropertyRow">
+            <TextBlock Classes="cell" Text="{Binding Name}" />
+        </DataTemplate>
+        <DataTemplate x:Key="ValueCell" x:DataType="dialogs:PropertyRow">
+            <TextBlock Classes="cell" Text="{Binding Value}" ToolTip.Tip="{Binding Value}"
+                       Classes.notAvailable="{Binding IsNotAvailable}" Classes.pending="{Binding IsPending}" />
+        </DataTemplate>
+    </Window.Resources>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <DockPanel>
+                <Button x:Name="exportButton" DockPanel.Dock="Left" Content="Save..." MinWidth="80" HorizontalContentAlignment="Center"
+                        Command="{Binding ExportCommand}" />
+                <Button x:Name="okButton" Content="OK" Classes="accent" MinWidth="80" HorizontalAlignment="Right"
+                        HorizontalContentAlignment="Center" IsDefault="True" IsCancel="True" />
+            </DockPanel>
+        </Border>
+        <TabControl Margin="8,4,8,8">
+            <TabItem Header="File">
+                <DataGrid x:Name="fileGrid" Classes="properties" ItemsSource="{Binding FileRows}">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Property" Width="Auto" CellTemplate="{StaticResource NameCell}" />
+                        <DataGridTemplateColumn Header="Value" Width="*" CellTemplate="{StaticResource ValueCell}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Container">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Bottom" Spacing="4" Margin="0,8,0,0">
+                        <TextBlock Text="Comment:" />
+                        <TextBox x:Name="commentTextBox" Text="{Binding Comment, Mode=OneTime}" IsReadOnly="True"
+                                 AcceptsReturn="True" TextWrapping="Wrap" Height="90" />
+                    </StackPanel>
+                    <DataGrid x:Name="containerGrid" Classes="properties" ItemsSource="{Binding ContainerRows}">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Property" Width="Auto" CellTemplate="{StaticResource NameCell}" />
+                            <DataGridTemplateColumn Header="Value" Width="*" CellTemplate="{StaticResource ValueCell}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="Partition table">
+                <DataGrid x:Name="partitionTableGrid" Classes="properties" ItemsSource="{Binding PartitionTableRows}">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Property" Width="Auto" CellTemplate="{StaticResource NameCell}" />
+                        <DataGridTemplateColumn Header="Value" Width="*" CellTemplate="{StaticResource ValueCell}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Selected partition">
+                <DataGrid x:Name="partitionGrid" Classes="properties" ItemsSource="{Binding PartitionRows}">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Property" Width="Auto" CellTemplate="{StaticResource NameCell}" />
+                        <DataGridTemplateColumn Header="Value" Width="*" CellTemplate="{StaticResource ValueCell}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="File system">
+                <DataGrid x:Name="fileSystemGrid" Classes="properties" ItemsSource="{Binding FileSystemRows}">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Property" Width="Auto" CellTemplate="{StaticResource NameCell}" />
+                        <DataGridTemplateColumn Header="Value" Width="*" CellTemplate="{StaticResource ValueCell}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
