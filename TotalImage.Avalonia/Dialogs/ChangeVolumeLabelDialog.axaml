@@ -1,0 +1,35 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        x:Class="TotalImage.Avalonia.Dialogs.ChangeVolumeLabelDialog"
+        x:DataType="dialogs:VolumeLabelViewModel"
+        Title="Change volume label"
+        Icon="/Assets/logo.ico"
+        Width="380"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button x:Name="okButton" Content="OK" Classes="accent" MinWidth="80" HorizontalContentAlignment="Center"
+                        IsDefault="True" Command="{Binding AcceptCommand}" />
+                <Button x:Name="cancelButton" Content="Cancel" MinWidth="80" HorizontalContentAlignment="Center" IsCancel="True" />
+            </StackPanel>
+        </Border>
+        <StackPanel Margin="16" Spacing="8">
+            <TextBlock Text="Enter a new volume label:" />
+            <TextBox x:Name="rootDirectoryLabelTextBox" Text="{Binding RootDirectoryLabel}" MaxLength="11" />
+            <HeaderedContentControl Header="FAT options" Margin="0,8,0,0">
+                <StackPanel Spacing="4" Margin="0,4,0,0">
+                    <CheckBox Content="Also write the volume label to the BPB" IsChecked="{Binding WriteBpbLabel}" />
+                    <CheckBox Content="Write the same label as in root directory" IsChecked="{Binding SyncLabels}"
+                              IsEnabled="{Binding CanEditBpbLabel}" />
+                    <TextBox Text="{Binding BpbLabel}" MaxLength="11" IsEnabled="{Binding CanEditBpbLabel}"
+                             IsReadOnly="{Binding IsBpbLabelReadOnly}" />
+                </StackPanel>
+            </HeaderedContentControl>
+        </StackPanel>
+    </DockPanel>
+</Window>

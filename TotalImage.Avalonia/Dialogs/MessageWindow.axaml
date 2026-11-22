@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TotalImage.Avalonia.Dialogs.MessageWindow"
+        Icon="/Assets/logo.ico"
+        SizeToContent="WidthAndHeight"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        MinWidth="360" MaxWidth="560">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <DockPanel>
+                <CheckBox x:Name="verificationCheckBox" DockPanel.Dock="Left" IsVisible="False" VerticalAlignment="Center" Margin="0,0,16,0" />
+                <StackPanel x:Name="buttonPanel" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" />
+            </DockPanel>
+        </Border>
+        <Grid ColumnDefinitions="Auto,*" Margin="16,16,16,20">
+            <Border x:Name="iconBorder" Width="32" Height="32" CornerRadius="16" VerticalAlignment="Top" Margin="0,0,16,0">
+                <TextBlock x:Name="iconText" Foreground="White" FontWeight="Bold" FontSize="18"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <StackPanel Grid.Column="1" Spacing="8">
+                <SelectableTextBlock x:Name="headingText" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" />
+                <SelectableTextBlock x:Name="messageText" TextWrapping="Wrap" />
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</Window>

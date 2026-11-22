@@ -1,0 +1,428 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+        xmlns:main="clr-namespace:TotalImage.ViewModels.Main;assembly=TotalImage.ViewModels"
+        xmlns:browsing="clr-namespace:TotalImage.ViewModels.Browsing;assembly=TotalImage.ViewModels"
+        xmlns:settings="clr-namespace:TotalImage.ViewModels.Settings;assembly=TotalImage.ViewModels"
+        xmlns:conv="clr-namespace:TotalImage.Avalonia.Converters"
+        xmlns:ctl="clr-namespace:TotalImage.Avalonia.Controls"
+        x:Class="TotalImage.Avalonia.Views.MainWindow"
+        x:DataType="main:MainViewModel"
+        Title="{Binding Title}"
+        Icon="/Assets/logo.ico"
+        Width="1000" Height="700"
+        MinWidth="480" MinHeight="320"
+        DragDrop.AllowDrop="True">
+
+    <Window.Resources>
+        <!-- The file list columns, as the view model numbers them. -->
+        <sys:Int32 x:Key="NameColumn">0</sys:Int32>
+        <sys:Int32 x:Key="TypeColumn">1</sys:Int32>
+        <sys:Int32 x:Key="SizeColumn">2</sys:Int32>
+        <sys:Int32 x:Key="ModifiedColumn">3</sys:Int32>
+        <sys:Int32 x:Key="AttributesColumn">4</sys:Int32>
+
+        <!-- Items of the file list in the icon and list views. -->
+        <DataTemplate x:Key="LargeIconTemplate" x:DataType="browsing:EntryViewModel">
+            <StackPanel Width="88" Spacing="2" ToolTip.Tip="{Binding ToolTip}">
+                <Image Source="{Binding IconKey, Converter={StaticResource LargeFileIconConverter}}"
+                       Classes.hidden="{Binding IsHidden}" Width="32" Height="32" />
+                <TextBlock Text="{Binding Name}" TextAlignment="Center" TextWrapping="Wrap" MaxHeight="34"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="SmallIconTemplate" x:DataType="browsing:EntryViewModel">
+            <StackPanel Orientation="Horizontal" Width="180" Spacing="4" ToolTip.Tip="{Binding ToolTip}">
+                <Image Source="{Binding IconKey, Converter={StaticResource SmallFileIconConverter}}"
+                       Classes.hidden="{Binding IsHidden}" Width="16" Height="16" />
+                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+            </StackPanel>
+        </DataTemplate>
+        <ItemsPanelTemplate x:Key="WrapRowsPanel">
+            <WrapPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+        <ItemsPanelTemplate x:Key="WrapColumnsPanel">
+            <WrapPanel Orientation="Vertical" />
+        </ItemsPanelTemplate>
+
+    </Window.Resources>
+
+    <Window.Styles>
+        <Style Selector="Menu > MenuItem">
+            <Setter Property="Padding" Value="8,4" />
+        </Style>
+        <Style Selector="MenuItem Image.menuIcon">
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+        </Style>
+        <Style Selector="StackPanel#commandBar > Button, StackPanel#commandBar > DropDownButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="6" />
+        </Style>
+        <Style Selector="StackPanel#commandBar > Button:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="StackPanel#commandBar > Button:disabled Image, StackPanel#commandBar > DropDownButton:disabled Image">
+            <Setter Property="Opacity" Value="0.4" />
+        </Style>
+        <Style Selector="StackPanel#commandBar Image">
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+        </Style>
+        <Style Selector="StackPanel#commandBar > Separator">
+            <Setter Property="Width" Value="1" />
+            <Setter Property="Height" Value="20" />
+            <Setter Property="Margin" Value="4,0" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseLowBrush}" />
+        </Style>
+        <Style Selector="Grid#statusBar TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="8,0" />
+        </Style>
+        <Style Selector="ProgressBar.low">
+            <Setter Property="Foreground" Value="#D13438" />
+        </Style>
+        <Style Selector="ProgressBar.medium">
+            <Setter Property="Foreground" Value="#E3A21A" />
+        </Style>
+        <Style Selector="ProgressBar.high">
+            <Setter Property="Foreground" Value="#2E9E3E" />
+        </Style>
+        <Style Selector="DataGrid#fileList DataGridCell">
+            <Setter Property="MinHeight" Value="22" />
+        </Style>
+        <Style Selector="TreeView#folderTree TreeViewItem" x:DataType="browsing:FolderViewModel">
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+        </Style>
+    </Window.Styles>
+
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Ctrl+N" Command="{Binding NewImageCommand}" />
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenImageCommand}" />
+        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}" />
+        <KeyBinding Gesture="Ctrl+Shift+S" Command="{Binding SaveAsCommand}" />
+        <KeyBinding Gesture="Ctrl+W" Command="{Binding CloseImageCommand}" />
+        <KeyBinding Gesture="Ctrl+A" Command="{Binding SelectAllCommand}" />
+        <KeyBinding Gesture="Insert" Command="{Binding InjectFilesCommand}" />
+        <KeyBinding Gesture="Ctrl+X" Command="{Binding ExtractCommand}" />
+        <KeyBinding Gesture="Ctrl+Shift+N" Command="{Binding NewFolderCommand}" />
+        <KeyBinding Gesture="Delete" Command="{Binding DeleteCommand}" />
+        <KeyBinding Gesture="F2" Command="{Binding RenameCommand}" />
+        <KeyBinding Gesture="Alt+Enter" Command="{Binding ShowPropertiesCommand}" />
+    </Window.KeyBindings>
+
+    <DockPanel>
+        <!-- Menu bar -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New..." Command="{Binding NewImageCommand}" InputGesture="Ctrl+N">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/page_white.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Open..." Command="{Binding OpenImageCommand}" InputGesture="Ctrl+O">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/folder_go.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Open containing folder..." Command="{Binding OpenContainingFolderCommand}" />
+                <MenuItem Header="_Save" Command="{Binding SaveCommand}" InputGesture="Ctrl+S">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/diskette.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Save _as..." Command="{Binding SaveAsCommand}" InputGesture="Ctrl+Shift+S">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/disk_multiple.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Reload image" Command="{Binding ReloadImageCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/arrow_refresh.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Close image" Command="{Binding CloseImageCommand}" InputGesture="Ctrl+W">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/cross.png" /></MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem x:Name="recentFilesMenuItem" Header="Recent _files" IsEnabled="{Binding HasRecentImages}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/clock_history_frame.png" /></MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="E_xit" Command="{Binding ExitCommand}" InputGesture="Alt+F4">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/door_out.png" /></MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="Select _all" Command="{Binding SelectAllCommand}" InputGesture="Ctrl+A" />
+                <Separator />
+                <MenuItem Header="_Inject files or folders..." Command="{Binding InjectFilesCommand}" InputGesture="Insert">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/page_white_add.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="E_xtract..." Command="{Binding ExtractCommand}" InputGesture="Ctrl+X">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/redo.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_New folder..." Command="{Binding NewFolderCommand}" InputGesture="Ctrl+Shift+N">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/folder_new.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Delete" Command="{Binding DeleteCommand}" InputGesture="Delete">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/bin_empty.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Rename..." Command="{Binding RenameCommand}" InputGesture="F2">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/textfield_rename.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Properties..." Command="{Binding ShowPropertiesCommand}" InputGesture="Alt+Enter">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/page_white_edit.png" /></MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Change volume _label..." Command="{Binding ChangeVolumeLabelCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/drive_rename.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Change floppy _geometry..." Command="{Binding ChangeFormatCommand}" />
+                <MenuItem Header="De_fragment..." Command="{Binding DefragmentCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/module.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="F_ormat disk/partition..." Command="{Binding FormatCommand}" />
+                <MenuItem Header="_Boot sector properties..." Command="{Binding ShowBootSectorCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/application_xp_terminal.png" /></MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="_Select partition..." Command="{Binding ChoosePartitionCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/drive_go.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Manage partitions..." Command="{Binding ManagePartitionsCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/drive_edit.png" /></MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="_Parent directory" Command="{Binding GoToParentFolderCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/folder_up.png" /></MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="_Expand directory tree" Command="{Binding ExpandFolderTreeCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/arrow_up_down.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Collapse directory tree" Command="{Binding CollapseFolderTreeCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/arrow_down_up.png" /></MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Show _hidden objects" ToggleType="CheckBox" IsChecked="{Binding ShowHiddenItems, Mode=OneWay}"
+                          Command="{Binding ToggleShowHiddenItemsCommand}" />
+                <Separator />
+                <MenuItem Header="_Large icons" ToggleType="Radio" GroupName="ViewMode"
+                          IsChecked="{Binding ViewMode, Mode=OneWay, Converter={x:Static conv:ValueConverters.EqualsParameter}, ConverterParameter={x:Static settings:ViewMode.LargeIcon}}"
+                          Command="{Binding SetViewModeCommand}" CommandParameter="{x:Static settings:ViewMode.LargeIcon}" />
+                <MenuItem Header="_Small icons" ToggleType="Radio" GroupName="ViewMode"
+                          IsChecked="{Binding ViewMode, Mode=OneWay, Converter={x:Static conv:ValueConverters.EqualsParameter}, ConverterParameter={x:Static settings:ViewMode.SmallIcon}}"
+                          Command="{Binding SetViewModeCommand}" CommandParameter="{x:Static settings:ViewMode.SmallIcon}" />
+                <MenuItem Header="L_ist" ToggleType="Radio" GroupName="ViewMode"
+                          IsChecked="{Binding ViewMode, Mode=OneWay, Converter={x:Static conv:ValueConverters.EqualsParameter}, ConverterParameter={x:Static settings:ViewMode.List}}"
+                          Command="{Binding SetViewModeCommand}" CommandParameter="{x:Static settings:ViewMode.List}" />
+                <MenuItem Header="_Details" ToggleType="Radio" GroupName="ViewMode"
+                          IsChecked="{Binding ViewMode, Mode=OneWay, Converter={x:Static conv:ValueConverters.EqualsParameter}, ConverterParameter={x:Static settings:ViewMode.Details}}"
+                          Command="{Binding SetViewModeCommand}" CommandParameter="{x:Static settings:ViewMode.Details}" />
+                <Separator />
+                <MenuItem x:Name="sortByMenuItem" Header="S_ort by">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/sort_descending.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Toolbars">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/layout.png" /></MenuItem.Icon>
+                    <MenuItem Header="Menu bar" ToggleType="CheckBox" IsChecked="True" IsEnabled="False" />
+                    <MenuItem Header="Command bar" ToggleType="CheckBox" IsChecked="{Binding ShowCommandBar, Mode=OneWay}"
+                              Command="{Binding ToggleCommandBarCommand}" />
+                    <MenuItem Header="Directory tree" ToggleType="CheckBox" IsChecked="{Binding ShowDirectoryTree, Mode=OneWay}"
+                              Command="{Binding ToggleDirectoryTreeCommand}" />
+                    <MenuItem Header="Status bar" ToggleType="CheckBox" IsChecked="{Binding ShowStatusBar, Mode=OneWay}"
+                              Command="{Binding ToggleStatusBarCommand}" />
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="_Deleted objects..." Command="{Binding ShowDeletedObjectsCommand}" />
+                <MenuItem Header="_Hex view..." Command="{Binding ShowHexViewCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/digit_separator.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Image information..." Command="{Binding ShowImageInformationCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/document_info.png" /></MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="_Settings..." Command="{Binding ShowSettingsCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/cog.png" /></MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="Online _documentation">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/help.png" /></MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_About..." Command="{Binding ShowAboutCommand}">
+                    <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/information.png" /></MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <!-- Command bar -->
+        <Border DockPanel.Dock="Top" IsVisible="{Binding ShowCommandBar}" Padding="4,2"
+                BorderThickness="0,0,0,1" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+            <StackPanel x:Name="commandBar" Orientation="Horizontal" Spacing="1">
+                <Button Command="{Binding NewImageCommand}" ToolTip.Tip="New"><Image Source="/Assets/page_white.png" /></Button>
+                <Button Command="{Binding OpenImageCommand}" ToolTip.Tip="Open"><Image Source="/Assets/folder_go.png" /></Button>
+                <Button Command="{Binding SaveCommand}" ToolTip.Tip="Save"><Image Source="/Assets/diskette.png" /></Button>
+                <Button Command="{Binding SaveAsCommand}" ToolTip.Tip="Save as"><Image Source="/Assets/disk_multiple.png" /></Button>
+                <Button Command="{Binding ReloadImageCommand}" ToolTip.Tip="Reload image"><Image Source="/Assets/arrow_refresh.png" /></Button>
+                <Button Command="{Binding CloseImageCommand}" ToolTip.Tip="Close image"><Image Source="/Assets/cross.png" /></Button>
+                <Separator />
+                <Button Command="{Binding InjectFilesCommand}" ToolTip.Tip="Inject files"><Image Source="/Assets/page_white_add.png" /></Button>
+                <Button Command="{Binding ExtractCommand}" ToolTip.Tip="Extract"><Image Source="/Assets/redo.png" /></Button>
+                <Button Command="{Binding NewFolderCommand}" ToolTip.Tip="New folder"><Image Source="/Assets/folder_new.png" /></Button>
+                <Button Command="{Binding DeleteCommand}" ToolTip.Tip="Delete"><Image Source="/Assets/bin_empty.png" /></Button>
+                <Button Command="{Binding ShowPropertiesCommand}" ToolTip.Tip="Properties"><Image Source="/Assets/page_white_edit.png" /></Button>
+                <Separator />
+                <ComboBox x:Name="partitionComboBox" IsEnabled="{Binding IsImageOpen}"
+                          Width="260" VerticalAlignment="Center" Margin="2,0" ToolTip.Tip="Partition" />
+                <Button Command="{Binding ManagePartitionsCommand}" ToolTip.Tip="Manage partitions"><Image Source="/Assets/drive_edit.png" /></Button>
+                <Separator />
+                <Button Command="{Binding ChangeVolumeLabelCommand}" ToolTip.Tip="Change volume label"><Image Source="/Assets/drive_rename.png" /></Button>
+                <Button Command="{Binding ShowBootSectorCommand}" ToolTip.Tip="Boot sector properties"><Image Source="/Assets/application_xp_terminal.png" /></Button>
+                <Button Command="{Binding ShowImageInformationCommand}" ToolTip.Tip="Image information"><Image Source="/Assets/document_info.png" /></Button>
+                <Separator />
+                <Button Command="{Binding GoToParentFolderCommand}" ToolTip.Tip="Parent directory"><Image Source="/Assets/folder_up.png" /></Button>
+                <DropDownButton x:Name="viewDropDownButton" ToolTip.Tip="View"><Image Source="/Assets/application_view_tile.png" /></DropDownButton>
+                <DropDownButton x:Name="sortDropDownButton" ToolTip.Tip="Sort by"><Image Source="/Assets/sort_descending.png" /></DropDownButton>
+                <Separator />
+                <Button Command="{Binding ShowSettingsCommand}" ToolTip.Tip="Settings"><Image Source="/Assets/cog.png" /></Button>
+            </StackPanel>
+        </Border>
+
+        <!-- Status bar -->
+        <Border DockPanel.Dock="Bottom" IsVisible="{Binding ShowStatusBar}" Height="26"
+                BorderThickness="0,1,0,0" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+            <Grid x:Name="statusBar" ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto">
+                <TextBlock Grid.Column="0" Text="{Binding PartitionSizeText}" />
+                <TextBlock Grid.Column="1" Text="{Binding FreeSpaceText}" />
+                <ProgressBar x:Name="freeSpaceBar" Grid.Column="2" Width="100" MinWidth="100" Height="12" Minimum="0" Maximum="100"
+                             VerticalAlignment="Center" IsVisible="{Binding IsImageOpen}" />
+                <TextBlock Grid.Column="3" Text="{Binding SelectionSizeText}" />
+                <TextBlock Grid.Column="4" Text="{Binding LocationText}" TextTrimming="CharacterEllipsis" />
+                <Button Grid.Column="5" Command="{Binding ShowNotificationsCommand}" Background="Transparent" BorderThickness="0" Padding="6,2">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <Image Source="/Assets/error.png" Width="16" Height="16" />
+                        <TextBlock Text="Notifications" Margin="0" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Folder tree and file list -->
+        <Grid x:Name="browseGrid" ColumnDefinitions="280,4,*">
+            <TreeView x:Name="folderTree" Grid.Column="0"
+                      ItemsSource="{Binding RootFolder, Converter={x:Static conv:ValueConverters.SingleItemList}}"
+
+                      SelectionMode="Single">
+                <TreeView.ItemTemplate>
+                    <TreeDataTemplate x:DataType="browsing:FolderViewModel" ItemsSource="{Binding Children}">
+                        <StackPanel Orientation="Horizontal" Spacing="6"
+                                    Background="{Binding Converter={x:Static ctl:EntryColors.FolderBackground}}">
+                            <Image Source="{Binding IconKey, Converter={StaticResource SmallFileIconConverter}}"
+                                   Classes.hidden="{Binding IsHidden}" Width="16" Height="16" />
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center"
+                                       Foreground="{Binding Converter={x:Static ctl:EntryColors.FolderForeground}}" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                </TreeView.ItemTemplate>
+                <TreeView.ContextMenu>
+                    <ContextMenu x:Name="folderTreeContextMenu">
+                        <MenuItem Header="_Expand directory tree" Command="{Binding ExpandFolderTreeCommand}">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/arrow_up_down.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Collapse directory tree" Command="{Binding CollapseFolderTreeCommand}">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/arrow_down_up.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Header="_Inject files or folders..." Command="{Binding InjectFilesCommand}">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/page_white_add.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="E_xtract..." Command="{Binding ExtractCommand}" InputGesture="Ctrl+X">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/redo.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_New folder..." Command="{Binding NewFolderCommand}" InputGesture="Ctrl+Shift+N">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/folder_new.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Delete" Command="{Binding DeleteCommand}" InputGesture="Delete">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/bin_empty.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Rename..." Command="{Binding RenameCommand}" InputGesture="F2">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/textfield_rename.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Properties..." Command="{Binding ShowPropertiesCommand}" InputGesture="Alt+Enter">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/page_white_edit.png" /></MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </TreeView.ContextMenu>
+            </TreeView>
+
+            <GridSplitter x:Name="splitter" Grid.Column="1" ResizeDirection="Columns" Background="Transparent" />
+
+            <Panel x:Name="fileListPanel" Grid.Column="2">
+                <Panel.ContextMenu>
+                    <ContextMenu x:Name="fileListContextMenu">
+                        <MenuItem Header="_Parent directory" Command="{Binding GoToParentFolderCommand}">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/folder_up.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem x:Name="contextViewMenuItem" Header="_View">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/application_view_tile.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem x:Name="contextSortMenuItem" Header="S_ort by">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/sort_descending.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Header="Select _all" Command="{Binding SelectAllCommand}" InputGesture="Ctrl+A" />
+                        <Separator />
+                        <MenuItem Header="_Inject files or folders..." Command="{Binding InjectFilesCommand}">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/page_white_add.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="E_xtract..." Command="{Binding ExtractCommand}" InputGesture="Ctrl+X">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/redo.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_New folder..." Command="{Binding NewFolderCommand}" InputGesture="Ctrl+Shift+N">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/folder_new.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Delete" Command="{Binding DeleteCommand}" InputGesture="Delete">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/bin_empty.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Rename..." Command="{Binding RenameCommand}" InputGesture="F2">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/textfield_rename.png" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="_Properties..." Command="{Binding ShowPropertiesCommand}" InputGesture="Alt+Enter">
+                            <MenuItem.Icon><Image Classes="menuIcon" Source="/Assets/page_white_edit.png" /></MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </Panel.ContextMenu>
+
+                <!-- Details view -->
+                <DataGrid x:Name="fileList"
+                          Background="Transparent"
+                          IsReadOnly="True"
+                          SelectionMode="Extended"
+                          CanUserSortColumns="True"
+                          CanUserReorderColumns="True"
+                          CanUserResizeColumns="True"
+                          GridLinesVisibility="None"
+                          HeadersVisibility="Column"
+                          RowHeight="22">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Name" Tag="{StaticResource NameColumn}" SortMemberPath="Name">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate x:DataType="browsing:EntryViewModel">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="6,0" ToolTip.Tip="{Binding ToolTip}">
+                                        <Image Source="{Binding IconKey, Converter={StaticResource SmallFileIconConverter}}"
+                                               Classes.hidden="{Binding IsHidden}" Width="16" Height="16" />
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn x:DataType="browsing:EntryViewModel" Header="Type" Tag="{StaticResource TypeColumn}" Binding="{Binding TypeName}" SortMemberPath="TypeName" />
+                        <DataGridTextColumn x:DataType="browsing:EntryViewModel" Header="Size" Tag="{StaticResource SizeColumn}" Binding="{Binding SizeText}" SortMemberPath="SizeText" />
+                        <DataGridTextColumn x:DataType="browsing:EntryViewModel" Header="Modified" Tag="{StaticResource ModifiedColumn}" Binding="{Binding ModifiedText}" SortMemberPath="ModifiedText" />
+                        <DataGridTextColumn x:DataType="browsing:EntryViewModel" Header="Attributes" Tag="{StaticResource AttributesColumn}" Binding="{Binding AttributesText}" SortMemberPath="AttributesText"
+                                            FontFamily="Consolas,Menlo,DejaVu Sans Mono,monospace" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Icon and list views -->
+                <ListBox x:Name="fileIconList" Background="Transparent" SelectionMode="Multiple" IsVisible="False" />
+            </Panel>
+        </Grid>
+    </DockPanel>
+</Window>

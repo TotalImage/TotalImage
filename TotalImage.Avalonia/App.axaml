@@ -1,0 +1,15 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="TotalImage.Avalonia.App"
+             Name="TotalImage"
+             RequestedThemeVariant="Default">
+    <Application.Styles>
+        <FluentTheme DensityStyle="Compact" />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+
+        <!-- Hidden entries and folders get faded icons, like in the WinForms UI. -->
+        <Style Selector="Image.hidden">
+            <Setter Property="Opacity" Value="0.65" />
+        </Style>
+    </Application.Styles>
+</Application>

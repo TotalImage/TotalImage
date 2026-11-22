@@ -1,0 +1,32 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dialogs="clr-namespace:TotalImage.ViewModels.Dialogs;assembly=TotalImage.ViewModels"
+        x:Class="TotalImage.Avalonia.Dialogs.AboutDialog"
+        x:DataType="dialogs:AboutViewModel"
+        Title="About TotalImage"
+        Icon="/Assets/logo.ico"
+        SizeToContent="WidthAndHeight"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <Button x:Name="okButton" Content="OK" MinWidth="80" HorizontalAlignment="Right"
+                    HorizontalContentAlignment="Center" IsDefault="True" IsCancel="True" />
+        </Border>
+        <StackPanel Orientation="Horizontal" Margin="20" Spacing="16">
+            <Image Source="/Assets/logo_48.png" Width="48" Height="48" VerticalAlignment="Top" />
+            <StackPanel Spacing="6">
+                <TextBlock Text="TotalImage" FontSize="28" FontWeight="Light" />
+                <TextBlock Text="A better disk image editor" />
+                <SelectableTextBlock Text="{Binding VersionText}" />
+                <TextBlock Text="Copyright © 2020-2026 The TotalImage Team" />
+                <HyperlinkButton x:Name="projectLink" Padding="0" Command="{Binding OpenProjectPageCommand}">
+                    <TextBlock x:Name="projectLinkText" TextDecorations="Underline" />
+                </HyperlinkButton>
+                <TextBlock Margin="0,8,0,0" FontSize="12" TextWrapping="Wrap" MaxWidth="360"
+                           Text="TotalImage is licensed under the MIT license. See the LICENSE file for more information and AUTHORS for a list of contributors." />
+            </StackPanel>
+        </StackPanel>
+    </DockPanel>
+</Window>

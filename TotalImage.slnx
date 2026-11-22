@@ -7,6 +7,7 @@
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
   </Folder>
+  <Project Path="TotalImage.Avalonia/TotalImage.Avalonia.csproj" />
   <Project Path="TotalImage.IO.Tests/TotalImage.IO.Tests.csproj" />
   <Project Path="TotalImage.IO/TotalImage.IO.csproj" />
   <Project Path="TotalImage.ViewModels.Tests/TotalImage.ViewModels.Tests.csproj" />

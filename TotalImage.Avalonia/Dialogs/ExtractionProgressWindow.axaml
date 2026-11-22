@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="TotalImage.Avalonia.Dialogs.ExtractionProgressWindow"
+        Title="Extracting"
+        Icon="/Assets/logo.ico"
+        Width="440"
+        SizeToContent="Height"
+        CanResize="False"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel>
+        <Border DockPanel.Dock="Bottom" Padding="12" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <DockPanel>
+                <Button x:Name="cancelButton" DockPanel.Dock="Right" Content="Cancel" MinWidth="80"
+                        HorizontalContentAlignment="Center" IsCancel="True" />
+                <TextBlock x:Name="statusText" Text="Enumerating files..." VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis" Margin="0,0,12,0" />
+            </DockPanel>
+        </Border>
+        <StackPanel Margin="16" Spacing="8">
+            <TextBlock Text="Extracting files, please wait..." FontSize="16" FontWeight="SemiBold" />
+            <TextBlock Text="This might take a while, so sit back and relax while we do all the work." TextWrapping="Wrap" />
+            <ProgressBar x:Name="progressBar" IsIndeterminate="True" Height="16" Margin="0,8,0,0" />
+        </StackPanel>
+    </DockPanel>
+</Window>
