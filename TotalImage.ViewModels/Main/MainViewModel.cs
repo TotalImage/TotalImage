@@ -12,6 +12,8 @@ using TotalImage.FileSystems.BPB;
 using TotalImage.FileSystems.FAT;
 using TotalImage.FileSystems.RAW;
 using TotalImage.Partitions;
+using TotalImage.ViewModels.Browsing;
+using TotalImage.ViewModels.Extraction;
 using TotalImage.ViewModels.Formatting;
 using TotalImage.ViewModels.Services;
 using TotalImage.ViewModels.Settings;
@@ -44,6 +46,8 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     private readonly IFilePickerService filePicker;
     private readonly ILauncherService launcher;
     private readonly IFileTypeInfo fileTypes;
+    private readonly ITempDirectoryService tempDirectory;
+    private readonly IFileExtractionService extraction;
 
     // The last file name saved with "Save as" that ends with a number, offered incremented next time.
     private string? lastSavedFileName;
@@ -54,7 +58,7 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
 
     public MainViewModel(ISettingsService settings, IImageFileService imageFiles, IImageDialogs imageDialogs,
         IEntryDialogs entryDialogs, IAppDialogs appDialogs, IMessageService messages, IFilePickerService filePicker,
-        ILauncherService launcher, IFileTypeInfo fileTypes)
+        ILauncherService launcher, IFileTypeInfo fileTypes, ITempDirectoryService tempDirectory, IFileExtractionService extraction)
     {
         this.settings = settings;
         this.imageFiles = imageFiles;
@@ -65,6 +69,8 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
         this.filePicker = filePicker;
         this.launcher = launcher;
         this.fileTypes = fileTypes;
+        this.tempDirectory = tempDirectory;
+        this.extraction = extraction;
 
         ReadViewSettings();
         RecentImages = ReadRecentImages();
@@ -693,8 +699,91 @@ public sealed partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand(CanExecute = nameof(CanInjectFiles))]
     private Task InjectFiles() => View?.InjectFilesAsync() ?? Task.CompletedTask;
 
+    /// <summary>
+    /// Extracts the selected entries (everything in the folder when nothing is selected), or the
+    /// folder selected in the tree (its entries for the root folder), asking where first when the
+    /// settings say so.
+    /// </summary>
     [RelayCommand(CanExecute = nameof(CanExtract))]
-    private Task Extract() => View?.ExtractAsync() ?? Task.CompletedTask;
+    private async Task Extract()
+    {
+        // The pane the command acts on tells which items to extract.
+        if (ActivePane == BrowsePane.Files)
+        {
+            if (SelectedObjects.Count == 0)
+                SelectAll();
+        }
+        else if (CurrentFolder?.IsRoot == true) //Root dir is selected, so we have to handle this separately
+        {
+            SelectAll();
+        }
+
+        var fromFolderTree = ActivePane == BrowsePane.Folders;
+        IReadOnlyList<FileSystemObject> items = fromFolderTree ? [CurrentFolder!.Directory] : SelectedObjects;
+        var current = settings.Current;
+
+        if (current.ExtractAlwaysAsk)
+        {
+            var options = await entryDialogs.AskExtractOptionsAsync(fromFolderTree ? 1 : items.Count);
+            if (options is null)
+                return;
+
+            current.DefaultExtractPath = options.TargetPath;
+            await ExtractToFolderAsync(items, options.TargetPath, options.DirectoryExtractionMode, options.OpenFolder);
+        }
+        else
+        {
+            await ExtractToFolderAsync(items, current.DefaultExtractPath, current.DefaultDirectoryExtractionMode, current.OpenFolderAfterExtract);
+        }
+    }
+
+    /// <summary>
+    /// Opens an entry of the file list: a folder becomes the current folder, and a file is
+    /// extracted to a temporary folder and opened with its default program. Pending entries
+    /// can't be opened yet.
+    /// </summary>
+    public async Task OpenEntryAsync(EntryViewModel entry)
+    {
+        if (TryOpenFolder(entry) || entry.IsPending || Image is null)
+            return;
+
+        var folder = tempDirectory.GetUniqueSubdirectoryPath();
+        if (await ExtractEntriesAsync([entry.Entry], folder, DirectoryExtractionMode.Skip, askOverwrite: false))
+            launcher.OpenFile(Path.Combine(folder, entry.Name));
+    }
+
+    private async Task ExtractToFolderAsync(IReadOnlyList<FileSystemObject> items, string targetPath, DirectoryExtractionMode mode, bool openFolder)
+    {
+        if (await ExtractEntriesAsync(items, targetPath, mode, askOverwrite: true) && openFolder)
+            launcher.OpenFolder(targetPath);
+    }
+
+    /// <summary>
+    /// Extracts entries while the progress window is shown, which keeps the image from being
+    /// used for anything else meanwhile. Explains the problem when it fails.
+    /// </summary>
+    /// <param name="askOverwrite">Whether to ask before overwriting files (when the settings say so).</param>
+    /// <returns>Whether everything was extracted: not cancelled and no error.</returns>
+    private async Task<bool> ExtractEntriesAsync(IEnumerable<FileSystemObject> entries, string targetPath, DirectoryExtractionMode mode, bool askOverwrite)
+    {
+        var current = settings.Current;
+        var options = new ExtractionOptions(targetPath, mode, current.ShowHiddenItems, current.ExtractPreserveDates, current.ExtractPreserveAttributes);
+        Func<string, Task<OverwriteAnswer>>? ask = askOverwrite && current.ConfirmOverwriteExtraction ? messages.AskOverwriteAsync : null;
+
+        var completed = false;
+        try
+        {
+            await entryDialogs.ShowExtractionProgressAsync(async (progress, cancellationToken) =>
+                completed = await extraction.ExtractAsync(entries, options, ask, progress, cancellationToken));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            await messages.ShowErrorAsync($"Extracting to \"{targetPath}\"", ex);
+            return false;
+        }
+
+        return completed;
+    }
 
     [RelayCommand(CanExecute = nameof(CanCreateFolder))]
     private Task NewFolder() => View?.CreateFolderAsync() ?? Task.CompletedTask;

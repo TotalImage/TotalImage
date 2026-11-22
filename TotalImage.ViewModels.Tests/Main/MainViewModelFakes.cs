@@ -10,6 +10,7 @@ using TotalImage.FileSystems.FAT;
 using TotalImage.Partitions;
 using TotalImage.ViewModels.Browsing;
 using TotalImage.ViewModels.Dialogs;
+using TotalImage.ViewModels.Extraction;
 using TotalImage.ViewModels.Main;
 using TotalImage.ViewModels.Services;
 using TotalImage.ViewModels.Settings;
@@ -37,6 +38,14 @@ internal sealed class MainTestContext : IDisposable
     public FakeMainLauncher Launcher { get; } = new();
     public FakeBridge Bridge { get; } = new();
     public FakeFileTypes FileTypes { get; } = new();
+    public FileExtractionService Extraction { get; } = new();
+
+    /// <summary>
+    /// The temporary folder of the app, inside the test's folder.
+    /// </summary>
+    public TempDirectoryService TempDirectory { get; }
+
+    public MainTestContext() => TempDirectory = new TempDirectoryService(temp.File("apptemp"));
 
     private MainViewModel? viewModel;
 
@@ -44,7 +53,7 @@ internal sealed class MainTestContext : IDisposable
     /// The view model, created on first use so tests can set up the settings first.
     /// </summary>
     public MainViewModel ViewModel => viewModel ??= new MainViewModel(Settings, ImageFiles, ImageDialogs, EntryDialogs,
-        AppDialogs, Messages, FilePicker, Launcher, FileTypes) { View = Bridge };
+        AppDialogs, Messages, FilePicker, Launcher, FileTypes, TempDirectory, Extraction) { View = Bridge };
 
     public string Folder => temp.Path;
 
@@ -262,11 +271,55 @@ internal sealed class FakeEntryDialogs : IEntryDialogs
         return Task.FromResult(VolumeLabelAnswer);
     }
 
+    public ExtractOptions? ExtractAnswer { get; set; }
+    public List<int> ExtractRequests { get; } = [];
+
+    /// <summary>
+    /// The progress reported to each progress window shown, in order.
+    /// </summary>
+    public List<List<ExtractionProgress>> ProgressShown { get; } = [];
+
+    /// <summary>
+    /// When set, the progress window's Cancel button is "clicked" when this returns true for a report.
+    /// </summary>
+    public Func<ExtractionProgress, bool>? CancelWhen { get; set; }
+
+    /// <summary>
+    /// Runs while the progress window is "open", after the extraction finished.
+    /// </summary>
+    public Action? WhileProgressShown { get; set; }
+
+    public Task<ExtractOptions?> AskExtractOptionsAsync(int itemCount)
+    {
+        ExtractRequests.Add(itemCount);
+        return Task.FromResult(ExtractAnswer);
+    }
+
+    public async Task ShowExtractionProgressAsync(Func<IProgress<ExtractionProgress>, CancellationToken, Task> extraction)
+    {
+        var reports = new List<ExtractionProgress>();
+        ProgressShown.Add(reports);
+        using var cancellation = new CancellationTokenSource();
+        await extraction(new RecordingProgress(report =>
+        {
+            reports.Add(report);
+            if (CancelWhen?.Invoke(report) == true)
+                cancellation.Cancel();
+        }), cancellation.Token);
+        WhileProgressShown?.Invoke();
+    }
+
     public Task<string?> AskRenameAsync(string currentName) => throw new NotSupportedException();
     public Task<string?> AskNewFolderNameAsync() => throw new NotSupportedException();
-    public Task<ExtractOptions?> AskExtractOptionsAsync(int itemCount) => throw new NotSupportedException();
     public Task<EntryPropertiesChange?> AskPropertiesAsync(IReadOnlyList<FileSystemObject> entries) => throw new NotSupportedException();
-    public Task ShowExtractionProgressAsync(Func<IProgress<Extraction.ExtractionProgress>, CancellationToken, Task> extraction) => throw new NotSupportedException();
+}
+
+/// <summary>
+/// Reports progress right away, on the reporting thread.
+/// </summary>
+internal sealed class RecordingProgress(Action<ExtractionProgress> report) : IProgress<ExtractionProgress>
+{
+    public void Report(ExtractionProgress value) => report(value);
 }
 
 internal sealed class FakeAppDialogs : IAppDialogs
@@ -341,6 +394,18 @@ internal sealed class FakeMainMessages : MessageServiceStub
         FormatConfirmations++;
         return Task.FromResult(ConfirmFormatAnswer);
     }
+
+    /// <summary>
+    /// Answers the overwrite questions in turn; the last answer repeats.
+    /// </summary>
+    public List<OverwriteAnswer> OverwriteAnswers { get; } = [new(OverwriteChoice.Overwrite)];
+    public List<string> OverwriteQuestions { get; } = [];
+
+    public override Task<OverwriteAnswer> AskOverwriteAsync(string fileName)
+    {
+        OverwriteQuestions.Add(fileName);
+        return Task.FromResult(OverwriteAnswers[Math.Min(OverwriteQuestions.Count, OverwriteAnswers.Count) - 1]);
+    }
 }
 
 internal sealed class FakeMainFilePicker : IFilePickerService
@@ -371,10 +436,17 @@ internal sealed class FakeMainFilePicker : IFilePickerService
 internal sealed class FakeMainLauncher : ILauncherService
 {
     public List<string> Revealed { get; } = [];
+    public List<string> OpenedFolders { get; } = [];
+
+    /// <summary>
+    /// The files opened, with whether each existed then.
+    /// </summary>
+    public List<(string Path, bool Existed)> OpenedFiles { get; } = [];
 
     public void RevealFile(string path) => Revealed.Add(path);
     public void OpenUrl(string url) => throw new NotSupportedException();
-    public void OpenFolder(string path) => throw new NotSupportedException();
+    public void OpenFolder(string path) => OpenedFolders.Add(path);
+    public void OpenFile(string path) => OpenedFiles.Add((path, System.IO.File.Exists(path)));
 }
 
 internal sealed class FakeBridge : IMainViewBridge
@@ -384,7 +456,6 @@ internal sealed class FakeBridge : IMainViewBridge
     public void Rename() => Calls.Add(nameof(Rename));
 
     public Task InjectFilesAsync() => Record(nameof(InjectFilesAsync));
-    public Task ExtractAsync() => Record(nameof(ExtractAsync));
     public Task CreateFolderAsync() => Record(nameof(CreateFolderAsync));
     public Task DeleteAsync() => Record(nameof(DeleteAsync));
     public Task ShowPropertiesAsync() => Record(nameof(ShowPropertiesAsync));

@@ -400,13 +400,12 @@ public class MainViewModelCommandTests : IDisposable
         Vm.ActivePane = BrowsePane.Folders;
 
         await Vm.InjectFilesCommand.ExecuteAsync(null);
-        await Vm.ExtractCommand.ExecuteAsync(null);
         await Vm.NewFolderCommand.ExecuteAsync(null);
         await Vm.DeleteCommand.ExecuteAsync(null);
         Vm.RenameCommand.Execute(null);
         await Vm.ShowPropertiesCommand.ExecuteAsync(null);
 
-        Assert.Equal(["InjectFilesAsync", "ExtractAsync", "CreateFolderAsync", "DeleteAsync", "Rename", "ShowPropertiesAsync"], context.Bridge.Calls);
+        Assert.Equal(["InjectFilesAsync", "CreateFolderAsync", "DeleteAsync", "Rename", "ShowPropertiesAsync"], context.Bridge.Calls);
     }
 
     #endregion

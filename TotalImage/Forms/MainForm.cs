@@ -167,6 +167,13 @@ namespace TotalImage.Forms
                 _lastTypeAheadIndex = -1;
             });
 
+            // Commands that switch to the file list (like extracting the root folder from the tree) move the focus there.
+            vm.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(MainViewModel.ActivePane) && vm.ActivePane == BrowsePane.Files && folderTree.Focused)
+                    fileList.Focus();
+            };
+
             // View options
             vm.Observe(nameof(MainViewModel.ViewMode), () => fileList.View = vm.ViewMode.ToWinForms());
             vm.Observe(nameof(MainViewModel.ShowCommandBar), () => commandBar.Visible = vm.ShowCommandBar);
@@ -444,39 +451,6 @@ namespace TotalImage.Forms
             }
         }
 
-        //Extracts file(s) or folder(s) from the image to the specified path.
-        async Task IMainViewBridge.ExtractAsync()
-        {
-            // The pane the command acts on tells which items to extract.
-            if (viewModel.ActivePane == BrowsePane.Files)
-            {
-                if (viewModel.SelectedObjects.Count == 0)
-                    viewModel.SelectAllCommand.Execute(null);
-            }
-            else if (viewModel.CurrentFolder?.IsRoot == true) //Root dir is selected, so we have to handle this separately
-            {
-                fileList.Focus();
-                viewModel.SelectAllCommand.Execute(null);
-            }
-
-            var fromFolderTree = viewModel.ActivePane == BrowsePane.Folders;
-            IReadOnlyList<TiFileSystemObject> items = fromFolderTree ? [viewModel.CurrentFolder!.Directory] : viewModel.SelectedObjects;
-
-            if (settings.Current.ExtractAlwaysAsk)
-            {
-                var options = await entryDialogs.AskExtractOptionsAsync(fromFolderTree ? 1 : items.Count);
-                if (options is not null)
-                {
-                    settings.Current.DefaultExtractPath = options.TargetPath;
-                    FileExtraction.ExtractFiles(this, settings.Current, items, options.TargetPath, options.DirectoryExtractionMode, options.OpenFolder);
-                }
-            }
-            else
-            {
-                FileExtraction.ExtractFiles(this, settings.Current, items);
-            }
-        }
-
         private void FileListContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (viewModel.Image is null || viewModel.IsParentEntrySelected)
@@ -583,36 +557,10 @@ namespace TotalImage.Forms
             }
         }
 
-        private void FileList_MouseDoubleClick(object sender, MouseEventArgs e)
+        private async void FileList_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (viewModel.SelectedEntries is [var entry] && e.Button != MouseButtons.Right)
-            {
-                if (viewModel.TryOpenFolder(entry)) //A folder was double-clicked
-                    return;
-
-                //A file was double-clicked - extract to temp dir then open it
-                tempDir = tempDirectory.GetUniqueSubdirectoryPath();
-                var selected = viewModel.SelectedObjects.ToArray();
-                string targetFile = Path.Combine(tempDir, selected.First().Name);
-
-                FileExtraction.ExtractFilesToTemporaryDirectory(this, settings.Current, selected, DirectoryExtractionMode.Skip);
-
-                try
-                {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = targetFile,
-                        UseShellExecute = true,
-                        ErrorDialog = true
-                    });
-                }
-                catch (System.ComponentModel.Win32Exception ex)
-                {
-                    // Throw if Process.Start fails with anything other than ERROR_CANCELLED
-                    if (ex.NativeErrorCode != 0x000004C7)
-                        throw;
-                }
-            }
+                await viewModel.OpenEntryAsync(entry);
         }
 
         private void FolderTreeContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -787,7 +735,7 @@ namespace TotalImage.Forms
                 viewModel.SelectPartition(option.Index);
         }
 
-        private void FileList_KeyUp(object sender, KeyEventArgs e)
+        private async void FileList_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Back)
             {
@@ -797,30 +745,7 @@ namespace TotalImage.Forms
             else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Return)
             {
                 if (viewModel.SelectedEntries is [var entry])
-                {
-                    if (viewModel.TryOpenFolder(entry))
-                    {
-                        // A folder (or "..") was opened
-                    }
-                    else if (entry.IsPending)
-                    {
-                        // Pending files are not yet on disk — cannot open
-                    }
-                    else
-                    {
-                        tempDir = tempDirectory.GetUniqueSubdirectoryPath();
-                        string targetFile = Path.Combine(tempDir, entry.Name);
-
-                        FileExtraction.ExtractFilesToTemporaryDirectory(this, settings.Current, viewModel.SelectedObjects, DirectoryExtractionMode.Skip);
-
-                        ProcessStartInfo psi = new()
-                        {
-                            FileName = targetFile,
-                            UseShellExecute = true
-                        };
-                        Process.Start(psi);
-                    }
-                }
+                    await viewModel.OpenEntryAsync(entry);
             }
         }
 

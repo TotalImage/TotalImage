@@ -16,6 +16,11 @@ public interface ILauncherService
     void OpenFolder(string path);
 
     /// <summary>
+    /// Opens a file with its default program.
+    /// </summary>
+    void OpenFile(string path);
+
+    /// <summary>
     /// Shows a file in the system file manager: its folder opens with the file selected where
     /// the platform supports it.
     /// </summary>

@@ -12,8 +12,6 @@ public interface IMainViewBridge
 {
     Task InjectFilesAsync();
 
-    Task ExtractAsync();
-
     Task CreateFolderAsync();
 
     Task DeleteAsync();

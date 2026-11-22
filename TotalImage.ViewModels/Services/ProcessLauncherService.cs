@@ -18,6 +18,24 @@ public sealed class ProcessLauncherService : ILauncherService
     public void OpenFolder(string path) => Start(path);
 
     /// <inheritdoc/>
+    public void OpenFile(string path)
+    {
+        try
+        {
+            using var _ = Process.Start(new ProcessStartInfo
+            {
+                FileName = path,
+                UseShellExecute = true,
+                ErrorDialog = OperatingSystem.IsWindows()
+            });
+        }
+        catch (Win32Exception ex) when (ex.NativeErrorCode == ErrorCancelled)
+        {
+            // The user dismissed the error dialog.
+        }
+    }
+
+    /// <inheritdoc/>
     public void RevealFile(string path)
     {
         if (OperatingSystem.IsWindows())

@@ -544,6 +544,8 @@ public sealed class SettingsViewModelTests : IDisposable
         public void OpenFolder(string path) => OpenedFolders.Add(path);
 
         public void RevealFile(string path) => throw new NotSupportedException();
+
+        public void OpenFile(string path) => throw new NotSupportedException();
     }
 
     private sealed class FakeFilePicker : IFilePickerService
