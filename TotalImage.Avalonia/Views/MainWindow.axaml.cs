@@ -50,8 +50,9 @@ public partial class MainWindow : Window
     private char lastTypeAheadChar;
     private int lastTypeAheadIndex = -1;
 
-    // Drag out: where the left button went down on an entry or folder, until it moves far enough.
-    private Point? dragStartPoint;
+    // Drag out: the left button going down on an entry or folder, until the pointer moves far enough.
+    // Kept because a drag can only be started from a press.
+    private PointerPressedEventArgs? dragPress;
     private BrowsePane dragPane;
     private bool isDraggingOut;
 
@@ -446,7 +447,7 @@ public partial class MainWindow : Window
             list.AddHandler(TextInputEvent, FileList_TextInput, RoutingStrategies.Tunnel);
             list.AddHandler(PointerPressedEvent, FileList_PointerPressed, RoutingStrategies.Tunnel);
             list.AddHandler(PointerMovedEvent, BrowsePane_PointerMoved, RoutingStrategies.Tunnel);
-            list.AddHandler(PointerReleasedEvent, (_, _) => dragStartPoint = null, RoutingStrategies.Tunnel);
+            list.AddHandler(PointerReleasedEvent, (_, _) => dragPress = null, RoutingStrategies.Tunnel);
         }
 
         fileListContextMenu.Opening += (_, e) =>
@@ -549,7 +550,7 @@ public partial class MainWindow : Window
     private void FileList_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
         var point = e.GetCurrentPoint(this);
-        dragStartPoint = null;
+        dragPress = null;
         if (EntryAt(e.Source) is not { } entry)
             return;
 
@@ -557,7 +558,7 @@ public partial class MainWindow : Window
         {
             if (!entry.IsParentEntry)
             {
-                dragStartPoint = point.Position;
+                dragPress = e;
                 dragPane = BrowsePane.Files;
             }
         }
@@ -616,7 +617,7 @@ public partial class MainWindow : Window
         folderTree.GotFocus += (_, _) => viewModel.ActivePane = BrowsePane.Folders;
         folderTree.AddHandler(PointerPressedEvent, FolderTree_PointerPressed, RoutingStrategies.Tunnel);
         folderTree.AddHandler(PointerMovedEvent, BrowsePane_PointerMoved, RoutingStrategies.Tunnel);
-        folderTree.AddHandler(PointerReleasedEvent, (_, _) => dragStartPoint = null, RoutingStrategies.Tunnel);
+        folderTree.AddHandler(PointerReleasedEvent, (_, _) => dragPress = null, RoutingStrategies.Tunnel);
 
         folderTreeContextMenu.Opening += (_, e) =>
         {
@@ -634,13 +635,13 @@ public partial class MainWindow : Window
     private void FolderTree_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
         var point = e.GetCurrentPoint(this);
-        dragStartPoint = null;
+        dragPress = null;
         if (FolderAt(e.Source) is not { } folder)
             return;
 
         if (point.Properties.IsLeftButtonPressed)
         {
-            dragStartPoint = point.Position;
+            dragPress = e;
             dragPane = BrowsePane.Folders;
         }
         else if (point.Properties.IsRightButtonPressed)
@@ -699,14 +700,14 @@ public partial class MainWindow : Window
     // Dragging entries or a folder out of the window: they are extracted to a temporary folder first.
     private async void BrowsePane_PointerMoved(object? sender, PointerEventArgs e)
     {
-        if (dragStartPoint is not { } start || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        if (dragPress is not { } press || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             return;
 
-        var delta = e.GetPosition(this) - start;
+        var delta = e.GetPosition(this) - press.GetPosition(this);
         if (Math.Abs(delta.X) < 4 && Math.Abs(delta.Y) < 4)
             return;
 
-        dragStartPoint = null;
+        dragPress = null;
         IReadOnlyList<string> paths;
         if (dragPane == BrowsePane.Files)
             paths = await viewModel.PrepareDragOutAsync(viewModel.SelectedEntries);
@@ -723,7 +724,7 @@ public partial class MainWindow : Window
         try
         {
             var data = await DragOutData.CreateAsync(StorageProvider, paths);
-            effect = await DragDrop.DoDragDrop(e, data, DragDropEffects.Copy);
+            effect = await DragDrop.DoDragDropAsync(press, data, DragDropEffects.Copy);
         }
         finally
         {
@@ -748,7 +749,7 @@ public partial class MainWindow : Window
     }
 
     private static List<string>? DroppedPaths(DragEventArgs e)
-        => e.Data.Contains(DataFormats.Files) && e.Data.GetFiles() is { } files
+        => e.DataTransfer.TryGetFiles() is { } files
             ? files.Select(file => file.TryGetLocalPath()).OfType<string>().ToList()
             : null;
 

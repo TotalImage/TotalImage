@@ -23,7 +23,7 @@ public sealed class DateTimeEditor : UserControl
     {
         SelectedDateFormat = CalendarDatePickerFormat.Custom,
         CustomDateFormatString = "yyyy-MM-dd",
-        Watermark = " ",
+        PlaceholderText = " ",
         IsTodayHighlighted = true,
         MinWidth = 140
     };
